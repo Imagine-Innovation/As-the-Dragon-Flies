@@ -1,0 +1,75 @@
+<?php
+
+namespace common\models;
+
+use Yii;
+
+/**
+ * This is the model class for table "menu".
+ *
+ * @property int $access_right_id Foreign key to"access_right" table
+ * @property string $label Label
+ * @property string $icon icon
+ * @property string $tooltip Tooltip
+ * @property string|null $card_title Card title
+ * @property string|null $subtitle Subtitle
+ * @property string|null $description Card menu description
+ * @property string|null $button_label Button label
+ * @property string|null $image Image file name
+ * @property int $is_context The image is context dependent
+ * @property int $sort_order Sort order
+ *
+ * @property AccessRight $accessRight
+ */
+class Menu extends \yii\db\ActiveRecord {
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function tableName() {
+        return 'menu';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function rules() {
+        return [
+            [['access_right_id', 'label', 'icon', 'tooltip'], 'required'],
+            [['access_right_id', 'is_context', 'sort_order'], 'integer'],
+            [['description'], 'string'],
+            [['label', 'icon'], 'string', 'max' => 32],
+            [['tooltip', 'card_title', 'subtitle', 'button_label', 'image'], 'string', 'max' => 255],
+            [['access_right_id'], 'unique'],
+            [['access_right_id'], 'exist', 'skipOnError' => true, 'targetClass' => AccessRight::class, 'targetAttribute' => ['access_right_id' => 'id']],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels() {
+        return [
+            'access_right_id' => 'Foreign key to\"access_right\" table',
+            'label' => 'Label',
+            'icon' => 'icon',
+            'tooltip' => 'Tooltip',
+            'card_title' => 'Card title',
+            'subtitle' => 'Subtitle',
+            'description' => 'Card menu description',
+            'button_label' => 'Button label',
+            'image' => 'Image file name',
+            'is_context' => 'The image is context dependent',
+            'sort_order' => 'Sort order',
+        ];
+    }
+
+    /**
+     * Gets query for [[AccessRight]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getAccessRight() {
+        return $this->hasOne(AccessRight::class, ['id' => 'access_right_id']);
+    }
+}

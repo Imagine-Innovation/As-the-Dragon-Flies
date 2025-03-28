@@ -1,0 +1,18 @@
+{
+  "scripts": {
+    "sass": "sass frontend/assets/scss/main.scss frontend/web/css/main.css --watch"
+  },
+  "name": "frontend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "sass": "^1.85.1"
+  }
+}

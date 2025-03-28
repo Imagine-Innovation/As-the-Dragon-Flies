@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" stroke="currentColor" fill="currentColor" class="bi bi-archive" viewBox="0 0 25 25">
+	<g>
+		<path d="M0.500053 10.5001 3.07145 0.500053 20.9286 0.500053 23.5001 10.5001Z" stroke-width="1.33333" stroke-miterlimit="8" fill="none" fill-rule="evenodd"/>
+		<path d="M0 11 2.82854 0 20.1715 0 23 11Z" stroke-width="1.33333" stroke-miterlimit="8" fill="none" fill-rule="evenodd" transform="matrix(1 0 0 -1 0.500053 23.5001)"/>
+		<path d="M9 8.5C9 7.11929 10.1193 6 11.5 6L11.5 6C12.8807 6 14 7.11929 14 8.5L14 14.5C14 15.8807 12.8807 17 11.5 17L11.5 17C10.1193 17 9 15.8807 9 14.5Z" fill-rule="evenodd"/>
+	</g>
+</svg>

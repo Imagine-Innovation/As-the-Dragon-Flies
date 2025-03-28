@@ -1,0 +1,467 @@
+<?php
+
+namespace frontend\controllers;
+
+/**
+ * Quest Management Controller
+ *
+ * Handles all quest-related operations including CRUD operations, tavern management,
+ * and real-time chat functionality through AJAX endpoints.
+ *
+ * Key features:
+ * - Quest listing and management
+ * - Tavern system for quest joining
+ * - Real-time chat system
+ * - Access control for authenticated users
+ *
+ * @package frontend\controllers
+ * @author François Gros
+ * @version 1.0
+ */
+use Yii;
+use common\models\Quest;
+use common\models\QuestChat;
+use common\components\ManageAccessRights;
+use common\components\QuestNotification;
+use common\components\QuestOnboarding;
+use common\components\QuestMessages;
+use common\helpers\UserErrorMessage;
+use frontend\components\AjaxRequest;
+use yii\data\ActiveDataProvider;
+use yii\db\Query;
+use yii\web\Controller;
+use yii\web\NotFoundHttpException;
+use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
+use yii\web\Response;
+
+/**
+ * QuestController implements the CRUD actions for Quest model.
+ */
+class QuestController extends Controller {
+
+    const DEFAULT_REDIRECT = 'story/index';
+
+    /**
+     * @inheritDoc
+     */
+    public function behaviors() {
+        return array_merge(
+                parent::behaviors(),
+                [
+                    'access' => [
+                        'class' => AccessControl::class,
+                        'rules' => [
+                            [
+                                'actions' => ['*'],
+                                'allow' => false,
+                                'roles' => ['?'],
+                            ],
+                            [
+                                'actions' => [
+                                    'index', 'update', 'delete', 'create', 'view',
+                                    'tavern', 'resume',
+                                    'ajax-tavern', 'ajax-tavern-counter',
+                                    'ajax-new-message', 'ajax-get-messages',
+                                    'ajax-start'
+                                ],
+                                'allow' => ManageAccessRights::isRouteAllowed($this),
+                                'roles' => ['@'],
+                            ],
+                        ],
+                    ],
+                    'verbs' => [
+                        'class' => VerbFilter::className(),
+                        'actions' => [
+                            'delete' => ['POST'],
+                        ],
+                    ],
+                ]
+        );
+    }
+
+    /**
+     * Lists all Quest models with access control
+     *
+     * Administrators see all quests while regular users only see
+     * quests they are participating in. Uses ActiveDataProvider for pagination.
+     *
+     * @return string Rendered index view with quest listing
+     */
+    public function actionIndex() {
+        $user = Yii::$app->user->identity;
+
+        // Admin users get full quest access
+        if ($user->is_admin) {
+            Yii::debug("*** Debug *** quest/index is_admin", __METHOD__);
+            $dataProvider = new ActiveDataProvider([
+                'query' => Quest::find()
+            ]);
+        }
+        // Regular users only see their quests
+        else {
+            $subQuery = (new Query())
+                    ->select('quest_id')
+                    ->from('quest_player')
+                    ->where(['player_id' => $user->current_player_id ?? 0]);
+            $dataProvider = new ActiveDataProvider([
+                'query' => Quest::find()
+                        ->where(['id' => $subQuery])
+            ]);
+        }
+
+        return $this->render('index', [
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * Displays quest details
+     *
+     * Shows comprehensive information about a specific quest instance.
+     *
+     * @param int $id Quest ID to view
+     * @return string Rendered view page
+     * @throws NotFoundHttpException if quest not found
+     */
+    public function actionView($id) {
+        return $this->render('view', [
+                    'model' => $this->findModel($id),
+        ]);
+    }
+
+    /**
+     * Handles AJAX request for tavern updates
+     *
+     * Retrieves and returns the current tavern state for real-time updates.
+     * Used for periodic polling from the frontend.
+     *
+     * @return array JSON response containing tavern state
+     *   - error: boolean indicating request status
+     *   - msg: string message for client
+     *   - content: HTML content for tavern update
+     */
+    public function actionAjaxTavern() {
+        // Configure JSON response format
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        // Validate request type
+        if (!$this->request->isGet || !$this->request->isAjax) {
+            return ['error' => true, 'msg' => 'Not an Ajax GET request'];
+        }
+
+        // Get current user context
+        $user = Yii::$app->user->identity;
+        $player = $user->currentPlayer;
+        $questId = $player->quest_id;
+
+        // Prepare Ajax request parameters
+        $param = [
+            'modelName' => 'Quest',
+            'render' => 'ajax-tavern',
+            'filter' => ['id' => $questId]
+        ];
+
+        // Process request and return response
+        $ajaxRequest = new AjaxRequest($param);
+        if ($ajaxRequest->makeResponse(Yii::$app->request)) {
+            return $ajaxRequest->response;
+        }
+
+        return ['error' => true, 'msg' => 'Error encountered'];
+    }
+
+    /**
+     * Handles AJAX counter updates for tavern welcome messages
+     *
+     * Provides real-time welcome message updates for the tavern interface.
+     * Used for dynamic content refresh and player engagement tracking.
+     *
+     * @return array JSON response containing:
+     *   - error: boolean indicating operation status
+     *   - msg: status message (empty on success)
+     *   - content: HTML content with welcome message
+     */
+    public function actionAjaxTavernCounter() {
+        // Configure response as JSON format
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        // Validate request type and method
+        if (!$this->request->isGet || !$this->request->isAjax) {
+            return ['error' => true, 'msg' => 'Not an Ajax GET request'];
+        }
+
+        // Get current user context and quest information
+        $user = Yii::$app->user->identity;
+        $player = $user->currentPlayer;
+        $questId = $player->quest_id;
+
+        // Generate welcome message for current quest
+        $wellcomeMessage = QuestOnboarding::wellcomeMessage($questId);
+
+        // Return success response with welcome message
+        return ['error' => false, 'msg' => '', 'content' => $wellcomeMessage];
+    }
+
+    /**
+     * Processes new chat messages in the tavern
+     *
+     * Handles message creation, persistence, and notification dispatch.
+     * Supports real-time chat functionality.
+     *
+     * @return array JSON response containing:
+     *   - error: boolean indicating operation success
+     *   - msg: status message
+     *   - content: rendered chat messages HTML
+     */
+    public function actionAjaxNewMessage() {
+        // Set JSON response format
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        // Validate request method and type
+        if (!$this->request->isPost || !$this->request->isAjax) {
+            return ['error' => true, 'msg' => 'Not an Ajax POST request'];
+        }
+
+        // Extract message data from request
+        $request = Yii::$app->request;
+        $ts = $request->post('ts');
+        $senderId = $request->post('senderId');
+        $questId = $request->post('questId');
+
+        // Create new chat message instance
+        $questChat = new QuestChat([
+            'sender_id' => $senderId,
+            'quest_id' => $questId,
+            'message' => $request->post('message'),
+            'created_at' => $ts
+        ]);
+
+        // Persist message and prepare response
+        if (($questChat) && ($questChat->save())) {
+            // Round timestamp for message grouping
+            $roundedTime = floor($ts / 60) * 60;
+
+            // Retrieve latest messages
+            $messages = QuestMessages::getLastMessages($questId, $senderId, $roundedTime);
+
+            // Render updated message list
+            $content = $this->renderPartial('ajax-messages', ['messages' => $messages]);
+
+            // Dispatch notification
+            QuestNotification::push('new-message', $questId, $senderId, 'Sent a message');
+
+            return ['error' => false, 'msg' => 'New message is saved', 'content' => $content];
+        }
+
+        return ['error' => true, 'msg' => 'Could not create a new message'];
+    }
+
+    public function actionAjaxStart() {
+        // Set JSON response format
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        // Validate request method and type
+        if (!$this->request->isPost || !$this->request->isAjax) {
+            return ['error' => true, 'msg' => 'Not an Ajax POST request'];
+        }
+
+        // Extract message data from request
+        $request = Yii::$app->request;
+        $questId = $request->post('questId');
+        $quest = $this->findModel($questId);
+
+        if ($quest) {
+            $update = Quest::updateAll(
+                    ['status' => Quest::STATUS_PLAYING, 'started_at' => time()],
+                    ['id' => $questId]
+            );
+            if ($update) {
+                $render = $this->render('view', ['model' => $quest]);
+                return ['error' => false, 'msg' => 'Quest is started', 'content' => $render];
+            }
+            return ['error' => true, 'msg' => 'Could not start quest'];
+        }
+        return ['error' => true, 'msg' => 'Quest not found'];
+    }
+
+    /**
+     * Retrieves latest messages for real-time chat updates
+     *
+     * Handles periodic polling for new messages in the tavern chat.
+     * Supports message grouping by timestamp.
+     *
+     * @return array JSON response with latest messages
+     */
+    public function actionAjaxGetMessages() {
+        // Configure response format
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        // Validate request type
+        if (!$this->request->isGet || !$this->request->isAjax) {
+            return ['error' => true, 'msg' => 'Not an Ajax GET request'];
+        }
+
+        // Extract request parameters
+        $request = Yii::$app->request;
+        $playerId = $request->get('playerId');
+        $questId = $request->get('questId');
+        $roundedTime = $request->get('roundedTime');
+
+        // Fetch and render messages
+        $messages = QuestMessages::getLastMessages($questId, $playerId, $roundedTime);
+        $content = $this->renderPartial('ajax-messages', ['messages' => $messages]);
+
+        return ['error' => false, 'msg' => '', 'content' => $content];
+    }
+
+    /**
+     * Handles tavern entry and player onboarding for a specific story
+     *
+     * Validates story access, creates or joins quest, and manages player onboarding flow.
+     * Core entry point for quest participation.
+     *
+     * @param int $storyId The ID of the story to join
+     * @return string|Response Rendered tavern view or error redirect
+     */
+    public function actionTavern($storyId) {
+        // Validate story existence and accessibility
+        $story = QuestOnboarding::findValidStory($storyId);
+        if (!$story) {
+            return UserErrorMessage::throw($this, 'fatal', 'Invalid story ID (' . ($storyId ?? 'NULL') . ')');
+        }
+
+        // Find or create tavern quest instance
+        $quest = QuestOnboarding::findTavern($story);
+        if (!$quest) {
+            return UserErrorMessage::throw($this, 'error', 'Unable to find or create a new quest', self::DEFAULT_REDIRECT);
+        }
+
+        // Get current player context
+        $player = Yii::$app->session->get('currentPlayer');
+
+        // Validate player eligibility
+        $canJoin = QuestOnboarding::canPlayerJoinQuest($player, $quest);
+        if ($canJoin['denied']) {
+            return UserErrorMessage::throw($this, 'error', $canJoin['reason'], self::DEFAULT_REDIRECT);
+        }
+
+        // Process player onboarding
+        if (!QuestOnboarding::wellcomePlayer($player, $quest)) {
+            return UserErrorMessage::throw($this, 'error', 'Unable to onboard player ' . $player->name . ' to the quest', self::DEFAULT_REDIRECT);
+        }
+
+        $questCanStart = QuestOnboarding::canStartQuest($quest);
+        if (!$questCanStart['denied']) {
+            QuestNotification::push('start-quest', $quest->id, $player->id, $questCanStart['reason']);
+        }
+        // Set session variables for quest context
+        Yii::$app->session->set('currentQuest', $quest);
+        Yii::$app->session->set('questId', $quest->id);
+        Yii::$app->session->set('inQuest', true);
+
+        return $this->render('tavern', [
+                    'model' => $quest,
+        ]);
+    }
+
+    /**
+     * Resumes an existing quest session
+     *
+     * Validates current player and quest state before allowing
+     * player to rejoin their active quest.
+     *
+     * @return string|Response Rendered tavern view or error redirect
+     */
+    public function actionResume() {
+        $quest = Yii::$app->session->get('currentQuest');
+
+        if ($quest->status == Quest::STATUS_PLAYING) {
+            return $this->redirect(['quest/view', 'id' => $quest->id]);
+        }
+
+        return $this->render('tavern', [
+                    'model' => $quest,
+        ]);
+    }
+
+    /**
+     * Creates a new Quest instance
+     *
+     * Handles form submission and model creation with validation.
+     * Redirects to view page on successful creation.
+     *
+     * @return string|Response Rendered create form or redirect to view
+     */
+    public function actionCreate() {
+        $model = new Quest();
+
+        // Handle form submission
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post()) && $model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
+        } else {
+            $model->loadDefaultValues();
+        }
+
+        return $this->render('create', [
+                    'model' => $model,
+        ]);
+    }
+
+    /**
+     * Updates an existing Quest model
+     *
+     * Handles form submission for quest updates with validation.
+     * Maintains data integrity through model validation rules.
+     *
+     * @param int $id Quest ID to update
+     * @return string|Response Rendered update form or redirect to view
+     * @throws NotFoundHttpException if quest not found
+     */
+    public function actionUpdate($id) {
+        $model = $this->findModel($id);
+
+        // Process form submission
+        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->id]);
+        }
+
+        return $this->render('update', [
+                    'model' => $model,
+        ]);
+    }
+
+    /**
+     * Deletes a Quest instance
+     *
+     * Removes quest and related data with proper cleanup.
+     * Requires POST request for security.
+     *
+     * @param int $id Quest ID to delete
+     * @return Response Redirect to index page
+     * @throws NotFoundHttpException if quest not found
+     */
+    public function actionDelete($id) {
+        $this->findModel($id)->delete();
+        return $this->redirect(['index']);
+    }
+
+    /**
+     * Utility method to find Quest model
+     *
+     * Central method for quest lookup to maintain consistency
+     * and proper error handling.
+     *
+     * @param int $id Quest ID to find
+     * @return Quest Found quest model
+     * @throws NotFoundHttpException if quest not found
+     */
+    protected function findModel($id) {
+        if (($model = Quest::findOne(['id' => $id])) !== null) {
+            return $model;
+        }
+        throw new NotFoundHttpException('The requested page does not exist.');
+    }
+}

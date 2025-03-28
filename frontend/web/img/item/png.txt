@@ -1,0 +1,52 @@
+Alchemists supplies.png
+Battleaxe.png
+Blowgun.png
+Breastplate.png
+Brewers supplies.png
+Calligraphers supplies.png
+Chain Mail.png
+Chain Shirt.png
+Club.png
+Crossbow, hand.png
+Crossbow, heavy.png
+Crossbow, light.png
+Dagger.png
+Dart.png
+Flail.png
+Glaive.png
+Greataxe.png
+Greatclub.png
+Greatsword.png
+Halberd.png
+Half Plate.png
+Handaxe.png
+Hide.png
+Javelin.png
+Lance.png
+Leather.png
+Light hammer.png
+Longbow.png
+Longsword.png
+Mace.png
+Maul.png
+Morningstar.png
+Padded.png
+Pike.png
+Plate.png
+Quarterstaff.png
+Rapier.png
+Ring Mail.png
+Scale Mail.png
+Scimitar.png
+Shield.png
+Shortbow.png
+Shortsword.png
+Sickle.png
+Sling.png
+Spear.png
+Splint.png
+Studded Leather.png
+Trident.png
+War pick.png
+Warhammer.png
+Whip.png

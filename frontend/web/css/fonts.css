@@ -1,0 +1,610 @@
+/******** Font handwritten/CursiveSerif.otf ********/
+@font-face {
+    font-family: 'CursiveSerif';
+    src: url('fonts/handwritten/CursiveSerif.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-cursiveserif {
+    font-family: 'CursiveSerif', serif;
+    font-size-adjust: 0.55;
+}
+
+/******** Font handwritten/SenjaSantuy.otf ********/
+@font-face {
+    font-family: 'SenjaSantuy';
+    src: url('fonts/handwritten/SenjaSantuy.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-senjasantuy {
+    font-family: 'SenjaSantuy', serif;
+    font-size-adjust: 0.45;
+}
+
+/******** Font layout/Balgruf.ttf ********/
+@font-face {
+    font-family: 'Balgruf';
+    src: url('fonts/layout/Balgruf.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-balgruf {
+    font-family: 'Balgruf', serif;
+    font-size-adjust: 0.5;
+}
+
+/******** Font layout/Berenika.ttf ********/
+@font-face {
+    font-family: 'Berenika';
+    src: url('fonts/layout/Berenika.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-berenika {
+    font-family: 'Berenika', serif;
+    /* font-size-adjust: 0.45; */
+}
+
+/******** Font layout/Cavalier.ttf ********/
+@font-face {
+    font-family: 'Cavalier';
+    src: url('fonts/layout/Cavalier.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-cavalier {
+    font-family: 'Cavalier', serif;
+    font-size-adjust: 0.55;
+}
+
+/******** Font layout/Charakterny.otf ********/
+@font-face {
+    font-family: 'Charakterny';
+    src: url('fonts/layout/Charakterny.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-charakterny {
+    font-family: 'Charakterny', serif;
+    font-size-adjust: 0.65;
+}
+
+/******** Font layout/Dumbledor2.ttf ********/
+@font-face {
+    font-family: 'Dumbledor2';
+    src: url('fonts/layout/Dumbledor2.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-dumbledor2 {
+    font-family: 'Dumbledor2', serif;
+    font-size-adjust: 0.45;
+}
+
+/******** Font layout/Dumbledor2Thin.ttf ********/
+@font-face {
+    font-family: 'Dumbledor2Thin';
+    src: url('fonts/layout/Dumbledor2Thin.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-dumbledor2thin {
+    font-family: 'Dumbledor2Thin', serif;
+    font-size-adjust: 0.5;
+}
+
+/******** Font layout/Gamestation.otf ********/
+@font-face {
+    font-family: 'Gamestation';
+    src: url('fonts/layout/Gamestation.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-gamestation {
+    font-family: 'Gamestation', serif;
+    /* font-size-adjust: 0.45; */
+}
+
+/******** Font layout/Goudymedieval.ttf ********/
+@font-face {
+    font-family: 'Goudymedieval';
+    src: url('fonts/layout/Goudymedieval.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-goudymedieval {
+    font-family: 'Goudymedieval', serif;
+    font-size-adjust: 0.5;
+}
+
+/******** Font layout/IpanemaSecco.ttf ********/
+@font-face {
+    font-family: 'IpanemaSecco';
+    src: url('fonts/layout/IpanemaSecco.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-ipanemasecco {
+    font-family: 'IpanemaSecco', serif;
+    /* font-size-adjust: 0.45; */
+}
+
+/******** Font layout/Lombardic.ttf ********/
+@font-face {
+    font-family: 'Lombardic';
+    src: url('fonts/layout/Lombardic.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-lombardic {
+    font-family: 'Lombardic', serif;
+    font-size-adjust: 0.55;
+}
+
+/******** Font layout/LombardicNarrow.ttf ********/
+@font-face {
+    font-family: 'LombardicNarrow';
+    src: url('fonts/layout/LombardicNarrow.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-lombardicnarrow {
+    font-family: 'LombardicNarrow', serif;
+    font-size-adjust: 0.55;
+}
+
+/******** Font layout/MedievalSharp.ttf ********/
+@font-face {
+    font-family: 'MedievalSharp';
+    src: url('fonts/layout/MedievalSharp.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-medievalsharp {
+    font-family: 'MedievalSharp', serif;
+    font-size-adjust: 0.55;
+}
+
+/******** Font layout/Romanuncialmodern.ttf ********/
+@font-face {
+    font-family: 'Romanuncialmodern';
+    src: url('fonts/layout/Romanuncialmodern.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-romanuncialmodern {
+    font-family: 'Romanuncialmodern', serif;
+    /* font-size-adjust: 0.45; */
+}
+
+/******** Font layout/UncialAntiqua.ttf ********/
+@font-face {
+    font-family: 'UncialAntiqua';
+    src: url('fonts/layout/UncialAntiqua.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-uncialantiqua {
+    font-family: 'UncialAntiqua', serif;
+    /* font-size-adjust: 0.45; */
+}
+
+/******** Font parchment/ACharmingFont.ttf ********/
+@font-face {
+    font-family: 'ACharmingFont';
+    src: url('fonts/parchment/ACharmingFont.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-acharmingfont {
+    font-family: 'ACharmingFont', serif;
+    font-size-adjust: 0.7;
+}
+
+/******** Font parchment/ACharmingFontExpanded.ttf ********/
+@font-face {
+    font-family: 'ACharmingFontExpanded';
+    src: url('fonts/parchment/ACharmingFontExpanded.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-acharmingfontexpanded {
+    font-family: 'ACharmingFontExpanded', serif;
+    font-size-adjust: 0.65;
+}
+
+/******** Font parchment/AlpineRegular.ttf ********/
+@font-face {
+    font-family: 'AlpineRegular';
+    src: url('fonts/parchment/AlpineRegular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-alpineregular {
+    font-family: 'AlpineRegular', serif;
+    font-size-adjust: 0.5;
+}
+
+/******** Font parchment/Bastarda.ttf ********/
+@font-face {
+    font-family: 'Bastarda';
+    src: url('fonts/parchment/Bastarda.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-bastarda {
+    font-family: 'Bastarda', serif;
+    font-size-adjust: 0.5;
+}
+
+/******** Font parchment/BuOscarDiggs.ttf ********/
+@font-face {
+    font-family: 'BuOscarDiggs';
+    src: url('fonts/parchment/BuOscarDiggs.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-buoscardiggs {
+    font-family: 'BuOscarDiggs', serif;
+    font-size-adjust: 0.6;
+}
+
+/******** Font parchment/BuWicked.ttf ********/
+@font-face {
+    font-family: 'BuWicked';
+    src: url('fonts/parchment/BuWicked.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-buwicked {
+    font-family: 'BuWicked', serif;
+    font-size-adjust: 0.6;
+}
+
+/******** Font parchment/Cardinal.ttf ********/
+@font-face {
+    font-family: 'Cardinal';
+    src: url('fonts/parchment/Cardinal.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-cardinal {
+    font-family: 'Cardinal', serif;
+    font-size-adjust: 0.5;
+}
+
+/******** Font parchment/Catwalzhari.ttf ********/
+@font-face {
+    font-family: 'Catwalzhari';
+    src: url('fonts/parchment/Catwalzhari.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-catwalzhari {
+    font-family: 'Catwalzhari', serif;
+    font-size-adjust: 0.55;
+}
+
+/******** Font parchment/CloisterBlackLight.ttf ********/
+@font-face {
+    font-family: 'CloisterBlackLight';
+    src: url('fonts/parchment/CloisterBlackLight.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-cloisterblacklight {
+    font-family: 'CloisterBlackLight', serif;
+    font-size-adjust: 0.65;
+}
+
+/******** Font parchment/ColchesterBlack.ttf ********/
+@font-face {
+    font-family: 'ColchesterBlack';
+    src: url('fonts/parchment/ColchesterBlack.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-colchesterblack {
+    font-family: 'ColchesterBlack', serif;
+    font-size-adjust: 0.65;
+}
+
+/******** Font parchment/DevinneSwash.ttf ********/
+@font-face {
+    font-family: 'DevinneSwash';
+    src: url('fonts/parchment/DevinneSwash.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-devinneswash {
+    font-family: 'DevinneSwash', serif;
+    /* font-size-adjust: 0.45; */
+}
+
+/******** Font parchment/FetteClassicUnzFraktur.ttf ********/
+@font-face {
+    font-family: 'FetteClassicUnzFraktur';
+    src: url('fonts/parchment/FetteClassicUnzFraktur.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-fetteclassicunzfraktur {
+    font-family: 'FetteClassicUnzFraktur', serif;
+    font-size-adjust: 0.6;
+}
+
+/******** Font parchment/HildaSonnenschein.ttf ********/
+@font-face {
+    font-family: 'HildaSonnenschein';
+    src: url('fonts/parchment/HildaSonnenschein.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-hildasonnenschein {
+    font-family: 'HildaSonnenschein', serif;
+    font-size-adjust: 0.6;
+}
+
+/******** Font parchment/Insula.ttf ********/
+@font-face {
+    font-family: 'Insula';
+    src: url('fonts/parchment/Insula.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-insula {
+    font-family: 'Insula', serif;
+    /* font-size-adjust: 0.45; */
+}
+
+/******** Font parchment/Lancaster.ttf ********/
+@font-face {
+    font-family: 'Lancaster';
+    src: url('fonts/parchment/Lancaster.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-lancaster {
+    font-family: 'Lancaster', serif;
+    /* font-size-adjust: 0.45; */
+}
+
+/******** Font parchment/Marigoldwild.ttf ********/
+@font-face {
+    font-family: 'Marigoldwild';
+    src: url('fonts/parchment/Marigoldwild.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-marigoldwild {
+    font-family: 'Marigoldwild', serif;
+    font-size-adjust: 0.75;
+}
+
+/******** Font parchment/MediaevalCaps-RpKPA.ttf ********/
+@font-face {
+    font-family: 'MediaevalCaps';
+    src: url('fonts/parchment/MediaevalCaps.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-mediaevalcaps {
+    font-family: 'MediaevalCaps', serif;
+    /* font-size-adjust: 0.45; */
+}
+
+/******** Font parchment/OldeEnglishRegular.ttf ********/
+@font-face {
+    font-family: 'OldeEnglishRegular';
+    src: url('fonts/parchment/OldeEnglishRegular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-oldeenglishregular {
+    font-family: 'OldeEnglishRegular', serif;
+    font-size-adjust: 0.55;
+}
+
+/******** Font parchment/Primitive.ttf ********/
+@font-face {
+    font-family: 'Primitive';
+    src: url('fonts/parchment/Primitive.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-primitive {
+    font-family: 'Primitive', serif;
+    /* font-size-adjust: 0.45; */
+}
+
+/******** Font parchment/RotundaPommerania.ttf ********/
+@font-face {
+    font-family: 'RotundaPommerania';
+    src: url('fonts/parchment/RotundaPommerania.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-rotundapommerania {
+    font-family: 'RotundaPommerania', serif;
+    font-size-adjust: 0.6;
+}
+
+/******** Font parchment/SidheNoble.ttf ********/
+@font-face {
+    font-family: 'SidheNoble';
+    src: url('fonts/parchment/SidheNoble.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-sidhenoble {
+    font-family: 'SidheNoble', serif;
+    /* font-size-adjust: 0.45; */
+}
+
+/******** Font special/Aelfa.ttf ********/
+@font-face {
+    font-family: 'Aelfa';
+    src: url('fonts/special/Aelfa.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-aelfa {
+    font-family: 'Aelfa', serif;
+    font-size-adjust: 0.4;
+}
+
+/******** Font special/CirnajaCalligraphy.ttf ********/
+@font-face {
+    font-family: 'CirnajaCalligraphy';
+    src: url('fonts/special/CirnajaCalligraphy.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-cirnajacalligraphy {
+    font-family: 'CirnajaCalligraphy', serif;
+    /* font-size-adjust: 0.45; */
+}
+
+/******** Font special/ElficCaslin.ttf ********/
+@font-face {
+    font-family: 'ElficCaslin';
+    src: url('fonts/special/ElficCaslin.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-elficcaslin {
+    font-family: 'ElficCaslin', serif;
+    /* font-size-adjust: 0.45; */
+}
+
+/******** Font special/Glagolitsa.ttf ********/
+@font-face {
+    font-family: 'Glagolitsa';
+    src: url('fonts/special/Glagolitsa.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-glagolitsa {
+    font-family: 'Glagolitsa', serif;
+    /* font-size-adjust: 0.45; */
+}
+
+/******** Font special/GreifswalderTengwar.ttf ********/
+@font-face {
+    font-family: 'GreifswalderTengwar';
+    src: url('fonts/special/GreifswalderTengwar.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-greifswaldertengwar {
+    font-family: 'GreifswalderTengwar', serif;
+    font-size-adjust: 0.8;
+}
+
+/******** Font special/SaratiEldamarLtr.ttf ********/
+@font-face {
+    font-family: 'SaratiEldamarLtr';
+    src: url('fonts/special/SaratiEldamarLtr.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-saratieldamarltr {
+    font-family: 'SaratiEldamarLtr', serif;
+    /* font-size-adjust: 0.45; */
+}
+
+/******** Font special/Stormning.otf ********/
+@font-face {
+    font-family: 'Stormning';
+    src: url('fonts/special/Stormning.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-stormning {
+    font-family: 'Stormning', serif;
+    /* font-size-adjust: 0.45; */
+}
+
+/******** Font special/TengwarEldamar.ttf ********/
+@font-face {
+    font-family: 'TengwarEldamar';
+    src: url('fonts/special/TengwarEldamar.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-tengwareldamar {
+    font-family: 'TengwarEldamar', serif;
+    /* font-size-adjust: 0.45; */
+}
+
+/******** Font special/TengwarParmaite.ttf ********/
+@font-face {
+    font-family: 'TengwarParmaite';
+    src: url('fonts/special/TengwarParmaite.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-tengwarparmaite {
+    font-family: 'TengwarParmaite', serif;
+    font-size-adjust: 0.5;
+}
+
+/******** Font special/ValmaricEldamar.ttf ********/
+@font-face {
+    font-family: 'ValmaricEldamar';
+    src: url('fonts/special/ValmaricEldamar.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-valmariceldamar {
+    font-family: 'ValmaricEldamar', serif;
+    font-size-adjust: 1;
+}
