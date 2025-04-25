@@ -41,7 +41,7 @@ class SiteController extends Controller {
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['logout', 'ajax-toast'],
+                        'actions' => ['logout', 'ajax-toast', 'websocket', 'send-message'],
                         //'allow' => ManageAccessRights::isRouteAllowed($this),
                         'allow' => true,
                         'roles' => ['@'],
@@ -96,6 +96,11 @@ class SiteController extends Controller {
     public function actionFonts() {
         ManageAccessRights::isRouteAllowed($this);
         return $this->render('fonts');
+    }
+
+    public function actionColors() {
+        ManageAccessRights::isRouteAllowed($this);
+        return $this->render('colors');
     }
 
     /**
@@ -316,5 +321,35 @@ class SiteController extends Controller {
         return $this->render('image-upload', [
                     'model' => $model,
         ]);
+    }
+
+    /**
+     * WebSocket test page
+     */
+    public function actionWebsocket() {
+        return $this->render('websocket');
+    }
+
+    /**
+     * Send a message to a player via WebSocket
+     */
+    public function actionSendMessage() {
+        if (Yii::$app->request->isAjax) {
+            $playerId = Yii::$app->request->post('playerId');
+            $message = Yii::$app->request->post('message');
+
+            // In a real application, you would need a way to communicate with
+            // the running WebSocket server. This could be through a shared
+            // database, Redis, or another messaging system.
+            // For now, we'll just log the request
+            Yii::info("Request to send message to player {$playerId}: {$message}", 'websocket');
+
+            return $this->asJson([
+                        'success' => true,
+                        'message' => "Message would be sent to {$playerId}"
+            ]);
+        }
+
+        return $this->asJson(['success' => false, 'message' => 'Invalid request']);
     }
 }

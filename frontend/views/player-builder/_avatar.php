@@ -12,7 +12,7 @@ use common\helpers\Utilities;
 <div class="container">
     <div class="card">
         <div class="card-body" id="ajaxAvatarChoice">
-            <h4 class="card-title">Images</h4>
+            <h4 class="card-title text-decoration">Images</h4>
             <h6 class="card-subtitle">Please select a race, a class and a gender before choosing an image.</h6>
         </div>
     </div>

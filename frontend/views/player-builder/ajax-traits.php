@@ -3,7 +3,7 @@
 /** @var app/models/Player $player */
 ?>
 
-<h4 class="card-title">Traits</h4>
+<h4 class="card-title text-decoration">Traits</h4>
 <?php if ($player): ?>
     <?php foreach ($player->playerTraits as $playerTrait): ?>
 <p>

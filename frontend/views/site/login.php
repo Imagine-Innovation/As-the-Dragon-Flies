@@ -13,7 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 $v1 = false;
 ?>
-<section class="vh-100 gradient-custom">
+<section class="vh-100">
     <div class="container py-5 h-100">
         <div class="row d-flex justify-content-center h-100">
             <div class="col-12 col-md-8 col-lg-6 col-xl-5">
@@ -55,11 +55,10 @@ $v1 = false;
                             </div>
 
                             <div class="d-flex mb-5 align-items-center">
-                                <label class="control control--checkbox mb-0"><span class="caption">Remember me </span>
+                                <label class="custom-control custom-checkbox mb-0"><span class="caption">Remember me </span>
                                     <input type="checkbox" checked="checked"/>
-                                    <div class="control__indicator"></div>
                                 </label>
-                                <span class="ml-auto">
+                                <span style="margin-left: auto;">
                                     <a class="fw-bold" href="<?= Url::toRoute(['site/request-password-reset']) ?>">Forgot Password</a>
                                 </span>
                             </div>

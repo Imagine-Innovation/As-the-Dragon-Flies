@@ -12,7 +12,7 @@ use yii\helpers\Url;
 <div class="container-fluid">
     <div class="card">
         <div class="card-body">
-            <h4 class="card-title">List of the players you have defined so far</h4>
+            <h4 class="card-title text-decoration">List of the players you have defined so far</h4>
             <div class="actions">
                 <a href="<?= Url::toRoute(['player/builder']) ?>" class="actions__item position-relative">
                     <span data-toggle="tooltip" title="Create a new player" data-placement="bottom"
@@ -22,7 +22,7 @@ use yii\helpers\Url;
             </div>
             <div class="row g-4">
                 <?php foreach ($models as $player): ?>
-                    <div class="col-12 col-md-6 col-lg-4 col-xxl-3">
+                    <div class="col-12 col-md-6 col-lg-4 col-xl-3 col-xxl-2">
                         <?= $this->renderFile('@app/views/player-builder/_card.php', ['player' => $player]) ?>
                     </div>
                 <?php endforeach; ?>

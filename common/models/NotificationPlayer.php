@@ -9,9 +9,10 @@ use Yii;
  *
  * @property int $notification_id Foreign key to "notification" table
  * @property int $player_id Foreign key to "player" table
- * @property int $distributed_at Notification was distributed at
- * @property int $is_read Notification is read
- * @property int|null $read_at Notification was read at
+ * @property int $is_read Whether the player has read this notification
+ * @property int|null $read_at When the player read this notification
+ * @property int $is_dismissed Whether the player has dismissed this notification
+ * @property int|null $dismissed_at When the player dismissed this notification
  *
  * @property Notification $notification
  * @property Player $player
@@ -31,7 +32,7 @@ class NotificationPlayer extends \yii\db\ActiveRecord {
     public function rules() {
         return [
             [['notification_id', 'player_id'], 'required'],
-            [['notification_id', 'player_id', 'distributed_at', 'is_read', 'read_at'], 'integer'],
+            [['notification_id', 'player_id', 'is_read', 'read_at', 'is_dismissed', 'dismissed_at'], 'integer'],
             [['notification_id', 'player_id'], 'unique', 'targetAttribute' => ['notification_id', 'player_id']],
             [['notification_id'], 'exist', 'skipOnError' => true, 'targetClass' => Notification::class, 'targetAttribute' => ['notification_id' => 'id']],
             [['player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['player_id' => 'id']],
@@ -45,9 +46,10 @@ class NotificationPlayer extends \yii\db\ActiveRecord {
         return [
             'notification_id' => 'Foreign key to \"notification\" table',
             'player_id' => 'Foreign key to \"player\" table',
-            'distributed_at' => 'Notification was distributed at',
-            'is_read' => 'Notification is read',
-            'read_at' => 'Notification was read at',
+            'is_read' => 'Whether the player has read this notification',
+            'read_at' => 'When the player read this notification',
+            'is_dismissed' => 'Whether the player has dismissed this notification',
+            'dismissed_at' => 'When the player dismissed this notification',
         ];
     }
 

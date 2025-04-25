@@ -18,15 +18,17 @@ namespace frontend\controllers;
  * @author François Gros
  * @version 1.0
  */
-use Yii;
+use common\models\events\EventFactory;
 use common\models\Quest;
 use common\models\QuestChat;
+use common\models\QuestPlayer;
 use common\components\ManageAccessRights;
-use common\components\QuestNotification;
-use common\components\QuestOnboarding;
-use common\components\QuestMessages;
 use common\helpers\UserErrorMessage;
 use frontend\components\AjaxRequest;
+use frontend\components\QuestMessages;
+use frontend\components\QuestNotification;
+use frontend\components\QuestOnboarding;
+use Yii;
 use yii\data\ActiveDataProvider;
 use yii\db\Query;
 use yii\web\Controller;
@@ -60,7 +62,7 @@ class QuestController extends Controller {
                             [
                                 'actions' => [
                                     'index', 'update', 'delete', 'create', 'view',
-                                    'tavern', 'resume',
+                                    'tavern', 'resume', 'send-message', 'get-messages', 'leave-quest',
                                     'ajax-tavern', 'ajax-tavern-counter',
                                     'ajax-new-message', 'ajax-get-messages',
                                     'ajax-start'
@@ -226,12 +228,12 @@ class QuestController extends Controller {
         // Extract message data from request
         $request = Yii::$app->request;
         $ts = $request->post('ts');
-        $senderId = $request->post('senderId');
+        $playerId = $request->post('playerId');
         $questId = $request->post('questId');
 
         // Create new chat message instance
         $questChat = new QuestChat([
-            'sender_id' => $senderId,
+            'player_id' => $playerId,
             'quest_id' => $questId,
             'message' => $request->post('message'),
             'created_at' => $ts
@@ -243,18 +245,141 @@ class QuestController extends Controller {
             $roundedTime = floor($ts / 60) * 60;
 
             // Retrieve latest messages
-            $messages = QuestMessages::getLastMessages($questId, $senderId, $roundedTime);
+            $messages = QuestMessages::getLastMessages($questId, $playerId, $roundedTime);
 
             // Render updated message list
             $content = $this->renderPartial('ajax-messages', ['messages' => $messages]);
 
             // Dispatch notification
-            QuestNotification::push('new-message', $questId, $senderId, 'Sent a message');
+            QuestNotification::push('new-message', $questId, $playerId, 'Sent a message');
 
             return ['error' => false, 'msg' => 'New message is saved', 'content' => $content];
         }
 
         return ['error' => true, 'msg' => 'Could not create a new message'];
+    }
+
+    public function actionSendMessage() {
+        Yii::debug("*** Debug *** actionSendMessage");
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        // Validate request method and type
+        if (!$this->request->isPost || !$this->request->isAjax) {
+            return ['error' => true, 'msg' => 'Not an Ajax POST request'];
+        }
+        Yii::debug("*** Debug *** actionSendMessage - Correct Ajax POST request");
+
+        $player = Yii::$app->session->get('currentPlayer');
+        if (!$player) {
+            return ['success' => false, 'message' => 'Player not found'];
+        }
+        Yii::debug("*** Debug *** actionSendMessage - Player: $player->name");
+
+        $quest = Yii::$app->session->get('currentQuest');
+
+        if (!$quest) {
+            return ['success' => false, 'message' => 'Quest not found'];
+        }
+        Yii::debug("*** Debug *** actionSendMessage - Quest: {$quest->story->name}");
+
+        $message = Yii::$app->request->post('message');
+        Yii::debug("*** Debug *** actionSendMessage - Message: {($message ?? 'empty')}");
+        if (empty($message)) {
+            return ['success' => false, 'message' => 'Message cannot be empty'];
+        }
+
+        // Create and process new message event
+        $event = EventFactory::createEvent('new-message', $player, $quest, ['message' => $message]);
+        $event->process();
+
+        return ['success' => true];
+    }
+
+    /**
+     * Get chat messages for a quest
+     */
+    public function actionGetMessages($questId = null) {
+        Yii::debug("*** Debug *** actionGetMessages");
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        // Validate request method and type
+        if (!$this->request->isPost || !$this->request->isAjax) {
+            return ['error' => true, 'msg' => 'Not an Ajax POST request'];
+        }
+        Yii::debug("*** Debug *** actionGetMessages - Correct Ajax POST request");
+
+        $player = Yii::$app->session->get('currentPlayer');
+        if (!$player) {
+            return ['success' => false, 'message' => 'Player not found'];
+        }
+        Yii::debug("*** Debug *** actionGetMessages - Player: $player->name");
+
+        $quest = Yii::$app->session->get('currentQuest');
+
+        if (!$quest) {
+            return ['success' => false, 'message' => 'Quest not found'];
+        }
+        Yii::debug("*** Debug *** actionGetMessages - Quest: {$quest->story->name}");
+
+        if ($questId !== $quest->id) {
+            Yii::debug("*** Debug *** actionGetMessages - Invalid QuestId");
+            return ['success' => false, 'message' => 'Invalid QuestId'];
+        }
+
+        /*
+          $messages = [];
+          foreach ($quest->getRecentChatMessages(50) as $chatMessage) {
+          $messages[] = [
+          'playerId' => $chatMessage->player_id,
+          'playerName' => $chatMessage->player->name,
+          'message' => $chatMessage->message,
+          'timestamp' => $chatMessage->created_at
+          ];
+          }
+         *
+         */
+
+        $messages = QuestMessages::getRecentChatMessages($questId);
+
+        return [
+            'success' => true,
+            'messages' => $messages
+        ];
+    }
+
+    public function actionLeaveQuest() {
+
+        $player = Yii::$app->session->get('currentPlayer');
+        if (!$player) {
+            return ['success' => false, 'message' => 'Player not found'];
+        }
+
+        $quest = Yii::$app->session->get('currentQuest');
+
+        if (!$quest) {
+            return ['success' => false, 'message' => 'Quest not found'];
+        }
+
+        // Update quest_player record
+        $questPlayer = QuestPlayer::findOne(['quest_id' => $quest->id, 'player_id' => $player->id]);
+        if ($questPlayer) {
+            $questPlayer->left_at = time();
+            $questPlayer->reason = 'left_voluntarily';
+            $questPlayer->save();
+        }
+
+        // Remove player from quest
+        $player->quest_id = null;
+        $player->save();
+
+        // Create a leave event (we could create a specific LeaveQuestEvent class)
+        $event = EventFactory::createEvent('game-action', $player, $quest, [
+            'action' => 'leave-quest',
+            'actionData' => ['reason' => 'left_voluntarily']
+        ]);
+        $event->process();
+
+        return $this->redirect(['quest/index']);
     }
 
     public function actionAjaxStart() {

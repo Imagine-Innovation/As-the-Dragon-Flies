@@ -1,11 +1,11 @@
 <?php
 
+use common\helpers\Status;
 use frontend\widgets\AjaxContainer;
 use frontend\widgets\BuilderOnclick;
 use frontend\widgets\BuilderTab;
 use frontend\components\BuilderTool;
 use yii\helpers\Html;
-use yii\helpers\Url;
 
 /** @var yii\web\View $this */
 /** @var common\models\PlayerBuilder $model */
@@ -25,23 +25,14 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
 
 <div class="card">
     <div class="card-body">
-        <h4 class="card-title"><?= Html::encode($this->title) ?></h4>
+        <h4 class="card-title text-decoration"><?= Html::encode($this->title) ?></h4>
         <div class="actions">
-            <a type="button" class="actions__item bi-check" href="#" data-toggle="tooltip" title="Validate this player" data-placement="bottom"
-               onclick="$('#validatePlayerForm').submit();">
-            </a>
-            <a href="#" id="showBuilderWizardModal-button" class="actions__item" data-toggle="tooltip" title="Class wizard" data-placement="bottom">
-                <span data-toggle="modal" data-target="#builderWizardModal">
-                    <i class="bi bi-magic"></i>
-                </span>
-            </a>
             <a href="#" class="actions__item" data-toggle="tooltip" title="Save" data-placement="bottom">
                 <span onclick="$('#save-button').click();">
                     <i class="bi bi-floppy"></i>
                 </span>
             </a>
             <a href="#" class="invisible" id="showEquipmentModal-hiddenButton" data-toggle="modal" data-target="#equipmentModal"></a>
-            <a href="#" class="invisible" id="showSaveModal-hiddenButton" data-toggle="modal" data-target="#hidden-modal-save"></a>
             <a href="#" class="invisible" id="showValidateModal-hiddenButton" data-toggle="modal" data-target="#validateModal"></a>
         </div>
         <h6 class="card-subtitle">
@@ -55,12 +46,6 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
             <span id="hiddenWizard-nextQuestion-Id"></span>
             <span id="hiddenAgeTable"></span>
             <span id="hiddenPlayerId"><?= $model->id ?></span>
-
-            <form action="<?= Url::toRoute(['player/validate', 'id' => $model->id]) ?>" id="validatePlayerForm" method="post">
-                <input type="hidden"
-                       name="<?= Yii::$app->request->csrfParam ?>"
-                       value="<?= Yii::$app->request->csrfToken ?>">
-            </form>
         </div>
 
         <div class="progress" style="height: 20px;">
@@ -75,8 +60,7 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
                         <li class="nav-item">
                             <a class="nav-link<?= $tab['anchor'] == $firstTab ? " active" : "" ?>"
                                data-toggle="tab" href="#<?= $tab['anchor'] ?>-tab" role="tab"
-                               <?= BuilderOnclick::widget(['player' => $model, 'wizard' => $tab['wizard'], 'onclick' => $tab['onclick']]) ?>
-                               >
+                               <?= BuilderOnclick::widget(['player' => $model, 'wizard' => $tab['wizard'], 'onclick' => $tab['onclick']]) ?>                               >
                                    <?= $tab['name'] ?>
                             </a>
                         </li>
@@ -161,27 +145,8 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-theme btn--icon"
-                        onclick="$('#validatePlayerForm').submit();">
+                        onclick="PlayerBuilder.setProperty('status', <?= Status::STATUS_ACTIVE ?>);$('#save-button').click();">
                     <i class="bi bi-check"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="hidden-modal-save" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h6 class="modal-title">Congratulation, your player is now fully created</h6>
-            </div>
-            <div class="modal-body">
-                <p>Now, let's dive into the next exciting step: saving your work!</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-theme btn--icon"
-                        onclick="$('#save-button').click();">
-                    <i class="bi bi-floppy"></i>
                 </button>
             </div>
         </div>
@@ -193,7 +158,6 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
         PlayerBuilder.initWizard('<?= $tabs[$firstTab]['wizard'] ?>');
         PlayerBuilder.updateProgress();
         PlayerBuilder.loadAdvancedProperties('images', 'ajaxAvatarChoice');
-
         $('#equipmentModal').on('click', '#exitEquipmentModal-button', function () {
             const selectedValue = $('input[name="initialEquipmentRadio"]:checked').val();
             if (selectedValue) {

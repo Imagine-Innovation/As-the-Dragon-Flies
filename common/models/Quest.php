@@ -14,11 +14,10 @@ use Yii;
  * @property int|null $started_at Started at
  * @property int $local_time Local time
  * @property int $elapsed_time Elapsed time (minute)
- * @property int|null $last_notification_at Store the last notification timestamp
  *
  * @property Notification[] $notifications
- * @property Player[] $players
- * @property Player[] $everyPlayers
+ * @property Player[] $currentPlayers
+ * @property Player[] $allPlayers
  * @property QuestChat[] $questChats
  * @property QuestLog[] $questLogs
  * @property QuestPlayer[] $questPlayers
@@ -46,7 +45,7 @@ class Quest extends \yii\db\ActiveRecord {
     public function rules() {
         return [
             [['story_id'], 'required'],
-            [['story_id', 'status', 'created_at', 'started_at', 'local_time', 'elapsed_time', 'last_notification_at'], 'integer'],
+            [['story_id', 'status', 'created_at', 'started_at', 'local_time', 'elapsed_time'], 'integer'],
             [['story_id'], 'exist', 'skipOnError' => true, 'targetClass' => Story::class, 'targetAttribute' => ['story_id' => 'id']],
         ];
     }
@@ -63,7 +62,6 @@ class Quest extends \yii\db\ActiveRecord {
             'started_at' => 'Started at',
             'local_time' => 'Local time',
             'elapsed_time' => 'Elapsed time (minute)',
-            'last_notification_at' => 'Store the last notification timestamp',
         ];
     }
 
@@ -77,20 +75,20 @@ class Quest extends \yii\db\ActiveRecord {
     }
 
     /**
-     * Gets query for [[Players]].
+     * Gets query for [[CurrentPlayers]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getPlayers() {
+    public function getCurrentPlayers() {
         return $this->hasMany(Player::class, ['quest_id' => 'id']);
     }
 
     /**
-     * Gets query for [[EveryPlayers]].
+     * Gets query for [[AllPlayers]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getEveryPlayers() {
+    public function getAllPlayers() {
         return $this->hasMany(Player::class, ['id' => 'player_id'])->via('questPlayers');
     }
 
@@ -137,5 +135,18 @@ class Quest extends \yii\db\ActiveRecord {
      */
     public function getUserLogs() {
         return $this->hasMany(UserLog::class, ['quest_id' => 'id']);
+    }
+
+    /*
+     * Custom properties & methods
+     */
+
+    public function isInitiator(int $playerId) {
+        $questPlayer = QuestPlayer::findOne([
+            'quest_id' => $this->id,
+            'player_id' => $playerId
+        ]);
+
+        return ($questPlayer?->is_initiator === 1);
     }
 }

@@ -25,14 +25,15 @@ if ($model->id):
             <div class="col-12 col-sm-6">
                 <div class="card h-100">
                     <div class="card-body" id="ajaxSkills">
-                        <h4 class="card-title">Skills</h4>
+                        <h4 class="card-title text-decoration">Skills</h4>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
+    <script type="text/javascript">
+
         $(document).ready(function () {
             PlayerBuilder.loadAdvancedProperties('skills', 'ajaxSkills');
         });

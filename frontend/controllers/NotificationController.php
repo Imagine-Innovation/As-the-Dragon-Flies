@@ -3,9 +3,9 @@
 namespace frontend\controllers;
 
 use common\models\Notification;
-use frontend\components\AjaxRequest;
-use common\components\QuestNotification;
 use common\components\ManageAccessRights;
+use frontend\components\AjaxRequest;
+use frontend\components\QuestNotification;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -108,6 +108,7 @@ class NotificationController extends Controller {
     public function actionCheck() {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
+        return ['error' => true, 'msg' => 'No new notification'];
 
         // Check if the request is a GET request and if it is an AJAX request
         if (!$this->request->isGet || !$this->request->isAjax) {
@@ -139,7 +140,7 @@ class NotificationController extends Controller {
         /*
           $user = Yii::$app->user->identity;
           $playerId = $user->current_player_id;
-         * 
+         *
          */
         $playerId = Yii::$app->request->get('playerId');
         $dateFrom = time() - (24 * 3600);
@@ -163,7 +164,7 @@ class NotificationController extends Controller {
         /*
           $user = Yii::$app->user->identity;
           $playerId = $user->current_player_id;
-         * 
+         *
          */
         $playerId = Yii::$app->request->get('playerId');
         $count = QuestNotification::getCount($playerId);

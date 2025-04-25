@@ -8,7 +8,7 @@ use Yii;
  * This is the model class for table "quest_chat".
  *
  * @property int $id Primary key
- * @property int $sender_id
+ * @property int $player_id
  * @property int $quest_id Foreign key to "quest" table
  * @property string $message Message content
  * @property int $created_at Created at
@@ -30,11 +30,11 @@ class QuestChat extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['sender_id', 'quest_id', 'message', 'created_at'], 'required'],
-            [['sender_id', 'quest_id', 'created_at'], 'integer'],
+            [['player_id', 'quest_id', 'message', 'created_at'], 'required'],
+            [['player_id', 'quest_id', 'created_at'], 'integer'],
             [['message'], 'string'],
             [['quest_id'], 'exist', 'skipOnError' => true, 'targetClass' => Quest::class, 'targetAttribute' => ['quest_id' => 'id']],
-            [['sender_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['sender_id' => 'id']],
+            [['player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['player_id' => 'id']],
         ];
     }
 
@@ -44,7 +44,7 @@ class QuestChat extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'sender_id' => 'Sender ID',
+            'player_id' => 'Sender ID',
             'quest_id' => 'Foreign key to \"quest\" table',
             'message' => 'Message content',
             'created_at' => 'Created at',
@@ -66,6 +66,6 @@ class QuestChat extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getSender() {
-        return $this->hasOne(Player::class, ['id' => 'sender_id']);
+        return $this->hasOne(Player::class, ['id' => 'player_id']);
     }
 }

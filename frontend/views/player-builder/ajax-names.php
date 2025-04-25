@@ -4,7 +4,7 @@
 $i = 0;
 ?>
 
-<h4 class="card-title">Name</h4>
+<h4 class="card-title text-decoration">Name</h4>
 <input type="text" class="form-control" id="tmpName"
        onchange='PlayerBuilder.setProperty("name", $("#tmpName").val());'>
 <br>

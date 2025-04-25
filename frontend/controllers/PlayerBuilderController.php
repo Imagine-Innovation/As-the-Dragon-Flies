@@ -4,17 +4,16 @@ namespace frontend\controllers;
 
 use common\models\Player;
 use common\models\PlayerItem;
-use frontend\models\PlayerBuilder;
 use common\models\PlayerSkill;
 use common\models\ClassEquipment;
 use common\models\Image;
+use common\components\ManageAccessRights;
+use frontend\models\PlayerBuilder;
 use frontend\components\AjaxRequest;
 use frontend\components\BuilderTool;
-use common\components\ManageAccessRights;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\web\Response;
 
@@ -43,23 +42,15 @@ class PlayerBuilderController extends Controller {
                             ],
                             [
                                 'actions' => [
-                                    'index', 'create', 'update', 'save-abilities', 'validate', 'restore',
-                                    'ajax', 'ajax-admin', 'ajax-lite', 'ajax-age', 'ajax-names', 'ajax-images',
-                                    'ajax-skills', 'ajax-traits', 'ajax-endowment', 'ajax-item-category', 'ajax-equipment',
-                                    'ajax-save-equipment', 'ajax-save-skills', 'ajax-save-abilities',
-                                    'ajax-set-context', 'view', 'delete', 'possessions', 'admin',
+                                    'create', 'update', 'view',
+                                    'ajax-age', 'ajax-endowment', 'ajax-equipment', 'ajax-images',
+                                    'ajax-item-category', 'ajax-names',
+                                    'ajax-save-abilities', 'ajax-save-equipment', 'ajax-save-skills',
+                                    'ajax-skills', 'ajax-traits',
                                 ],
                                 'allow' => ManageAccessRights::isRouteAllowed($this),
                                 'roles' => ['@'],
                             ],
-                        ],
-                    ],
-                    'verbs' => [
-                        'class' => VerbFilter::className(),
-                        'actions' => [
-                            'delete' => ['POST'],
-                            'save-abilities' => ['POST'],
-                            'validate' => ['POST'],
                         ],
                     ],
                 ]
@@ -118,6 +109,23 @@ class PlayerBuilderController extends Controller {
         ];
     }
 
+    private function renderImages($imageId, $raceId, $classId, $gender) {
+        $images = Image::find()
+                ->select('image.*')
+                ->innerJoin('class_image', 'image.id = class_image.image_id')
+                ->innerJoin('race_group_image', 'image.id = race_group_image.image_id')
+                ->innerJoin('race_group', 'race_group_image.race_group_id = race_group.id')
+                ->innerJoin('race', 'race_group.id = race.race_group_id')
+                ->andWhere(['class_image.class_id' => $classId])
+                ->andWhere(['race.id' => $raceId])
+                ->andWhere(['race_group_image.gender' => $gender])
+                ->all();
+
+        return [
+            'error' => false, 'msg' => '',
+            'content' => $this->renderPartial('ajax-image', ['imageId' => $imageId, 'images' => $images])];
+    }
+
     public function actionAjaxImages() {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -134,24 +142,11 @@ class PlayerBuilderController extends Controller {
         $gender = $request->post('gender');
 
         if ($raceId && $classId && $gender) {
-            $images = Image::find()
-                    ->select('image.*')
-                    ->innerJoin('class_image', 'image.id = class_image.image_id')
-                    ->innerJoin('race_group_image', 'image.id = race_group_image.image_id')
-                    ->innerJoin('race_group', 'race_group_image.race_group_id = race_group.id')
-                    ->innerJoin('race', 'race_group.id = race.race_group_id')
-                    ->andWhere(['class_image.class_id' => $classId])
-                    ->andWhere(['race.id' => $raceId])
-                    ->andWhere(['race_group_image.gender' => $gender])
-                    ->all();
-
-            return [
-                'error' => false, 'msg' => '',
-                'content' => $this->renderPartial('ajax-image', ['images' => $images])];
+            return $this->renderImages($request->post('imageId'), $raceId, $classId, $gender);
         }
-        return ['error' => true, 'msg' => 'Missing argument:'
-            . ($raceId ? '' : 'race') . ' '
-            . ($classId ? '' : 'class') . ' '
+        return ['error' => true, 'msg' => 'Missing argument: '
+            . ($raceId ? '' : 'race ')
+            . ($classId ? '' : 'class ')
             . ($gender ? '' : 'gender')];
     }
 
@@ -218,15 +213,39 @@ class PlayerBuilderController extends Controller {
         $request = Yii::$app->request;
         $playerId = $request->post('playerId');
         $player = $this->findModel($playerId);
+
         $endowmentTable = $player->loadInitialEndowment();
-        $choices = max(array_keys($endowmentTable));
+        $backgroundItems = $player->background->backgroundItems;
+
         return [
             'error' => false,
             'content' => $this->renderPartial('ajax-endowment', [
                 'player' => $player,
                 'endowments' => $endowmentTable,
-                'choices' => $choices,
+                'backgroundItems' => $backgroundItems,
+                'choices' => max(array_keys($endowmentTable)),
             ]),
+        ];
+    }
+
+    public function actionAjaxBackgroundEquipment() {
+        // Set the response format to JSON
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        // Check if the request is a POST request and if it is an AJAX request
+        if (!$this->request->isPost || !$this->request->isAjax) {
+            // If not, return an error response
+            return ['error' => true, 'msg' => 'Not an Ajax POST request'];
+        }
+
+        $request = Yii::$app->request;
+        $equipments = BackgroundItem::findAll(['background_id' => $request->post('backgroundId')]);
+
+        $content = BuilderTool::setEquipmentResponse($equipments);
+        return [
+            'error' => false,
+            'content' => $content,
+                // 'content' => ['items' => implode(',', $items), 'categories' => implode(',', $categories)],
         ];
     }
 
@@ -242,27 +261,20 @@ class PlayerBuilderController extends Controller {
 
         $request = Yii::$app->request;
         $choice = $request->post('choice');
-        $endowmentId = $request->post('endowmentId');
-        $equipments = ClassEquipment::findAll(['endowment_id' => $endowmentId]);
-        $items = [];
-        $categories = [];
-        foreach ($equipments as $equipment) {
-            if ($equipment->item_id) {
-                Yii::debug("*** Debug *** actionAjaxGetEquipment equipment->item_id=$equipment->item_id");
-                $items[] = $equipment->item_id . '|' . $equipment->quantity;
-            }
-            if ($equipment->category_id) {
-                Yii::debug("*** Debug *** actionAjaxGetEquipment equipment->category_id=$equipment->category_id");
-                $categories[] = $equipment->category_id . '|' . $equipment->quantity;
-            }
-        }
+
+        $equipments = ClassEquipment::findAll(['endowment_id' => $request->post('endowmentId')]);
+
+        $content = BuilderTool::setEquipmentResponse($equipments, $choice);
         return [
             'error' => false,
-            'content' => ['choice' => $choice, 'items' => implode(',', $items), 'categories' => implode(',', $categories)],
+            'content' => $content,
+                // 'content' => ['choice' => $choice, 'items' => implode(',', $items), 'categories' => implode(',', $categories)],
         ];
     }
 
     private function getItemsFromJson($itemIds) {
+        Yii::debug($itemIds, 'getItemsFromJson');
+
         $items = [];
         foreach ($itemIds as $itemId) {
             $selections = explode(',', $itemId);
@@ -274,6 +286,17 @@ class PlayerBuilderController extends Controller {
             }
         }
         return $items;
+    }
+
+    private function addNewItem($playerId, $item) {
+        $playerItem = new PlayerItem([
+            'player_id' => $playerId,
+            'item_id' => $item['id'],
+            'quantity' => $item['quantity'],
+            'is_carrying' => 1,
+            'is_equiped' => 1,
+        ]);
+        return $playerItem->save();
     }
 
     public function actionAjaxSaveEquipment() {
@@ -295,22 +318,49 @@ class PlayerBuilderController extends Controller {
         // purchased or collected during the setup process.
         PlayerItem::deleteAll(['player_id' => $playerId]);
 
+        if (!$itemIds) {
+            return ['error' => true, 'msg' => 'Missing item ids'];
+        }
+
         $items = $this->getItemsFromJson($itemIds);
 
         $success = true;
         foreach ($items as $item) {
-            $playerItem = new PlayerItem([
-                'player_id' => $playerId,
-                'item_id' => $item['id'],
-                'quantity' => $item['quantity'],
-                'is_carrying' => 1,
-                'is_equiped' => 1,
-            ]);
-            $save = $playerItem->save();
-            $success = $success && $save;
+            $success = $success && $this->addNewItem($playerId, $item);
         }
 
         return ['error' => !$success, 'msg' => $success ? 'Initial items are saved' : 'Could not save initial items'];
+    }
+
+    private function getItemsCategory($request) {
+        // First split by comma to get each pair
+        $ids = $request->post('categoryIds');
+        Yii::debug($ids, 'getItemsCategory');
+        $pairs = explode(',', $ids);
+        Yii::debug($pairs, 'getItemsCategory');
+
+        $quantity = explode('|', $pairs[0])[1];
+        Yii::debug($quantity, 'getItemsCategory');
+
+        // Extract first elements (ids) using array_map
+        $categoryIds = array_map(function ($pair) {
+            return explode('|', $pair)[0];
+        }, $pairs);
+        Yii::debug($categoryIds, 'getItemsCategory');
+
+        $param = [
+            'modelName' => 'ItemCategory',
+            'render' => 'ajax-item-category',
+            'with' => ['item', 'image'],
+            'param' => [
+                'choice' => $request->post('choice'),
+                'alreadySelectedItems' => $request->post('alreadySelectedItems'),
+                'quantity' => $quantity
+            ],
+            'filter' => ['category_id' => $categoryIds],
+        ];
+
+        return new AjaxRequest($param);
     }
 
     public function actionAjaxItemCategory() {
@@ -324,22 +374,7 @@ class PlayerBuilderController extends Controller {
         }
 
         $request = Yii::$app->request;
-        // First split by comma to get each pair
-        $pairs = explode(',', $request->post('categoryIds'));
-        $quantity = explode('|', $pairs[0])[1];
-        // Extract first elements (ids) using array_map
-        $categoryIds = array_map(function ($pair) {
-            return explode('|', $pair)[0];
-        }, $pairs);
-
-        $param = [
-            'modelName' => 'ItemCategory',
-            'render' => 'ajax-item-category',
-            'with' => ['item', 'image'],
-            'param' => ['choice' => $request->post('choice'), 'alreadySelectedItems' => $request->post('alreadySelectedItems'), 'quantity' => $quantity],
-            'filter' => ['category_id' => $categoryIds],
-        ];
-        $ajaxRequest = new AjaxRequest($param);
+        $ajaxRequest = $this->getItemsCategory($request);
 
         if ($ajaxRequest->makeResponse($request)) {
             return $ajaxRequest->response;

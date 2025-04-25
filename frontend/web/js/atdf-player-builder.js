@@ -45,7 +45,8 @@ class PlayerBuilder {
             raceId: $('#playerbuilder-race_id').val(),
             classId: $('#playerbuilder-class_id').val(),
             backgroundId: $('#playerbuilder-background_id').val(),
-            gender: $('#playerbuilder-gender').val()
+            gender: $('#playerbuilder-gender').val(),
+            imageId: $('#playerbuilder-image_id').val()
         };
 
         // Only proceed if mandatory parameters are present
@@ -90,7 +91,6 @@ class PlayerBuilder {
         // Trigger save if complete
         if (progress === 100) {
             if (playerId) {
-                $('#save-button').click();
                 $('#showValidateModal-hiddenButton').click();
             } else {
                 $('#showSaveModal-hiddenButton').click();
@@ -418,21 +418,6 @@ class PlayerBuilder {
 
     /**
      * 
-     * @param {type} backgroundId
-     * @returns {undefined}
-     */
-    static loadBackgroundEquipment(backgroundId) {
-        Logger.log(1, 'loadBackgroundEquipment', `backgroundId=${backgroundId}`);
-
-        AjaxUtils.getContent({
-            target: `#ajaxBackgroundItems`,
-            url: 'player-builder/ajax-background-items',
-            data: {backgroundId: backgroundId}
-        });
-    }
-
-    /**
-     * 
      * @returns {unresolved}
      */
     static __getItems() {
@@ -454,22 +439,22 @@ class PlayerBuilder {
 
         const playerId = $('#hiddenPlayerId').html();
         const selectedIds = this.__getItems();
+        const selectedCount = selectedIds.length;
+        const max = $('div[id^="ajaxItemChoice-"]').length;
         Logger.log(10, '_saveEquipment', `playerId=${playerId}, selectedIds=${selectedIds}`);
+        Logger.log(10, '_saveEquipment', `selectedCount=${selectedCount}, max=${max}`);
 
-        if (selectedIds.length === $('div[id^="ajaxItemChoice-"]').length) {
-            AjaxUtils.request({
-                url: 'player-builder/ajax-save-equipment',
-                data: {
-                    playerId: playerId,
-                    itemIds: selectedIds
-                },
-                successCallback: (response) => {
-                    ToastManager.show('Initial equipment', response.msg, response.error ? 'error' : 'info');
-                    this.setProperty('items', 'ok');
-                }
-            });
-        }
-
+        AjaxUtils.request({
+            url: 'player-builder/ajax-save-equipment',
+            data: {
+                playerId: playerId,
+                itemIds: selectedIds
+            },
+            successCallback: (response) => {
+                ToastManager.show('Initial equipment', response.msg, response.error ? 'error' : 'info');
+                this.setProperty('items', selectedCount === max ? 'ok' : '');
+            }
+        });
     }
 
     /**
@@ -527,6 +512,7 @@ class PlayerBuilder {
 
         $(target).html(itemIds.join(','));
         this._loadItemImages();
+        this._saveEquipment();
     }
 
     /**
@@ -562,5 +548,25 @@ class PlayerBuilder {
                 this._saveEquipment();
             }
         });
+    }
+
+    /**
+     * 
+     * @param {type} category
+     * @returns {undefined}
+     */
+    static chooseBackgroundEquipment(category) {
+        Logger.log(1, 'chooseBackgroundEquipment', `category=${category}`);
+
+        const target = $('#ajaxItemChoice-background');
+        const alreadySelectedItems = target.html();
+
+        this._loadCategoryModal('background', alreadySelectedItems, category);
+
+        const selectedItems = target.html();
+        target.html(`${alreadySelectedItems},${selectedItems}`);
+
+        this._loadItemImages();
+        this._saveEquipment();
     }
 }

@@ -16,10 +16,10 @@ $raceGroups = RaceGroup::find()->all();
 <div class="container">
     <div class="row g-4">
         <?php foreach ($raceGroups as $raceGroup): ?>
-            <div class="col-12 col-md-6 col-lg-4">
+            <div class="col-12 col-md-6 col-lg-4 col-xl-3">
                 <div class="card h-100">
                     <div class="card-body">
-                        <h4 class="card-title"><?= $raceGroup->name ?></h4>
+                        <h4 class="card-title text-decoration"><?= $raceGroup->name ?></h4>
                         <h6 class="card-subtitle text-muted">
                             <?=
                             ModalDesc::widget([

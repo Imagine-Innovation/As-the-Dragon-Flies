@@ -8,8 +8,7 @@ use common\models\Player;
 use common\models\PlayerAbility;
 use common\models\PlayerCoin;
 use common\models\PlayerTrait;
-use common\components\DiceRoller;
-use frontend\components\BuilderTool;
+use frontend\components\DiceRoller;
 use Yii;
 
 /**
@@ -72,7 +71,7 @@ class PlayerBuilder extends Player {
      * @return bool Returns true if the coin funding is successfully initialized,
      *                      false otherwise.
      */
-    protected function initCoinage() {
+    protected function xxxinitCoinageV1() {
         // Retrieve the player's class
         $class = $this->class;
 
@@ -108,6 +107,54 @@ class PlayerBuilder extends Player {
 
         // Return whether coin funding initialization was successful
         return $success;
+    }
+
+    /**
+     * Initializes coin funding for a player model.
+     *
+     * This method initializes the coin funding for a player model by creating
+     * and saving player coin records for each type of coin (e.g., copper, silver,
+     * gold) based on the player's background settings.
+     *
+     * @return bool Returns true if the coin funding is successfully initialized,
+     *                      false otherwise.
+     */
+    protected function initCoinage() {
+        $coins = ['cp', 'sp', 'ep', 'pp'];
+
+        $success = true;
+        // Iterate over each coin type
+        foreach ($coins as $coin) {
+            // Create a new player coin instance
+            $playerCoin = new PlayerCoin([
+                'player_id' => $this->id,
+                'coin' => $coin,
+                'quantity' => 0
+            ]);
+
+            // Save the player coin and track success status
+            $success = $success && $playerCoin->save();
+        }
+
+        // Initial funding is provided by background
+        $playerCoin = new PlayerCoin([
+            'player_id' => $this->id,
+            'coin' => 'gp',
+            'quantity' => $this->getFundingFromBackground()
+        ]);
+
+        // Return whether coin funding initialization was successful
+        return $success && $playerCoin->save();
+    }
+
+    protected function getFundingFromBackground() {
+        $backgroundItems = $this->background->backgroundItems;
+
+        $funding = 0;
+        foreach ($backgroundItems as $backgroundItem) {
+            $funding += ($backgroundItem->funding ?? 0);
+        }
+        return $funding;
     }
 
     /**

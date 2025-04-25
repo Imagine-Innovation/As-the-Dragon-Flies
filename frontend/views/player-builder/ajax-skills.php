@@ -18,7 +18,7 @@ if ($player) {
 }
 ?>
 
-<h4 class="card-title">Skills</h4>
+<h4 class="card-title text-decoration">Skills</h4>
 <?php if ($player): ?>
     <?php if ($background_skills): ?>
         <p class="text-muted">Your <?= $player->background->name ?> background gives you the following skills</p>

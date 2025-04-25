@@ -7,15 +7,12 @@ use common\helpers\Status;
 use common\models\Player;
 use common\models\User;
 use frontend\components\AjaxRequest;
-use frontend\components\BuilderTool;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\web\Response;
-use yii\behaviors\AttributeBehavior;
-use yii\db\ActiveRecord;
 
 /**
  * PlayerController implements the CRUD actions for Player model.
@@ -39,9 +36,8 @@ class PlayerController extends Controller {
                             ],
                             [
                                 'actions' => [
-                                    'index', 'create', 'builder', 'update', 'save-abilities', 'validate', 'restore',
+                                    'admin', 'delete', 'index', 'restore', 'update', 'validate', 'view',
                                     'ajax', 'ajax-admin', 'ajax-lite', 'ajax-set-context',
-                                    'view', 'delete', 'possessions', 'admin',
                                 ],
                                 'allow' => ManageAccessRights::isRouteAllowed($this),
                                 'roles' => ['@'],
@@ -52,23 +48,9 @@ class PlayerController extends Controller {
                         'class' => VerbFilter::className(),
                         'actions' => [
                             'delete' => ['POST'],
-                            'save-abilities' => ['POST'],
                             'validate' => ['POST'],
                         ],
                     ],
-                /*
-                  [
-                  'class' => AttributeBehavior::class,
-                  'attributes' => [
-                  ActiveRecord::EVENT_BEFORE_INSERT => 'created_at',
-                  ActiveRecord::EVENT_BEFORE_UPDATE => 'updated_at',
-                  ],
-                  'value' => function ($event) {
-                  return time();
-                  },
-                  ],
-                 *
-                 */
                 ]
         );
     }

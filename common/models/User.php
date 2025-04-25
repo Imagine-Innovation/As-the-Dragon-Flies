@@ -29,7 +29,6 @@ use yii\web\IdentityInterface;
  * @property int|null $backend_last_login_at Last login to the backend at
  * @property int|null $frontend_last_login_at Last login to the frontend at
  * @property string $password write-only password
- * @property int|null $last_notification_at Store the last notification timestamp
  *
  * @property AccessRight[] $accessRights
  * @property int $hasPlayers
@@ -66,7 +65,7 @@ class User extends ActiveRecord implements IdentityInterface {
     public function rules() {
         return [
             [['username', 'password_hash', 'verification_token', 'email'], 'required'],
-            [['status', 'is_admin', 'is_designer', 'is_player', 'current_player_id', 'created_at', 'updated_at', 'backend_last_login_at', 'frontend_last_login_at', 'last_notification_at'], 'integer'],
+            [['status', 'is_admin', 'is_designer', 'is_player', 'current_player_id', 'created_at', 'updated_at', 'backend_last_login_at', 'frontend_last_login_at'], 'integer'],
             [['username', 'password_hash', 'password_reset_token', 'verification_token', 'email'], 'string', 'max' => 255],
             [['fullname'], 'string', 'max' => 64],
             [['auth_key'], 'string', 'max' => 32],
@@ -99,7 +98,6 @@ class User extends ActiveRecord implements IdentityInterface {
             'updated_at' => 'Updated at',
             'backend_last_login_at' => 'Last login to the backend at',
             'frontend_last_login_at' => 'Last login to the frontend at',
-            'last_notification_at' => 'Store the last notification timestamp',
         ];
     }
 

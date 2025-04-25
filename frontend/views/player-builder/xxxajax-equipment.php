@@ -6,7 +6,7 @@
 /** @var Array $items */
 /** @var Array $categories */
 ?>
-<h4 class="card-title">Items</h4>
+<h4 class="card-title text-decoration">Items</h4>
 <?php
 if ($player && $choices > 0):
     for ($i = 1; $i <= $choices; $i++):

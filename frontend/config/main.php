@@ -17,6 +17,9 @@ return [
         'request' => [
             'csrfParam' => '_csrf-frontend',
         ],
+        'eventHandler' => [
+            'class' => 'common\extensions\EventHandler\EventHandler',
+        ],
         'user' => [
             'identityClass' => 'common\models\User',
             'enableAutoLogin' => true,

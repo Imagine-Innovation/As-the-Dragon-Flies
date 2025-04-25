@@ -19,7 +19,7 @@ $currentLabel = current(array_filter(
                         fn($label) => $currentAge <= $label['age']
                 ))['lib'] ?? 'fine';
 ?>
-<h4 class="card-title">Age</h4>
+<h4 class="card-title text-decoration">Age</h4>
 <div id="useSliderAgeLabel" style="visibility: <?= $currentAge == 0 ? "visible" : "hidden" ?>">
     <h6 class="card-subtitle">Simply move the slider below to select your player's age.</h6>
 </div>

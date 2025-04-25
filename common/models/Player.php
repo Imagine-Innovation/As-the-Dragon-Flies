@@ -29,7 +29,6 @@ use Yii;
  * @property int $armor_class Armor Class (AC)
  * @property int|null $created_at Creation timestamp
  * @property int|null $updated_at Last update timestamp
- * @property int|null $last_notification_at Store the last notification timestamp
  *
  * @property Ability[] $abilities
  * @property Alignment $alignment
@@ -69,6 +68,7 @@ use Yii;
  * *********** Custom **********
  *
  * @property string $description
+ * @property Notification[] $unreadNotifications
  *
  */
 class Player extends \yii\db\ActiveRecord {
@@ -89,7 +89,7 @@ class Player extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['level_id', 'user_id', 'race_id', 'class_id', 'background_id', 'history_id', 'alignment_id', 'image_id', 'quest_id', 'status', 'age', 'experience_points', 'hit_points', 'max_hit_points', 'armor_class', 'created_at', 'updated_at', 'last_notification_at'], 'integer'],
+            [['level_id', 'user_id', 'race_id', 'class_id', 'background_id', 'history_id', 'alignment_id', 'image_id', 'quest_id', 'status', 'age', 'experience_points', 'hit_points', 'max_hit_points', 'armor_class', 'created_at', 'updated_at'], 'integer'],
             [['user_id', 'race_id', 'class_id', 'background_id', 'history_id'], 'required'],
             [['gender'], 'string'],
             [['name'], 'string', 'max' => 64],
@@ -130,7 +130,6 @@ class Player extends \yii\db\ActiveRecord {
             'armor_class' => 'Armor Class (AC)',
             'created_at' => 'Creation timestamp',
             'updated_at' => 'Last update timestamp',
-            'last_notification_at' => 'Store the last notification timestamp',
         ];
     }
 
@@ -251,7 +250,7 @@ class Player extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getTriggeredNotifications() {
-        return $this->hasMany(Notification::class, ['sender_id' => 'id']);
+        return $this->hasMany(Notification::class, ['player_id' => 'id']);
     }
 
     /**
@@ -359,7 +358,7 @@ class Player extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getQuestChats() {
-        return $this->hasMany(QuestChat::class, ['sender_id' => 'id']);
+        return $this->hasMany(QuestChat::class, ['player_id' => 'id']);
     }
 
     /**
@@ -503,5 +502,17 @@ class Player extends \yii\db\ActiveRecord {
         $this->status = $status;
         // Save the changes to the model and returns whether the save operation was successful
         return $this->save();
+    }
+
+    /**
+     * Get unread notifications for this player
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUnreadNotifications() {
+        return $this->hasMany(Notification::class, ['id' => 'notification_id'])
+                        ->via('notificationPlayers', function ($query) {
+                            $query->andWhere(['is_read' => 0]);
+                        });
     }
 }

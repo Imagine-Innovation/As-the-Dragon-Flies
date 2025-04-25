@@ -6,11 +6,11 @@ class QuestManager {
     /**
      * Adds a new message to the quest chat
      * @param {number} questId - Quest identifier
-     * @param {number} senderId - Message sender identifier
+     * @param {number} playerId - Message sender identifier
      * @param {string} message - Message content
      */
-    static addMessage(questId, senderId, message) {
-        Logger.log(1, 'addMessage', `questId=${questId}, senderId=${senderId}, message=${message}`);
+    static addMessage(questId, playerId, message) {
+        Logger.log(1, 'addMessage', `questId=${questId}, playerId=${playerId}, message=${message}`);
 
         const target = '#questChatContent';
         if (!DOMUtils.exists(target))
@@ -25,7 +25,7 @@ class QuestManager {
             url: 'quest/ajax-new-message',
             data: {
                 questId,
-                senderId,
+                playerId,
                 message,
                 ts: timestamp
             },

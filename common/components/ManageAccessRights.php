@@ -35,7 +35,7 @@ class ManageAccessRights extends Component {
         $currentPlayer = $hasPlayer ? $user->currentPlayer : null;
         Yii::$app->session->set('currentPlayer', $currentPlayer);
 
-        if ($hasPlayer && $currentPlayer->quest_id) {
+        if ($hasPlayer && $currentPlayer?->quest_id) {
             Yii::$app->session->set('inQuest', true);
             Yii::$app->session->set('questId', $currentPlayer->quest_id);
             Yii::$app->session->set('currentQuest', $currentPlayer->quest);

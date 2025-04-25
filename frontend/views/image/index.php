@@ -112,6 +112,7 @@ $this->renderFile('@app/views/layouts/_ajax.php', [
     </div>
 </div>
 
-<script>
+<script type="text/javascript">
+
     ImageManager.prepareUpload();
 </script>

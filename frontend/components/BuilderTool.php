@@ -250,4 +250,22 @@ class BuilderTool {
         // Return random question ID using array_rand
         return $firstQuestions[array_rand($firstQuestions)];
     }
+
+    public static function setEquipmentResponse($equipments, $choice = null) {
+        $items = [];
+        $categories = [];
+        foreach ($equipments as $equipment) {
+            if ($equipment->item_id) {
+                $items[] = "$equipment->item_id|$equipment->quantity";
+            }
+            if ($equipment->category_id) {
+                $categories[] = "$equipment->category_id|$equipment->quantity";
+            }
+        }
+        return [
+            'choice' => $choice,
+            'items' => implode(',', $items),
+            'categories' => implode(',', $categories)
+        ];
+    }
 }

@@ -10,7 +10,7 @@ use Yii;
  * @property int $quest_id Foreign key to "quest" table
  * @property int $player_id Foreign key to "player" table
  * @property int $onboarded_at Onboarded at
- * @property int $is_owner The player is the quest's owner
+ * @property int $is_initiator The player is the quest's owner
  * @property int|null $left_at The player left at
  * @property string|null $reason Reason why the player left
  *
@@ -32,7 +32,7 @@ class QuestPlayer extends \yii\db\ActiveRecord {
     public function rules() {
         return [
             [['quest_id', 'player_id'], 'required'],
-            [['quest_id', 'player_id', 'onboarded_at', 'is_owner', 'left_at'], 'integer'],
+            [['quest_id', 'player_id', 'onboarded_at', 'is_initiator', 'left_at'], 'integer'],
             [['reason'], 'string', 'max' => 32],
             [['quest_id', 'player_id'], 'unique', 'targetAttribute' => ['quest_id', 'player_id']],
             [['player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['player_id' => 'id']],
@@ -48,7 +48,7 @@ class QuestPlayer extends \yii\db\ActiveRecord {
             'quest_id' => 'Foreign key to \"quest\" table',
             'player_id' => 'Foreign key to \"player\" table',
             'onboarded_at' => 'Onboarded at',
-            'is_owner' => 'The player is the quest\'s owner',
+            'is_initiator' => 'The player is the quest\'s owner',
             'left_at' => 'The player left at',
             'reason' => 'Reason why the player left',
         ];

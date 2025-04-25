@@ -29,16 +29,16 @@ use yii\helpers\Url;
                             </h5>
                             <br>
                             <p>
-                                <a class = "btn btn-lg btn-warning text-decoration" href = "<?= Url::toRoute(['site/login']) ?>">
+                                <a class="btn btn-lg btn-warning text-decoration" href="<?= Url::toRoute(['site/login']) ?>">
                                     <img src="img/Dragonfly.svg" style="height:32px;" alt=""> Come and join us!
                                 </a>
                             </p>
                         </div>
-                        <div class = "col-12 col-md-6 h-100">
-                            <div class = "carousel slide carousel-fade transition: transform 1s ease, opacity 1s ease-out" data-ride = "carousel">
-                                <div class = "carousel-inner" role = "listbox">
-                                    <div class = "carousel-item active">
-                                        <img src = "img/carousel/car1.jpg" alt = "First slide">
+                        <div class="col-12 col-md-6 h-100">
+                            <div class="carousel slide carousel-fade transition: transform 1s ease, opacity 1s ease-out" data-ride="carousel">
+                                <div class="carousel-inner" role="listbox">
+                                    <div class="carousel-item active">
+                                        <img src="img/carousel/car1.jpg" alt="First slide">
                                     </div>
                                     <?php for ($img = 2; $img <= 10; $img++): ?>
                                         <div class="carousel-item" data-aos="fade-up" data-aos-delay="500">
@@ -81,7 +81,7 @@ use yii\helpers\Url;
                             </h5>
                             <br>
                             <p>
-                                <a class = "btn btn-lg btn-warning text-decoration" href = "<?= Url::toRoute(['site/login']) ?>">
+                                <a class="btn btn-lg btn-warning text-decoration" href="<?= Url::toRoute(['site/login']) ?>">
                                     <img src="img/Dragonfly.svg" style="height:32px;" alt=""> Come and join us!
                                 </a>
                             </p>
@@ -101,7 +101,7 @@ use yii\helpers\Url;
                             </h5>
                             <br>
                             <p>
-                                <a class = "btn btn-lg btn-warning text-decoration" href = "<?= Url::toRoute(['site/login']) ?>">
+                                <a class="btn btn-lg btn-warning text-decoration" href="<?= Url::toRoute(['site/login']) ?>">
                                     <img src="img/Dragonfly.svg" style="height:32px;" alt=""> Come and join us!
                                 </a>
                             </p>

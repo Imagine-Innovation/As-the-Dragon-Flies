@@ -24,17 +24,14 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
 
 <div class="card">
     <div class="card-body">
-        <h4 class="card-title"><?= Html::encode($this->title) ?></h4>
+        <h4 class="card-title text-decoration"><?= Html::encode($this->title) ?></h4>
         <div class="actions">
-            <a type="button" class="actions__item bi-check" href="#" data-toggle="tooltip" title="Validate this player" data-placement="bottom"
-               onclick="$('#validatePlayerForm').submit();">
-            </a>
             <a href="#" id="showBuilderWizardModal-button" class="actions__item" data-toggle="tooltip" title="Character builder wizard" data-placement="bottom">
                 <span data-toggle="modal" data-target="#builderWizardModal">
                     <i class="bi bi-magic"></i>
                 </span>
             </a>
-            <a href="#" class="invisible" id="showSaveModal-hiddenButton" data-toggle="modal" data-target="#hidden-modal-save"></a>
+            <a href="#" class="invisible" id="showSaveModal-hiddenButton" data-toggle="modal" data-target="#builderSaveModal"></a>
         </div>
         <h6 class="card-subtitle">
             A step-by-step wizard to help you create your player
@@ -48,12 +45,6 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
             <span id="hiddenWizard-nextQuestion-Id"></span>
             <span id="hiddenAgeTable"></span>
             <span id="hiddenPlayerId"><?= $model->id ?></span>
-
-            <form action="<?= Url::toRoute(['player/validate', 'id' => $model->id]) ?>" id="validatePlayerForm" method="post">
-                <input type="hidden"
-                       name="<?= Yii::$app->request->csrfParam ?>"
-                       value="<?= Yii::$app->request->csrfToken ?>">
-            </form>
         </div>
         <div class="progress" style="height: 20px;">
             <div class="progress-bar bg-secondary" role="progressbar" id="builderProgressBar"
@@ -121,7 +112,7 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
     </div>
 </div>
 
-<div class="modal fade" id="hidden-modal-save" tabindex="-1">
+<div class="modal fade" id="builderSaveModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">

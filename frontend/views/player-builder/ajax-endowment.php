@@ -5,12 +5,27 @@ use common\helpers\Utilities;
 /** @var yii\web\View $this */
 /** @var common\models\PlayerBuilder $player */
 /** @var string[] $endowments */
+/** @var common\models\BackgrounsItems $backgroundItems */
 /** @var integer $choices */
 $choiceLabels = ['', '(a)', '(b)', '(c)', '(d)', '(e)'];
 $paragraphs = [
     "Your class '{$player->class->name}' and your background '{$player->background->name}' offers you the following options for building your starting equipment",
     "Select one option on each line:"
 ];
+
+$items = [];
+$category = "";
+foreach ($backgroundItems as $backgroundItem) {
+    if ($backgroundItem->item_id) {
+        $items[] = "{$backgroundItem->item_id}|{$backgroundItem->quantity}";
+    } else {
+        // Side effect: one background has 0 or 1 item category
+        $category = "{$backgroundItem->category_id}|{$backgroundItem->quantity}";
+    }
+}
+
+Yii::debug($items);
+Yii::debug($category);
 ?>
 <!-- Character Builder - Equipment Tab -->
 <?= Utilities::formatMultiLine($paragraphs) ?>
@@ -20,20 +35,26 @@ $paragraphs = [
         <div class="col-12 col-md-6">
             <div class="card h-100">
                 <div class="card-body" id="ajaxEndowment">
-                    <h4 class="card-title">Your background <?= $player->background->name ?> gives you</h4>
+                    <h4 class="card-title text-decoration">Your background <?= $player->background->name ?> gives you</h4>
                     <p><?= $player->background->initial_equipment ?>&nbsp;
-                        <span onclick="PlayerBuilder.chooseBackgroundEquipment();">
+                        <span onclick="PlayerBuilder.chooseBackgroundEquipment('<?= $category ?>');">
                             <i class="bi bi-info-circle"></i>
                         </span>
                     </p>
                     <p/>
-                    <h4 class="card-title">Your class <?= $player->class->name ?> gives you</h4>
+                    <h4 class="card-title text-decoration">Your class <?= $player->class->name ?> gives you</h4>
                     <?php
-                    for ($choice = 1; $choice <= $choices; $choice++):
+                    for ($choice = 1;
+                            $choice <= $choices;
+                            $choice++):
                         $options = max(array_keys($endowments[$choice]));
                         ?>
                         <p>
-                            <?php for ($option = 1; $option <= $options; $option++): ?>
+                            <?php
+                            for ($option = 1;
+                                    $option <= $options;
+                                    $option++):
+                                ?>
                             <div class="custom-control custom-radio custom-control-inline">
                                 <input type="radio" class="custom-control-input"
                                        id="endowmentRadio-<?= $endowments[$choice][$option]['id'] ?>"
@@ -64,9 +85,9 @@ $paragraphs = [
         <div class="col-12 col-md-6">
             <div class="card h-100">
                 <div class="card-body" id="ajaxSelectedItems">
-                    <h4 class="card-title">Items</h4>
+                    <h4 class="card-title text-decoration">Items</h4>
                     <div id="ajaxItemImages"></div>
-                    <div id="ajaxBackgroundItems"></div>
+                    <div id="ajaxItemChoice-background"><?= implode(',', $items) ?></div>
                     <?php for ($i = 1; $i <= $choices; $i++): ?>
                         <div id="ajaxItemChoice-<?= $i ?>"></div>
                     <?php endfor; ?>
@@ -76,16 +97,19 @@ $paragraphs = [
     </div>
 </div>
 
-<script>
+<script type="text/javascript">
+
     $(document).ready(function () {
-        //PlayerBuilder.loadBackgroundEquipment();
 <?php
-for ($choice = 1; $choice <= $choices; $choice++):
+if ($category) {
+    echo "PlayerBuilder.chooseBackgroundEquipment('$category');";
+}
+for ($choice = 1; $choice <= $choices; $choice++) {
     $options = max(array_keys($endowments[$choice]));
-    if ($options === 1):
-        ?>
-                PlayerBuilder.chooseEquipment(<?= $choice ?>, <?= $endowments[$choice][1]['id'] ?>);
-    <?php endif; ?>
-<?php endfor; ?>
+    if ($options === 1) {
+        echo "PlayerBuilder.chooseEquipment($choice, {$endowments[$choice][1]['id']});";
+    }
+}
+?>
     });
 </script>

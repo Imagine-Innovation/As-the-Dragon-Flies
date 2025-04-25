@@ -13,7 +13,7 @@ AppAsset::register($this);
 ?>
 <header class="header">
 
-    <div class="logo d-none d-sm-inline-flex">
+    <div class="logo d-none d-md-inline-flex">
         <a href="<?= Url::toRoute(['site/index']) ?>">
             <img src="img/Dragonfly32White.png" alt="">
             <?= Caligraphy::appName() ?>

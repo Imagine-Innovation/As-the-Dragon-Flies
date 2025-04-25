@@ -34,7 +34,7 @@ $snippet = Yii::$app->user->isGuest ? 'guest' : 'lobby';
 
                 $(document).ready(function () {
                     NotificationHandler.init({
-                        pollingInterval: 1000000,
+                        pollingInterval: 100000,
                         userId: userId,
                         playerId: playerId,
                         questId: questId

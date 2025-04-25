@@ -19,7 +19,7 @@ class WebSocketServer extends Component {
         parent::init();
         $this->server = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
         socket_set_option($this->server, SOL_SOCKET, SO_REUSEADDR, 1);
-        socket_bind($this->server, '127.0.0.1', 8081);
+        socket_bind($this->server, '127.0.0.1', 8082);
         socket_listen($this->server);
     }
 

@@ -23,8 +23,14 @@ class Logger {
     static log(level, fx, msg) {
         if (level <= CONFIG.LOG_LEVEL) {
             const offset = level < 5 ? ' '.repeat(level * 4) : '--> ';
-            console.log(`${offset}${fx}: ${msg}`);
+            console.log(`[${this._getFullTimestamp()}] ${offset}${fx}: ${msg}`);
         }
+    }
+    static _getFullTimestamp() {
+        const pad = (n, s = 2) => (`${new Array(s).fill(0)}${n}`).slice(-s);
+        const d = new Date();
+
+        return `${pad(d.getFullYear(), 4)}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}.${pad(d.getMilliseconds(), 3)}`;
     }
 
     static getCallerStack(msg) {

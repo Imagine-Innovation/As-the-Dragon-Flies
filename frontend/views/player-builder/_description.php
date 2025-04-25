@@ -33,13 +33,13 @@ foreach ($alignments as $alignment) {
 
 <div class="container">
     <div class="row g-4">
-        <div class="col-12 col-md-6 col-lg-4">
+        <div class="col-12 col-md-6 col-lg-4 col-xl-3">
             <div class="card h-100">
                 <div class="card-body">
                     <!-- Gender -->
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="card-title">Gender</h4>
+                            <h4 class="card-title text-decoration">Gender</h4>
                             <div class="custom-control custom-radio custom-control-inline mb-2">
                                 <input type="radio" id="genderM" name="gender" class="custom-control-input"
                                        onchange='PlayerBuilder.setProperty("gender", "M");'>
@@ -56,7 +56,7 @@ foreach ($alignments as $alignment) {
                     <!-- Age -->
                     <div class="card">
                         <div class="card-body" id="ajaxAgeSelection">
-                            <h4 class="card-title">Age</h4>
+                            <h4 class="card-title text-decoration">Age</h4>
                             <h6 class="card-subtitle">Each race has its own age range. Please select a race before choosing an age.</h6>
                         </div>
                     </div>
@@ -71,7 +71,7 @@ foreach ($alignments as $alignment) {
                     <a href="#" class="actions__item bi-arrow-repeat"></a>
                 </div>
                 <div class="card-body" id="ajaxNameSelection">
-                    <h4 class="card-title">Name</h4>
+                    <h4 class="card-title text-decoration">Name</h4>
                     <?php if ($model->name): ?>
                         <h6 class="card-subtitle">Your player is called "<?= $model->name ?>"</h6>
                     <?php else: ?>
@@ -84,8 +84,15 @@ foreach ($alignments as $alignment) {
         <!-- Alignment -->
         <div class="col-12 col-md-6 col-lg-4">
             <div class="card h-100">
+                <div class="actions">
+                    <a href="#" id="showBuilderWizardModal-button" class="actions__item" data-toggle="tooltip" title="Class wizard" data-placement="bottom">
+                        <span data-toggle="modal" data-target="#builderWizardModal">
+                            <i class="bi bi-magic"></i>
+                        </span>
+                    </a>
+                </div>
                 <div class="card-body">
-                    <h4 class="card-title">Alignment</h4>
+                    <h4 class="card-title text-decoration">Alignment</h4>
                     <div class="table-responsive">
                         <table class="table table-dark table-hover mb-0">
                             <thead>
@@ -120,7 +127,8 @@ foreach ($alignments as $alignment) {
     </div>
 </div>
 
-<script>
+<script type="text/javascript">
+
     $(document).ready(function () {
         PlayerBuilder.loadRandomNames();
         PlayerBuilder.loadAges(<?= $model->age ?? 0 ?>);

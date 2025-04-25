@@ -14,7 +14,7 @@ $story = $questId ? $quest->story : null;
 <div class="row g-4">
     <?php foreach ($menus as $menu): ?>
         <?php if ($menu->card_title): ?>
-            <div class="col-12 col-md-6 col-lg-4 col-xl-4 col-xxl-3">
+            <div class="col-12 col-md-6 col-lg-4 col-xxl-4">
                 <div class="card h-100">
                     <div class="actions">
                         <a href="<?= Url::toRoute($menu->accessRight->route . '/' . $menu->accessRight->action) ?>" class="actions__item position-relative">
@@ -27,6 +27,12 @@ $story = $questId ? $quest->story : null;
                         <img class="card-img-top" src="<?= Utilities::toolImage($menu->image, $menu->is_context) ?>">
                     </a>
                     <div class="card-body">
+                        <p>
+                            <a class = "btn btn-warning text-decoration"
+                               href = "<?= Url::toRoute($menu->accessRight->route . '/' . $menu->accessRight->action) ?>">
+                                <i class="bi <?= $menu->icon ?>"></i> <?= $menu->card_title ?>
+                            </a>
+                        </p>
                         <h4 class="card-title"><?= $menu->card_title ?></h4>
                         <h6 class="card-subtitle"><?= ($menu->is_context && $questId) ? $story->name : $menu->subtitle ?></h6>
                         <?= HtmlPurifier::process(($menu->is_context && $questId) ? $story->description : $menu->description) ?>

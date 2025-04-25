@@ -74,7 +74,8 @@ if ($model->id):
         </div>
     </div>
 
-    <script>
+    <script type="text/javascript">
+
         $(document).ready(function () {
             ChartDrawer.drawAbilityCharts();
         });

@@ -28,12 +28,12 @@ class QuestChatContent extends Widget {
         $chatData = [];
         $data = [];
         $prevDateTime = "";
-        $prevSenderId = 0;
+        $prevPlayerId = 0;
         foreach ($questChat as $chat) {
             $player = $chat->sender;
             $dateTime = Yii::$app->formatter->asDateTime($chat->created_at, 'dd/MM/yyyy HH:mm');
 
-            if (($dateTime == $prevDateTime) && ($player->id == $prevSenderId)) {
+            if (($dateTime == $prevDateTime) && ($player->id == $prevPlayerId)) {
                 $data['messages'][] = '<p>'. Html::encode($chat->message) . '</p>';
                 $chatData[0] = $data;
             } else {
@@ -49,7 +49,7 @@ class QuestChatContent extends Widget {
             }
 
             $prevDateTime = $dateTime;
-            $prevSenderId = $player->id;
+            $prevPlayerId = $player->id;
         }
         return array_reverse($chatData);
     }

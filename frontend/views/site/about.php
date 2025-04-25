@@ -22,13 +22,4 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <p class="card-text">Donec sed odio dui. Nulla vitae elit libero, a pharetra augue. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Nullam id dolor id nibh ultricies vehicula ut id elit. Cras mattis consectetur purus sit Donec id elit non mi porta gravida at eget metus. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Nullam quis risus eget urna mollis ornare vel eu leo. Maecenas faucibus mollis interdum. Vestibulum id ligula porta felis euismod semper. Vestibulum id ligula porta felis euismod semper. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Sed posuere consectetur est at lobortis. amet fermentum. Aenean lacinia bibendum nulla sed consectetur.</p>
     </div>
-
-    <div class="blog__arthur">
-        <div class="blog__arthur-img">
-            <img src="demo/img/contacts/1.jpg" alt="">
-        </div>
-
-        <h6>Malinda Hollaway</h6>
-        <p>Donec sed odio dui. Nullam quis risus eget urna mollis ornare vel eu leo. Nullam quis risus eget urna mollis ornare vel eu leo. Donec id elit non mi porta gravida at eget metus.</p>
-    </div>
 </div>

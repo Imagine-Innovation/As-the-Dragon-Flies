@@ -2,9 +2,9 @@
 
 use common\helpers\StoryNeededClass;
 use common\helpers\StoryPlayers;
-use common\components\QuestOnboarding;
-use yii\helpers\Url;
+use frontend\components\QuestOnboarding;
 use frontend\widgets\ModalDesc;
+use yii\helpers\Url;
 
 /** @var yii\web\View $this */
 /** @var common\models\User $user */
