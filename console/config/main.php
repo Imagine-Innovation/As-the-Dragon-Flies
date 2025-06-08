@@ -37,17 +37,6 @@ return [
                 ],
             ],
         ],
-        /*
-          'log-old' => [
-          'targets' => [
-          [
-          'class' => \yii\log\FileTarget::class,
-          'levels' => ['error', 'warning'],
-          ],
-          ],
-          ],
-         *
-         */
         'eventHandler' => [
             'class' => 'common\extensions\EventHandler\EventHandler',
         ],

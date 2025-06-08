@@ -28,6 +28,9 @@ return [
                 ],
             ],
         ],
+        'eventHandler' => [
+            'class' => 'common\extensions\EventHandler\EventHandler',
+        ],
 //        'websocket' => [
 //            'class' => 'common\components\WebsocketServer',
 //        ],

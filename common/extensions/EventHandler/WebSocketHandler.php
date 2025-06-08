@@ -4,100 +4,132 @@ namespace common\extensions\EventHandler;
 
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
+// Removed: use common\extensions\EventHandler\EventHandler;
+use common\extensions\EventHandler\MessageHandlerInterface;
+use common\extensions\EventHandler\LoggerService;
+use common\extensions\EventHandler\WebSocketServerManager;
 
 class WebSocketHandler implements MessageComponentInterface {
 
-    /**
-     * @var EventHandler
-     */
-    protected $eventHandler;
+    private MessageHandlerInterface $messageHandler;
+    private LoggerService $logger;
+    private WebSocketServerManager $serverManager; // To call addClient/removeClient on the manager
+    private array $clientsMap = []; // Maps $conn->resourceId to our generated $clientId
 
-    /**
-     * @var array Map of connections to client IDs
-     */
-    protected $clients = [];
-
-    /**
-     * Constructor
-     *
-     * @param EventHandler $eventHandler
-     */
-    public function __construct(EventHandler $eventHandler) {
-        $this->eventHandler = $eventHandler;
+    public function __construct(
+        MessageHandlerInterface $messageHandler,
+        LoggerService $logger,
+        WebSocketServerManager $serverManager
+    ) {
+        $this->messageHandler = $messageHandler;
+        $this->logger = $logger;
+        $this->serverManager = $serverManager;
+        $this->logger->log("WebSocketHandler: Initialized");
     }
 
-    /**
-     * When a new connection is opened
-     *
-     * @param ConnectionInterface $conn
-     */
     public function onOpen(ConnectionInterface $conn) {
-        $this->eventHandler->logStart("WebSocketHandler onOpen");
-        $clientId = uniqid('client_');
+        $this->logger->logStart("WebSocketHandler: onOpen from {$conn->remoteAddress}");
+        
+        $clientId = uniqid('client_'); // Generate a unique client ID
+        $conn->appClientId = $clientId; // Attach our clientId to the connection object
+        $this->clientsMap[$conn->resourceId] = $clientId; // Map Ratchet's resourceId to our clientId
 
-        // Store the client ID on the connection object for easy reference
-        $conn->clientId = $clientId;
+        // Notify WebSocketServerManager to add this client to its list
+        $this->serverManager->addClient($conn, $clientId);
+        
+        // Notify the MessageHandler (Orchestrator) about the new connection
+        $this->messageHandler->open($conn, $clientId);
 
-        // Map the connection resource ID to the client ID
-        $this->clients[$conn->resourceId] = $clientId;
-
-        // Add the client to the event handler
-        $this->eventHandler->addClient($conn, $clientId);
-
-        $this->eventHandler->log("New connection! ({$conn->remoteAddress}) assigned ID: {$clientId}", $this->clients);
-        $this->eventHandler->logEnd("WebSocketHandler onOpen");
+        $this->logger->log("WebSocketHandler: New connection! ({$conn->remoteAddress}) assigned appClientId: {$clientId}, resourceId: {$conn->resourceId}");
+        $this->logger->logEnd("WebSocketHandler: onOpen");
     }
 
-    /**
-     * When a message is received
-     *
-     * @param ConnectionInterface $from
-     * @param string $msg
-     */
     public function onMessage(ConnectionInterface $from, $msg) {
-        $this->eventHandler->logStart("WebSocketHandler onMessage", $msg);
-        $clientId = $from->clientId ?? $this->clients[$from->resourceId] ?? null;
-
-        if ($clientId) {
-            $this->eventHandler->log("Received message from client {$clientId}: {$msg}");
-            $this->eventHandler->handleMessage($from, $clientId, $msg);
+        // Retrieve our clientId
+        if (isset($from->appClientId)) {
+            $clientId = $from->appClientId;
+        } elseif (isset($this->clientsMap[$from->resourceId])) {
+            $clientId = $this->clientsMap[$from->resourceId];
         } else {
-            $this->eventHandler->log("Received message from unknown client: {$msg}", $from, 'warning');
+            $this->logger->log("WebSocketHandler: Error - Could not determine client ID for message from resourceId: {$from->resourceId}", ['message' => $msg], 'error');
+            $from->close(); // Close connection if client ID is unknown
+            return;
         }
-        $this->eventHandler->logEnd("WebSocketHandler onMessage");
+        
+        $this->logger->logStart("WebSocketHandler: onMessage from clientId=[{$clientId}], resourceId=[{$from->resourceId}]", ['message_summary' => substr($msg, 0, 100) . (strlen($msg) > 100 ? '...' : '')]);
+        
+        // Delegate message handling to the MessageHandler (Orchestrator)
+        $this->messageHandler->handle($from, $clientId, $msg);
+        
+        $this->logger->logEnd("WebSocketHandler: onMessage from clientId=[{$clientId}]");
     }
 
-    /**
-     * When a connection is closed
-     *
-     * @param ConnectionInterface $conn
-     */
     public function onClose(ConnectionInterface $conn) {
-        $this->eventHandler->logStart("WebSocketHandler onClose");
-        $clientId = $conn->clientId ?? $this->clients[$conn->resourceId] ?? null;
-
-        if ($clientId) {
-            $this->eventHandler->removeClient($clientId);
-            unset($this->clients[$conn->resourceId]);
-            $this->eventHandler->log("Connection {$clientId} has disconnected", $this->clients);
+        // Retrieve our clientId
+        if (isset($conn->appClientId)) {
+            $clientId = $conn->appClientId;
+        } elseif (isset($this->clientsMap[$conn->resourceId])) {
+            $clientId = $this->clientsMap[$conn->resourceId];
         } else {
-            $this->eventHandler->log("Unknown connection has disconnected", $this->clients, 'warning');
+            // This might happen if onError closed the connection before appClientId was set or if it was never opened properly.
+            $this->logger->log("WebSocketHandler: onClose - Could not determine client ID for resourceId: {$conn->resourceId}", null, 'warning');
+            // Attempt to remove from serverManager by resourceId if it has a fallback or if we just log
+            // For now, just log and ensure local map is cleaned if entry exists
+            if(isset($this->clientsMap[$conn->resourceId])) {
+                 unset($this->clientsMap[$conn->resourceId]);
+            }
+            return; 
         }
-        $this->eventHandler->logEnd("WebSocketHandler onClose");
+
+        $this->logger->logStart("WebSocketHandler: onClose for clientId=[{$clientId}], resourceId=[{$conn->resourceId}]");
+
+        // Notify the MessageHandler (Orchestrator) about the connection closing
+        $this->messageHandler->close($clientId);
+        
+        // Notify WebSocketServerManager to remove this client from its list
+        // WebSocketServerManager's removeClient will also trigger QuestSessionManager->clearClientId
+        $this->serverManager->removeClient($clientId);
+        
+        // Remove from local map
+        if (isset($this->clientsMap[$conn->resourceId])) {
+            unset($this->clientsMap[$conn->resourceId]);
+        }
+        if (isset($conn->appClientId)) { // Clean up our attached property
+            unset($conn->appClientId);
+        }
+
+        $this->logger->log("WebSocketHandler: Connection clientId=[{$clientId}] has disconnected.");
+        $this->logger->logEnd("WebSocketHandler: onClose");
     }
 
-    /**
-     * When an error occurs
-     *
-     * @param ConnectionInterface $conn
-     * @param \Exception $e
-     */
     public function onError(ConnectionInterface $conn, \Exception $e) {
-        $this->eventHandler->logStart("WebSocketHandler onError");
-        $clientId = $conn->clientId ?? $this->clients[$conn->resourceId] ?? 'unknown';
-        $this->eventHandler->log("An error occurred with client {$clientId}", $e->getMessage(), 'error');
+        // Retrieve our clientId
+        if (isset($conn->appClientId)) {
+            $clientId = $conn->appClientId;
+        } elseif (isset($this->clientsMap[$conn->resourceId])) {
+            $clientId = $this->clientsMap[$conn->resourceId];
+        } else {
+            $this->logger->log("WebSocketHandler: onError - Could not determine client ID for resourceId: {$conn->resourceId}. Error: " . $e->getMessage(), $e->getTraceAsString(), 'error');
+            // Ratchet usually calls onClose after onError, so cleanup might happen there.
+            // If not, we might need to manually trigger cleanup.
+            $conn->close(); // Ensure connection is closed.
+            return;
+        }
+        
+        $this->logger->logStart("WebSocketHandler: onError for clientId=[{$clientId}], resourceId=[{$conn->resourceId}]", ['error' => $e->getMessage()]);
+        
+        // Notify the MessageHandler (Orchestrator) about the error
+        $this->messageHandler->error($conn, $clientId, $e);
+        
+        $this->logger->log("WebSocketHandler: An error occurred with client clientId=[{$clientId}]: " . $e->getMessage(), $e->getTraceAsString(), 'error');
+        
+        // Ratchet's documentation implies onClose will be called automatically by the server
+        // when a connection drops or an error handler closes the connection.
+        // Explicitly calling $conn->close() here ensures it's closed if the error isn't fatal enough for Ratchet to auto-close.
+         if ($conn->getSocket()) { // Check if connection is still open before trying to close
+            $conn->close();
+        }
 
-        $conn->close();
-        $this->eventHandler->logEnd("WebSocketHandler onError");
+        $this->logger->logEnd("WebSocketHandler: onError for clientId=[{$clientId}]");
     }
 }
