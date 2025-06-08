@@ -163,13 +163,24 @@ class EventHandler extends Component {
         }
 
         // Search for the session that opened the client connection
+        $this->log("Attempting to nullify client_id in QuestSession for clientId=[{$clientId}]");
         $rowsUpdated = QuestSession::updateAll(
                 ['client_id' => null],
                 ['client_id' => $clientId]
         );
+        $this->log("QuestSession::updateAll result: {$rowsUpdated} row(s) updated for clientId=[{$clientId}]");
         if ($rowsUpdated === 0) {
-            $this->log("Could not find a session associated with client [{$clientId}]", null, 'warning');
-            $this - $this->logQuestSession();
+            $this->log("QuestSession::updateAll found no rows to update for clientId=[{$clientId}]. Attempting to find session by client_id directly.", null, 'warning');
+            // Try to find the session by client_id to log its state if it exists
+            $staleSession = QuestSession::findOne(['client_id' => $clientId]);
+            if ($staleSession) {
+                $this->log("Found QuestSession with client_id=[{$clientId}]: id=[{$staleSession->id}], quest_id=[{$staleSession->quest_id}], player_id=[{$staleSession->player_id}], last_ts=[{$staleSession->last_ts}]", null, 'warning');
+            } else {
+                $this->log("No QuestSession found with client_id=[{$clientId}] either.", null, 'warning');
+            }
+            // The original logQuestSession() call can be kept if it's useful for broader context, or removed if too verbose.
+            // For now, let's keep it to see all sessions.
+            $this->logQuestSession("Current QuestSessions after attempting to remove client [{$clientId}]");
         }
         $this->logEnd("removeClient");
     }
@@ -277,6 +288,7 @@ class EventHandler extends Component {
             'register' => $this->handleRegistration($from, $clientId, $sessionId, $data),
             'chat' => $this->handleChatMessage($from, $sessionId, $data),
             'action' => $this->handleGameAction($from, $sessionId, $data),
+            'announce_player_join' => $this->handleAnnouncePlayerJoin($from, $clientId, $sessionId, $data), // New line
             default => $this->handleUnknownType($from, $sessionId, $type, $data)
         };
         $this->logEnd("handleTypedMessage");
@@ -346,9 +358,16 @@ class EventHandler extends Component {
             'player_id' => $playerId,
             'client_id' => $clientId,
         ]);
+        $this->log("Attempting to save new QuestSession: sessionId=[{$sessionId}], questId=[{$questId}], playerId=[{$playerId}], clientId=[{$clientId}]");
+        $saved = $session->save();
+        if ($saved) {
+            $this->log("Successfully saved new QuestSession: id=[{$session->id}]");
+        } else {
+            $this->log("Failed to save new QuestSession: sessionId=[{$sessionId}]. Errors: " . print_r($session->getErrors(), true), null, 'error');
+        }
         $this->logQuestSession();
         $this->logEnd("newSession");
-        return $session->save();
+        return $saved;
     }
 
     /**
@@ -387,7 +406,18 @@ class EventHandler extends Component {
         }
 
         // avoid unnecessay updates if nothing change
-        $updated = $needUpdate ? $session->save() : true;
+        if ($needUpdate) {
+            $this->log("Attempting to update QuestSession: id=[{$session->id}], newQuestId=[{$questId}], newPlayerId=[{$playerId}], newClientId=[{$clientId}]");
+            $saved = $session->save();
+            if ($saved) {
+                $this->log("Successfully updated QuestSession: id=[{$session->id}]");
+            } else {
+                $this->log("Failed to update QuestSession: id=[{$session->id}]. Errors: " . print_r($session->getErrors(), true), null, 'error');
+            }
+            $updated = $saved;
+        } else {
+            $updated = true;
+        }
         $this->logQuestSession();
         $this->logEnd("updateSession: " . ($updated ? "success" : "failed"));
         return $updated;
@@ -462,24 +492,37 @@ class EventHandler extends Component {
      */
     private function recoverMessageHistory(string $sessionId): void {
         // Consider that this function is called once we know a playerId, questId, sessionId and data
-        $this->logStart("recoverMessageHistory");
+        $this->logStart("recoverMessageHistory for sessionId=[{$sessionId}]");
 
         $session = QuestSession::findOne(['id' => $sessionId]);
         if (!$session) {
-            $this->log("sessionId [{$sessionId}] is unknown!", null, 'warning');
-            $this->logEnd("recoverMessageHistory");
+            $this->log("QuestSession not found for sessionId=[{$sessionId}]. Cannot recover history.", null, 'warning');
+            $this->logEnd("recoverMessageHistory for sessionId=[{$sessionId}]");
             return;
         }
+        $this->log("Found QuestSession: id=[{$session->id}], quest_id=[{$session->quest_id}], player_id=[{$session->player_id}], client_id=[{$session->client_id}], last_ts=[{$session->last_ts}]");
 
         // Collects message notifications for the current quest
+        $this->log("Fetching 'chat' notifications for quest_id=[{$session->quest_id}] created after timestamp=[{$session->last_ts}]");
         $chatNotifications = $this->getNotifications($session->quest_id, 'chat', $session->last_ts);
+
+        $notificationCount = count($chatNotifications);
+        $this->log("Processing {$notificationCount} 'chat' notifications for history recovery for sessionId=[{$sessionId}].");
 
         $recoveredMessages = 0;
         foreach ($chatNotifications as $notification) {
+            $this->log("Preparing to send historical chat message: Notification.id=[{$notification->id}], player_id=[{$notification->player_id}], created_at=[{$notification->created_at}], payload=" . json_encode($notification->payload));
             $chatMessage = $this->prepareChatMessage($notification, $sessionId);
-            $recoveredMessages += $this->sendToSession($session, $chatMessage) ? 1 : 0;
+            $sent = $this->sendToSession($session, $chatMessage);
+            if ($sent) {
+                $recoveredMessages++;
+                $this->log("Successfully sent historical message Notification.id=[{$notification->id}] to session [{$sessionId}]");
+            } else {
+                $this->log("Failed to send historical message Notification.id=[{$notification->id}] to session [{$sessionId}]", null, 'error');
+            }
         }
-        $this->logEnd("recoverMessageHistory");
+        $this->log("Finished recovering history for session [{$sessionId}]. Sent {$recoveredMessages} message(s).");
+        $this->logEnd("recoverMessageHistory for sessionId=[{$sessionId}]");
     }
 
     /**
@@ -490,7 +533,8 @@ class EventHandler extends Component {
      * @return array
      */
     private function getNotifications(int $questId, string $type, int $since): array {
-        $this->logStart("getNotifications");
+        $this->logStart("getNotifications for questId=[{$questId}], type=[{$type}], since=[{$since}]");
+        $this->log("Querying Notifications: quest_id=[{$questId}], notification_type=[{$type}], created_at > {$since}");
         $notifications = Notification::find()
                 ->where(['quest_id' => $questId ?? 0])
                 ->andWhere(['notification_type' => $type ?? 'unknown'])
@@ -498,8 +542,8 @@ class EventHandler extends Component {
                 ->orderBy(['created_at' => SORT_ASC])
                 ->all();
         $notificationCount = count($notifications);
-        $this->log("{$notificationCount} notification(s) found");
-        $this->logEnd("getNotifications");
+        $this->log("{$notificationCount} notification(s) found for questId=[{$questId}], type=[{$type}], since=[{$since}]");
+        $this->logEnd("getNotifications for questId=[{$questId}], type=[{$type}], since=[{$since}]");
         return $notifications;
     }
 
@@ -536,24 +580,66 @@ class EventHandler extends Component {
      * @param array $data
      */
     private function handleChatMessage(ConnectionInterface $from, string $sessionId, array $data): void {
-        $this->logStart("handleChatMessage");
-        // $this->log("sessionId=[{$sessionId}]", $data);
+        $this->logStart("handleChatMessage sessionId=[{$sessionId}]", $data);
 
-        $message = $data['message'] ?? '';
-        $playerId = $data['playerId'] ?? 'unknown';
-        $questId = $data['questId'];
+        $messageText = $data['message'] ?? '';
+        $playerId = $data['playerId'] ?? null;
+        $questId = $data['questId'] ?? null;
 
-        if ($questId) {
-            $this->log("Received chat message from player {$playerId} in session [{$sessionId}] for quest {$questId}: {$message}");
-            $this->broadcastToQuest($questId, $data, $sessionId);
-        } else {
-            $this->log("Received chat message from player {$playerId} in session [{$sessionId}]: {$message}");
-            $this->broadcast($data);
+        if (empty($messageText) || $playerId === null || $questId === null) {
+            $this->log("handleChatMessage: Missing message, playerId, or questId.", $data, 'warning');
+            $from->send(json_encode(['type' => 'error', 'message' => 'Invalid chat message data.']));
+            $this->logEnd("handleChatMessage sessionId=[{$sessionId}]");
+            return;
         }
-        //$this->sendBack('echo', $from, $data);
-        $from->send(json_encode($data));
 
-        $this->logEnd("handleChatMessage");
+        /*
+         * Used only for log purpose
+         *
+          $sender = Player::findOne($playerId);
+          if (!$sender) {
+          $this->log("handleChatMessage: Player not found for playerId=[{$playerId}].", $data, 'error');
+          $from->send(json_encode(['type' => 'error', 'message' => 'Chat sender (player) not found.']));
+          $this->logEnd("handleChatMessage sessionId=[{$sessionId}]");
+          return;
+          }
+
+          $quest = Quest::findOne($questId);
+          if (!$quest) {
+          $this->log("handleChatMessage: Quest not found for questId=[{$questId}].", $data, 'error');
+          $from->send(json_encode(['type' => 'error', 'message' => 'Chat quest not found.']));
+          $this->logEnd("handleChatMessage sessionId=[{$sessionId}]");
+          return;
+          }
+
+          $this->log("handleChatMessage: Successfully retrieved player '{$sender->name}' and quest '{$quest->story->name}'. Ready for further processing.");
+
+          $notification = $this->saveNotification($playerId, $questId, $data);
+          //$timestamp = ($notification?->created_at) ? $notification->created_at : time();
+
+
+          $broadcastMessage = [
+          'type' => 'chat', // Keep type 'chat' for client's existing chat handler
+          'senderId' => $sender->id,
+          'senderName' => $sender->name,
+          'message' => $messageText,
+          'timestamp' => $timestamp,
+          'questId' => $quest->id // Good to include for client-side context
+          ];
+         *
+         */
+
+        $notification = $this->saveNotification($playerId, $questId, $data);
+        $broadcastMessage = $this->prepareChatMessage($notification, $sessionId);
+
+        // Broadcast to other clients in the quest
+        $this->log("Broadcasting chat message for questId=[" . $questId . "] from playerId=[" . $playerId . "] (sessionId=[" . $sessionId . "])", $broadcastMessage);
+        $this->broadcastToQuest((int) $questId, $broadcastMessage, $sessionId); // Exclude sender by $sessionId
+        // Send the structured message back to the original sender for UI consistency
+        //$this->log("Sending chat message back to original sender sessionId=[" . $sessionId . "]", $broadcastMessage);
+        $from->send(json_encode($broadcastMessage));
+
+        $this->logEnd("handleChatMessage sessionId=[{$sessionId}]");
     }
 
     /**
@@ -571,6 +657,111 @@ class EventHandler extends Component {
         // In a real app, you would process the action
         $this->sendBack('echo', $from, $data);
         $this->logEnd("handleGameAction");
+    }
+
+    private function handleAnnouncePlayerJoin(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
+        $this->logStart("handleAnnouncePlayerJoin from clientId=[{$clientId}], sessionId=[{$sessionId}]", $data);
+        $payload = $data['payload'] ?? null;
+        $questId = $payload['questId'] ?? null; // Extracted from the client-sent payload
+
+        if (!$payload || !is_numeric($questId)) {
+            $this->log("Missing payload or invalid questId for announce_player_join. Payload: " . print_r($payload, true) . " QuestID: " . print_r($questId, true), $data, 'warning');
+            $this->sendBack('error', $from, 'Invalid announce_player_join message: missing payload or questId.');
+            $this->logEnd("handleAnnouncePlayerJoin");
+            return;
+        }
+
+        // The client sends data like {'playerId': ..., 'playerName': ..., 'questId': ..., 'questName': ..., 'joinedAt': ...}
+        // This entire structure is in $payload.
+
+        $broadcastMessage = [
+            'type' => 'new_player_joined', // This is the WebSocket message type clients will receive
+            'notificationId' => uniqid('notif_event_'), // A unique ID for this event instance
+            'triggerSessionId' => $sessionId, // The sessionId of the player whose client triggered this announcement
+            'triggerPlayerId' => $payload['playerId'] ?? null, // The playerId of the new player
+            'questId' => (int) $questId,
+            'timestamp' => time(),
+            'payload' => $payload // This nested payload contains playerName, questName, joinedAt etc.
+        ];
+
+        $this->log("Broadcasting 'new_player_joined' event for questId=[{$questId}] triggered by sessionId=[{$sessionId}]", $broadcastMessage);
+
+        // Broadcast to all clients in the quest, *excluding* the sender client identified by $sessionId.
+        // Note: broadcastToQuest's third argument is $originSessionId to exclude.
+        $this->broadcastToQuest((int) $questId, $broadcastMessage, $sessionId);
+
+        // --- ADD HISTORY RECOVERY HERE ---
+        if ($questId) { // Ensure questId is valid before attempting recovery
+            $this->log("Attempting to recover message history for session [{$sessionId}] in quest [{$questId}] after player announcement.", $payload, 'info');
+            $this->recoverMessageHistory($sessionId);
+        } else {
+            $this->log("Skipping message history recovery for session [{$sessionId}] due to missing questId in payload.", $payload, 'warning');
+        }
+        // --- END HISTORY RECOVERY ---
+        // Send an acknowledgement back to the sender client
+        $this->sendBack('ack', $from, ['type' => 'announce_player_join_processed', 'originalPayload' => $payload]);
+
+        $this->logEnd("handleAnnouncePlayerJoin");
+    }
+
+    private function saveQuestChat(int $playerId, int $questId, string $message, int $createdAt): bool {
+        $this->logStart("saveQuestChat playerId=[{$playerId}], questId=[{$questId}], message=[{$message}], createdAt=[{$createdAt}]");
+        $questChat = new QuestChat([
+            'player_id' => $playerId,
+            'quest_id' => $questId,
+            'message' => $message,
+            'created_at' => $createdAt
+        ]);
+
+        $return = $questChat->save();
+        $this->logEnd("saveQuestChat, returned value=" . ($return ? "true" : "false"));
+        return $return;
+    }
+
+    private function saveNotification(int $playerId, int $questId, array $data): Notification {
+        $this->logStart("saveNotification playerId=[{$playerId}], questId=[{$questId}]", $data);
+        $message = $data['message'] ?? '';
+        $type = $data['type'] ?? 'unknown'; // For chat, $type will be 'chat'
+        $createdAt = time();
+
+        if ($type === 'chat' && !$this->saveQuestChat($playerId, $questId, $message, $createdAt)) {
+            $this->log("saveNotification: Failed to save QuestChat, aborting notification save.", $data, 'error');
+            $this->logEnd("saveNotification");
+            return null;
+        }
+
+        $sender = Player::findOne($playerId);
+        if (!$sender) {
+            $this->log("saveNotification: Player not found for playerId=[{$playerId}] when creating payload.", null, 'warning');
+            $this->logEnd("saveNotification");
+            return null;
+        }
+
+        $payload = [
+            'playerName' => $sender->name,
+            'playerId' => $playerId,
+            'message' => $message,
+            'timestamp' => date('Y-m-d H:i:s', $createdAt),
+        ];
+
+        $notification = new Notification([
+            'player_id' => $playerId,
+            'quest_id' => $questId,
+            'notification_type' => $type, // This will be 'chat' for chat messages
+            'title' => ($type === 'chat' ? "New chat message from " . $sender->name : ($data['title'] ?? 'Unknown Event')),
+            'message' => $message, // For chat, this is the core message text
+            'created_at' => $createdAt,
+            'is_private' => 0, // Assuming chat notifications are not private by default
+            'payload' => json_encode($payload),
+        ]);
+
+        if (!$notification->save()) {
+            $this->log("saveNotification: Failed to save Notification. Errors: " . print_r($notification->getErrors(), true), $data, 'error');
+            $this->logEnd("saveNotification");
+            return null;
+        }
+        $this->logEnd("saveNotification");
+        return $notification;
     }
 
     /**
@@ -653,7 +844,7 @@ class EventHandler extends Component {
         $clientId = $session->client_id ?? 'null';
 
         if (!isset(self::$clients[$clientId])) {
-            $this->log("Unknown clientId [{$clientId}]", array_keys(self::$clients), 'warning');
+            $this->log("Cannot send message: Unknown clientId [{$clientId}] for QuestSession.id (sessionId)=[{$session->id}], quest_id=[{$session->quest_id}], player_id=[{$session->player_id}]. Current known clientIds: " . implode(', ', array_keys(self::$clients)), null, 'warning');
             $this->logEnd("sendToSession");
             return false;
         }

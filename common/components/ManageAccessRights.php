@@ -118,7 +118,7 @@ class ManageAccessRights extends Component {
      * @param string $action
      * @return bool
      */
-    private static function isPublic(sting $route, string $action): bool {
+    private static function isPublic(string $route, string $action): bool {
         $publicSiteActions = ['error', 'login', 'captcha', 'index', 'signup',
             'request-password-reset', 'reset-password', 'verify-email', 'resend-verification-email'];
         // Allow access to site/error, site/login, site/captcha, site/index,

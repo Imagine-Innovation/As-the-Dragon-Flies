@@ -94,6 +94,23 @@ class NotificationClient {
             console.log('Received register message:', data);
             this.displayChatMessage(data);
         });
+
+        this.on('new_player_joined', (data) => {
+            console.log('Received new_player_joined event:', data);
+            if (data.payload && data.payload.playerName && data.payload.questName) {
+                // Construct the message from the payload
+                const message = `Player ${data.payload.playerName} has joined quest "${data.payload.questName}".`;
+                
+                // Use the existing displayChatMessage method to show it in the UI
+                this.displayChatMessage({
+                    sender: 'System', // Or any other appropriate sender name
+                    message: message,
+                    timestamp: data.timestamp || Math.floor(Date.now() / 1000) // Use server timestamp or current time
+                });
+            } else {
+                console.warn('Received new_player_joined event with incomplete payload:', data);
+            }
+        });
     }
 
     /**
@@ -134,10 +151,21 @@ class NotificationClient {
                 url: 'quest/ajax-trigger-new-player-event',
                 data: {sessionId: this.sessionId},
                 successCallback: (response) => {
-                    this.send({
-                        type: 'chat',
-                        message: JSON.stringify(response.msg)
-                    });
+                    if (response && response.error === false && response.data) {
+                        console.log('AJAX success for new player event, sending announce_player_join WebSocket message:', response.data);
+                        this.send({
+                            type: 'announce_player_join',
+                            payload: response.data
+                        });
+                    } else {
+                        console.error('Failed to get valid data from ajax-trigger-new-player-event:', response);
+                        // Optionally, send the old chat message here as a fallback or error indicator,
+                        // or handle the error more robustly. For now, just log it.
+                        // this.send({
+                        //     type: 'chat',
+                        //     message: JSON.stringify("Error processing new player announcement: " + (response ? response.msg : "Unknown error"))
+                        // });
+                    }
                 }
             });
         };

@@ -281,7 +281,7 @@ class QuestController extends Controller {
             return ['success' => false, 'message' => 'Quest not found'];
         }
 
-        $sessionId = Yii::$app->request->post('sessionId');
+        //$sessionId = Yii::$app->request->post('sessionId');
         $message = Yii::$app->request->post('message');
         Yii::debug("*** Debug *** actionSendMessage - Player/ {$player->name}, Quest: {$quest->story->name}, Message: " . ($message ?? 'empty'));
         if (empty($message)) {
@@ -289,10 +289,11 @@ class QuestController extends Controller {
         }
 
         // Create and process new message event
-        $event = EventFactory::createEvent('new-message', $sessionId, $player, $quest, ['message' => $message]);
-        $event->process();
+        // $event = EventFactory::createEvent('new-message', $sessionId, $player, $quest, ['message' => $message]);
+        // $event->process();
+        // Yii::debug("*** Debug *** actionSendMessage - Event processing removed. Chat now handled via WebSocket direct message.");
 
-        return ['success' => true];
+        return ['success' => true, 'msg' => 'Message send attempt acknowledged. Actual processing via WebSocket.'];
     }
 
     /**
@@ -306,38 +307,22 @@ class QuestController extends Controller {
         if (!$this->request->isPost || !$this->request->isAjax) {
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
-        Yii::debug("*** Debug *** actionGetMessages - Correct Ajax POST request");
 
         $player = Yii::$app->session->get('currentPlayer');
         if (!$player) {
             return ['success' => false, 'message' => 'Player not found'];
         }
-        Yii::debug("*** Debug *** actionGetMessages - Player: $player->name");
 
         $quest = Yii::$app->session->get('currentQuest');
 
         if (!$quest) {
             return ['success' => false, 'message' => 'Quest not found'];
         }
-        Yii::debug("*** Debug *** actionGetMessages - Quest: {$quest->story->name}");
 
         if ($questId !== $quest->id) {
             Yii::debug("*** Debug *** actionGetMessages - Invalid QuestId");
             return ['success' => false, 'message' => 'Invalid QuestId'];
         }
-
-        /*
-          $messages = [];
-          foreach ($quest->getRecentChatMessages(50) as $chatMessage) {
-          $messages[] = [
-          'playerId' => $chatMessage->player_id,
-          'playerName' => $chatMessage->player->name,
-          'message' => $chatMessage->message,
-          'timestamp' => $chatMessage->created_at
-          ];
-          }
-         *
-         */
 
         $messages = QuestMessages::getRecentChatMessages($questId);
 
@@ -473,13 +458,23 @@ class QuestController extends Controller {
           return ['error' => true, 'msg' => "Unable to link Quest {$quest->story->name} and Player {$player->name} to session {$sessionId}", 'content' => ''];
           }
          */
-        Yii::debug("*** Debug *** actionAjaxTriggerNewPlayerEvent - Avant EventFactory::createEvent");
-        $event = EventFactory::createEvent('new-player', $sessionId, $player, $quest);
-        Yii::debug("*** Debug *** actionAjaxTriggerNewPlayerEvent - Après EventFactory::createEvent");
-        $event->process();
-        Yii::debug("*** Debug *** actionAjaxTriggerNewPlayerEvent - Après event->process()");
+        // Yii::debug("*** Debug *** actionAjaxTriggerNewPlayerEvent - Avant EventFactory::createEvent");
+        // $event = EventFactory::createEvent('new-player', $sessionId, $player, $quest);
+        // Yii::debug("*** Debug *** actionAjaxTriggerNewPlayerEvent - Après EventFactory::createEvent");
+        // $event->process();
+        // Yii::debug("*** Debug *** actionAjaxTriggerNewPlayerEvent - Après event->process()");
 
-        return ['error' => false, 'msg' => "Player {$player->name} has joined the quest {$quest->story->name}", 'content' => ''];
+        return [
+            'error' => false,
+            'msg' => "Player {$player->name} successfully processed for quest {$quest->story->name}. Client will now announce join via WebSocket.",
+            'data' => [
+                'playerId' => $player->id,
+                'playerName' => $player->name,
+                'questId' => $quest->id,
+                'questName' => $quest->story->name,
+                'joinedAt' => date('Y-m-d H:i:s')
+            ]
+        ];
     }
 
     /**

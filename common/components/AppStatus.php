@@ -15,9 +15,9 @@ enum AppStatus: int {
     case COMPLETED = 103;
     case ABORTED = 109;
     // Story statuses
-    case ARCHIVED = 200;
-    case DRAFT = 201;
-    case PUBLISHED = 202;
+    case DRAFT = 200;
+    case PUBLISHED = 201;
+    case ARCHIVED = 202;
 
     public function getLabel(): string {
         return match ($this) {
@@ -31,9 +31,9 @@ enum AppStatus: int {
             self::COMPLETED => 'Completed',
             self::ABORTED => 'Aborted',
             // Story statuses
-            self::ARCHIVED => 'Archived',
             self::DRAFT => 'Draft',
             self::PUBLISHED => 'Published',
+            self::ARCHIVED => 'Archived',
             default => 'Unknown Status', // Not strictly needed for backed enums if all cases covered
         };
     }
@@ -43,11 +43,13 @@ enum AppStatus: int {
             self::DELETED => ['icon' => 'bi-x-square', 'tooltip' => 'Deleted, only adminstrators can restore'],
             self::INACTIVE => ['icon' => 'bi-code-square', 'tooltip' => 'Inactive. Need to be validated to be used'],
             self::ACTIVE => ['icon' => 'bi-caret-right-square', 'tooltip' => 'Validated and active'],
+            // Quest statuses
             self::WAITING => ['icon' => 'bi-hourglass-split', 'tooltip' => 'Waiting for other players'],
             self::PLAYING => ['icon' => 'bi-action-fight', 'tooltip' => 'The adventure has begun'],
             self::PAUSED => ['icon' => 'bi-alarm', 'tooltip' => 'The adventure continues after a short break'],
             self::COMPLETED => ['icon' => 'bi-trophy', 'tooltip' => 'The adventure is now finished'],
             self::ABORTED => ['icon' => 'bi-sign-stop', 'tooltip' => 'The adventure is aborted'],
+            // Story statuses
             self::DRAFT => ['icon' => 'bi-journal-code', 'tooltip' => 'Draft'],
             self::PUBLISHED => ['icon' => 'bi-journal-check', 'tooltip' => 'Published'],
             self::ARCHIVED => ['icon' => 'bi-journal-x', 'tooltip' => 'Archived'],
@@ -76,9 +78,9 @@ enum AppStatus: int {
 
     public static function getValuesForStory(): array {
         return [
-            self::ARCHIVED->value,
             self::DRAFT->value,
             self::PUBLISHED->value,
+            self::ARCHIVED->value,
         ];
     }
 
