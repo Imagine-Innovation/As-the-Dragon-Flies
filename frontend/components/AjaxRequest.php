@@ -89,10 +89,6 @@ class AjaxRequest {
             //$query = $model->find()->select($this->select ?? '*');
             $query = $modelName::find()->select($this->select ?? '*');
 
-            if ($this->join) {
-                $query->join(implode(', ', $this->join));
-            }
-
             foreach ($this->innerJoin as $join) {
                 $query->innerJoin($join['table'], $join['clause']);
             }

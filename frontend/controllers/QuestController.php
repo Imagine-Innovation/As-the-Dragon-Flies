@@ -18,10 +18,13 @@ namespace frontend\controllers;
  * @author François Gros
  * @version 1.0
  */
+use common\components\AppStatus;
 use common\models\events\EventFactory;
 use common\models\Quest;
 use common\models\QuestChat;
 use common\models\QuestPlayer;
+use common\models\Player;
+use common\models\Story;
 use common\components\ManageAccessRights;
 use common\helpers\UserErrorMessage;
 use frontend\components\AjaxRequest;
@@ -62,10 +65,10 @@ class QuestController extends Controller {
                             [
                                 'actions' => [
                                     'index', 'update', 'delete', 'create', 'view',
-                                    'tavern', 'resume', 'send-message', 'get-messages', 'leave-quest',
+                                    'join-quest', 'resume', 'send-message', 'get-messages', 'leave-quest',
                                     'ajax-tavern', 'ajax-tavern-counter',
                                     'ajax-new-message', 'ajax-get-messages',
-                                    'ajax-start'
+                                    'ajax-start', 'ajax-trigger-new-player-event',
                                 ],
                                 'allow' => ManageAccessRights::isRouteAllowed($this),
                                 'roles' => ['@'],
@@ -267,29 +270,26 @@ class QuestController extends Controller {
         if (!$this->request->isPost || !$this->request->isAjax) {
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
-        Yii::debug("*** Debug *** actionSendMessage - Correct Ajax POST request");
 
         $player = Yii::$app->session->get('currentPlayer');
         if (!$player) {
             return ['success' => false, 'message' => 'Player not found'];
         }
-        Yii::debug("*** Debug *** actionSendMessage - Player: $player->name");
 
         $quest = Yii::$app->session->get('currentQuest');
-
         if (!$quest) {
             return ['success' => false, 'message' => 'Quest not found'];
         }
-        Yii::debug("*** Debug *** actionSendMessage - Quest: {$quest->story->name}");
 
+        $sessionId = Yii::$app->request->post('sessionId');
         $message = Yii::$app->request->post('message');
-        Yii::debug("*** Debug *** actionSendMessage - Message: {($message ?? 'empty')}");
+        Yii::debug("*** Debug *** actionSendMessage - Player/ {$player->name}, Quest: {$quest->story->name}, Message: " . ($message ?? 'empty'));
         if (empty($message)) {
             return ['success' => false, 'message' => 'Message cannot be empty'];
         }
 
         // Create and process new message event
-        $event = EventFactory::createEvent('new-message', $player, $quest, ['message' => $message]);
+        $event = EventFactory::createEvent('new-message', $sessionId, $player, $quest, ['message' => $message]);
         $event->process();
 
         return ['success' => true];
@@ -373,7 +373,8 @@ class QuestController extends Controller {
         $player->save();
 
         // Create a leave event (we could create a specific LeaveQuestEvent class)
-        $event = EventFactory::createEvent('game-action', $player, $quest, [
+        $sessionId = Yii::$app->request->post('sessionId');
+        $event = EventFactory::createEvent('game-action', $sessionId, $player, $quest, [
             'action' => 'leave-quest',
             'actionData' => ['reason' => 'left_voluntarily']
         ]);
@@ -398,7 +399,7 @@ class QuestController extends Controller {
 
         if ($quest) {
             $update = Quest::updateAll(
-                    ['status' => Quest::STATUS_PLAYING, 'started_at' => time()],
+                    ['status' => AppStatus::PLAYING->value, 'started_at' => time()],
                     ['id' => $questId]
             );
             if ($update) {
@@ -441,6 +442,47 @@ class QuestController extends Controller {
     }
 
     /**
+     * Retrieves latest messages for real-time chat updates
+     *
+     * Handles periodic polling for new messages in the tavern chat.
+     * Supports message grouping by timestamp.
+     *
+     * @return array JSON response with latest messages
+     */
+    public function actionAjaxTriggerNewPlayerEvent() {
+        // Configure response format
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        // Validate request type
+        if (!$this->request->isPost || !$this->request->isAjax) {
+            return ['error' => true, 'msg' => 'Not an Ajax POST request'];
+        }
+
+        // Extract request parameters
+        $player = Yii::$app->session->get('currentPlayer');
+        $quest = Yii::$app->session->get('currentQuest');
+        $sessionId = Yii::$app->request->post('sessionId');
+        /*
+          $questSession = new QuestSession([
+          'id' => $sessionId,
+          'quest_id' => $quest->id,
+          'player_id' => $player->id,
+          ]);
+
+          if (!$questSession->save()) {
+          return ['error' => true, 'msg' => "Unable to link Quest {$quest->story->name} and Player {$player->name} to session {$sessionId}", 'content' => ''];
+          }
+         */
+        Yii::debug("*** Debug *** actionAjaxTriggerNewPlayerEvent - Avant EventFactory::createEvent");
+        $event = EventFactory::createEvent('new-player', $sessionId, $player, $quest);
+        Yii::debug("*** Debug *** actionAjaxTriggerNewPlayerEvent - Après EventFactory::createEvent");
+        $event->process();
+        Yii::debug("*** Debug *** actionAjaxTriggerNewPlayerEvent - Après event->process()");
+
+        return ['error' => false, 'msg' => "Player {$player->name} has joined the quest {$quest->story->name}", 'content' => ''];
+    }
+
+    /**
      * Handles tavern entry and player onboarding for a specific story
      *
      * Validates story access, creates or joins quest, and manages player onboarding flow.
@@ -449,16 +491,16 @@ class QuestController extends Controller {
      * @param int $storyId The ID of the story to join
      * @return string|Response Rendered tavern view or error redirect
      */
-    public function actionTavern($storyId) {
+    public function actionJoinQuest($storyId) {
         // Validate story existence and accessibility
-        $story = QuestOnboarding::findValidStory($storyId);
+        $story = $this->findValidStory($storyId);
         if (!$story) {
             return UserErrorMessage::throw($this, 'fatal', 'Invalid story ID (' . ($storyId ?? 'NULL') . ')');
         }
 
         // Find or create tavern quest instance
-        $quest = QuestOnboarding::findTavern($story);
-        if (!$quest) {
+        $tavern = $this->findTavern($story);
+        if (!$tavern) {
             return UserErrorMessage::throw($this, 'error', 'Unable to find or create a new quest', self::DEFAULT_REDIRECT);
         }
 
@@ -466,28 +508,55 @@ class QuestController extends Controller {
         $player = Yii::$app->session->get('currentPlayer');
 
         // Validate player eligibility
-        $canJoin = QuestOnboarding::canPlayerJoinQuest($player, $quest);
+        $canJoin = QuestOnboarding::canPlayerJoinQuest($player, $tavern);
         if ($canJoin['denied']) {
             return UserErrorMessage::throw($this, 'error', $canJoin['reason'], self::DEFAULT_REDIRECT);
         }
 
         // Process player onboarding
-        if (!QuestOnboarding::wellcomePlayer($player, $quest)) {
+        if (!$this->addPlayerToQuest($player, $tavern)) {
             return UserErrorMessage::throw($this, 'error', 'Unable to onboard player ' . $player->name . ' to the quest', self::DEFAULT_REDIRECT);
         }
 
-        $questCanStart = QuestOnboarding::canStartQuest($quest);
-        if (!$questCanStart['denied']) {
-            QuestNotification::push('start-quest', $quest->id, $player->id, $questCanStart['reason']);
-        }
         // Set session variables for quest context
-        Yii::$app->session->set('currentQuest', $quest);
-        Yii::$app->session->set('questId', $quest->id);
+        Yii::$app->session->set('currentQuest', $tavern);
+        Yii::$app->session->set('questId', $tavern->id);
         Yii::$app->session->set('inQuest', true);
 
         return $this->render('tavern', [
-                    'model' => $quest,
+                    'model' => $tavern,
         ]);
+    }
+
+    /**
+     *
+     * @param Player $player
+     * @param Quest $quest
+     * @return bool
+     */
+    private function addPlayerToQuest(Player $player, Quest $quest): bool {
+
+        // Player is already onboarded in the quest => do nothing
+        if ($player->quest_id === $quest->id) {
+            return true;
+        }
+
+        $player->quest_id = $quest->id;
+        if (!$player->save()) {
+            return false;
+        }
+
+        $questPlayer = QuestPlayer::findOne(['quest_id' => $quest->id, 'player_id' => $player->id]);
+
+        if (!$questPlayer) {
+            $currentPlayerCount = count($quest->currentPlayers);
+            $success = QuestOnboarding::addQuestPlayer($quest->id, $player->id, $currentPlayerCount > 0 ? false : true);
+            if (!$success) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -501,7 +570,7 @@ class QuestController extends Controller {
     public function actionResume() {
         $quest = Yii::$app->session->get('currentQuest');
 
-        if ($quest->status == Quest::STATUS_PLAYING) {
+        if ($quest->status == AppStatus::PLAYING->value) {
             return $this->redirect(['quest/view', 'id' => $quest->id]);
         }
 
@@ -588,5 +657,44 @@ class QuestController extends Controller {
             return $model;
         }
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    protected function findValidStory($storyId) {
+        if ($storyId) {
+            return Story::findOne(['id' => $storyId, 'status' => AppStatus::PUBLISHED->value]);
+        }
+        return null;
+    }
+
+    protected function findTavern($story) {
+
+        $tavern = $story->tavern ?? null;
+        $questId = Yii::$app->session->get('questId');
+
+        if ($questId && (!$tavern || $tavern->id !== $questId)) {
+            Yii::debug("*** Debug *** findTavern  ===>  Tavern is not the current quest");
+            return null;
+        }
+
+        if (!$tavern) {
+            Yii::debug("*** Debug *** findTavern  ===>  Create a new Tavern");
+            $tavern = new Quest([
+                'story_id' => $story->id,
+                'status' => AppStatus::WAITING->value,
+                'created_at' => time(),
+                'local_time' => time(),
+            ]);
+            if (!$tavern->save()) {
+                Yii::debug("*** Debug *** findTavern  ===>  Could not save new Quest");
+                return null;
+            }
+            Yii::debug("*** Debug *** newQuest  ===>  new Quest is saved");
+            if (!$tavern) {
+                Yii::debug("*** Debug *** findTavern  ===>  Tavern creation failed");
+                return null;
+            }
+        }
+
+        return $tavern;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\components\AppStatus;
 use common\components\ManageAccessRights;
 use common\helpers\Status;
 use common\models\Player;
@@ -64,7 +65,7 @@ class PlayerController extends Controller {
         $user = Yii::$app->user->identity;
         $players = Player::find()
                 ->where(['user_id' => $user->id])
-                ->andWhere(['status' => [Player::STATUS_ACTIVE, Player::STATUS_INACTIVE]])
+                ->andWhere(['status' => [AppStatus::ACTIVE->value, AppStatus::INACTIVE->value]])
                 ->all();
 
         return $this->render('index', ['players' => $players]);
@@ -205,7 +206,7 @@ class PlayerController extends Controller {
      */
     public function actionDelete($id) {
         $model = $this->findModel($id);
-        if (Status::changeStatus($model, Player::STATUS_DELETED)) {
+        if (Status::changeStatus($model, AppStatus::DELETED->value)) {
             return $this->redirect(['admin']);
         }
         throw new NotFoundHttpException('Could not delete this player');
@@ -213,7 +214,7 @@ class PlayerController extends Controller {
 
     public function actionValidate($id) {
         $model = $this->findModel($id);
-        if (Status::changeStatus($model, Player::STATUS_ACTIVE)) {
+        if (Status::changeStatus($model, AppStatus::ACTIVE->value)) {
             return $this->redirect(['index']);
         }
         throw new NotFoundHttpException('Could not validate this player');
@@ -221,7 +222,7 @@ class PlayerController extends Controller {
 
     public function actionRestore($id) {
         $model = $this->findModel($id);
-        if (Status::changeStatus($model, Player::STATUS_INACTIVE)) {
+        if (Status::changeStatus($model, AppStatus::INACTIVE->value)) {
             return $this->redirect(['admin']);
         }
         throw new NotFoundHttpException('Could not restore this player');

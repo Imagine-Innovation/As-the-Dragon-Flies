@@ -2,15 +2,12 @@
 
 namespace frontend\widgets;
 
+use common\components\AppStatus;
 use common\helpers\Utilities;
 use Yii;
 use yii\base\Widget;
 
 class ActionButtons extends Widget {
-
-    const STATUS_DELETED = 0;
-    const STATUS_INACTIVE = 9;
-    const STATUS_ACTIVE = 10;
 
     public $model;
     public $isOwner;
@@ -19,7 +16,7 @@ class ActionButtons extends Widget {
     public function run() {
         $modelName = Utilities::modelName($this->model);
         $actions = [
-            self::STATUS_DELETED => [
+            AppStatus::DELETED->value => [
                 [
                     'tooltip' => 'Restore',
                     'route' => $modelName,
@@ -33,7 +30,7 @@ class ActionButtons extends Widget {
                     'view' => true,
                 ],
             ],
-            self::STATUS_INACTIVE => [
+            AppStatus::INACTIVE->value => [
                 [
                     'tooltip' => 'View',
                     'route' => $modelName,
@@ -71,7 +68,7 @@ class ActionButtons extends Widget {
                     'view' => true,
                 ],
             ],
-            self::STATUS_ACTIVE => [
+            AppStatus::ACTIVE->value => [
                 [
                     'tooltip' => 'Unvalidate',
                     'route' => $modelName,
@@ -118,5 +115,4 @@ class ActionButtons extends Widget {
                     'mode' => $this->mode,
         ]);
     }
-
 }

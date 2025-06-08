@@ -2,30 +2,29 @@
 
 namespace frontend\models;
 
-use Yii;
 use common\models\User;
+use common\components\AppStatus;
+use Yii;
 use yii\base\Model;
 
-class ResendVerificationEmailForm extends Model
-{
+class ResendVerificationEmailForm extends Model {
+
     /**
      * @var string
      */
     public $email;
 
-
     /**
      * {@inheritdoc}
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             ['email', 'trim'],
             ['email', 'required'],
             ['email', 'email'],
             ['email', 'exist',
                 'targetClass' => '\common\models\User',
-                'filter' => ['status' => User::STATUS_INACTIVE],
+                'filter' => ['status' => AppStatus::INACTIVE->value],
                 'message' => 'There is no user with this email address.'
             ],
         ];
@@ -36,11 +35,10 @@ class ResendVerificationEmailForm extends Model
      *
      * @return bool whether the email was sent
      */
-    public function sendEmail()
-    {
+    public function sendEmail() {
         $user = User::findOne([
             'email' => $this->email,
-            'status' => User::STATUS_INACTIVE
+            'status' => AppStatus::INACTIVE->value
         ]);
 
         if ($user === null) {
@@ -48,14 +46,14 @@ class ResendVerificationEmailForm extends Model
         }
 
         return Yii::$app
-            ->mailer
-            ->compose(
-                ['html' => 'emailVerify-html', 'text' => 'emailVerify-text'],
-                ['user' => $user]
-            )
-            ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name . ' robot'])
-            ->setTo($this->email)
-            ->setSubject('Account registration at ' . Yii::$app->name)
-            ->send();
+                        ->mailer
+                        ->compose(
+                                ['html' => 'emailVerify-html', 'text' => 'emailVerify-text'],
+                                ['user' => $user]
+                        )
+                        ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name . ' robot'])
+                        ->setTo($this->email)
+                        ->setSubject('Account registration at ' . Yii::$app->name)
+                        ->send();
     }
 }

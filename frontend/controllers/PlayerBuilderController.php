@@ -7,6 +7,7 @@ use common\models\PlayerItem;
 use common\models\PlayerSkill;
 use common\models\ClassEquipment;
 use common\models\Image;
+use common\components\AppStatus;
 use common\components\ManageAccessRights;
 use frontend\models\PlayerBuilder;
 use frontend\components\AjaxRequest;
@@ -473,7 +474,7 @@ class PlayerBuilderController extends Controller {
     public function actionUpdate($id) {
         $model = $this->findModel($id);
 
-        if ($model->status === Player::STATUS_ACTIVE) {
+        if ($model->status === AppStatus::ACTIVE->value) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 

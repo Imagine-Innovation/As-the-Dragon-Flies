@@ -1,6 +1,6 @@
 <?php
 
-use common\helpers\CheckBox;
+use common\helpers\SpecialCheckBox;
 use frontend\widgets\Pagination;
 use frontend\widgets\RecordCount;
 use yii\helpers\Url;
@@ -49,11 +49,11 @@ use yii\helpers\Url;
                                     <?= $model->route . '/' . $model->action ?>
                                 </a>
                             </th>
-                            <td class="text-center"><?= CheckBox::setAccessRight($model, 'is_admin') ?></td>
-                            <td class="text-center"><?= CheckBox::setAccessRight($model, 'is_designer') ?></td>
-                            <td class="text-center"><?= CheckBox::setAccessRight($model, 'is_player') ?></td>
-                            <td class="text-center"><?= CheckBox::setAccessRight($model, 'has_player') ?></td>
-                            <td class="text-center"><?= CheckBox::setAccessRight($model, 'in_quest') ?></td>
+                            <td class="text-center"><?= SpecialCheckBox::setAccessRight($model, 'is_admin') ?></td>
+                            <td class="text-center"><?= SpecialCheckBox::setAccessRight($model, 'is_designer') ?></td>
+                            <td class="text-center"><?= SpecialCheckBox::setAccessRight($model, 'is_player') ?></td>
+                            <td class="text-center"><?= SpecialCheckBox::setAccessRight($model, 'has_player') ?></td>
+                            <td class="text-center"><?= SpecialCheckBox::setAccessRight($model, 'in_quest') ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>

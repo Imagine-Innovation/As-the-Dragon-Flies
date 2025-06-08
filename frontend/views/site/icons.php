@@ -4,11 +4,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Scripting/EmptyPHP.php to edit this template
  */
 $icons = [
-    'chest',
-    'action-run', 'action-fight', 'action-prepare-spell', 'action-hide', 'action-move', 'action-climb',
-    'armor-shield', 'armor-helmet',
+    'd20', 'chest',
+    'action-rest', 'action-run', 'action-fight', 'action-prepare-spell', 'action-hide', 'action-move', 'action-climb',
+    'armor-plate', 'armor-shield', 'armor-helmet',
     'weapon-sword', 'weapon-bow',
-    'class-wizard', 'class-artificer', 'class-barbarian', 'class-bard', 'class-rogue',
+    'class-wizard', 'class-artificer', 'class-barbarian', 'class-bard', 'class-rogue', 'class-sorcerer',
 ];
 ?>
 <div class="container-fluid">

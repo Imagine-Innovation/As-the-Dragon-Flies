@@ -26,11 +26,28 @@ return [
         'log' => [
             'targets' => [
                 [
-                    'class' => \yii\log\FileTarget::class,
-                    'levels' => ['error', 'warning'],
+                    'class' => 'yii\log\FileTarget',
+                    'levels' => ['error', 'warning', 'info'],
+                    'logFile' => '@runtime/logs/console.log',
+                ],
+                [
+                    'class' => 'yii\log\FileTarget',
+                    'levels' => ['error', 'warning', 'info'],
+                    'categories' => ['websocket'],
                 ],
             ],
         ],
+        /*
+          'log-old' => [
+          'targets' => [
+          [
+          'class' => \yii\log\FileTarget::class,
+          'levels' => ['error', 'warning'],
+          ],
+          ],
+          ],
+         *
+         */
         'eventHandler' => [
             'class' => 'common\extensions\EventHandler\EventHandler',
         ],

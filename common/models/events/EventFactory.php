@@ -2,37 +2,30 @@
 
 namespace common\models\events;
 
+use Yii;
 use common\models\Player;
 use common\models\Quest;
 
 class EventFactory {
 
-    public static function createEvent($type, Player $player, Quest $quest, $data = []) {
+    /**
+     *
+     * @param string $eventType
+     * @param string $sessionId
+     * @param Player $player
+     * @param Quest $quest
+     * @param array $data
+     * @return type
+     */
+    public static function createEvent(string $eventType, string $sessionId, Player $player, Quest $quest, array $data = []) {
 
-        return match ($type) {
-            'new-player' => new NewPlayerEvent($player, $quest),
-            'new-message' => new NewMessageEvent($player, $quest, $data['message'] ?? ''),
-            'start-quest' => new StartQuestEvent($player, $quest),
-            'game-action' => new GameActionEvent($player, $quest, $data['action'] ?? '', $data['actionData'] ?? []),
-            default => throw new \InvalidArgumentException("Unknown event type: $type"),
+        Yii::debug("*** debug *** EventFactory.createEvent type=$eventType, sessionId={$sessionId}, playerId={$player->id}, questId={$quest->id}, data=" . print_r($data, true));
+        return match ($eventType) {
+            'new-player' => new NewPlayerEvent($sessionId, $player, $quest),
+            'new-message' => new NewMessageEvent($sessionId, $player, $quest, $data['message'] ?? ''),
+            'start-quest' => new StartQuestEvent($sessionId, $player, $quest),
+            'game-action' => new GameActionEvent($sessionId, $player, $quest, $data['action'] ?? '', $data['actionData'] ?? []),
+            default => throw new \InvalidArgumentException("Unknown event type: $eventType"),
         };
-
-        /* Original version */
-        switch ($type) {
-            case 'new-player':
-                return new NewPlayerEvent($player, $quest);
-
-            case 'new-message':
-                return new NewMessageEvent($player, $quest, $data['message'] ?? '');
-
-            case 'start-quest':
-                return new StartQuestEvent($player, $quest);
-
-            case 'game-action':
-                return new GameActionEvent($player, $quest, $data['action'] ?? '', $data['actionData'] ?? []);
-
-            default:
-                throw new \InvalidArgumentException("Unknown event type: $type");
-        }
     }
 }

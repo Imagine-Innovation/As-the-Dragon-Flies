@@ -2,127 +2,79 @@
 
 namespace common\helpers;
 
+use common\components\AppStatus;
 use common\helpers\Utilities;
 use Yii;
 use yii\helpers\Url;
 
 class Status {
 
-    const STATUS_DELETED = 0;
-    const STATUS_INACTIVE = 9;
-    const STATUS_ACTIVE = 10;
-    const STATUS = [
-        self::STATUS_DELETED => [
-            'icon' => 'bi-x-square',
-            'tooltip' => 'Deleted, only adminstrators can restore',
-            'display' => 'Deleted',
-            'action' => 'restore',
-        ],
-        self::STATUS_INACTIVE => [
-            'icon' => 'bi-code-square',
-            'tooltip' => 'Draft or inactive. Need to be validated to be used',
-            'display' => 'Draft or inactive',
-            'action' => 'validate',
-        ],
-        self::STATUS_ACTIVE => [
-            'icon' => 'bi-caret-right-square',
-            'tooltip' => 'Validated and active',
-            'display' => 'Validated',
-            'action' => 'view',
-        ],
-    ];
-
     /**
      * Returns the string representation of a status code.
      *
-     * This function converts a given status code into its corresponding string
-     * representation.
-     * It handles several predefined status codes, providing a meaningful label
-     * for each.
-     *
-     * @param int|null $status The status code to be converted. It can be one
-     *                         of the predefined constants or null.
+     * @param int|null $statusCode The status code to be converted.
      * @return string The string representation of the status code.
-     *                If the status code is not recognized, 'Unknown' is returned.
      */
-    public static function label($status) {
-        if (is_null($status)) {
+    public static function label(int|null $statusCode = null): string {
+        if (!$statusCode) {
             return 'Undefined';
         }
 
-        return self::STATUS[$status]['display'] ?? 'Unknown';
+        return AppStatus::tryFrom($statusCode)?->label ?? 'Unknown';
     }
 
     /**
      * Generates an HTML string for displaying a status icon with a tooltip.
      *
-     * This function returns an HTML anchor element containing an icon representing
-     * the given status. The icon is displayed with a tooltip that provides
-     * additional information about the status. The function handles several
-     * predefined status codes and assigns corresponding icons and tooltips.
-     * If the status code is not recognized, it returns a default icon and tooltip.
-     *
-     * @param int|null $status The status code for which the icon and tooltip
-     *                         need to be generated. It can be one of the
-     *                         predefined constants or null.
+     * @param int|null $statusValue The status code for which the icon and tooltip need to be generated.
      * @return string The HTML string representing the status icon with a tooltip.
      */
-    public static function icon($status): string {
-        if (is_null($status)) {
-            $icon = 'bi-exclamation-square';
-            $tooltip = 'Undefined';
-        } elseif (isset(self::STATUS[$status])) {
-            $icon = self::STATUS[$status]['icon'];
-            $tooltip = self::STATUS[$status]['tooltip'];
-        } else {
-            $icon = 'bi-question-square';
-            $tooltip = 'Unknown';
-        }
+    public static function icon(int|null $statusCode = null): string {
+        $defaultIcon = ['icon' => 'bi-exclamation-square', 'tooltip' => 'Undefined'];
 
-        /*
-          return sprintf(
-          '<a title="%s" data-toggle="tooltip" data-placement="top"><i class="bi %s h5"></i></a>',
-          $tooltip,
-          $icon
-          );
-         *
-         */
-        return <<<HTML
-<a title="{$tooltip}" data-toggle="tooltip" data-placement="top">
-    <i class="bi {$icon} h5"></i>
-</a>
-HTML;
+        $icon = $statusCode ?
+                (AppStatus::tryFrom($statusCode)?->getIcon() ?? $defaultIcon) :
+                $defaultIcon;
+
+        $iconClass = $icon['icon'];
+        $tooltip = $icon['tooltip'];
+
+        return sprintf(
+                '<a title="%s" data-toggle="tooltip" data-placement="top"><i class="bi %s h5"></i></a>',
+                Utilities::encode($tooltip),
+                Utilities::encode($iconClass)
+        );
     }
 
     /**
      * Changes the status of a model.
      *
-     * This function validates the new status, updates the user's status if it
-     * is valid, and saves the changes to the database.
-     *
-     * @param \yii\db\ActiveRecord $model The model to update
-     * @param int $status The new status to be set. Must be one of
-     *                    Self::STATUS_DELETED,
-     *                    Self::STATUS_ACTIVE, or
-     *                    Self::STATUS_INACTIVE.
-     * @return bool True if the status change was successful, false otherwise.
+     * @param \yii\db\ActiveRecord $model The model to update.
+     * @param int $statusCode The new status code to be set. This should be a valid code value from AppStatus enum.
+     * @return bool True if the status change was successful (model saved), false otherwise.
      */
-    public static function changeStatus($model, $status) {
+    public static function changeStatus(\yii\db\ActiveRecord $model, int $statusCode): bool {
         // Check if the model exists
         if (!$model) {
             return false;
         }
 
-        // Check if status is valid
-        if (isset(self::STATUS[$status])) {
-            // Update the status of the user
-            $model->status = $status;
+        $className = get_class($model);
 
-            // Save the changes to the database and update the return value
-            return $model->save();
+        if (!property_exists($model, 'status')) {
+            Yii::error("Model {$className} does not have a 'status' property.", __METHOD__);
+            return false;
         }
-        // Status is invalid
-        return false;
+
+        if (!AppStatus::isValidForEntity($className, $statusCode)) {
+            $statusCase = AppStatus::tryFrom($statusCode);
+            $label = $statusCase ? $statusCase->label : 'Unknown Status';
+            Yii::error("{$label} is not a valid status for {$className} class", __METHOD__);
+            return false;
+        }
+
+        $model->status = $statusCode;
+        return $model->save();
     }
 
     /**
@@ -140,23 +92,18 @@ HTML;
      * @return string The generated HTML hyperlink or a placeholder if the model
      *                or property is invalid.
      */
-    public static function hyperlink($model, $property = 'name') {
+    public static function hyperlink($model, $property = 'name'): string {
         $controller = Utilities::modelName($model); // Get the controller name for the model
 
         $display = isset($model->$property) ?
                 Utilities::encode(empty($model->$property) ? 'Unknown' : $model->$property) :
                 '<i class="bi bi-exclamation-square"></i>';
 
-        if (
-                !$controller ||
-                !isset($model->id) ||
-                !isset($model->status) ||
-                !isset(self::STATUS[$model->status])
-        ) {
+        if (!$controller || !isset($model->id) || !property_exists($model, 'status')) {
             return $display;
         }
 
-        $route = $controller . '/view';
+        $route = "{$controller}/view";
 
         return '<a href="' . Url::toRoute([$route, 'id' => $model->id]) . '">' . $display . '</a>';
     }

@@ -46,10 +46,18 @@ class StartQuestEvent extends Event {
             $notificationPlayer->save();
         }
 
-        // Broadcast event to all connected clients
-        Yii::$app->eventHandler->broadcastToQuest(
-                $this->quest->id,
-                $this->toArray()
-        );
+        $this->broadcast();
+        /*
+          $array = $this->toArray();
+          // First, register the session for the quest
+          if (Yii::$app->eventHandler->registerSessionForQuest($this->sessionId, $array)) {
+          // Broadcast event to all connected clients
+          Yii::$app->eventHandler->broadcastToQuest(
+          $this->quest->id,
+          $array
+          );
+          }
+         *
+         */
     }
 }

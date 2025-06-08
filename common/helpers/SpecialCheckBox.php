@@ -2,7 +2,9 @@
 
 namespace common\helpers;
 
-class CheckBox {
+use frontend\widgets\CheckBox;
+
+class SpecialCheckBox {
 
     /**
      * Generates an HTML checkbox for a given role on a model.
@@ -25,28 +27,11 @@ class CheckBox {
             // Determine if the checkbox should be checked based on the model's role property
             $checked = $model->$property ? "checked" : "";
 
-            // Generate the HTML for the checkbox
-            /*
-              $html = '<div class="custom-control custom-checkbox mb-2">';
-              $html .= '<input type="checkbox" class="custom-control-input" ';
-              $html .= 'id="user-' . $role . '-' . $model->id . '" ';
-              $html .= 'onclick="UserManager.setRole(' . $model->id . ', \'' . $role . '\');" ';
-              $html .= $checked . '>';
-              $html .= '<label class="custom-control-label" for="user-' . $role . '-' . $model->id . '">';
-              $html .= '</label>';
-              $html .= '</div>';
-             *
-             */
-            $html = <<<HTML
-<div class="custom-control custom-checkbox mb-2">
-    <input type="checkbox"
-           class="custom-control-input"
-           id="user-{$role}-{$model->id}"
-           onclick="UserManager.setRole({$model->id}, '{$role}');"
-           {$checked}>
-    <label class="custom-control-label" for="user-{$role}-{$model->id}"></label>
-</div>
-HTML;
+            $html = CheckBox::widget([
+                'id' => "user-{$role}-{$model->id}",
+                'onclick' => "UserManager.setRole({$model->id}, '{$role}');",
+                'checked' => $checked
+            ]);
         } else {
             // If the role property is not set on the model, return an empty string
             $html = '';
@@ -73,29 +58,11 @@ HTML;
         if (isset($model->$access)) {
             // Determine if the checkbox should be checked based on the model's role property
             $checked = $model->$access ? "checked" : "";
-
-            // Generate the HTML for the checkbox
-            /*
-              $html = '<div class="custom-control custom-checkbox mb-2">';
-              $html .= '<input type="checkbox" class="custom-control-input" ';
-              $html .= 'id="access-right-' . $access . '-' . $model->id . '" ';
-              $html .= 'onclick="UserManager.setAccessRight(' . $model->id . ', \'' . $access . '\');" ';
-              $html .= $checked . '>';
-              $html .= '<label class="custom-control-label" for="access-right-' . $access . '-' . $model->id . '">';
-              $html .= '</label>';
-              $html .= '</div>';
-             *
-             */
-            $html = <<<HTML
-<div class="custom-control custom-checkbox mb-2">
-    <input type="checkbox"
-           class="custom-control-input"
-           id="access-right-{$access}-{$model->id}"
-           onclick="UserManager.setAccessRight({$model->id}, '{$access}');"
-           {$checked}>
-    <label class="custom-control-label" for="access-right-{$access}-{$model->id}"></label>
-</div>
-HTML;
+            $html = CheckBox::widget([
+                'id' => "access-right-{$access}-{$model->id}",
+                'onclick' => "UserManager.setAccessRight({$model->id}, '{$access}');",
+                'checked' => $checked
+            ]);
         } else {
             // If the role property is not set on the model, return an empty string
             $html = '';

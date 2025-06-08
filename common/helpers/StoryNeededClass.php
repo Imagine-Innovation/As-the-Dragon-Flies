@@ -19,6 +19,9 @@
 
 namespace common\helpers;
 
+use frontend\widgets\CheckBox;
+use common\models\Story;
+
 class StoryNeededClass {
 
     /**
@@ -26,62 +29,29 @@ class StoryNeededClass {
      * Each character class is represented as a disabled checkbox, and the checkbox is
      * marked as checked if any player in the tavern has the corresponding class.
      *
-     * @param  object $story The story object containing properties:
+     * @param  Story $story The story object containing properties:
      *                       - `id`: Unique identifier for the story.
      *                       - `classes`: Array of class objects, each with `id` and `name`.
      *                       - `tavern`: (Optional) Object containing `players` array.
      * @return string        HTML markup with checkboxes for each class in the story,
      *                       or an empty string if no classes are present.
-     *
-      public static function ClassList($story) {
-      $html = "";
-
-      if ($story->classes) {
-      $html .= '<ul class="list list--check">Expected character classes:';
-
-      foreach ($story->classes as $class) {
-      // Generate unique input ID using the story and class IDs
-      $inputId = "story" . $story->id . "-" . $class->id;
-
-      // Add a checkbox for each class, with the unique input ID
-      $html .= '<div class="custom-control custom-checkbox mb-2">';
-      $html .= '<input type="checkbox" class="custom-control-input" ';
-      $html .= 'id="' . $inputId . '" ' . self::checked($story, $class) . ' disabled>';
-      $html .= '<label class="custom-control-label" for="' . $inputId . '">' . $class->name . '</label>';
-      $html .= '</div>';
-      }
-
-      $html .= '</ul>';
-      }
-      return $html;
-      }
      */
-    public static function ClassList($story) {
+    public static function classList(Story $story): string {
         if (!$story->classes) {
             return '';
         }
 
         $checkboxes = '';
         foreach ($story->classes as $class) {
-            $inputId = "story{$story->id}-{$class->id}";
-            $checkboxes .= <<<HTML
-        <div class="custom-control custom-checkbox mb-2">
-            <input type="checkbox"
-                   class="custom-control-input"
-                   id="{$inputId}"
-                   {self::checked($story, $class)}
-                   disabled>
-            <label class="custom-control-label" for="{$inputId}">{$class->name}</label>
-        </div>
-        HTML;
+            $checkboxes .= CheckBox::widget([
+                'id' => "story{$story->id}-{$class->id}",
+                'checked' => self::checked($story, $class),
+                'disabled' => 'disabled',
+                'label' => $class->name
+            ]);
         }
 
-        return <<<HTML
-    <ul class="list list--check">
-        Expected character classes:
-        {$checkboxes}
-    </ul>
-    HTML;
+        return '<ul class="list list--check">Expected character classes:' . $checkboxes . '</ul>';
     }
 
     /**

@@ -8,8 +8,8 @@ use Yii;
  * This is the model class for table "notification".
  *
  * @property int $id Primary key
- * @property int $player_id
- * @property int $quest_id Foreign key to "quest" table
+ * @property int $player_id Foreign key to "player" table. Identify the initiator of the notification
+ * @property int|null $quest_id Foreign key to "quest" table
  * @property string $notification_type Notifcation type
  * @property string $title Notification title
  * @property string $message Notification content
@@ -18,6 +18,7 @@ use Yii;
  * @property int $created_at When the notification was created
  * @property int|null $expires_at When the notification expires (optional)
  * @property int $is_private Notification is private
+ * @property string|null $payload Notification Payload
  *
  * @property NotificationPlayer[] $notificationPlayers
  * @property Player $player
@@ -38,9 +39,9 @@ class Notification extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['player_id', 'quest_id', 'notification_type', 'message'], 'required'],
+            [['player_id', 'notification_type', 'message'], 'required'],
             [['player_id', 'quest_id', 'source_id', 'created_at', 'expires_at', 'is_private'], 'integer'],
-            [['message'], 'string'],
+            [['message', 'payload'], 'string'],
             [['notification_type', 'source_type'], 'string', 'max' => 32],
             [['title'], 'string', 'max' => 4096],
             [['player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['player_id' => 'id']],
@@ -54,7 +55,7 @@ class Notification extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'player_id' => 'Player ID',
+            'player_id' => 'Foreign key to \"player\" table. Identify the initiator of the notification',
             'quest_id' => 'Foreign key to \"quest\" table',
             'notification_type' => 'Notifcation type',
             'title' => 'Notification title',
@@ -64,6 +65,7 @@ class Notification extends \yii\db\ActiveRecord {
             'created_at' => 'When the notification was created',
             'expires_at' => 'When the notification expires (optional)',
             'is_private' => 'Notification is private',
+            'payload' => 'Notification Payload',
         ];
     }
 

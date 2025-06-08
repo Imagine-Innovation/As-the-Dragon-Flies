@@ -1,6 +1,6 @@
 <?php
 
-use common\helpers\Status;
+use common\components\AppStatus;
 use frontend\widgets\AjaxContainer;
 use frontend\widgets\BuilderOnclick;
 use frontend\widgets\BuilderTab;
@@ -145,7 +145,7 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-theme btn--icon"
-                        onclick="PlayerBuilder.setProperty('status', <?= Status::STATUS_ACTIVE ?>);$('#save-button').click();">
+                        onclick="PlayerBuilder.setProperty('status', <?= AppStatus::ACTIVE->value ?>);$('#save-button').click();">
                     <i class="bi bi-check"></i>
                 </button>
             </div>

@@ -1,5 +1,7 @@
 @Echo off
 
+color 2f
+
 set Path=C:\xampp\;C:\xampp\php;C:\xampp\perl\site\bin;C:\xampp\perl\bin;C:\xampp\apache\bin;C:\xampp\mysql\bin;C:\xampp\FileZillaFTP;C:\xampp\MercuryMail;C:\xampp\sendmail;C:\xampp\webalizer;C:\xampp\tomcat\bin;%PATH%
 set PHPRC=C:\xampp\php
 set PHP_PEAR_BIN_DIR=C:\xampp\php
@@ -14,7 +16,7 @@ set PHP_PEAR_WWW_DIR=C:\xampp\php\www
 set MIBDIRS=C:/xampp/php/extras/mibs
 set MYSQL_HOME=C:\xampp\mysql\bin
 
-c:\
+c:
 cd C:\Users\franc\OneDrive\devenv\htdocs\DnD
 cls
 

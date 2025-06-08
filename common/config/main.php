@@ -10,6 +10,24 @@ return [
         'cache' => [
             'class' => \yii\caching\FileCache::class,
         ],
+        'log' => [
+            'traceLevel' => YII_DEBUG ? 3 : 0,
+            'targets' => [
+                [
+                    'class' => 'yii\log\FileTarget',
+                    'levels' => ['error', 'warning', 'info'],
+                    'logFile' => '@runtime/logs/console.log',
+                ],
+                [
+                    'class' => 'yii\log\FileTarget',
+                    'levels' => ['info'],
+                    'categories' => ['websocket'],
+                    'logFile' => '@runtime/logs/websocket.log',
+                    'logVars' => [], // Don't log context variables
+                    'exportInterval' => 1, // Export logs immediately for real-time monitoring
+                ],
+            ],
+        ],
 //        'websocket' => [
 //            'class' => 'common\components\WebsocketServer',
 //        ],

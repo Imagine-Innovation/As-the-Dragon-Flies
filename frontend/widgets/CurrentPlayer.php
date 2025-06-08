@@ -3,6 +3,7 @@
 namespace frontend\widgets;
 
 use yii\base\Widget;
+use common\components\AppStatus;
 use common\models\Player;
 
 class CurrentPlayer extends Widget {
@@ -70,7 +71,7 @@ class CurrentPlayer extends Widget {
                         ->with(['class', 'race'])
                         ->where([
                             'user_id' => $userId,
-                            'status' => Player::STATUS_ACTIVE,
+                            'status' => AppStatus::ACTIVE->value,
                         ])
                         ->All();
     }

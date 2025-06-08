@@ -59,11 +59,33 @@ return [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [
                 [
-                    'class' => \yii\log\FileTarget::class,
-                    'levels' => ['error', 'warning'],
+                    'class' => 'yii\log\FileTarget',
+                    'levels' => ['error', 'warning', 'info'],
+                    'logFile' => '@runtime/logs/app.log',
                 ],
+                [
+                    'class' => 'yii\log\FileTarget',
+                    'levels' => ['info'],
+                    'categories' => ['websocket'],
+                    'logFile' => '@runtime/logs/websocket.log',
+                    'logVars' => [],
+                ],
+            // You can add a DbTarget to log to database
+            // or other targets as needed
             ],
         ],
+        /*
+          'log-old' => [
+          'traceLevel' => YII_DEBUG ? 3 : 0,
+          'targets' => [
+          [
+          'class' => \yii\log\FileTarget::class,
+          'levels' => ['error', 'warning'],
+          ],
+          ],
+          ],
+         *
+         */
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],

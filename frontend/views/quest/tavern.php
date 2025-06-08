@@ -1,5 +1,6 @@
 <?php
 
+use common\components\AppStatus;
 use common\models\Quest;
 use frontend\widgets\AjaxContainer;
 use yii\helpers\Html;
@@ -13,9 +14,9 @@ $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 $playerId = Yii::$app->session->get('playerId');
 ?>
-<script src="js/atdf-quest-manager.js"></script>
-<script src="js/atdf-quest-events.js"></script>
 <?php if (1 === 0): ?>
+    <script src="js/atdf-quest-manager.js"></script>
+    <script src="js/atdf-quest-events.js"></script>
     <div class="container-flex">
         <div id="questView">
             <div class="row g-4">
@@ -165,7 +166,7 @@ $playerId = Yii::$app->session->get('playerId');
                         ])
                         ?>
 
-                        <?php if ($model->status === Quest::STATUS_WAITING && $model->isInitiator($playerId)): ?>
+                        <?php if ($model->status === AppStatus::WAITING->value && $model->isInitiator($playerId)): ?>
                             <?=
                             Html::a('Start Quest', ['quest/game-action'], [
                                 'class' => 'btn btn-success',
@@ -197,15 +198,38 @@ $playerId = Yii::$app->session->get('playerId');
          NotificationHandler.executeRequest(config, '');
          *
          */
+        /*
+         const currentHost = window.location.hostname;
+         QuestEvents.init({
+         sessionId: sessionStorage.getItem("tabId") ?? null,
+         playerId: <?= $playerId ?>,
+         questId: <?= $model->id ?>,
+         serverUrl: '<?= Url::to(['quest/send-message'], true) ?>',
+         //wsUrl: 'ws://<?= Yii::$app->request->hostInfo ?>:8082'
+         wsUrl: `ws://${currentHost}:8082`,
+         wsAltUrl: `ws://localhost:8082`
+         });
+         */
+        const sessionId = NotificationClient.getSessionId();
+        // Create and initialize the notification client instance
+        // Replace these with your actual values
         const currentHost = window.location.hostname;
-        QuestEvents.init({
-            playerId: <?= $playerId ?>,
-            questId: <?= $model->id ?>,
-            serverUrl: '<?= Url::to(['quest/send-message'], true) ?>',
-            //wsUrl: 'ws://<?= Yii::$app->request->hostInfo ?>:8082'
-            wsUrl: `ws://${currentHost}:8082`,
-            wsAltUrl: `ws://localhost:8082`
-        });
+        const url = `ws://${currentHost}:8082`;
+        const playerId = <?= $playerId ?>;
+        const questId = <?= $model->id ?>;
 
+        const notificationClient = new NotificationClient(url, playerId, questId);
+        notificationClient.init();
+        /*
+         AjaxUtils.request({
+         url: 'quest/ajax-trigger-new-player-event',
+         data: {sessionId: sessionId},
+         successCallback: (response) => {
+         //ToastManager.show('New player', response.msg, response.error ? 'error' : 'info');
+         console.log(response.msg);
+         }
+         });
+         *
+         */
     });
 </script>

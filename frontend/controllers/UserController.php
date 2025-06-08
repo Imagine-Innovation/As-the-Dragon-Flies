@@ -2,10 +2,11 @@
 
 namespace frontend\controllers;
 
+use common\components\AppStatus;
+use common\components\ManageAccessRights;
+use common\helpers\Status;
 use common\models\User;
 use frontend\components\AjaxRequest;
-use common\helpers\Status;
-use common\components\ManageAccessRights;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
@@ -152,7 +153,7 @@ class UserController extends Controller {
 
     public function actionDelete($id) {
         $model = $this->findModel($id);
-        if (Status::changeStatus($model, User::STATUS_DELETED)) {
+        if (Status::changeStatus($model, AppStatus::DELETED->value)) {
             return $this->redirect(['index']);
         }
         throw new NotFoundHttpException('Could not delete this user');
@@ -160,7 +161,7 @@ class UserController extends Controller {
 
     public function actionValidate($id) {
         $model = $this->findModel($id);
-        if (Status::changeStatus($model, User::STATUS_ACTIVE)) {
+        if (Status::changeStatus($model, AppStatus::ACTIVE->value)) {
             return $this->redirect(['index']);
         }
         throw new NotFoundHttpException('Could not validate this user');
@@ -168,7 +169,7 @@ class UserController extends Controller {
 
     public function actionRestore($id) {
         $model = $this->findModel($id);
-        if (Status::changeStatus($model, User::STATUS_INACTIVE)) {
+        if (Status::changeStatus($model, AppStatus::INACTIVE->value)) {
             return $this->redirect(['index']);
         }
         throw new NotFoundHttpException('Could not restore this user');

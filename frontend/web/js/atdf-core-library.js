@@ -23,9 +23,27 @@ class Logger {
     static log(level, fx, msg) {
         if (level <= CONFIG.LOG_LEVEL) {
             const offset = level < 5 ? ' '.repeat(level * 4) : '--> ';
-            console.log(`[${this._getFullTimestamp()}] ${offset}${fx}: ${msg}`);
+            console.log(`[${this._getFullTimestamp()}] ${offset}${this._getCaller()}.${fx}: ${msg}`);
         }
     }
+
+    static _getCaller() {
+        try {
+            throw new Error();
+        } catch (err) {
+            let stack = err.stack;
+            // N.B. stack === "Error\n  at Hello ...\n  at main ... \n...."
+            let m = stack.match(/.*?log.*?\n(.*?)\n/);
+            if (m) {
+                const callingLine = m[1];
+                const startPos=callingLine.indexOf(" at ")+4;
+                const endPos=callingLine.indexOf(".");
+                const caller = callingLine.substring(startPos, endPos);
+                return caller;
+            }
+        }
+    }
+
     static _getFullTimestamp() {
         const pad = (n, s = 2) => (`${new Array(s).fill(0)}${n}`).slice(-s);
         const d = new Date();

@@ -14,14 +14,15 @@ class EventService {
      * Process an event by type
      *
      * @param string $type Event type
+     * @param string $sessionId Id of the current browser tab
      * @param Player $player Player who triggered the event
      * @param Quest $quest Quest context
      * @param array $data Additional event data
      * @return bool Whether the event was processed successfully
      */
-    public function processEvent($type, Player $player, Quest $quest, $data = []) {
+    public function processEvent(string $type, string $sessionId, Player $player, Quest $quest, array $data = []): bool {
         try {
-            $event = EventFactory::createEvent($type, $player, $quest, $data);
+            $event = EventFactory::createEvent($type, $sessionId, $player, $quest, $data);
             $event->process();
             return true;
         } catch (\Exception $e) {
@@ -56,7 +57,7 @@ class EventService {
      * @param array|int $notificationIds Array of notification IDs or single notification ID
      * @return int Number of rows updated
      */
-    public function markNotificationsAsRead(Player $player, $notificationIds) {
+    public function markNotificationsAsRead(Player $player, $notificationIds): int {
         return NotificationPlayer::updateAll(
                         [
                             'is_read' => 1,

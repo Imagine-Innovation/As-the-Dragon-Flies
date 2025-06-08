@@ -32,11 +32,20 @@ class WebSocketHandler implements MessageComponentInterface {
      * @param ConnectionInterface $conn
      */
     public function onOpen(ConnectionInterface $conn) {
+        $this->eventHandler->logStart("WebSocketHandler onOpen");
         $clientId = uniqid('client_');
+
+        // Store the client ID on the connection object for easy reference
+        $conn->clientId = $clientId;
+
+        // Map the connection resource ID to the client ID
         $this->clients[$conn->resourceId] = $clientId;
+
+        // Add the client to the event handler
         $this->eventHandler->addClient($conn, $clientId);
 
-        $this->eventHandler->log("New connection! ({$conn->remoteAddress}) assigned ID: {$clientId}\n");
+        $this->eventHandler->log("New connection! ({$conn->remoteAddress}) assigned ID: {$clientId}", $this->clients);
+        $this->eventHandler->logEnd("WebSocketHandler onOpen");
     }
 
     /**
@@ -46,14 +55,16 @@ class WebSocketHandler implements MessageComponentInterface {
      * @param string $msg
      */
     public function onMessage(ConnectionInterface $from, $msg) {
-        $clientId = $this->clients[$from->resourceId] ?? null;
+        $this->eventHandler->logStart("WebSocketHandler onMessage", $msg);
+        $clientId = $from->clientId ?? $this->clients[$from->resourceId] ?? null;
 
         if ($clientId) {
-            $this->eventHandler->log("Received message from client {$clientId}: {$msg}\n");
+            $this->eventHandler->log("Received message from client {$clientId}: {$msg}");
             $this->eventHandler->handleMessage($from, $clientId, $msg);
         } else {
-            $this->eventHandler->log("Received message from unknown client: {$msg}\n");
+            $this->eventHandler->log("Received message from unknown client: {$msg}", $from, 'warning');
         }
+        $this->eventHandler->logEnd("WebSocketHandler onMessage");
     }
 
     /**
@@ -62,15 +73,17 @@ class WebSocketHandler implements MessageComponentInterface {
      * @param ConnectionInterface $conn
      */
     public function onClose(ConnectionInterface $conn) {
-        $clientId = $this->clients[$conn->resourceId] ?? null;
+        $this->eventHandler->logStart("WebSocketHandler onClose");
+        $clientId = $conn->clientId ?? $this->clients[$conn->resourceId] ?? null;
 
         if ($clientId) {
             $this->eventHandler->removeClient($clientId);
             unset($this->clients[$conn->resourceId]);
-            $this->eventHandler->log("Connection {$clientId} has disconnected\n");
+            $this->eventHandler->log("Connection {$clientId} has disconnected", $this->clients);
         } else {
-            $this->eventHandler->log("Unknown connection has disconnected\n");
+            $this->eventHandler->log("Unknown connection has disconnected", $this->clients, 'warning');
         }
+        $this->eventHandler->logEnd("WebSocketHandler onClose");
     }
 
     /**
@@ -80,9 +93,11 @@ class WebSocketHandler implements MessageComponentInterface {
      * @param \Exception $e
      */
     public function onError(ConnectionInterface $conn, \Exception $e) {
-        $clientId = $this->clients[$conn->resourceId] ?? 'unknown';
-        $this->eventHandler->log("An error occurred with client {$clientId}: {$e->getMessage()}\n");
+        $this->eventHandler->logStart("WebSocketHandler onError");
+        $clientId = $conn->clientId ?? $this->clients[$conn->resourceId] ?? 'unknown';
+        $this->eventHandler->log("An error occurred with client {$clientId}", $e->getMessage(), 'error');
 
         $conn->close();
+        $this->eventHandler->logEnd("WebSocketHandler onError");
     }
 }

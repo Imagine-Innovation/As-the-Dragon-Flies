@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use common\components\AppStatus;
 use common\components\RuleParser;
 use common\components\RuleValidator;
 use common\models\RuleExpression;
@@ -27,10 +28,6 @@ use common\helpers\ClassName;
  */
 class Rule extends \yii\db\ActiveRecord {
 
-    const STATUS_DELETED = 0;
-    const STATUS_INACTIVE = 9;
-    const STATUS_ACTIVE = 10;
-
     private $parsingTree;
     public $errorMessage;
 
@@ -52,6 +49,8 @@ class Rule extends \yii\db\ActiveRecord {
             [['name'], 'string', 'max' => 32],
             [['definition'], 'string', 'max' => 256],
             [['definition'], RuleValidator::class],
+            ['status', 'default', 'value' => AppStatus::INACTIVE->value],
+            ['status', 'in', 'range' => AppStatus::getValuesForPlayer()],
         ];
     }
 
@@ -107,9 +106,9 @@ class Rule extends \yii\db\ActiveRecord {
     }
 
     /**
-     * 
+     *
      * Custom properties
-     * 
+     *
      */
 
     /**

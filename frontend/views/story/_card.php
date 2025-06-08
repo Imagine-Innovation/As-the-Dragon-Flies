@@ -3,6 +3,7 @@
 use common\helpers\StoryNeededClass;
 use common\helpers\StoryPlayers;
 use frontend\components\QuestOnboarding;
+use frontend\widgets\Button;
 use frontend\widgets\ModalDesc;
 use yii\helpers\Url;
 
@@ -14,16 +15,16 @@ use yii\helpers\Url;
 /** @var integer $isDesigner */
 /** @var integer $isPlayer */
 $canJoin = QuestOnboarding::canPlayerJoinQuest($player, $quest);
+
+$image = $story->image ?
+        "img/story/{$story->id}/{$story->image->file_name}" :
+        "img/sm/" . mt_rand(1, 8) . ".jpg";
 ?>
 
 <div class="card h-100">
-    <?php if (!$canJoin['denied']): ?>
-        <div class="card-header">
-            <a class="card-link" href="<?= Url::toRoute(['quest/tavern', 'storyId' => $story->id]) ?>">
-                Join the quest
-            </a>
-        </div>
-    <?php endif; ?>
+    <div class="card-header">
+        <h4 class="card-title"><?= $story->name ?></h4>
+    </div>
     <?php if ($user->is_designer): ?>
         <div class="actions">
             <a href="<?= Url::toRoute(['story/view', 'id' => $story->id]) ?>" class="actions__item position-relative">
@@ -39,26 +40,34 @@ $canJoin = QuestOnboarding::canPlayerJoinQuest($player, $quest);
         </div>
     <?php endif; ?>
 
-    <?php if ($story->image): ?>
-        <img class="card-img-top" src="img/story/<?= $story->id ?>/<?= $story->image->file_name ?>">
-    <?php else: ?>
-        <img class="card-img-top" src="img/sm/<?= mt_rand(1, 8) ?>.jpg">
-    <?php endif; ?>
+    <img class="card-img-top" src="<?= $image ?>">
 
     <div class="card-body">
-        <h4 class="card-title"><?= $story->name ?></h4>
-
-        <?php if ($user->is_player): ?>
-            <?= StoryPlayers::exists($story, $user->players); ?>
+        <?php if (!$canJoin['denied']): ?>
+            <p>
+                <?=
+                Button::widget([
+                    'route' => ['quest/join-quest', 'storyId' => $story->id],
+                    'icon' => 'bi-action-move',
+                    'title' => 'Join the quest'
+                ])
+                ?>
+            </p>
         <?php endif; ?>
 
-        <div>
-            <span class="badge badge-warning">Level <?= $story->min_level ?> to <?= $story->max_level ?></span>
-            <span class="badge badge-warning"><?= $story->min_players ?> to <?= $story->max_players ?> players</span>
+        <?php if ($user->is_player): ?>
+            <p class="lead">
+                <?= StoryPlayers::exists($story, $user->players); ?>
+            </p>
+        <?php endif; ?>
+
+        <p>
+            <span class="badge badge-info"><?= $story->requiredLevels ?></span>
+            <span class="badge badge-info"><?= $story->companySize ?></span>
             <?php if ($story->tavern): ?>
-                <span class="badge badge-warning"><?= $story->tavern->getQuestPlayers()->count() ?> partners waiting</span>
+                <span class="badge badge-info"><?= $story->tavern->getQuestPlayers()->count() ?> partners waiting</span>
             <?php endif; ?>
-        </div>
+        </p>
 
         <p class="text-muted">
             <?=

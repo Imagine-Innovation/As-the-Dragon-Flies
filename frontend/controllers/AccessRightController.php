@@ -113,17 +113,21 @@ class AccessRightController extends Controller {
         $id = $request->post('id');
         $model = AccessRight::findOne(['id' => $id]);
         if (!$model) {
-            return ['error' => true, 'msg' => "Access right id $id not found!"];
+            return ['error' => true, 'msg' => "Access right id {$id} not found!"];
         }
 
         $access = $request->post('access');
-        $status = $request->post('status');
+        $status = $request->post('status') ? 1 : 0; // Ensure status is boolean (0 or 1)
+
+        if (ManageAccessRights::isValidAttribute($access ?? 'null') === false) {
+            return ['error' => true, 'msg' => "Invalid access attribute {$access} specified."];
+        }
         $model->$access = $status;
 
         if ($model->save()) {
-            return ['error' => false, 'msg' => "Access right $access has been " . ($status == 1 ? "granted" : "revoked") . " to route $model->route"];
+            return ['error' => false, 'msg' => "Access right {$access} has been " . ($status == 1 ? "granted" : "revoked") . " to route {$model->route}"];
         }
-        return ['error' => true, 'msg' => "Unable to " . ($status == 1 ? "grant" : "revoke") . " Access right $access to route $model->route"];
+        return ['error' => true, 'msg' => "Unable to " . ($status == 1 ? "grant" : "revoke") . " Access right {$access} to route {$model->route}"];
     }
 
     /**

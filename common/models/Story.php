@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\components\AppStatus;
 use common\models\Quest;
 use Yii;
 
@@ -27,14 +28,14 @@ use Yii;
  * @property StoryTag[] $storyTags
  * @property Tag[] $tags
  * @property Tile[] $tiles
- * 
+ *
+ * ************ Custom properties
+ *
  * @property Quest $tavern
+ * @property sting $requestedLevels
+ * @property sting $companySize
  */
 class Story extends \yii\db\ActiveRecord {
-
-    const STATUS_DRAFT = 9;
-    const STATUS_PUBLISHED = 10;
-    const STATUS_ARCHIVED = 0;
 
     /**
      * {@inheritdoc}
@@ -54,6 +55,8 @@ class Story extends \yii\db\ActiveRecord {
             [['name'], 'string', 'max' => 32],
             [['name'], 'unique'],
             [['image_id'], 'exist', 'skipOnError' => true, 'targetClass' => Image::class, 'targetAttribute' => ['image_id' => 'id']],
+            ['status', 'default', 'value' => AppStatus::DRAFT->value],
+            ['status', 'in', 'range' => AppStatus::getValuesForStory()],
         ];
     }
 
@@ -167,8 +170,51 @@ class Story extends \yii\db\ActiveRecord {
     public function getTavern() {
         $quest = Quest::findOne([
             'story_id' => $this->id,
-            'status' => Quest::STATUS_WAITING
+            'status' => AppStatus::WAITING->value
         ]);
         return $quest;
+    }
+
+    /**
+     * Generate a string that describes the number of requested player levels
+     *
+     * @return string
+     */
+    public function getRequiredLevels(): string {
+        $max = $this->max_level ?? 0;
+        $min = $this->min_level ?? 0;
+        if (($min + $max) === 0) {
+            return "Undefined";
+        }
+        if ($max === 1) {
+            return "Beginner only";
+        }
+        if ($max === $min) {
+            return "Level {$min} only";
+        }
+        if (($max - $min) === 1) {
+            return "Level {$min} or {$max}";
+        }
+        return "From level {$min} to level {$max}";
+    }
+
+    /**
+     * Generate a string that describes the number of expected players
+     *
+     * @return string
+     */
+    public function getCompanySize(): string {
+        $max = $this->max_players ?? 0;
+        $min = $this->min_players ?? 0;
+        if (($min + $max) === 0) {
+            return "Undefined";
+        }
+        if ($max === 1) {
+            return "Single player";
+        }
+        if (($max - $min) === 1) {
+            return "{$min} or {$max} players";
+        }
+        return "{$min} to {$max} players";
     }
 }

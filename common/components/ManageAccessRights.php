@@ -2,6 +2,7 @@
 
 namespace common\components;
 
+use common\components\AppStatus;
 use common\models\AccessRight;
 use common\models\UserLog;
 use common\helpers\UserErrorMessage;
@@ -9,10 +10,6 @@ use Yii;
 use yii\base\Component;
 
 class ManageAccessRights extends Component {
-
-    const STATUS_DELETED = 0;
-    const STATUS_INACTIVE = 9;
-    const STATUS_ACTIVE = 10;
 
     /**
      * Store user and active player information in the current session
@@ -67,7 +64,7 @@ class ManageAccessRights extends Component {
      * @param bool $inQuest Whether the selected player is in a quest
      * @return ActiveQuery Query containing all authorized access right IDs
      */
-    public static function getEntitled($user, $hasPlayer = false, $inQuest = false) {
+    public static function getAuthorizedIds($user, $hasPlayer = false, $inQuest = false) {
 
         $accesRights = AccessRight::find()->select('id')->where(['id' => 1]);
         if ($user->is_player) {
@@ -115,6 +112,26 @@ class ManageAccessRights extends Component {
     }
 
     /**
+     * Defines if an action within a route is public, i.e. access can be granted by default
+     *
+     * @param sting $route
+     * @param string $action
+     * @return bool
+     */
+    private static function isPublic(sting $route, string $action): bool {
+        $publicSiteActions = ['error', 'login', 'captcha', 'index', 'signup',
+            'request-password-reset', 'reset-password', 'verify-email', 'resend-verification-email'];
+        // Allow access to site/error, site/login, site/captcha, site/index,
+        // site/request-password-reset, site/reset-password, site/verify-email,
+        // site/resend-verification-email, site/signup
+        // or to any ajax call (side effect, every ajax call actions should be prefixed with 'ajax'
+        return (
+                ($route === 'site' && in_array($action, $publicSiteActions)) ||
+                substr($action, 0, 4) === 'ajax'
+        );
+    }
+
+    /**
      * Checks that the requested action is authorised within the controller
      *
      * @param yii\web\Controller $controller
@@ -128,9 +145,11 @@ class ManageAccessRights extends Component {
         // Get access rights for the route
         $accessRight = AccessRight::findOne(['route' => $route, 'action' => $action]);
 
-        // If no access rights defined, grant access by default
+        // If no access rights defined, grant access to public "route/action"
         if (!$accessRight) {
-            return self::logAccess(null, false, 'success', 'Access granted by default');
+            return self::isPublic($route, $action) ?
+                    self::logAccess(null, false, 'success', 'Access granted by default to public route') :
+                    self::logAccess(null, true, 'error', 'Access denied by default; no specific AccessRight found');
         }
 
         $sessionUser = Yii::$app->session->get('user');
@@ -268,10 +287,10 @@ class ManageAccessRights extends Component {
      *
      * @param string $route
      * @param string $action
-     * @param number $status
+     * @param int $status
      * @return array type
      */
-    public static function selectActionButtons($route, $action = 'index', $status = self::STATUS_ACTIVE) {
+    public static function selectActionButtons(string $route, string $action = 'index', int $status = AppStatus::ACTIVE->value) {
 
         $actionButtons = ActionButton::find()
                         ->select(['action_button.icon', 'action_button.route', 'action_button.action', 'action_button.tooltip'])
@@ -295,5 +314,23 @@ class ManageAccessRights extends Component {
         }
 
         return $buttons;
+    }
+
+    /**
+     * Check if the attribute is valid
+     *
+     * @param string $attribute
+     * @return bool
+     */
+    public static function isValidAttribute(string $attribute): bool {
+        $allowedAttributes = [
+            'is_admin',
+            'is_designer',
+            'is_player',
+            'has_player',
+            'in_quest',
+        ];
+
+        return in_array($attribute, $allowedAttributes);
     }
 }

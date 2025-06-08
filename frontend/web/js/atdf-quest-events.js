@@ -1,412 +1,438 @@
-/**
- * Quest Events JavaScript Module
- */
-var QuestEvents = (function () {
-    var socket;
-    var isConnected;
-    var reconnectAttempts;
-    const maxReconnectAttempts = 5;
-    const reconnectDelay = 3000; // 3 seconds
-    var config = {
-        playerId: null,
-        questId: null,
-        serverUrl: '',
-        wsUrl: '',
-        wsAltUrl: ''
-    };
-
-    /**
-     * Initialize the module
-     * @param {Object} options Configuration options
-     */
-    function init(options) {
-        isConnected = false;
-        reconnectAttempts = 0;
-        config = $.extend(config, options);
-
-        if (!config.playerId || !config.questId) {
-            console.error('Player ID and Quest ID are required');
-            return;
-        }
-
-        initWebSocket();
-        initEventHandlers();
-        loadInitialData();
+class NotificationClient {
+    constructor(url, playerId, questId) {
+        this.url = url;
+        this.playerId = playerId;
+        this.questId = questId;
+        this.socket = null;
+        this.connected = false;
+        this.messageQueue = [];
+        this.eventListeners = {};
+        // Get or create a session ID using sessionStorage
+        this.sessionId = NotificationClient.getSessionId();
     }
 
     /**
-     * Initialize WebSocket connection
+     * Initialize the notification client and set up event handlers
      */
-    function initWebSocket() {
-        Logger.log(1, `initWebSocket`, `config=${JSON.stringify(config)}`);
-
-        // Close existing connection if any
-        if (socket) {
-            Logger.log(2, `initWebSocket`, `Previous socket is closed`);
-            socket.close();
-        }
-        socket = new WebSocket(config.wsUrl);
-
-        socket.onopen = function () {
-            Logger.log(2, `initWebSocket`, `onopen - WebSocket connection established`);
-            isConnected = true;
-            reconnectAttempts = 0;
-
-            // Send player registration
-            sendRegistration();
-        };
-
-        socket.onmessage = function (event) {
-            Logger.log(2, `initWebSocket`, `onmessage - Message from server: ${JSON.stringify(event.data)}`);
-            try {
-                var data = JSON.parse(event.data);
-                handleEvent(data);
-            } catch (e) {
-                console.error('Error parsing message:', e);
-            }
-        };
-
-        socket.onclose = function () {
-            Logger.log(2, `initWebSocket`, `onclose - WebSocket connection closed: ${JSON.stringify(event)}`);
-            isConnected = false;
-
-            // Attempt to reconnect
-            if (reconnectAttempts < maxReconnectAttempts) {
-                reconnectAttempts++;
-                Logger.log(2, `initWebSocket`, `onclose - Attempting to reconnect (${reconnectAttempts}/${maxReconnectAttempts})...`);
-                setTimeout(initWebSocket, reconnectDelay);
-            } else {
-                console.error('Max reconnect attempts reached. Please refresh the page.');
-            }
-        };
-
-        socket.onerror = function (error) {
-            Logger.log(2, `initWebSocket`, `onerror - WebSocket error: ${JSON.stringify(error)}`);
-            console.error('WebSocket error:', error);
-
-            // Try alternative connection if this is the first error
-            if (reconnectAttempts === 0) {
-                console.log('Trying alternative connection...');
-                setTimeout(() => {
-                    socket = new WebSocket(config.wsAltUrl);
-
-                    socket.onopen = function () {
-                        Logger.log(2, `initWebSocket`, `onerror - Connected via alternative URL ${config.wsAltUrl}!`);
-                        console.log('Connected via alternative URL!');
-                        isConnected = true;
-                        reconnectAttempts = 0;
-                        sendRegistration();
-                    };
-
-                    socket.onerror = function (altError) {
-                        console.error('Alternative connection also failed:', altError);
-                    };
-                }, 1000);
-            }
-        };
-    }
-
-    /**
-     * Initialize UI event handlers
-     */
-    function initEventHandlers() {
-        Logger.log(1, `initEventHandlers`, ``);
-        // Send message button click
-        $('#send-message').on('click', function () {
-            Logger.log(2, `initEventHandlers`, `send-message click`);
-            sendMessage();
-        });
-
-        // Enter key in message input
-        $('#message-input').on('keypress', function (e) {
-            if (e.which === 13) {
-                Logger.log(2, `initEventHandlers`, `message-input keypress CR`);
-                sendMessage();
-                return false;
-            }
-        });
-
-        // Start quest button click
-        $('#start-quest-btn').on('click', function (e) {
-            const url = $(this).attr('href');
-            Logger.log(2, `initEventHandlers`, `start-quest-btn on click, url=${url}`);
-            e.preventDefault();
-
-            $.ajax({
-                url: url,
-                type: 'POST',
-                data: {
-                    action: 'start-quest',
-                    actionData: {}
-                },
-                dataType: 'json',
-                success: function (response) {
-                    if (!response.success) {
-                        alert(response.message || 'Failed to start quest');
-                    }
-                },
-                error: function () {
-                    alert('An error occurred while trying to start the quest');
+    init() {
+        // Connect to WebSocket server
+        this.connect();
+        // Set up default event handlers
+        this.setupDefaultHandlers();
+        // Set up chat input enter key handler
+        const chatInput = document.getElementById('message-input');
+        if (chatInput) {
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    this.sendChatMessage(chatInput.value);
                 }
             });
+        }
+        // Set up mark all read button
+        const markAllReadBtn = document.getElementById('mark-all-read-btn');
+        if (markAllReadBtn) {
+            markAllReadBtn.addEventListener('click', () => {
+                this.markAllNotificationsAsRead();
+            });
+        }
+        // Set up send chat button
+        const sendChatBtn = document.getElementById('send-message');
+        if (sendChatBtn) {
+            sendChatBtn.addEventListener('click', () => {
+                const chatInput = document.getElementById('message-input');
+                if (chatInput) {
+                    this.sendChatMessage(chatInput.value);
+                }
+            });
+        }
+
+        // Clean up when the page is unloaded
+        window.addEventListener('unload', (e) => {
+            e.preventDefault();
+            this.disconnect();
+        });
+
+        return this;
+    }
+
+    /**
+     * Set up default event handlers
+     */
+    setupDefaultHandlers() {
+        // Handle connection established
+        this.on('open', () => {
+            console.log('Connection to notification server established');
+            this.updateConnectionStatus('Connected');
+        });
+
+        // Handle connection closed
+        this.on('close', () => {
+            console.log('Connection to notification server closed');
+            this.updateConnectionStatus('Disconnected - Reconnecting...');
+        });
+
+        // Handle errors
+        this.on('error', (error) => {
+            console.error('Notification error:', error);
+            this.updateConnectionStatus('Connection Error');
+        });
+
+        // Handle incoming notifications
+        this.on('notification', (data) => {
+            console.log('Received notification:', data);
+            this.displayNotification(data);
+        });
+
+        // Handle chat messages
+        this.on('chat', (data) => {
+            console.log('Received chat message:', data);
+            this.displayChatMessage(data);
+        });
+
+        // Handle other player registration
+        this.on('register', (data) => {
+            console.log('Received register message:', data);
+            this.displayChatMessage(data);
         });
     }
 
     /**
-     * Load initial chat messages and player list
+     * Connect to the WebSocket server
      */
-    function loadInitialData() {
-        // Load chat messages
-        AjaxUtils.request({
-            url: 'quest/get-messages',
-            data: {questId: config.questId},
-            successCallback: (response) => {
-                if (response.success) {
-                    response.messages.forEach(function (message) {
-                        addChatMessage(message);
-                    });
+    connect() {
+        console.log(`Connecting to WebSocket server at ${this.url}`);
+        console.log(`Player ID: ${this.playerId}, Quest ID: ${this.questId}, Session ID: ${this.sessionId}`);
 
-                    // Scroll to bottom of chat
-                    scrollChatToBottom();
-                }
+        this.socket = new WebSocket(this.url);
+
+        this.socket.onopen = () => {
+            console.log('WebSocket connection established');
+            this.connected = true;
+
+            // Register with the server, including our session ID
+            /*
+             const attachMessage = {
+             type: 'attach',
+             playerId: this.playerId,
+             questId: this.questId,
+             sessionId: this.sessionId
+             };
+             console.log('Sending attachment message:', attachMessage);
+             this.socket.send(JSON.stringify(attachMessage));
+             */
+            this.send({type: 'attach'});
+
+            // Process any queued messages
+            console.log(`Processing ${this.messageQueue.length} queued messages`);
+            while (this.messageQueue.length > 0) {
+                const message = this.messageQueue.shift();
+                console.log('Sending queued message:', message);
+                this.socket.send(JSON.stringify(message));
             }
-        });
-        /*
-        $.ajax({
-            url: 'quest/get-messages',
-            type: 'GET',
-            data: {questId: config.questId},
-            dataType: 'json',
-            success: function (response) {
-                if (response.success) {
-                    response.messages.forEach(function (message) {
-                        addChatMessage(message);
+            this.triggerEvent('open');
+            AjaxUtils.request({
+                url: 'quest/ajax-trigger-new-player-event',
+                data: {sessionId: this.sessionId},
+                successCallback: (response) => {
+                    this.send({
+                        type: 'chat',
+                        message: JSON.stringify(response.msg)
                     });
-
-                    // Scroll to bottom of chat
-                    scrollChatToBottom();
                 }
-            }
-        });
-        */
-    }
-
-    /**
-     * Send player registration to the server
-     */
-    function sendRegistration() {
-        Logger.log(1, `sendRegistration`, ``);
-        if (!isConnected) {
-            console.error('Cannot send registration: WebSocket not connected');
-            return;
-        }
-
-        const playerId = config.playerId;
-        const questId = config.questId;
-
-        if (!playerId) {
-            console.error('Cannot send registration: Player ID not found');
-            return;
-        }
-
-        const registrationData = {
-            playerId: playerId
+            });
         };
 
-        if (questId) {
-            registrationData.questId = questId;
+        this.socket.onmessage = (event) => {
+            console.log('Received message:', event.data);
+            try {
+                const data = JSON.parse(event.data);
+                this.triggerEvent('message', data);
+                // Also trigger specific event type if applicable
+                if (data.type) {
+                    this.triggerEvent(data.type, data);
+                }
+            } catch (error) {
+                console.error('Error parsing message:', error);
+                console.error('Raw message:', event.data);
+            }
+        };
+
+        this.socket.onclose = (event) => {
+            console.log('WebSocket connection closed. Code:', event.code, 'Reason:', event.reason);
+            this.connected = false;
+            this.triggerEvent('close');
+            // Attempt to reconnect after a delay
+            setTimeout(() => this.connect(), 3000);
+        };
+
+        this.socket.onerror = (error) => {
+            console.error('WebSocket error:', error);
+            this.triggerEvent('error', error);
+        };
+    }
+
+    /**
+     * Send a message to the server
+     * 
+     * @param {string} message
+     * @returns {void}
+     */
+    send(message) {
+        // Ensure all messages include the session ID, player ID, and quest ID
+        const completeMessage = {
+            ...message,
+            sessionId: this.sessionId,
+            playerId: this.playerId,
+            questId: this.questId
+        };
+
+        if (this.connected) {
+            console.log('Sending message:', completeMessage);
+            this.socket.send(JSON.stringify(completeMessage));
+            //this.socket.send(completeMessage);
+        } else {
+            console.log('Connection not ready, queueing message:', completeMessage);
+            // Queue the message to be sent when connection is established
+            this.messageQueue.push(completeMessage);
+        }
+    }
+
+    /**
+     * Register an event handler
+     * 
+     * @param {string} eventType
+     * @param {function} callback
+     * @returns {undefined}
+     */
+    on(eventType, callback) {
+        if (!this.eventListeners[eventType]) {
+            this.eventListeners[eventType] = [];
+        }
+        this.eventListeners[eventType].push(callback);
+    }
+
+    /**
+     * Trigger an event
+     * 
+     * @param {string} eventType
+     * @param {object} data
+     * @returns {undefined}
+     */
+    triggerEvent(eventType, data) {
+        if (this.eventListeners[eventType]) {
+            for (const callback of this.eventListeners[eventType]) {
+                callback(data);
+            }
+        }
+    }
+
+    /**
+     * Disconnect from the server
+     */
+    disconnect() {
+        // Clear heartbeat interval
+        if (this.heartbeatInterval) {
+            clearInterval(this.heartbeatInterval);
+        }
+        if (this.socket) {
+            this.socket.close();
+        }
+    }
+
+    /**
+     * Update the connection status indicator
+     * 
+     * @param {string} status
+     * @returns {void}
+     */
+    updateConnectionStatus(status) {
+        const statusElement = document.getElementById('chat-messages');
+        if (statusElement) {
+            statusElement.textContent = status;
+            statusElement.className = 'status-' + status.toLowerCase().replace(/\s+/g, '-');
+        }
+    }
+
+    /**
+     * Display a notification in the UI
+     * 
+     * @param {object} notification
+     * @returns {void}
+     */
+    displayNotification(notification) {
+        const container = document.getElementById('notifications-container');
+        if (!container)
+            return;
+
+        const notificationElement = document.createElement('div');
+        notificationElement.className = 'notification';
+        notificationElement.dataset.id = notification.id;
+
+        // Add 'read' class if the notification is already read
+        if (notification.is_read) {
+            notificationElement.classList.add('read');
         }
 
-        socket.send(JSON.stringify(registrationData));
-        Logger.log(1, `sendRegistration`, `Sent registration:${JSON.stringify(registrationData)}`);
+        notificationElement.innerHTML = `
+            <div class="notification-header">
+                <p>Notification</p>
+                <span class="notification-type">Type: ${notification.type}</span>
+                <span class="notification-time">Timestamp: ${notification.timestamp}</span>
+            </div>
+            <div class="notification-content">Content: ${notification.message}</div>
+            <div class="notification-actions">
+                <button class="mark-read-btn" ${notification.is_read ? 'disabled' : ''}>
+                    ${notification.is_read ? 'Read' : 'Mark as Read'}
+                </button>
+            </div>
+        `;
+
+        // Add click handler for the mark as read button
+        const markReadBtn = notificationElement.querySelector('.mark-read-btn');
+        if (markReadBtn && !notification.is_read) {
+            markReadBtn.addEventListener('click', () => {
+                this.markNotificationAsRead(notification.id);
+            });
+        }
+
+        // Add to the container
+        container.prepend(notificationElement);
+    }
+
+    /**
+     * Display notification history
+     * 
+     * @param {object} notifications
+     * @returns {void}
+     */
+    displayNotificationHistory(notifications) {
+        const container = document.getElementById('notifications-container');
+        if (!container)
+            return;
+
+        // Clear existing notifications
+        container.innerHTML = '';
+
+        // Display each notification
+        notifications.forEach(notification => {
+            this.displayNotification(notification);
+        });
+    }
+
+    /**
+     * Display a chat message
+     * 
+     * @param {object} chatData
+     * @returns {void}
+     */
+    displayChatMessage(chatData) {
+        const container = document.getElementById('chat-messages');
+        if (!container)
+            return;
+
+        const chatElement = document.createElement('div');
+        chatElement.className = 'chat-message';
+        chatElement.innerHTML = `
+            <div class="chat-header">
+                <p>Message</p>
+                <span class="chat-sender">Sender: ${chatData.sender}</span>
+                <span class="chat-time">Timestamp: ${chatData.timestamp}</span>
+            </div>
+            <div class="chat-content">Message: ${chatData.message}</div>
+        `;
+
+        // Add to the container
+        container.appendChild(chatElement);
+        // Scroll to bottom
+        container.scrollTop = container.scrollHeight;
+    }
+
+    /**
+     * Mark a notification as read
+     * 
+     * @param {int} notificationId
+     * @returns {void}
+     */
+    markNotificationAsRead(notificationId) {
+        this.send({
+            type: 'notification_update',
+            action: 'read',
+            notificationId: notificationId
+        });
+
+        // Update UI
+        const notificationElement = document.querySelector(`.notification[data-id="${notificationId}"]`);
+        if (notificationElement) {
+            notificationElement.classList.add('read');
+            const markReadBtn = notificationElement.querySelector('.mark-read-btn');
+            if (markReadBtn) {
+                markReadBtn.textContent = 'Read';
+                markReadBtn.disabled = true;
+            }
+        }
+    }
+
+    /**
+     * Mark all notifications as read
+     */
+    markAllNotificationsAsRead() {
+        this.send({
+            type: 'mark_all_read'
+        });
+
+        // Update UI
+        const notifications = document.querySelectorAll('.notification:not(.read)');
+        notifications.forEach(notification => {
+            notification.classList.add('read');
+            const markReadBtn = notification.querySelector('.mark-read-btn');
+            if (markReadBtn) {
+                markReadBtn.textContent = 'Read';
+                markReadBtn.disabled = true;
+            }
+        });
     }
 
     /**
      * Send a chat message
+     * 
+     * @param {string} message
+     * @returns {void}
      */
-    function sendMessage() {
-        var messageInput = $('#message-input');
-        var message = messageInput.val().trim();
+    sendChatMessage(message) {
+        if (!message.trim())
+            return;
 
-        if (message) {
-            AjaxUtils.request({
-                url: 'quest/send-message',
-                data: {message: message},
-                successCallback: (response) => {
-                    if (!response.success) {
-                        alert(response.message || 'Failed to send message');
-                    }
-
-                    // Clear input regardless of success
-                    messageInput.val('');
-                },
-                errorCallback: (response) => {
-                    alert('An error occurred while sending your message');
-                }
-            });
-            /*
-             $.ajax({
-             url: 'quest/send-message',
-             type: 'POST',
-             data: {message: message},
-             dataType: 'json',
-             success: function (response) {
-             if (!response.success) {
-             alert(response.message || 'Failed to send message');
-             }
-             
-             // Clear input regardless of success
-             messageInput.val('');
-             },
-             error: function () {
-             alert('An error occurred while sending your message');
-             }
-             });
-             */
-        }
-    }
-
-    /**
-     * Handle incoming events from the server
-     * @param {Object} event Event data
-     */
-    function handleEvent(event) {
-        switch (event.type) {
-            case 'new-player':
-                handleNewPlayerEvent(event);
-                break;
-
-            case 'new-message':
-                handleNewMessageEvent(event);
-                break;
-
-            case 'start-quest':
-                handleStartQuestEvent(event);
-                break;
-
-            case 'game-action':
-                handleGameActionEvent(event);
-                break;
-        }
-    }
-
-    /**
-     * Handle new player event
-     * @param {Object} event Event data
-     */
-    function handleNewPlayerEvent(event) {
-        // Add player to the player list if not already there
-        if ($('#player-list li[data-player-id="' + event.payload.playerId + '"]').length === 0) {
-            $('#player-list').append(
-                    '<li class="list-group-item" data-player-id="' + event.payload.playerId + '">' +
-                    event.payload.playerName +
-                    '</li>'
-                    );
-        }
-
-        // Add system message to chat
-        addSystemMessage(event.payload.playerName + ' has joined the quest');
-    }
-
-    /**
-     * Handle new message event
-     * @param {Object} event Event data
-     */
-    function handleNewMessageEvent(event) {
-        addChatMessage({
-            playerName: event.payload.playerName,
-            message: event.payload.message,
-            timestamp: event.payload.timestamp
+        this.send({
+            type: 'chat',
+            message: message
         });
 
-        scrollChatToBottom();
-    }
-
-    /**
-     * Handle start quest event
-     * @param {Object} event Event data
-     */
-    function handleStartQuestEvent(event) {
-        // Add system message to chat
-        addSystemMessage('The quest "' + event.payload.questName + '" has begun!');
-
-        // Redirect to quest page after a short delay
-        setTimeout(function () {
-            window.location.href = 'quest/play?id=' + event.payload.questId;
-        }, 3000);
-    }
-
-    /**
-     * Handle game action event
-     * @param {Object} event Event data
-     */
-    function handleGameActionEvent(event) {
-        switch (event.payload.action) {
-            case 'leave-quest':
-                // Remove player from the list
-                $('#player-list li[data-player-id="' + event.payload.playerId + '"]').remove();
-
-                // Add system message to chat
-                addSystemMessage(event.payload.playerName + ' has left the quest');
-                break;
-
-                // Handle other game actions as needed
-            default:
-                console.log('Unhandled game action:', event.payload.action);
-                break;
+        // Clear the input field
+        const chatInput = document.getElementById('message-input');
+        if (chatInput) {
+            chatInput.value = '';
         }
-    }
-
-    /**
-     * Add a chat message to the chat window
-     * @param {Object} message Message data
-     */
-    function addChatMessage(message) {
-        $('#chat-messages').append(
-                '<div class="message">' +
-                '<span class="timestamp">[' + message.timestamp + ']</span> ' +
-                '<span class="player-name">' + message.playerName + ':</span> ' +
-                '<span class="message-text">' + message.message + '</span>' +
-                '</div>'
-                );
-
-        scrollChatToBottom();
-    }
-
-    /**
-     * Add a system message to the chat window
-     * @param {String} message System message text
-     */
-    function addSystemMessage(message) {
-        $('#chat-messages').append(
-                '<div class="message system-message">' +
-                '<span class="timestamp">[' + formatTimestamp(new Date()) + ']</span> ' +
-                '<span class="system-text">' + message + '</span>' +
-                '</div>'
-                );
-
-        scrollChatToBottom();
-    }
-
-    /**
-     * Scroll the chat window to the bottom
-     */
-    function scrollChatToBottom() {
-        var chatMessages = $('#chat-messages');
-        chatMessages.scrollTop(chatMessages[0].scrollHeight);
     }
 
     /**
      * Format a timestamp
-     * @param {Date} date Date object
-     * @return {String} Formatted timestamp
+     * 
+     * @param {timestamp} timestamp
+     * @returns {String}
      */
-    function formatTimestamp(date) {
-        return date.toISOString().replace('T', ' ').substr(0, 19);
+    formatTimestamp(timestamp) {
+        const date = new Date(timestamp * 1000);
+        return date.toLocaleTimeString();
     }
 
-    // Public API
-    return {
-        init: init
-    };
-})();
+    // Static method to get session ID without needing an instance
+    static getSessionId() {
+        if (!sessionStorage.getItem("tabId")) {
+            const uniqueId = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+            sessionStorage.setItem("tabId", uniqueId);
+        }
+        const sessionId = sessionStorage.getItem("tabId");
+        console.log('Using session ID:', sessionId);
+        return sessionId;
+    }
+}

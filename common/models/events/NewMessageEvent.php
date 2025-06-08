@@ -4,15 +4,17 @@ namespace common\models\events;
 
 use common\models\NotificationPlayer;
 use common\models\QuestChat;
+use common\models\Quest;
+use common\models\Player;
 use Yii;
 
 class NewMessageEvent extends Event {
 
     public $message;
 
-    public function __construct($player, $quest, $message, $config = []) {
+    public function __construct(string $sessionId, Player $player, Quest $quest, string $message, array $config = []) {
         $this->message = $message;
-        parent::__construct($player, $quest, $config);
+        parent::__construct($sessionId, $player, $quest, $config);
     }
 
     public function getType(): string {
@@ -64,10 +66,18 @@ class NewMessageEvent extends Event {
             }
         }
 
-        // Broadcast event to all connected clients
-        Yii::$app->eventHandler->broadcastToQuest(
-                $this->quest->id,
-                $this->toArray()
-        );
+        $this->broadcast();
+        /*
+          $array = $this->toArray();
+          // First, register the session for the quest
+          if (Yii::$app->eventHandler->registerSessionForQuest($this->sessionId, $array)) {
+          // Broadcast event to all connected clients
+          Yii::$app->eventHandler->broadcastToQuest(
+          $this->quest->id,
+          $array
+          );
+          }
+         *
+         */
     }
 }

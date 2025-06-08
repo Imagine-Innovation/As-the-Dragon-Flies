@@ -16,13 +16,15 @@ class NewPlayerEvent extends Event {
     }
 
     public function getMessage(): string {
-        return "{$this->player->id} joined the quest";
+        return "{$this->player->name} joined the quest";
     }
 
     public function getPayload(): array {
         return [
             'playerName' => $this->player->name,
             'playerId' => $this->player->id,
+            'questName' => ($this->quest) ? $this->quest->story->name : null,
+            'questId' => ($this->quest) ? $this->quest->id : null,
             'joinedAt' => date('Y-m-d H:i:s', $this->timestamp)
         ];
     }
@@ -44,11 +46,19 @@ class NewPlayerEvent extends Event {
             }
         }
 
-        // Broadcast event to all connected clients
-        Yii::$app->eventHandler->broadcastToQuest(
-                $this->quest->id,
-                $this->toArray()
-        );
+        $this->broadcast();
+        /*
+          $array = $this->toArray();
+          // First, register the session for the quest
+          if (Yii::$app->eventHandler->registerSessionForQuest($this->sessionId, $array)) {
+          // Broadcast event to all connected clients
+          Yii::$app->eventHandler->broadcastToQuest(
+          $this->quest->id,
+          $array
+          );
+          }
+         *
+         */
 
         // Check if quest should start (max players reached)
         if (count($players) >= $this->quest->story->max_players) {

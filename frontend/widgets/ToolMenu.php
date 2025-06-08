@@ -25,20 +25,18 @@ class ToolMenu extends Widget {
 
         $hasPlayer = false;
         $inQuest = false;
-        if ($user->is_player) {
-            if ($user->current_player_id) {
-                $hasPlayer = true;
-                $inQuest = Yii::$app->session->get('questId') ? true : false;
-            }
+        if ($user->is_player && $user->current_player_id !== null) {
+            $hasPlayer = true;
+            $inQuest = Yii::$app->session->get('questId') ? true : false;
         }
 
-        $accesRightIds = ManageAccessRights::getEntitled($user, $hasPlayer, $inQuest);
+        $authorizedIds = ManageAccessRights::getAuthorizedIds($user, $hasPlayer, $inQuest);
 
-        $selectMenus = Menu::find()
+        $authorizedMenus = Menu::find()
                 ->joinWith('accessRight')
-                ->where(['access_right_id' => $accesRightIds])
+                ->where(['access_right_id' => $authorizedIds])
                 ->orderBy(['sort_order' => SORT_ASC]);
 
-        return $selectMenus->all();
+        return $authorizedMenus->all();
     }
 }

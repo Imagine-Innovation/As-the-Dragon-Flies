@@ -3,9 +3,10 @@
 namespace frontend\controllers;
 
 use Yii;
-use common\models\Story;
-use common\helpers\Status;
+use common\components\AppStatus;
 use common\components\ManageAccessRights;
+use common\helpers\Status;
+use common\models\Story;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -63,7 +64,7 @@ class StoryController extends Controller {
 
         $query = Story::find();
         if (!$user->is_designer) {
-            $query->where(['status' => Story::STATUS_PUBLISHED]);
+            $query->where(['status' => AppStatus::PUBLISHED->value]);
         }
 
         $dataProvider = new ActiveDataProvider(['query' => $query]);
@@ -134,7 +135,7 @@ class StoryController extends Controller {
      */
     public function actionDelete($id) {
         $model = $this->findModel($id);
-        if (Status::changeStatus($model, Story::STATUS_ARCHIVED)) {
+        if (Status::changeStatus($model, AppStatus::ARCHIVED->value)) {
             return $this->redirect(['index']);
         }
         throw new NotFoundHttpException('Could not delete this story');
@@ -142,7 +143,7 @@ class StoryController extends Controller {
 
     public function actionValidate($id) {
         $model = $this->findModel($id);
-        if (Status::changeStatus($model, Story::STATUS_PUBLISHED)) {
+        if (Status::changeStatus($model, AppStatus::PUBLISHED->value)) {
             return $this->redirect(['index']);
         }
         throw new NotFoundHttpException('Could not validate this story');
@@ -150,7 +151,7 @@ class StoryController extends Controller {
 
     public function actionRestore($id) {
         $model = $this->findModel($id);
-        if (Status::changeStatus($model, Story::STATUS_DRAFT)) {
+        if (Status::changeStatus($model, AppStatus::DRAFT->value)) {
             return $this->redirect(['index']);
         }
         throw new NotFoundHttpException('Could not restore this story');

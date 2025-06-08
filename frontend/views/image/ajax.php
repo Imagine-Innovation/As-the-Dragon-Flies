@@ -3,6 +3,7 @@
 use common\models\CharacterClass;
 use frontend\widgets\Pagination;
 use frontend\widgets\RecordCount;
+use frontend\widgets\CheckBox;
 
 /** @var yii\web\View $this */
 /** @var common\models\Image $models */
@@ -53,14 +54,24 @@ foreach ($models as $model) {
                             </th>
                             <?php foreach ($classes as $class): ?>
                                 <td class="text-center">
-                                    <div class="custom-control custom-checkbox mb-2">
-                                        <a href="#" title="<?= $class->name ?>" data-toggle="tooltip" data-placement="right">
-                                            <input type="checkbox" class="custom-control-input" id="image-<?= $model->id ?>-<?= $class->id ?>"
-                                                   onclick="ImageManager.setClass(<?= $model->id ?>, <?= $class->id ?>, '<?= $class->name ?>');"
-                                                   <?= $checked[$model->id][$class->id] ? "checked" : "" ?>>
-                                            <label class="custom-control-label" for="image-<?= $model->id ?>-<?= $class->id ?>"></label>
-                                        </a>
-                                    </div>
+                                    <?php if (1 === 2): ?>
+                                        <div class="custom-control custom-checkbox mb-2">
+                                            <a href="#" title="<?= $class->name ?>" data-toggle="tooltip" data-placement="right">
+                                                <input type="checkbox" class="custom-control-input" id="image-<?= $model->id ?>-<?= $class->id ?>"
+                                                       onclick="ImageManager.setClass(<?= $model->id ?>, <?= $class->id ?>, '<?= $class->name ?>');"
+                                                       <?= $checked[$model->id][$class->id] ? "checked" : "" ?>>
+                                                <label class="custom-control-label" for="image-<?= $model->id ?>-<?= $class->id ?>"></label>
+                                            </a>
+                                        </div>
+                                    <?php endif; ?>
+                                    <?=
+                                    CheckBox::widget([
+                                        'id' => "image-{$model->id}-{$class->id}",
+                                        'onclick' => "ImageManager.setClass({$model->id}, {$class->id}, '{$class->name}');",
+                                        'checked' => $checked[$model->id][$class->id] ? "checked" : "",
+                                        'title' => $class->name
+                                    ])
+                                    ?>
                                 </td>
                             <?php endforeach; ?>
                         </tr>

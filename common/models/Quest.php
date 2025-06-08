@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\components\AppStatus;
 use Yii;
 
 /**
@@ -21,16 +22,11 @@ use Yii;
  * @property QuestChat[] $questChats
  * @property QuestLog[] $questLogs
  * @property QuestPlayer[] $questPlayers
+ * @property QuestSession[] $questSessions
  * @property Story $story
  * @property UserLog[] $userLogs
  */
 class Quest extends \yii\db\ActiveRecord {
-
-    const STATUS_WAITING = 0;   // When creating a new quest, players are waiting in the tavern
-    const STATUS_PLAYING = 1;   // Quest is actually started
-    const STATUS_PAUSED = 2;    // Quest is paused. When resuming status switches to "Playing"
-    const STATUS_COMPLETED = 3; // Players reached the end of the quest
-    const STATUS_ABORTED = 9;   // Aborted on admin or owner request
 
     /**
      * {@inheritdoc}
@@ -47,6 +43,8 @@ class Quest extends \yii\db\ActiveRecord {
             [['story_id'], 'required'],
             [['story_id', 'status', 'created_at', 'started_at', 'local_time', 'elapsed_time'], 'integer'],
             [['story_id'], 'exist', 'skipOnError' => true, 'targetClass' => Story::class, 'targetAttribute' => ['story_id' => 'id']],
+            ['status', 'default', 'value' => AppStatus::WAITING->value],
+            ['status', 'in', 'range' => AppStatus::getValuesForQuest()],
         ];
     }
 
@@ -117,6 +115,15 @@ class Quest extends \yii\db\ActiveRecord {
      */
     public function getQuestPlayers() {
         return $this->hasMany(QuestPlayer::class, ['quest_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[QuestSessions]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getQuestSessions() {
+        return $this->hasMany(QuestSession::class, ['quest_id' => 'id']);
     }
 
     /**

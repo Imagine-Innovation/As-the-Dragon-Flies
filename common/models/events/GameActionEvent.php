@@ -29,8 +29,8 @@ class GameActionEvent extends Event {
      * @param string $action The action type
      * @param array $actionData Additional action data
      */
-    public function __construct(Player $player, Quest $quest, $action, $actionData = []) {
-        parent::__construct($player, $quest);
+    public function __construct(string $sessionId, Player $player, Quest $quest, $action, $actionData = []) {
+        parent::__construct($sessionId, $player, $quest);
         $this->action = $action;
         $this->actionData = $actionData;
     }

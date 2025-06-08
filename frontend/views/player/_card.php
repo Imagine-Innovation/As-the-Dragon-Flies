@@ -1,12 +1,12 @@
 <?php
 
-use common\models\Player;
+use common\components\AppStatus;
 use yii\helpers\Url;
 use frontend\widgets\PlayerCharacteristics;
 
 /** @var yii\web\View $this */
 /** @var common\models\Player $player */
-$route = $player->status == Player::STATUS_ACTIVE ? 'player/view' : 'player/update';
+$route = $player->status == AppStatus::ACTIVE->value ? 'player/view' : 'player/update';
 ?>
 
 <div class="card h-100">
@@ -21,7 +21,7 @@ $route = $player->status == Player::STATUS_ACTIVE ? 'player/view' : 'player/upda
         </div>
     </div>
 
-    <img class="card-img-top" src="img/characters/<?= $player->avatar ?>">
+    <img class="card-img-top" src="img/characters/<?= $player->avatar ?>" alt="avatar">
 
     <div class="card-body">
         <h4 class="card-title"><?= $player->name ?? "Unkown yet" ?></h4>

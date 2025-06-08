@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\components\AppStatus;
 use common\models\Image;
 use common\models\PlayerCoin;
 use Yii;
@@ -57,6 +58,7 @@ use Yii;
  * @property Quest $quest
  * @property QuestChat[] $questChats
  * @property QuestPlayer[] $questPlayers
+ * @property QuestSession[] $questSessions
  * @property Quest[] $quests
  * @property Race $race
  * @property Skill[] $skills
@@ -72,10 +74,6 @@ use Yii;
  *
  */
 class Player extends \yii\db\ActiveRecord {
-
-    const STATUS_DELETED = 0;
-    const STATUS_INACTIVE = 9;
-    const STATUS_ACTIVE = 10;
 
     /**
      * {@inheritdoc}
@@ -102,6 +100,8 @@ class Player extends \yii\db\ActiveRecord {
             [['level_id'], 'exist', 'skipOnError' => true, 'targetClass' => Level::class, 'targetAttribute' => ['level_id' => 'id']],
             [['image_id'], 'exist', 'skipOnError' => true, 'targetClass' => Image::class, 'targetAttribute' => ['image_id' => 'id']],
             [['quest_id'], 'exist', 'skipOnError' => true, 'targetClass' => Quest::class, 'targetAttribute' => ['quest_id' => 'id']],
+            ['status', 'default', 'value' => AppStatus::INACTIVE->value],
+            ['status', 'in', 'range' => AppStatus::getValuesForPlayer()],
         ];
     }
 
@@ -368,6 +368,15 @@ class Player extends \yii\db\ActiveRecord {
      */
     public function getQuestPlayers() {
         return $this->hasMany(QuestPlayer::class, ['player_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[QuestSessions]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getQuestSessions() {
+        return $this->hasMany(QuestSession::class, ['player_id' => 'id']);
     }
 
     /**
