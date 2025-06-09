@@ -7,7 +7,7 @@ use Ratchet\Http\HttpServer;
 use Ratchet\WebSocket\WsServer;
 use React\EventLoop\LoopInterface;
 use React\Socket\SocketServer;
-use common\extensions\EventHandler\MessageHandlerInterface;
+use common\extensions\EventHandler\contracts\MessageHandlerInterface; // Updated
 use common\extensions\EventHandler\LoggerService; // Added use statement
 use common\extensions\EventHandler\QuestSessionManager; // Added use statement
 use Ratchet\ConnectionInterface; // Added because it's used in addClient
@@ -69,15 +69,34 @@ class WebSocketServerManager {
         // Create an HTTP server to handle the WebSocket handshake
         $httpServer = new HttpServer($wsServer);
 
-        // Create the socket server
-        $this->socket = new SocketServer("{$host}:{$port}", [], $this->loop);
+        $this->logger->log("WebSocketServerManager: Attempting to create SocketServer on {$host}:{$port}...");
+        try {
+            $this->socket = new SocketServer("{$host}:{$port}", [], $this->loop);
+            $this->logger->log("WebSocketServerManager: SocketServer created successfully.");
+        } catch (\Throwable $e) {
+            $this->logger->log("WebSocketServerManager: Error creating SocketServer: " . $e->getMessage() . " - Trace: " . $e->getTraceAsString(), null, 'error');
+            throw $e; // Re-throw to allow higher-level handlers to catch it if needed
+        }
 
-        // Create the IO server
-        $this->server = new IoServer($httpServer, $this->socket, $this->loop);
+        $this->logger->log("WebSocketServerManager: Attempting to create IoServer...");
+        try {
+            $this->server = new IoServer($httpServer, $this->socket, $this->loop);
+            $this->logger->log("WebSocketServerManager: IoServer created successfully.");
+        } catch (\Throwable $e) {
+            $this->logger->log("WebSocketServerManager: Error creating IoServer: " . $e->getMessage() . " - Trace: " . $e->getTraceAsString(), null, 'error');
+            throw $e; // Re-throw
+        }
 
-        $this->logger->log("WebSocket server running at {$host}:{$port}"); // Use LoggerService
+        $this->logger->log("WebSocketServerManager: WebSocket server setup complete. About to start event loop...");
+        // The previous log: "$this->logger->log("WebSocket server running at {$host}:{$port}");" is functionally similar to the line above.
+        // We can keep one that indicates setup is complete before loop->run().
+        
         $this->loop->run();
-        // logEnd for server start will be in shutdown or if run completes/exits.
+        
+        // Note: Any log immediately after $this->loop->run() within THIS method 
+        // will only be hit if $this->loop->run() terminates AND execution returns here,
+        // which is the normal blocking behavior. The log in EventHandler.php after its call 
+        // to this run() method is the one that indicates the loop has stopped.
     }
 
     public function shutdown(): void {

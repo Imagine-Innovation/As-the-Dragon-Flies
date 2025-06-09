@@ -2,51 +2,58 @@
 
 namespace common\extensions\EventHandler;
 
+use common\extensions\EventHandler\contracts\BroadcastServiceInterface;
+use common\extensions\EventHandler\contracts\SpecificMessageHandlerInterface; // Updated
+use common\extensions\EventHandler\factories\BroadcastMessageFactory;
+use common\extensions\EventHandler\LoggerService;
 use Ratchet\ConnectionInterface;
-// use common\extensions\EventHandler\LoggerService;
-// use common\extensions\EventHandler\BroadcastService; // Placeholder
 
 class GameActionHandler implements SpecificMessageHandlerInterface {
 
     private LoggerService $logger;
-    private BroadcastService $broadcastService; // Updated
+    private BroadcastServiceInterface $broadcastService;
+    private BroadcastMessageFactory $messageFactory;
 
     public function __construct(
         LoggerService $logger,
-        BroadcastService $broadcastService // Added
+        BroadcastServiceInterface $broadcastService,
+        BroadcastMessageFactory $messageFactory
     ) {
         $this->logger = $logger;
         $this->broadcastService = $broadcastService;
+        $this->messageFactory = $messageFactory;
     }
 
     /**
      * Handles game action messages.
-     * Original logic from EventHandler::handleGameAction
      */
     public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
-        $this->logger->logStart("GameActionHandler: handle for sessionId=[{$sessionId}], clientId=[{$clientId}]", $data);
+        $this->logger->logStart("GameActionHandler: handle from clientId={$clientId}, sessionId={$sessionId}", $data);
 
-        $action = $data['action'] ?? 'unknown_action';
-        $this->logger->log("GameActionHandler: Received game action '{$action}' from session [{$sessionId}]", $data);
+        if (!isset($data['action_type'], $data['details'], $data['quest_id'])) {
+            $this->logger->log("GameActionHandler: Missing required data (action_type, details, quest_id).", $data, 'warning');
+            $errorDto = $this->messageFactory->createErrorMessage("Invalid game action data provided.");
+            $this->broadcastService->sendToClient($clientId, $errorDto, false, $sessionId);
+            $this->logger->logEnd("GameActionHandler: handle");
+            return;
+        }
 
-        // Use BroadcastService to send echo back
-        $this->broadcastService->sendBack($from, 'echo', $data);
+        $gameActionDto = $this->messageFactory->createGameActionMessage(
+            (string)$data['action_type'],
+            (array)$data['details']
+        );
+
+        $this->broadcastService->broadcastToQuest(
+            (int)$data['quest_id'],
+            $gameActionDto,
+            $sessionId // Exclude the sender from this broadcast
+        );
         
-        // In a real application, you would process the action based on its type and payload.
-        // For example:
-        // switch ($action) {
-        //     case 'move_player':
-        //         // ... logic to move player
-        //         break;
-        //     case 'use_item':
-        //         // ... logic to use item
-        //         break;
-        //     default:
-        //         $this->logger->log("GameActionHandler: Unknown action '{$action}'", $data, 'warning');
-        //         // $this->broadcastService->sendBack($from, 'error', "Unknown action: {$action}");
-        //         $this->logger->log("GameActionHandler: Would send 'error' for unknown action", ['clientId' => $clientId, 'action' => $action]);
-        // }
+        $this->logger->log("GameActionHandler: GameActionDto broadcasted", ['quest_id' => $data['quest_id'], 'action_type' => $data['action_type']]);
 
-        $this->logger->logEnd("GameActionHandler: handle for sessionId=[{$sessionId}]");
+        // Send an acknowledgement back to the sender client
+        $this->broadcastService->sendBack($from, 'action_ack', ['status' => 'success', 'action_type' => $data['action_type']]);
+
+        $this->logger->logEnd("GameActionHandler: handle");
     }
 }

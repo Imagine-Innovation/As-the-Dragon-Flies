@@ -2,6 +2,7 @@
 
 namespace common\extensions\EventHandler;
 
+use common\extensions\EventHandler\contracts\SpecificMessageHandlerInterface; // Updated
 use Ratchet\ConnectionInterface;
 // Assuming LoggerService, QuestSessionManager, BroadcastService will be in this namespace or properly aliased
 // use common\extensions\EventHandler\LoggerService;

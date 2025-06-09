@@ -2,81 +2,88 @@
 
 namespace common\extensions\EventHandler;
 
+use common\extensions\EventHandler\contracts\BroadcastServiceInterface;
+use common\extensions\EventHandler\contracts\SpecificMessageHandlerInterface; // Updated
+use common\extensions\EventHandler\factories\BroadcastMessageFactory;
+use common\extensions\EventHandler\NotificationService;
+use common\extensions\EventHandler\LoggerService;
 use Ratchet\ConnectionInterface;
-// use common\extensions\EventHandler\LoggerService;
-use common\extensions\EventHandler\NotificationService; // Import NotificationService
-// use common\extensions\EventHandler\BroadcastService; // Placeholder
 
 class ChatMessageHandler implements SpecificMessageHandlerInterface {
 
     private LoggerService $logger;
-    private NotificationService $notificationService; // Use NotificationService
-    private BroadcastService $broadcastService; // Updated
+    private NotificationService $notificationService;
+    private BroadcastServiceInterface $broadcastService; // Corrected type hint
+    private BroadcastMessageFactory $messageFactory;
 
     public function __construct(
         LoggerService $logger,
-        NotificationService $notificationService, // Inject NotificationService
-        BroadcastService $broadcastService // Added
+        NotificationService $notificationService,
+        BroadcastServiceInterface $broadcastService, // Corrected type hint
+        BroadcastMessageFactory $messageFactory
     ) {
         $this->logger = $logger;
         $this->notificationService = $notificationService;
         $this->broadcastService = $broadcastService;
+        $this->messageFactory = $messageFactory;
     }
 
     /**
-     * Handles chat messages.
-     * Original logic from EventHandler::handleChatMessage
+     * Handles chat messages by delegating to NotificationService to create and broadcast.
      */
     public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
         $this->logger->logStart("ChatMessageHandler: handle sessionId=[{$sessionId}], clientId=[{$clientId}]", $data);
 
         $messageText = $data['message'] ?? '';
-        $playerId = $data['playerId'] ?? null;
-        $questId = $data['questId'] ?? null;
+        // Assuming player_id is passed in $data, consistent with createNotificationAndBroadcast
+        // If 'sender_name' is also available in $data, NotificationService can use it.
+        $userId = $data['player_id'] ?? ($data['playerId'] ?? null); // Use player_id or playerId from $data
+        $questId = $data['quest_id'] ?? ($data['questId'] ?? null); // Use quest_id or questId from $data
 
-        if (empty($messageText) || $playerId === null || $questId === null) {
-            $this->logger->log("ChatMessageHandler: Missing message, playerId, or questId.", $data, 'warning');
-            // $this->broadcastService->sendToClient($from, ['type' => 'error', 'message' => 'Invalid chat message data.']);
-            $this->logger->log("ChatMessageHandler: Would send 'error' to client", ['clientId' => $clientId]);
-            $this->logger->logEnd("ChatMessageHandler: handle sessionId=[{$sessionId}]");
-            return;
-        }
-
-        // Use NotificationService to save the notification
-        // $data already contains 'message', 'playerId', 'questId', and 'type' (implicitly 'chat')
-        $notification = $this->notificationService->saveNotification((int)$playerId, (int)$questId, $data);
-
-        if (!$notification) {
-            $this->logger->log("ChatMessageHandler: Failed to save notification for chat message.", $data, 'error');
-            // $this->broadcastService->sendToClient($from, ['type' => 'error', 'message' => 'Failed to process chat message.']);
-            $this->logger->log("ChatMessageHandler: Would send 'error' to client due to notification save failure", ['clientId' => $clientId]);
+        if (empty($messageText) || $userId === null || $questId === null) {
+            $this->logger->log("ChatMessageHandler: Missing message, player_id/playerId, or quest_id/questId.", $data, 'warning');
+            // Optionally send an error DTO back to the client
+            $errorDto = $this->messageFactory->createErrorMessage('Invalid chat message data: message, player ID, or quest ID missing.');
+            $this->broadcastService->sendToClient($clientId, $errorDto, false, $sessionId);
             $this->logger->logEnd("ChatMessageHandler: handle sessionId=[{$sessionId}]");
             return;
         }
         
-        $this->logger->log("ChatMessageHandler: Notification saved, ID: " . $notification->id);
+        // Ensure 'type' is set to 'chat' if NotificationService relies on it within $data
+        $data['type'] = 'chat'; 
+        // Pass 'sender_name' if available, otherwise NotificationService will try to determine it.
+        // $data['sender_name'] = $data['sender_name'] ?? 'Player ' . $userId; // Example if needed
 
-        // Use NotificationService to prepare the message for broadcast
-        $broadcastMessageJson = $this->notificationService->prepareChatMessage($notification, $sessionId);
-        // The prepareChatMessage method already logs details and returns a JSON string.
-        // For broadcasting, we'd typically decode it if the broadcast service expects an array,
-        // or send JSON directly if it handles that.
-        $broadcastMessageArray = json_decode($broadcastMessageJson, true); 
-        
-        if (json_last_error() !== JSON_ERROR_NONE) {
-             $this->logger->log("ChatMessageHandler: Failed to decode prepared chat message for broadcasting.", ['json' => $broadcastMessageJson], 'error');
-             // Decide on error handling, perhaps send an error to the original client
-            $this->logger->logEnd("ChatMessageHandler: handle sessionId=[{$sessionId}]");
-            return;
+        // Delegate to NotificationService. It now handles DTO creation and broadcasting.
+        $notificationModel = $this->notificationService->createNotificationAndBroadcast(
+            (int)$questId,
+            $data, // Pass the whole $data array, NotificationService will extract what it needs
+            'chat', // Explicitly pass type
+            $sessionId, // excludeSessionId
+            (int)$userId
+        );
+
+        if ($notificationModel) {
+            $this->logger->log("ChatMessageHandler: Chat message processed and broadcasted via NotificationService.", ['notificationId' => $notificationModel->id]);
+            // Send an ack or the DTO back to the original sender if needed
+            // This depends on whether createNotificationAndBroadcast already handles sending to originator
+            // For now, we assume broadcastToQuest does not send to excludeSessionId, so sender needs explicit confirmation.
+            
+            // Create a DTO for the original sender for consistency (optional, depends on client needs)
+            // This step might be redundant if client optimistically displays message.
+            // However, sending the confirmed DTO ensures data consistency.
+            $senderName = $data['sender_name'] ?? $notificationModel->player->name ?? 'You';
+            $chatDto = $this->messageFactory->createChatMessage(
+                $notificationModel->message,
+                $senderName // Or a specific "You" marker if client handles it
+            );
+            $this->broadcastService->sendToConnection($from, $chatDto->toJson());
+
+        } else {
+            $this->logger->log("ChatMessageHandler: Failed to process chat message via NotificationService.", $data, 'error');
+            $errorDto = $this->messageFactory->createErrorMessage('Failed to process chat message.');
+            $this->broadcastService->sendToClient($clientId, $errorDto, false, $sessionId);
         }
-
-        $this->logger->log("ChatMessageHandler: Prepared broadcast message.", $broadcastMessageArray);
-
-        $this->broadcastService->broadcastToQuest((int)$questId, $broadcastMessageArray, $sessionId);
-
-        // Send the structured message back to the original sender for UI consistency
-        // $from->send(json_encode($broadcastMessageArray));
-        $this->broadcastService->sendToConnection($from, $broadcastMessageJson); // Send the JSON string directly
 
         $this->logger->logEnd("ChatMessageHandler: handle sessionId=[{$sessionId}]");
     }

@@ -5,7 +5,7 @@ namespace common\extensions\EventHandler;
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 // Removed: use common\extensions\EventHandler\EventHandler;
-use common\extensions\EventHandler\MessageHandlerInterface;
+use common\extensions\EventHandler\contracts\MessageHandlerInterface; // Updated
 use common\extensions\EventHandler\LoggerService;
 use common\extensions\EventHandler\WebSocketServerManager;
 

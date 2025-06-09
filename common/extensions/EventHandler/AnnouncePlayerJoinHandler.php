@@ -2,71 +2,81 @@
 
 namespace common\extensions\EventHandler;
 
+use common\extensions\EventHandler\contracts\BroadcastServiceInterface;
+use common\extensions\EventHandler\contracts\SpecificMessageHandlerInterface; // Updated
+use common\extensions\EventHandler\factories\BroadcastMessageFactory;
+use common\extensions\EventHandler\LoggerService;
 use Ratchet\ConnectionInterface;
-// use common\extensions\EventHandler\LoggerService;
-// use common\extensions\EventHandler\BroadcastService; // Placeholder
-// use common\extensions\EventHandler\NotificationService; // Placeholder for recoverMessageHistory
 
 class AnnouncePlayerJoinHandler implements SpecificMessageHandlerInterface {
 
     private LoggerService $logger;
-    private BroadcastService $broadcastService; // Updated
-    // private NotificationService $notificationService; // Placeholder - recoverMessageHistory is in BroadcastService
+    private BroadcastServiceInterface $broadcastService;
+    private BroadcastMessageFactory $messageFactory;
 
     public function __construct(
         LoggerService $logger,
-        BroadcastService $broadcastService // Added
-        /*, NotificationService $notificationService */
+        BroadcastServiceInterface $broadcastService,
+        BroadcastMessageFactory $messageFactory
     ) {
         $this->logger = $logger;
         $this->broadcastService = $broadcastService;
-        // $this->notificationService = $notificationService;
+        $this->messageFactory = $messageFactory;
     }
 
     /**
      * Handles announce_player_join messages.
-     * Original logic from EventHandler::handleAnnouncePlayerJoin
      */
     public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
-        $this->logger->logStart("AnnouncePlayerJoinHandler: handle from clientId=[{$clientId}], sessionId=[{$sessionId}]", $data);
+        $this->logger->logStart("AnnouncePlayerJoinHandler: handle for session {$sessionId}, client {$clientId}", $data);
         
-        $payload = $data['payload'] ?? null;
-        $questId = $payload['questId'] ?? null;
+        // $data is the top-level message received. 'playerName' and 'questId' should be direct keys in $data.
+        // If they are nested under a 'payload' key, adjust $data['payload']['playerName'] accordingly.
+        // Based on the new handle method in the prompt, 'playerName' and 'questId' are expected in $data directly.
+        // $playerName = $data['playerName'] ?? null; // Old way
+        // $questId = $data['questId'] ?? null; // Old way
 
-        if (!$payload || !is_numeric($questId)) {
-            $this->logger->log("AnnouncePlayerJoinHandler: Missing payload or invalid questId.", $data, 'warning');
-            // $this->broadcastService->sendToClient($from, ['type' => 'error', 'message' => 'Invalid announce_player_join message: missing payload or questId.']);
-            $this->logger->log("AnnouncePlayerJoinHandler: Would send 'error' for invalid message", ['clientId' => $clientId]);
+        if (empty($data['payload']['playerName']) || 
+            !isset($data['payload']['questId']) || $data['payload']['questId'] === '' ||
+            empty($data['payload']['questName'])) {
+            $this->logger->log("AnnouncePlayerJoinHandler: Missing playerName, questId, or questName in data['payload'].", $data, 'warning');
+            $errorDto = $this->messageFactory->createErrorMessage("Invalid player join announcement: playerName, questId, or questName missing within payload.");
+            $this->broadcastService->sendToClient($clientId, $errorDto, false, $sessionId);
             $this->logger->logEnd("AnnouncePlayerJoinHandler: handle");
             return;
         }
 
-        // The client sends data like {'playerId': ..., 'playerName': ..., 'questId': ..., 'questName': ..., 'joinedAt': ...}
-        // This entire structure is in $payload.
-        $broadcastMessage = [
-            'type' => 'new_player_joined', // This is the WebSocket message type clients will receive
-            'notificationId' => 'event_' . uniqid(), // A unique ID for this event instance
-            'triggerSessionId' => $sessionId, // The sessionId of the player whose client triggered this announcement
-            'triggerPlayerId' => $payload['playerId'] ?? null, // The playerId of the new player
-            'questId' => (int) $questId,
-            'timestamp' => time(),
-            'payload' => $payload // This nested payload contains playerName, questName, joinedAt etc.
-        ];
+        $playerName = (string)$data['payload']['playerName'];
+        $questId = (int)$data['payload']['questId'];
+        $questName = (string)$data['payload']['questName'];
 
-        $this->logger->log("AnnouncePlayerJoinHandler: Broadcasting 'new_player_joined' event for questId=[{$questId}] triggered by sessionId=[{$sessionId}]", $broadcastMessage);
-        $this->broadcastService->broadcastToQuest((int)$questId, $broadcastMessage, $sessionId);
+        $playerJoinedDto = $this->messageFactory->createPlayerJoinedMessage(
+            $playerName,
+            $sessionId,
+            $questName
+        );
 
-        // --- HISTORY RECOVERY ---
-        if ($questId) {
-            $this->logger->log("AnnouncePlayerJoinHandler: Attempting to recover message history for session [{$sessionId}] in quest [{$questId}].", $payload, 'info');
+        $this->broadcastService->broadcastToQuest(
+            $questId,
+            $playerJoinedDto,
+            $sessionId // Exclude the sender's session from this specific broadcast
+        );
+        
+        $this->logger->log("AnnouncePlayerJoinHandler: PlayerJoinedDto broadcasted", ['questId' => $questId, 'playerName' => $playerName, 'sessionId' => $sessionId, 'questName' => $questName]);
+
+        // --- HISTORY RECOVERY for the joining client ---
+        // This part remains crucial for the joining client to get recent messages.
+        if (is_numeric($questId)) { // ensure questId is valid before attempting recovery
+            $this->logger->log("AnnouncePlayerJoinHandler: Attempting to recover message history for session [{$sessionId}] in quest [{$questId}].", $data, 'info');
             $this->broadcastService->recoverMessageHistory($sessionId);
         } else {
-            $this->logger->log("AnnouncePlayerJoinHandler: Skipping message history recovery for session [{$sessionId}] due to missing questId in payload.", $payload, 'warning');
+            // This case should ideally not be reached if questId is validated above.
+            $this->logger->log("AnnouncePlayerJoinHandler: Skipping message history recovery for session [{$sessionId}] due to invalid questId (numeric check failed).", $data, 'warning');
         }
         // --- END HISTORY RECOVERY ---
 
         // Send an acknowledgement back to the sender client
-        $this->broadcastService->sendBack($from, 'ack', ['type' => 'announce_player_join_processed', 'originalPayload' => $payload]);
+        $this->broadcastService->sendBack($from, 'ack', ['type' => 'announce_player_join_processed', 'playerName' => $playerName, 'questId' => $questId, 'questName' => $questName]);
 
         $this->logger->logEnd("AnnouncePlayerJoinHandler: handle");
     }

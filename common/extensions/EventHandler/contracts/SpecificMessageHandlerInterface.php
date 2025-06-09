@@ -1,6 +1,6 @@
 <?php
 
-namespace common\extensions\EventHandler;
+namespace common\extensions\EventHandler\contracts;
 
 use Ratchet\ConnectionInterface;
 

@@ -2,6 +2,7 @@
 
 namespace common\extensions\EventHandler;
 
+use common\extensions\EventHandler\contracts\SpecificMessageHandlerInterface; // Updated
 use Ratchet\ConnectionInterface;
 // use common\extensions\EventHandler\LoggerService;
 use common\extensions\EventHandler\QuestSessionManager; // Import QuestSessionManager

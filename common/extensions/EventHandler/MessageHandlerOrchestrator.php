@@ -2,6 +2,8 @@
 
 namespace common\extensions\EventHandler;
 
+use common\extensions\EventHandler\contracts\MessageHandlerInterface; // Updated
+use common\extensions\EventHandler\contracts\SpecificMessageHandlerInterface; // Updated
 use Ratchet\ConnectionInterface;
 
 // Assuming LoggerService and BroadcastService will be in this namespace or properly aliased
