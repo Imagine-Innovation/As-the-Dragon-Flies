@@ -8,10 +8,11 @@ class PlayerJoinedDto implements BroadcastMessageInterface {
     private string $type = 'player_joined';
     private array $payload;
 
-    public function __construct(string $playerName, string $sessionId) {
+    public function __construct(string $playerName, string $sessionId, string $questName) {
         $this->payload = [
             'playerName' => $playerName,
             'sessionId' => $sessionId,
+            'questName' => $questName, // Added this line
             'timestamp' => time()
         ];
     }
