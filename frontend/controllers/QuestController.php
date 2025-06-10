@@ -68,7 +68,7 @@ class QuestController extends Controller {
                                     'join-quest', 'resume', 'send-message', 'get-messages', 'leave-quest',
                                     'ajax-tavern', 'ajax-tavern-counter',
                                     'ajax-new-message', 'ajax-get-messages',
-                                    'ajax-start', 'ajax-trigger-new-player-event',
+                                    'ajax-start', 'ajax-can-start',
                                 ],
                                 'allow' => ManageAccessRights::isRouteAllowed($this),
                                 'roles' => ['@'],
@@ -383,11 +383,11 @@ class QuestController extends Controller {
         $quest = $this->findModel($questId);
 
         if ($quest) {
-            $update = Quest::updateAll(
+            $updated = Quest::updateAll(
                     ['status' => AppStatus::PLAYING->value, 'started_at' => time()],
                     ['id' => $questId]
             );
-            if ($update) {
+            if ($updated > 0) {
                 $render = $this->render('view', ['model' => $quest]);
                 return ['error' => false, 'msg' => 'Quest is started', 'content' => $render];
             }
@@ -427,14 +427,11 @@ class QuestController extends Controller {
     }
 
     /**
-     * Retrieves latest messages for real-time chat updates
-     *
-     * Handles periodic polling for new messages in the tavern chat.
-     * Supports message grouping by timestamp.
+     * Check if the quest can start or not
      *
      * @return array JSON response with latest messages
      */
-    public function actionAjaxTriggerNewPlayerEvent() {
+    public function actionAjaxCanStart() {
         // Configure response format
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -444,37 +441,24 @@ class QuestController extends Controller {
         }
 
         // Extract request parameters
-        $player = Yii::$app->session->get('currentPlayer');
         $quest = Yii::$app->session->get('currentQuest');
-        $sessionId = Yii::$app->request->post('sessionId');
-        /*
-          $questSession = new QuestSession([
-          'id' => $sessionId,
-          'quest_id' => $quest->id,
-          'player_id' => $player->id,
-          ]);
+        $story = $quest->story;
 
-          if (!$questSession->save()) {
-          return ['error' => true, 'msg' => "Unable to link Quest {$quest->story->name} and Player {$player->name} to session {$sessionId}", 'content' => ''];
-          }
-         */
-        // Yii::debug("*** Debug *** actionAjaxTriggerNewPlayerEvent - Avant EventFactory::createEvent");
-        // $event = EventFactory::createEvent('new-player', $sessionId, $player, $quest);
-        // Yii::debug("*** Debug *** actionAjaxTriggerNewPlayerEvent - Après EventFactory::createEvent");
-        // $event->process();
-        // Yii::debug("*** Debug *** actionAjaxTriggerNewPlayerEvent - Après event->process()");
+        if ($quest->status !== AppStatus::WAITING->value) {
+            return ['can-start' => false, 'message' => "Quest {$story->name} is not in wating state."];
+        }
 
-        return [
-            'error' => false,
-            'msg' => "Player {$player->name} successfully processed for quest {$quest->story->name}. Client will now announce join via WebSocket.",
-            'data' => [
-                'playerId' => $player->id,
-                'playerName' => $player->name,
-                'questId' => $quest->id,
-                'questName' => $quest->story->name,
-                'joinedAt' => date('Y-m-d H:i:s')
-            ]
-        ];
+        $playersCount = $quest->getCurrentPlayers()->count();
+
+        if ($playersCount < $story->min_players) {
+            return ['can-start' => false, 'message' => "Quest can start once {$story->min_players} joined. Current oount is {$playersCount}"];
+        }
+
+        if (!QuestOnboarding::areRequiredClassesPresent($quest)) {
+            return ['can-start' => false, 'message' => "Missing required player classes"];
+        }
+
+        return ['can-start' => true, 'message' => "Quest can start"];
     }
 
     /**
@@ -545,7 +529,7 @@ class QuestController extends Controller {
 
         if (!$questPlayer) {
             $currentPlayerCount = count($quest->currentPlayers);
-            $success = QuestOnboarding::addQuestPlayer($quest->id, $player->id, $currentPlayerCount > 0 ? false : true);
+            $success = QuestOnboarding::newQuestPlayer($quest->id, $player->id, $currentPlayerCount > 0 ? false : true);
             if (!$success) {
                 return false;
             }

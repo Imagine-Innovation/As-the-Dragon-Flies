@@ -3,7 +3,6 @@
 namespace frontend\components;
 
 use common\components\AppStatus;
-use common\models\Quest;
 use common\models\QuestPlayer;
 use Yii;
 
@@ -18,18 +17,32 @@ class QuestOnboarding {
         "With five guys like you, it's going to be quite a team!"
     ];
 
-    public static function addQuestPlayer($questId, $playerId, $isInitiator = false) {
+    /**
+     * Add a new record to quest_player table
+     *
+     * @param int $questId
+     * @param int $playerId
+     * @param bool $isInitiator
+     * @return bool
+     */
+    public static function newQuestPlayer(int $questId, int $playerId, bool $isInitiator = false): bool {
         $questPlayer = new QuestPlayer([
             'quest_id' => $questId,
             'player_id' => $playerId,
             'onboarded_at' => time(),
-            'is_initiator' => ($isInitiator == true ? 1 : 0)
+            'is_initiator' => ($isInitiator ? 1 : 0)
         ]);
 
         return $questPlayer->save();
     }
 
-    public static function wellcomeMessage($questId) {
+    /**
+     * Returns a wellcone message for a new joiner
+     *
+     * @param int $questId
+     * @return string
+     */
+    public static function wellcomeMessage(int $questId): string {
 
         $count = self::playerCount($questId);
 
@@ -39,7 +52,15 @@ class QuestOnboarding {
         return $message;
     }
 
-    public static function canPlayerJoinQuest($player, $quest) {
+    /**
+     * Check if a player can join a quest.
+     * Returns an array with a deny status and a reason messge.
+     *
+     * @param \common\models\Player $player
+     * @param \common\models\Quest $quest
+     * @return array
+     */
+    public static function canPlayerJoinQuest(\common\models\Player $player, \common\models\Quest $quest): array {
 
         $questStatus = self::isQuestValid($player, $quest);
         if ($questStatus['error']) {
@@ -69,7 +90,15 @@ class QuestOnboarding {
         return ['denied' => false, 'reason' => "canPlayerJoinQuest->Player {$player->name} can join the quest"];
     }
 
-    private static function isQuestValid($player, $quest) {
+    /**
+     * Check if a quest is valid and if a player is willing to join it.
+     * return an array with an error status, a deny status and a reason message.
+     *
+     * @param \common\models\Player $player
+     * @param \common\models\Quest $quest
+     * @return array
+     */
+    private static function isQuestValid(\common\models\Player $player, \common\models\Quest $quest): array {
         // Check if player is selected
         if (!$player) {
             return ['error' => true, 'denied' => true, 'reason' => "isQuestValid->You must select a player first"];
@@ -91,26 +120,26 @@ class QuestOnboarding {
         return ['error' => false, 'denied' => false, 'reason' => "isQuestValid->Quest #{$quest->id} is valid quest"];
     }
 
-    public static function canStartQuest($quest) {
-        $story = $quest->story;
-        $playersCount = $quest->getCurrentPlayers()->count();
-
-        if ($playersCount < $story->min_players) {
-            return ['denied' => true, 'reason' => "canStartQuest->Quest can start once {$story->min_players} joined. Current oount is {$playersCount}"];
-        }
-
-        if (!self::areRequiredClassesPresent($quest)) {
-            return ['denied' => true, 'reason' => "canStartQuest->Missing required player classes"];
-        }
-
-        return ['denied' => false, 'reason' => "canStartQuest->Quest can start"];
-    }
-
-    private static function isPlayerLevelValid($player, $story) {
+    /**
+     * Check is the player's level is compatible with the story requirements
+     *
+     * @param \common\models\Player $player
+     * @param \common\models\Story $story
+     * @return bool
+     */
+    private static function isPlayerLevelValid(\common\models\Player $player, \common\models\Story $story): bool {
         return $player->level_id >= $story->min_level && $player->level_id <= $story->max_level;
     }
 
-    private static function shouldAllowPlayerClass($player, $quest) {
+    /**
+     * Check is the player's class is allowed with the story requirements.
+     * If nothing is specified, every class can join.
+     *
+     * @param \common\models\Player $player
+     * @param \common\models\Quest $quest
+     * @return bool
+     */
+    private static function shouldAllowPlayerClass(\common\models\Player $player, \common\models\Quest $quest): bool {
         $story = $quest->story;
         $requiredClasses = $story->classes;
 
@@ -134,28 +163,5 @@ class QuestOnboarding {
         $missingClassesCount = count(array_diff($requiredClassIds, $presentClasses));
 
         return $remainingSpots > $missingClassesCount;
-    }
-
-    private static function areRequiredClassesPresent($quest) {
-        $story = $quest->story;
-        //$requiredClasses = $story->getRequiredClasses();
-        $storyClasses = $story->storyClasses;
-
-        /*
-          if (empty($requiredClasses)) {
-          return true;
-          }
-         *
-         */
-        $requiredClasses = [];
-        foreach ($storyClasses as $storyClass) {
-            $requiredClasses[] = $storyClass->class_id;
-        }
-
-        $presentClasses = $quest->getPlayers()
-                ->select('class_id')
-                ->column();
-
-        return empty(array_diff($requiredClasses, $presentClasses));
     }
 }

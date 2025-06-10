@@ -15,8 +15,8 @@ class BroadcastMessageFactory {
         return new ChatMessageDto($message, $sender, $recipient);
     }
 
-    public function createPlayerJoinedMessage(string $playerName, string $sessionId): PlayerJoinedDto {
-        return new PlayerJoinedDto($playerName, $sessionId);
+    public function createPlayerJoinedMessage(string $playerName, string $sessionId, string $questName): PlayerJoinedDto {
+        return new PlayerJoinedDto($playerName, $sessionId, $questName);
     }
 
     public function createGameActionMessage(string $action, array $details): GameActionDto {
@@ -51,9 +51,10 @@ class BroadcastMessageFactory {
                 }
                 break;
             case 'player_joined':
-                if (isset($payload['playerName'], $payload['sessionId'])) {
-                    return new PlayerJoinedDto($payload['playerName'], $payload['sessionId']);
+                if (isset($payload['playerName'], $payload['sessionId'], $payload['questName'])) {
+                    return new PlayerJoinedDto($payload['playerName'], $payload['sessionId'], $payload['questName']);
                 }
+                // Consider adding an else or logging if payload is incomplete for this type
                 break;
             case 'game_action':
                 if (isset($payload['action'], $payload['details'])) {

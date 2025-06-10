@@ -8,11 +8,16 @@ use yii\helpers\Url;
 
 /** @var yii\web\View $this */
 /** @var common\models\Quest $model */
-$this->title = $model->story->name;
+$player = Yii::$app->session->get('currentPlayer');
+$playerId = $player->id;
+$playerName = $player->name;
+
+$questName = $model->story->name;
+
+$this->title = $questName;
 $this->params['breadcrumbs'][] = ['label' => 'Quests', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
-$playerId = Yii::$app->session->get('playerId');
 ?>
 <?php if (1 === 0): ?>
     <script src="js/atdf-quest-manager.js"></script>
@@ -37,12 +42,12 @@ $playerId = Yii::$app->session->get('playerId');
                     </div>
                 </div>
                 <div class="col-12 col-md-6">
-                    <?=
-                    $this->renderFile('@app/views/quest/_chat.php', [
-                        'questId' => $model->id,
-                        'playerId' => $playerId
-                    ])
-                    ?>
+    <?=
+    $this->renderFile('@app/views/quest/_chat.php', [
+        'questId' => $model->id,
+        'playerId' => $playerId
+    ])
+    ?>
                 </div>
             </div>
             <div class="card">
@@ -51,7 +56,7 @@ $playerId = Yii::$app->session->get('playerId');
                     <div class="actions">
                         <a class="actions__item bi-chat-left-dots" type="button" data-bs-toggle="modal" data-bs-target="#questChatModal"></a>
                     </div>
-                    <?= AjaxContainer::widget(['name' => 'questTavernPlayersContainer']) ?>
+    <?= AjaxContainer::widget(['name' => 'questTavernPlayersContainer']) ?>
                 </div>
             </div>
         </div>
@@ -145,26 +150,26 @@ $playerId = Yii::$app->session->get('playerId');
                     </div>
                     <div class="panel-body">
                         <ul id="player-list" class="list-group">
-                            <?php foreach ($model->currentPlayers as $player): ?>
+    <?php foreach ($model->currentPlayers as $player): ?>
                                 <li class="list-group-item" data-player-id="<?= $player->id ?>">
-                                    <?= Html::encode($player->name) ?>
+                                <?= Html::encode($player->name) ?>
                                     <?php if ($model->isInitiator($player->id)): ?>
                                         <span class="badge">Quest Master</span>
                                     <?php endif; ?>
                                 </li>
-                            <?php endforeach; ?>
+                                <?php endforeach; ?>
                         </ul>
                     </div>
                     <div class="panel-footer">
-                        <?=
-                        Html::a('Leave Quest', ['quest/leave-quest'], [
-                            'class' => 'btn btn-danger',
-                            'data' => [
-                                'confirm' => 'Are you sure you want to leave this quest?',
-                                'method' => 'post',
-                            ],
-                        ])
-                        ?>
+    <?=
+    Html::a('Leave Quest', ['quest/leave-quest'], [
+        'class' => 'btn btn-danger',
+        'data' => [
+            'confirm' => 'Are you sure you want to leave this quest?',
+            'method' => 'post',
+        ],
+    ])
+    ?>
 
                         <?php if ($model->status === AppStatus::WAITING->value && $model->isInitiator($playerId)): ?>
                             <?=
@@ -187,49 +192,16 @@ $playerId = Yii::$app->session->get('playerId');
 
 <script type="text/javascript">
     $(document).ready(function () {
-        /*
-         const config = {
-         route: 'quest/ajax-tavern',
-         method: 'GET',
-         placeholder: 'questTavernPlayersContainer',
-         badge: false
-         };
-
-         NotificationHandler.executeRequest(config, '');
-         *
-         */
-        /*
-         const currentHost = window.location.hostname;
-         QuestEvents.init({
-         sessionId: sessionStorage.getItem("tabId") ?? null,
-         playerId: <?= $playerId ?>,
-         questId: <?= $model->id ?>,
-         serverUrl: '<?= Url::to(['quest/send-message'], true) ?>',
-         //wsUrl: 'ws://<?= Yii::$app->request->hostInfo ?>:8082'
-         wsUrl: `ws://${currentHost}:8082`,
-         wsAltUrl: `ws://localhost:8082`
-         });
-         */
-        const sessionId = NotificationClient.getSessionId();
         // Create and initialize the notification client instance
         // Replace these with your actual values
         const currentHost = window.location.hostname;
         const url = `ws://${currentHost}:8082`;
         const playerId = <?= $playerId ?>;
+        const playerName = `<?= $playerName ?>`;
         const questId = <?= $model->id ?>;
+        const questName = `<?= $questName ?>`;
 
-        const notificationClient = new NotificationClient(url, playerId, questId);
+        const notificationClient = new NotificationClient(url, playerId, questId, playerName, questName);
         notificationClient.init();
-        /*
-         AjaxUtils.request({
-         url: 'quest/ajax-trigger-new-player-event',
-         data: {sessionId: sessionId},
-         successCallback: (response) => {
-         //ToastManager.show('New player', response.msg, response.error ? 'error' : 'info');
-         console.log(response.msg);
-         }
-         });
-         *
-         */
     });
 </script>

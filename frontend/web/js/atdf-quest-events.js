@@ -1,8 +1,10 @@
 class NotificationClient {
-    constructor(url, playerId, questId) {
+    constructor(url, playerId, questId, playerName, questName) {
         this.url = url;
         this.playerId = playerId;
         this.questId = questId;
+        this.playerName = playerName;
+        this.questName = questName;
         this.socket = null;
         this.connected = false;
         this.messageQueue = [];
@@ -95,12 +97,12 @@ class NotificationClient {
             this.displayChatMessage(data);
         });
 
-        this.on('new_player_joined', (data) => {
+        this.on('player_joined', (data) => {
             console.log('Received new_player_joined event:', data);
             if (data.payload && data.payload.playerName && data.payload.questName) {
                 // Construct the message from the payload
                 const message = `Player ${data.payload.playerName} has joined quest "${data.payload.questName}".`;
-                
+
                 // Use the existing displayChatMessage method to show it in the UI
                 this.displayChatMessage({
                     sender: 'System', // Or any other appropriate sender name
@@ -117,27 +119,16 @@ class NotificationClient {
      * Connect to the WebSocket server
      */
     connect() {
+        console.log(`----------------------------------------------`);
         console.log(`Connecting to WebSocket server at ${this.url}`);
-        console.log(`Player ID: ${this.playerId}, Quest ID: ${this.questId}, Session ID: ${this.sessionId}`);
+        console.log(`Player ID: ${this.playerId}, Player name: ${this.playerName}, Quest ID: ${this.questId}, Quest name: ${this.questName}, Session ID: ${this.sessionId}`);
 
         this.socket = new WebSocket(this.url);
 
         this.socket.onopen = () => {
             console.log('WebSocket connection established');
             this.connected = true;
-
-            // Register with the server, including our session ID
-            /*
-             const attachMessage = {
-             type: 'attach',
-             playerId: this.playerId,
-             questId: this.questId,
-             sessionId: this.sessionId
-             };
-             console.log('Sending attachment message:', attachMessage);
-             this.socket.send(JSON.stringify(attachMessage));
-             */
-            this.send({type: 'attach'});
+            this.send({type: 'register'});
 
             // Process any queued messages
             console.log(`Processing ${this.messageQueue.length} queued messages`);
@@ -146,9 +137,23 @@ class NotificationClient {
                 console.log('Sending queued message:', message);
                 this.socket.send(JSON.stringify(message));
             }
+            
             this.triggerEvent('open');
+
+            const joinedAt = new Date();
+            this.send({
+                type: 'announce_player_join',
+                payload: {
+                    playerId: this.playerId,
+                    playerName: this.playerName,
+                    questId: this.questId,
+                    questName: this.questName,
+                    joinedAt: joinedAt.toLocaleString()
+                }
+            });
+            
             AjaxUtils.request({
-                url: 'quest/ajax-trigger-new-player-event',
+                url: 'quest/ajax-can-start',
                 data: {sessionId: this.sessionId},
                 successCallback: (response) => {
                     if (response && response.error === false && response.data) {
@@ -168,6 +173,7 @@ class NotificationClient {
                     }
                 }
             });
+
         };
 
         this.socket.onmessage = (event) => {
