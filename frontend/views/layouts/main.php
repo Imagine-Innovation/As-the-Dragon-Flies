@@ -11,7 +11,7 @@ $snippet = Yii::$app->user->isGuest ? 'guest' : 'lobby';
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
-<html lang="<?= Yii::$app->language ?>" data-bs-theme="dark">
+<html lang="<?= Yii::$app->language ?>">
 
     <?= $this->renderFile('@app/views/layouts/_head.php') ?>
 
