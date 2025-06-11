@@ -39,7 +39,7 @@ $shopping = new Shopping();
                                 </a>
                                 <a href="#" class="actions__item" onclick="ShopManager.removeFromCart(<?= $model->item_id ?>, $('#cartCount-<?= $model->item_id ?>').html());">
                                     <span data-toggle="tooltip" title="Delete this item from your cart" data-placement="bottom"
-                                          <i class="bi bi-trash3"></i>
+                                          <i class="icon-trash3"></i>
                                     </span>
                                 </a>
                                 <a href="#" class="actions__item">
@@ -117,7 +117,7 @@ $shopping = new Shopping();
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-theme btn--icon" data-dismiss="modal">
-                        <i class="bi bi-x-lg"></i>
+                        <i class="icon-x-lg"></i>
                     </button>
                 </div>
             </div>

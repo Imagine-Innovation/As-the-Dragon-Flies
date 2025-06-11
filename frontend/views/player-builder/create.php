@@ -105,7 +105,7 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
                 </button>
                 &nbsp;
                 <button type="button" class="btn btn-theme btn--icon" data-dismiss="modal">
-                    <i class="bi bi-x-lg"></i>
+                    <i class="icon-x-lg"></i>
                 </button>
             </div>
         </div>

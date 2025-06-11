@@ -29,7 +29,7 @@ $currentUser = Yii::$app->user->identity;
                    data-toggle="tooltip"
                    title="Contact us"
                    data-placement="bottom">
-                    <i class="bi bi-pencil-square"></i>
+                    <i class="icon-pencil-square"></i>
                 </a>
             </li>
             <li class="dropdown top-nav__notifications">

@@ -11,7 +11,7 @@ use frontend\widgets\RecordCount;
 /** @var int $page: current page number */
 /** @var int $pageCount: nomber of pages regarding the limit of the query */
 /** @var int $limit: nomber of records to be fetched */
-$icon = '<i class="bi bi-check-lg"></i>';
+$icon = '<i class="icon-check-lg"></i>';
 $components = array();
 ?>
 <div class="card">

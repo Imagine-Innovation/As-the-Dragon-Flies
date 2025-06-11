@@ -14,7 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="login__block active" id="l-login">
 
             <div class="login__block__header">
-                <i class="bi bi-person-circle"></i>
+                <i class="icon-person-circle"></i>
 
                 <div class="actions actions--inverse login__block__actions">
                     <div class="dropdown">
@@ -73,7 +73,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     </div>
                 </div>
 
-                <?= Html::submitButton('<i class="bi bi-check"></i>', ['class' => 'btn btn-theme btn--icon', 'name' => 'login-button']) ?>
+                <?= Html::submitButton('<i class="icon-check"></i>', ['class' => 'btn btn-theme btn--icon', 'name' => 'login-button']) ?>
 
                 <?php ActiveForm::end(); ?>
             </div>

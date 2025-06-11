@@ -1,0 +1,253 @@
+/* SVG Icon Styles using CSS Masking */
+
+.icon-envelope {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    background-color: currentColor;
+    -webkit-mask-image: url(../icons/envelope.svg);
+    mask-image: url(../icons/envelope.svg);
+    -webkit-mask-size: cover;
+    mask-size: cover;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    vertical-align: text-bottom;
+}
+
+.icon-bell {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    background-color: currentColor;
+    -webkit-mask-image: url(../icons/bell.svg);
+    mask-image: url(../icons/bell.svg);
+    -webkit-mask-size: cover;
+    mask-size: cover;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    vertical-align: text-bottom;
+}
+
+.icon-person-circle {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    background-color: currentColor;
+    -webkit-mask-image: url(../icons/person-circle.svg);
+    mask-image: url(../icons/person-circle.svg);
+    -webkit-mask-size: cover;
+    mask-size: cover;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    vertical-align: text-bottom;
+}
+
+.icon-box-arrow-right {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    background-color: currentColor;
+    -webkit-mask-image: url(../icons/box-arrow-right.svg);
+    mask-image: url(../icons/box-arrow-right.svg);
+    -webkit-mask-size: cover;
+    mask-size: cover;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    vertical-align: text-bottom;
+}
+
+.icon-list {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    background-color: currentColor;
+    -webkit-mask-image: url(../icons/list.svg);
+    mask-image: url(../icons/list.svg);
+    -webkit-mask-size: cover;
+    mask-size: cover;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    vertical-align: text-bottom;
+}
+
+.icon-search {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    background-color: currentColor;
+    -webkit-mask-image: url(../icons/search.svg);
+    mask-image: url(../icons/search.svg);
+    -webkit-mask-size: cover;
+    mask-size: cover;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    vertical-align: text-bottom;
+}
+
+.icon-pencil {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    background-color: currentColor;
+    -webkit-mask-image: url(../icons/pencil.svg);
+    mask-image: url(../icons/pencil.svg);
+    -webkit-mask-size: cover;
+    mask-size: cover;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    vertical-align: text-bottom;
+}
+
+.icon-trash {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    background-color: currentColor;
+    -webkit-mask-image: url(../icons/trash.svg);
+    mask-image: url(../icons/trash.svg);
+    -webkit-mask-size: cover;
+    mask-size: cover;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    vertical-align: text-bottom;
+}
+
+.icon-eye {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    background-color: currentColor;
+    -webkit-mask-image: url(../icons/eye.svg);
+    mask-image: url(../icons/eye.svg);
+    -webkit-mask-size: cover;
+    mask-size: cover;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    vertical-align: text-bottom;
+}
+
+.icon-plus {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    background-color: currentColor;
+    -webkit-mask-image: url(../icons/plus.svg);
+    mask-image: url(../icons/plus.svg);
+    -webkit-mask-size: cover;
+    mask-size: cover;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    vertical-align: text-bottom;
+}
+
+.icon-check {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    background-color: currentColor;
+    -webkit-mask-image: url(../icons/check.svg);
+    mask-image: url(../icons/check.svg);
+    -webkit-mask-size: cover;
+    mask-size: cover;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    vertical-align: text-bottom;
+}
+
+.icon-x {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    background-color: currentColor;
+    -webkit-mask-image: url(../icons/x.svg);
+    mask-image: url(../icons/x.svg);
+    -webkit-mask-size: cover;
+    mask-size: cover;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    vertical-align: text-bottom;
+}
+
+.icon-chevron-left {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    background-color: currentColor;
+    -webkit-mask-image: url(../icons/chevron-left.svg);
+    mask-image: url(../icons/chevron-left.svg);
+    -webkit-mask-size: cover;
+    mask-size: cover;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    vertical-align: text-bottom;
+}
+
+.icon-chevron-right {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    background-color: currentColor;
+    -webkit-mask-image: url(../icons/chevron-right.svg);
+    mask-image: url(../icons/chevron-right.svg);
+    -webkit-mask-size: cover;
+    mask-size: cover;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    vertical-align: text-bottom;
+}
+
+.icon-chevron-down {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    background-color: currentColor;
+    -webkit-mask-image: url(../icons/chevron-down.svg);
+    mask-image: url(../icons/chevron-down.svg);
+    -webkit-mask-size: cover;
+    mask-size: cover;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    vertical-align: text-bottom;
+}
+
+.icon-chevron-up {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    background-color: currentColor;
+    -webkit-mask-image: url(../icons/chevron-up.svg);
+    mask-image: url(../icons/chevron-up.svg);
+    -webkit-mask-size: cover;
+    mask-size: cover;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    vertical-align: text-bottom;
+}
+
+.icon-tools {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    background-color: currentColor;
+    -webkit-mask-image: url(../icons/tools.svg);
+    mask-image: url(../icons/tools.svg);
+    -webkit-mask-size: cover;
+    mask-size: cover;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    vertical-align: text-bottom;
+}
+
+.icon-gear {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    background-color: currentColor;
+    -webkit-mask-image: url(../icons/gear.svg);
+    mask-image: url(../icons/gear.svg);
+    -webkit-mask-size: cover;
+    mask-size: cover;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    vertical-align: text-bottom;
+}

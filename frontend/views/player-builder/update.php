@@ -101,7 +101,7 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
                 </button>
                 &nbsp;
                 <button type="button" class="btn btn-theme btn--icon" data-dismiss="modal">
-                    <i class="bi bi-x-lg"></i>
+                    <i class="icon-x-lg"></i>
                 </button>
             </div>
         </div>
@@ -124,7 +124,7 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
             ?>
             <div class="modal-footer">
                 <button type="button" class="btn btn-theme btn--icon" id="exitEquipmentModal-button">
-                    <i class="bi bi-check"></i>
+                    <i class="icon-check"></i>
                 </button>
                 <button type="button" class="invisible" id="closeEquipmentModal-hiddenButton" data-dismiss="modal"></button>
             </div>
@@ -146,7 +146,7 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
             <div class="modal-footer">
                 <button type="button" class="btn btn-theme btn--icon"
                         onclick="PlayerBuilder.setProperty('status', <?= AppStatus::ACTIVE->value ?>);$('#save-button').click();">
-                    <i class="bi bi-check"></i>
+                    <i class="icon-check"></i>
                 </button>
             </div>
         </div>

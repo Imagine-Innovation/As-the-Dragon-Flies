@@ -103,7 +103,7 @@ $firstType = $itemTypes[0];
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-theme btn--icon" data-dismiss="modal">
-                        <i class="bi bi-x-lg"></i>
+                        <i class="icon-x-lg"></i>
                     </button>
                 </div>
             </div>

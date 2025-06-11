@@ -52,7 +52,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
 
                 <div class="form-group">
-                    <?= Html::submitButton('<i class="bi bi-check"></i>', ['class' => 'btn btn-theme btn--icon', 'name' => 'Send']) ?>
+                    <?= Html::submitButton('<i class="icon-check"></i>', ['class' => 'btn btn-theme btn--icon', 'name' => 'Send']) ?>
                 </div>
 
 

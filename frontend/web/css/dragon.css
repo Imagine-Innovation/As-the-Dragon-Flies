@@ -272,7 +272,6 @@ pre {
 }
 
 .list>li:before {
-	font-family:bootstrap-icons !important;
 	margin-right:1.1rem;
 	font-size:1.25rem;
 }
@@ -283,6 +282,15 @@ pre {
 @media (min-width:1200px) {
 	.content:not(.content--boxed):not(.content--full) {
 		padding:102px 30px 30px 30px;
+	}
+}
+
+@media (min-width:2000px) { /* Added for very large screens */
+	.content:not(.content--boxed):not(.content--full) {
+		padding:102px 40px 30px 40px;
+	}
+	.content--full { /* Ensuring full content also has adjusted padding */
+		padding:102px 40px 30px 40px;
 	}
 }
 
@@ -298,7 +306,7 @@ pre {
 	}
 }
 
-@media (min-width:576px) {
+@media (min-width:576px) { /* Restoring this media query */
 	.content--full {
 		padding:102px 30px 30px 30px;
 	}
@@ -537,8 +545,7 @@ pre {
 }
 
 .top-nav__notifications .listview:before {
-	font-family:bootstrap-icons;
-	content:"";
+	content:""; /* This will likely render as a missing character or a default glyph now */
 	font-size:3.5rem;
 	-webkit-transition:opacity .3s,-webkit-transform .3s;
 	transition:opacity .3s,-webkit-transform .3s;

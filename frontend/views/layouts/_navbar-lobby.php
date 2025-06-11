@@ -13,7 +13,7 @@ AppAsset::register($this);
 ?>
 <header class="header">
 
-    <div class="logo d-none d-md-inline-flex">
+    <div class="logo d-none d-md-inline-flex"> <!-- Using existing d-none and d-md-inline-flex -->
         <a href="<?= Url::toRoute(['site/index']) ?>">
             <img src="img/Dragonfly32White.png" alt="">
             <?= Caligraphy::appName() ?>
@@ -29,23 +29,23 @@ AppAsset::register($this);
         ])
         ?>
 
-        <li class="dropdown top-nav__notifications">
-            <a class="top-nav position-relative" href="#" data-toggle="dropdown">
-                <i class="bi bi-envelope"></i>
+        <li class="dropdown top-nav__notifications"> <!-- Assuming 'dropdown' and 'top-nav__notifications' are styled by dragon.css or custom -->
+            <a class="top-nav position-relative" href="#" data-toggle="dropdown"> <!-- position-relative is standard CSS -->
+                <i class="icon-envelope"></i>
                 <!--
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger text-white">
                     1
                 </span>
                 -->
             </a>
 
 
-            <div class="dropdown-menu dropdown-menu-right dropdown-menu--block">
+            <div class="dropdown-menu dropdown-menu-end dropdown-menu--block"> <!-- Replaced dropdown-menu-right with dropdown-menu-end -->
                 <div class="dropdown-header">
                     Messages
 
                     <div class="actions">
-                        <a class="actions__item bi-envelope" href="<?= Url::toRoute(['site/index']) ?>"></a>
+                        <a class="actions__item icon-envelope" href="<?= Url::toRoute(['site/index']) ?>"></a>
                     </div>
                 </div>
 
@@ -81,20 +81,20 @@ AppAsset::register($this);
             </div>
         </li>
 
-        <li id="notificationDropdown" class="dropdown top-nav__notifications">
-            <a href="#" data-toggle="dropdown">
-                <i class="bi bi-bell"></i>
-                <span id="notificationCounter" class="d-none position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+        <li id="notificationDropdown" class="dropdown top-nav__notifications"> <!-- Assuming 'dropdown' and 'top-nav__notifications' are styled by dragon.css or custom -->
+            <a href="#" data-toggle="dropdown" class="position-relative"> <!-- Added position-relative for badge positioning -->
+                <i class="icon-bell"></i>
+                <span id="notificationCounter" class="d-none position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger text-white">
                     0
                 </span>
             </a>
 
-            <div class="dropdown-menu dropdown-menu-right dropdown-menu--block">
+            <div class="dropdown-menu dropdown-menu-end dropdown-menu--block"> <!-- Replaced dropdown-menu-right with dropdown-menu-end -->
                 <div class="dropdown-header">
                     Notifications
 
                     <div class="actions">
-                        <a class="actions__item bi-bell" href="<?= Url::toRoute(['site/index']) ?>" data-sa-action="notifications-clear"></a>
+                        <a class="actions__item icon-bell" href="<?= Url::toRoute(['site/index']) ?>" data-sa-action="notifications-clear"></a>
                     </div>
                 </div>
 
@@ -111,14 +111,14 @@ AppAsset::register($this);
         <li class="dropdown top-nav__notifications">
             <a href="<?= Url::toRoute(['site/about']) ?>"
                data-toggle="tooltip" title="<?= $currentUser->username ?> user profile" data-placement="bottom">
-                <i class="bi bi-person-circle"></i>
+                <i class="icon-person-circle"></i>
             </a>
         </li>
 
         <li class="dropdown top-nav__notifications">
             <a href="#" data-toggle="tooltip" title="Logout" data-placement="bottom"
                onclick="$('#logoutForm').submit();">
-                <i class="bi bi-box-arrow-right"></i>
+                <i class="icon-box-arrow-right"></i>
                 <form action="<?= Url::toRoute(['site/logout']) ?>" id="logoutForm" method="post">
                     <input type="hidden"
                            name="<?= Yii::$app->request->csrfParam ?>"

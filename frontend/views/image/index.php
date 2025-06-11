@@ -105,7 +105,7 @@ $this->renderFile('@app/views/layouts/_ajax.php', [
             <div class="modal-footer">
                 <button type="button" class="btn btn-theme btn--icon"
                         onclick="ImageManager.upload();">
-                    <i class="bi bi-check"></i>
+                    <i class="icon-check"></i>
                 </button>
             </div>
         </div>

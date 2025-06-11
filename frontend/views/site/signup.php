@@ -12,16 +12,16 @@ $this->title = 'Signup';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
-<section class="vh-100">
-    <div class="container py-5 h-100">
-        <div class="row d-flex justify-content-center h-100">
-            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-                <div class="card" style="border-radius: 2rem;background-color: rgba(20,20,20,.85);">
-                    <div class="card-body p-5">
+<section class="vh-100"> <!-- vh-100 covered -->
+    <div class="container py-5 h-100"> <!-- container, py-5, h-100 covered -->
+        <div class="row d-flex justify-content-center h-100"> <!-- row, d-flex, justify-content-center, h-100 covered -->
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5"> <!-- col-* covered -->
+                <div class="card" style="border-radius: 2rem;background-color: rgba(20,20,20,.85);"> <!-- card covered -->
+                    <div class="card-body p-5"> <!-- card-body, p-5 covered -->
 
-                        <div class="mb-md-5 mt-md-4 pb-5">
+                        <div class="mb-5 mt-4 pb-5"> <!-- mb-md-5 -> mb-5, mt-md-4 -> mt-4. pb-5 covered -->
 
-                            <h2 class="mb-2">
+                            <h2 class="mb-2"> <!-- mb-2 covered -->
                                 <img src="img/Dragonfly32White.png" alt="Logo">
                                 <?= Caligraphy::appName() ?>
                             </h2>
@@ -75,14 +75,14 @@ $this->params['breadcrumbs'][] = $this->title;
                             <div class="form-group">
                                 <?=
                                 Html::submitButton('<img src="img/Dragonfly.svg" style="height:32px;" alt=""> Signup', [
-                                    'class' => 'form-control btn btn-lg btn-warning text-decoration',
+                                    'class' => 'form-control btn btn-lg btn-warning text-decoration', // btn, btn-lg, btn-warning, text-decoration (dragon.css)
                                     'name' => 'signup-button'
                                 ])
                                 ?>
                             </div>
-                            <p class="mb-0">
+                            <p class="mb-0"> <!-- mb-0 covered -->
                                 Already have an account?
-                                <a class="fw-bold" href="<?= Url::toRoute(['site/login']) ?>">Login</a>
+                                <a class="fw-bold" href="<?= Url::toRoute(['site/login']) ?>">Login</a> <!-- fw-bold covered -->
                             </p>
                             <?php ActiveForm::end(); ?>
                         </div>

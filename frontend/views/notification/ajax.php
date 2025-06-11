@@ -37,7 +37,7 @@ use frontend\widgets\RecordCount;
                             <td><?= $model->sender->name ?></td>
                             <td class="text-center"><?= Yii::$app->formatter->asDateTime($model->created_at, 'dd/MM/yyyy HH:mm') ?></td>
                             <td><?= $model->message ?></td>
-                            <td><?= $model->acknowledged ? '<i class="bi bi-check-lg"></i>' : '&nbsp;' ?></td>
+                            <td><?= $model->acknowledged ? '<i class="icon-check-lg"></i>' : '&nbsp;' ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>

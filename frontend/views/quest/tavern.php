@@ -66,7 +66,7 @@ $playerId = Yii::$app->session->get('playerId');
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-theme btn--icon" data-bs-dismiss="modal">
-                            <i class="bi bi-x-square"></i>
+                            <i class="icon-x-square"></i>
                         </button>
                     </div>
                 </div>

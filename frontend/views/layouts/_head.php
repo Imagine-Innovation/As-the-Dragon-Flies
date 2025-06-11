@@ -28,6 +28,7 @@ $webRoot = Url::base();
     <script src="js/popper.min.js"></script>
 
     <link rel="stylesheet" href="css/bootstrap-replacement.css">
+    <link rel="stylesheet" href="css/icons.css"> /* New icon CSS */
     <link rel="stylesheet" href="css/dnd-icons.css">
     <link rel="stylesheet" href="css/fonts.css">
     <link rel="stylesheet" href="css/dragon.css">
