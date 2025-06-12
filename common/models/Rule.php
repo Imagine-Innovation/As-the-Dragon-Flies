@@ -15,6 +15,7 @@ use common\helpers\ClassName;
  *
  * @property int $id Primary key.
  * @property string $name Name of the rule
+ * @property string $trigger_name Name of the trigger that activates this rule
  * @property string $definition A text description of the rule in human readable terms
  * @property string|null $description Any additional explanations
  * @property int $status Status of the rule (Deleted=0, Inactive=9, Active=10)
@@ -43,10 +44,11 @@ class Rule extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['name', 'definition'], 'required'],
+            [['name', 'definition', 'trigger_name'], 'required'],
             [['description'], 'string'],
             [['status', 'created_at', 'updated_at'], 'integer'],
             [['name'], 'string', 'max' => 32],
+            [['trigger_name'], 'string', 'max' => 64],
             [['definition'], 'string', 'max' => 256],
             [['definition'], RuleValidator::class],
             ['status', 'default', 'value' => AppStatus::INACTIVE->value],
@@ -61,6 +63,7 @@ class Rule extends \yii\db\ActiveRecord {
         return [
             'id' => 'Primary key.',
             'name' => 'Name of the rule',
+            'trigger_name' => 'Trigger Name',
             'definition' => 'A text description of the rule in human readable terms',
             'description' => 'Any additional explanations',
             'status' => 'Status of the rule (Deleted=0, Inactive=9, Active=10)',
@@ -139,7 +142,10 @@ class Rule extends \yii\db\ActiveRecord {
 
             // Set the error message from the parser.
             $this->errorMessage = $parser->errorMessage;
+        } else {
+            $this->errorMessage = 'Rule definition is empty.';
         }
+
 
         // Return whether the rule definition is valid.
         return $match;
@@ -154,18 +160,24 @@ class Rule extends \yii\db\ActiveRecord {
      * the method returns true. If the rule definition is invalid or the save
      * operation fails, the method throws an exception.
      *
-     * @throws Exception if the rule model is missing or the rule definition is invalid.
+     * @throws \Exception if the rule model is missing or the rule definition is invalid.
      * @return bool Whether the save operation is successful (true) or not.
      */
     public function saveRuleDefinition() {
-        // Check if there is an error message indicating a missing rule model.
-        if ($this->errorMessage !== "") {
+        // Check if there is an error message indicating a missing rule model or invalid definition.
+        if (!empty($this->errorMessage)) {
             // Log the error message for debugging purposes.
-            Yii::debug("*** Debug *** saveRuleDefinition => ERROR: $this->errorMessage", __METHOD__);
+            Yii::error("saveRuleDefinition validation failed: {$this->errorMessage}", __METHOD__);
 
-            // If there is an error message, throw an exception indicating a missing rule model.
-            throw new Exception('Missing Rule model');
+            // If there is an error message, throw an exception.
+            throw new \Exception('Rule definition is invalid or Rule model is missing: ' . $this->errorMessage);
         }
+
+        if (!$this->parsingTree) {
+             Yii::error("Parsing tree is empty, cannot save rule definition.", __METHOD__);
+             throw new \Exception('Parsing tree is empty, cannot save rule definition.');
+        }
+
 
         // Save the parsing tree with the rule ID.
         // The saveParsingTree method is expected to handle the actual saving process.
@@ -184,8 +196,13 @@ class Rule extends \yii\db\ActiveRecord {
      * @param int $ruleId The ID of the rule associated with the parsing tree.
      * @param int|null $parentId The ID of the parent node in the parsing tree (optional).
      * @return bool Whether the save operation is successful (true) or not.
+     * @throws \Exception If expression type is missing or invalid.
      */
     private function saveParsingTree($expression, $ruleId, $parentId = null) {
+        if (!isset($expression['type'])) {
+            Yii::error("Expression type is missing in parsing tree node.", __METHOD__);
+            throw new \Exception("Invalid parsing tree structure: expression type is missing.");
+        }
         // Initialize the save status to false
         $saveStatus = false;
 
@@ -195,6 +212,10 @@ class Rule extends \yii\db\ActiveRecord {
             case 'condition':
                 // If parent ID is not provided, create a new root rule expression
                 $parentId = $parentId ?? $this->newRuleExpression($ruleId, null);
+                 if (!$parentId) {
+                    Yii::error("Failed to create new RuleExpression for condition.", __METHOD__);
+                    return false; // Cannot proceed without a parent expression ID
+                }
                 // Save the rule condition and update the save status
                 $saveStatus = $this->saveRuleCondition($expression['node'], $ruleId, $parentId);
                 break;
@@ -219,6 +240,7 @@ class Rule extends \yii\db\ActiveRecord {
 
             // If the expression type is not recognized, do nothing (saveStatus remains false)
             default:
+                Yii::warning("Unknown expression type: {$expression['type']}", __METHOD__);
                 // Optionally log or handle unknown expression types here
                 break;
         }
@@ -394,9 +416,13 @@ class Rule extends \yii\db\ActiveRecord {
      *
      * @param string $component the component string (model and attribute/method)
      * @return RuleModel the retrieved or created RuleModel instance
-     * @throws Exception if failed to save the RuleModel model
+     * @throws \Exception if failed to save the RuleModel model or component string is invalid
      */
     private function getRuleModel($component) {
+        if (empty($component) || !is_string($component)) {
+            Yii::error("Component string is empty or invalid.", __METHOD__);
+            throw new \Exception('Component string cannot be empty.');
+        }
         // Split the field name into model and attribute/method parts
         $parts = explode('->', $component, 2);
         $modelName = $parts[0];
@@ -421,7 +447,7 @@ class Rule extends \yii\db\ActiveRecord {
         if (!$model) {
             $path = ClassName::path($modelName);
             $model = new RuleModel([
-                'path' => $path,
+                'path' => $path, // Path might need to be verified if it's critical
                 'name' => $modelName,
                 'attribute' => $modelAttribute,
                 'is_method' => ($isMethod ? 1 : 0)
@@ -429,8 +455,9 @@ class Rule extends \yii\db\ActiveRecord {
 
             // Save the new RuleModel instance in the database
             if (!$model->save()) {
-                // Throw an exception if failed to save the RuleModel model
-                throw new Exception('Failed to save the RuleModel model.');
+                $errors = $model->getFirstErrors();
+                Yii::error("Failed to save RuleModel: " . print_r($errors, true), __METHOD__);
+                throw new \Exception('Failed to save the RuleModel model: ' . print_r($errors, true));
             }
         }
 

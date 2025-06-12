@@ -32,6 +32,26 @@ class BroadcastMessageFactory {
     }
 
     /**
+     * Creates a standardized message structure for rule outcomes.
+     * This will be serialized to JSON for sending to clients.
+     *
+     * @param string $type The specific type of the outcome event (e.g., 'PLAYER_STAT_UPDATED', 'ITEM_RECEIVED').
+     * @param array $data The actual data payload of the outcome.
+     * @param string|null $messageKey Optional key for client-side i18n or specific message lookup.
+     * @return array The structured message array.
+     */
+    public function createRuleOutcomeMessage(string $type, array $data, ?string $messageKey = null): array {
+        return [
+            'type' => $type, // This is the main message type for client-side routing/handling
+            'payload' => [
+                'data' => $data, // The core data associated with the outcome
+                'message_key' => $messageKey, // Optional key for specific client messages
+                'timestamp' => time(), // Standardizing timestamp inclusion
+            ],
+        ];
+    }
+
+    /**
      * Generic factory method if type and payload are already known.
      * This can be useful for reconstructing messages or for dynamic creation.
      */
@@ -73,7 +93,7 @@ class BroadcastMessageFactory {
             // Add other types as needed
         }
         // Log error or throw exception for unknown type or invalid payload
-        // error_log("BroadcastMessageFactory: Unknown message type '{$type}' or invalid payload for generic creation.");
+        // Yii::error("BroadcastMessageFactory: Unknown message type '{$type}' or invalid payload for generic creation.");
         return null;
     }
 }
