@@ -505,12 +505,41 @@ class Player extends \yii\db\ActiveRecord {
      * Changes the status of the given model and updates its "updated_at" timestamp.
      *
      * @param string $status The new status to set.
-     * @return bool Whether the status change was successful.
+     * @return array A standardized outcome array.
      */
-    public function setStatus($status) {
-        $this->status = $status;
-        // Save the changes to the model and returns whether the save operation was successful
-        return $this->save();
+    public function setStatus(string $newStatus): array {
+        $oldStatus = $this->status;
+        $this->status = $newStatus;
+
+        if ($this->save()) {
+            return [
+                'outcomeType' => 'PLAYER_STATUS_UPDATED',
+                'outcomeData' => [
+                    'player_id' => $this->id,
+                    'old_status' => $oldStatus,
+                    'new_status' => $this->status,
+                ],
+                'outcomeStatus' => 'success',
+                'messageKey' => 'player.status.update.success',
+                'broadcastScope' => 'quest', // Or 'player' or 'all_in_quest_inclusive' depending on needs
+                // 'broadcastTargetId' => $this->id, // If scope is 'player', this would be relevant if player_id is client_id
+            ];
+        } else {
+            // Revert status on failure if desired, though validation errors will prevent save anyway
+            // $this->status = $oldStatus;
+            return [
+                'outcomeType' => 'PLAYER_STATUS_UPDATED', // Still same type, but status indicates failure
+                'outcomeData' => [
+                    'player_id' => $this->id,
+                    'attempted_status' => $newStatus,
+                    'old_status' => $oldStatus,
+                    'errors' => $this->getErrors(),
+                ],
+                'outcomeStatus' => 'failure',
+                'messageKey' => 'player.status.update.failure',
+                'broadcastScope' => 'session', // Inform only the current session/player about the failure
+            ];
+        }
     }
 
     /**

@@ -11,7 +11,9 @@ use common\extensions\EventHandler\RegistrationHandler;
 use common\extensions\EventHandler\ChatMessageHandler;
 use common\extensions\EventHandler\GameActionHandler;
 use common\extensions\EventHandler\AnnouncePlayerJoinHandler;
-use common\extensions\EventHandler\factories\BroadcastMessageFactory; // Added
+use common\extensions\EventHandler\factories\BroadcastMessageFactory;
+use common\components\LoggerService; // Changed namespace
+use common\components\RuleEngineService; // Added RuleEngineService
 
 // AttachmentHandler and RegistrationHandler are already imported, ensure they are correct if used.
 
@@ -19,10 +21,9 @@ class EventHandler extends Component {
 
     public $host = '0.0.0.0';
     public $port = 8082;
-    //public $logFilePath = '@runtime/logs/eventhandler.log'; // Default log file path
-    public $logFilePath = 'c:/temp/EventHandler.log';
+    public $logFilePath = 'c:/temp/EventHandler.log'; // Default log file path, Yii alias preferred: '@runtime/logs/eventhandler.log'
     public $debug = true;
-    private ?LoggerService $loggerService = null;
+    private ?LoggerService $loggerService = null; // Will be common\components\LoggerService
     private ?QuestSessionManager $questSessionManager = null;
     private ?NotificationService $notificationService = null;
     private ?WebSocketServerManager $webSocketServerManager = null;
@@ -207,20 +208,26 @@ class EventHandler extends Component {
         // Now, inject NotificationService back into BroadcastService using the setter
         $this->broadcastService->setNotificationService($this->notificationService);
 
-        // 6. Initialize Specific Message Handlers
+        // Now, inject NotificationService back into BroadcastService using the setter
+        $this->broadcastService->setNotificationService($this->notificationService);
+
+        // 6. Initialize RuleEngineService (after LoggerService)
+        $ruleEngineService = new RuleEngineService($this->loggerService);
+
+        // 7. Initialize Specific Message Handlers
         $specificHandlers = [
             'attach' => new AttachmentHandler($this->loggerService, $this->questSessionManager, $this->broadcastService),
             'register' => new RegistrationHandler($this->loggerService, $this->questSessionManager, $this->broadcastService),
             'chat' => new ChatMessageHandler($this->loggerService, $this->notificationService, $this->broadcastService, $messageFactory),
-            'action' => new GameActionHandler($this->loggerService, $this->broadcastService, $messageFactory),
+            'action' => new GameActionHandler($this->loggerService, $this->broadcastService, $messageFactory, $ruleEngineService), // Added $ruleEngineService
             'announce_player_join' => new AnnouncePlayerJoinHandler($this->loggerService, $this->broadcastService, $messageFactory),
         ];
 
-        // 7. Initialize MessageHandlerOrchestrator
+        // 8. Initialize MessageHandlerOrchestrator
         $this->messageHandlerOrchestrator = new MessageHandlerOrchestrator(
                 $this->loggerService,
                 $this->broadcastService,
-                $specificHandlers // Corrected order: specificHandlers first
+                $specificHandlers
         );
     }
 

@@ -8,6 +8,7 @@ use common\extensions\EventHandler\dtos\GameActionDto;
 use common\extensions\EventHandler\dtos\NotificationDto;
 use common\extensions\EventHandler\dtos\ErrorDto;
 use common\extensions\EventHandler\contracts\BroadcastMessageInterface;
+use common\extensions\EventHandler\dtos\RuleOutcomeDto; // Added import
 
 class BroadcastMessageFactory {
 
@@ -35,20 +36,31 @@ class BroadcastMessageFactory {
      * Creates a standardized message structure for rule outcomes.
      * This will be serialized to JSON for sending to clients.
      *
-     * @param string $type The specific type of the outcome event (e.g., 'PLAYER_STAT_UPDATED', 'ITEM_RECEIVED').
-     * @param array $data The actual data payload of the outcome.
+     * @param string $outcomeType The specific type of the outcome event (e.g., 'PLAYER_STAT_UPDATED', 'ITEM_RECEIVED').
+     * @param array $outcomeData The actual data payload of the outcome.
+     * @param string $outcomeStatus The status of the outcome (e.g., 'success', 'failure').
      * @param string|null $messageKey Optional key for client-side i18n or specific message lookup.
-     * @return array The structured message array.
+     * @param string $broadcastScope The intended scope for broadcasting this outcome.
+     * @param string|null $broadcastTargetId Optional target identifier for specific scopes (e.g., client ID for 'player' scope).
+     * @return RuleOutcomeDto The created DTO object.
      */
-    public function createRuleOutcomeMessage(string $type, array $data, ?string $messageKey = null): array {
-        return [
-            'type' => $type, // This is the main message type for client-side routing/handling
-            'payload' => [
-                'data' => $data, // The core data associated with the outcome
-                'message_key' => $messageKey, // Optional key for specific client messages
-                'timestamp' => time(), // Standardizing timestamp inclusion
-            ],
-        ];
+    public function createRuleOutcomeMessage(
+        string $outcomeType,
+        array $outcomeData,
+        string $outcomeStatus = 'success',
+        ?string $messageKey = null,
+        string $broadcastScope = 'quest',
+        ?string $broadcastTargetId = null
+    ): RuleOutcomeDto {
+        return new RuleOutcomeDto(
+            $outcomeType,
+            $outcomeData,
+            $outcomeStatus,
+            $messageKey,
+            $broadcastScope,
+            $broadcastTargetId
+            // Timestamp is handled by DTO constructor by default
+        );
     }
 
     /**

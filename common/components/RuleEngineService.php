@@ -409,16 +409,22 @@ class RuleEngineService extends Component
             $this->logger->log("Attempting to assign role '{$role}' to user ID '{$userId}'. (Placeholder)");
             // Actual role assignment logic would be here.
             return [
-                'status' => 'success',
-                'message_key' => 'role_assigned', // For potential i18n on client
-                'data' => ['user_id' => $userId, 'role_assigned' => $role],
-                'broadcast_scope' => 'player', // 'player', 'quest', 'session', 'all'
-                'broadcast_target_id' => $this->fetchValueFromObject($data, 'clientId'), // For 'player' scope
-                'broadcast_type' => 'PLAYER_ROLE_UPDATED' // Client-side message type
+                'outcomeStatus' => 'success',
+                'messageKey' => 'role_assigned', // For potential i18n on client
+                'outcomeData' => ['user_id' => $userId, 'role_assigned' => $role],
+                'broadcastScope' => 'player', // 'player', 'quest', 'session', 'all'
+                'broadcastTargetId' => $this->fetchValueFromObject($data, 'clientId'), // For 'player' scope
+                'outcomeType' => 'PLAYER_ROLE_UPDATED' // Client-side message type
             ];
         } else {
             $this->logger->log("Missing user ID or role for actionAssignRole.", LoggerService::LEVEL_WARNING);
-            return ['status' => 'failure', 'message_key' => 'assign_role_failed_params', 'data' => $params];
+            return [
+                'outcomeStatus' => 'failure',
+                'messageKey' => 'assign_role_failed_params',
+                'outcomeData' => $params,
+                'broadcastScope' => 'session', // Notify originating session of failure
+                'outcomeType' => 'ACTION_FAILED'
+            ];
         }
     }
 
@@ -431,15 +437,21 @@ class RuleEngineService extends Component
             $this->logger->log("Attempting to send welcome email template '{$template}' to '{$email}'. (Placeholder)");
             // Actual email sending logic
             return [
-                'status' => 'success',
-                'message_key' => 'welcome_email_sent',
-                'data' => ['email' => $email, 'template' => $template],
-                'broadcast_scope' => 'none', // Or 'player_internal' if no client broadcast needed
-                'broadcast_type' => 'INTERNAL_NOTIFICATION'
+                'outcomeStatus' => 'success',
+                'messageKey' => 'welcome_email_sent',
+                'outcomeData' => ['email' => $email, 'template' => $template],
+                'broadcastScope' => 'none', // Or 'player_internal' if no client broadcast needed
+                'outcomeType' => 'INTERNAL_NOTIFICATION' // This type might not be directly broadcastable or handled differently
             ];
         } else {
             $this->logger->log("Missing email or template for actionSendWelcomeEmail.", LoggerService::LEVEL_WARNING);
-            return ['status' => 'failure', 'message_key' => 'send_email_failed_params', 'data' => $params];
+            return [
+                'outcomeStatus' => 'failure',
+                'messageKey' => 'send_email_failed_params',
+                'outcomeData' => $params,
+                'broadcastScope' => 'none',
+                'outcomeType' => 'INTERNAL_FAILURE_LOG'
+            ];
         }
     }
 
@@ -450,11 +462,11 @@ class RuleEngineService extends Component
         $this->logger->log("Attempting to send admin notification: '{$message}'. (Placeholder)");
         // Actual notification logic
         return [
-            'status' => 'success',
-            'message_key' => 'admin_notified',
-            'data' => ['message' => $message],
-            'broadcast_scope' => 'none', // Typically admin notifications are not broadcast to players
-            'broadcast_type' => 'ADMIN_ALERT'
+            'outcomeStatus' => 'success',
+            'messageKey' => 'admin_notified',
+            'outcomeData' => ['message' => $message],
+            'broadcastScope' => 'none', // Typically admin notifications are not broadcast to players
+            'outcomeType' => 'ADMIN_ALERT'  // This type might not be directly broadcastable
         ];
     }
 
@@ -468,16 +480,22 @@ class RuleEngineService extends Component
             $this->logger->log("Attempting to apply {$percentage}% discount to order ID '{$orderId}'. (Placeholder)");
             // Actual discount logic
             return [
-                'status' => 'success',
-                'message_key' => 'discount_applied',
-                'data' => ['order_id' => $orderId, 'discount_percentage' => $percentage],
-                'broadcast_scope' => 'player', // Notify the player who owns the order
-                'broadcast_target_id' => $this->fetchValueFromObject($data, 'clientId'),
-                'broadcast_type' => 'ORDER_UPDATED'
+                'outcomeStatus' => 'success',
+                'messageKey' => 'discount_applied',
+                'outcomeData' => ['order_id' => $orderId, 'discount_percentage' => $percentage],
+                'broadcastScope' => 'player', // Notify the player who owns the order
+                'broadcastTargetId' => $this->fetchValueFromObject($data, 'clientId'),
+                'outcomeType' => 'ORDER_UPDATED'
             ];
         } else {
             $this->logger->log("Missing order ID or percentage for actionApplyDiscount.", LoggerService::LEVEL_WARNING);
-            return ['status' => 'failure', 'message_key' => 'apply_discount_failed_params', 'data' => $params];
+            return [
+                'outcomeStatus' => 'failure',
+                'messageKey' => 'apply_discount_failed_params',
+                'outcomeData' => $params,
+                'broadcastScope' => 'session',
+                'outcomeType' => 'ACTION_FAILED'
+            ];
         }
     }
 }

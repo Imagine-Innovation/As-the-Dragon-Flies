@@ -156,4 +156,43 @@ class Quest extends \yii\db\ActiveRecord {
 
         return ($questPlayer?->is_initiator === 1);
     }
+
+    /**
+     * Sets the quest status and returns a standardized outcome array.
+     *
+     * @param string $newStatus The new status to set for the quest.
+     * @return array A standardized outcome array.
+     */
+    public function setQuestStatus(string $newStatus): array {
+        $oldStatus = $this->status;
+        $this->status = $newStatus; // Assuming $newStatus is a value from AppStatus enum
+
+        if ($this->save()) {
+            return [
+                'outcomeType' => 'QUEST_STATUS_UPDATED',
+                'outcomeData' => [
+                    'quest_id' => $this->id,
+                    'old_status' => $oldStatus,
+                    'new_status' => $this->status,
+                ],
+                'outcomeStatus' => 'success',
+                'messageKey' => 'quest.status.update.success',
+                'broadcastScope' => 'quest', // Or 'all_in_quest_inclusive'
+            ];
+        } else {
+            // $this->status = $oldStatus; // Optionally revert status on failure
+            return [
+                'outcomeType' => 'QUEST_STATUS_UPDATED',
+                'outcomeData' => [
+                    'quest_id' => $this->id,
+                    'attempted_status' => $newStatus,
+                    'old_status' => $oldStatus,
+                    'errors' => $this->getErrors(),
+                ],
+                'outcomeStatus' => 'failure',
+                'messageKey' => 'quest.status.update.failure',
+                'broadcastScope' => 'session', // Or to specific admin/initiator if applicable
+            ];
+        }
+    }
 }

@@ -5,10 +5,11 @@ namespace common\extensions\EventHandler;
 use common\extensions\EventHandler\contracts\BroadcastServiceInterface;
 use common\extensions\EventHandler\contracts\SpecificMessageHandlerInterface;
 use common\extensions\EventHandler\factories\BroadcastMessageFactory;
-use common\components\LoggerService; // Assuming LoggerService is in common\components
-use common\components\RuleEngineService; // Assuming RuleEngineService is in common\components
+use common\components\LoggerService;
+use common\components\RuleEngineService;
+use common\extensions\EventHandler\dtos\RuleOutcomeDto; // Import the new DTO
 use Ratchet\ConnectionInterface;
-use common\models\Player; // Assuming Player model path
+use common\models\Player;
 use common\models\Quest;   // Assuming Quest model path
 // Potentially other models like Item, Character, etc. depending on 'action_type'
 
@@ -111,44 +112,84 @@ class GameActionHandler implements SpecificMessageHandlerInterface {
         // Process and broadcast outcomes from the RuleEngineService
         if (!empty($ruleOutcomes)) {
             foreach ($ruleOutcomes as $outcome) {
-                if (!is_array($outcome) || !isset($outcome['status'], $outcome['broadcast_type'], $outcome['data'])) {
-                    $this->logger->log("GameActionHandler: Invalid outcome structure received from RuleEngine.", ['outcome' => $outcome], LoggerService::LEVEL_WARNING);
+                // Validate the structure of the outcome array from RuleEngineService
+                if (!is_array($outcome) ||
+                    !isset($outcome['outcomeType'], $outcome['outcomeData'], $outcome['outcomeStatus'], $outcome['broadcastScope'])) {
+                    $this->logger->log("GameActionHandler: Invalid or incomplete outcome structure received from RuleEngine.",
+                        ['outcome' => $outcome], LoggerService::LEVEL_WARNING);
                     continue;
                 }
 
-                if ($outcome['status'] !== 'success') {
-                    $this->logger->log("GameActionHandler: Rule action resulted in non-success status.", ['outcome' => $outcome], LoggerService::LEVEL_INFO);
-                    // Optionally, handle non-success outcomes differently, e.g., send specific error to client
-                    // For now, we only broadcast success outcomes that have a broadcast type and scope.
-                    // Or, we could have a specific 'failure_outcome' broadcast_type.
-                    // Let's assume for now only 'success' outcomes with valid scopes are broadcasted.
-                    // If a different message needs to be sent for failure, the action should return that as a specific outcome.
-                    // e.g. status: 'success', broadcast_type: 'ACTION_FAILED_NOTIFICATION', data: {reason: ...}
+                // Extract details from outcome using the new keys
+                $outcomeType = (string)$outcome['outcomeType'];
+                $outcomeData = (array)$outcome['outcomeData'];
+                $outcomeStatus = (string)$outcome['outcomeStatus'];
+                $messageKey = isset($outcome['messageKey']) ? (string)$outcome['messageKey'] : null;
+                $broadcastScope = (string)$outcome['broadcastScope'];
+                $broadcastTargetId = isset($outcome['broadcastTargetId']) ? (string)$outcome['broadcastTargetId'] : null;
+
+                // Log non-success status, but still proceed to create DTO and broadcast
+                // The DTO and client can decide how to handle non-success statuses.
+                if ($outcomeStatus !== 'success') {
+                    $this->logger->log("GameActionHandler: Rule action resulted in non-success status.",
+                        [
+                            'type' => $outcomeType,
+                            'status' => $outcomeStatus,
+                            'data' => $outcomeData,
+                            'scope' => $broadcastScope
+                        ], LoggerService::LEVEL_INFO);
                 }
 
+                // Skip broadcasting if the scope is 'none'
+                if ($broadcastScope === 'none') {
+                    $this->logger->log("GameActionHandler: 'none' broadcast scope for outcome. Skipping broadcast.",
+                        ['type' => $outcomeType, 'status' => $outcomeStatus]);
+                    continue;
+                }
+                // If we only want to broadcast 'success' statuses, we can add this check:
+                // if ($outcomeStatus !== 'success') {
+                //     $this->logger->log("GameActionHandler: Skipping broadcast for non-success outcome.", ['type' => $outcomeType, 'status' => $outcomeStatus]);
+                //     continue;
+                // }
+
+
                 $dto = $this->messageFactory->createRuleOutcomeMessage(
-                    (string)$outcome['broadcast_type'],
-                    (array)$outcome['data'],
-                    isset($outcome['message_key']) ? (string)$outcome['message_key'] : null
+                    $outcomeType,
+                    $outcomeData,
+                    $outcomeStatus,
+                    $messageKey,
+                    $broadcastScope,
+                    $broadcastTargetId
                 );
 
-                $scope = $outcome['broadcast_scope'] ?? 'quest'; // Default to 'quest'
-                $targetId = $outcome['broadcast_target_id'] ?? null; // For player-specific scopes
+                $this->logger->log("GameActionHandler: Broadcasting rule outcome.", [
+                    'dto_type' => $dto->type,
+                    'dto_scope' => $dto->broadcastScope,
+                    'dto_target' => $dto->broadcastTargetId,
+                    'dto_status' => $dto->status
+                ]);
 
-                $this->logger->log("GameActionHandler: Broadcasting rule outcome.", ['type' => $dto['type'], 'scope' => $scope, 'target_id' => $targetId]);
-
-                switch ($scope) {
+                // Use properties from the DTO for broadcasting decisions
+                switch ($dto->broadcastScope) {
                     case 'player':
-                        if ($targetId) { // Target ID should be the client_id for 'player' scope
-                            $this->broadcastService->sendToClient($targetId, $dto);
+                        if ($dto->broadcastTargetId) {
+                            $this->broadcastService->sendToClient($dto->broadcastTargetId, $dto);
                         } else {
-                             $this->logger->log("GameActionHandler: Missing target_id for 'player' scope broadcast.", ['outcome' => $outcome], LoggerService::LEVEL_WARNING);
-                             // Fallback to sending to the originating client if no target_id and it's a player-specific message often meant for them
+                             $this->logger->log("GameActionHandler: Missing target_id for 'player' scope broadcast. Fallback to originating client.",
+                                ['outcome_type' => $dto->type], LoggerService::LEVEL_WARNING);
                              $this->broadcastService->sendToClient($clientId, $dto);
                         }
                         break;
                     case 'session': // Send back to the originating connection
-                        $this->broadcastService->sendBack($from, $dto['type'], $dto['payload']); // sendBack might take type & payload separately
+                        // Assuming sendBack takes the DTO directly, or adjust if it needs specific parts.
+                        // If sendBack expects type & payload: $this->broadcastService->sendBack($from, $dto->type, get_object_vars($dto));
+                        // For now, assuming it can handle the DTO object.
+                        $this->broadcastService->sendBack($from, $dto->type, [
+                            'status' => $dto->status,
+                            'data' => $dto->data,
+                            'message_key' => $dto->messageKey,
+                            'timestamp' => $dto->timestamp
+                        ]);
                         break;
                     case 'quest':
                         $this->broadcastService->broadcastToQuest($questId, $dto, $sessionId); // Exclude sender
@@ -159,13 +200,10 @@ class GameActionHandler implements SpecificMessageHandlerInterface {
                     case 'all': // Broadcast to everyone connected to the server
                         $this->broadcastService->broadcast($dto, $sessionId); // Exclude sender by default
                         break;
-                    case 'none':
-                        // Do nothing, action is internal or outcome is not for broadcast
-                        $this->logger->log("GameActionHandler: 'none' broadcast scope for outcome.", ['type' => $dto['type']]);
-                        break;
-                    default:
-                        $this->logger->log("GameActionHandler: Unknown broadcast scope '{$scope}'. Defaulting to quest broadcast.", ['outcome' => $outcome], LoggerService::LEVEL_WARNING);
-                        $this->broadcastService->broadcastToQuest($questId, $dto, $sessionId); // Exclude sender
+                    default: // Handles 'none' and any unknown scopes
+                        $this->logger->log("GameActionHandler: Unknown or 'none' broadcast scope '{$dto->broadcastScope}'. No broadcast performed by default.",
+                            ['outcome_type' => $dto->type], LoggerService::LEVEL_WARNING);
+                        // Previously, unknown defaulted to quest. Explicit 'none' or specific handling is better.
                         break;
                 }
             }
