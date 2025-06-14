@@ -67,6 +67,7 @@ class EventHandler extends Component {
             'chat' => new ChatMessageHandler($this->loggerService, $this->notificationService, $this->broadcastService, $messageFactory),
             'action' => new GameActionHandler($this->loggerService, $this->broadcastService, $messageFactory),
             'announce_player_join' => new AnnouncePlayerJoinHandler($this->loggerService, $this->broadcastService, $messageFactory),
+            'quest_can_start' => new QuestCanStartHandler($this->loggerService, $this->broadcastService, $messageFactory),
         ];
 
         // 7. Initialize MessageHandlerOrchestrator

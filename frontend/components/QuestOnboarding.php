@@ -3,7 +3,10 @@
 namespace frontend\components;
 
 use common\components\AppStatus;
+use common\models\Quest;
 use common\models\QuestPlayer;
+use common\models\Player;
+use common\models\StoryClass;
 use Yii;
 
 class QuestOnboarding {
@@ -56,11 +59,11 @@ class QuestOnboarding {
      * Check if a player can join a quest.
      * Returns an array with a deny status and a reason messge.
      *
-     * @param \common\models\Player $player
-     * @param \common\models\Quest $quest
+     * @param Player $player
+     * @param Quest|null $quest
      * @return array
      */
-    public static function canPlayerJoinQuest(\common\models\Player $player, \common\models\Quest $quest): array {
+    public static function canPlayerJoinQuest(Player $player, Quest|null $quest = null): array {
 
         $questStatus = self::isQuestValid($player, $quest);
         if ($questStatus['error']) {
@@ -94,16 +97,11 @@ class QuestOnboarding {
      * Check if a quest is valid and if a player is willing to join it.
      * return an array with an error status, a deny status and a reason message.
      *
-     * @param \common\models\Player $player
-     * @param \common\models\Quest $quest
+     * @param Player $player
+     * @param Quest|null $quest
      * @return array
      */
-    private static function isQuestValid(\common\models\Player $player, \common\models\Quest $quest): array {
-        // Check if player is selected
-        if (!$player) {
-            return ['error' => true, 'denied' => true, 'reason' => "isQuestValid->You must select a player first"];
-        }
-
+    private static function isQuestValid(Player $player, Quest|null $quest = null): array {
         // Check if quest exists
         if (!$quest) {
             // Check if player is already in another quest
@@ -123,11 +121,11 @@ class QuestOnboarding {
     /**
      * Check is the player's level is compatible with the story requirements
      *
-     * @param \common\models\Player $player
+     * @param Player $player
      * @param \common\models\Story $story
      * @return bool
      */
-    private static function isPlayerLevelValid(\common\models\Player $player, \common\models\Story $story): bool {
+    private static function isPlayerLevelValid(Player $player, \common\models\Story $story): bool {
         return $player->level_id >= $story->min_level && $player->level_id <= $story->max_level;
     }
 
@@ -135,11 +133,11 @@ class QuestOnboarding {
      * Check is the player's class is allowed with the story requirements.
      * If nothing is specified, every class can join.
      *
-     * @param \common\models\Player $player
-     * @param \common\models\Quest $quest
+     * @param Player $player
+     * @param Quest $quest
      * @return bool
      */
-    private static function shouldAllowPlayerClass(\common\models\Player $player, \common\models\Quest $quest): bool {
+    private static function shouldAllowPlayerClass(Player $player, Quest $quest): bool {
         $story = $quest->story;
         $requiredClasses = $story->classes;
 
@@ -163,5 +161,48 @@ class QuestOnboarding {
         $missingClassesCount = count(array_diff($requiredClassIds, $presentClasses));
 
         return $remainingSpots > $missingClassesCount;
+    }
+
+    /**
+     * Check of every required classes defined in the story
+     * have onboarded in the quest
+     *
+     * @param Quest $quest
+     * @return bool
+     */
+    public static function areRequiredClassesPresent(Quest $quest): bool {
+        /*
+          $story = $quest->story;
+          $storyClasses = $story->storyClasses;
+
+          if (empty($storyClasses)) {
+          return true;
+          }
+
+          $requiredClasses = [];
+          foreach ($storyClasses as $storyClass) {
+          $requiredClasses[] = $storyClass->class_id;
+          }
+
+          $presentClasses = $quest->getPlayers()
+          ->select('class_id')
+          ->column();
+         */
+        $requiredClasses = StoryClass::find()
+                ->select('class_id')
+                ->where(['story_id' => $quest->story_id])
+                ->all();
+
+        // If no specific class is required, consider that they are all present
+        if (count($requiredClasses) === 0) {
+            return true;
+        }
+
+        $presentClasses = Player::find()
+                ->select('class_id')
+                ->where(['quest_id' => $quest->id])
+                ->all();
+
+        return empty(array_diff($requiredClasses, $presentClasses));
     }
 }

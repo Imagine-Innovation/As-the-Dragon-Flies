@@ -42,12 +42,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     </div>
                 </div>
                 <div class="col-12 col-md-6">
-    <?=
-    $this->renderFile('@app/views/quest/_chat.php', [
-        'questId' => $model->id,
-        'playerId' => $playerId
-    ])
-    ?>
+                    <?=
+                    $this->renderFile('@app/views/quest/_chat.php', [
+                        'questId' => $model->id,
+                        'playerId' => $playerId
+                    ])
+                    ?>
                 </div>
             </div>
             <div class="card">
@@ -56,7 +56,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <div class="actions">
                         <a class="actions__item bi-chat-left-dots" type="button" data-bs-toggle="modal" data-bs-target="#questChatModal"></a>
                     </div>
-    <?= AjaxContainer::widget(['name' => 'questTavernPlayersContainer']) ?>
+                    <?= AjaxContainer::widget(['name' => 'questTavernPlayersContainer']) ?>
                 </div>
             </div>
         </div>
@@ -80,6 +80,118 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 <?php else: ?>
     <style>
+        .notification-panel, .chat-panel {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            max-width: 600px;
+        }
+
+        .panel-header {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .notifications-list, .chat-messages {
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .notification {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+        }
+
+        .notification.read {
+            opacity: 0.7;
+            background-color: #f0f0f0;
+        }
+
+        .notification-header, .chat-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .notification-content, .chat-content {
+            margin-bottom: 10px;
+        }
+
+        .notification-actions {
+            text-align: right;
+        }
+
+        .chat-message {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #f0f8ff;
+        }
+
+        .chat-input-area {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ccc;
+        }
+
+        #chat-input {
+            flex-grow: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 8px 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        #connection-status {
+            font-size: 0.8em;
+            padding: 3px 8px;
+            border-radius: 10px;
+        }
+
+        .status-connected {
+            background-color: #dff0d8;
+            color: #3c763d;
+        }
+
+        .status-disconnected-reconnecting {
+            background-color: #fcf8e3;
+            color: #8a6d3b;
+        }
+
+        .status-connection-error {
+            background-color: #f2dede;
+            color: #a94442;
+        }
+
         .chat-messages {
             height: 400px;
             overflow-y: auto;
@@ -123,6 +235,16 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <div class="row">
             <div class="col-md-8">
+                <div class="notification-panel">
+                    <div class="panel-header">
+                        <h3>Notifications</h3>
+                        <span id="connection-status">Connecting...</span>
+                        <button id="mark-all-read-btn" onclick="markAllNotificationsAsRead()">Mark All as Read</button>
+                    </div>
+                    <div id="notifications-container" class="notifications-list">
+                        <!-- Notifications will be inserted here -->
+                    </div>
+                </div>
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h3 class="panel-title">Tavern Chat</h3>
@@ -150,26 +272,26 @@ $this->params['breadcrumbs'][] = $this->title;
                     </div>
                     <div class="panel-body">
                         <ul id="player-list" class="list-group">
-    <?php foreach ($model->currentPlayers as $player): ?>
+                            <?php foreach ($model->currentPlayers as $player): ?>
                                 <li class="list-group-item" data-player-id="<?= $player->id ?>">
-                                <?= Html::encode($player->name) ?>
+                                    <?= Html::encode($player->name) ?>
                                     <?php if ($model->isInitiator($player->id)): ?>
                                         <span class="badge">Quest Master</span>
                                     <?php endif; ?>
                                 </li>
-                                <?php endforeach; ?>
+                            <?php endforeach; ?>
                         </ul>
                     </div>
                     <div class="panel-footer">
-    <?=
-    Html::a('Leave Quest', ['quest/leave-quest'], [
-        'class' => 'btn btn-danger',
-        'data' => [
-            'confirm' => 'Are you sure you want to leave this quest?',
-            'method' => 'post',
-        ],
-    ])
-    ?>
+                        <?=
+                        Html::a('Leave Quest', ['quest/leave-quest'], [
+                            'class' => 'btn btn-danger',
+                            'data' => [
+                                'confirm' => 'Are you sure you want to leave this quest?',
+                                'method' => 'post',
+                            ],
+                        ])
+                        ?>
 
                         <?php if ($model->status === AppStatus::WAITING->value && $model->isInitiator($playerId)): ?>
                             <?=

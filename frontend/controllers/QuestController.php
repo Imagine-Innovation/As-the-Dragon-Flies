@@ -65,9 +65,9 @@ class QuestController extends Controller {
                             [
                                 'actions' => [
                                     'index', 'update', 'delete', 'create', 'view',
-                                    'join-quest', 'resume', 'send-message', 'get-messages', 'leave-quest',
+                                    'join-quest', 'resume', 'get-messages', 'leave-quest',
                                     'ajax-tavern', 'ajax-tavern-counter',
-                                    'ajax-new-message', 'ajax-get-messages',
+                                    'ajax-new-message', 'ajax-get-messages', 'ajax-send-message',
                                     'ajax-start', 'ajax-can-start',
                                 ],
                                 'allow' => ManageAccessRights::isRouteAllowed($this),
@@ -262,8 +262,8 @@ class QuestController extends Controller {
         return ['error' => true, 'msg' => 'Could not create a new message'];
     }
 
-    public function actionSendMessage() {
-        Yii::debug("*** Debug *** actionSendMessage");
+    public function actionAjaxSendMessage() {
+        Yii::debug("*** Debug *** actionAjaxSendMessage");
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         // Validate request method and type
@@ -283,7 +283,7 @@ class QuestController extends Controller {
 
         //$sessionId = Yii::$app->request->post('sessionId');
         $message = Yii::$app->request->post('message');
-        Yii::debug("*** Debug *** actionSendMessage - Player/ {$player->name}, Quest: {$quest->story->name}, Message: " . ($message ?? 'empty'));
+        Yii::debug("*** Debug *** actionAjaxSendMessage - Player/ {$player->name}, Quest: {$quest->story->name}, Message: " . ($message ?? 'empty'));
         if (empty($message)) {
             return ['success' => false, 'message' => 'Message cannot be empty'];
         }
@@ -291,7 +291,7 @@ class QuestController extends Controller {
         // Create and process new message event
         // $event = EventFactory::createEvent('new-message', $sessionId, $player, $quest, ['message' => $message]);
         // $event->process();
-        // Yii::debug("*** Debug *** actionSendMessage - Event processing removed. Chat now handled via WebSocket direct message.");
+        // Yii::debug("*** Debug *** actionAjaxSendMessage - Event processing removed. Chat now handled via WebSocket direct message.");
 
         return ['success' => true, 'msg' => 'Message send attempt acknowledged. Actual processing via WebSocket.'];
     }
@@ -437,7 +437,7 @@ class QuestController extends Controller {
 
         // Validate request type
         if (!$this->request->isPost || !$this->request->isAjax) {
-            return ['error' => true, 'msg' => 'Not an Ajax POST request'];
+            return ['canStart' => false, 'msg' => 'Not an Ajax POST request'];
         }
 
         // Extract request parameters
@@ -445,20 +445,20 @@ class QuestController extends Controller {
         $story = $quest->story;
 
         if ($quest->status !== AppStatus::WAITING->value) {
-            return ['can-start' => false, 'message' => "Quest {$story->name} is not in wating state."];
+            return ['canStart' => false, 'msg' => "Quest {$story->name} is not in wating state."];
         }
 
         $playersCount = $quest->getCurrentPlayers()->count();
 
         if ($playersCount < $story->min_players) {
-            return ['can-start' => false, 'message' => "Quest can start once {$story->min_players} joined. Current oount is {$playersCount}"];
+            return ['canStart' => false, 'msg' => "Quest can start once {$story->min_players} joined. Current count is {$playersCount}"];
         }
 
         if (!QuestOnboarding::areRequiredClassesPresent($quest)) {
-            return ['can-start' => false, 'message' => "Missing required player classes"];
+            return ['canStart' => false, 'msg' => "Missing required player classes"];
         }
 
-        return ['can-start' => true, 'message' => "Quest can start"];
+        return ['canStart' => true, 'msg' => "Quest can start", 'questName' => $story->name, 'questId' => $quest->id];
     }
 
     /**

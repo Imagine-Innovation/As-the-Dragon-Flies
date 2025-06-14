@@ -4,6 +4,7 @@ namespace common\extensions\EventHandler\factories;
 
 use common\extensions\EventHandler\dtos\ChatMessageDto;
 use common\extensions\EventHandler\dtos\PlayerJoinedDto;
+use common\extensions\EventHandler\dtos\QuestCanStartDto;
 use common\extensions\EventHandler\dtos\GameActionDto;
 use common\extensions\EventHandler\dtos\NotificationDto;
 use common\extensions\EventHandler\dtos\ErrorDto;
@@ -17,6 +18,10 @@ class BroadcastMessageFactory {
 
     public function createPlayerJoinedMessage(string $playerName, string $sessionId, string $questName): PlayerJoinedDto {
         return new PlayerJoinedDto($playerName, $sessionId, $questName);
+    }
+
+    public function createQuestCanStartMessage(string $sessionId, string $questName): QuestCanStartDto {
+        return new QuestCanStartDto($sessionId, $questName);
     }
 
     public function createGameActionMessage(string $action, array $details): GameActionDto {
@@ -44,9 +49,9 @@ class BroadcastMessageFactory {
                 // and specific creator methods are preferred.
                 // If direct creation from payload is needed, each DTO should have a constructor
                 // that accepts an array or dedicated setters.
-                // Example: return new ChatMessageDto($payload['message'], $payload['sender']); 
+                // Example: return new ChatMessageDto($payload['message'], $payload['sender']);
                 // This is a placeholder and might need adjustment based on DTO constructor signatures.
-                 if (isset($payload['message'], $payload['sender'])) {
+                if (isset($payload['message'], $payload['sender'])) {
                     return new ChatMessageDto($payload['message'], $payload['sender'], $payload['recipient'] ?? null);
                 }
                 break;
@@ -62,8 +67,13 @@ class BroadcastMessageFactory {
                 }
                 break;
             case 'notification':
-                 if (isset($payload['message'])) {
+                if (isset($payload['message'])) {
                     return new NotificationDto($payload['message'], $payload['level'] ?? 'info', $payload['details'] ?? null);
+                }
+                break;
+            case 'quest_can_start':
+                if (isset($payload['sessionId'], $payload['questName'])) {
+                    return new QuestCanStartDto($payload['sessionId'], $payload['questName']);
                 }
                 break;
             case 'error':

@@ -85,16 +85,35 @@ class NotificationClient {
             this.displayNotification(data);
         });
 
+        // Handle incoming notifications
+        this.on('ack', (data) => {
+            console.log('Received aknowledgement:', data);
+            this.displayNotification(data);
+        });
+
         // Handle chat messages
         this.on('chat', (data) => {
             console.log('Received chat message:', data);
-            this.displayChatMessage(data);
+            this.displayChatMessage(data.payload ?? data);
         });
 
         // Handle other player registration
         this.on('register', (data) => {
             console.log('Received register message:', data);
-            this.displayChatMessage(data);
+            this.displayNotification(data);
+        });
+
+        this.on('quest_can_start', (data) => {
+            console.log('Received quest can start message:', data);
+            /*
+            this.displayNotification({
+                type: 'quest_can_start',
+                sender: 'Game master',
+                message: 'Quest can start',
+                timestamp: data.timestamp || Math.floor(Date.now() / 1000)
+            });
+            */
+                this.displayNotification(data);
         });
 
         this.on('player_joined', (data) => {
@@ -104,11 +123,14 @@ class NotificationClient {
                 const message = `Player ${data.payload.playerName} has joined quest "${data.payload.questName}".`;
 
                 // Use the existing displayChatMessage method to show it in the UI
-                this.displayChatMessage({
-                    sender: 'System', // Or any other appropriate sender name
+                /*
+                this.displayNotification({
+                    sender: 'Game master',
                     message: message,
-                    timestamp: data.timestamp || Math.floor(Date.now() / 1000) // Use server timestamp or current time
+                    timestamp: data.timestamp || Math.floor(Date.now() / 1000)
                 });
+                */
+                this.displayNotification(data);
             } else {
                 console.warn('Received new_player_joined event with incomplete payload:', data);
             }
@@ -137,7 +159,7 @@ class NotificationClient {
                 console.log('Sending queued message:', message);
                 this.socket.send(JSON.stringify(message));
             }
-            
+
             this.triggerEvent('open');
 
             const joinedAt = new Date();
@@ -151,25 +173,14 @@ class NotificationClient {
                     joinedAt: joinedAt.toLocaleString()
                 }
             });
-            
+
             AjaxUtils.request({
                 url: 'quest/ajax-can-start',
                 data: {sessionId: this.sessionId},
                 successCallback: (response) => {
-                    if (response && response.error === false && response.data) {
-                        console.log('AJAX success for new player event, sending announce_player_join WebSocket message:', response.data);
-                        this.send({
-                            type: 'announce_player_join',
-                            payload: response.data
-                        });
-                    } else {
-                        console.error('Failed to get valid data from ajax-trigger-new-player-event:', response);
-                        // Optionally, send the old chat message here as a fallback or error indicator,
-                        // or handle the error more robustly. For now, just log it.
-                        // this.send({
-                        //     type: 'chat',
-                        //     message: JSON.stringify("Error processing new player announcement: " + (response ? response.msg : "Unknown error"))
-                        // });
+                    console.log(`Can start? ${JSON.stringify(response)}`);
+                    if (response.canStart) {
+                        this.send({type: 'quest_can_start', payload: response});
                     }
                 }
             });
@@ -309,11 +320,13 @@ class NotificationClient {
 
         notificationElement.innerHTML = `
             <div class="notification-header">
-                <p>Notification</p>
-                <span class="notification-type">Type: ${notification.type}</span>
-                <span class="notification-time">Timestamp: ${notification.timestamp}</span>
+                ${notification.type} at ${this.formatTimestamp(notification.timestamp)}<br>
+                ${JSON.stringify(notification)}
             </div>
-            <div class="notification-content">Content: ${notification.message}</div>
+            <hr>
+            <div class="notification-content">
+                ${notification.message ? JSON.stringify(notification.message) : 'no message'}
+            </div>
             <div class="notification-actions">
                 <button class="mark-read-btn" ${notification.is_read ? 'disabled' : ''}>
                     ${notification.is_read ? 'Read' : 'Mark as Read'}
@@ -366,13 +379,23 @@ class NotificationClient {
 
         const chatElement = document.createElement('div');
         chatElement.className = 'chat-message';
+        /*
+         chatElement.innerHTML = `
+         <div class="chat-header">
+         <p>Message</p>
+         <span class="chat-sender">Sender: ${chatData.sender}</span>
+         <span class="chat-time">Timestamp: ${chatData.timestamp}</span>
+         </div>
+         <div class="chat-content">Message: ${chatData.message}</div>
+         `;
+         */
         chatElement.innerHTML = `
-            <div class="chat-header">
-                <p>Message</p>
-                <span class="chat-sender">Sender: ${chatData.sender}</span>
-                <span class="chat-time">Timestamp: ${chatData.timestamp}</span>
+            <div class="chat-content">
+                <p>Message sent by ${chatData.sender} at ${this.formatTimestamp(chatData.timestamp)}<br>
+                ${JSON.stringify(chatData)}<br>
+                ${chatData.message ?? 'Empty message'}</p>
+                <hr>
             </div>
-            <div class="chat-content">Message: ${chatData.message}</div>
         `;
 
         // Add to the container

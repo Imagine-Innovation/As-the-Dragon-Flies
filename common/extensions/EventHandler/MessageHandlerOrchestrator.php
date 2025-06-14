@@ -1,4 +1,3 @@
-
 <?php
 
 namespace common\extensions\EventHandler;
@@ -65,6 +64,19 @@ class MessageHandlerOrchestrator implements MessageHandlerInterface {
         $this->broadcastService->sendBack($conn, 'error', "An internal error occurred: " . $e->getMessage());
     }
 
+    private function handleTypedMessage(string $type, ConnectionInterface $conn, string $clientId, string $sessionId, array $data): void {
+        if (
+                isset($this->specificHandlers[$type]) &&
+                $this->specificHandlers[$type] instanceof SpecificMessageHandlerInterface
+        ) {
+            $this->logger->log("Orchestrator: Delegating to handler for type '{$type}' for client {$clientId}");
+            $this->specificHandlers[$type]->handle($conn, $clientId, $sessionId, $data);
+        } else {
+            $this->logger->log("Orchestrator: No specific handler for type '{$type}'. Calling handleUnknownType for client {$clientId}");
+            $this->handleUnknownType($conn, $clientId, $sessionId, $type ?? 'implicit registration', $data);
+        }
+    }
+
     /**
      * Handle a JSON message
      *
@@ -85,26 +97,12 @@ class MessageHandlerOrchestrator implements MessageHandlerInterface {
 
         $type = $data['type'] ?? null;
 
-        // Special case for registration: if type is 'register' or if no type but playerId exists
-        if ($type === 'register' || (!$type && isset($data['playerId']))) {
-            $handlerKey = 'register'; // Use a consistent key for registration
-            if (isset($this->specificHandlers[$handlerKey]) && $this->specificHandlers[$handlerKey] instanceof SpecificMessageHandlerInterface) {
-                $this->logger->log("Orchestrator: Delegating to RegistrationHandler.", ['clientId' => $clientId, 'type' => $type ?? 'implicit registration']);
-                $this->specificHandlers[$handlerKey]->handle($conn, $clientId, $sessionId, $data);
-            } else {
-                $this->logger->log("Orchestrator: RegistrationHandler not found for type '{$handlerKey}'.", ['type' => $handlerKey], 'warning');
-                $this->handleUnknownType($conn, $clientId, $sessionId, $type ?? 'implicit registration', $data);
-            }
-        } elseif ($type && isset($this->specificHandlers[$type]) && $this->specificHandlers[$type] instanceof SpecificMessageHandlerInterface) {
-            $this->logger->log("Orchestrator: Delegating to handler for type '{$type}'.", ['clientId' => $clientId, 'type' => $type]);
-            $this->specificHandlers[$type]->handle($conn, $clientId, $sessionId, $data);
-        } elseif ($type) {
-            // Type is set, but no specific handler
-            $this->logger->log("Orchestrator: No specific handler for type '{$type}'. Calling handleUnknownType.", ['clientId' => $clientId, 'type' => $type]);
-            $this->handleUnknownType($conn, $clientId, $sessionId, $type, $data);
+        if ($type || isset($data['playerId'])) {
+            $handlerKey = $type ?? 'register';
+            $this->handleTypedMessage($handlerKey, $conn, $clientId, $sessionId, $data);
         } else {
             // No type and no playerId (already handled by registration logic) -> generic JSON
-            $this->logger->log("Orchestrator: Message has no 'type' or specific registration trigger. Calling handleGenericJsonMessage.", ['clientId' => $clientId]);
+            $this->logger->log("Orchestrator: Message has no 'type' or specific registration trigger. Calling handleGenericJsonMessage for clientId={$clientId}");
             $this->handleGenericJsonMessage($conn, $clientId, $sessionId, $data);
         }
         $this->logger->logEnd("Orchestrator: handleJsonMessage for clientId=[{$clientId}]");
