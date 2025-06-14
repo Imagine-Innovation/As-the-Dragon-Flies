@@ -28,6 +28,7 @@ use Yii;
  * @property int $hit_points Current Hit Points (HP)
  * @property int $max_hit_points Maximum Hit Points
  * @property int $armor_class Armor Class (AC)
+ * @property int|null $speed Actual speed
  * @property int|null $created_at Creation timestamp
  * @property int|null $updated_at Last update timestamp
  *
@@ -76,6 +77,13 @@ use Yii;
 class Player extends \yii\db\ActiveRecord {
 
     /**
+     * ENUM field values
+     */
+    const GENDER_C = 'C';
+    const GENDER_F = 'F';
+    const GENDER_M = 'M';
+
+    /**
      * {@inheritdoc}
      */
     public static function tableName() {
@@ -87,10 +95,18 @@ class Player extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['level_id', 'user_id', 'race_id', 'class_id', 'background_id', 'history_id', 'alignment_id', 'image_id', 'quest_id', 'status', 'age', 'experience_points', 'hit_points', 'max_hit_points', 'armor_class', 'created_at', 'updated_at'], 'integer'],
+            [['alignment_id', 'image_id', 'quest_id', 'name', 'gender', 'age', 'speed', 'created_at', 'updated_at'], 'default', 'value' => null],
+            [['level_id'], 'default', 'value' => 1],
+            [['status'], 'default', 'value' => AppStatus::INACTIVE->value],
+            [['status'], 'in', 'range' => AppStatus::getValuesForPlayer()],
+            [['experience_points'], 'default', 'value' => 0],
+            [['armor_class'], 'default', 'value' => 10],
+            [['level_id', 'user_id', 'race_id', 'class_id', 'background_id', 'history_id', 'alignment_id', 'image_id', 'quest_id', 'status', 'age', 'experience_points', 'hit_points', 'max_hit_points', 'armor_class', 'speed', 'created_at', 'updated_at'], 'integer'],
+            [['level_id', 'user_id', 'race_id', 'class_id', 'background_id', 'history_id', 'alignment_id', 'image_id', 'quest_id', 'status', 'age', 'speed', 'experience_points', 'hit_points', 'max_hit_points', 'armor_class', 'created_at', 'updated_at'], 'integer'],
             [['user_id', 'race_id', 'class_id', 'background_id', 'history_id'], 'required'],
             [['gender'], 'string'],
             [['name'], 'string', 'max' => 64],
+            ['gender', 'in', 'range' => array_keys(self::optsGender())],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
             [['race_id'], 'exist', 'skipOnError' => true, 'targetClass' => Race::class, 'targetAttribute' => ['race_id' => 'id']],
             [['class_id'], 'exist', 'skipOnError' => true, 'targetClass' => CharacterClass::class, 'targetAttribute' => ['class_id' => 'id']],
@@ -100,8 +116,6 @@ class Player extends \yii\db\ActiveRecord {
             [['level_id'], 'exist', 'skipOnError' => true, 'targetClass' => Level::class, 'targetAttribute' => ['level_id' => 'id']],
             [['image_id'], 'exist', 'skipOnError' => true, 'targetClass' => Image::class, 'targetAttribute' => ['image_id' => 'id']],
             [['quest_id'], 'exist', 'skipOnError' => true, 'targetClass' => Quest::class, 'targetAttribute' => ['quest_id' => 'id']],
-            ['status', 'default', 'value' => AppStatus::INACTIVE->value],
-            ['status', 'in', 'range' => AppStatus::getValuesForPlayer()],
         ];
     }
 
@@ -128,6 +142,7 @@ class Player extends \yii\db\ActiveRecord {
             'hit_points' => 'Current Hit Points (HP)',
             'max_hit_points' => 'Maximum Hit Points',
             'armor_class' => 'Armor Class (AC)',
+            'speed' => 'Actual speed',
             'created_at' => 'Creation timestamp',
             'updated_at' => 'Last update timestamp',
         ];
@@ -443,6 +458,58 @@ class Player extends \yii\db\ActiveRecord {
     }
 
     /**
+     * column gender ENUM value labels
+     * @return string[]
+     */
+    public static function optsGender() {
+        return [
+            self::GENDER_C => 'C',
+            self::GENDER_F => 'F',
+            self::GENDER_M => 'M',
+        ];
+    }
+
+    /**
+     * @return string
+     */
+    public function displayGender() {
+        return self::optsGender()[$this->gender];
+    }
+
+    /**
+     * @return bool
+     */
+    public function isGenderC() {
+        return $this->gender === self::GENDER_C;
+    }
+
+    public function setGenderToC() {
+        $this->gender = self::GENDER_C;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isGenderF() {
+        return $this->gender === self::GENDER_F;
+    }
+
+    public function setGenderToF() {
+        $this->gender = self::GENDER_F;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isGenderM() {
+        return $this->gender === self::GENDER_M;
+    }
+
+    public function setGenderToM() {
+        $this->gender = self::GENDER_M;
+    }
+
+    /**
      * ************************
      *     Custom properties
      * ************************ */
@@ -480,11 +547,17 @@ class Player extends \yii\db\ActiveRecord {
      * @return string The description of the player character.
      */
     public function getDescription() {
-        return 'A ' . $this->age . ' years old ' .
-                ($this->gender == 'M' ? 'male' : 'femele') . ' ' .
-                $this->race->name . ' ' .
-                $this->level->name . ' ' .
-                $this->class->name . ' ';
+        /*
+          return 'A ' . $this->age . ' years old ' .
+          ($this->gender == 'M' ? 'male' : 'femele') . ' ' .
+          $this->race->name . ' ' .
+          $this->level->name . ' ' .
+          $this->class->name . ' ';
+         *
+         */
+        $gender = $this->gender == 'M' ? 'male' : 'femele';
+        $description = "{$this->age}-years-old {$gender} {$this->race->name}, {$this->level->name} {$this->alignment->name} {$this->class->name}";
+        return strtolower($description);
     }
 
     /**

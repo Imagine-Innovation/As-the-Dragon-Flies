@@ -143,6 +143,7 @@ $shadows = [
     </div>
 </div>
 <br>
+<hr>
 <br>
 <h1>Border colors</h1>
 <div class="container-fluid">
@@ -159,6 +160,7 @@ $shadows = [
     </div>
 </div>
 <br>
+<hr>
 <br>
 <h1>Colors</h1>
 <div class="container-fluid">
@@ -188,8 +190,9 @@ $shadows = [
     </div>
 </div>
 <br>
+<hr>
 <br>
-<h1>Shodows</h1>
+<h1>Shadows</h1>
 <div class="container-fluid">
     <div class="row g-1">
         <?php foreach ($shadows as $shadow): ?>

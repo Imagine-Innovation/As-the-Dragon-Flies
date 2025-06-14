@@ -26,6 +26,7 @@ $webRoot = Url::base();
 
     <link rel="stylesheet" href="css/bootstrap532.min.css">
     <link rel="stylesheet" href="css/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="js/jquery.min.js"></script>
     <script src="js/popper.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
