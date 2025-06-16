@@ -2,7 +2,9 @@
 
 namespace frontend\controllers;
 
+use common\models\User;
 use Yii;
+use yii\authclient\ClientInterface;
 use yii\base\InvalidArgumentException;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
@@ -33,10 +35,10 @@ class SiteController extends Controller {
         return [
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['logout', 'signup'],
+                'only' => ['logout', 'signup', 'auth'],
                 'rules' => [
                     [
-                        'actions' => ['signup'],
+                        'actions' => ['signup', 'auth'], // Add 'auth' here
                         'allow' => true,
                         'roles' => ['?'],
                     ],
@@ -69,7 +71,55 @@ class SiteController extends Controller {
                 'class' => \yii\captcha\CaptchaAction::class,
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
             ],
+            'auth' => [
+                'class' => 'yii\\authclient\\AuthAction',
+                'successCallback' => [$this, 'onAuthSuccess'],
+            ],
         ];
+    }
+
+    public function onAuthSuccess(ClientInterface $client)
+    {
+        $attributes = $client->getUserAttributes();
+        $googleUserId = $attributes['id'];
+        $email = $attributes['email'];
+        $username = $attributes['name']; // Or some other logic to generate a unique username
+
+        /* @var $user User */
+        $user = User::findByGoogleUserId($googleUserId);
+
+        if ($user) {
+            // User found, log them in
+            Yii::$app->user->login($user);
+        } else {
+            // User not found, check if email exists
+            $user = User::findOne(['email' => $email, 'status' => User::STATUS_ACTIVE]);
+            if ($user) {
+                // Email exists, link Google account
+                $user->google_user_id = $googleUserId;
+                if ($user->save()) {
+                    Yii::$app->user->login($user);
+                } else {
+                    Yii::$app->session->setFlash('error', 'Unable to link Google account.');
+                }
+            } else {
+                // New user, create an account
+                $newUser = new User();
+                $newUser->google_user_id = $googleUserId;
+                $newUser->email = $email;
+                $newUser->username = $username; // Ensure this is unique or implement logic for it
+                $newUser->status = User::STATUS_ACTIVE;
+                $newUser->generateAuthKey();
+                // $newUser->setPassword(Yii::$app->security->generateRandomString(12)); // Optional: set a random password or leave it null if only Google login is used
+
+                if ($newUser->save()) {
+                    Yii::$app->user->login($newUser);
+                } else {
+                    Yii::$app->session->setFlash('error', 'Unable to create an account using Google.');
+                    // Log errors: Yii::error($newUser->getErrors());
+                }
+            }
+        }
     }
 
     /**

@@ -30,6 +30,7 @@ use yii\web\IdentityInterface;
  * @property int|null $backend_last_login_at Last login to the backend at
  * @property int|null $frontend_last_login_at Last login to the frontend at
  * @property string $password write-only password
+ * @property string $google_user_id Google User ID
  *
  * @property AccessRight[] $accessRights
  * @property int $hasPlayers
@@ -39,6 +40,7 @@ use yii\web\IdentityInterface;
  * @property WebsocketConnection[] $websocketConnections
  */
 class User extends ActiveRecord implements IdentityInterface {
+    public $google_user_id;
 
     /**
      * {@inheritdoc}
@@ -63,10 +65,10 @@ class User extends ActiveRecord implements IdentityInterface {
         return [
             [['username', 'password_hash', 'verification_token', 'email'], 'required'],
             [['status', 'is_admin', 'is_designer', 'is_player', 'current_player_id', 'created_at', 'updated_at', 'backend_last_login_at', 'frontend_last_login_at'], 'integer'],
-            [['username', 'password_hash', 'password_reset_token', 'verification_token', 'email'], 'string', 'max' => 255],
+            [['username', 'password_hash', 'password_reset_token', 'verification_token', 'email', 'google_user_id'], 'string', 'max' => 255],
             [['fullname'], 'string', 'max' => 64],
             [['auth_key'], 'string', 'max' => 32],
-            [['username'], 'unique'],
+            [['username', 'google_user_id'], 'unique'],
             [['current_player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['current_player_id' => 'id']],
             ['status', 'default', 'value' => AppStatus::INACTIVE->value],
             ['status', 'in', 'range' => AppStatus::getValuesForUser()],
@@ -95,6 +97,7 @@ class User extends ActiveRecord implements IdentityInterface {
             'updated_at' => 'Updated at',
             'backend_last_login_at' => 'Last login to the backend at',
             'frontend_last_login_at' => 'Last login to the frontend at',
+            'google_user_id' => 'Google User ID',
         ];
     }
 
@@ -120,6 +123,17 @@ class User extends ActiveRecord implements IdentityInterface {
      */
     public static function findByUsername($username) {
         return static::findOne(['username' => $username, 'status' => AppStatus::ACTIVE->value]);
+    }
+
+    /**
+     * Finds user by google_user_id
+     *
+     * @param string $googleUserId
+     * @return static|null
+     */
+    public static function findByGoogleUserId($googleUserId)
+    {
+        return static::findOne(['google_user_id' => $googleUserId, 'status' => AppStatus::ACTIVE->value]);
     }
 
     /**

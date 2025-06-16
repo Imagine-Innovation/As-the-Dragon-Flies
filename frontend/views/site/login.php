@@ -7,6 +7,7 @@ use frontend\helpers\Caligraphy;
 use yii\helpers\Url;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
+use yii\authclient\widgets\AuthChoice;
 
 $this->title = 'Login';
 $this->params['breadcrumbs'][] = $this->title;
@@ -70,6 +71,14 @@ $v1 = false;
                                     'name' => 'login-button'
                                 ])
                                 ?>
+                            </div>
+
+                            <div class="text-center my-3">
+                                <p>OR</p>
+                                <?= AuthChoice::widget([
+                                    'baseAuthUrl' => ['site/auth'],
+                                    'popupMode' => false, // Set to true for popup mode
+                                ]) ?>
                             </div>
 
                             <?php ActiveForm::end(); ?>

@@ -89,6 +89,16 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
+        'authClientCollection' => [
+            'class' => 'yii\\authclient\\Collection',
+            'clients' => [
+                'google' => [
+                    'class' => 'yii\\authclient\\clients\\Google',
+                    'clientId' => 'YOUR_GOOGLE_CLIENT_ID',
+                    'clientSecret' => 'YOUR_GOOGLE_CLIENT_SECRET',
+                ],
+            ],
+        ],
     /*
       'urlManager' => [
       'enablePrettyUrl' => true,
