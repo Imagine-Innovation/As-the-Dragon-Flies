@@ -80,78 +80,47 @@ class SiteController extends Controller {
 
     public function onAuthSuccess(ClientInterface $client)
     {
-        $attributes = $client->getUserAttributes();
-        $provider = $client->getId();
-        // Ensure $oauthUserId is a string. Some providers might return integer.
-        $oauthUserId = isset($attributes['id']) ? (string)$attributes['id'] : null;
-        // Email might not be provided by all OAuth providers or might be empty
-        $email = isset($attributes['email']) ? $attributes['email'] : null;
-        // Username: try 'login' for GitHub, then 'name', then a default or error
-        $username = isset($attributes['login']) ? $attributes['login'] : (isset($attributes['name']) ? $attributes['name'] : null);
+        $oauthAttributes = $this->_getOAuthUserAttributes($client);
 
-        if (empty($oauthUserId)) {
-            Yii::$app->session->setFlash('error', 'Unable to retrieve OAuth User ID.');
-            return; // Or redirect, or handle error appropriately
+        if (!$oauthAttributes) {
+            // Error message already set in _getOAuthUserAttributes if oauth_user_id was missing
+            // Or add a generic one if it can fail for other reasons:
+            // Yii::$app->session->setFlash('error', 'Could not retrieve user information from ' . ucfirst($client->getId()) . '.');
+            return; // Stop further processing
         }
 
-        if (empty($username)) {
-            // Generate a unique username if not provided or if default is not suitable
-            // For now, we'll use a placeholder or derive from email if possible
-            $username = $email ? explode('@', $email)[0] . '_' . $provider : 'user_' . $provider . '_' . $oauthUserId;
-        }
+        $provider = $oauthAttributes['provider'];
+        $oauthUserId = $oauthAttributes['oauth_user_id'];
+        $email = $oauthAttributes['email'];
+        $username = $oauthAttributes['username'];
 
-
-        /* @var $user User */
-        $user = User::findByOAuthCredentials($provider, $oauthUserId);
+        $user = $this->_findUserByOAuth($provider, $oauthUserId);
 
         if ($user) {
-            // User found, log them in
-            Yii::$app->user->login($user);
-        } else {
-            // User not found, check if email exists (if provided by OAuth)
-            if ($email !== null) {
-                $user = User::findOne(['email' => $email, 'status' => User::STATUS_ACTIVE]);
-                if ($user) {
-                    // Email exists, link OAuth account
-                    $user->oauth_provider = $provider;
-                    $user->oauth_user_id = $oauthUserId;
-                    if ($user->save()) {
-                        Yii::$app->user->login($user);
-                    } else {
-                        Yii::$app->session->setFlash('error', 'Unable to link ' . ucfirst($provider) . ' account.');
-                        // Log errors: Yii::error($user->getErrors());
-                    }
-                    return; // Exit after attempting to link
+            $this->_loginUser($user);
+            return;
+        }
+
+        // User not found by OAuth credentials, try to link or create
+        if ($email !== null) {
+            $existingUserByEmail = $this->_findUserByEmail($email);
+            if ($existingUserByEmail) {
+                if ($this->_linkOAuthToUser($existingUserByEmail, $provider, $oauthUserId, $client)) {
+                    $this->_loginUser($existingUserByEmail);
                 }
-            }
-
-            // New user, or user with non-matching email: create an account
-            // Check for username conflicts before creating a new user
-            if (User::findOne(['username' => $username])) {
-                // Username exists, generate a unique one or prompt user
-                $username = $username . '_' . substr($oauthUserId, 0, 4); // Simple uniqueness
-                if (User::findOne(['username' => $username])) {
-                     Yii::$app->session->setFlash('error', 'Username ' . $username . ' already exists. Please choose a different one or contact support if this is your account.');
-                     return; // Or redirect to a form where user can choose a username
-                }
-            }
-
-            $newUser = new User();
-            $newUser->oauth_provider = $provider;
-            $newUser->oauth_user_id = $oauthUserId;
-            $newUser->email = $email; // Can be null if not provided
-            $newUser->username = $username;
-            $newUser->status = User::STATUS_ACTIVE; // Or User::STATUS_INACTIVE if email verification is needed and email is provided
-            $newUser->generateAuthKey();
-            // $newUser->setPassword(Yii::$app->security->generateRandomString(12)); // Only if local login is also desired
-
-            if ($newUser->save()) {
-                Yii::$app->user->login($newUser);
-            } else {
-                Yii::$app->session->setFlash('error', 'Unable to create an account using ' . ucfirst($provider) . '.');
-                // Log errors: Yii::error($newUser->getErrors());
+                // If linking fails, an error flash is set in _linkOAuthToUser.
+                // The AuthAction will typically redirect to auth/login on callback method return.
+                return;
             }
         }
+
+        // No existing user by email, or email not provided by OAuth: create a new user
+        $newUser = $this->_createNewUserFromOAuth($provider, $oauthUserId, $email, $username, $client);
+        if ($newUser) {
+            $this->_loginUser($newUser);
+        }
+        // If user creation fails, an error flash is set in _createNewUserFromOAuth.
+        // AuthAction redirects.
     }
 
     /**
@@ -433,5 +402,134 @@ class SiteController extends Controller {
         }
 
         return $this->asJson(['success' => false, 'message' => 'Invalid request']);
+    }
+
+    /**
+     * Extracts relevant user attributes from OAuth client.
+     * @param ClientInterface $client
+     * @return array|null
+     */
+    private function _getOAuthUserAttributes(ClientInterface $client): ?array
+    {
+        $attributes = $client->getUserAttributes();
+        $provider = $client->getId();
+
+        $oauthUserId = isset($attributes['id']) ? (string)$attributes['id'] : null;
+        if (empty($oauthUserId)) {
+            Yii::$app->session->setFlash('error', 'Unable to retrieve OAuth User ID from ' . ucfirst($provider) . '.');
+            return null;
+        }
+
+        $email = isset($attributes['email']) ? $attributes['email'] : null;
+        $username = isset($attributes['login']) ? $attributes['login'] : (isset($attributes['name']) ? $attributes['name'] : null);
+
+        if (empty($username)) {
+            // Fallback username generation
+            $username = $email ? explode('@', $email)[0] : 'user_' . $provider;
+            $username .= '_' . substr($oauthUserId, 0, 5); // Add part of ID for more uniqueness
+        }
+
+        // Further ensure username uniqueness or handle conflicts if necessary before returning
+        // This basic version just extracts or generates a candidate username.
+
+        return [
+            'provider' => $provider,
+            'oauth_user_id' => $oauthUserId,
+            'email' => $email,
+            'username' => $username,
+        ];
+    }
+
+    /**
+     * Finds a user by OAuth provider and ID.
+     * @param string $provider
+     * @param string $oauthUserId
+     * @return User|null
+     */
+    private function _findUserByOAuth(string $provider, string $oauthUserId): ?User
+    {
+        return User::findByOAuthCredentials($provider, $oauthUserId);
+    }
+
+    /**
+     * Finds a user by email.
+     * @param string $email
+     * @return User|null
+     */
+    private function _findUserByEmail(string $email): ?User
+    {
+        return User::findOne(['email' => $email, 'status' => User::STATUS_ACTIVE]);
+    }
+
+    /**
+     * Links OAuth credentials to an existing user.
+     * @param User $user
+     * @param string $provider
+     * @param string $oauthUserId
+     * @param ClientInterface $client
+     * @return bool
+     */
+    private function _linkOAuthToUser(User $user, string $provider, string $oauthUserId, ClientInterface $client): bool
+    {
+        $user->oauth_provider = $provider;
+        $user->oauth_user_id = $oauthUserId;
+        if ($user->save()) {
+            return true;
+        } else {
+            Yii::$app->session->setFlash('error', 'Unable to link ' . ucfirst($client->getId()) . ' account. Please try again.');
+            // Log errors: Yii::error($user->getErrors());
+            return false;
+        }
+    }
+
+    /**
+     * Creates a new user from OAuth attributes.
+     * @param string $provider
+     * @param string $oauthUserId
+     * @param string|null $email
+     * @param string $username
+     * @param ClientInterface $client
+     * @return User|null
+     */
+    private function _createNewUserFromOAuth(string $provider, string $oauthUserId, ?string $email, string $username, ClientInterface $client): ?User
+    {
+        $baseUsername = $username;
+        $counter = 1;
+        // Resolve username conflicts
+        while (User::findOne(['username' => $username])) {
+            $username = $baseUsername . '_' . substr($oauthUserId, 0, 4) . ($counter > 1 ? '_' . $counter : '');
+            if ($counter > 5) { // Limit attempts to avoid infinite loops on extreme edge cases
+                 Yii::$app->session->setFlash('error', 'Failed to generate a unique username for ' . ucfirst($client->getId()) . ' account.');
+                 return null;
+            }
+            $counter++;
+        }
+
+        $newUser = new User();
+        $newUser->oauth_provider = $provider;
+        $newUser->oauth_user_id = $oauthUserId;
+        $newUser->email = $email;
+        $newUser->username = $username;
+        $newUser->status = User::STATUS_ACTIVE; // Consider User::STATUS_INACTIVE if email verification is desired and email is present
+        $newUser->generateAuthKey();
+        // $newUser->setPassword(Yii::$app->security->generateRandomString(12)); // Optional: if local login with password is also desired
+
+        if ($newUser->save()) {
+            return $newUser;
+        } else {
+            Yii::$app->session->setFlash('error', 'Unable to create an account using ' . ucfirst($client->getId()) . '.');
+            // Log errors: Yii::error($newUser->getErrors());
+            return null;
+        }
+    }
+
+    /**
+     * Logs in the given user.
+     * @param User $user
+     * @return bool
+     */
+    private function _loginUser(User $user): bool
+    {
+        return Yii::$app->user->login($user);
     }
 }
