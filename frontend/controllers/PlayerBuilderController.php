@@ -12,11 +12,14 @@ use common\components\ManageAccessRights;
 use frontend\models\PlayerBuilder;
 use frontend\components\AjaxRequest;
 use frontend\components\BuilderTool;
-use Yii;
+use frontend\modules\playerBuilder\application\SavePlayerAbilitiesUseCase;
+use frontend\modules\playerBuilder\infrastructure\YiiPlayerRepository;
+// Potentially: use frontend\modules\playerBuilder\application\PlayerRepositoryInterface;
+use Yii; // Already there
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\AccessControl;
-use yii\web\Response;
+use yii\web\Response; // Already there
 
 //use yii\behaviors\AttributeBehavior;
 //use yii\db\ActiveRecord;
@@ -421,20 +424,18 @@ class PlayerBuilderController extends Controller {
         }
 
         $request = Yii::$app->request;
-        $model = $this->findModel($request->post('playerId'));
-        $success = true;
-        if ($model) {
-            $abilities = $request->post('abilities');
-            Yii::debug($abilities, 'arrays', 'Save abilities');
-            foreach ($model->playerAbilities as $playerAbility) {
-                $ability_id = $playerAbility->ability_id;
-                $playerAbility->score = $abilities[$ability_id];
-                if (!$playerAbility->validate()) {
-                    Yii::$app->session->setFlash('error',);
-                }
-                $success = $success && $playerAbility->save();
-            }
+        $playerId = $request->post('playerId');
+        $abilitiesData = $request->post('abilities');
+
+        if (!$playerId || !$abilitiesData) {
+            return ['error' => true, 'msg' => 'Missing playerId or abilities data.'];
         }
+
+        // Manual instantiation for now. DI will be addressed in the next step.
+        $playerRepository = new YiiPlayerRepository();
+        $savePlayerAbilitiesUseCase = new SavePlayerAbilitiesUseCase($playerRepository);
+
+        $success = $savePlayerAbilitiesUseCase->execute((int)$playerId, $abilitiesData);
 
         return ['error' => !$success, 'msg' => $success ? 'Abilities are saved' : 'Could not save abilities'];
     }
