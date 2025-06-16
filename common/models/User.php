@@ -30,7 +30,8 @@ use yii\web\IdentityInterface;
  * @property int|null $backend_last_login_at Last login to the backend at
  * @property int|null $frontend_last_login_at Last login to the frontend at
  * @property string $password write-only password
- * @property string $google_user_id Google User ID
+ * @property string|null $oauth_provider OAuth Provider
+ * @property string|null $oauth_user_id OAuth User ID
  *
  * @property AccessRight[] $accessRights
  * @property int $hasPlayers
@@ -40,7 +41,8 @@ use yii\web\IdentityInterface;
  * @property WebsocketConnection[] $websocketConnections
  */
 class User extends ActiveRecord implements IdentityInterface {
-    public $google_user_id;
+    public $oauth_provider;
+    public $oauth_user_id;
 
     /**
      * {@inheritdoc}
@@ -65,13 +67,19 @@ class User extends ActiveRecord implements IdentityInterface {
         return [
             [['username', 'password_hash', 'verification_token', 'email'], 'required'],
             [['status', 'is_admin', 'is_designer', 'is_player', 'current_player_id', 'created_at', 'updated_at', 'backend_last_login_at', 'frontend_last_login_at'], 'integer'],
-            [['username', 'password_hash', 'password_reset_token', 'verification_token', 'email', 'google_user_id'], 'string', 'max' => 255],
+            [['username', 'password_hash', 'password_reset_token', 'verification_token', 'email'], 'string', 'max' => 255],
             [['fullname'], 'string', 'max' => 64],
             [['auth_key'], 'string', 'max' => 32],
-            [['username', 'google_user_id'], 'unique'],
+            [['username'], 'unique'],
             [['current_player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['current_player_id' => 'id']],
             ['status', 'default', 'value' => AppStatus::INACTIVE->value],
             ['status', 'in', 'range' => AppStatus::getValuesForUser()],
+            [['oauth_provider'], 'string', 'max' => 50],
+            [['oauth_user_id'], 'string', 'max' => 255],
+            [['oauth_provider', 'oauth_user_id'], 'default', 'value' => null],
+            [['oauth_user_id'], 'unique', 'targetAttribute' => ['oauth_provider', 'oauth_user_id'], 'message' => 'This combination of OAuth provider and User ID has already been taken.', 'when' => function ($model) {
+                return $model->oauth_provider !== null && $model->oauth_user_id !== null;
+            }],
         ];
     }
 
@@ -97,7 +105,8 @@ class User extends ActiveRecord implements IdentityInterface {
             'updated_at' => 'Updated at',
             'backend_last_login_at' => 'Last login to the backend at',
             'frontend_last_login_at' => 'Last login to the frontend at',
-            'google_user_id' => 'Google User ID',
+            'oauth_provider' => 'OAuth Provider',
+            'oauth_user_id' => 'OAuth User ID',
         ];
     }
 
@@ -126,14 +135,15 @@ class User extends ActiveRecord implements IdentityInterface {
     }
 
     /**
-     * Finds user by google_user_id
+     * Finds user by OAuth credentials
      *
-     * @param string $googleUserId
+     * @param string $provider
+     * @param string $providerUserId
      * @return static|null
      */
-    public static function findByGoogleUserId($googleUserId)
+    public static function findByOAuthCredentials($provider, $providerUserId)
     {
-        return static::findOne(['google_user_id' => $googleUserId, 'status' => AppStatus::ACTIVE->value]);
+        return static::findOne(['oauth_provider' => $provider, 'oauth_user_id' => $providerUserId, 'status' => AppStatus::ACTIVE->value]);
     }
 
     /**

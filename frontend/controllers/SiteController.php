@@ -81,43 +81,75 @@ class SiteController extends Controller {
     public function onAuthSuccess(ClientInterface $client)
     {
         $attributes = $client->getUserAttributes();
-        $googleUserId = $attributes['id'];
-        $email = $attributes['email'];
-        $username = $attributes['name']; // Or some other logic to generate a unique username
+        $provider = $client->getId();
+        // Ensure $oauthUserId is a string. Some providers might return integer.
+        $oauthUserId = isset($attributes['id']) ? (string)$attributes['id'] : null;
+        // Email might not be provided by all OAuth providers or might be empty
+        $email = isset($attributes['email']) ? $attributes['email'] : null;
+        // Username: try 'login' for GitHub, then 'name', then a default or error
+        $username = isset($attributes['login']) ? $attributes['login'] : (isset($attributes['name']) ? $attributes['name'] : null);
+
+        if (empty($oauthUserId)) {
+            Yii::$app->session->setFlash('error', 'Unable to retrieve OAuth User ID.');
+            return; // Or redirect, or handle error appropriately
+        }
+
+        if (empty($username)) {
+            // Generate a unique username if not provided or if default is not suitable
+            // For now, we'll use a placeholder or derive from email if possible
+            $username = $email ? explode('@', $email)[0] . '_' . $provider : 'user_' . $provider . '_' . $oauthUserId;
+        }
+
 
         /* @var $user User */
-        $user = User::findByGoogleUserId($googleUserId);
+        $user = User::findByOAuthCredentials($provider, $oauthUserId);
 
         if ($user) {
             // User found, log them in
             Yii::$app->user->login($user);
         } else {
-            // User not found, check if email exists
-            $user = User::findOne(['email' => $email, 'status' => User::STATUS_ACTIVE]);
-            if ($user) {
-                // Email exists, link Google account
-                $user->google_user_id = $googleUserId;
-                if ($user->save()) {
-                    Yii::$app->user->login($user);
-                } else {
-                    Yii::$app->session->setFlash('error', 'Unable to link Google account.');
+            // User not found, check if email exists (if provided by OAuth)
+            if ($email !== null) {
+                $user = User::findOne(['email' => $email, 'status' => User::STATUS_ACTIVE]);
+                if ($user) {
+                    // Email exists, link OAuth account
+                    $user->oauth_provider = $provider;
+                    $user->oauth_user_id = $oauthUserId;
+                    if ($user->save()) {
+                        Yii::$app->user->login($user);
+                    } else {
+                        Yii::$app->session->setFlash('error', 'Unable to link ' . ucfirst($provider) . ' account.');
+                        // Log errors: Yii::error($user->getErrors());
+                    }
+                    return; // Exit after attempting to link
                 }
-            } else {
-                // New user, create an account
-                $newUser = new User();
-                $newUser->google_user_id = $googleUserId;
-                $newUser->email = $email;
-                $newUser->username = $username; // Ensure this is unique or implement logic for it
-                $newUser->status = User::STATUS_ACTIVE;
-                $newUser->generateAuthKey();
-                // $newUser->setPassword(Yii::$app->security->generateRandomString(12)); // Optional: set a random password or leave it null if only Google login is used
+            }
 
-                if ($newUser->save()) {
-                    Yii::$app->user->login($newUser);
-                } else {
-                    Yii::$app->session->setFlash('error', 'Unable to create an account using Google.');
-                    // Log errors: Yii::error($newUser->getErrors());
+            // New user, or user with non-matching email: create an account
+            // Check for username conflicts before creating a new user
+            if (User::findOne(['username' => $username])) {
+                // Username exists, generate a unique one or prompt user
+                $username = $username . '_' . substr($oauthUserId, 0, 4); // Simple uniqueness
+                if (User::findOne(['username' => $username])) {
+                     Yii::$app->session->setFlash('error', 'Username ' . $username . ' already exists. Please choose a different one or contact support if this is your account.');
+                     return; // Or redirect to a form where user can choose a username
                 }
+            }
+
+            $newUser = new User();
+            $newUser->oauth_provider = $provider;
+            $newUser->oauth_user_id = $oauthUserId;
+            $newUser->email = $email; // Can be null if not provided
+            $newUser->username = $username;
+            $newUser->status = User::STATUS_ACTIVE; // Or User::STATUS_INACTIVE if email verification is needed and email is provided
+            $newUser->generateAuthKey();
+            // $newUser->setPassword(Yii::$app->security->generateRandomString(12)); // Only if local login is also desired
+
+            if ($newUser->save()) {
+                Yii::$app->user->login($newUser);
+            } else {
+                Yii::$app->session->setFlash('error', 'Unable to create an account using ' . ucfirst($provider) . '.');
+                // Log errors: Yii::error($newUser->getErrors());
             }
         }
     }
