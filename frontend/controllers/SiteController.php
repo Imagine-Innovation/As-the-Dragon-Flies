@@ -10,6 +10,7 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\web\Response;
 use common\models\LoginForm;
+use common\models\User;
 use common\components\ManageAccessRights;
 use frontend\models\ResendVerificationEmailForm;
 use frontend\models\VerifyEmailForm;
@@ -33,7 +34,7 @@ class SiteController extends Controller {
         return [
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['logout', 'signup'],
+                'only' => ['logout', 'signup', 'keep-alive', 'lock-screen', 'unlock-session'],
                 'rules' => [
                     [
                         'actions' => ['signup'],
@@ -41,10 +42,14 @@ class SiteController extends Controller {
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['logout', 'ajax-toast', 'websocket', 'send-message'],
-                        //'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'actions' => ['logout', 'keep-alive'],
                         'allow' => true,
                         'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['lock-screen', 'unlock-session'],
+                        'allow' => true,
+                        'roles' => ['?', '@'], // Allow guest (session timeout) and authenticated (JS initiated lock)
                     ],
                 ],
             ],
@@ -351,5 +356,103 @@ class SiteController extends Controller {
         }
 
         return $this->asJson(['success' => false, 'message' => 'Invalid request']);
+    }
+
+    /**
+     * Displays the lock screen.
+     * If the user is a guest, it shows the lock screen.
+     * If the user is logged in, it redirects to the home page.
+     *
+     * @return mixed
+     */
+    public function actionLockScreen()
+    {
+        if (Yii::$app->user->isGuest) {
+            $this->layout = 'blank';
+            $model = new LoginForm();
+
+            $username = Yii::$app->session->getFlash('lockscreen_username', '');
+
+            if (!empty($username)) {
+                $model->username = $username;
+            }
+
+            // Store the attempted URL before lock
+            $returnUrl = Yii::$app->user->getReturnUrl(Yii::$app->getHomeUrl());
+            if (strpos($returnUrl, 'lock-screen') === false && strpos($returnUrl, 'login') === false) {
+                 Yii::$app->session->set('lock_screen_return_url', $returnUrl);
+            }
+
+
+            return $this->render('lock-screen', [
+                'model' => $model,
+            ]);
+        }
+
+        return $this->goHome();
+    }
+
+    /**
+     * Handles unlocking the session.
+     *
+     * @return mixed
+     */
+    public function actionUnlockSession()
+    {
+        if (!Yii::$app->user->isGuest) {
+            // If user is already logged in (e.g. opened unlock in another tab), just go home.
+            return $this->goHome();
+        }
+
+        $this->layout = 'blank';
+        $model = new LoginForm();
+
+        if ($model->load(Yii::$app->request->post())) {
+            // The username should be submitted from the lock screen form.
+            $lockedUser = User::findByUsername($model->username);
+
+            if ($lockedUser && $lockedUser->validatePassword($model->password)) {
+                // Password is correct for the intended user. Log them in.
+                // For unlock, we don't want "rememberMe" functionality to extend cookie duration.
+                if (Yii::$app->user->login($lockedUser, 0)) { // Duration 0 for session login
+                    Yii::$app->session->regenerateID(true); // Regenerate session ID for security
+
+                    $returnUrl = Yii::$app->session->get('lock_screen_return_url', Yii::$app->getHomeUrl());
+                    Yii::$app->session->remove('lock_screen_return_url'); // Clean up
+                    return $this->redirect($returnUrl);
+                } else {
+                    // Login failed unexpectedly
+                    Yii::$app->session->setFlash('error', 'There was an issue unlocking your session. Please try again.');
+                }
+            } else {
+                // Incorrect password or username doesn't match
+                $model->addError('password', 'Incorrect username or password.');
+                // Pass the username back to prefill the lock screen form
+                Yii::$app->session->setFlash('lockscreen_username', $model->username);
+            }
+        } else {
+            // If not a POST request or load failed, redirect to lock screen.
+            // This might happen if someone navigates to the URL directly without submitting the form.
+            return $this->redirect(['site/lock-screen']);
+        }
+
+        // If login failed, re-render the lock screen
+        return $this->render('lock-screen', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Dummy action to keep session alive.
+     * Accessed via AJAX by the session timeout script.
+     */
+    public function actionKeepAlive()
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        if (Yii::$app->request->isPost && !Yii::$app->user->isGuest) {
+            // Just by accessing this, the session is touched and its lifetime extended by PHP/Yii.
+            return ['status' => 'success', 'message' => 'Session extended.'];
+        }
+        return ['status' => 'error', 'message' => 'Invalid request or user not logged in.'];
     }
 }

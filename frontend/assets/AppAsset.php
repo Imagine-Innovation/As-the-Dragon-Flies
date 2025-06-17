@@ -16,6 +16,7 @@ class AppAsset extends AssetBundle {
         'css/main.css',
     ];
     public $js = [
+        'js/session-timeout.js' // Add this line
     ];
     public $depends = [
         'yii\web\YiiAsset',

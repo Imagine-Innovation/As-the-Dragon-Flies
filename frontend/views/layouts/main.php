@@ -15,10 +15,10 @@ $snippet = Yii::$app->user->isGuest ? 'guest' : 'lobby';
 
     <?= $this->renderFile('@app/views/layouts/_head.php') ?>
 
-    <body>
+    <body class="<?= Yii::$app->user->isGuest ? 'guest-user' : 'logged-in' ?> d-flex flex-column h-100">
         <?php $this->beginBody(); ?>
 
-        <main role="main" class="main">
+        <main role="main" class="main flex-shrink-0">
             <?= $this->renderFile("@app/views/layouts/_content-$snippet.php", ['content' => $content]) ?>
         </main>
 
