@@ -3,139 +3,85 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Scripting/EmptyPHP.php to edit this template
  */
-$backgrounds = [
-    'var(--blue)', 'var(--light-blue)', 'var(--pink)', 'var(--green)', 'var(--light-green)',
-    'var(--bs-yellow)', 'var(--light-yellow)', 'var(--red)', 'var(--cyan)', 'var(--white)',
-    'var(--gray-1)', 'var(--gray-2)', 'var(--gray-4)', 'var(--gray-6)', 'var(--gray-8)',
-    'var(--gray-a)', 'var(--gray-c)', 'var(--gray-e)', 'var(--background)', 'var(--primary)',
-    'var(--secondary)', 'var(--success)', 'var(--info)', 'var(--warning)', 'var(--danger)',
-    'var(--light)', 'var(--dark)',
-    '#0c5460',
-    '#0f6674',
-    '#117a8b',
-    '#121416',
-    '#494f54',
-    '#a71d2a',
-    '#ba8b00',
-    '#cbd3da',
-    '#f00',
-    'rgba(0,123,255,.25)',
-    'rgba(0,123,255,.5)',
-    'rgba(108,117,125,.5)',
-    'rgba(220,53,69,.25)',
-    'rgba(220,53,69,.5)',
-    'rgba(23,162,184,.5)',
-    'rgba(242,242,242,.2)',
-    'rgba(248,249,250,.5)',
-    'rgba(250,250,250,.75)',
-    'rgba(255,193,7,.5)',
-    'rgba(40,167,69,.25)',
-    'rgba(40,167,69,.5)',
-    'rgba(52,58,64,.5)',
-];
-
-$bordercolors = [
-    'var(--blue)', 'var(--light-blue)', 'var(--pink)', 'var(--green)', 'var(--light-green)',
-    'var(--bs-yellow)', 'var(--light-yellow)', 'var(--red)', 'var(--cyan)', 'var(--white)',
-    'var(--gray-1)', 'var(--gray-2)', 'var(--gray-4)', 'var(--gray-6)', 'var(--gray-8)',
-    'var(--gray-a)', 'var(--gray-c)', 'var(--gray-e)', 'var(--background)', 'var(--primary)',
-    'var(--secondary)', 'var(--success)', 'var(--info)', 'var(--warning)', 'var(--danger)',
-    'var(--light)', 'var(--dark)',
-    '#0c5460',
-    '#0f6674',
-    '#117a8b',
-    '#121416',
-    '#494f54',
-    '#a71d2a',
-    '#ba8b00',
-    '#cbd3da',
-    '#f00',
-    'rgba(0,123,255,.25)',
-    'rgba(0,123,255,.5)',
-    'rgba(108,117,125,.5)',
-    'rgba(220,53,69,.25)',
-    'rgba(220,53,69,.5)',
-    'rgba(23,162,184,.5)',
-    'rgba(242,242,242,.2)',
-    'rgba(248,249,250,.5)',
-    'rgba(250,250,250,.75)',
-    'rgba(255,193,7,.5)',
-    'rgba(40,167,69,.25)',
-    'rgba(40,167,69,.5)',
-    'rgba(52,58,64,.5)',
-];
 
 $colors = [
-    'var(--blue)', 'var(--light-blue)', 'var(--pink)', 'var(--green)', 'var(--light-green)',
-    'var(--bs-yellow)', 'var(--light-yellow)', 'var(--red)', 'var(--cyan)', 'var(--white)',
-    'var(--gray-1)', 'var(--gray-2)', 'var(--gray-4)', 'var(--gray-6)', 'var(--gray-8)',
-    'var(--gray-a)', 'var(--gray-c)', 'var(--gray-e)', 'var(--background)', 'var(--primary)',
-    'var(--secondary)', 'var(--success)', 'var(--info)', 'var(--warning)', 'var(--danger)',
-    'var(--light)', 'var(--dark)',
-    '#0c5460',
-    '#0f6674',
-    '#117a8b',
-    '#121416',
-    '#494f54',
-    '#a71d2a',
-    '#ba8b00',
-    '#cbd3da',
-    '#f00',
-    'rgba(0,123,255,.25)',
-    'rgba(0,123,255,.5)',
-    'rgba(108,117,125,.5)',
-    'rgba(220,53,69,.25)',
-    'rgba(220,53,69,.5)',
-    'rgba(23,162,184,.5)',
-    'rgba(242,242,242,.2)',
-    'rgba(248,249,250,.5)',
-    'rgba(250,250,250,.75)',
-    'rgba(255,193,7,.5)',
-    'rgba(40,167,69,.25)',
-    'rgba(40,167,69,.5)',
-    'rgba(52,58,64,.5)',
-];
-
-$shadows = [
-    'var(--blue)', 'var(--light-blue)', 'var(--pink)', 'var(--green)', 'var(--light-green)',
-    'var(--bs-yellow)', 'var(--light-yellow)', 'var(--red)', 'var(--cyan)', 'var(--white)',
-    'var(--gray-1)', 'var(--gray-2)', 'var(--gray-4)', 'var(--gray-6)', 'var(--gray-8)',
-    'var(--gray-a)', 'var(--gray-c)', 'var(--gray-e)', 'var(--background)', 'var(--primary)',
-    'var(--secondary)', 'var(--success)', 'var(--info)', 'var(--warning)', 'var(--danger)',
-    'var(--light)', 'var(--dark)',
-    '#0c5460',
-    '#0f6674',
-    '#117a8b',
-    '#121416',
-    '#494f54',
-    '#a71d2a',
-    '#ba8b00',
-    '#cbd3da',
-    '#f00',
-    'rgba(0,123,255,.25)',
-    'rgba(0,123,255,.5)',
-    'rgba(108,117,125,.5)',
-    'rgba(220,53,69,.25)',
-    'rgba(220,53,69,.5)',
-    'rgba(23,162,184,.5)',
-    'rgba(242,242,242,.2)',
-    'rgba(248,249,250,.5)',
-    'rgba(250,250,250,.75)',
-    'rgba(255,193,7,.5)',
-    'rgba(40,167,69,.25)',
-    'rgba(40,167,69,.5)',
-    'rgba(52,58,64,.5)',
+    'var(--blue)',
+    'var(--blue-25)',
+    'var(--blue-50)',
+    'var(--light-blue)',
+    'var(--cyan)',
+    'var(--cyan-50)',
+    'var(--teal)',
+    'var(--light-green)',
+    'var(--green)',
+    'var(--green-50)',
+    'var(--green-25)',
+    'var(--indigo)',
+    'var(--purple)',
+    'var(--red)',
+    'var(--red-25)',
+    'var(--red-50)',
+    'var(--orange)',
+    'var(--yellow)',
+    'var(--yellow-50)',
+    'var(--light-yellow)',
+    'var(--pink)',
+    'var(--black)',
+    'var(--dark-95)',
+    'var(--dark-75)',
+    'var(--dark-50)',
+    'var(--dark-25)',
+    'var(--dark-10)',
+    'var(--dark-00)',
+    'var(--dark-gray)',
+    'var(--dark-gray-50)',
+    'var(--gray)',
+    'var(--gray-50)',
+    'var(--gray-1)',
+    'var(--gray-2)',
+    'var(--gray-4)',
+    'var(--gray-6)',
+    'var(--gray-8)',
+    'var(--gray-a)',
+    'var(--gray-c)',
+    'var(--gray-e)',
+    'var(--light-05)',
+    'var(--light-10)',
+    'var(--light-25)',
+    'var(--light-50)',
+    'var(--light-75)',
+    'var(--light-85)',
+    'var(--light-gray-50)',
+    'var(--light-gray)',
+    'var(--white)',
 ];
 ?>
 <h1>Background colors</h1>
 <div class="container-fluid">
     <div class="row g-1">
-        <?php foreach ($backgrounds as $background): ?>
+        <?php foreach ($colors as $color): ?>
             <div class="col-2 col-lg-1">
-                <div class="card h-100" style="background-color: <?= $background ?>;">
+                <div class="card h-100" style="background-color: <?= $color ?>;">
                     <div class="card-body" style="padding: 5px;">
-                        <p style="color: black;"><?= $background ?></p>
-                        <p style="color: white;"><?= $background ?></p>
+                        <p style="color: black;"><?= $color ?></p>
+                        <p style="color: white;"><?= $color ?></p>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>
+<br>
+<hr>
+<br>
+<div class="container-fluid" style="background-color: white;">
+    <div class="row g-1">
+        <?php foreach ($colors as $color): ?>
+            <div class="col-2 col-lg-1">
+                <div class="card h-100" style="background-color: <?= $color ?>;">
+                    <div class="card-body" style="padding: 5px;">
+                        <p style="color: black;"><?= $color ?></p>
+                        <p style="color: white;"><?= $color ?></p>
                     </div>
                 </div>
             </div>
@@ -148,11 +94,11 @@ $shadows = [
 <h1>Border colors</h1>
 <div class="container-fluid">
     <div class="row g-1">
-        <?php foreach ($bordercolors as $bordercolor): ?>
+        <?php foreach ($colors as $color): ?>
             <div class="col-2 col-lg-1">
-                <div class="card h-100" style="border: 5px solid <?= $bordercolor ?>;">
+                <div class="card h-100" style="border: 5px solid <?= $color ?>;">
                     <div class="card-body" style="padding: 5px;">
-                        <p style="color: white;"><?= $bordercolor ?></p>
+                        <p style="color: white;"><?= $color ?></p>
                     </div>
                 </div>
             </div>
@@ -195,11 +141,11 @@ $shadows = [
 <h1>Shadows</h1>
 <div class="container-fluid">
     <div class="row g-1">
-        <?php foreach ($shadows as $shadow): ?>
+        <?php foreach ($colors as $color): ?>
             <div class="col-2 col-lg-1">
-                <div class="card h-100" style="box-shadow: <?= $shadow ?>;">
+                <div class="card h-100" style="box-shadow: <?= $color ?>;">
                     <div class="card-body" style="padding: 5px;">
-                        <p><?= $shadow ?></p>
+                        <p><?= $color ?></p>
                     </div>
                 </div>
             </div>

@@ -12,6 +12,7 @@ use common\components\ManageAccessRights;
 use frontend\models\PlayerBuilder;
 use frontend\components\AjaxRequest;
 use frontend\components\BuilderTool;
+use frontend\components\PlayerTool;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -164,12 +165,14 @@ class PlayerBuilderController extends Controller {
         $request = Yii::$app->request;
         $playerId = $request->post('playerId');
         $player = $this->findModel($playerId);
+
+        $success = BuilderTool::initSkills($player);
         return [
-            'error' => false,
+            'error' => $success ? false : true,
             'content' => $this->renderPartial('ajax-skills', [
                 'player' => $player,
-                'background_skills' => $player->background->skills,
-                'class_skills' => $player->class->skills,
+                'backgroundSkills' => $player->background->backgroundSkills,
+                'playerSkills' => $player->playerSkills,
                 'n' => $player->class->max_skills,
             ]),
         ];
@@ -188,7 +191,7 @@ class PlayerBuilderController extends Controller {
         $request = Yii::$app->request;
 
         $player = $this->findModel($request->post('playerId'));
-        $success = $player->initTraits();
+        $success = BuilderTool::initTraits($player);
 
         if ($success) {
             return [
@@ -215,7 +218,7 @@ class PlayerBuilderController extends Controller {
         $playerId = $request->post('playerId');
         $player = $this->findModel($playerId);
 
-        $endowmentTable = $player->loadInitialEndowment();
+        $endowmentTable = $player->initialEndowment;
         $backgroundItems = $player->background->backgroundItems;
 
         return [
@@ -395,18 +398,21 @@ class PlayerBuilderController extends Controller {
 
         $request = Yii::$app->request;
         $playerId = $request->post('playerId');
-        // before anything else, delete the existing skills
-        $n = PlayerSkill::find()->where(['player_id' => $playerId])->count();
-        $success = $n > 0 ? PlayerSkill::deleteAll(['player_id' => $playerId]) : true;
+
+        $reset = PlayerSkill::updateAll(['is_proficient' => 0], ['player_id' => $playerId]);
 
         // get the list of skill ids from the ajax param "skills"
         $skills = $request->post('skills');
+        $success = $reset & PlayerSkill::updateAll(['is_proficient' => 1], ['player_id' => $playerId, 'skill_id' => $skills]);
         Yii::debug($skills, 'actionAjaxSaveSkills', 'from JSON');
-        foreach ($skills as $skillId) {
-            $playerSkill = new PlayerSkill(['player_id' => $playerId, 'skill_id' => $skillId]);
-            $save = $playerSkill->save();
-            $success = $success && $save;
-        }
+        /*
+          foreach ($skills as $skillId) {
+          $playerSkill = new PlayerSkill(['player_id' => $playerId, 'skill_id' => $skillId]);
+          $save = $playerSkill->save();
+          $success = $success && $save;
+          }
+         *
+         */
 
         return ['error' => !$success, 'msg' => $success ? 'Skills are saved' : 'Could not save skills'];
     }
@@ -428,7 +434,10 @@ class PlayerBuilderController extends Controller {
             Yii::debug($abilities, 'arrays', 'Save abilities');
             foreach ($model->playerAbilities as $playerAbility) {
                 $ability_id = $playerAbility->ability_id;
-                $playerAbility->score = $abilities[$ability_id];
+                $score = $abilities[$ability_id];
+                $playerAbility->score = $score;
+                $playerAbility->modifier = PlayerTool::calcAbilityModifier($score);
+
                 if (!$playerAbility->validate()) {
                     Yii::$app->session->setFlash('error',);
                 }
@@ -475,11 +484,11 @@ class PlayerBuilderController extends Controller {
         $model = $this->findModel($id);
 
         if ($model->status === AppStatus::ACTIVE->value) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['player/view', 'id' => $id]);
         }
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['update', 'id' => $model->id]);
+            return $this->redirect(['update', 'id' => $id]);
         }
 
         return $this->render('update', [
@@ -494,9 +503,7 @@ class PlayerBuilderController extends Controller {
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionView($id) {
-        return $this->render('view', [
-                    'model' => $this->findModel($id),
-        ]);
+        return $this->redirect(['player/view', 'id' => $id]);
     }
 
     /**

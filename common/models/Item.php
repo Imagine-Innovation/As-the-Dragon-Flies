@@ -27,7 +27,7 @@ use frontend\components\Shopping;
  * @property BackgroundItem[] $backgroundItems
  * @property Category[] $categories
  * @property ClassEquipment[] $classEquipments
- * @property ClassItem[] $classItems
+ * @property ClassItemProficiency[] $classItemProficiencies
  * @property CharacterClass[] $classes
  * @property GridItem[] $gridItems
  * @property Grid[] $grids
@@ -72,6 +72,9 @@ class Item extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['image_id', 'description', 'cost', 'coin', 'weight', 'max_load', 'max_volume'], 'default', 'value' => null],
+            [['is_purchasable'], 'default', 'value' => 1],
+            [['is_wearable'], 'default', 'value' => 0],
             [['item_type_id', 'name'], 'required'],
             [['item_type_id', 'image_id', 'sort_order', 'cost', 'quantity', 'is_packable', 'is_wearable', 'is_purchasable'], 'integer'],
             [['description'], 'string'],
@@ -144,12 +147,12 @@ class Item extends \yii\db\ActiveRecord {
     }
 
     /**
-     * Gets query for [[ClassItems]].
+     * Gets query for [[ClassItemProficiencies]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getClassItems() {
-        return $this->hasMany(ClassItem::class, ['item_id' => 'id']);
+    public function getClassItemProficiencies() {
+        return $this->hasMany(ClassItemProficiency::class, ['item_id' => 'id']);
     }
 
     /**

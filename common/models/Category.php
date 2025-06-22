@@ -13,10 +13,13 @@ use Yii;
  *
  * @property BackgroundItem[] $backgroundItems
  * @property ClassEquipment[] $classEquipments
+ * @property ClassItemProficiency[] $classItemProficiencies
  * @property ItemCategory[] $itemCategories
  * @property Item[] $items
  */
-class Category extends \yii\db\ActiveRecord {
+class Category extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -30,6 +33,7 @@ class Category extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['description'], 'default', 'value' => null],
             [['name'], 'required'],
             [['description'], 'string'],
             [['name'], 'string', 'max' => 32],
@@ -66,6 +70,15 @@ class Category extends \yii\db\ActiveRecord {
     }
 
     /**
+     * Gets query for [[ClassItemProficiencies]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getClassItemProficiencies() {
+        return $this->hasMany(ClassItemProficiency::class, ['category_id' => 'id']);
+    }
+
+    /**
      * Gets query for [[ItemCategories]].
      *
      * @return \yii\db\ActiveQuery
@@ -80,6 +93,7 @@ class Category extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getItems() {
-        return $this->hasMany(Item::class, ['id' => 'item_id'])->via('itemCategories');
+        return $this->hasMany(Item::class, ['id' => 'item_id'])->viaTable('item_category', ['category_id' => 'id']);
     }
+
 }

@@ -119,7 +119,7 @@ class ManageAccessRights extends Component {
      * @return bool
      */
     private static function isPublic(string $route, string $action): bool {
-        $publicSiteActions = ['error', 'login', 'captcha', 'index', 'signup', 'colors', 'icons', 'fonts',
+        $publicSiteActions = ['error', 'login', 'captcha', 'index', 'signup', 'colors', 'icons', 'fonts', 'game',
             'request-password-reset', 'reset-password', 'verify-email', 'resend-verification-email'];
         // Allow access to site/error, site/login, site/captcha, site/index,...
         // or to any ajax call (side effect, every ajax call actions should be prefixed with 'ajax'
@@ -140,18 +140,18 @@ class ManageAccessRights extends Component {
         $route = $controller->id;
         $action = $controller->action->id;
 
+        if (self::isPublic($route, $action)) {
+            return self::logAccess(null, false, 'success', 'Access granted by default to public route');
+        }
         // Get access rights for the route
         $accessRight = AccessRight::findOne(['route' => $route, 'action' => $action]);
 
         // If no access rights defined, grant access to public "route/action"
         if (!$accessRight) {
-            return self::isPublic($route, $action) ?
-                    self::logAccess(null, false, 'success', 'Access granted by default to public route') :
-                    self::logAccess(null, true, 'error', 'Access denied by default; no specific AccessRight found');
+            return self::logAccess(null, true, 'error', "Access denied by default for [{$route}/{$action}]: no specific AccessRight found");
         }
 
-        $sessionUser = Yii::$app->session->get('user');
-        $user = $sessionUser ?? Yii::$app->user->identity;
+        $user = Yii::$app->session->get('user') ?? Yii::$app->user->identity;
 
         // Grant access if user is admin and route allows admin access
         if ($user->is_admin && $accessRight->is_admin) {

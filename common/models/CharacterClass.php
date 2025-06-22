@@ -17,11 +17,12 @@ namespace common\models;
  * @property string $initial_funding_coin Initial funding coin
  *
  * @property Ability[] $abilities
+ * @property AbilityDefault[] $abilityDefaults
  * @property ClassAbility[] $classAbilities
  * @property ClassEndowment[] $classEndowments
  * @property ClassFeature[] $classFeatures
  * @property ClassImage[] $classImages
- * @property ClassItem[] $classItems
+ * @property ClassItemProficiency[] $classItemProficiencies
  * @property ClassProficiency[] $classProficiencies
  * @property ClassSkill[] $classSkills
  * @property ClassSpell[] $classSpells
@@ -52,6 +53,9 @@ class CharacterClass extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['description'], 'default', 'value' => null],
+            [['tools'], 'default', 'value' => 0],
+            [['initial_funding_multiplier'], 'default', 'value' => 1],
             [['name', 'hit_die', 'initial_funding_dice', 'initial_funding_coin'], 'required'],
             [['description'], 'string'],
             [['abilities', 'max_skills', 'tools', 'initial_funding_multiplier'], 'integer'],
@@ -126,12 +130,12 @@ class CharacterClass extends \yii\db\ActiveRecord {
     }
 
     /**
-     * Gets query for [[ClassItems]].
+     * Gets query for [[ClassItemProficiencies]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getClassItems() {
-        return $this->hasMany(ClassItem::class, ['class_id' => 'id']);
+    public function getClassItemProficiencies() {
+        return $this->hasMany(ClassItemProficiency::class, ['class_id' => 'id']);
     }
 
     /**

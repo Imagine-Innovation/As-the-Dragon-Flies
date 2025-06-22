@@ -7,6 +7,8 @@ use frontend\widgets\PlayerCharacteristics;
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Players', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+
+$proficiencyBonus = $model->level->proficiency_bonus;
 ?>
 <div class="container py-3">
     <?php if (1 === 2): ?>
@@ -21,29 +23,29 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= PlayerCharacteristics::widget(['player' => $model]) ?>
     <?php else: ?>
         <!-- Character Header -->
-        <div class="row mb-4">
-            <div class="col-lg-3 text-center mb-3 mb-lg-0">
-                <div class="d-flex align-items-center justify-content-center mx-auto">
+        <table>
+            <tr>
+                <td>
                     <div class="avatar-img">
                         <img src="img/characters/<?= $model->avatar ?>" class="rounded-circle image-thumbnail" style="object-fit: cover;">
                     </div>
-                </div>
-            </div>
-            <div class="col-lg-9">
-                <h1 class="mb-3 text-decoration"><?= $model->name ?></h1>
-                <h5><?= $model->description ?></h5>
-            </div>
-        </div>
+                </td>
+                <td>
+                    <h1 class="mb-3 text-decoration"><?= $model->name ?></h1>
+                    <h5><?= $model->description ?></h5>
+                </td>
+            </tr>
+        </table>
 
         <hr class="border-secondary">
 
         <!-- Main Content -->
         <div class="row g-4">
             <!-- Left Column -->
-            <div class="col-12 col-md-6 col-lg-4 col-xxl-3">
+            <div class="col-12 col-md-6 col-xl-4 col-xxl-3">
                 <!-- Ability Scores -->
                 <div class="card mb-4">
-                    <div class="card-header bg-warning text-decoration text-dark ext-center py-2">
+                    <div class="card-header bg-purple text-decoration fw-bold h-100 py-2">
                         <i class="fas fa-fist-raised me-2"></i>Ability Scores
                     </div>
                     <div class="card-body">
@@ -64,9 +66,9 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
 
             <!-- Combat Stats -->
-            <div class="col-12 col-md-6 col-lg-4 col-xxl-3">
+            <div class="col-12 col-md-6 col-xl-4 col-xxl-3">
                 <div class="card mb-4">
-                    <div class="card-header bg-warning text-decoration text-dark text-center py-2">
+                    <div class="card-header bg-purple text-decoration fw-bold h-100 py-2">
                         <i class="fas fa-shield-alt me-2"></i>Combat Stats
                     </div>
                     <div class="card-body">
@@ -74,32 +76,28 @@ $this->params['breadcrumbs'][] = $this->title;
                             <div class="col-6">
                                 <div class="card text-center">
                                     <div class="card-body p-3">
-                                        <small class="text-uppercase fw-bold text-muted d-block">Armor Class</small>
-                                        <div class="stat-value">18</div>
+                                        Armor Class: <?= $model->armor_class ?>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="card text-center">
                                     <div class="card-body p-3">
-                                        <small class="text-uppercase fw-bold text-muted d-block">Initiative</small>
-                                        <div class="stat-value">+1</div>
+                                        Initiative: +1
                                     </div>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="card text-center">
                                     <div class="card-body p-3">
-                                        <small class="text-uppercase fw-bold text-muted d-block">Speed</small>
-                                        <div class="stat-value">25 ft</div>
+                                        Speed: <?= $model->speed ?? $model->race->speed ?> ft
                                     </div>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="card text-center">
                                     <div class="card-body p-3">
-                                        <small class="text-uppercase fw-bold text-muted d-block">Prof. Bonus</small>
-                                        <div class="stat-value">+3</div>
+                                        Prof. Bonus: +<?= $proficiencyBonus ?>
                                     </div>
                                 </div>
                             </div>
@@ -108,9 +106,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
             </div>
             <!-- Hit Points -->
-            <div class="col-12 col-md-6 col-lg-4 col-xxl-3">
+            <div class="col-12 col-md-6 col-xl-4 col-xxl-3">
                 <div class="card mb-4">
-                    <div class="card-header bg-warning text-decoration text-dark text-center py-2">
+                    <div class="card-header bg-purple text-decoration fw-bold h-100 py-2">
                         <i class="fas fa-heart me-2"></i>Hit Points
                     </div>
                     <div class="card-body">
@@ -118,146 +116,86 @@ $this->params['breadcrumbs'][] = $this->title;
                             <div class="col-6">
                                 <div class="card hp-current text-center">
                                     <div class="card-body p-3">
-                                        <small class="text-uppercase fw-bold d-block opacity-75">Current HP</small>
-                                        <div class="stat-value text-white">42</div>
+                                        Current HP: <?= $model->hit_points ?>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="card hp-max text-center">
                                     <div class="card-body p-3">
-                                        <small class="text-uppercase fw-bold text-muted d-block">Max HP</small>
-                                        <div class="stat-value">47</div>
+                                        Max HP: <?= $model->max_hit_points ?>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="progress progress-fantasy mb-3" style="height: 8px;">
-                            <div class="progress-bar" role="progressbar" style="width: 89%" aria-valuenow="42" aria-valuemin="0" aria-valuemax="47"></div>
+                            <div class="progress-bar" role="progressbar"
+                                 style="width: <?= intval(($model->hit_points ?? 0) / ($model->max_hit_points ?? 1) * 100) ?>%"
+                                 aria-valuenow="<?= $model->hit_points ?>"
+                                 aria-valuemin="0"
+                                 aria-valuemax="<?= $model->max_hit_points ?>">
+                            </div>
                         </div>
                         <div class="card text-center">
                             <div class="card-body p-3">
-                                <small class="text-uppercase fw-bold text-muted d-block">Hit Dice</small>
-                                <div class="stat-value">5d10</div>
+                                Hit Dice: <?= $model->class->hit_die ?>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <!-- Skills -->
-            <div class="col-12 col-md-6 col-lg-4 col-xxl-3">
+            <div class="col-12 col-md-6 col-xl-4 col-xxl-3">
                 <div class="card mb-4">
-                    <div class="card-header bg-warning text-decoration text-dark text-center py-2">
+                    <div class="card-header bg-purple text-decoration fw-bold h-100 py-2">
                         <i class="fas fa-tools me-2"></i>Skills
                     </div>
-                    <div class="card-body p-2">
-                        <div class="list-group list-group-flush">
-                            <div class="list-group-item skill-row d-flex justify-content-between align-items-center bg-transparent border-0 px-3 py-2">
-                                <div class="d-flex align-items-center">
-                                    <div class="proficiency-indicator me-3"></div>
-                                    <span>Athletics</span>
-                                </div>
-                                <span class="badge bg-secondary">+6</span>
-                            </div>
-                            <div class="list-group-item skill-row d-flex justify-content-between align-items-center bg-transparent border-0 px-3 py-2">
-                                <div class="d-flex align-items-center">
-                                    <div class="proficiency-indicator not-proficient me-3"></div>
-                                    <span>Acrobatics</span>
-                                </div>
-                                <span class="badge bg-secondary">+1</span>
-                            </div>
-                            <div class="list-group-item skill-row d-flex justify-content-between align-items-center bg-transparent border-0 px-3 py-2">
-                                <div class="d-flex align-items-center">
-                                    <div class="proficiency-indicator me-3"></div>
-                                    <span>Intimidation</span>
-                                </div>
-                                <span class="badge bg-secondary">+3</span>
-                            </div>
-                            <div class="list-group-item skill-row d-flex justify-content-between align-items-center bg-transparent border-0 px-3 py-2">
-                                <div class="d-flex align-items-center">
-                                    <div class="proficiency-indicator me-3"></div>
-                                    <span>Survival</span>
-                                </div>
-                                <span class="badge bg-secondary">+5</span>
-                            </div>
-                            <div class="list-group-item skill-row d-flex justify-content-between align-items-center bg-transparent border-0 px-3 py-2">
-                                <div class="d-flex align-items-center">
-                                    <div class="proficiency-indicator not-proficient me-3"></div>
-                                    <span>Perception</span>
-                                </div>
-                                <span class="badge bg-secondary">+2</span>
-                            </div>
-                            <div class="list-group-item skill-row d-flex justify-content-between align-items-center bg-transparent border-0 px-3 py-2">
-                                <div class="d-flex align-items-center">
-                                    <div class="proficiency-indicator not-proficient me-3"></div>
-                                    <span>Investigation</span>
-                                </div>
-                                <span class="badge bg-secondary">+1</span>
-                            </div>
-                        </div>
+                    <div class="card-body p-4">
+                        <table class="w-100">
+                            <?php foreach ($model->playerSkills as $playerSkill): ?>
+                                <tr>
+                                    <td><?= $playerSkill->skill->name ?></td>
+                                    <td class="text-center w-25">
+                                        <span class="badge bg-secondary w-75">
+                                            +<?= $playerSkill->bonus ?>
+                                            <?= $playerSkill->is_proficient ? '&nbsp;<i class="bi bi-shield-plus"></i>' : "" ?>
+                                        </span>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </table>
                     </div>
                 </div>
             </div>
 
             <!-- Saving Throws -->
-            <div class="col-12 col-md-6 col-lg-4 col-xxl-3">
+            <div class="col-12 col-md-6 col-xl-4 col-xxl-3">
                 <div class="card mb-4">
-                    <div class="card-header bg-warning text-decoration text-dark text-center py-2">
+                    <div class="card-header bg-purple text-decoration fw-bold h-100 py-2">
                         <i class="fas fa-dice-d20 me-2"></i>Saving Throws
                     </div>
-                    <div class="card-body p-2">
-                        <div class="list-group list-group-flush">
-                            <div class="list-group-item skill-row d-flex justify-content-between align-items-center bg-transparent border-0 px-3 py-2">
-                                <div class="d-flex align-items-center">
-                                    <div class="proficiency-indicator me-3"></div>
-                                    <span>Strength</span>
-                                </div>
-                                <span class="badge bg-secondary">+6</span>
-                            </div>
-                            <div class="list-group-item skill-row d-flex justify-content-between align-items-center bg-transparent border-0 px-3 py-2">
-                                <div class="d-flex align-items-center">
-                                    <div class="proficiency-indicator not-proficient me-3"></div>
-                                    <span>Dexterity</span>
-                                </div>
-                                <span class="badge bg-secondary">+1</span>
-                            </div>
-                            <div class="list-group-item skill-row d-flex justify-content-between align-items-center bg-transparent border-0 px-3 py-2">
-                                <div class="d-flex align-items-center">
-                                    <div class="proficiency-indicator me-3"></div>
-                                    <span>Constitution</span>
-                                </div>
-                                <span class="badge bg-secondary">+5</span>
-                            </div>
-                            <div class="list-group-item skill-row d-flex justify-content-between align-items-center bg-transparent border-0 px-3 py-2">
-                                <div class="d-flex align-items-center">
-                                    <div class="proficiency-indicator not-proficient me-3"></div>
-                                    <span>Intelligence</span>
-                                </div>
-                                <span class="badge bg-secondary">+1</span>
-                            </div>
-                            <div class="list-group-item skill-row d-flex justify-content-between align-items-center bg-transparent border-0 px-3 py-2">
-                                <div class="d-flex align-items-center">
-                                    <div class="proficiency-indicator not-proficient me-3"></div>
-                                    <span>Wisdom</span>
-                                </div>
-                                <span class="badge bg-secondary">+2</span>
-                            </div>
-                            <div class="list-group-item skill-row d-flex justify-content-between align-items-center bg-transparent border-0 px-3 py-2">
-                                <div class="d-flex align-items-center">
-                                    <div class="proficiency-indicator not-proficient me-3"></div>
-                                    <span>Charisma</span>
-                                </div>
-                                <span class="badge bg-secondary">+0</span>
-                            </div>
-                        </div>
+                    <div class="card-body p-4">
+                        <table class="w-100">
+                            <?php foreach ($model->playerAbilities as $playerAbility): ?>
+                                <?php $savingThrow = $playerAbility->modifier + ($playerAbility->is_saving_throw ? $proficiencyBonus : 0); ?>
+                                <tr>
+                                    <td class="text-left"><?= $playerAbility->ability->name ?></td>
+                                    <td class="text-right w-25">
+                                        <span class="badge bg-secondary w-75">
+                                            <?= $savingThrow >= 0 ? "+$savingThrow" : "$savingThrow" ?>
+                                        </span>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </table>
                     </div>
                 </div>
             </div>
 
             <!-- Attacks -->
-            <div class="col-12 col-md-6 col-lg-4 col-xxl-3">
+            <div class="col-12 col-md-6 col-xl-4 col-xxl-3">
                 <div class="card mb-4">
-                    <div class="card-header bg-warning text-decoration text-dark text-center py-2">
+                    <div class="card-header bg-purple text-decoration fw-bold h-100 py-2">
                         <i class="fas fa-sword me-2"></i>Attacks & Spells
                     </div>
                     <div class="card-body">
@@ -293,9 +231,9 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
 
             <!-- Equipment -->
-            <div class="col-12 col-md-6 col-lg-4 col-xxl-3">
+            <div class="col-12 col-md-6 col-xl-4 col-xxl-3">
                 <div class="card mb-4">
-                    <div class="card-header bg-warning text-decoration text-dark text-center py-2">
+                    <div class="card-header bg-purple text-decoration fw-bold h-100 py-2">
                         <i class="fas fa-backpack me-2"></i>Equipment
                     </div>
                     <div class="card-body">
@@ -389,9 +327,9 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
 
             <!-- Features & Traits -->
-            <div class="col-12 col-md-6 col-lg-4 col-xxl-3">
+            <div class="col-12 col-md-6 col-xl-4 col-xxl-3">
                 <div class="card mb-4">
-                    <div class="card-header bg-warning text-decoration text-dark text-center py-2">
+                    <div class="card-header bg-purple text-decoration fw-bold h-100 py-2">
                         <i class="fas fa-magic me-2"></i>Features & Traits
                     </div>
                     <div class="card-body">
@@ -424,21 +362,21 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
 
             <!-- Notes -->
-            <div class="col-12 col-md-6 col-lg-4 col-xxl-3">
+            <div class="col-12 col-md-6 col-xl-4 col-xxl-3">
                 <div class="card">
-                    <div class="card-header bg-warning text-decoration text-dark text-center py-2">
+                    <div class="card-header bg-purple text-decoration fw-bold h-100 py-2">
                         <i class="fas fa-sticky-note me-2"></i>Notes
                     </div>
                     <div class="card-body">
                         <textarea class="form-control" rows="8" placeholder="Character notes, backstory, goals, and other important information...">
-                                Thorin was once a simple blacksmith in the mountain village of Ironpeak. When raiders threatened his home, he took up arms to defend his people. His bravery and skill in battle earned him recognition as a folk hero. Now he adventures to protect the innocent and uphold justice wherever he goes.
+                                                                                                                                                                                                                                                                                                                                                                                    Thorin was once a simple blacksmith in the mountain village of Ironpeak. When raiders threatened his home, he took up arms to defend his people. His bravery and skill in battle earned him recognition as a folk hero. Now he adventures to protect the innocent and uphold justice wherever he goes.
 
-                                Current Quest: Investigating strange disappearances in the nearby forest. Suspects involve dark magic or aberrant creatures.
+                                                                                                                                                                                                                                                                                                                                                                                    Current Quest: Investigating strange disappearances in the nearby forest. Suspects involve dark magic or aberrant creatures.
 
-                                Party Members:
-                                - Elara (Elf Wizard)
-                                - Gareth (Human Cleric)
-                                - Pip (Halfling Rogue)</textarea>
+                                                                                                                                                                                                                                                                                                                                                                                    Party Members:
+                                                                                                                                                                                                                                                                                                                                                                                    - Elara (Elf Wizard)
+                                                                                                                                                                                                                                                                                                                                                                                    - Gareth (Human Cleric)
+                                                                                                                                                                                                                                                                                                                                                                                    - Pip (Halfling Rogue)</textarea>
                     </div>
                 </div>
             </div>

@@ -98,6 +98,11 @@ class SiteController extends Controller {
         return $this->render('fonts');
     }
 
+    public function actionGame() {
+        ManageAccessRights::isRouteAllowed($this);
+        return $this->render('game');
+    }
+
     public function actionColors() {
         ManageAccessRights::isRouteAllowed($this);
         return $this->render('colors');

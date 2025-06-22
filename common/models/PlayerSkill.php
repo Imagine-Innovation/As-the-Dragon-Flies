@@ -9,11 +9,15 @@ use Yii;
  *
  * @property int $player_id Foreign key to "player" table
  * @property int $skill_id Foreign key to "skill" table
+ * @property int $is_proficient The player is proficient in the skill
+ * @property int $bonus Skill bonus
  *
  * @property Player $player
  * @property Skill $skill
  */
-class PlayerSkill extends \yii\db\ActiveRecord {
+class PlayerSkill extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -27,8 +31,9 @@ class PlayerSkill extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['bonus'], 'default', 'value' => 0],
             [['player_id', 'skill_id'], 'required'],
-            [['player_id', 'skill_id'], 'integer'],
+            [['player_id', 'skill_id', 'is_proficient', 'bonus'], 'integer'],
             [['player_id', 'skill_id'], 'unique', 'targetAttribute' => ['player_id', 'skill_id']],
             [['player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['player_id' => 'id']],
             [['skill_id'], 'exist', 'skipOnError' => true, 'targetClass' => Skill::class, 'targetAttribute' => ['skill_id' => 'id']],
@@ -42,6 +47,8 @@ class PlayerSkill extends \yii\db\ActiveRecord {
         return [
             'player_id' => 'Foreign key to \"player\" table',
             'skill_id' => 'Foreign key to \"skill\" table',
+            'is_proficient' => 'The player is proficient in the skill',
+            'bonus' => 'Skill bonus',
         ];
     }
 
@@ -62,4 +69,5 @@ class PlayerSkill extends \yii\db\ActiveRecord {
     public function getSkill() {
         return $this->hasOne(Skill::class, ['id' => 'skill_id']);
     }
+
 }

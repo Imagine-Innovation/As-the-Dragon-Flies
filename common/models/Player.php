@@ -547,14 +547,6 @@ class Player extends \yii\db\ActiveRecord {
      * @return string The description of the player character.
      */
     public function getDescription() {
-        /*
-          return 'A ' . $this->age . ' years old ' .
-          ($this->gender == 'M' ? 'male' : 'femele') . ' ' .
-          $this->race->name . ' ' .
-          $this->level->name . ' ' .
-          $this->class->name . ' ';
-         *
-         */
         $gender = $this->gender == 'M' ? 'male' : 'femele';
         $description = "{$this->age}-years-old {$gender} {$this->race->name}, {$this->level->name} {$this->alignment->name} {$this->class->name}";
         return strtolower($description);
@@ -569,9 +561,24 @@ class Player extends \yii\db\ActiveRecord {
      */
     public function isProficient($item_id) {
         $class = $this->class;
-        $proficiency = ClassItem::findOne(['class_id' => $class->id, 'item_id' => $item_id]);
 
-        return $proficiency ? true : false;
+        // Check whether the player's class gives a direct proficiency for the item.
+        $proficientForItem = ClassItem::findOne(['class_id' => $class->id, 'item_id' => $item_id]);
+        if ($proficientForItem) {
+            return true;
+        }
+
+        // If not, check that the item belongs to a category for which
+        // the class gives the player a particular proficiency.
+        $categoryIds = ClassItemProficiency::find()
+                ->select('category_id')
+                ->where(['class_id' => $class->id])
+                ->andWhere(['not', 'category_id', null])
+                ->all();
+
+        $proficient = ItemCategory::findAll(['item_id' => $item_id, 'category_id' => $categoryIds]);
+
+        return $proficient ? true : false;
     }
 
     /**
