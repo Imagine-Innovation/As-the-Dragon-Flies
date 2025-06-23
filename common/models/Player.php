@@ -3,6 +3,7 @@
 namespace common\models;
 
 use common\components\AppStatus;
+use frontend\components\PlayerTool;
 use common\models\Image;
 use common\models\PlayerCoin;
 use Yii;
@@ -562,23 +563,7 @@ class Player extends \yii\db\ActiveRecord {
     public function isProficient($item_id) {
         $class = $this->class;
 
-        // Check whether the player's class gives a direct proficiency for the item.
-        $proficientForItem = ClassItem::findOne(['class_id' => $class->id, 'item_id' => $item_id]);
-        if ($proficientForItem) {
-            return true;
-        }
-
-        // If not, check that the item belongs to a category for which
-        // the class gives the player a particular proficiency.
-        $categoryIds = ClassItemProficiency::find()
-                ->select('category_id')
-                ->where(['class_id' => $class->id])
-                ->andWhere(['not', 'category_id', null])
-                ->all();
-
-        $proficient = ItemCategory::findAll(['item_id' => $item_id, 'category_id' => $categoryIds]);
-
-        return $proficient ? true : false;
+        return PlayerTool::isProficient($class->id, $item_id);
     }
 
     /**

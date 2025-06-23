@@ -11,7 +11,7 @@ class ShopManager {
         Logger.log(1, 'addToCart', `itemId=${itemId}`);
 
         AjaxUtils.request({
-            url: 'player-cart/ajax-cart-add',
+            url: 'player-cart/ajax-add',
             data: { itemId },
             successCallback: (response) => {
                 if (response.error) {
@@ -35,7 +35,7 @@ class ShopManager {
         Logger.log(1, 'removeFromCart', `itemId=${itemId}, quantity=${quantity}`);
 
         AjaxUtils.request({
-            url: 'player-cart/ajax-cart-remove',
+            url: 'player-cart/ajax-remove',
             data: { itemId, quantity },
             successCallback: (response) => {
                 if (response.error) {
@@ -85,7 +85,7 @@ class ShopManager {
         if (!DOMUtils.exists(target)) return;
 
         AjaxUtils.request({
-            url: 'player-cart/ajax-cart-info',
+            url: 'player-cart/ajax-info',
             successCallback: (response) => {
                 if (!response.error) {
                     this._updateCartDisplay(response);
@@ -112,7 +112,7 @@ class ShopManager {
         Logger.log(1, 'validateCart', '');
 
         AjaxUtils.request({
-            url: 'player-cart/ajax-cart-validate',
+            url: 'player-cart/ajax-validate',
             successCallback: (response) => {
                 if (!response.error) {
                     location.reload();

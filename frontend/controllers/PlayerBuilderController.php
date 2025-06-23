@@ -292,13 +292,14 @@ class PlayerBuilderController extends Controller {
         return $items;
     }
 
-    private function addNewItem($playerId, $item) {
+    private function addNewItem($player, $item) {
         $playerItem = new PlayerItem([
-            'player_id' => $playerId,
+            'player_id' => $player->id,
             'item_id' => $item['id'],
             'quantity' => $item['quantity'],
             'is_carrying' => 1,
             'is_equiped' => 1,
+            'is_proficient' => PlayerTool::isProficient($player->class->id, $item['id']) ? 1 : 0
         ]);
         return $playerItem->save();
     }
@@ -327,10 +328,10 @@ class PlayerBuilderController extends Controller {
         }
 
         $items = $this->getItemsFromJson($itemIds);
-
+        $player = $this->findModel($playerId);
         $success = true;
         foreach ($items as $item) {
-            $success = $success && $this->addNewItem($playerId, $item);
+            $success = $success && $this->addNewItem($player, $item);
         }
 
         return ['error' => !$success, 'msg' => $success ? 'Initial items are saved' : 'Could not save initial items'];

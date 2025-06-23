@@ -40,8 +40,8 @@ class PlayerCartController extends Controller {
                                 'actions' => ['index', 'create',
                                     'update', 'delete', 'view',
                                     'shop', 'cart',
-                                    'ajax-cart-add', 'ajax-cart-remove', 'ajax-cart-validate',
-                                    'ajax-cart-info', 'ajax-item-count',
+                                    'ajax-add', 'ajax-remove', 'ajax-validate',
+                                    'ajax-info', 'ajax-item-count',
                                 ],
                                 'allow' => ManageAccessRights::isRouteAllowed($this),
                                 'roles' => ['@'],
@@ -102,13 +102,13 @@ class PlayerCartController extends Controller {
      * Creates a new PlayerCart model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      *
-     * This action handles the creation of a new PlayerCart model. 
+     * This action handles the creation of a new PlayerCart model.
      * It first initializes a new instance of PlayerCart.
      * If the request method is POST, it attempts to load data from the request
      * and save the model.
      * If the model is saved successfully, the browser is redirected to the 'view'
      * page for the newly created model.
-     * If the request method is not POST, it loads default values for the model 
+     * If the request method is not POST, it loads default values for the model
      * and renders the 'create' view.
      *
      * @return string|\yii\web\Response The rendered 'create' view or a response
@@ -140,10 +140,10 @@ class PlayerCartController extends Controller {
      * Updates an existing PlayerCart model.
      * If update is successful, the browser will be redirected to the 'view' page.
      *
-     * This action handles the update of an existing PlayerCart model identified 
+     * This action handles the update of an existing PlayerCart model identified
      * by the provided player ID and item ID.
      * It first finds the model using the provided player ID and item ID.
-     * If the request method is POST and the model is loaded with data from the 
+     * If the request method is POST and the model is loaded with data from the
      * request and saved successfully,
      * the browser is redirected to the 'view' page for the updated model.
      * If the request method is not POST, or if there are errors in loading or
@@ -220,7 +220,7 @@ class PlayerCartController extends Controller {
     /**
      * Displays the shopping cart.
      *
-     * This action renders the 'cart' view, which displays the shopping cart 
+     * This action renders the 'cart' view, which displays the shopping cart
      * containing PlayerCart models.
      * If the specified model cannot be found, it throws a NotFoundHttpException.
      *
@@ -243,20 +243,20 @@ class PlayerCartController extends Controller {
      * This action is responsible for handling AJAX requests to add an item to the player's cart.
      * It first checks if the request is a POST request and if it is an AJAX request.
      * If not, it returns an error response.
-     * Then, it retrieves the player using the `findPlayer` method. 
+     * Then, it retrieves the player using the `findPlayer` method.
      * If no player is found, it returns an error response.
-     * Next, it retrieves the item ID from the POST data and finds the item 
+     * Next, it retrieves the item ID from the POST data and finds the item
      * using the `findItem` method.
      * If no item is found, it returns an error response.
      * It then calculates the funding using the `getFunding` method of the `Shopping` class.
-     * If the funding is insufficient, it returns an error response with a message 
+     * If the funding is insufficient, it returns an error response with a message
      * indicating the reason.
-     * Otherwise, it adds the item to the player's cart using the `addToCart` 
+     * Otherwise, it adds the item to the player's cart using the `addToCart`
      * method and returns the result.
      *
      * @return array The response in JSON format
      */
-    public function actionAjaxCartAdd() {
+    public function actionAjaxAdd() {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         // Check if the request is a POST request and if it is an AJAX request
@@ -310,7 +310,7 @@ class PlayerCartController extends Controller {
      *
      * @return array The JSON response indicating the success or failure of the cart validation.
      */
-    public function actionAjaxCartValidate() {
+    public function actionAjaxValidate() {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -360,7 +360,7 @@ class PlayerCartController extends Controller {
      *
      * @return array The response in JSON format
      */
-    public function actionAjaxCartRemove() {
+    public function actionAjaxRemove() {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         // Check if the request is a POST request and if it is an AJAX request
@@ -404,7 +404,7 @@ class PlayerCartController extends Controller {
      * @return array The JSON response containing the total count of items in the player's cart,
      *               the cart string, and the purse string.
      */
-    public function actionAjaxCartInfo() {
+    public function actionAjaxInfo() {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -443,11 +443,11 @@ class PlayerCartController extends Controller {
     /**
      * Handles AJAX request to retrieve the quantity of a specific item in the player's cart.
      *
-     * This action is responsible for handling AJAX requests to retrieve the 
+     * This action is responsible for handling AJAX requests to retrieve the
      * quantity of a specific item in the player's cart.
      * It first checks if the request is a POST request and if it is an AJAX request.
      * If not, it returns an error response.
-     * Then, it retrieves the player using the `findPlayer` method. 
+     * Then, it retrieves the player using the `findPlayer` method.
      * If no player is found, it returns an error response.
      * Next, it retrieves the item ID from the request.
      * After that, it searches for the PlayerCart model corresponding to the player ID and item ID.
@@ -486,7 +486,7 @@ class PlayerCartController extends Controller {
      * Finds the PlayerCart model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      *
-     * This method is used internally to retrieve the PlayerCart model based on 
+     * This method is used internally to retrieve the PlayerCart model based on
      * the provided player ID and item ID.
      * It queries the PlayerCart table for a record with matching player_id and item_id values.
      * If a matching model is found, it is returned. Otherwise, a NotFoundHttpException is thrown.
@@ -511,7 +511,7 @@ class PlayerCartController extends Controller {
      *
      * This method is used internally to retrieve the cart associated with the selected player.
      * It first retrieves the player using the `findPlayer` method.
-     * If a player is found, it returns the player's carts. Otherwise, 
+     * If a player is found, it returns the player's carts. Otherwise,
      * it throws a NotFoundHttpException.
      *
      * @return PlayerCart[] The player's carts

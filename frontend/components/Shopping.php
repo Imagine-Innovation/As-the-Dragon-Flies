@@ -327,7 +327,7 @@ class Shopping {
         // Calculate the value of the item cost in copper coins.
         $itemCopperValue = $this->copperValue($cost, $coin);
 
-        // Determine the maximum funding the player can contribute based 
+        // Determine the maximum funding the player can contribute based
         // on their purse and item cost.
         // If the player's purse value is less than the item cost, return zero;
         // otherwise, return the item cost in copper coins.
@@ -431,7 +431,7 @@ class Shopping {
      * @param int $playerCoins The amount of coins the player has.
      * @param common\models\Item $item The item to be purchased.
      *
-     * @return string The purchase status message.  
+     * @return string The purchase status message.
      */
     public function purchaseNotPossibleMessage($playerCoins, $item) {
         // Initialize the player's purse with the current coins.
@@ -553,8 +553,8 @@ class Shopping {
     private function validateSingleItemPurchase($playerCart) {
         // Find the corresponding PlayerItem for the player cart item
         $playerItem = PlayerItem::findOne([
-                    'player_id' => $playerCart->player_id,
-                    'item_id' => $playerCart->item_id
+            'player_id' => $playerCart->player_id,
+            'item_id' => $playerCart->item_id
         ]);
 
         // Check if a PlayerItem exists
@@ -562,11 +562,13 @@ class Shopping {
             // Update the quantity of the existing PlayerItem
             $playerItem->quantity += $playerCart->quantity;
         } else {
+            $classId = $playerCart->player->class_id;
             // Create a new PlayerItem if it does not exist
             $playerItem = new PlayerItem([
                 'player_id' => $playerCart->player_id,
                 'item_id' => $playerCart->item_id,
-                'quantity' => $playerCart->quantity * $playerCart->item->quantity
+                'quantity' => $playerCart->quantity * $playerCart->item->quantity,
+                'is_proficient' => PlayerTool::isProficient($classId, $playerCart->item_id) ? 1 : 0
             ]);
         }
 
@@ -576,10 +578,7 @@ class Shopping {
         }
 
         // Return an error response if saving failed
-        return [
-            'error' => true,
-            'msg' => 'Could not validate the purchase of ' . $playerCart->item->name
-        ];
+        return ['error' => true, 'msg' => "Could not validate the purchase of {$playerCart->item->name}"];
     }
 
     /**
