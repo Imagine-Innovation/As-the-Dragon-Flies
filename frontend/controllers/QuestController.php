@@ -383,17 +383,84 @@ class QuestController extends Controller {
         $quest = $this->findModel($questId);
 
         if ($quest) {
-            $updated = Quest::updateAll(
-                    ['status' => AppStatus::PLAYING->value, 'started_at' => time()],
-                    ['id' => $questId]
-            );
-            if ($updated > 0) {
-                $render = $this->render('view', ['model' => $quest]);
-                return ['error' => false, 'msg' => 'Quest is started', 'content' => $render];
+            // $updated = Quest::updateAll( // We need the model instance to call initializeTurnOrder
+            //         ['status' => AppStatus::PLAYING->value, 'started_at' => time()],
+            //         ['id' => $questId]
+            // );
+            $quest->status = AppStatus::PLAYING->value;
+            $quest->started_at = time();
+
+            if ($quest->save()) { // Save status and timestamp first
+                Yii::info("Quest {$questId} status updated to PLAYING.", __METHOD__);
+
+                // === Initialize QuestProgress ===
+                // Determine initial room_id. This is crucial and story-dependent.
+                // Placeholder: Assume story has a 'starting_room_id' attribute or a method to get it.
+                // Or, find the first room associated with the story's first entry point.
+                $initialRoomId = null;
+                $story = $quest->story;
+                if ($story) {
+                    // Example: Find first room of the first floor linked to the story (complex and might not be correct logic for all stories)
+                    // A simpler way would be a direct `story.default_starting_room_id`
+                    $entryPoint = $story->getEntryPoints()->orderBy('id')->one();
+                    if ($entryPoint && $entryPoint->tile && $entryPoint->tile->grid && $entryPoint->tile->grid->room) {
+                        $initialRoomId = $entryPoint->tile->grid->room_id;
+                    }
+                }
+                if (!$initialRoomId) {
+                     Yii::error("Quest {$questId} started but could not determine initial_room_id.", __METHOD__);
+                     // Handle this error - maybe set a default room or prevent quest start if essential.
+                     // For now, let's assume a hypothetical default room ID 1 if all else fails, for testing.
+                     // This should be replaced with robust logic.
+                     $initialRoomId = 1; // FIXME: Placeholder for actual starting room logic
+                     Yii::warning("Quest {$questId} using fallback initial_room_id: {$initialRoomId}", __METHOD__);
+                }
+
+                $questProgress = \common\models\QuestProgress::findOrCreate($questId, $initialRoomId);
+                if (!$questProgress) {
+                    Yii::error("Quest {$questId} started but FAILED to create/find QuestProgress.", __METHOD__);
+                    return ['error' => true, 'msg' => 'Quest started but failed to set up progress tracking.'];
+                }
+
+                $questProgress->current_room_id = $initialRoomId;
+                if ($questProgress->isNewRecord || $questProgress->step === null || $questProgress->step === 0) {
+                    $questProgress->step = 1;
+                }
+                // Potentially advance step if re-entering a quest in a new way, though typically step advances through gameplay.
+                // For quest start, ensuring step is at least 1 is fine.
+
+                if (!$questProgress->save()) {
+                     Yii::error("Quest {$questId} FAILED to save QuestProgress with initial_room_id or step. Errors: " . print_r($questProgress->getErrors(), true), __METHOD__);
+                     return ['error' => true, 'msg' => 'Quest started but failed to save initial room/step.'];
+                }
+                Yii::info("QuestProgress for quest {$questId} initialized/updated. Room ID: {$initialRoomId}, Step: {$questProgress->step}.", __METHOD__);
+
+                // GameRound is no longer explicitly created here.
+                // It will be created by DmService::processActionAndManageRound when the first player action is received.
+
+                // Optionally, send an initial broadcast message that the quest has started.
+                $roomName = $questProgress->currentRoom ? $questProgress->currentRoom->name : "an unknown location";
+                $initialQuestMessage = "The adventure '{$story->name}' has begun! You find yourselves in {$roomName}. What do you do?";
+
+                // This requires BroadcastService to be available here, or a helper method.
+                // For simplicity, this broadcast can also be triggered by the client upon receiving the success message.
+                // Or, the very first 'round_start_description' from the first GameRound will serve this purpose.
+                // Let's assume the first GameRound's start description (created on first action) will cover this.
+
+                // Example of how one might broadcast an initial message if desired:
+                /*
+                $broadcastService = Yii::$container->get(\common\extensions\EventHandler\contracts\BroadcastServiceInterface::class);
+                $messageFactory = Yii::$container->get(\common\extensions\EventHandler\factories\BroadcastMessageFactory::class);
+                $questStartDto = $messageFactory->createGenericMessage('dm_narrative', ['text' => $initialQuestMessage, 'type_detail' => 'quest_start']);
+                $broadcastService->broadcastToQuest($questId, $questStartDto);
+                Yii::info("Quest start message broadcasted for quest {$questId}.", __METHOD__);
+                */
+
+                return ['error' => false, 'msg' => "Quest '{$story->name}' has started in {$roomName}."];
             }
-            return ['error' => true, 'msg' => 'Could not start quest'];
+            return ['error' => true, 'msg' => 'Could not update quest status to playing.'];
         }
-        return ['error' => true, 'msg' => 'Quest not found'];
+        return ['error' => true, 'msg' => 'Quest not found for starting.'];
     }
 
     /**
