@@ -16,7 +16,7 @@ class QuestNotification extends Component {
     public static function push($notifiationType, $questId, $playerId, $message, $dataId = null) {
         $notification = new Notification([
             'quest_id' => $questId,
-            'player_id' => $playerId,
+            'initiator_id' => $playerId,
             'message' => $message,
             'created_at' => time(),
             'notification_type' => $notifiationType,

@@ -12,32 +12,14 @@ use Yii;
 class QuestOnboarding {
 
     const WELLCOME_MESSAGES = [
-        "There's nobody here!",
-        "For the moment, it looks like you're the first one",
-        "Look, there are two of you now",
-        "Ah! but there are three of you! Wait, I'll get a chair",
-        "Now that there are four of you, I'm going to put you on a bigger table",
-        "With five guys like you, it's going to be quite a team!"
+        0 => "There's nobody here!",
+        1 => "For the moment, it looks like you're the first one",
+        2 => "Look, there are two of you now",
+        3 => "Ah! but there are three of you! Wait, I'll get a chair",
+        4 => "Now that there are four of you, I'm going to put you on a bigger table",
+        5 => "With five guys like you, it's going to be quite a team!"
     ];
-
-    /**
-     * Add a new record to quest_player table
-     *
-     * @param int $questId
-     * @param int $playerId
-     * @param bool $isInitiator
-     * @return bool
-     */
-    public static function newQuestPlayer(int $questId, int $playerId, bool $isInitiator = false): bool {
-        $questPlayer = new QuestPlayer([
-            'quest_id' => $questId,
-            'player_id' => $playerId,
-            'onboarded_at' => time(),
-            'is_initiator' => ($isInitiator ? 1 : 0)
-        ]);
-
-        return $questPlayer->save();
-    }
+    const DEFAULT_MESSAGE = "Boy, that's quite a team!";
 
     /**
      * Returns a wellcone message for a new joiner
@@ -49,8 +31,9 @@ class QuestOnboarding {
 
         $count = self::playerCount($questId);
 
-        $builtinMessages = count(self::WELLCOME_MESSAGES);
-        $message = $count < $builtinMessages ? self::WELLCOME_MESSAGES[$count] : "Boy, that's quite a team!";
+        $message = array_key_exists($count, self::WELLCOME_MESSAGES) ?
+                self::WELLCOME_MESSAGES[$count] :
+                self::DEFAULT_MESSAGE;
 
         return $message;
     }
@@ -59,11 +42,16 @@ class QuestOnboarding {
      * Check if a player can join a quest.
      * Returns an array with a deny status and a reason messge.
      *
-     * @param Player $player
+     * @param Player|null $player
      * @param Quest|null $quest
      * @return array
      */
-    public static function canPlayerJoinQuest(Player $player, Quest|null $quest = null): array {
+    public static function canPlayerJoinQuest(Player|null $player, Quest|null $quest = null): array {
+
+        // Check if player is selected
+        if (!$player) {
+            return ['denied' => true, 'reason' => "canPlayerJoinQuest->No player is selected"];
+        }
 
         $questStatus = self::isQuestValid($player, $quest);
         if ($questStatus['error']) {
@@ -171,23 +159,6 @@ class QuestOnboarding {
      * @return bool
      */
     public static function areRequiredClassesPresent(Quest $quest): bool {
-        /*
-          $story = $quest->story;
-          $storyClasses = $story->storyClasses;
-
-          if (empty($storyClasses)) {
-          return true;
-          }
-
-          $requiredClasses = [];
-          foreach ($storyClasses as $storyClass) {
-          $requiredClasses[] = $storyClass->class_id;
-          }
-
-          $presentClasses = $quest->getPlayers()
-          ->select('class_id')
-          ->column();
-         */
         $requiredClasses = StoryClass::find()
                 ->select('class_id')
                 ->where(['story_id' => $quest->story_id])
@@ -204,5 +175,35 @@ class QuestOnboarding {
                 ->all();
 
         return empty(array_diff($requiredClasses, $presentClasses));
+    }
+
+    public static function addPlayerToQuest(Player $player, Quest $quest): bool {
+
+        // Player is already onboarded in the quest => do nothing
+        if ($player->quest_id === $quest->id) {
+            return true;
+        }
+
+        $player->quest_id = $quest->id;
+        if (!$player->save()) {
+            throw new \Exception(implode("<br />", \yii\helpers\ArrayHelper::getColumn($player->errors, 0, false)));
+            //return false;
+        }
+
+        $questPlayer = QuestPlayer::findOne(['quest_id' => $quest->id, 'player_id' => $player->id]);
+
+        if (!$questPlayer) {
+            $questPlayer = new QuestPlayer([
+                'quest_id' => $quest->id,
+                'player_id' => $player->id,
+                'onboarded_at' => time()
+            ]);
+
+            if (!$questPlayer->save()) {
+                throw new \Exception(implode("<br />", \yii\helpers\ArrayHelper::getColumn($questPlayer->errors, 0, false)));
+            }
+        }
+
+        return true;
     }
 }

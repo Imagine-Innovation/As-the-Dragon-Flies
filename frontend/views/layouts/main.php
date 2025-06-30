@@ -26,34 +26,8 @@ $snippet = Yii::$app->user->isGuest ? 'guest' : 'lobby';
 
         <?php if (!Yii::$app->user->isGuest): ?>
             <!-- script src="js/atdf-notification-handler.js"></script -->
-            <script src="js/atdf-quest-events.js"></script>
+            <!-- script src="js/atdf-quest-events.js"></script -->
             <script type="text/javascript">
-                // Initialize the broker
-                /*
-                 $(document).ready(function () {
-                 NotificationHandler.init({
-                 pollingInterval: 10000000,
-                 userId: userId,
-                 playerId: playerId,
-                 questId: questId
-                 });
-                 });
-                 *
-                 */
-                /*
-                 document.addEventListener('DOMContentLoaded', function () {
-                 // Configuration variables from your server-side template
-                 const currentHost = window.location.hostname;
-                 const websocketUrl = `ws://${currentHost}:8082`;
-                 const playerId = <?= $user->current_player_id ?? 'null' ?>;
-                 const questId = <?= Yii::$app->session->get('questId') ?? 'null' ?>;
-                 // Create and initialize the notification client
-                 var notificationClient;
-                 if (!notificationClient) {
-                 notificationClient = new NotificationClient(websocketUrl, playerId, questId).init();
-                 }
-                 });
-                 */
                 console.log('loading main layout');
             </script>
         <?php endif; ?>

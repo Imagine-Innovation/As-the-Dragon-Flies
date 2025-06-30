@@ -266,7 +266,7 @@ class Player extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getTriggeredNotifications() {
-        return $this->hasMany(Notification::class, ['player_id' => 'id']);
+        return $this->hasMany(Notification::class, ['initiator_id' => 'id']);
     }
 
     /**

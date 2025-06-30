@@ -176,12 +176,26 @@ $proficiencyBonus = $model->level->proficiency_bonus;
                     </div>
                     <div class="card-body p-4">
                         <table class="w-100">
+                            <thead>
+                                <tr>
+                                    <th>Ability</th>
+                                    <th class="text-center">Score</th>
+                                    <th class="text-center w-25">Bonus</th>
+                                    <th class="text-center w-25">Saving Throw</th>
+                                </tr>
+                            </thead>
                             <?php foreach ($model->playerAbilities as $playerAbility): ?>
                                 <?php $savingThrow = $playerAbility->modifier + ($playerAbility->is_saving_throw ? $proficiencyBonus : 0); ?>
                                 <tr>
                                     <td class="text-left"><?= $playerAbility->ability->name ?></td>
-                                    <td class="text-right w-25">
-                                        <span class="badge bg-secondary w-75">
+                                    <td class="text-center"><?= $playerAbility->score ?></td>
+                                    <td class="text-center">
+                                        <span class="badge bg-danger w-50">
+                                            <?= $playerAbility->score >= 0 ? "+$playerAbility->score" : "$playerAbility->score" ?>
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-secondary w-50">
                                             <?= $savingThrow >= 0 ? "+$savingThrow" : "$savingThrow" ?>
                                         </span>
                                     </td>
@@ -369,14 +383,14 @@ $proficiencyBonus = $model->level->proficiency_bonus;
                     </div>
                     <div class="card-body">
                         <textarea class="form-control" rows="8" placeholder="Character notes, backstory, goals, and other important information...">
-                                                                                                                                                                                                                                                                                                                                                                                    Thorin was once a simple blacksmith in the mountain village of Ironpeak. When raiders threatened his home, he took up arms to defend his people. His bravery and skill in battle earned him recognition as a folk hero. Now he adventures to protect the innocent and uphold justice wherever he goes.
+                                                                                                                                                                                                                                                                                                                                                                                                                    Thorin was once a simple blacksmith in the mountain village of Ironpeak. When raiders threatened his home, he took up arms to defend his people. His bravery and skill in battle earned him recognition as a folk hero. Now he adventures to protect the innocent and uphold justice wherever he goes.
 
-                                                                                                                                                                                                                                                                                                                                                                                    Current Quest: Investigating strange disappearances in the nearby forest. Suspects involve dark magic or aberrant creatures.
+                                                                                                                                                                                                                                                                                                                                                                                                                    Current Quest: Investigating strange disappearances in the nearby forest. Suspects involve dark magic or aberrant creatures.
 
-                                                                                                                                                                                                                                                                                                                                                                                    Party Members:
-                                                                                                                                                                                                                                                                                                                                                                                    - Elara (Elf Wizard)
-                                                                                                                                                                                                                                                                                                                                                                                    - Gareth (Human Cleric)
-                                                                                                                                                                                                                                                                                                                                                                                    - Pip (Halfling Rogue)</textarea>
+                                                                                                                                                                                                                                                                                                                                                                                                                    Party Members:
+                                                                                                                                                                                                                                                                                                                                                                                                                    - Elara (Elf Wizard)
+                                                                                                                                                                                                                                                                                                                                                                                                                    - Gareth (Human Cleric)
+                                                                                                                                                                                                                                                                                                                                                                                                                    - Pip (Halfling Rogue)</textarea>
                     </div>
                 </div>
             </div>

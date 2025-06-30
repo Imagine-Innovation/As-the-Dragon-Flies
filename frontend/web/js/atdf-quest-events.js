@@ -1,15 +1,20 @@
 class NotificationClient {
-    constructor(url, playerId, questId, playerName, questName) {
+    constructor(url, playerId, avatar, questId, playerName, questName, chatInput) {
+        Logger.log(1, 'constructor', `url=${url}, playerId=${playerId}, avatar=${avatar}, questId=${questId}, playerName=${playerName}, questName=${questName}, chatInput=${chatInput}`);
+        // loading init parameters
         this.url = url;
         this.playerId = playerId;
+        this.avatar = avatar;
         this.questId = questId;
         this.playerName = playerName;
         this.questName = questName;
+        this.chatInput = chatInput;
+
+        // init internal variables
         this.socket = null;
         this.connected = false;
         this.messageQueue = [];
         this.eventListeners = {};
-        // Get or create a session ID using sessionStorage
         this.sessionId = NotificationClient.getSessionId();
     }
 
@@ -22,26 +27,20 @@ class NotificationClient {
         // Set up default event handlers
         this.setupDefaultHandlers();
         // Set up chat input enter key handler
-        const chatInput = document.getElementById('message-input');
+        const chatInput = document.getElementById(this.chatInput);
         if (chatInput) {
             chatInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
+                    e.preventDefault();
                     this.sendChatMessage(chatInput.value);
                 }
-            });
-        }
-        // Set up mark all read button
-        const markAllReadBtn = document.getElementById('mark-all-read-btn');
-        if (markAllReadBtn) {
-            markAllReadBtn.addEventListener('click', () => {
-                this.markAllNotificationsAsRead();
             });
         }
         // Set up send chat button
         const sendChatBtn = document.getElementById('send-message');
         if (sendChatBtn) {
             sendChatBtn.addEventListener('click', () => {
-                const chatInput = document.getElementById('message-input');
+                const chatInput = document.getElementById(this.chatInput);
                 if (chatInput) {
                     this.sendChatMessage(chatInput.value);
                 }
@@ -61,15 +60,16 @@ class NotificationClient {
      * Set up default event handlers
      */
     setupDefaultHandlers() {
+        Logger.log(1, 'setupDefaultHandlers', '');
         // Handle connection established
         this.on('open', () => {
-            console.log('Connection to notification server established');
+            Logger.log(2, 'setupDefaultHandlers', 'Connection to notification server established');
             this.updateConnectionStatus('Connected');
         });
 
         // Handle connection closed
         this.on('close', () => {
-            console.log('Connection to notification server closed');
+            Logger.log(2, 'setupDefaultHandlers', 'Connection to notification server closed');
             this.updateConnectionStatus('Disconnected - Reconnecting...');
         });
 
@@ -81,56 +81,52 @@ class NotificationClient {
 
         // Handle incoming notifications
         this.on('notification', (data) => {
-            console.log('Received notification:', data);
+            Logger.log(2, 'setupDefaultHandlers', 'Received notification:', data);
             this.displayNotification(data);
         });
 
         // Handle incoming notifications
         this.on('ack', (data) => {
-            console.log('Received aknowledgement:', data);
+            Logger.log(2, 'setupDefaultHandlers', 'Received aknowledgement:', data);
             this.displayNotification(data);
         });
 
         // Handle chat messages
         this.on('chat', (data) => {
-            console.log('Received chat message:', data);
-            this.displayChatMessage(data.payload ?? data);
+            Logger.log(2, 'setupDefaultHandlers', 'Received chat message:', data);
+            let config = {
+                route: 'quest/ajax-get-messages',
+                method: 'GET',
+                placeholder: 'questChatContent',
+                badge: false
+            };
+            this.executeRequest(config, data);
         });
 
         // Handle other player registration
         this.on('register', (data) => {
-            console.log('Received register message:', data);
+            Logger.log(2, 'setupDefaultHandlers', 'Received register message:', data);
             this.displayNotification(data);
         });
 
         this.on('quest_can_start', (data) => {
-            console.log('Received quest can start message:', data);
-            /*
-            this.displayNotification({
-                type: 'quest_can_start',
-                sender: 'Game master',
-                message: 'Quest can start',
-                timestamp: data.timestamp || Math.floor(Date.now() / 1000)
-            });
-            */
-                this.displayNotification(data);
+            Logger.log(2, 'setupDefaultHandlers', 'Received quest can start message:', data);
+            this.displayNotification(data);
         });
 
         this.on('player_joined', (data) => {
-            console.log('Received new_player_joined event:', data);
+            Logger.log(2, 'setupDefaultHandlers', 'Received new_player_joined event:', data);
             if (data.payload && data.payload.playerName && data.payload.questName) {
                 // Construct the message from the payload
                 const message = `Player ${data.payload.playerName} has joined quest "${data.payload.questName}".`;
 
-                // Use the existing displayChatMessage method to show it in the UI
-                /*
-                this.displayNotification({
-                    sender: 'Game master',
-                    message: message,
-                    timestamp: data.timestamp || Math.floor(Date.now() / 1000)
-                });
-                */
-                this.displayNotification(data);
+                let config = {
+                    route: 'quest/ajax-tavern',
+                    method: 'GET',
+                    placeholder: 'questTavernPlayersContainer',
+                    badge: false
+                };
+                this.executeRequest(config, data);
             } else {
                 console.warn('Received new_player_joined event with incomplete payload:', data);
             }
@@ -141,35 +137,39 @@ class NotificationClient {
      * Connect to the WebSocket server
      */
     connect() {
-        console.log(`----------------------------------------------`);
-        console.log(`Connecting to WebSocket server at ${this.url}`);
-        console.log(`Player ID: ${this.playerId}, Player name: ${this.playerName}, Quest ID: ${this.questId}, Quest name: ${this.questName}, Session ID: ${this.sessionId}`);
+        Logger.log(1, 'connect', `----------------------------------------------`);
+        Logger.log(1, 'connect', `Connecting to WebSocket server at ${this.url}`);
+        Logger.log(1, 'connect', `Player ID: ${this.playerId}, Player name: ${this.playerName}, Avatar: ${this.avatar}, Quest ID: ${this.questId}, Quest name: ${this.questName}, Session ID: ${this.sessionId}`);
 
         this.socket = new WebSocket(this.url);
 
         this.socket.onopen = () => {
-            console.log('WebSocket connection established');
+            Logger.log(2, 'connect', 'WebSocket connection established');
             this.connected = true;
             this.send({type: 'register'});
 
             // Process any queued messages
-            console.log(`Processing ${this.messageQueue.length} queued messages`);
+            Logger.log(2, 'connect', `Processing ${this.messageQueue.length} queued messages`);
             while (this.messageQueue.length > 0) {
                 const message = this.messageQueue.shift();
-                console.log('Sending queued message:', message);
+                Logger.log(2, 'connect', 'Sending queued message:', message);
                 this.socket.send(JSON.stringify(message));
             }
 
             this.triggerEvent('open');
 
             const joinedAt = new Date();
+            const roundedTime = Math.floor(joinedAt / 60) * 60;
             this.send({
                 type: 'announce_player_join',
                 payload: {
                     playerId: this.playerId,
                     playerName: this.playerName,
+                    avatar: this.avatar,
                     questId: this.questId,
                     questName: this.questName,
+                    roundedTime: roundedTime,
+                    timestamp: joinedAt.toLocaleString(),
                     joinedAt: joinedAt.toLocaleString()
                 }
             });
@@ -178,7 +178,7 @@ class NotificationClient {
                 url: 'quest/ajax-can-start',
                 data: {sessionId: this.sessionId},
                 successCallback: (response) => {
-                    console.log(`Can start? ${JSON.stringify(response)}`);
+                    Logger.log(2, 'connect', `Can start? ${JSON.stringify(response)}`);
                     if (response.canStart) {
                         this.send({type: 'quest_can_start', payload: response});
                     }
@@ -188,7 +188,7 @@ class NotificationClient {
         };
 
         this.socket.onmessage = (event) => {
-            console.log('Received message:', event.data);
+            Logger.log(2, 'connect', 'Received message:', event.data);
             try {
                 const data = JSON.parse(event.data);
                 this.triggerEvent('message', data);
@@ -203,7 +203,7 @@ class NotificationClient {
         };
 
         this.socket.onclose = (event) => {
-            console.log('WebSocket connection closed. Code:', event.code, 'Reason:', event.reason);
+            Logger.log(2, 'connect', `'WebSocket connection closed. Code:${event.code}, Reason: ${event.reason}`);
             this.connected = false;
             this.triggerEvent('close');
             // Attempt to reconnect after a delay
@@ -223,20 +223,22 @@ class NotificationClient {
      * @returns {void}
      */
     send(message) {
+        Logger.log(1, 'send', `send message=${message}, sessionId=${this.sessionId}, playerId=${this.playerId}, questId=${this.questId}`);
         // Ensure all messages include the session ID, player ID, and quest ID
         const completeMessage = {
             ...message,
             sessionId: this.sessionId,
             playerId: this.playerId,
-            questId: this.questId
+            questId: this.questId,
+            playerName: this.playerName
         };
 
         if (this.connected) {
-            console.log('Sending message:', completeMessage);
+            Logger.log(2, 'send', 'Sending message:', completeMessage);
             this.socket.send(JSON.stringify(completeMessage));
             //this.socket.send(completeMessage);
         } else {
-            console.log('Connection not ready, queueing message:', completeMessage);
+            Logger.log(2, 'send', 'Connection not ready, queueing message:', completeMessage);
             // Queue the message to be sent when connection is established
             this.messageQueue.push(completeMessage);
         }
@@ -291,11 +293,18 @@ class NotificationClient {
      * @returns {void}
      */
     updateConnectionStatus(status) {
-        const statusElement = document.getElementById('chat-messages');
-        if (statusElement) {
-            statusElement.textContent = status;
-            statusElement.className = 'status-' + status.toLowerCase().replace(/\s+/g, '-');
+        let severity = '';
+        switch (status) {
+            case 'Connected':
+                severity='info';
+                break;
+            case 'Error':
+                severity='error';
+                break;
+            default:
+                severity='warning';
         }
+        ToastManager.show('Connection status', status, severity);
     }
 
     /**
@@ -305,148 +314,10 @@ class NotificationClient {
      * @returns {void}
      */
     displayNotification(notification) {
-        const container = document.getElementById('notifications-container');
-        if (!container)
-            return;
+        const message = `${notification.type} at ${this.formatTimestamp(notification.timestamp)}<br>
+                ${notification.message ? JSON.stringify(notification.message) : 'no message'}        `;
 
-        const notificationElement = document.createElement('div');
-        notificationElement.className = 'notification';
-        notificationElement.dataset.id = notification.id;
-
-        // Add 'read' class if the notification is already read
-        if (notification.is_read) {
-            notificationElement.classList.add('read');
-        }
-
-        notificationElement.innerHTML = `
-            <div class="notification-header">
-                ${notification.type} at ${this.formatTimestamp(notification.timestamp)}<br>
-                ${JSON.stringify(notification)}
-            </div>
-            <hr>
-            <div class="notification-content">
-                ${notification.message ? JSON.stringify(notification.message) : 'no message'}
-            </div>
-            <div class="notification-actions">
-                <button class="mark-read-btn" ${notification.is_read ? 'disabled' : ''}>
-                    ${notification.is_read ? 'Read' : 'Mark as Read'}
-                </button>
-            </div>
-        `;
-
-        // Add click handler for the mark as read button
-        const markReadBtn = notificationElement.querySelector('.mark-read-btn');
-        if (markReadBtn && !notification.is_read) {
-            markReadBtn.addEventListener('click', () => {
-                this.markNotificationAsRead(notification.id);
-            });
-        }
-
-        // Add to the container
-        container.prepend(notificationElement);
-    }
-
-    /**
-     * Display notification history
-     * 
-     * @param {object} notifications
-     * @returns {void}
-     */
-    displayNotificationHistory(notifications) {
-        const container = document.getElementById('notifications-container');
-        if (!container)
-            return;
-
-        // Clear existing notifications
-        container.innerHTML = '';
-
-        // Display each notification
-        notifications.forEach(notification => {
-            this.displayNotification(notification);
-        });
-    }
-
-    /**
-     * Display a chat message
-     * 
-     * @param {object} chatData
-     * @returns {void}
-     */
-    displayChatMessage(chatData) {
-        const container = document.getElementById('chat-messages');
-        if (!container)
-            return;
-
-        const chatElement = document.createElement('div');
-        chatElement.className = 'chat-message';
-        /*
-         chatElement.innerHTML = `
-         <div class="chat-header">
-         <p>Message</p>
-         <span class="chat-sender">Sender: ${chatData.sender}</span>
-         <span class="chat-time">Timestamp: ${chatData.timestamp}</span>
-         </div>
-         <div class="chat-content">Message: ${chatData.message}</div>
-         `;
-         */
-        chatElement.innerHTML = `
-            <div class="chat-content">
-                <p>Message sent by ${chatData.sender} at ${this.formatTimestamp(chatData.timestamp)}<br>
-                ${JSON.stringify(chatData)}<br>
-                ${chatData.message ?? 'Empty message'}</p>
-                <hr>
-            </div>
-        `;
-
-        // Add to the container
-        container.appendChild(chatElement);
-        // Scroll to bottom
-        container.scrollTop = container.scrollHeight;
-    }
-
-    /**
-     * Mark a notification as read
-     * 
-     * @param {int} notificationId
-     * @returns {void}
-     */
-    markNotificationAsRead(notificationId) {
-        this.send({
-            type: 'notification_update',
-            action: 'read',
-            notificationId: notificationId
-        });
-
-        // Update UI
-        const notificationElement = document.querySelector(`.notification[data-id="${notificationId}"]`);
-        if (notificationElement) {
-            notificationElement.classList.add('read');
-            const markReadBtn = notificationElement.querySelector('.mark-read-btn');
-            if (markReadBtn) {
-                markReadBtn.textContent = 'Read';
-                markReadBtn.disabled = true;
-            }
-        }
-    }
-
-    /**
-     * Mark all notifications as read
-     */
-    markAllNotificationsAsRead() {
-        this.send({
-            type: 'mark_all_read'
-        });
-
-        // Update UI
-        const notifications = document.querySelectorAll('.notification:not(.read)');
-        notifications.forEach(notification => {
-            notification.classList.add('read');
-            const markReadBtn = notification.querySelector('.mark-read-btn');
-            if (markReadBtn) {
-                markReadBtn.textContent = 'Read';
-                markReadBtn.disabled = true;
-            }
-        });
+        ToastManager.show('Event Handler', message, 'info');
     }
 
     /**
@@ -465,7 +336,7 @@ class NotificationClient {
         });
 
         // Clear the input field
-        const chatInput = document.getElementById('message-input');
+        const chatInput = document.getElementById(this.chatInput);
         if (chatInput) {
             chatInput.value = '';
         }
@@ -489,7 +360,57 @@ class NotificationClient {
             sessionStorage.setItem("tabId", uniqueId);
         }
         const sessionId = sessionStorage.getItem("tabId");
-        console.log('Using session ID:', sessionId);
+        Logger.log(1, 'getSessionId', 'Using session ID:', sessionId);
         return sessionId;
+    }
+
+    /**
+     * Executes AJAX request based on configuration
+     * @param {Object} config - Request configuration
+     * @param {Object} data - Request data
+     */
+    executeRequest(config, data) {
+        Logger.log(1, 'executeRequest', `config=${JSON.stringify(config)}, data=${JSON.stringify(data)}`);
+
+        const target = `#${config.placeholder}`;
+        if (!DOMUtils.exists(target))
+            return;
+
+        const fixedData = {
+            playerId: this.playerId,
+            questId: this.questId
+        };
+
+        console.log('Before Ajax');
+        AjaxUtils.request({
+            url: config.route,
+            method: config.method,
+            data: fixedData,
+            successCallback: (response) => {
+                console.log('Callback', response);
+                if (!response.error) {
+                    this._updateTarget(target, response, config.badge);
+                }
+            }
+        });
+        console.log('After Ajax');
+        return true;
+    }
+
+    /**
+     * Updates target element based on response
+     * @param {string} target - Target selector
+     * @param {Object} response - Server response
+     * @param {boolean} isBadge - Whether target is a badge
+     */
+    _updateTarget(target, response, isBadge) {
+        if (isBadge) {
+            const $target = $(target);
+            response.content > 0
+                    ? $target.removeClass('d-none').text(response.content)
+                    : $target.addClass('d-none').text('0');
+        } else {
+            $(target).html(response.content);
+        }
     }
 }

@@ -8,24 +8,24 @@ use Yii;
  * This is the model class for table "notification".
  *
  * @property int $id Primary key
- * @property int $player_id Foreign key to "player" table. Identify the initiator of the notification
+ * @property int $initiator_id Foreign key to "player" table. Identifies the initiator of the notification
  * @property int|null $quest_id Foreign key to "quest" table
  * @property string $notification_type Notifcation type
  * @property string $title Notification title
  * @property string $message Notification content
- * @property int|null $source_id ID of the source object (quest_id, player_id, etc.)
- * @property string|null $source_type Type of the source object (quest, player, etc.)
  * @property int $created_at When the notification was created
  * @property int|null $expires_at When the notification expires (optional)
  * @property int $is_private Notification is private
  * @property string|null $payload Notification Payload
  *
+ * @property Player $initiator
  * @property NotificationPlayer[] $notificationPlayers
- * @property Player $player
  * @property Player[] $players
  * @property Quest $quest
  */
-class Notification extends \yii\db\ActiveRecord {
+class Notification extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -39,12 +39,16 @@ class Notification extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['player_id', 'notification_type', 'message'], 'required'],
-            [['player_id', 'quest_id', 'source_id', 'created_at', 'expires_at', 'is_private'], 'integer'],
-            [['message', 'payload'], 'string'],
-            [['notification_type', 'source_type'], 'string', 'max' => 32],
+            [['quest_id', 'expires_at', 'payload'], 'default', 'value' => null],
+            [['title'], 'default', 'value' => 'Technical event'],
+            [['is_private'], 'default', 'value' => 0],
+            [['initiator_id', 'notification_type', 'message'], 'required'],
+            [['initiator_id', 'quest_id', 'created_at', 'expires_at', 'is_private'], 'integer'],
+            [['message'], 'string'],
+            [['payload'], 'safe'],
+            [['notification_type'], 'string', 'max' => 32],
             [['title'], 'string', 'max' => 4096],
-            [['player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['player_id' => 'id']],
+            [['initiator_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['initiator_id' => 'id']],
             [['quest_id'], 'exist', 'skipOnError' => true, 'targetClass' => Quest::class, 'targetAttribute' => ['quest_id' => 'id']],
         ];
     }
@@ -55,18 +59,25 @@ class Notification extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'player_id' => 'Foreign key to \"player\" table. Identify the initiator of the notification',
+            'initiator_id' => 'Foreign key to \"player\" table. Identifies the initiator of the notification',
             'quest_id' => 'Foreign key to \"quest\" table',
             'notification_type' => 'Notifcation type',
             'title' => 'Notification title',
             'message' => 'Notification content',
-            'source_id' => 'ID of the source object (quest_id, player_id, etc.)',
-            'source_type' => 'Type of the source object (quest, player, etc.)',
             'created_at' => 'When the notification was created',
             'expires_at' => 'When the notification expires (optional)',
             'is_private' => 'Notification is private',
             'payload' => 'Notification Payload',
         ];
+    }
+
+    /**
+     * Gets query for [[Initiator]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getInitiator() {
+        return $this->hasOne(Player::class, ['id' => 'initiator_id']);
     }
 
     /**
@@ -79,21 +90,12 @@ class Notification extends \yii\db\ActiveRecord {
     }
 
     /**
-     * Gets query for [[Player]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getPlayer() {
-        return $this->hasOne(Player::class, ['id' => 'player_id']);
-    }
-
-    /**
      * Gets query for [[Players]].
      *
      * @return \yii\db\ActiveQuery
      */
     public function getPlayers() {
-        return $this->hasMany(Player::class, ['id' => 'player_id'])->via('notificationPlayers');
+        return $this->hasMany(Player::class, ['id' => 'player_id'])->viaTable('notification_player', ['notification_id' => 'id']);
     }
 
     /**
@@ -104,4 +106,5 @@ class Notification extends \yii\db\ActiveRecord {
     public function getQuest() {
         return $this->hasOne(Quest::class, ['id' => 'quest_id']);
     }
+
 }

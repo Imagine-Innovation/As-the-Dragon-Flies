@@ -11,11 +11,11 @@
     --green:rgba(40,167,69,1);      /* #28a745 */
     --green-50:rgba(40,167,69,.5);
     --green-25:rgba(40,167,69,.25);
-    
+
     /* purple colors */
     --indigo:rgba(102,16,242,1);     /* #6610f2 */
     --purple:rgba(111,66,193,1);     /* #6f42c1 */
-    
+
     /* red to yellow colors */
     --red:rgba(220,53,69,1);      /* #dc3545 */
     --red-25:rgba(220,53,69,.25);
@@ -25,7 +25,7 @@
     --yellow-50:rgba(255,193,7,.5);
     --light-yellow:rgba(255,238,187,1);    /* #ffeebb */
     --pink:rgba(232,62,140,1);     /* #e83e8c */
-    
+
     /* from black to white */
     --black:rgba(0,0,0,1);          /* #000000 */
     --dark-95:rgba(0,0,0,.95);
@@ -35,7 +35,7 @@
     --dark-10:rgba(0,0,0,.1);
     --dark-00:rgba(0,0,0,0);
     --dark-gray:rgba(56,51,51,1);       /* #383333 */
-    --dark-gray-50:rgba(56,51,51,.5);    
+    --dark-gray-50:rgba(56,51,51,.5);
     --gray:rgba(108,117,125,1);    /* #6c757d */
     --gray-50:rgba(108,117,125,.5);    /* #6c757d */
     --gray-1:rgba(17,17,17,1);       /* #111 */
@@ -55,7 +55,7 @@
     --light-gray-50:rgba(248,249,250,.5);
     --light-gray:rgba(248,249,250,1);    /* #f8f9fa */
     --white:rgba(255,255,255,1);    /* #ffffff */
-    
+
     /* bootstrap colors */
     --primary:var(--blue);
     --secondary:var(--gray);
@@ -67,7 +67,7 @@
     --danger:var(--red);
     --light:var(--light-gray);
     --dark:var(--dark-gray);
-    
+
     /* breakpoints */
     --breakpoint-xs:0;
     --breakpoint-sm:576px;
@@ -5140,12 +5140,11 @@ pre {
 }
 
 .messages__details>p {
-    border-radius:2px;
+    border-radius:4px;
     padding:.5rem;
     margin-bottom:0;
     display:inline-block;
     text-align:left;
-    border-radius:25%;
 }
 
 .messages__details>p+p {
@@ -5154,7 +5153,7 @@ pre {
 
 .messages__details>small {
     display:block;
-    margin-top:0.9rem;
+    margin-top:0.85rem;
 }
 
 .messages__details>small>i {
@@ -5381,4 +5380,79 @@ pre {
     width:3rem;
     height:3rem;
     margin-right:1.2rem
+}
+
+/* Custom Image Card Styles */
+.image-card {
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    height: 100%;
+}
+
+.image-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.image-card-body {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1; /* Maintains square aspect ratio */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: flex-end;
+    padding: 0;
+}
+
+.image-card-label {
+    width: 100%;
+    background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.8) 0%,
+        rgba(0, 0, 0, 0.6) 50%,
+        rgba(0, 0, 0, 0) 100%
+        );
+    color: white;
+    padding: 1.5rem 1rem 1rem;
+    text-align: center;
+}
+
+.image-card-label h6 {
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    font-size: 0.9rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 575.98px) {
+    .image-card-label {
+        padding: 1rem 0.75rem 0.75rem;
+    }
+
+    .image-card-label h6 {
+        font-size: 0.85rem;
+    }
+}
+
+@media (min-width: 992px) {
+    .image-card-label h6 {
+        font-size: 1rem;
+    }
+}
+
+/* Alternative version with solid background label */
+.image-card-solid .image-card-label {
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.image-card-solid .image-card-label h6 {
+    text-shadow: none;
+    color: #333;
 }

@@ -2,79 +2,159 @@
 
 namespace frontend\components;
 
-use common\models\QuestChat;
+use common\models\Notification;
+use common\models\Player;
 use common\helpers\Utilities;
 use Yii;
 
 class QuestMessages {
 
-    public static function getRecentChatMessages(int $questId, int $limit = 20): array {
-        $recentChatMessages = QuestChat::find()
+    const DEFAULT_LIMIT = 20;
+    const CHAT_NOTIFICATION_TYPE = 'chat';
+    const ROUNDED_SECONDS = 60;  // rounded to the same minute by default
+
+    /**
+     * Get every notification of a specific type for a specific quest.
+     *
+     * @param int $questId ID of quest
+     * @param string $type notification type ("chat", "action"...)
+     * @param int|null $since optional parameter to get the notifications since a specific date
+     * @param int|null $limit optional parameter to limit the number of returned values
+     * @return common\models\Notification
+     */
+    private static function getQuestNotifications(int $questId, string $type, int|null $since = null, int|null $limit = null): ?array {
+
+        Yii::debug("*** Debug *** getQuestNotifications - questId={$questId}, type={$type}, since=" . ($since ? Utilities::formatDate($since) : "null") . ", limit=" . ($limit ?? "null"));
+        $query = Notification::find()
                 ->where(['quest_id' => $questId])
-                ->orderBy(['created_at' => SORT_DESC])
-                ->limit($limit)
-                ->all();
+                ->andWhere(['notification_type' => $type]);
 
-        $messages = [];
-        foreach ($recentChatMessages as $chatMessage) {
-            $messages[] = [
-                'playerId' => $chatMessage->player_id,
-                'playerName' => $chatMessage->player->name,
-                'message' => $chatMessage->message,
-                'timestamp' => $chatMessage->created_at
-            ];
+        if ($since) {
+            $query->andWhere(['>=', 'created_at', $since]);
         }
 
-        return $messages;
-    }
-
-    public static function getLastMessages(int $questId, int $playerId, int $from = null, int $limit = 20): string {
-        $query = QuestChat::find()->where(['quest_id' => $questId]);
-
-        if ($from) {
-            Yii::debug("*** Debug *** prepareMessages - From=" . Utilities::formatDate($from));
-            $query->andWhere(['>=', 'created_at', $from]);
-        }
-
-        $questChat = $query->orderBy(['created_at' => SORT_ASC])
-                ->limit($limit)
+        $notifications = $query->orderBy(['created_at' => SORT_DESC])
+                ->limit($limit ?? self::DEFAULT_LIMIT)
                 ->all();
 
-        return self::prepareMessages($questChat, $playerId);
+        $n = count($notifications);
+        Yii::debug("*** Debug *** getQuestNotifications - returns {$n} records");
+        return $notifications;
     }
 
-    private static function prepareMessages(QuestChat $questChat, int $playerId) {
-        $messages = [];
-        $data = [];
-        $prevRoundedTime = 0;
-        $prevPlayerId = 0;
+    /**
+     *
+     * @param int $questId
+     * @param int|null $limit
+     * @return array|null
+     */
+    public static function getRecentChatMessages(int $questId, int|null $limit = null): ?array {
+
+        $chatNotifications = self::getQuestNotifications($questId, self::CHAT_NOTIFICATION_TYPE, null, $limit);
+
+        if (!$chatNotifications) {
+            return null;
+        }
+
+        $chatMessages = [];
+        foreach ($chatNotifications as $chatNotification) {
+            $chatMessages[] = self::newChatEntry($chatNotification);
+        }
+
+        return $chatMessages;
+    }
+
+    /**
+     *
+     * @param int|null $time
+     * @return int
+     */
+    public static function roundedTime(int|null $time = null): int {
+        $timestamp = $time ?? time();
+        return floor($timestamp / self::ROUNDED_SECONDS) * self::ROUNDED_SECONDS;
+    }
+
+    /**
+     * Initialize a chat message payload
+     *
+     * @param Player $player
+     * @param string $message
+     * @return array
+     */
+    public static function payload(Player $player, string $message): array {
+        $timestamp = time();
+
+        return [
+            'playerName' => $player->name,
+            'playerId' => $player->id,
+            'avatar' => $player->image->file_name,
+            'questId' => $player->quest_id,
+            'message' => $message,
+            'timestamp' => date('Y-m-d H:i:s', $timestamp),
+            'roundedTime' => self::roundedTime($timestamp),
+        ];
+    }
+
+    /**
+     * Prepare a new entry for the char message array based on the cha event payload
+     *
+     * @param Notification $chatNotification
+     * @param int $playerId
+     * @return array|null
+     */
+    private static function newChatEntry(Notification $chatNotification, int $playerId): ?array {
+        if ($chatNotification->notification_type !== self::CHAT_NOTIFICATION_TYPE) {
+            return null;
+        }
+
+        $payload = json_decode($chatNotification->payload, true);
+
+        Yii::debug($chatNotification->payload);
+        Yii::debug($payload);
+        return [
+            'isAuthor' => ($chatNotification->initiator_id == $playerId), // defines is the current player is the one who initiate the chat message
+            'displayedDateTime' => Utilities::formatDate($payload['roundedTime']),
+            'sender' => Utilities::encode($payload['playerName']),
+            'messages' => [Utilities::encode($payload['message'])], // first entry of the message array
+            'avatar' => $payload['avatar'],
+            'roundedTime' => $payload['roundedTime'],
+        ];
+    }
+
+    /**
+     *
+     * @param int $questId
+     * @param int $playerId
+     * @param int|null $since
+     * @param int|null $limit
+     * @return array|null
+     */
+    public static function getLastMessages(int $questId, int $playerId, int|null $since = null, int|null $limit = null): array {
+        $chatNotifications = self::getQuestNotifications($questId, self::CHAT_NOTIFICATION_TYPE, $since, $limit);
+
+        if (!$chatNotifications) {
+            return []; // returns an empty array
+        }
+
+        $chatMessages = [];
+        $previousRoundedTime = 0;
+        $previousInitiatorId = 0;
         $i = 0;
-        foreach ($questChat as $chat) {
-            $sender = $chat->sender;
-            $roundedTime = floor($chat->created_at / 60) * 60;
-            Yii::debug("*** Debug *** prepareMessages[$i] - sender=$sender->id, date=" . Utilities::formatDate($chat->created_at) . ", message=$chat->message");
+        foreach ($chatNotifications as $chatNotification) {
+            $roundedTime = self::roundedTime($chatNotification->created_at);
 
-            if (($roundedTime == $prevRoundedTime) && ($sender->id == $prevPlayerId)) {
-                Yii::debug("*** Debug *** prepareMessages[$i] -----------> same minute, same sender");
-                $data['messages'][] = '<p>' . Utilities::encode($chat->message) . '</p>';
-                $messages[$i] = $data;
+            if (($roundedTime !== $previousRoundedTime) || ($chatNotification->initiator_id !== $previousInitiatorId)) {
+                // If the message is not sent during the same minute by the same user then create a new entry
+                $chatMessages[++$i] = self::newChatEntry($chatNotification, $playerId);
             } else {
-                $data = [
-                    'is_author' => ($sender->id == $playerId),
-                    'date_time' => Utilities::formatDate($chat->created_at),
-                    'sender' => Utilities::encode($sender->name),
-                    'messages' => ['<p>' . Utilities::encode($chat->message) . '</p>'],
-                    'avatar' => "img/characters/" . $sender->image->file_name,
-                    'div_id' => 'quest-chat-' . $roundedTime,
-                ];
-
-                $messages[++$i] = $data;
+                // otherwise, append the chat message to the current entry
+                $chatMessages[$i]['messages'][] = Utilities::encode($chatNotification->message);
             }
 
-            $prevRoundedTime = $roundedTime;
-            $prevPlayerId = $sender->id;
-            Yii::debug("*** Debug *** prepareMessages[$i] - message=" . implode(" ", $messages[$i]['messages']));
+            $previousRoundedTime = $roundedTime;
+            $previousInitiatorId = $chatNotification->initiator_id;
         }
-        return array_reverse($messages);
+        //return array_reverse($chatMessages);
+        return $chatMessages;
     }
 }

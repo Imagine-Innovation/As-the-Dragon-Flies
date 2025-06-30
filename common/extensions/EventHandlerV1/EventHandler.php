@@ -724,11 +724,14 @@ class EventHandler extends Component {
         $type = $data['type'] ?? 'unknown'; // For chat, $type will be 'chat'
         $createdAt = time();
 
-        if ($type === 'chat' && !$this->saveQuestChat($playerId, $questId, $message, $createdAt)) {
-            $this->log("saveNotification: Failed to save QuestChat, aborting notification save.", $data, 'error');
-            $this->logEnd("saveNotification");
-            return null;
-        }
+        /*
+          if ($type === 'chat' && !$this->saveQuestChat($playerId, $questId, $message, $createdAt)) {
+          $this->log("saveNotification: Failed to save QuestChat, aborting notification save.", $data, 'error');
+          $this->logEnd("saveNotification");
+          return null;
+          }
+         *
+         */
 
         $sender = Player::findOne($playerId);
         if (!$sender) {
@@ -745,7 +748,7 @@ class EventHandler extends Component {
         ];
 
         $notification = new Notification([
-            'player_id' => $playerId,
+            'initiator_id' => $playerId,
             'quest_id' => $questId,
             'notification_type' => $type, // This will be 'chat' for chat messages
             'title' => ($type === 'chat' ? "New chat message from " . $sender->name : ($data['title'] ?? 'Unknown Event')),

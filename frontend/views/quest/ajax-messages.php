@@ -2,14 +2,19 @@
 /** @var yii\web\View $this */
 /** @var array $messages[] */
 ?>
-<?php foreach ($messages as $chat): ?>
-    <div class="messages__item<?= ($chat['is_author']) ? ' messages__item--right' : '' ?>" id="<?= $chat['div_id'] ?>">
-        <?php if (!$chat['is_author']): ?>
-            <img src="<?= $chat['avatar'] ?>" class="avatar-img" alt="">
-        <?php endif; ?>
-        <div class="messages__details">
-            <?= implode("", $chat['messages']) ?>
-            <small><i class="bi-clock"></i> <?= $chat['date_time'] ?> - <?= $chat['sender'] ?></small>
+<?php if ($messages): ?>
+    <?php foreach ($messages as $chatMessage): ?>
+        <div class="messages__item<?= ($chatMessage['isAuthor']) ? ' messages__item--right' : '' ?>" id="quest-chat-<?= $chatMessage['roundedTime'] ?>">
+            <div class="messages__details">
+                <?php foreach ($chatMessage['messages'] as $chat): ?>
+                    <p><?= $chat ?></p>
+                <?php endforeach; ?>
+                <small><?= $chatMessage['displayedDateTime'] ?> - <?= $chatMessage['sender'] ?></small>
+            </div>
         </div>
+    <?php endforeach; ?>
+<?php else: ?>
+    <div class="messages__item">
+        <div class="messages__details">No message yet</div>
     </div>
-<?php endforeach; ?>
+<?php endif; ?>

@@ -65,7 +65,7 @@ abstract class Event extends BaseObject {
 
     protected function createNotification(): Notification {
         $notification = new Notification([
-            'player_id' => $this->player->id,
+            'initiator_id' => $this->player->id,
             'quest_id' => $this->quest->id,
             'notification_type' => $this->getType(),
             'title' => $this->getTitle(),

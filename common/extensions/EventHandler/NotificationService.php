@@ -5,12 +5,11 @@ namespace common\extensions\EventHandler;
 use common\extensions\EventHandler\contracts\BroadcastServiceInterface;
 use common\extensions\EventHandler\dtos\ChatMessageDto;
 use common\extensions\EventHandler\factories\BroadcastMessageFactory;
+use common\extensions\EventHandler\LoggerService; // Ensured LoggerService is used
 use common\models\Notification;
 use common\models\Player;
 use common\models\QuestChat;
-use common\models\Quest;      // Required if directly interacting with Quest model like Quest::findOne
-use common\models\Story;      // Required if accessing $quest->story
-use common\extensions\EventHandler\LoggerService; // Ensured LoggerService is used
+use frontend\components\QuestMessages;
 
 class NotificationService {
 
@@ -19,9 +18,9 @@ class NotificationService {
     private BroadcastMessageFactory $messageFactory;
 
     public function __construct(
-        LoggerService $logger,
-        BroadcastServiceInterface $broadcastService,
-        BroadcastMessageFactory $messageFactory
+            LoggerService $logger,
+            BroadcastServiceInterface $broadcastService,
+            BroadcastMessageFactory $messageFactory
     ) {
         $this->logger = $logger;
         $this->broadcastService = $broadcastService;
@@ -68,14 +67,17 @@ class NotificationService {
         $message = $data['message'] ?? '';
         $type = $data['type'] ?? 'unknown';
         $createdAt = $data['timestamp'] ?? time(); // Use timestamp from data if available, fallback to now
-        // If it's a chat type, first try to save the QuestChat entry
-        if ($type === 'chat') {
-            if (!$this->saveQuestChat($playerId, $questId, $message, $createdAt)) {
-                $this->logger->log("NotificationService: Failed to save QuestChat, aborting notification save for chat.", $data, 'error');
-                $this->logger->logEnd("NotificationService: saveNotification");
-                return null;
-            }
-        }
+        /*
+          // If it's a chat type, first try to save the QuestChat entry
+          if ($type === 'chat') {
+          if (!$this->saveQuestChat($playerId, $questId, $message, $createdAt)) {
+          $this->logger->log("NotificationService: Failed to save QuestChat, aborting notification save for chat.", $data, 'error');
+          $this->logger->logEnd("NotificationService: saveNotification");
+          return null;
+          }
+          }
+         *
+         */
 
         $sender = Player::findOne($playerId);
         if (!$sender) {
@@ -87,18 +89,21 @@ class NotificationService {
         $playerName = $sender ? $sender->name : 'Unknown Player';
 
         // Construct payload. This might vary based on notification type in a more complex system.
-        $payload = [
-            'playerName' => $playerName,
-            'playerId' => $playerId,
-            'message' => $message, // Core message content
-            'timestamp' => date('Y-m-d H:i:s', $createdAt), // Human-readable timestamp in payload
-                // Add other type-specific details to payload as needed
-        ];
-
+        /*
+          $payload = [
+          'playerName' => $playerName,
+          'playerId' => $playerId,
+          'message' => $message, // Core message content
+          'timestamp' => date('Y-m-d H:i:s', $createdAt), // Human-readable timestamp in payload
+          // Add other type-specific details to payload as needed
+          ];
+         *
+         */
+        $payload = QuestMessages::payload($sender, $message);
         $title = $data['title'] ?? ($type === 'chat' ? "New chat message from " . $playerName : "Notification");
 
         $notification = new Notification([
-            'player_id' => $playerId,
+            'initiator_id' => $playerId,
             'quest_id' => $questId,
             'notification_type' => $type,
             'title' => $title,
@@ -137,18 +142,17 @@ class NotificationService {
      * @param int|null $userId User initiating the action
      * @return Notification|null
      */
-    public function createNotificationAndBroadcast(int $questId, array $data, string $type, ?string $excludeSessionId = null, ?int $userId = null): ?Notification
-    {
+    public function createNotificationAndBroadcast(int $questId, array $data, string $type, ?string $excludeSessionId = null, ?int $userId = null): ?Notification {
         $this->logger->logStart("NotificationService: createNotificationAndBroadcast questId=[{$questId}], type=[{$type}]", ['data' => $data, 'excludeSessionId' => $excludeSessionId, 'userId' => $userId]);
 
         // Assuming $userId is equivalent to player_id for the notification
-        $playerId = $userId ?? ($data['player_id'] ?? null); 
+        $playerId = $userId ?? ($data['player_id'] ?? null);
         if (!$playerId) {
             $this->logger->log("NotificationService: Player ID not provided for notification.", $data, 'error');
             // Depending on requirements, might create an error DTO and send back to originator if possible
             return null;
         }
-        
+
         // Create and save the notification model
         // This reuses the saveNotification method, which already handles logging for that part.
         $notificationModel = $this->saveNotification($playerId, $questId, $data);
@@ -166,21 +170,20 @@ class NotificationService {
             $senderName = $data['sender_name'] ?? $notificationModel->player->name ?? 'Unknown Sender';
 
             $chatDto = $this->messageFactory->createChatMessage(
-                $notificationModel->message,
-                $senderName 
+                    $notificationModel->message,
+                    $senderName
             );
-            
-            $this->broadcastService->broadcastToQuest((int)$notificationModel->quest_id, $chatDto, $excludeSessionId);
+
+            $this->broadcastService->broadcastToQuest((int) $notificationModel->quest_id, $chatDto, $excludeSessionId);
             $this->logger->log("NotificationService: Chat DTO broadcasted for questId=[{$notificationModel->quest_id}]", ['type' => $chatDto->getType()]);
         } else {
             // Handle other notification types or non-DTO broadcasts if necessary
             $this->logger->log("NotificationService: Notification type [{$notificationModel->notification_type}] not handled by DTO broadcast in this example.", ['notificationId' => $notificationModel->id]);
         }
-        
+
         $this->logger->logEnd("NotificationService: createNotificationAndBroadcast");
         return $notificationModel;
     }
-
 
     /**
      * Retrieves notifications for a quest.
@@ -217,31 +220,11 @@ class NotificationService {
      */
     public function prepareChatMessageDto(Notification $notification, string $sessionId): ChatMessageDto {
         $this->logger->log("NotificationService: Preparing ChatMessageDto for Notification ID: {$notification->id}, Session ID: {$sessionId}");
-        
-        // Attempt to get sender name from relation or payload
-        $senderDisplayName = 'System'; // Default sender
-        if ($notification->player) { // Assumes 'player' relation is eager-loaded or can be lazy-loaded
-            $senderDisplayName = $notification->player->name; // Adjust according to your Player model's name attribute
-        } elseif ($notification->created_by) { // Fallback if direct player relation isn't available/loaded
-            // This might require fetching Player model if only created_by (ID) is available
-            // For simplicity, using a placeholder. Ideally, ensure player name is consistently available.
-            $senderDisplayName = "User {$notification->created_by}"; 
-        } else {
-             // Further fallback: check payload if it stores sender info not in player relation
-            $payload = json_decode($notification->payload, true);
-            if (isset($payload['playerName'])) {
-                $senderDisplayName = $payload['playerName'];
-            } elseif (isset($payload['sender_name'])) { // another common key
-                $senderDisplayName = $payload['sender_name'];
-            }
-        }
-        
+
+        $payload = json_decode($notification->payload, true);
+        $senderDisplayName = $notification->initiator->name; // Adjust according to your Player model's name attribute
         // Message content can come from notification's message field or a specific field in payload
-        $messageContent = $notification->message;
-        $payload = json_decode($notification->payload, true); // Decode once if needed for other fields
-        if (isset($payload['message'])) { // If payload has a specific 'message' field, it might be preferred
-            $messageContent = $payload['message'];
-        }
+        $messageContent = $payload['message'] ?? $notification->message;
 
         return $this->messageFactory->createChatMessage($messageContent, $senderDisplayName);
     }

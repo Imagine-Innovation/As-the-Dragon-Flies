@@ -6,6 +6,7 @@ use common\models\NotificationPlayer;
 use common\models\QuestChat;
 use common\models\Quest;
 use common\models\Player;
+use frontend\components\QuestMessages;
 use Yii;
 
 class NewMessageEvent extends Event {
@@ -30,23 +31,32 @@ class NewMessageEvent extends Event {
     }
 
     public function getPayload(): array {
-        return [
-            'playerName' => $this->player->name,
-            'playerId' => $this->player->id,
-            'message' => $this->message,
-            'timestamp' => date('Y-m-d H:i:s', $this->timestamp)
-        ];
+        /*
+          return [
+          'playerName' => $this->player->name,
+          'playerId' => $this->player->id,
+          'avatar' => $this->player->image->file_name,
+          'message' => $this->message,
+          'timestamp' => date('Y-m-d H:i:s', $this->timestamp),
+          'roundedTime' => floor($this->timestamp / 60) * 60 // rounded to the same minute
+          ];
+         *
+         */
+        return QuestMessages::payload($this->player, $this->message);
     }
 
     public function process(): void {
-        // Save message to quest_chat
-        $questChat = new QuestChat([
-            'quest_id' => $this->quest->id,
-            'player_id' => $this->player->id,
-            'message' => $this->message,
-            'created_at' => time()
-        ]);
-        $questChat->save();
+        /*
+          // Save message to quest_chat
+          $questChat = new QuestChat([
+          'quest_id' => $this->quest->id,
+          'player_id' => $this->player->id,
+          'message' => $this->message,
+          'created_at' => time()
+          ]);
+          $questChat->save();
+         *
+         */
 
         // Create notification
         $notification = $this->createNotification();
@@ -67,17 +77,5 @@ class NewMessageEvent extends Event {
         }
 
         $this->broadcast();
-        /*
-          $array = $this->toArray();
-          // First, register the session for the quest
-          if (Yii::$app->eventHandler->registerSessionForQuest($this->sessionId, $array)) {
-          // Broadcast event to all connected clients
-          Yii::$app->eventHandler->broadcastToQuest(
-          $this->quest->id,
-          $array
-          );
-          }
-         *
-         */
     }
 }
