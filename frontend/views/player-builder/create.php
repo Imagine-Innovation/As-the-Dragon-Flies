@@ -26,12 +26,12 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
     <div class="card-body">
         <h4 class="card-title text-decoration"><?= Html::encode($this->title) ?></h4>
         <div class="actions">
-            <a href="#" id="showBuilderWizardModal-button" class="actions__item" data-toggle="tooltip" title="Character builder wizard" data-placement="bottom">
-                <span data-toggle="modal" data-target="#builderWizardModal">
+            <a href="#" id="showBuilderWizardModal-button" class="actions__item" data-bs-toggle="tooltip" title="Character builder wizard" data-placement="bottom">
+                <span data-bs-toggle="modal" data-bs-target="#builderWizardModal">
                     <i class="bi bi-magic"></i>
                 </span>
             </a>
-            <a href="#" class="invisible" id="showSaveModal-hiddenButton" data-toggle="modal" data-target="#builderSaveModal"></a>
+            <a href="#" class="invisible" id="showSaveModal-hiddenButton" data-bs-toggle="modal" data-bs-target="#builderSaveModal"></a>
         </div>
         <h6 class="card-subtitle">
             A step-by-step wizard to help you create your player
@@ -58,7 +58,7 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
                     <?php if (($isAdmin && $tab['admin']) || !$tab['admin']): ?>
                         <li class="nav-item">
                             <a class="nav-link<?= $tab['anchor'] == $firstTab ? " active" : "" ?>"
-                               data-toggle="tab" href="#<?= $tab['anchor'] ?>-tab" role="tab"
+                               data-bs-toggle="tab" href="#<?= $tab['anchor'] ?>-tab" role="tab"
                                onclick="PlayerBuilder.initWizard('<?= $tab['wizard'] ?>');">
                                    <?= $tab['name'] ?>
                             </a>
@@ -104,7 +104,7 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
                     <i class="bi bi-caret-right"></i>
                 </button>
                 &nbsp;
-                <button type="button" class="btn btn-theme btn--icon" data-dismiss="modal">
+                <button type="button" class="btn btn-theme btn--icon" data-bs-dismiss="modal">
                     <i class="bi bi-x-lg"></i>
                 </button>
             </div>

@@ -92,9 +92,13 @@ class PlayerBuilder {
         // Trigger save if complete
         if (progress === 100) {
             if (playerId) {
-                $('#showValidateModal-hiddenButton').click();
+                $('#showValidateModal-hiddenButton').click(); // Keep this for now, might be in a different view
             } else {
-                $('#showSaveModal-hiddenButton').click();
+                var saveModalEl = document.getElementById('builderSaveModal');
+                if (saveModalEl) {
+                    var modal = bootstrap.Modal.getOrCreateInstance(saveModalEl);
+                    modal.show();
+                }
             }
         }
     }
@@ -564,7 +568,11 @@ class PlayerBuilder {
                 categoryIds: categoryIds
             },
             callback: () => {
-                $('#showEquipmentModal-hiddenButton').click();
+                var equipmentModalEl = document.getElementById('equipmentModal');
+                if (equipmentModalEl) {
+                    var modal = bootstrap.Modal.getOrCreateInstance(equipmentModalEl);
+                    modal.show();
+                }
             }
         });
     }

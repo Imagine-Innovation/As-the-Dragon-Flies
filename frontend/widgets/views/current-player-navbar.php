@@ -16,7 +16,7 @@ foreach ($players as $player) {
 }
 ?>
 <li class="dropdown top-nav__notifications">
-    <a class="top-nav position-relative" href="#" data-toggle="dropdown">
+    <a class="top-nav position-relative" href="#" data-bs-toggle="dropdown">
         <i class="bi bi-file-earmark-person"></i>
         <div id="currentPlayerBadge"></div>
     </a>
@@ -40,7 +40,7 @@ foreach ($players as $player) {
                                    <?= $player['id'] == $selectedPlayerId ? "checked" : "" ?>
                                    onclick="PlayerSelector.select(<?= $user_id ?>, <?= $player['id'] ?>);">
                             <label class="custom-control-label" for="playerNav-<?= $player['id'] ?>">
-                                <span data-toggle="tooltip" title="<?= ucfirst($player['tooltip']) ?>" data-placement="bottom">
+                                <span data-bs-toggle="tooltip" title="<?= ucfirst($player['tooltip']) ?>" data-placement="bottom">
                                     <?= $player['name'] ?>
                                 </span>
                             </label>
