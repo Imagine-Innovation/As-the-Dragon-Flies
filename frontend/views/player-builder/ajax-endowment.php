@@ -24,8 +24,7 @@ foreach ($backgroundItems as $backgroundItem) {
     }
 }
 
-Yii::debug($items);
-Yii::debug($category);
+$endowmentsJson = json_encode($endowments);
 ?>
 <!-- Character Builder - Equipment Tab -->
 <?= Utilities::formatMultiLine($paragraphs) ?>
@@ -98,18 +97,5 @@ Yii::debug($category);
 </div>
 
 <script type="text/javascript">
-
-    $(document).ready(function () {
-<?php
-if ($category) {
-    echo "PlayerBuilder.chooseBackgroundEquipment('$category');";
-}
-for ($choice = 1; $choice <= $choices; $choice++) {
-    $options = max(array_keys($endowments[$choice]));
-    if ($options === 1) {
-        echo "PlayerBuilder.chooseEquipment($choice, {$endowments[$choice][1]['id']});";
-    }
-}
-?>
-    });
+    PlayerBuilder.initEndowmentTab('<?= $category ?>', <?= $choices ?>, <?= $endowmentsJson ?>);
 </script>

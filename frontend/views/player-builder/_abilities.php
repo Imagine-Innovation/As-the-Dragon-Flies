@@ -75,10 +75,7 @@ if ($model->id):
     </div>
 
     <script type="text/javascript">
-
-        $(document).ready(function () {
-            ChartDrawer.drawAbilityCharts();
-        });
+        PlayerBuilder.initAbilitiesTab();
     </script>
 
 <?php endif; ?>

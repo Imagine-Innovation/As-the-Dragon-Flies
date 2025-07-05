@@ -133,8 +133,5 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
 </div>
 
 <script type="text/javascript">
-    $(document).ready(function () {
-        PlayerBuilder.initWizard('<?= $tabs[$firstTab]['wizard'] ?>');
-        PlayerBuilder.updateProgress();
-    });
+    PlayerBuilder.initCreatePage('<?= $tabs[$firstTab]['wizard'] ?>');
 </script>

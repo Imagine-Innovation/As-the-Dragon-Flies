@@ -154,17 +154,5 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
 </div>
 
 <script type="text/javascript">
-    $(document).ready(function () {
-        PlayerBuilder.initWizard('<?= $tabs[$firstTab]['wizard'] ?>');
-        PlayerBuilder.updateProgress();
-        PlayerBuilder.loadAdvancedProperties('images', 'ajaxAvatarChoice');
-        $('#equipmentModal').on('click', '#exitEquipmentModal-button', function () {
-            const selectedValue = $('input[name="initialEquipmentRadio"]:checked').val();
-            if (selectedValue) {
-                const [choice, ...itemIds] = selectedValue.split(',');
-                $('#closeEquipmentModal-hiddenButton').click();
-                PlayerBuilder.setCategoryItem(choice, itemIds);
-            }
-        });
-    });
+    PlayerBuilder.initUpdatePage('<?= $tabs[$firstTab]['wizard'] ?>');
 </script>

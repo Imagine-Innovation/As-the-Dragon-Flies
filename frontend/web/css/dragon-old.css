@@ -13594,18 +13594,6 @@ button,input,optgroup,select,textarea {
 }
 
 .messages {
-//	  display:-webkit-box;
-//	  display:-ms-flexbox;
-//	  display:flex;
-//	  -webkit-box-orient:horizontal;
-//	  -webkit-box-direction:normal;
-//	  -ms-flex-direction:row;
-//	  flex-direction:row;
-//	  background-color:rgba(0,0,0,.2);
-//	  border-radius:2px;
-//	  -webkit-box-shadow:0 1px 5px rgba(0,0,0,.1);
-//	  box-shadow:0 1px 5px rgba(0,0,0,.1);
-//	  height:calc(100vh - 180px)
 	height: calc(100% - 180px);
 	overflow-y: auto;
 	position: absolute;
@@ -13724,11 +13712,7 @@ button,input,optgroup,select,textarea {
 
 .messages__details>small {
 	display:block;
-//	  padding:0 1.5rem;
-//	  margin-top:1rem;
 	margin-top:0.9rem;
-//	  color:rgba(255,255,255,.5);
-//	  font-size:.9rem
 }
 
 .messages__details>small>i {

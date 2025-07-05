@@ -18,8 +18,3 @@ $functionCall = $functionCall ?? null;
     <span id="currentId"><?= $initId ?></span>
     <span id="filter"><?= $filter ?></span>
 </div>
-<script type="text/javascript">
-    $(document).ready(function () {
-        TableManager.loadGenericAjaxTable(0);
-    });
-</script>

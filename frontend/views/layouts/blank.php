@@ -4,7 +4,6 @@
 /** @var string $content */
 use common\widgets\Alert;
 use frontend\assets\AppAsset;
-use yii\bootstrap5\Html;
 
 AppAsset::register($this);
 ?>
@@ -24,5 +23,7 @@ AppAsset::register($this);
                 <?= $content ?>
             </div>
         </main>
+        <?php $this->endBody() ?>
     </body>
 </html>
+<?php $this->endPage() ?>

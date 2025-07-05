@@ -33,18 +33,7 @@ if ($model->id):
     </div>
 
     <script type="text/javascript">
-
-        $(document).ready(function () {
-            PlayerBuilder.loadAdvancedProperties('skills', 'ajaxSkills');
-        });
-
-        $('a.bi-arrow-repeat').click(function (event) {
-            // Prevent the default link click behavior
-            event.preventDefault();
-
-            // Perform AJAX call
-            PlayerBuilder.loadAdvancedProperties('traits', 'ajaxTraits');
-        });
+        PlayerBuilder.initSkillsTab();
     </script>
 
 <?php endif; ?>

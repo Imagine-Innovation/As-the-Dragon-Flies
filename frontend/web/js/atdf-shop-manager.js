@@ -3,6 +3,55 @@
  * Handles shopping cart operations and item management
  */
 class ShopManager {
+    
+    /***********************************************/
+    /*        Page initialization Methods          */
+    /***********************************************/
+
+    static initCartPage() {
+        $(document).ready(function () {
+            if (typeof ShopManager !== 'undefined' && ShopManager.getCartInfo) {
+                ShopManager.getCartInfo();
+            } else {
+                console.error('ShopManager or getCartInfo method not found.');
+            }
+        });
+    }
+
+    static initShopPage(userId, initialPlayerId, currentSessionPlayerId) {
+        $(document).ready(function () {
+            if (typeof ShopManager !== 'undefined' && ShopManager.getCartInfo) {
+                ShopManager.getCartInfo();
+            } else {
+                console.error('ShopManager or getCartInfo method not found.');
+            }
+
+            if (typeof PlayerSelector !== 'undefined' && PlayerSelector.select) {
+                if (currentSessionPlayerId) { // A player is set in session
+                    if (initialPlayerId && currentSessionPlayerId !== initialPlayerId) {
+                        // Player in session is different from URL param, prioritize session
+                        // Potentially, could also choose to prioritize URL param by calling:
+                        // PlayerSelector.select(userId, initialPlayerId);
+                        // For now, we assume session is the correct current context if it exists
+                         console.log('Player in session, no select action needed unless URL param forces a change.');
+                    }
+                } else { // No player in session
+                    if (initialPlayerId) { // Player ID from URL
+                        PlayerSelector.select(userId, initialPlayerId);
+                    } else { // No player in session and no ID from URL
+                        if ($('#showCurrentPlayerModal-button').length) {
+                            $('#showCurrentPlayerModal-button').click();
+                        } else {
+                            console.error('#showCurrentPlayerModal-button not found.');
+                        }
+                    }
+                }
+            } else {
+                console.error('PlayerSelector or select method not found.');
+            }
+        });
+    }
+
     /**
      * Adds an item to shopping cart
      * @param {number} itemId - Item identifier to add

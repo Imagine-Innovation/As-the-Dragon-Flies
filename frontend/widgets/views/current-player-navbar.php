@@ -66,21 +66,3 @@ foreach ($players as $player) {
         </div>
     </div>
 </li>
-
-<script type="text/javascript">
-    $(document).ready(function () {
-        const ids_str = $("#ids").html();
-        PlayerSelector.ids = ids_str.split(';');
-
-        const initials_str = $("#initials").html();
-        PlayerSelector.initials = initials_str.split(';');
-
-        const tooltips_str = $("#tooltips").html();
-        PlayerSelector.tooltips = tooltips_str.split(';');
-
-        const player_id = $('#hiddenSelectedPlayerId').html();
-        const playerIds = PlayerSelector.ids;
-        const id = playerIds.indexOf(String(player_id));
-        PlayerSelector.setBadge(id);
-    });
-</script>

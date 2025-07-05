@@ -127,24 +127,4 @@ AppAsset::register($this);
             </a>
         </li>
     </ul>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('#notificationDropdown').on('show.bs.dropdown', function () {
-                let n = $('#notificationCounter').text();
-
-                if (playerId && n > 0) {
-                    let config = {
-                        route: 'notification/ajax-mark-as-read',
-                        method: 'POST',
-                        placeholder: 'notificationCounter',
-                        badge: true
-                    };
-                    let data = {playerId: playerId};
-
-                    NotificationHandler.executeRequest(config, data);
-                }
-
-            });
-        });
-    </script>
 </header>

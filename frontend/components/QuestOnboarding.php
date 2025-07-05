@@ -199,9 +199,10 @@ class QuestOnboarding {
                 'onboarded_at' => time()
             ]);
 
-            if (!$questPlayer->save()) {
-                throw new \Exception(implode("<br />", \yii\helpers\ArrayHelper::getColumn($questPlayer->errors, 0, false)));
+            if ($questPlayer->save()) {
+                return true;
             }
+            throw new \Exception(implode("<br />", \yii\helpers\ArrayHelper::getColumn($questPlayer->errors, 0, false)));
         }
 
         return true;

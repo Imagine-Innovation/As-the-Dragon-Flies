@@ -25,12 +25,23 @@ $snippet = Yii::$app->user->isGuest ? 'guest' : 'lobby';
         <?= $this->renderFile('@app/views/layouts/_footer.php') ?>
 
         <?php if (!Yii::$app->user->isGuest): ?>
-            <!-- script src="js/atdf-notification-handler.js"></script -->
-            <!-- script src="js/atdf-quest-events.js"></script -->
             <script type="text/javascript">
                 console.log('loading main layout');
             </script>
         <?php endif; ?>
 
+        <?php $this->endBody(); ?>
     </body>
+
+
+    <?php if (!Yii::$app->user->isGuest): ?>
+        <script type="text/javascript">
+            var currentPlayerId = <?= Yii::$app->session->get('playerId') ?? 'null' ?>;
+            PlayerSelector.initializeFromDOM();
+            LayoutInitializer.initNavbarLobby();
+            LayoutInitializer.initAjaxPage();
+        </script>
+    <?php endif; ?>
+
 </html>
+<?php $this->endPage() ?>

@@ -21,9 +21,7 @@ namespace frontend\controllers;
 use common\components\AppStatus;
 use common\models\events\EventFactory;
 use common\models\Quest;
-use common\models\QuestChat;
 use common\models\QuestPlayer;
-use common\models\Player;
 use common\models\Story;
 use common\components\ManageAccessRights;
 use common\helpers\UserErrorMessage;
@@ -613,14 +611,12 @@ class QuestController extends Controller {
             ]);
             if (!$tavern->save()) {
                 Yii::debug("*** Debug *** findTavern  ===>  Could not save new Quest");
-                return null;
+                throw new \Exception(implode("<br />", \yii\helpers\ArrayHelper::getColumn($tavern->errors, 0, false)));
+                //return null;
             }
-            Yii::debug("*** Debug *** newQuest  ===>  new Quest is saved");
-            if (!$tavern) {
-                Yii::debug("*** Debug *** findTavern  ===>  Tavern creation failed");
-                return null;
-            }
+            Yii::debug("*** Debug *** findTavern  ===>  new Quest is saved");
         }
+        Yii::debug("*** Debug *** findTavern  ===>  Tavern was found");
 
         return $tavern;
     }

@@ -16,9 +16,7 @@ $this->title = $questName;
 $this->params['breadcrumbs'][] = ['label' => 'Quests', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $questName;
 $messages = QuestMessages::getLastMessages($model->id, $playerId);
-\yii\web\YiiAsset::register($this);
 ?>
-<script src="js/atdf-quest-events.js"></script>
 <style>
     /* Chat Panel Height Management */
     .chat-container {

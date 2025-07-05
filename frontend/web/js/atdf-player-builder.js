@@ -1,4 +1,5 @@
 class PlayerBuilder {
+
     /***********************************************/
     /*        Hight level builder functions        */
     /***********************************************/
@@ -96,6 +97,93 @@ class PlayerBuilder {
                 $('#showSaveModal-hiddenButton').click();
             }
         }
+    }
+
+
+    /***********************************************/
+    /*        Page initialization Methods          */
+    /***********************************************/
+
+    static initCreatePage(firstTabWizard) {
+        $(document).ready(function () {
+            PlayerBuilder.initWizard(firstTabWizard);
+            PlayerBuilder.updateProgress();
+        });
+    }
+
+    static initUpdatePage(firstTabWizard) {
+        $(document).ready(function () {
+            PlayerBuilder.initWizard(firstTabWizard);
+            PlayerBuilder.updateProgress();
+            PlayerBuilder.loadAdvancedProperties('images', 'ajaxAvatarChoice');
+
+            $('#equipmentModal').on('click', '#exitEquipmentModal-button', function () {
+                const selectedValue = $('input[name="initialEquipmentRadio"]:checked').val();
+                if (selectedValue) {
+                    const [choice, ...itemIds] = selectedValue.split(',');
+                    $('#closeEquipmentModal-hiddenButton').click();
+                    PlayerBuilder.setCategoryItem(choice, itemIds);
+                }
+            });
+        });
+    }
+
+    static initDescriptionTab(gender, alignmentId, age) {
+        $(document).ready(function () {
+            PlayerBuilder.loadRandomNames();
+            PlayerBuilder.loadAges(age);
+
+            if (gender) {
+                $('#gender' + gender).prop('checked', true);
+            }
+            if (alignmentId) {
+                $('#alignment' + alignmentId).prop('checked', true);
+            }
+
+            $('a.bi-arrow-repeat').click(function (event) {
+                event.preventDefault();
+                PlayerBuilder.loadRandomNames();
+            });
+        });
+    }
+
+    static initSkillsTab() {
+        $(document).ready(function () {
+            PlayerBuilder.loadAdvancedProperties('skills', 'ajaxSkills');
+            $('a.bi-arrow-repeat').click(function (event) {
+                event.preventDefault();
+                PlayerBuilder.loadAdvancedProperties('traits', 'ajaxTraits');
+            });
+        });
+    }
+
+    static initAbilitiesTab() {
+        $(document).ready(function () {
+            if (typeof ChartDrawer !== 'undefined' && ChartDrawer.drawAbilityCharts) {
+                ChartDrawer.drawAbilityCharts();
+            } else {
+                console.error('ChartDrawer or drawAbilityCharts method not found.');
+            }
+        });
+    }
+
+    static initAvatarTab() {
+        $(document).ready(function () {
+            PlayerBuilder.loadAdvancedProperties('images', 'ajaxAvatarChoice');
+        });
+    }
+    
+    static initEndowmentTab(category, choices, endowments) {
+        $(document).ready(function () {
+            if (category) {
+                 PlayerBuilder.chooseBackgroundEquipment(category);
+            }
+            for (let choice = 1; choice <= choices; choice++) {
+                if (endowments[choice] && endowments[choice][1] && Object.keys(endowments[choice]).length === 1) {
+                    PlayerBuilder.chooseEquipment(choice, endowments[choice][1].id);
+                }
+            }
+        });
     }
 
     /***********************************************/

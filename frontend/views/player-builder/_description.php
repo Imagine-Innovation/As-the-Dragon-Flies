@@ -128,18 +128,5 @@ foreach ($alignments as $alignment) {
 </div>
 
 <script type="text/javascript">
-
-    $(document).ready(function () {
-        PlayerBuilder.loadRandomNames();
-        PlayerBuilder.loadAges(<?= $model->age ?? 0 ?>);
-
-        $('#gender<?= $model->gender ?>').prop('checked', true);
-        $('#alignment<?= $model->alignment_id ?>').prop('checked', true);
-    });
-
-    $('a.bi-arrow-repeat').click(function (event) {
-        // Prevent the default link click behavior
-        event.preventDefault();
-        PlayerBuilder.loadRandomNames();
-    });
+    PlayerBuilder.initDescriptionTab('<?= $model->gender ?>', <?= $model->alignment_id ?? 'null' ?>, <?= $model->age ?? 0 ?>);
 </script>

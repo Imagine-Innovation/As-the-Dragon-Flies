@@ -96,7 +96,8 @@ class DOMUtils {
 class AjaxUtils {
     static buildUrl(route = 'site/index') {
         Logger.log(3, 'buildUrl', `route=${route}`);
-        return `${CONFIG.ROOT_URL}/index.php?r=${route.toLowerCase()}`;
+        const actualRoute = route ?? 'site/index';
+        return `${CONFIG.ROOT_URL}/index.php?r=${actualRoute.toLowerCase()}`;
     }
 
     static request( {url, method = 'POST', data = {}, successCallback, errorCallback}) {
@@ -186,6 +187,51 @@ class PlayerSelector {
     static ids = [];
     static initials = [];
     static tooltips = [];
+
+    static initializeFromDOM() {
+        Logger.log(1, 'initializeFromDOM', 'Initializing PlayerSelector from DOM elements.');
+        const ids_str = $("#ids")?.html();
+        if (ids_str) {
+            this.ids = ids_str.split(';');
+        } else {
+            Logger.log(5, 'initializeFromDOM', '#ids element not found or empty.');
+            this.ids = [];
+        }
+
+        const initials_str = $("#initials")?.html();
+        if (initials_str) {
+            this.initials = initials_str.split(';');
+        } else {
+            Logger.log(5, 'initializeFromDOM', '#initials element not found or empty.');
+            this.initials = [];
+        }
+
+        const tooltips_str = $("#tooltips")?.html();
+        if (tooltips_str) {
+            this.tooltips = tooltips_str.split(';');
+        } else {
+            Logger.log(5, 'initializeFromDOM', '#tooltips element not found or empty.');
+            this.tooltips = [];
+        }
+
+        const player_id_val = $('#hiddenSelectedPlayerId')?.html();
+        if (player_id_val && this.ids.length > 0) {
+            const player_id = String(player_id_val);
+            const id = this.ids.indexOf(player_id);
+            if (id !== -1) {
+                this.setBadge(id);
+            } else {
+                Logger.log(5, 'initializeFromDOM', `Player ID ${player_id} not found in available IDs.`);
+                this.setBadge(-1); // Or handle as appropriate if player_id not in list
+            }
+        } else if (this.ids.length === 0 && player_id_val) {
+             Logger.log(5, 'initializeFromDOM', 'Player IDs array is empty, cannot set badge based on hiddenSelectedPlayerId.');
+             this.setBadge(-1);
+        } else {
+            Logger.log(5, 'initializeFromDOM', '#hiddenSelectedPlayerId element not found or empty, or no player IDs loaded. Not setting initial badge.');
+            this.setBadge(-1); // No player selected or data available
+        }
+    }
 
     static setBadge(id) {
         Logger.log(1, 'setBadge', `id=${id}`);
@@ -360,6 +406,72 @@ class UserManager {
                         response.msg,
                         response.error ? 'error' : 'info'
                         );
+            }
+        });
+    }
+}
+
+class LayoutInitializer {
+    static initAjaxPage() {
+        $(document).ready(function () {
+            if (typeof TableManager !== 'undefined' && TableManager.loadGenericAjaxTable) {
+                TableManager.loadGenericAjaxTable(0);
+            } else {
+                console.error('TableManager or loadGenericAjaxTable method not found.');
+            }
+        });
+    }
+
+    static initNavbarLobby() {
+        $(document).ready(function () {
+            $('#notificationDropdown').on('show.bs.dropdown', function () {
+                let n = $('#notificationCounter').text();
+                // Assuming playerId is globally available or accessible here. 
+                // This might need adjustment based on how playerId is set in your actual application.
+                let playerId = typeof currentPlayerId !== 'undefined' ? currentPlayerId : null; 
+
+                if (playerId && parseInt(n) > 0) {
+                    if (typeof NotificationHandler !== 'undefined' && NotificationHandler.executeRequest) {
+                        let config = {
+                            route: 'notification/ajax-mark-as-read',
+                            method: 'POST',
+                            placeholder: 'notificationCounter',
+                            badge: true
+                        };
+                        let data = {playerId: playerId};
+                        NotificationHandler.executeRequest(config, data);
+                    } else {
+                        console.error('NotificationHandler or executeRequest method not found.');
+                    }
+                }
+            });
+        });
+    }
+
+    static initQuestTavernPage(playerId, avatar, playerName, questId, questName, chatInputId) {
+        $(document).ready(function () {
+            const currentHost = window.location.hostname;
+            const url = `ws://${currentHost}:8082`;
+            
+            if (typeof NotificationClient !== 'undefined') {
+                console.log(`NotificationClient(url=${url}, playerId=${playerId}, avatar=${avatar}, questId=${questId}, playerName=${playerName}, questName=${questName}, chatInput=${chatInputId})`);
+                const notificationClient = new NotificationClient(url, playerId, avatar, questId, playerName, questName, chatInputId);
+                notificationClient.init();
+
+                // Initial load of tavern players
+                 if (notificationClient.executeRequest) {
+                    let config = {
+                        route: 'quest/ajax-tavern',
+                        method: 'GET',
+                        placeholder: 'questTavernPlayersContainer', // Ensure this placeholder exists
+                        badge: false
+                    };
+                    notificationClient.executeRequest(config, '');
+                } else {
+                    console.error('NotificationClient.executeRequest method not found.');
+                }
+            } else {
+                console.error('NotificationClient class not found.');
             }
         });
     }

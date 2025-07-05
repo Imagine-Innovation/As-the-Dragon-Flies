@@ -19,7 +19,5 @@ use common\helpers\Utilities;
 </div>
 
 <script type="text/javascript">
-    $(document).ready(function () {
-        PlayerBuilder.loadAdvancedProperties('images', 'ajaxAvatarChoice');
-    });
+    PlayerBuilder.initAvatarTab();
 </script>
