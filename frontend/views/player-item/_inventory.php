@@ -18,7 +18,7 @@ use frontend\widgets\ModalDesc;
                         <div class="actions">
                             <div class="form-group">
                                 <div class="toggle-switch">
-                                    <span data-toggle="tooltip" title="Add or remove from pack" data-placement="bottom">
+                                    <span data-bs-toggle="tooltip" title="Add or remove from pack" data-placement="bottom">
                                         <input type="checkbox" class="toggle-switch__checkbox" id="pack-<?= $item['id'] ?>" <?= $item['is_carrying'] ? 'checked' : '' ?>
                                                onchange="ItemManager.toggle_pack(<?= $item['id'] ?>);">
                                         <i class="toggle-switch__helper"></i>
@@ -29,7 +29,7 @@ use frontend\widgets\ModalDesc;
                         <h4 class="card-title text-center">
                             <?= $item['quantity'] ?> x <?= $item['name'] ?>
                             <?php if (($player) && ($player->isProficient($item['id']))): ?>
-                                <span data-toggle="tooltip" title="You have proficiency with this item" data-placement="bottom">
+                                <span data-bs-toggle="tooltip" title="You have proficiency with this item" data-placement="bottom">
                                     <i class="bi bi-star-fill"></i>
                                 </span>
                             <?php endif; ?>

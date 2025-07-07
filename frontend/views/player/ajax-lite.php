@@ -15,7 +15,7 @@ if ($user->currentPlayer) {
 ?>
 <?php if ($models): ?>
     <li class="dropdown top-nav__notifications">
-        <a class="top-nav position-relative" href="#" data-toggle="dropdown">
+        <a class="top-nav position-relative" href="#" data-bs-toggle="dropdown">
             <i class="bi bi-file-earmark-person"></i>
             <?php if ($initial): ?>
                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">

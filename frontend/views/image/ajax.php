@@ -56,7 +56,7 @@ foreach ($models as $model) {
                                 <td class="text-center">
                                     <?php if (1 === 2): ?>
                                         <div class="custom-control custom-checkbox mb-2">
-                                            <a href="#" title="<?= $class->name ?>" data-toggle="tooltip" data-placement="right">
+                                            <a href="#" title="<?= $class->name ?>" data-bs-toggle="tooltip" data-placement="right">
                                                 <input type="checkbox" class="custom-control-input" id="image-<?= $model->id ?>-<?= $class->id ?>"
                                                        onclick="ImageManager.setClass(<?= $model->id ?>, <?= $class->id ?>, '<?= $class->name ?>');"
                                                        <?= $checked[$model->id][$class->id] ? "checked" : "" ?>>

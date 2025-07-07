@@ -20,8 +20,8 @@ $categories = ['Misc', 'Image', 'Item', 'Monster'];
 <div class="card">
     <div class="card-body">
         <div class="actions">
-            <a href="#" id="imageUpload-button" class="actions__item" data-toggle="tooltip" title="Upload a new image" data-placement="bottom">
-                <span data-toggle="modal" data-target="#imageUploadModal">
+            <a href="#" id="imageUpload-button" class="actions__item" data-bs-toggle="tooltip" title="Upload a new image" data-placement="bottom">
+                <span data-bs-toggle="modal" data-bs-target="#imageUploadModal">
                     <i class="bi bi-upload"></i>
                 </span>
             </a>
@@ -43,7 +43,7 @@ $categories = ['Misc', 'Image', 'Item', 'Monster'];
                 <?php foreach ($raceGroups as $raceGroup): ?>
                     <li class="nav-item">
                         <a class="nav-link<?= $raceGroup->name == $initTab ? " active" : "" ?>"
-                           data-toggle="tab" href="#tab-<?= $raceGroup->name ?>" role="tab"
+                           data-bs-toggle="tab" href="#tab-<?= $raceGroup->name ?>" role="tab"
                            onclick='ImageManager.loadTab("<?= $raceGroup->name ?>", <?= $raceGroup->id ?>);return false;'>
                                <?= $raceGroup->name ?>
                         </a>

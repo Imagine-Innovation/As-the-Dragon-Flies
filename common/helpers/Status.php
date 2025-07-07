@@ -40,7 +40,7 @@ class Status {
         $tooltip = $icon['tooltip'];
 
         return sprintf(
-                '<a title="%s" data-toggle="tooltip" data-placement="top"><i class="bi %s h5"></i></a>',
+                '<a title="%s" data-bs-toggle="tooltip" data-placement="top"><i class="bi %s h5"></i></a>',
                 Utilities::encode($tooltip),
                 Utilities::encode($iconClass)
         );

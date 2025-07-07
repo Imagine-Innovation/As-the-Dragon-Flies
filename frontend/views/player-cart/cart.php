@@ -28,29 +28,29 @@ $shopping = new Shopping();
                         <div class="card-body">
                             <div class="actions">
                                 <a href="#" class="actions__item" onclick="ShopManager.addToCart(<?= $model->item_id ?>);">
-                                    <span data-toggle="tooltip" title="Add one item" data-placement="bottom"
+                                    <span data-bs-toggle="tooltip" title="Add one item" data-placement="bottom"
                                           <i class="bi bi-cart-plus"></i>
                                     </span>
                                 </a>
                                 <a href="#" class="actions__item" onclick="ShopManager.removeFromCart(<?= $model->item_id ?>, 1);">
-                                    <span data-toggle="tooltip" title="Remove one item" data-placement="bottom"
+                                    <span data-bs-toggle="tooltip" title="Remove one item" data-placement="bottom"
                                           <i class="bi bi-cart-dash"></i>
                                     </span>
                                 </a>
                                 <a href="#" class="actions__item" onclick="ShopManager.removeFromCart(<?= $model->item_id ?>, $('#cartCount-<?= $model->item_id ?>').html());">
-                                    <span data-toggle="tooltip" title="Delete this item from your cart" data-placement="bottom"
+                                    <span data-bs-toggle="tooltip" title="Delete this item from your cart" data-placement="bottom"
                                           <i class="bi bi-trash3"></i>
                                     </span>
                                 </a>
                                 <a href="#" class="actions__item">
-                                    <span data-toggle="tooltip" title="Items in your cart" data-placement="bottom"
+                                    <span data-bs-toggle="tooltip" title="Items in your cart" data-placement="bottom"
                                           <i class="bi bi-cart"></i>
                                     </span>
                                     <div style="font-size: 12.35px">
                                         <span id="cartCount-<?= $model->item_id ?>" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"><?= $model->quantity ?></span>
                                     </div>
                                 </a>
-                                <a href="#" class="invisible" id="somethingWrongModel-hiddenButton" data-toggle="modal" data-target="#somethingWrongModal"></a>
+                                <a href="#" class="invisible" id="somethingWrongModel-hiddenButton" data-bs-toggle="modal" data-bs-target="#somethingWrongModal"></a>
                             </div>
                             <img src="img/item/<?= $model->item->image->file_name ?>" class="image-thumbnail float-start" style="width: 80px;height: 80px;">
                             <h6 class="card-subtitle">
@@ -116,7 +116,7 @@ $shopping = new Shopping();
                     <p class="text-muted" id="noFundLabel"></p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-theme btn--icon" data-dismiss="modal">
+                    <button type="button" class="btn btn-theme btn--icon" data-bs-dismiss="modal">
                         <i class="bi bi-x-lg"></i>
                     </button>
                 </div>

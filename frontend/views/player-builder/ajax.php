@@ -15,7 +15,7 @@ use yii\helpers\Url;
             <h4 class="card-title text-decoration">List of the players you have defined so far</h4>
             <div class="actions">
                 <a href="<?= Url::toRoute(['player/builder']) ?>" class="actions__item position-relative">
-                    <span data-toggle="tooltip" title="Create a new player" data-placement="bottom"
+                    <span data-bs-toggle="tooltip" title="Create a new player" data-placement="bottom"
                           <i class="bi bi-journal-plus"></i>
                     </span>
                 </a>

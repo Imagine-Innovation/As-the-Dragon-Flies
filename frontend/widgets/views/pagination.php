@@ -44,7 +44,7 @@ $limits = [3, 5, 10, 20, 50];
     </ul>
 </nav>
 <div class="dropdown">
-    <button class="btn btn-theme dropdown-toggle dropdown-menu-right" data-toggle="dropdown">Display <?= $limit ?> lines per page</button>
+    <button class="btn btn-theme dropdown-toggle dropdown-menu-right" data-bs-toggle="dropdown">Display <?= $limit ?> lines per page</button>
     <div class="dropdown-menu">
         <?php foreach ($limits as $l): ?>
             <?php if ($l == $limit): ?>

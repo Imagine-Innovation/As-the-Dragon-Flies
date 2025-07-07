@@ -85,8 +85,8 @@ foreach ($alignments as $alignment) {
         <div class="col-12 col-md-6 col-lg-4">
             <div class="card h-100">
                 <div class="actions">
-                    <a href="#" id="showBuilderWizardModal-button" class="actions__item" data-toggle="tooltip" title="Class wizard" data-placement="bottom">
-                        <span data-toggle="modal" data-target="#builderWizardModal">
+                    <a href="#" id="showBuilderWizardModal-button" class="actions__item" data-bs-toggle="tooltip" title="Alignment wizard" data-placement="bottom">
+                        <span data-bs-toggle="modal" data-bs-target="#builderWizardModal">
                             <i class="bi bi-magic"></i>
                         </span>
                     </a>
@@ -126,7 +126,3 @@ foreach ($alignments as $alignment) {
         </div>
     </div>
 </div>
-
-<script type="text/javascript">
-    PlayerBuilder.initDescriptionTab('<?= $model->gender ?>', <?= $model->alignment_id ?? 'null' ?>, <?= $model->age ?? 0 ?>);
-</script>

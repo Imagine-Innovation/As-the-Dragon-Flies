@@ -25,7 +25,7 @@ class CheckBox extends Widget {
         $icon = $this->icon ? '<i class = "bi ' . $this->icon . '"></i> ' : "";
         $label = $this->label ?? "";
 
-        $startTooltip = $this->title ? '<a href="#" title="' . $this->title . '" data-toggle="tooltip" data-placement="right">' : "";
+        $startTooltip = $this->title ? '<a href="#" title="' . $this->title . '" data-bs-toggle="tooltip" data-placement="right">' : "";
         $endTooltip = $this->title ? "</a>" : "";
 
         $html = <<<HTML

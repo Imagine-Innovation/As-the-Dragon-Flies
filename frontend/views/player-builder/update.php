@@ -21,19 +21,18 @@ $firstTab = array_key_first($tabs);
 $isAdmin = (Yii::$app->user->identity->is_admin === 1);
 ?>
 <script src="js/atdf-chart-drawer.js"></script>
-<script src="js/atdf-player-builder.js"></script>
 
-<div class="card">
+<div class="card" id="playerBuilder-update">
     <div class="card-body">
         <h4 class="card-title text-decoration"><?= Html::encode($this->title) ?></h4>
         <div class="actions">
-            <a href="#" class="actions__item" data-toggle="tooltip" title="Save" data-placement="bottom">
+            <a href="#" class="actions__item" data-bs-toggle="tooltip" title="Save" data-placement="bottom">
                 <span onclick="$('#save-button').click();">
                     <i class="bi bi-floppy"></i>
                 </span>
             </a>
-            <a href="#" class="invisible" id="showEquipmentModal-hiddenButton" data-toggle="modal" data-target="#equipmentModal"></a>
-            <a href="#" class="invisible" id="showValidateModal-hiddenButton" data-toggle="modal" data-target="#validateModal"></a>
+            <a href="#" class="invisible" id="showEquipmentModal-hiddenButton" data-bs-toggle="modal" data-bs-target="#builderEquipmentModal"></a>
+            <a href="#" class="invisible" id="showValidateModal-hiddenButton" data-bs-toggle="modal" data-bs-target="#validateModal"></a>
         </div>
         <h6 class="card-subtitle">
             You've chosen to be a <?= $model->race->name ?> <?= $model->class->name ?> with a <?= $model->background->name ?> background, now you just need to fine-tune your characteristics before embarking on new adventures.
@@ -59,7 +58,7 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
                     <?php if (($isAdmin && $tab['admin']) || !$tab['admin']): ?>
                         <li class="nav-item">
                             <a class="nav-link<?= $tab['anchor'] == $firstTab ? " active" : "" ?>"
-                               data-toggle="tab" href="#<?= $tab['anchor'] ?>-tab" role="tab"
+                               data-bs-toggle="tab" href="#<?= $tab['anchor'] ?>-tab" role="tab"
                                <?= BuilderOnclick::widget(['player' => $model, 'wizard' => $tab['wizard'], 'onclick' => $tab['onclick']]) ?>                               >
                                    <?= $tab['name'] ?>
                             </a>
@@ -100,7 +99,7 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
                     <i class="bi bi-caret-right"></i>
                 </button>
                 &nbsp;
-                <button type="button" class="btn btn-theme btn--icon" data-dismiss="modal">
+                <button type="button" class="btn btn-theme btn--icon" data-bs-dismiss="modal">
                     <i class="bi bi-x-lg"></i>
                 </button>
             </div>
@@ -108,7 +107,7 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
     </div>
 </div>
 
-<div class="modal fade" id="equipmentModal" data-backdrop="static" data-keyboard="false" tabindex="-1">
+<div class="modal fade" id="builderEquipmentModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
         <div class="modal-content">
             <div class="modal-header">
@@ -126,13 +125,13 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
                 <button type="button" class="btn btn-theme btn--icon" id="exitEquipmentModal-button">
                     <i class="bi bi-check"></i>
                 </button>
-                <button type="button" class="invisible" id="closeEquipmentModal-hiddenButton" data-dismiss="modal"></button>
+                <button type="button" class="invisible" id="closeEquipmentModal-hiddenButton" data-bs-dismiss="modal"></button>
             </div>
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="validateModal" tabindex="-1">
+<div class="modal fade" id="builderValidateModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -152,7 +151,3 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
         </div>
     </div>
 </div>
-
-<script type="text/javascript">
-    PlayerBuilder.initUpdatePage('<?= $tabs[$firstTab]['wizard'] ?>');
-</script>

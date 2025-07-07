@@ -27,7 +27,7 @@ $firstType = $itemTypes[0] ?? "";
             <p id="purseContent"></p>
             <div class="actions">
                 <a href="<?= Url::toRoute(['player-item/index']) ?>" class="actions__item position-relative">
-                    <span data-toggle="tooltip" title="Pack your items" data-placement="bottom"
+                    <span data-bs-toggle="tooltip" title="Pack your items" data-placement="bottom"
                           <i class="bi bi-backpack2"></i>
                     </span>
                     <div style="font-size: 12.35px">
@@ -42,7 +42,7 @@ $firstType = $itemTypes[0] ?? "";
                         <?php foreach ($itemTypes as $itemType): ?>
                             <li class="nav-item">
                                 <a class="nav-link<?= $itemType == $firstType ? " active" : "" ?>"
-                                   data-toggle="tab" href="#tab-<?= $itemType ?>" role="tab" href="#">
+                                   data-bs-toggle="tab" href="#tab-<?= $itemType ?>" role="tab" href="#">
                                        <?= $itemType ?>
                                 </a>
                             </li>

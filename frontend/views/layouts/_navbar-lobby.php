@@ -30,7 +30,7 @@ AppAsset::register($this);
         ?>
 
         <li class="dropdown top-nav__notifications">
-            <a class="top-nav position-relative" href="#" data-toggle="dropdown">
+            <a class="top-nav position-relative" href="#" data-bs-toggle="dropdown">
                 <i class="bi bi-envelope"></i>
                 <!--
                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
@@ -82,7 +82,7 @@ AppAsset::register($this);
         </li>
 
         <li id="notificationDropdown" class="dropdown top-nav__notifications">
-            <a href="#" data-toggle="dropdown">
+            <a href="#" data-bs-toggle="dropdown">
                 <i class="bi bi-bell"></i>
                 <span id="notificationCounter" class="d-none position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                     0
@@ -110,13 +110,13 @@ AppAsset::register($this);
 
         <li class="dropdown top-nav__notifications">
             <a href="<?= Url::toRoute(['site/about']) ?>"
-               data-toggle="tooltip" title="<?= $currentUser->username ?> user profile" data-placement="bottom">
+               data-bs-toggle="tooltip" title="<?= $currentUser->username ?> user profile" data-placement="bottom">
                 <i class="bi bi-person-circle"></i>
             </a>
         </li>
 
         <li class="dropdown top-nav__notifications">
-            <a href="#" data-toggle="tooltip" title="Logout" data-placement="bottom"
+            <a href="#" data-bs-toggle="tooltip" title="Logout" data-placement="bottom"
                onclick="$('#logoutForm').submit();">
                 <i class="bi bi-box-arrow-right"></i>
                 <form action="<?= Url::toRoute(['site/logout']) ?>" id="logoutForm" method="post">

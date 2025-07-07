@@ -28,12 +28,12 @@ $image = $story->image ?
     <?php if ($user->is_designer): ?>
         <div class="actions">
             <a href="<?= Url::toRoute(['story/view', 'id' => $story->id]) ?>" class="actions__item position-relative">
-                <span data-toggle="tooltip" title="View story details" data-placement="bottom">
+                <span data-bs-toggle="tooltip" title="View story details" data-placement="bottom">
                     <i class="bi bi-journal"></i>
                 </span>
             </a>
             <a href="<?= Url::toRoute(['story/update', 'id' => $story->id]) ?>" class="actions__item position-relative">
-                <span data-toggle="tooltip" title="Edit story" data-placement="bottom">
+                <span data-bs-toggle="tooltip" title="Edit story" data-placement="bottom">
                     <i class="bi bi-journal-code"></i>
                 </span>
             </a>

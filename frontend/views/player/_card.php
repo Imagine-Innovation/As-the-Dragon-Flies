@@ -14,7 +14,7 @@ $route = $player->status == AppStatus::ACTIVE->value ? 'player/view' : 'player/u
         <h4><?= $player->name ?></h4>
         <div class="actions">
             <a href="<?= Url::toRoute([$route, 'id' => $player->id]) ?>" class="actions__item position-relative">
-                <span data-toggle="tooltip" title="View player details" data-placement="bottom">
+                <span data-bs-toggle="tooltip" title="View player details" data-placement="bottom">
                     <i class="bi bi-controller"></i>
                 </span>
             </a>

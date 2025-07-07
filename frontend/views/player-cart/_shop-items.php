@@ -17,7 +17,7 @@ use frontend\widgets\ModalDesc;
                     <?php endif; ?>
                     <div class="card-body">
                         <div class="actions">
-                            <a href="#" class="actions__item" data-toggle="tooltip" title="Add to cart" data-placement="bottom" onclick="ShopManager.addToCart(<?= $item['id'] ?>); return false;">
+                            <a href="#" class="actions__item" data-bs-toggle="tooltip" title="Add to cart" data-placement="bottom" onclick="ShopManager.addToCart(<?= $item['id'] ?>); return false;">
                                 <i class="bi bi-cart-plus h2"></i>
                             </a>
                         </div>
@@ -27,7 +27,7 @@ use frontend\widgets\ModalDesc;
                                 (x<?= $item['quantity'] ?>)
                             <?php endif; ?>
                             <?php if (($player) && ($player->isProficient($item['id']))): ?>
-                                <span data-toggle="tooltip" title="You have proficiency with this item" data-placement="bottom">
+                                <span data-bs-toggle="tooltip" title="You have proficiency with this item" data-placement="bottom">
                                     <i class="bi bi-star-fill"></i>
                                 </span>
                             <?php endif; ?>

@@ -18,7 +18,7 @@ $story = $questId ? $quest->story : null;
                 <div class="card h-100">
                     <div class="actions">
                         <a href="<?= Url::toRoute($menu->accessRight->route . '/' . $menu->accessRight->action) ?>" class="actions__item position-relative">
-                            <span data-toggle="tooltip" title="<?= $menu->tooltip ?>" data-placement="bottom">
+                            <span data-bs-toggle="tooltip" title="<?= $menu->tooltip ?>" data-placement="bottom">
                                 <i class="bi <?= $menu->icon ?>"></i>
                             </span>
                         </a>

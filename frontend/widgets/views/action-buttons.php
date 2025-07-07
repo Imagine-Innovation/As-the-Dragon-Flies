@@ -24,7 +24,7 @@ if ($mode === "table") {
 
         <?php if (ManageAccessRights::isActionButtonAllowed($action, $modelName, $isOwner, $mode)): ?>
 
-            <a type="button" class="<?= $buttonClass ?>" href="#" data-toggle="tooltip" title="<?= $action['tooltip'] ?>" data-placement="bottom"
+            <a type="button" class="<?= $buttonClass ?>" href="#" data-bs-toggle="tooltip" title="<?= $action['tooltip'] ?>" data-placement="bottom"
                onclick="$('#<?= $action['verb'] ?>-form-<?= $model->id ?>').submit();">
                 <i class="bi bi-<?= $action['icon'] ?>"></i>
                 <form action="<?= Url::toRoute([$action['route'] . '/' . $action['verb'], 'id' => $model->id]) ?>" id="<?= $action['verb'] ?>-form-<?= $model->id ?>" method="post">

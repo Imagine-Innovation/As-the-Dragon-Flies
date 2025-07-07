@@ -1,6 +1,5 @@
 <?php
 
-use common\models\Image;
 use common\helpers\Utilities;
 
 /** @var yii\web\View $this */
@@ -17,7 +16,3 @@ use common\helpers\Utilities;
         </div>
     </div>
 </div>
-
-<script type="text/javascript">
-    PlayerBuilder.initAvatarTab();
-</script>

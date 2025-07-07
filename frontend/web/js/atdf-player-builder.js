@@ -72,7 +72,7 @@ class PlayerBuilder {
 
         // Define required properties for completion
         const playerId = $('#hiddenPlayerId').html();
-        const properties = playerId === '' ?
+        const properties = (playerId === '') ?
                 ['race_id', 'class_id', 'background_id', 'history_id'] :
                 ['alignment_id', 'image_id', 'name', 'gender', 'age', 'abilities', 'skills', 'items'];
 
@@ -89,35 +89,47 @@ class PlayerBuilder {
                 .css('width', `${progress}%`)
                 .text(`${progress}%`);
 
-        // Trigger save if complete
+        // Trigger save or validate if complete
         if (progress === 100) {
-            if (playerId) {
-                $('#showValidateModal-hiddenButton').click();
-            } else {
-                $('#showSaveModal-hiddenButton').click();
+            var modalName = (playerId === '') ? 'builderSaveModal' : 'builderValidateModal';
+            var modalElement = document.getElementById(modalName);
+            if (modalElement) {
+                var modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+                modal.show();
             }
         }
     }
-
 
     /***********************************************/
     /*        Page initialization Methods          */
     /***********************************************/
 
-    static initCreatePage(firstTabWizard) {
+    static initCreatePage() {
         $(document).ready(function () {
-            PlayerBuilder.initWizard(firstTabWizard);
+            Logger.log(1, 'initCreatePage', '');
+            const target = `#hiddenWizard-topic`;
+            Logger.log(2, 'initCreatePage', `hiddenWizard-topic=${$(target).html()}`);
+            if (!DOMUtils.exists(target))
+                return;
+
+            PlayerBuilder.initWizard($(target).html());
             PlayerBuilder.updateProgress();
         });
     }
 
-    static initUpdatePage(firstTabWizard) {
+    static initUpdatePage() {
         $(document).ready(function () {
-            PlayerBuilder.initWizard(firstTabWizard);
+            Logger.log(1, 'initUpdatePage', '');
+            const target = `#hiddenWizard-topic`;
+            Logger.log(2, 'initCreatePage', `hiddenWizard-topic=${$(target).html()}`);
+            if (!DOMUtils.exists(target))
+                return;
+
+            PlayerBuilder.initWizard($(target).html());
             PlayerBuilder.updateProgress();
             PlayerBuilder.loadAdvancedProperties('images', 'ajaxAvatarChoice');
 
-            $('#equipmentModal').on('click', '#exitEquipmentModal-button', function () {
+            $('#builderEquipmentModal').on('click', '#exitEquipmentModal-button', function () {
                 const selectedValue = $('input[name="initialEquipmentRadio"]:checked').val();
                 if (selectedValue) {
                     const [choice, ...itemIds] = selectedValue.split(',');
@@ -130,6 +142,7 @@ class PlayerBuilder {
 
     static initDescriptionTab(gender, alignmentId, age) {
         $(document).ready(function () {
+            Logger.log(1, 'initDescriptionTab', `gender=${gender}, alignmentId=${alignmentId}, age=${age}`);
             PlayerBuilder.loadRandomNames();
             PlayerBuilder.loadAges(age);
 
@@ -149,6 +162,7 @@ class PlayerBuilder {
 
     static initSkillsTab() {
         $(document).ready(function () {
+            Logger.log(1, 'initSkillsTab', '');
             PlayerBuilder.loadAdvancedProperties('skills', 'ajaxSkills');
             $('a.bi-arrow-repeat').click(function (event) {
                 event.preventDefault();
@@ -159,6 +173,7 @@ class PlayerBuilder {
 
     static initAbilitiesTab() {
         $(document).ready(function () {
+            Logger.log(1, 'initAbilitiesTab', '');
             if (typeof ChartDrawer !== 'undefined' && ChartDrawer.drawAbilityCharts) {
                 ChartDrawer.drawAbilityCharts();
             } else {
@@ -169,14 +184,16 @@ class PlayerBuilder {
 
     static initAvatarTab() {
         $(document).ready(function () {
+            Logger.log(1, 'initAvatarTab', '');
             PlayerBuilder.loadAdvancedProperties('images', 'ajaxAvatarChoice');
         });
     }
-    
+
     static initEndowmentTab(category, choices, endowments) {
         $(document).ready(function () {
+            Logger.log(1, 'initEndowmentTab', `category=${category}, choices=${choices}, endowments=${endowments}`);
             if (category) {
-                 PlayerBuilder.chooseBackgroundEquipment(category);
+                PlayerBuilder.chooseBackgroundEquipment(category);
             }
             for (let choice = 1; choice <= choices; choice++) {
                 if (endowments[choice] && endowments[choice][1] && Object.keys(endowments[choice]).length === 1) {
@@ -564,7 +581,11 @@ class PlayerBuilder {
                 categoryIds: categoryIds
             },
             callback: () => {
-                $('#showEquipmentModal-hiddenButton').click();
+                var modalElement = $('#builderEquipmentModal');
+                if (modalElement) {
+                    var modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+                    modal.show();
+                }
             }
         });
     }

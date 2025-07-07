@@ -8,7 +8,7 @@
         <?php foreach ($actions as $action): ?>
             <?php
             $tooltipTxt = $action['tooltip'];
-            $tooltip = $tooltipTxt ? ' data-toggle="tooltip" title="' . $tooltipTxt . '" data-placement="bottom"' : "";
+            $tooltip = $tooltipTxt ? ' data-bs-toggle="tooltip" title="' . $tooltipTxt . '" data-placement="bottom"' : "";
             ?>
             <?php if ($action['trigger'] == "href"): ?>
                 <a class="actions__item <?= $action['icon'] ?>" href="<?= $action['action'] ?>"<?= $tooltip ?>></a>

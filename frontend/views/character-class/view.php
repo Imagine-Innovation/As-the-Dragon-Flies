@@ -51,7 +51,7 @@ $first_anchor = $tabs['init']['anchor'];
                 <?php foreach ($tabs as $tab): ?>
                     <li class="nav-item">
                         <a class="nav-link<?= $tab['anchor'] == $first_anchor ? " active" : "" ?>"
-                           data-toggle="tab" href="#<?= $tab['anchor'] ?>" role="tab">
+                           data-bs-toggle="tab" href="#<?= $tab['anchor'] ?>" role="tab">
                                <?= $tab['name'] ?>
                         </a>
                     </li>

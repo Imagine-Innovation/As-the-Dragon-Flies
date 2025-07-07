@@ -7,7 +7,7 @@ use yii\helpers\Url;
 /** @var array $debugMode */
 ?>
 <li class="dropdown top-nav__notifications">
-    <a href="#" data-toggle="dropdown">
+    <a href="#" data-bs-toggle="dropdown">
         <i class="bi bi-grid"></i>
     </a>
     <div class="dropdown-menu dropdown-menu-right dropdown-menu--block" role="menu">

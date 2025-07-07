@@ -15,7 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <h4 class="card-title">List of the players you have already defined</h4>
             <div class="actions">
                 <a href="<?= Url::toRoute(['player-builder/create']) ?>" class="actions__item position-relative">
-                    <span data-toggle="tooltip" title="Create a new player" data-placement="bottom"
+                    <span data-bs-toggle="tooltip" title="Create a new player" data-placement="bottom"
                           <i class="bi bi-dpad"></i>
                     </span>
                 </a>

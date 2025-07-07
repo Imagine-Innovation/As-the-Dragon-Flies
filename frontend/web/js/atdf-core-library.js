@@ -245,7 +245,7 @@ class PlayerSelector {
         if (id >= 0) {
             const tooltip = this.tooltips[id];
             const initial = this.initials[id];
-            badge = `<a title="${tooltip}" data-toggle="tooltip" data-placement="top">
+            badge = `<a title="${tooltip}" data-bs-toggle="tooltip" data-placement="top">
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                             ${initial}
                         </span>

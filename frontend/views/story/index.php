@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <?php if ($user->is_designer): ?>
                 <div class="actions">
                     <a href="<?= Url::toRoute(['story/create']) ?>" class="actions__item position-relative">
-                        <span data-toggle="tooltip" title="Create a new story" data-placement="bottom"
+                        <span data-bs-toggle="tooltip" title="Create a new story" data-placement="bottom"
                               <i class="bi bi-journal-plus"></i>
                         </span>
                     </a>

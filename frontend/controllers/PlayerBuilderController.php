@@ -293,15 +293,28 @@ class PlayerBuilderController extends Controller {
     }
 
     private function addNewItem($player, $item) {
-        $playerItem = new PlayerItem([
-            'player_id' => $player->id,
-            'item_id' => $item['id'],
-            'quantity' => $item['quantity'],
-            'is_carrying' => 1,
-            'is_equiped' => 1,
-            'is_proficient' => PlayerTool::isProficient($player->class->id, $item['id']) ? 1 : 0
-        ]);
-        return $playerItem->save();
+
+        $playerItem = PlayerItem::findOne(['player_id' => $player->id, 'item_id' => $item['id']]);
+
+        if ($playerItem) {
+            $playerItem->quantity = $item['quantity'];
+            $playerItem->is_carrying = 1;
+            $playerItem->is_equiped = 1;
+            $playerItem->is_proficient = PlayerTool::isProficient($player->class->id, $item['id']) ? 1 : 0;
+        } else {
+            $playerItem = new PlayerItem([
+                'player_id' => $player->id,
+                'item_id' => $item['id'],
+                'quantity' => $item['quantity'],
+                'is_carrying' => 1,
+                'is_equiped' => 1,
+                'is_proficient' => PlayerTool::isProficient($player->class->id, $item['id']) ? 1 : 0
+            ]);
+        }
+        if ($playerItem->save()) {
+            return true;
+        }
+        throw new \Exception(implode("<br />", \yii\helpers\ArrayHelper::getColumn($playerItem->errors, 0, false)));
     }
 
     public function actionAjaxSaveEquipment() {

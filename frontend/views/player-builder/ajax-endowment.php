@@ -34,26 +34,21 @@ $endowmentsJson = json_encode($endowments);
         <div class="col-12 col-md-6">
             <div class="card h-100">
                 <div class="card-body" id="ajaxEndowment">
-                    <h4 class="card-title text-decoration">Your background <?= $player->background->name ?> gives you</h4>
+                    <h4 class="card-title text-decoration">Your background <?= $player->background->name ?> gives you:</h4>
                     <p><?= $player->background->initial_equipment ?>&nbsp;
                         <span onclick="PlayerBuilder.chooseBackgroundEquipment('<?= $category ?>');">
                             <i class="bi bi-info-circle"></i>
                         </span>
                     </p>
-                    <p/>
-                    <h4 class="card-title text-decoration">Your class <?= $player->class->name ?> gives you</h4>
+                    <p>&nbsp;</p>
+                    <h4 class="card-title text-decoration">Your class <?= $player->class->name ?> gives you!</h4>
                     <?php
-                    for ($choice = 1;
-                            $choice <= $choices;
-                            $choice++):
+                    for ($choice = 1; $choice <= $choices; $choice++):
                         $options = max(array_keys($endowments[$choice]));
-                        ?>
-                        <p>
-                            <?php
-                            for ($option = 1;
-                                    $option <= $options;
-                                    $option++):
-                                ?>
+
+                        echo("<p>");
+                        for ($option = 1; $option <= $options; $option++):
+                            ?>
                             <div class="custom-control custom-radio custom-control-inline">
                                 <input type="radio" class="custom-control-input"
                                        id="endowmentRadio-<?= $endowments[$choice][$option]['id'] ?>"

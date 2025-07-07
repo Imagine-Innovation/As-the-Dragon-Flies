@@ -15,7 +15,7 @@ foreach ($players as $player) {
 }
 ?>
 
-<div class="modal fade" id="selectPlayerModal" data-keyboard="false" data-backdrop="false" tabindex="-1">
+<div class="modal fade" id="selectPlayerModal" data-bs-keyboard="false" data-bs-backdrop="false" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -31,7 +31,7 @@ foreach ($players as $player) {
                                <?= $player['id'] == $selectedPlayerId ? "checked" : "" ?>
                                onclick="PlayerSelector.select(<?= $user_id ?>, <?= $player['id'] ?>); $('#CloseSelectPlayerModal-button').click();">
                         <label class="custom-control-label" for="selectPlayerModal-<?= $player['id'] ?>">
-                            <span data-toggle="tooltip" title="<?= ucfirst($player['tooltip']) ?>" data-placement="bottom">
+                            <span data-bs-toggle="tooltip" title="<?= ucfirst($player['tooltip']) ?>" data-placement="bottom">
                                 <?= Html::encode($player['name']) ?>
                             </span>
                         </label>
@@ -39,7 +39,7 @@ foreach ($players as $player) {
                 <?php endforeach; ?>
             </div>
             <div class="modal-footer">
-                <button type="button" id="CloseSelectPlayerModal-button" class="btn btn-theme btn--icon" data-dismiss="modal">
+                <button type="button" id="CloseSelectPlayerModal-button" class="btn btn-theme btn--icon" data-bs-dismiss="modal">
                     <i class="bi bi-x-lg"></i>
                 </button>
             </div>

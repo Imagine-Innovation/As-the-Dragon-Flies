@@ -10,7 +10,7 @@ use common\helpers\Utilities;
 $shortDesc = Utilities::trim($description, $maxLength);
 ?>
 <div class="container g-0 p-0">
-    <a data-toggle="modal" data-target="#modal-<?= $UUID ?>"><?= Utilities::encode($shortDesc) ?></a>
+    <a data-bs-toggle="modal" data-bs-target="#modal-<?= $UUID ?>"><?= Utilities::encode($shortDesc) ?></a>
     <div class="modal fade" id="modal-<?= $UUID ?>" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
@@ -21,7 +21,7 @@ $shortDesc = Utilities::trim($description, $maxLength);
                 <?php endif; ?>
                 <div class="modal-body"><?= Utilities::encode($description) ?></div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-theme btn--icon" data-dismiss="modal">
+                    <button type="button" class="btn btn-theme btn--icon" data-bs-dismiss="modal">
                         <i class="bi bi-x-lg"></i>
                     </button>
                 </div>

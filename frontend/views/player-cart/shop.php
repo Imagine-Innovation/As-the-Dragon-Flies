@@ -47,14 +47,14 @@ $firstType = $itemTypes[0];
             <p id="purseContent"></p>
             <div class="actions">
                 <a href="<?= Url::toRoute(['player-cart/cart']) ?>" class="actions__item position-relative">
-                    <span data-toggle="tooltip" title="Go to your cart" data-placement="bottom"
+                    <span data-bs-toggle="tooltip" title="Go to your cart" data-placement="bottom"
                           <i class="bi bi-cart"></i>
                     </span>
                     <div style="font-size: 12.35px">
                         <span id="cartItemCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"></span>
                     </div>
                 </a>
-                <a href="#" class="invisible" id="somethingWrongModel-hiddenButton" data-toggle="modal" data-target="#somethingWrongModal"></a>
+                <a href="#" class="invisible" id="somethingWrongModel-hiddenButton" data-bs-toggle="modal" data-bs-target="#somethingWrongModal"></a>
             </div>
 
             <div class="tab-container">
@@ -62,7 +62,7 @@ $firstType = $itemTypes[0];
                     <?php foreach ($itemTypes as $itemType): ?>
                         <li class="nav-item">
                             <a class="nav-link<?= $itemType == $firstType ? " active" : "" ?>"
-                               data-toggle="tab" href="#tab-<?= $itemType ?>" role="tab" href="#">
+                               data-bs-toggle="tab" href="#tab-<?= $itemType ?>" role="tab" href="#">
                                    <?= $itemType ?>
                             </a>
                         </li>
@@ -102,7 +102,7 @@ $firstType = $itemTypes[0];
                     <p class="text-muted" id="noFundLabel"></p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-theme btn--icon" data-dismiss="modal">
+                    <button type="button" class="btn btn-theme btn--icon" data-bs-dismiss="modal">
                         <i class="bi bi-x-lg"></i>
                     </button>
                 </div>

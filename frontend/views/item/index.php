@@ -31,7 +31,7 @@ $firstTypeId = $itemTypes[0]->id;
                 <?php foreach ($itemTypes as $itemType): ?>
                     <li class="nav-item">
                         <a class="nav-link<?= $itemType->id == $firstTypeId ? " active" : "" ?>"
-                           data-toggle="tab" href="#tab-<?= $itemType->id ?>" role="tab"
+                           data-bs-toggle="tab" href="#tab-<?= $itemType->id ?>" role="tab"
                            href="#" onclick="ItemManager.loadTypeTab('<?= $itemType->id ?>');">
                                <?= $itemType->name ?>
                         </a>
