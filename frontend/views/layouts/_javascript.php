@@ -78,5 +78,3 @@ $route = "{$controllerId}/{$actionId}";
 <?php endif; ?>
 
 </script>
-
-</script>
