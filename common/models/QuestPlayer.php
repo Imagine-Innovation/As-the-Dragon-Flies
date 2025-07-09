@@ -36,7 +36,7 @@ class QuestPlayer extends \yii\db\ActiveRecord
             [['onboarded_at'], 'default', 'value' => 0],
             [['quest_id', 'player_id'], 'required'],
             [['quest_id', 'player_id', 'onboarded_at', 'left_at'], 'integer'],
-            [['reason'], 'string', 'max' => 32],
+            [['reason'], 'string', 'max' => 256],
             [['quest_id', 'player_id'], 'unique', 'targetAttribute' => ['quest_id', 'player_id']],
             [['player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['player_id' => 'id']],
             [['quest_id'], 'exist', 'skipOnError' => true, 'targetClass' => Quest::class, 'targetAttribute' => ['quest_id' => 'id']],

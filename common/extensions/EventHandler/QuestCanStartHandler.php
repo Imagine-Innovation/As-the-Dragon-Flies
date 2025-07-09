@@ -28,7 +28,7 @@ class QuestCanStartHandler implements SpecificMessageHandlerInterface {
      * Handles player_joining messages.
      */
     public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
-        $this->logger->logStart("QuestCanStartHandler: handle for session {$sessionId}, client {$clientId}", $data);
+        $this->logger->logStart("QuestCanStartHandler: handle for session {$sessionId}, client {$clientId}");
 
         $payload = $data['payload'];
         $questId = (int) $payload['questId'] ?? null;

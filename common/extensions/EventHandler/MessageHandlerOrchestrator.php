@@ -85,7 +85,7 @@ class MessageHandlerOrchestrator implements MessageHandlerInterface {
      * @param array $data
      */
     private function handleJsonMessage(ConnectionInterface $conn, string $clientId, array $data): void {
-        $this->logger->logStart("Orchestrator: handleJsonMessage for clientId=[{$clientId}]", $data);
+        $this->logger->logStart("Orchestrator: handleJsonMessage for clientId=[{$clientId}]");
 
         $sessionId = $data['sessionId'] ?? null; // Used by some original handlers, kept for context
         if (!$sessionId) {
@@ -117,7 +117,7 @@ class MessageHandlerOrchestrator implements MessageHandlerInterface {
      * @param array $data
      */
     private function handleGenericJsonMessage(ConnectionInterface $conn, string $clientId, string $sessionId, array $data): void {
-        $this->logger->logStart("Orchestrator: handleGenericJsonMessage for clientId=[{$clientId}], sessionId=[{$sessionId}]", $data);
+        $this->logger->logStart("Orchestrator: handleGenericJsonMessage for clientId=[{$clientId}], sessionId=[{$sessionId}]");
 
         // Use BroadcastService to send echo back
         $this->broadcastService->sendBack($conn, 'echo', $data);

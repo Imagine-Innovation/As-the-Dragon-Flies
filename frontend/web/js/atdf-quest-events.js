@@ -48,16 +48,13 @@ class NotificationClient {
             });
         }
 
-        const leaveTavernBtn = document.getElementById('leaveTavernButton');
-        if (leaveTavernBtn) {
-            leaveTavernBtn.addEventListener('click', () => {
-                console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-                this.send({
-                    type: 'player_leaving',
-                    message: `${this.playerName} has decided not to take part in the quest`
-                });
-            });
-        }
+        // Event delegation for the "Leave Tavern" button
+        document.addEventListener('click', (event) => {
+            if (event.target && event.target.id === 'leaveTavernButton') {
+                Logger.log(2, 'init', `Delegated click event for leaveTavernButton`);
+                this.leaveTavern();
+            }
+        });
 
         // Set up leave quest button
         const leaveTavernBtnxx = document.getElementById('leaveTavernButton-xxxxxxxxxxxxx');
@@ -164,6 +161,7 @@ class NotificationClient {
                     badge: false
                 };
                 this.executeRequest(config, data);
+                ToastManager.show('Event Handler', message, 'info');
             } else {
                 console.warn('Received new_player_joined event with incomplete payload:', data);
             }
@@ -182,6 +180,7 @@ class NotificationClient {
                     badge: false
                 };
                 this.executeRequest(config, data);
+                ToastManager.show('Event Handler', message, 'info');
             } else {
                 console.warn('Received new_player_left event with incomplete payload:', data);
             }
@@ -195,6 +194,7 @@ class NotificationClient {
         Logger.log(1, 'connect', `----------------------------------------------`);
         Logger.log(1, 'connect', `Connecting to WebSocket server at ${this.url}`);
         Logger.log(1, 'connect', `Player ID: ${this.playerId}, Player name: ${this.playerName}, Avatar: ${this.avatar}, Quest ID: ${this.questId}, Quest name: ${this.questName}, Session ID: ${this.sessionId}`);
+        Logger.log(1, 'connect', `----------------------------------------------`);
 
         this.socket = new WebSocket(this.url);
 
@@ -212,24 +212,6 @@ class NotificationClient {
             }
 
             this.triggerEvent('open');
-
-            /*
-             const joinedAt = new Date();
-             const roundedTime = Math.floor(joinedAt / 60) * 60;
-             this.send({
-             type: 'player_joining',
-             payload: {
-             playerId: this.playerId,
-             playerName: this.playerName,
-             avatar: this.avatar,
-             questId: this.questId,
-             questName: this.questName,
-             roundedTime: roundedTime,
-             timestamp: joinedAt.toLocaleString(),
-             joinedAt: joinedAt.toLocaleString()
-             }
-             });
-             */
             this.sendWithPayload('player_joining', `${this.playerName} is joining the quest`);
 
             AjaxUtils.request({
@@ -408,10 +390,7 @@ class NotificationClient {
         if (!message.trim())
             return;
 
-        this.send({
-            type: 'chat',
-            message: message
-        });
+        this.send({type: 'chat', message: message});
 
         // Clear the input field
         if (chatInput) {
@@ -430,6 +409,9 @@ class NotificationClient {
                 if (response.success) {
                     // this.send({type: 'quest_can_start', payload: response});
                     this.sendWithPayload('player_leaving', reason);
+                    console.log("************");
+                    window.location.href = '/frontend/web/index.php?r=story/index';
+                    console.log("************");
                 }
             }
         });

@@ -3,6 +3,7 @@
 namespace common\extensions\EventHandler;
 
 use common\models\QuestSession; // Required for QuestSession model usage
+
 // use common\extensions\EventHandler\LoggerService; // Will be injected
 
 class QuestSessionManager {
@@ -93,16 +94,16 @@ class QuestSessionManager {
      */
     private function newSession(string $sessionId, ?int $questId, ?int $playerId, ?string $clientId): bool {
         $this->logger->logStart("QuestSessionManager: newSession sessionId=[{$sessionId}], questId=[{$questId}], playerId=[{$playerId}], clientId=[{$clientId}]");
-        
+
         $session = new QuestSession([
             'id' => $sessionId,
             'quest_id' => $questId,
             'player_id' => $playerId,
             'client_id' => $clientId,
-            // 'last_ts' => time(), // Consider setting last_ts on creation
+                // 'last_ts' => time(), // Consider setting last_ts on creation
         ]);
         $this->logger->log("QuestSessionManager: Attempting to save new QuestSession", $session->getAttributes());
-        
+
         $saved = false;
         try {
             $saved = $session->save();
@@ -112,7 +113,7 @@ class QuestSessionManager {
                 $this->logger->log("QuestSessionManager: Failed to save new QuestSession: sessionId=[{$sessionId}]. Errors: " . print_r($session->getErrors(), true), null, 'error');
             }
         } catch (\Exception $e) {
-             $this->logger->log("QuestSessionManager: Exception while saving new QuestSession: sessionId=[{$sessionId}]. Error: " . $e->getMessage(), $e->getTraceAsString(), 'error');
+            $this->logger->log("QuestSessionManager: Exception while saving new QuestSession: sessionId=[{$sessionId}]. Error: " . $e->getMessage(), $e->getTraceAsString(), 'error');
         }
 
         $this->logQuestSession("QuestSession status after newSession attempt for sessionId=[{$sessionId}]");
@@ -201,15 +202,15 @@ class QuestSessionManager {
         }
         foreach ($sessions as $session) {
             if (is_object($session) && method_exists($session, 'getAttributes')) {
-                 $attributes = $session->getAttributes(['id', 'quest_id', 'player_id', 'client_id', 'last_ts']);
-                 $log = "Session Details: id=[{$attributes['id']}], quest_id=[{$attributes['quest_id']}], player_id=[{$attributes['player_id']}], client_id=[{$attributes['client_id']}], last_ts=[{$attributes['last_ts']}]";
-                 $this->logger->log($log);
+                $attributes = $session->getAttributes(['id', 'quest_id', 'player_id', 'client_id', 'last_ts']);
+                $log = "Session Details: id=[{$attributes['id']}], quest_id=[{$attributes['quest_id']}], player_id=[{$attributes['player_id']}], client_id=[{$attributes['client_id']}], last_ts=[{$attributes['last_ts']}]";
+                $this->logger->log($log);
             } else {
                 $this->logger->log("Invalid session object provided to logQuestSession.");
             }
         }
     }
-    
+
     /**
      * Clears the client_id for any QuestSession associated with the given clientId.
      * This is new method based on logic from EventHandler::removeClient.
@@ -220,8 +221,8 @@ class QuestSessionManager {
 
         try {
             $rowsUpdated = QuestSession::updateAll(
-                ['client_id' => null],
-                ['client_id' => $clientId]
+                    ['client_id' => null],
+                    ['client_id' => $clientId]
             );
             $this->logger->log("QuestSessionManager: QuestSession::updateAll result: {$rowsUpdated} row(s) updated to nullify client_id for clientId=[{$clientId}]");
 
@@ -236,7 +237,7 @@ class QuestSessionManager {
         } catch (\Exception $e) {
             $this->logger->log("QuestSessionManager: Exception during clearClientId for clientId=[{$clientId}]: " . $e->getMessage(), $e->getTraceAsString(), 'error');
         }
-        
+
         // Log current state of sessions for this client (should be none or cleared)
         // $this->logQuestSession("QuestSessions state after attempting to clear clientId=[{$clientId}]", QuestSession::findAll(['client_id' => $clientId]));
         // Or log all sessions if that's more useful for debugging context
@@ -253,7 +254,7 @@ class QuestSessionManager {
      */
     public function updateLastTimestamp(string $sessionId, int $timestamp): bool {
         $this->logger->logStart("QuestSessionManager: updateLastTimestamp for sessionId=[{$sessionId}] to timestamp=[{$timestamp}]");
-        
+
         $session = QuestSession::findOne(['id' => $sessionId]);
         if (!$session) {
             $this->logger->log("QuestSessionManager: QuestSession not found for id=[{$sessionId}] during updateLastTimestamp.", null, 'warning');
@@ -262,7 +263,7 @@ class QuestSessionManager {
         }
 
         $session->last_ts = $timestamp;
-        
+
         try {
             if ($session->save()) {
                 $this->logger->log("QuestSessionManager: Successfully updated last_ts for session [{$sessionId}].");

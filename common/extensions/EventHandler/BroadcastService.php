@@ -6,7 +6,6 @@ use common\extensions\EventHandler\contracts\BroadcastMessageInterface;
 use common\extensions\EventHandler\contracts\BroadcastServiceInterface;
 use Ratchet\ConnectionInterface;
 use common\models\QuestSession;
-use common\models\Notification;
 
 // Assuming LoggerService, WebSocketServerManager, QuestSessionManager, NotificationService are properly imported or aliased if not in this namespace.
 
@@ -21,12 +20,10 @@ class BroadcastService implements BroadcastServiceInterface {
             LoggerService $logger,
             WebSocketServerManager $webSocketServerManager,
             QuestSessionManager $questSessionManager
-            // NotificationService $notificationService // Removed from constructor
     ) {
         $this->logger = $logger;
         $this->webSocketServerManager = $webSocketServerManager;
         $this->questSessionManager = $questSessionManager;
-        // $this->notificationService = $notificationService; // Removed assignment
     }
 
     public function setNotificationService(NotificationService $notificationService): void {

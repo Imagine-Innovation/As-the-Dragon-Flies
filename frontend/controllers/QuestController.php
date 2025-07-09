@@ -19,9 +19,7 @@ namespace frontend\controllers;
  * @version 1.0
  */
 use common\components\AppStatus;
-use common\models\events\EventFactory;
 use common\models\Quest;
-use common\models\QuestPlayer;
 use common\models\Story;
 use common\components\ManageAccessRights;
 use common\helpers\UserErrorMessage;
@@ -66,7 +64,7 @@ class QuestController extends Controller {
                                     'join-quest', 'resume', 'get-messages', 'leave-quest',
                                     'ajax-tavern', 'ajax-tavern-counter',
                                     'ajax-new-message', 'ajax-get-messages', 'ajax-send-message',
-                                    'ajax-start', 'ajax-can-start',
+                                    'ajax-start', 'ajax-can-start', 'ajax-leave-quest'
                                 ],
                                 'allow' => ManageAccessRights::isRouteAllowed($this),
                                 'roles' => ['@'],

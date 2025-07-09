@@ -28,35 +28,6 @@ class NotificationService {
     }
 
     /**
-     * Saves a quest chat message.
-     * Original logic from EventHandler::saveQuestChat
-     * @return bool
-     */
-    public function saveQuestChat(int $playerId, int $questId, string $message, int $createdAt): bool {
-        $this->logger->logStart("NotificationService: saveQuestChat playerId=[{$playerId}], questId=[{$questId}]", ['message' => $message, 'createdAt' => $createdAt]);
-        $questChat = new QuestChat([
-            'player_id' => $playerId,
-            'quest_id' => $questId,
-            'message' => $message,
-            'created_at' => $createdAt
-        ]);
-
-        $saved = false;
-        try {
-            $saved = $questChat->save();
-            if ($saved) {
-                $this->logger->log("NotificationService: QuestChat saved successfully.");
-            } else {
-                $this->logger->log("NotificationService: Failed to save QuestChat. Errors: " . print_r($questChat->getErrors(), true), null, 'error');
-            }
-        } catch (\Exception $e) {
-            $this->logger->log("NotificationService: Exception while saving QuestChat. Error: " . $e->getMessage(), $e->getTraceAsString(), 'error');
-        }
-        $this->logger->logEnd("NotificationService: saveQuestChat, returned value=" . ($saved ? "true" : "false"));
-        return $saved;
-    }
-
-    /**
      * Saves a notification.
      * Original logic from EventHandler::saveNotification
      * @return Notification|null The saved Notification object or null on failure.
@@ -67,17 +38,6 @@ class NotificationService {
         $message = $data['message'] ?? '';
         $type = $data['type'] ?? 'unknown';
         $createdAt = $data['timestamp'] ?? time(); // Use timestamp from data if available, fallback to now
-        /*
-          // If it's a chat type, first try to save the QuestChat entry
-          if ($type === 'chat') {
-          if (!$this->saveQuestChat($playerId, $questId, $message, $createdAt)) {
-          $this->logger->log("NotificationService: Failed to save QuestChat, aborting notification save for chat.", $data, 'error');
-          $this->logger->logEnd("NotificationService: saveNotification");
-          return null;
-          }
-          }
-         *
-         */
 
         $sender = Player::findOne($playerId);
         if (!$sender) {
@@ -89,16 +49,6 @@ class NotificationService {
         $playerName = $sender ? $sender->name : 'Unknown Player';
 
         // Construct payload. This might vary based on notification type in a more complex system.
-        /*
-          $payload = [
-          'playerName' => $playerName,
-          'playerId' => $playerId,
-          'message' => $message, // Core message content
-          'timestamp' => date('Y-m-d H:i:s', $createdAt), // Human-readable timestamp in payload
-          // Add other type-specific details to payload as needed
-          ];
-         *
-         */
         $payload = QuestMessages::payload($sender, $message);
         $title = $data['title'] ?? ($type === 'chat' ? "New chat message from " . $playerName : "Notification");
 
@@ -227,39 +177,5 @@ class NotificationService {
         $messageContent = $payload['message'] ?? $notification->message;
 
         return $this->messageFactory->createChatMessage($messageContent, $senderDisplayName);
-    }
-
-    /**
-     * Recovers message history for a specific session.
-     * This method might be called by RegistrationHandler or PlayerJoiningHandler after a player connects/reconnects.
-     * It would typically involve fetching relevant notifications (e.g., recent chat messages for the quest)
-     * and then using something like BroadcastService to send them to the specific client associated with the session.
-     *
-     * @param string $sessionId The ID of the session for which to recover history.
-     * @param int $questId The ID of the quest to recover history for.
-     * @param int $lastTimestamp The timestamp after which messages should be recovered.
-     * @param ConnectionInterface $clientConnection The specific client connection to send messages to.
-     */
-    public function recoverMessageHistoryForSession(string $sessionId, int $questId, int $lastTimestamp, /* ConnectionInterface $clientConnection, BroadcastService $broadcastService */): void {
-        $this->logger->logStart("NotificationService: recoverMessageHistory for sessionId=[{$sessionId}], questId=[{$questId}], since=[{$lastTimestamp}]");
-
-        $chatNotifications = $this->getNotifications($questId, 'chat', $lastTimestamp);
-        $notificationCount = count($chatNotifications);
-        $this->logger->log("NotificationService: Processing {$notificationCount} 'chat' notifications for history recovery for sessionId=[{$sessionId}].");
-
-        $recoveredMessagesCount = 0;
-        foreach ($chatNotifications as $notification) {
-            $this->logger->log("NotificationService: Preparing historical chat message: Notification.id=[{$notification->id}]");
-            $chatMessageJson = $this->prepareChatMessage($notification, $sessionId);
-
-            // In a real scenario, you would use BroadcastService here to send to the specific client
-            // $broadcastService->sendToClient($clientConnection, json_decode($chatMessageJson, true));
-            // For now, just log what would happen:
-            $this->logger->log("NotificationService: Would send historical message to client for session [{$sessionId}]", ['message' => json_decode($chatMessageJson, true)]);
-            $recoveredMessagesCount++;
-        }
-
-        $this->logger->log("NotificationService: Finished recovering history for session [{$sessionId}]. Sent {$recoveredMessagesCount} message(s).");
-        $this->logger->logEnd("NotificationService: recoverMessageHistory for sessionId=[{$sessionId}]");
     }
 }

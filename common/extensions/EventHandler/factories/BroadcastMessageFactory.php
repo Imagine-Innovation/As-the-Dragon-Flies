@@ -21,7 +21,7 @@ class BroadcastMessageFactory {
         return new PlayerJoinedDto($playerName, $sessionId, $questName);
     }
 
-    public function createPlayerLeftMessage(string $playerName, string $sessionId, string $questName): PlayerJoinedDto {
+    public function createPlayerLeftMessage(string $playerName, string $sessionId, string $questName): PlayerLeftDto {
         return new PlayerLeftDto($playerName, $sessionId, $questName);
     }
 
