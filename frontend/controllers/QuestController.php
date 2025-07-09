@@ -433,8 +433,9 @@ class QuestController extends Controller {
         }
 
         // Process player onboarding
-        if (!QuestOnboarding::addPlayerToQuest($player, $tavern)) {
-            return UserErrorMessage::throw($this, 'error', 'Unable to onboard player ' . $player->name . ' to the quest', self::DEFAULT_REDIRECT);
+        $onboarded = QuestOnboarding::addPlayerToQuest($player, $tavern);
+        if ($onboarded['denied']) {
+            return UserErrorMessage::throw($this, 'error', $onboarded['reason'], self::DEFAULT_REDIRECT);
         }
 
         // Set session variables for quest context

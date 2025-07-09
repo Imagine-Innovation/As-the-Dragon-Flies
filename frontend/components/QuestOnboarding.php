@@ -177,89 +177,87 @@ class QuestOnboarding {
         return empty(array_diff($requiredClasses, $presentClasses));
     }
 
-    public static function addPlayerToQuest(Player $player, Quest $quest): bool {
-
-        // Player is already onboarded in the quest => do nothing
-        if ($player->quest_id === $quest->id) {
-            return true;
+    /**
+     *
+     * @param Player $player
+     * @param int|null $questId
+     * @return array
+     */
+    private static function updatePlayerQuestId(Player &$player, int|null $questId = null): array {
+        $player->quest_id = $questId;
+        if (!$player->save()) {
+            return ['denied' => true, 'reason' => "Could not save Player : " . implode("\n", \yii\helpers\ArrayHelper::getColumn($player->errors, 0, false))];
         }
-
-        /*
-          $player->quest_id = $quest->id;
-          if (!$player->save()) {
-          throw new \Exception(implode("<br />", \yii\helpers\ArrayHelper::getColumn($player->errors, 0, false)));
-          }
-
-          $questPlayer = QuestPlayer::findOne(['quest_id' => $quest->id, 'player_id' => $player->id]);
-         *
-         */
-        Player::updateAll(['quest_id' => $quest->id], ['id' => $player->id]);
-
-        // Try to update potentially existing records
-        $updates = QuestPlayer::updateAll(
-                ['left_at' => null, 'reason' => null],
-                ['quest_id' => $quest->id, 'player_id' => $player->id]
-        );
-
-        //if (!$questPlayer) {
-        // If no record is actually updated, create a new entry
-        if ($updates === 0) {
-            $questPlayer = new QuestPlayer([
-                'quest_id' => $quest->id,
-                'player_id' => $player->id,
-                'onboarded_at' => time()
-            ]);
-
-            if ($questPlayer->save()) {
-                return true;
-            }
-            throw new \Exception(implode("<br />", \yii\helpers\ArrayHelper::getColumn($questPlayer->errors, 0, false)));
-        }
-
-        return true;
+        return ['denied' => false, 'reason' => "Player's quest_id updated to {$questId}"];
     }
 
-    public static function withdrawPlayer(Player $player, Quest $quest, string $reason = null): bool {
+    /**
+     * Update or Insert a new QuestPlayer entry
+     *
+     * @param int $questId
+     * @param int $playerId
+     * @param string|null $reasonWhyHeLeft
+     * @return array
+     */
+    private static function upsertQuestPlayer(int $questId, int $playerId, string|null $reasonWhyHeLeft = null): array {
+        $questPlayer = QuestPlayer::findOne(['quest_id' => $questId, 'player_id' => $playerId]);
+
+        if (!$questPlayer) {
+            // If no record is previously existing, create a new entry
+            $questPlayer = new QuestPlayer([
+                'quest_id' => $questId,
+                'player_id' => $playerId,
+                'onboarded_at' => time()
+            ]);
+        }
+
+        $questPlayer->left_at = $reasonWhyHeLeft ? time() : null;
+        $questPlayer->reason = $reasonWhyHeLeft;
+
+        if ($questPlayer->save()) {
+            return ['denied' => false, 'reason' => "Player successfully onboarded on the quest"];
+        }
+        return ['denied' => true, 'reason' => "Could not save QuestPlayer : " . implode("\n", \yii\helpers\ArrayHelper::getColumn($questPlayer->errors, 0, false))];
+    }
+
+    /**
+     *
+     * @param Player $player
+     * @param Quest $quest
+     * @return array
+     */
+    public static function addPlayerToQuest(Player &$player, Quest &$quest): array {
+
+        if ($player->quest_id === $quest->id) {
+            return ['denied' => false, 'reason' => "Player is already onboarded in the quest"];
+        }
+
+        $playerUpdate = self::updatePlayerQuestId($player, $quest->id);
+        if ($playerUpdate['denied']) {
+            return $playerUpdate;
+        }
+
+        return self::upsertQuestPlayer($quest->id, $player->id);
+    }
+
+    /**
+     *
+     * @param Player $player
+     * @param Quest $quest
+     * @param string $reason
+     * @return array
+     */
+    public static function withdrawPlayer(Player $player, Quest $quest, string $reason = null): array {
 
         // Player is already onboarded on a different quest => error
         if ($player->quest_id === null || $player->quest_id !== $quest->id) {
-            Yii::debug("*** Debug *** withdrawPlayer - Player {$player->name} not in quest id {$quest->id}");
-            return false;
+            return ['denied' => true, 'reason' => "player {$player->name} (id {$player->id}) is not quest={$quest->id}, player->quest_id=" . ($player->quest_id ?? "null")];
         }
 
-        /*
-          $player->quest_id = null;
-          if (!$player->save()) {
-          throw new \Exception(implode("<br />", \yii\helpers\ArrayHelper::getColumn($player->errors, 0, false)));
-          }
-
-          $questPlayer = QuestPlayer::findOne(['quest_id' => $quest->id, 'player_id' => $player->id]);
-
-          if (!$questPlayer) {
-          Yii::debug("*** Debug *** withdrawPlayer - QuestPlayer does not exist");
-          return false;
-          }
-          $questPlayer->left_at = time();
-          $questPlayer->reason = $reason ?? "Player's choice to leave";
-
-          if ($questPlayer->save()) {
-          Yii::debug("*** Debug *** withdrawPlayer - QuestPlayer successfully updated");
-          return true;
-          }
-
-          throw new \Exception(implode("<br />", \yii\helpers\ArrayHelper::getColumn($questPlayer->errors, 0, false)));
-         *          *
-         */
-        Player::updateAll(['quest_id' => null], ['id' => $player->id]);
-
-        $updates = QuestPlayer::updateAll(
-                ['left_at' => time(), 'reason' => $reason ?? "Player's choice to leave"],
-                ['quest_id' => $quest->id, 'player_id' => $player->id]
-        );
-        if ($updates === 0) {
-            Yii::debug("*** Debug *** withdrawPlayer - QuestPlayer does not exist");
-            return false;
+        $playerUpdate = self::updatePlayerQuestId($player, null);
+        if ($playerUpdate['denied']) {
+            return $playerUpdate;
         }
-        return true;
+        return self::upsertQuestPlayer($quest->id, $player->id, $reason);
     }
 }
