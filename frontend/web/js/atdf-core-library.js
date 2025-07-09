@@ -36,8 +36,8 @@ class Logger {
             let m = stack.match(/.*?log.*?\n(.*?)\n/);
             if (m) {
                 const callingLine = m[1];
-                const startPos=callingLine.indexOf(" at ")+4;
-                const endPos=callingLine.indexOf(".");
+                const startPos = callingLine.indexOf(" at ") + 4;
+                const endPos = callingLine.indexOf(".");
                 const caller = callingLine.substring(startPos, endPos);
                 return caller;
             }
@@ -190,46 +190,38 @@ class PlayerSelector {
 
     static initializeFromDOM() {
         Logger.log(1, 'initializeFromDOM', 'Initializing PlayerSelector from DOM elements.');
-        const ids_str = $("#ids")?.html();
-        if (ids_str) {
-            this.ids = ids_str.split(';');
-        } else {
-            Logger.log(5, 'initializeFromDOM', '#ids element not found or empty.');
-            this.ids = [];
-        }
+        this.ids = this.getDivValue("ids");
+        this.initials = this.getDivValue("initials");
+        this.tooltips = this.getDivValue("tooltips");
 
-        const initials_str = $("#initials")?.html();
-        if (initials_str) {
-            this.initials = initials_str.split(';');
-        } else {
-            Logger.log(5, 'initializeFromDOM', '#initials element not found or empty.');
-            this.initials = [];
-        }
-
-        const tooltips_str = $("#tooltips")?.html();
-        if (tooltips_str) {
-            this.tooltips = tooltips_str.split(';');
-        } else {
-            Logger.log(5, 'initializeFromDOM', '#tooltips element not found or empty.');
-            this.tooltips = [];
-        }
-
-        const player_id_val = $('#hiddenSelectedPlayerId')?.html();
-        if (player_id_val && this.ids.length > 0) {
-            const player_id = String(player_id_val);
-            const id = this.ids.indexOf(player_id);
+        const selectedPlayerId = $('#hiddenSelectedPlayerId')?.html();
+        if (selectedPlayerId && this.ids.length > 0) {
+            const playerId = String(selectedPlayerId);
+            const id = this.ids.indexOf(playerId);
             if (id !== -1) {
                 this.setBadge(id);
             } else {
-                Logger.log(5, 'initializeFromDOM', `Player ID ${player_id} not found in available IDs.`);
-                this.setBadge(-1); // Or handle as appropriate if player_id not in list
+                Logger.log(5, 'initializeFromDOM', `Player ID ${playerId} not found in available IDs.`);
+                this.setBadge(-1); // Or handle as appropriate if playerId not in list
             }
-        } else if (this.ids.length === 0 && player_id_val) {
-             Logger.log(5, 'initializeFromDOM', 'Player IDs array is empty, cannot set badge based on hiddenSelectedPlayerId.');
-             this.setBadge(-1);
+        } else if (this.ids.length === 0 && selectedPlayerId) {
+            Logger.log(5, 'initializeFromDOM', 'Player IDs array is empty, cannot set badge based on hiddenSelectedPlayerId.');
+            this.setBadge(-1);
         } else {
             Logger.log(5, 'initializeFromDOM', '#hiddenSelectedPlayerId element not found or empty, or no player IDs loaded. Not setting initial badge.');
             this.setBadge(-1); // No player selected or data available
+        }
+    }
+
+    static getDivValue(divName) {
+        Logger.log(2, 'getDivValue', `divName=${divName}`);
+        const div = `#${divName}`;
+        const str = $(div)?.html();
+        if (str) {
+            return str.split(';');
+        } else {
+            Logger.log(5, 'getDivValue', `${div} element not found or empty.`);
+            return [];
         }
     }
 
@@ -257,6 +249,7 @@ class PlayerSelector {
 
     /**
      * Selects a player and updates the application context
+     * 
      * @param {number} userId - User identifier
      * @param {number} playerId - Player identifier
      */
@@ -428,7 +421,7 @@ class LayoutInitializer {
                 let n = $('#notificationCounter').text();
                 // Assuming playerId is globally available or accessible here. 
                 // This might need adjustment based on how playerId is set in your actual application.
-                let playerId = typeof currentPlayerId !== 'undefined' ? currentPlayerId : null; 
+                let playerId = typeof currentPlayerId !== 'undefined' ? currentPlayerId : null;
 
                 if (playerId && parseInt(n) > 0) {
                     if (typeof NotificationHandler !== 'undefined' && NotificationHandler.executeRequest) {
@@ -452,14 +445,14 @@ class LayoutInitializer {
         $(document).ready(function () {
             const currentHost = window.location.hostname;
             const url = `ws://${currentHost}:8082`;
-            
+
             if (typeof NotificationClient !== 'undefined') {
                 console.log(`NotificationClient(url=${url}, playerId=${playerId}, avatar=${avatar}, questId=${questId}, playerName=${playerName}, questName=${questName}, chatInput=${chatInputId})`);
                 const notificationClient = new NotificationClient(url, playerId, avatar, questId, playerName, questName, chatInputId);
                 notificationClient.init();
 
                 // Initial load of tavern players
-                 if (notificationClient.executeRequest) {
+                if (notificationClient.executeRequest) {
                     let config = {
                         route: 'quest/ajax-tavern',
                         method: 'GET',

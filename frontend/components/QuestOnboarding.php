@@ -187,7 +187,6 @@ class QuestOnboarding {
         $player->quest_id = $quest->id;
         if (!$player->save()) {
             throw new \Exception(implode("<br />", \yii\helpers\ArrayHelper::getColumn($player->errors, 0, false)));
-            //return false;
         }
 
         $questPlayer = QuestPlayer::findOne(['quest_id' => $quest->id, 'player_id' => $player->id]);
@@ -206,5 +205,34 @@ class QuestOnboarding {
         }
 
         return true;
+    }
+
+    public static function withdrawPlayer(Player $player, Quest $quest, string $reason = null): bool {
+
+        // Player is already onboarded on a different quest => error
+        if ($player->quest_id === null || $player->quest_id !== $quest->id) {
+            Yii::debug("*** Debug *** withdrawPlayer - Player {$player->name} not in quest id {$quest->id}");
+            return false;
+        }
+
+        $player->quest_id = null;
+        if (!$player->save()) {
+            throw new \Exception(implode("<br />", \yii\helpers\ArrayHelper::getColumn($player->errors, 0, false)));
+        }
+
+        $questPlayer = QuestPlayer::findOne(['quest_id' => $quest->id, 'player_id' => $player->id]);
+
+        if ($questPlayer) {
+            Yii::debug("*** Debug *** withdrawPlayer - QuestPlayer does not exist");
+            return false;
+        }
+        $questPlayer->left_at = time();
+        $questPlayer->reason = $reason ?? "Player's choice to leave";
+
+        if ($questPlayer->save()) {
+            Yii::debug("*** Debug *** withdrawPlayer - QuestPlayer successfully updated");
+            return true;
+        }
+        throw new \Exception(implode("<br />", \yii\helpers\ArrayHelper::getColumn($questPlayer->errors, 0, false)));
     }
 }

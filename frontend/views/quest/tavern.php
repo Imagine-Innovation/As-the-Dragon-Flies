@@ -125,7 +125,7 @@ $messages = QuestMessages::getLastMessages($model->id, $playerId);
 </style>
 <div class="row g-3">
     <!-- Quest Panel -->
-    <div class="col-xl-8">
+    <div class="col-md-6 col-xl-8">
         <div class="card p-4 mb-3">
             <div class="card-header">
                 <h5 class="text-decoration">Welcome <?= $playerName ?> in <?= $questName ?> Quest</h5>
@@ -152,7 +152,7 @@ $messages = QuestMessages::getLastMessages($model->id, $playerId);
     </div>
 
     <!-- Chat Panel -->
-    <div class="col-xl-4">
+    <div class="col-md-6 col-xl-4">
         <div class="chat-panel-container">
             <div class="card p-4 h-100 d-flex flex-column">
                 <div class="card-header">
@@ -163,7 +163,7 @@ $messages = QuestMessages::getLastMessages($model->id, $playerId);
                     <form id="questChatMessageForm">
                         <div class="input-group">
                             <input type="text" class="form-control" id="questChatInput" placeholder="Type your message...">
-                            <button id="send-message" class="btn btn-primary" type="button">Send</button>
+                            <button id="sendChatMessageButton" class="btn btn-primary" type="button">Send</button>
                         </div>
                     </form>
                     <small class="text-muted mt-2 d-block">Press Enter to send • Be respectful to fellow adventurers</small>
@@ -178,33 +178,4 @@ $messages = QuestMessages::getLastMessages($model->id, $playerId);
             </div>
         </div>
     </div>
-
-
-    <script type="text/javascript">
-        $(document).ready(function () {
-            // Create and initialize the notification client instance
-            // Replace these with your actual values
-            const currentHost = window.location.hostname;
-            const url = `ws://${currentHost}:8082`;
-            const playerId = <?= $playerId ?>;
-            const avatar = `<?= $avatar ?>`;
-            const playerName = `<?= $playerName ?>`;
-            const questId = <?= $model->id ?>;
-            const questName = `<?= $questName ?>`;
-            const chatInput = `questChatInput`;
-
-            console.log(`NotificationClient(url=${url}, playerId=${playerId}, avatar=${avatar}, questId=${questId}, playerName=${playerName}, questName=${questName}, chatInput=${chatInput}`);
-            const notificationClient = new NotificationClient(url, playerId, avatar, questId, playerName, questName, chatInput);
-
-            notificationClient.init();
-
-            let config = {
-                route: 'quest/ajax-tavern',
-                method: 'GET',
-                placeholder: 'questTavernPlayersContainer',
-                badge: false
-            };
-            notificationClient.executeRequest(config, '');
-
-        });
-    </script>
+</div>

@@ -1,12 +1,12 @@
 <?php
 
-namespace common\extensions\EventHandler;
+namespace common\extensions\EventHandler\handlers;
 
-use common\extensions\EventHandler\contracts\SpecificMessageHandlerInterface; // Updated
+use common\extensions\EventHandler\contracts\SpecificMessageHandlerInterface;
+use common\extensions\EventHandler\LoggerService;
+use common\extensions\EventHandler\BroadcastService;
+use common\extensions\EventHandler\QuestSessionManager;
 use Ratchet\ConnectionInterface;
-// Assuming LoggerService, QuestSessionManager, BroadcastService will be in this namespace or properly aliased
-// use common\extensions\EventHandler\LoggerService;
-use common\extensions\EventHandler\QuestSessionManager; // Import QuestSessionManager
 
 // use common\extensions\EventHandler\BroadcastService; // Placeholder
 

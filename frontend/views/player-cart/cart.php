@@ -12,12 +12,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
 $shopping = new Shopping();
 ?>
-<script type="text/javascript">
-    $(document).ready(function () {
-        ShopManager.getCartInfo();
-    });
-
-</script>
 <div class="container g-0 p-0">
     <p id="purseContent"></p>
     <div class="row g-2">

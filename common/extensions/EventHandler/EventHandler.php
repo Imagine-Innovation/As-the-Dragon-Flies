@@ -6,10 +6,11 @@ use Yii; // Assuming Yii is used for path aliasing
 use yii\base\Component;
 use React\EventLoop\Loop; // Required for Loop::get() if used directly, but likely encapsulated now
 // Specific Handlers (assuming they are in the same namespace)
-use common\extensions\EventHandler\RegistrationHandler;
-use common\extensions\EventHandler\ChatMessageHandler;
-use common\extensions\EventHandler\GameActionHandler;
-use common\extensions\EventHandler\AnnouncePlayerJoinHandler;
+use common\extensions\EventHandler\handlers\RegistrationHandler;
+use common\extensions\EventHandler\handlers\ChatMessageHandler;
+use common\extensions\EventHandler\handlers\GameActionHandler;
+use common\extensions\EventHandler\handlers\PlayerJoiningHandler;
+use common\extensions\EventHandler\handlers\PlayerLeavingHandler;
 use common\extensions\EventHandler\factories\BroadcastMessageFactory; // Added
 
 class EventHandler extends Component {
@@ -66,7 +67,8 @@ class EventHandler extends Component {
             'register' => new RegistrationHandler($this->loggerService, $this->questSessionManager, $this->broadcastService),
             'chat' => new ChatMessageHandler($this->loggerService, $this->notificationService, $this->broadcastService, $messageFactory),
             'action' => new GameActionHandler($this->loggerService, $this->broadcastService, $messageFactory),
-            'announce_player_join' => new AnnouncePlayerJoinHandler($this->loggerService, $this->broadcastService, $messageFactory),
+            'player_joining' => new PlayerJoiningHandler($this->loggerService, $this->broadcastService, $messageFactory),
+            'player_leaving' => new PlayerLeavingHandler($this->loggerService, $this->broadcastService, $messageFactory),
             'quest_can_start' => new QuestCanStartHandler($this->loggerService, $this->broadcastService, $messageFactory),
         ];
 

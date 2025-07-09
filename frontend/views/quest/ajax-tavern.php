@@ -6,7 +6,7 @@ $playerId = Yii::$app->session->get('playerId');
 <div class="row g-4">
     <?php foreach ($models as $model): ?>
         <?php foreach ($model->currentPlayers as $player): ?>
-            <div class="col-12 col-md-6 col-lg-3 col-xl-4">
+            <div class="col-12 col-sm-6 col-md-12 col-lg-6 col-xl-4 col-xxl-3">
                 <div class="image-card">
                     <div class="image-card-body" style="background-image: url('img/characters/<?= $player->image->file_name ?>');">
                         <div class="image-card-label">
@@ -14,7 +14,9 @@ $playerId = Yii::$app->session->get('playerId');
                             <p class="small mb-1"><?= $player->age ?>-year-old <?= $player->gender == 'M' ? 'male' : 'female' ?> <?= $player->race->name ?></p>
                             <p class="small mb-0"><?= $player->level->name ?> <?= $player->alignment->name ?> <?= $player->class->name ?></p>
                             <?php if ($player->id === $playerId): ?>
-                                <a href="" class="btn btn-warning btn-sm mt-2 w-100"><i class="bi bi-box-arrow-right"></i> Leave Tavern</a>
+                                <button class="btn btn-warning btn-sm mt-2 w-100" id="leaveTavernButton" type="button">
+                                    <i class="bi bi-box-arrow-right"></i> Leave Tavern
+                                </button>
                             <?php endif; ?>
                         </div>
                     </div>

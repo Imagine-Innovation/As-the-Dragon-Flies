@@ -1,9 +1,9 @@
 <?php
 
-namespace common\extensions\EventHandler;
+namespace common\extensions\EventHandler\handlers;
 
 use common\extensions\EventHandler\contracts\BroadcastServiceInterface;
-use common\extensions\EventHandler\contracts\SpecificMessageHandlerInterface; // Updated
+use common\extensions\EventHandler\contracts\SpecificMessageHandlerInterface;
 use common\extensions\EventHandler\factories\BroadcastMessageFactory;
 use common\extensions\EventHandler\LoggerService;
 use Ratchet\ConnectionInterface;
@@ -15,9 +15,9 @@ class GameActionHandler implements SpecificMessageHandlerInterface {
     private BroadcastMessageFactory $messageFactory;
 
     public function __construct(
-        LoggerService $logger,
-        BroadcastServiceInterface $broadcastService,
-        BroadcastMessageFactory $messageFactory
+            LoggerService $logger,
+            BroadcastServiceInterface $broadcastService,
+            BroadcastMessageFactory $messageFactory
     ) {
         $this->logger = $logger;
         $this->broadcastService = $broadcastService;
@@ -39,16 +39,16 @@ class GameActionHandler implements SpecificMessageHandlerInterface {
         }
 
         $gameActionDto = $this->messageFactory->createGameActionMessage(
-            (string)$data['action_type'],
-            (array)$data['details']
+                (string) $data['action_type'],
+                (array) $data['details']
         );
 
         $this->broadcastService->broadcastToQuest(
-            (int)$data['quest_id'],
-            $gameActionDto,
-            $sessionId // Exclude the sender from this broadcast
+                (int) $data['quest_id'],
+                $gameActionDto,
+                $sessionId // Exclude the sender from this broadcast
         );
-        
+
         $this->logger->log("GameActionHandler: GameActionDto broadcasted", ['quest_id' => $data['quest_id'], 'action_type' => $data['action_type']]);
 
         // Send an acknowledgement back to the sender client

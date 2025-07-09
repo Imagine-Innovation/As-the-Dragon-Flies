@@ -132,9 +132,25 @@ class PlayerBuilder {
             $('#builderEquipmentModal').on('click', '#exitEquipmentModal-button', function () {
                 const selectedValue = $('input[name="initialEquipmentRadio"]:checked').val();
                 if (selectedValue) {
+                    // Blur the button before closing the modal to prevent focus issues
+                    $(this).blur();
                     const [choice, ...itemIds] = selectedValue.split(',');
-                    $('#closeEquipmentModal-hiddenButton').click();
+                    var modalElement = document.getElementById('builderEquipmentModal');
+                    if (modalElement) {
+                        var modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+                        modal.hide();
+                    }
+
                     PlayerBuilder.setCategoryItem(choice, itemIds);
+                }
+            });
+            // More robust focus management on modal hide
+            $('#builderEquipmentModal').on('hide.bs.modal', function () {
+                const focusedElement = document.activeElement;
+                if (this.contains(focusedElement)) {
+                    focusedElement.blur();
+                    // Optionally, move focus to a specific element outside the modal, e.g.:
+                    // $('#some-element-outside-modal').focus();
                 }
             });
         });
@@ -581,7 +597,7 @@ class PlayerBuilder {
                 categoryIds: categoryIds
             },
             callback: () => {
-                var modalElement = $('#builderEquipmentModal');
+                var modalElement = document.getElementById('builderEquipmentModal');
                 if (modalElement) {
                     var modal = bootstrap.Modal.getOrCreateInstance(modalElement);
                     modal.show();

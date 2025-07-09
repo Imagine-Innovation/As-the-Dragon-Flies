@@ -23,24 +23,6 @@ $active = $user->hasPlayers();
 
 $firstType = $itemTypes[0];
 ?>
-<script src="js/atdf-shop-manager.js"></script>
-<script type="text/javascript">
-    $(document).ready(function () {
-        ShopManager.getCartInfo();
-<?php if ($currentPlayer): ?>
-    <?php if ($player_id && $currentPlayer->id <> $player_id): ?>
-                PlayerSelector.select(<?= $user->id ?>, <?= $player_id ?>);
-    <?php endif; ?>
-<?php else: ?>
-    <?php if ($player_id): ?>
-                PlayerSelector.select(<?= $user->id ?>, <?= $player_id ?>);
-    <?php else: ?>
-                $('#showCurrentPlayerModal-button').click();
-    <?php endif; ?>
-<?php endif; ?>
-    });
-
-</script>
 <div class="container g-0 p-0">
     <div class="card">
         <div class="card-body">

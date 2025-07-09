@@ -103,7 +103,6 @@ class Player extends \yii\db\ActiveRecord {
             [['experience_points'], 'default', 'value' => 0],
             [['armor_class'], 'default', 'value' => 10],
             [['level_id', 'user_id', 'race_id', 'class_id', 'background_id', 'history_id', 'alignment_id', 'image_id', 'quest_id', 'status', 'age', 'experience_points', 'hit_points', 'max_hit_points', 'armor_class', 'speed', 'created_at', 'updated_at'], 'integer'],
-            [['level_id', 'user_id', 'race_id', 'class_id', 'background_id', 'history_id', 'alignment_id', 'image_id', 'quest_id', 'status', 'age', 'speed', 'experience_points', 'hit_points', 'max_hit_points', 'armor_class', 'created_at', 'updated_at'], 'integer'],
             [['user_id', 'race_id', 'class_id', 'background_id', 'history_id'], 'required'],
             [['gender'], 'string'],
             [['name'], 'string', 'max' => 64],
@@ -551,6 +550,10 @@ class Player extends \yii\db\ActiveRecord {
         $gender = $this->gender == 'M' ? 'male' : 'femele';
         $description = "{$this->age}-years-old {$gender} {$this->race->name}, {$this->level->name} {$this->alignment->name} {$this->class->name}";
         return strtolower($description);
+    }
+
+    public function getInitiative() {
+        return PlayerTool::getInitiative($this->abilities);
     }
 
     /**

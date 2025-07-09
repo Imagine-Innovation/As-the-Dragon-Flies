@@ -17,7 +17,9 @@ use Yii;
  * @property ClassProficiency[] $classProficiencies
  * @property Player[] $players
  */
-class Level extends \yii\db\ActiveRecord {
+class Level extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -31,6 +33,7 @@ class Level extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['proficiency_bonus'], 'default', 'value' => 0],
             [['name', 'xp_min', 'xp_max'], 'required'],
             [['xp_min', 'xp_max', 'proficiency_bonus'], 'integer'],
             [['name'], 'string', 'max' => 32],
@@ -77,4 +80,5 @@ class Level extends \yii\db\ActiveRecord {
     public function getPlayers() {
         return $this->hasMany(Player::class, ['level_id' => 'id']);
     }
+
 }

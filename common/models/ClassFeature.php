@@ -7,7 +7,6 @@ use Yii;
 /**
  * This is the model class for table "class_feature".
  *
- * @property int $id Primary key
  * @property int $class_id Foreign key to "class" table
  * @property int $feature_id Foreign key to "feature" table
  * @property int $level_id Foreign key to "level" table
@@ -22,6 +21,7 @@ use Yii;
  * @property Level $level
  */
 class ClassFeature extends \yii\db\ActiveRecord {
+
     /**
      * {@inheritdoc}
      */
@@ -34,10 +34,13 @@ class ClassFeature extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['cr', 'dice', 'weapon_dice', 'spell_level'], 'default', 'value' => null],
+            [['times_used'], 'default', 'value' => 1],
             [['class_id', 'feature_id', 'level_id'], 'required'],
             [['class_id', 'feature_id', 'level_id', 'weapon_dice', 'times_used', 'spell_level'], 'integer'],
             [['cr'], 'number'],
             [['dice'], 'string', 'max' => 8],
+            [['class_id', 'feature_id', 'level_id'], 'unique', 'targetAttribute' => ['class_id', 'feature_id', 'level_id']],
             [['class_id'], 'exist', 'skipOnError' => true, 'targetClass' => CharacterClass::class, 'targetAttribute' => ['class_id' => 'id']],
             [['level_id'], 'exist', 'skipOnError' => true, 'targetClass' => Level::class, 'targetAttribute' => ['level_id' => 'id']],
             [['feature_id'], 'exist', 'skipOnError' => true, 'targetClass' => Feature::class, 'targetAttribute' => ['feature_id' => 'id']],
@@ -49,7 +52,6 @@ class ClassFeature extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'id' => 'Primary key',
             'class_id' => 'Foreign key to \"class\" table',
             'feature_id' => 'Foreign key to \"feature\" table',
             'level_id' => 'Foreign key to \"level\" table',

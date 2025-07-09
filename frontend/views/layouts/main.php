@@ -31,36 +31,7 @@ $snippet = Yii::$app->user->isGuest ? 'guest' : 'lobby';
         <?php endif; ?>
 
         <?php $this->endBody(); ?>
+        <?= $this->renderFile('@app/views/layouts/_javascript.php') ?>
     </body>
-
-
-    <?php if (!Yii::$app->user->isGuest): ?>
-        <script type="text/javascript">
-            var currentPlayerId = <?= Yii::$app->session->get('playerId') ?? 'null' ?>;
-            PlayerSelector.initializeFromDOM();
-            LayoutInitializer.initNavbarLobby();
-
-            if (DOMUtils.exists('#hiddenAjaxParams')) {
-                LayoutInitializer.initAjaxPage();
-            }
-
-            if (DOMUtils.exists('#playerBuilder-create')) {
-                PlayerBuilder.initCreatePage();
-            }
-
-            if (DOMUtils.exists('#playerBuilder-update')) {
-                PlayerBuilder.initUpdatePage();
-
-    <?php
-    $player = Yii::$app->session->get('currentPlayer');
-    ?>
-                PlayerBuilder.initDescriptionTab('<?= $player->gender ?>', <?= $player->alignment_id ?? 'null' ?>, <?= $player->age ?? 0 ?>);
-                PlayerBuilder.initAbilitiesTab();
-                PlayerBuilder.initAvatarTab();
-                PlayerBuilder.initSkillsTab();
-            }
-        </script>
-    <?php endif; ?>
-
 </html>
 <?php $this->endPage() ?>

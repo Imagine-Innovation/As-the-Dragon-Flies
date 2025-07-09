@@ -31,8 +31,6 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
                     <i class="bi bi-floppy"></i>
                 </span>
             </a>
-            <a href="#" class="invisible" id="showEquipmentModal-hiddenButton" data-bs-toggle="modal" data-bs-target="#builderEquipmentModal"></a>
-            <a href="#" class="invisible" id="showValidateModal-hiddenButton" data-bs-toggle="modal" data-bs-target="#validateModal"></a>
         </div>
         <h6 class="card-subtitle">
             You've chosen to be a <?= $model->race->name ?> <?= $model->class->name ?> with a <?= $model->background->name ?> background, now you just need to fine-tune your characteristics before embarking on new adventures.
@@ -125,7 +123,6 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
                 <button type="button" class="btn btn-theme btn--icon" id="exitEquipmentModal-button">
                     <i class="bi bi-check"></i>
                 </button>
-                <button type="button" class="invisible" id="closeEquipmentModal-hiddenButton" data-bs-dismiss="modal"></button>
             </div>
         </div>
     </div>

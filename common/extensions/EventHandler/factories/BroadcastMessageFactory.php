@@ -4,6 +4,7 @@ namespace common\extensions\EventHandler\factories;
 
 use common\extensions\EventHandler\dtos\ChatMessageDto;
 use common\extensions\EventHandler\dtos\PlayerJoinedDto;
+use common\extensions\EventHandler\dtos\PlayerLeftDto;
 use common\extensions\EventHandler\dtos\QuestCanStartDto;
 use common\extensions\EventHandler\dtos\GameActionDto;
 use common\extensions\EventHandler\dtos\NotificationDto;
@@ -18,6 +19,10 @@ class BroadcastMessageFactory {
 
     public function createPlayerJoinedMessage(string $playerName, string $sessionId, string $questName): PlayerJoinedDto {
         return new PlayerJoinedDto($playerName, $sessionId, $questName);
+    }
+
+    public function createPlayerLeftMessage(string $playerName, string $sessionId, string $questName): PlayerJoinedDto {
+        return new PlayerLeftDto($playerName, $sessionId, $questName);
     }
 
     public function createQuestCanStartMessage(string $sessionId, string $questName): QuestCanStartDto {
@@ -58,6 +63,12 @@ class BroadcastMessageFactory {
             case 'player_joined':
                 if (isset($payload['playerName'], $payload['sessionId'], $payload['questName'])) {
                     return new PlayerJoinedDto($payload['playerName'], $payload['sessionId'], $payload['questName']);
+                }
+                // Consider adding an else or logging if payload is incomplete for this type
+                break;
+            case 'player_left':
+                if (isset($payload['playerName'], $payload['sessionId'], $payload['questName'])) {
+                    return new PlayerLeftDto($payload['playerName'], $payload['sessionId'], $payload['questName']);
                 }
                 // Consider adding an else or logging if payload is incomplete for this type
                 break;

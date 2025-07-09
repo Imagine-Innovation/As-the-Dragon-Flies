@@ -1,6 +1,6 @@
 <?php
 
-namespace common\extensions\EventHandler;
+namespace common\extensions\EventHandler\handlers;
 
 use common\extensions\EventHandler\contracts\BroadcastServiceInterface;
 use common\extensions\EventHandler\contracts\SpecificMessageHandlerInterface;
@@ -8,7 +8,7 @@ use common\extensions\EventHandler\factories\BroadcastMessageFactory;
 use common\extensions\EventHandler\LoggerService;
 use Ratchet\ConnectionInterface;
 
-class QuestCanStartHandler implements SpecificMessageHandlerInterface {
+class PlayerJoiningHandler implements SpecificMessageHandlerInterface {
 
     private LoggerService $logger;
     private BroadcastServiceInterface $broadcastService;
@@ -28,25 +28,28 @@ class QuestCanStartHandler implements SpecificMessageHandlerInterface {
      * Handles player_joining messages.
      */
     public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
-        $this->logger->logStart("QuestCanStartHandler: handle for session {$sessionId}, client {$clientId}", $data);
+        $this->logger->logStart("PlayerJoiningHandler: handle for session {$sessionId}, client {$clientId}", $data);
 
         $payload = $data['payload'];
+        $playerName = (string) $payload['playerName'] ?? 'Unknown';
         $questId = (int) $payload['questId'] ?? null;
         $questName = (string) $payload['questName'] ?? 'Unknown';
 
         if ($questId === null || $questId === '' || $questName === 'Unknown') {
-            $this->logger->log("QuestCanStartHandler: Missing questId, or questName in data['payload'].", $data, 'warning');
+            $this->logger->log("PlayerJoiningHandler: Missing questId, or questName in data['payload'].", $data, 'warning');
             $errorDto = $this->messageFactory->createErrorMessage("Invalid player join announcement: questId, or questName missing within payload.");
             $this->broadcastService->sendToClient($clientId, $errorDto, false, $sessionId);
-            $this->logger->logEnd("QuestCanStartHandler: handle");
+            $this->logger->logEnd("PlayerJoiningHandler: handle");
             return;
         }
 
-        $questCanStartDto = $this->messageFactory->createQuestCanStartMessage($sessionId, $questName);
-        $this->broadcastService->broadcastToQuest($questId, $questCanStartDto, $sessionId);
+        $playerJoinedDto = $this->messageFactory->createPlayerJoinedMessage($playerName, $sessionId, $questName);
+        $this->broadcastService->broadcastToQuest($questId, $playerJoinedDto, $sessionId);
 
-        $this->broadcastService->sendBack($from, 'ack', ['type' => 'quest_can_start', 'questId' => $questId, 'questName' => $questName]);
+        $this->broadcastService->recoverMessageHistory($sessionId);
 
-        $this->logger->logEnd("QuestCanStartHandler: handle");
+        $this->broadcastService->sendBack($from, 'ack', ['type' => 'player_joining_processed', 'playerName' => $playerName, 'questId' => $questId, 'questName' => $questName]);
+
+        $this->logger->logEnd("PlayerJoiningHandler: handle");
     }
 }

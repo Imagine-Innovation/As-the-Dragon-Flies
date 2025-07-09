@@ -2,9 +2,8 @@
 
 namespace common\extensions\EventHandler;
 
-use common\models\QuestSession; // Added for logQuestSession
-
 class LoggerService {
+
     private string $logFilePath;
     private bool $debug;
     private int $nestedLevel = 0;
@@ -25,7 +24,7 @@ class LoggerService {
             error_log("Unable to open log file: {$this->logFilePath}");
             return;
         }
-        
+
         $offset = str_repeat("    ", max($this->nestedLevel, 0));
         $date = date('Y-m-d H:i:s');
         $txt = "{$date} {$level}: {$this->nestedLevel}.{$offset}{$message}\n";

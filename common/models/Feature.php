@@ -13,7 +13,9 @@ use Yii;
  *
  * @property ClassFeature[] $classFeatures
  */
-class Feature extends \yii\db\ActiveRecord {
+class Feature extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -27,6 +29,7 @@ class Feature extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['description'], 'default', 'value' => null],
             [['name'], 'required'],
             [['description'], 'string'],
             [['name'], 'string', 'max' => 32],
@@ -53,4 +56,5 @@ class Feature extends \yii\db\ActiveRecord {
     public function getClassFeatures() {
         return $this->hasMany(ClassFeature::class, ['feature_id' => 'id']);
     }
+
 }

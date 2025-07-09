@@ -32,18 +32,55 @@ class NotificationClient {
             chatInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
                     e.preventDefault();
-                    this.sendChatMessage(chatInput.value);
+                    this.sendChatMessage(chatInput);
                 }
             });
         }
+
         // Set up send chat button
-        const sendChatBtn = document.getElementById('send-message');
+        const sendChatBtn = document.getElementById('sendChatMessageButton');
         if (sendChatBtn) {
             sendChatBtn.addEventListener('click', () => {
-                const chatInput = document.getElementById(this.chatInput);
                 if (chatInput) {
-                    this.sendChatMessage(chatInput.value);
+                    console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+                    this.sendChatMessage(chatInput);
                 }
+            });
+        }
+
+        const leaveTavernBtn = document.getElementById('leaveTavernButton');
+        if (leaveTavernBtn) {
+            leaveTavernBtn.addEventListener('click', () => {
+                console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+                this.send({
+                    type: 'player_leaving',
+                    message: `${this.playerName} has decided not to take part in the quest`
+                });
+            });
+        }
+
+        // Set up leave quest button
+        const leaveTavernBtnxx = document.getElementById('leaveTavernButton-xxxxxxxxxxxxx');
+        if (leaveTavernBtnxx) {
+            leaveTavernBtnxx.addEventListener('click', () => {
+                console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+                /*
+                 Logger.log(2, 'init', `Received leaveTavernBtn click event`);
+                 const reason = `${this.playerName} has decided not to take part in the quest`;
+                 
+                 AjaxUtils.request({
+                 url: 'quest/ajax-leave-quest',
+                 data: {sessionId: this.sessionId, reason: reason},
+                 successCallback: (response) => {
+                 Logger.log(2, 'init', `leaveQuest ${JSON.stringify(response)}`);
+                 if (response.success) {
+                 // this.send({type: 'quest_can_start', payload: response});
+                 this.sendWithPayload('player_leaving', reason);
+                 }
+                 }
+                 });
+                 */
+                this.leaveTavern();
             });
         }
 
@@ -131,6 +168,24 @@ class NotificationClient {
                 console.warn('Received new_player_joined event with incomplete payload:', data);
             }
         });
+
+        this.on('player_left', (data) => {
+            Logger.log(2, 'setupDefaultHandlers', 'Received new_player_left event:', data);
+            if (data.payload && data.payload.playerName && data.payload.questName) {
+                // Construct the message from the payload
+                const message = `Player ${data.payload.playerName} has left the quest`;
+
+                let config = {
+                    route: 'quest/ajax-tavern',
+                    method: 'GET',
+                    placeholder: 'questTavernPlayersContainer',
+                    badge: false
+                };
+                this.executeRequest(config, data);
+            } else {
+                console.warn('Received new_player_left event with incomplete payload:', data);
+            }
+        });
     }
 
     /**
@@ -158,21 +213,24 @@ class NotificationClient {
 
             this.triggerEvent('open');
 
-            const joinedAt = new Date();
-            const roundedTime = Math.floor(joinedAt / 60) * 60;
-            this.send({
-                type: 'announce_player_join',
-                payload: {
-                    playerId: this.playerId,
-                    playerName: this.playerName,
-                    avatar: this.avatar,
-                    questId: this.questId,
-                    questName: this.questName,
-                    roundedTime: roundedTime,
-                    timestamp: joinedAt.toLocaleString(),
-                    joinedAt: joinedAt.toLocaleString()
-                }
-            });
+            /*
+             const joinedAt = new Date();
+             const roundedTime = Math.floor(joinedAt / 60) * 60;
+             this.send({
+             type: 'player_joining',
+             payload: {
+             playerId: this.playerId,
+             playerName: this.playerName,
+             avatar: this.avatar,
+             questId: this.questId,
+             questName: this.questName,
+             roundedTime: roundedTime,
+             timestamp: joinedAt.toLocaleString(),
+             joinedAt: joinedAt.toLocaleString()
+             }
+             });
+             */
+            this.sendWithPayload('player_joining', `${this.playerName} is joining the quest`);
 
             AjaxUtils.request({
                 url: 'quest/ajax-can-start',
@@ -219,14 +277,14 @@ class NotificationClient {
     /**
      * Send a message to the server
      * 
-     * @param {string} message
+     * @param {string} messageArray
      * @returns {void}
      */
-    send(message) {
-        Logger.log(1, 'send', `send message=${message}, sessionId=${this.sessionId}, playerId=${this.playerId}, questId=${this.questId}`);
+    send(messageArray) {
+        Logger.log(1, 'send', `send messageArray=${messageArray}, sessionId=${this.sessionId}, playerId=${this.playerId}, questId=${this.questId}`);
         // Ensure all messages include the session ID, player ID, and quest ID
         const completeMessage = {
-            ...message,
+            ...messageArray,
             sessionId: this.sessionId,
             playerId: this.playerId,
             questId: this.questId,
@@ -242,6 +300,25 @@ class NotificationClient {
             // Queue the message to be sent when connection is established
             this.messageQueue.push(completeMessage);
         }
+    }
+
+    sendWithPayload(type, textMessage) {
+        const joinedAt = new Date();
+        const roundedTime = Math.floor(joinedAt / 60) * 60;
+        this.send({
+            type: type,
+            message: textMessage,
+            payload: {
+                playerId: this.playerId,
+                playerName: this.playerName,
+                avatar: this.avatar,
+                questId: this.questId,
+                questName: this.questName,
+                roundedTime: roundedTime,
+                timestamp: joinedAt.toLocaleString(),
+                joinedAt: joinedAt.toLocaleString()
+            }
+        });
     }
 
     /**
@@ -296,13 +373,13 @@ class NotificationClient {
         let severity = '';
         switch (status) {
             case 'Connected':
-                severity='info';
+                severity = 'info';
                 break;
             case 'Error':
-                severity='error';
+                severity = 'error';
                 break;
             default:
-                severity='warning';
+                severity = 'warning';
         }
         ToastManager.show('Connection status', status, severity);
     }
@@ -323,10 +400,11 @@ class NotificationClient {
     /**
      * Send a chat message
      * 
-     * @param {string} message
+     * @param {control} chatInput
      * @returns {void}
      */
-    sendChatMessage(message) {
+    sendChatMessage(chatInput) {
+        const message = chatInput.value;
         if (!message.trim())
             return;
 
@@ -336,10 +414,25 @@ class NotificationClient {
         });
 
         // Clear the input field
-        const chatInput = document.getElementById(this.chatInput);
         if (chatInput) {
             chatInput.value = '';
         }
+    }
+
+    leaveTavern() {
+        Logger.log(1, 'leaveTavern', `Received leaveTavernButton click event`);
+        const reason = `${this.playerName} has decided not to take part in the quest`;
+        AjaxUtils.request({
+            url: 'quest/ajax-leave-quest',
+            data: {sessionId: this.sessionId, reason: reason},
+            successCallback: (response) => {
+                Logger.log(2, 'leaveTavern', `leaveTavern ${JSON.stringify(response)}`);
+                if (response.success) {
+                    // this.send({type: 'quest_can_start', payload: response});
+                    this.sendWithPayload('player_leaving', reason);
+                }
+            }
+        });
     }
 
     /**

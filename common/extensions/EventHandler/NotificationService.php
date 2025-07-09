@@ -231,7 +231,7 @@ class NotificationService {
 
     /**
      * Recovers message history for a specific session.
-     * This method might be called by RegistrationHandler or AnnouncePlayerJoinHandler after a player connects/reconnects.
+     * This method might be called by RegistrationHandler or PlayerJoiningHandler after a player connects/reconnects.
      * It would typically involve fetching relevant notifications (e.g., recent chat messages for the quest)
      * and then using something like BroadcastService to send them to the specific client associated with the session.
      *

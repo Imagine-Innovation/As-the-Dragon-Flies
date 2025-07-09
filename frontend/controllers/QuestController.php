@@ -310,42 +310,6 @@ class QuestController extends Controller {
         ];
     }
 
-    public function actionLeaveQuest() {
-
-        $player = Yii::$app->session->get('currentPlayer');
-        if (!$player) {
-            return ['success' => false, 'message' => 'Player not found'];
-        }
-
-        $quest = Yii::$app->session->get('currentQuest');
-
-        if (!$quest) {
-            return ['success' => false, 'message' => 'Quest not found'];
-        }
-
-        // Update quest_player record
-        $questPlayer = QuestPlayer::findOne(['quest_id' => $quest->id, 'player_id' => $player->id]);
-        if ($questPlayer) {
-            $questPlayer->left_at = time();
-            $questPlayer->reason = 'left_voluntarily';
-            $questPlayer->save();
-        }
-
-        // Remove player from quest
-        $player->quest_id = null;
-        $player->save();
-
-        // Create a leave event (we could create a specific LeaveQuestEvent class)
-        $sessionId = Yii::$app->request->post('sessionId');
-        $event = EventFactory::createEvent('game-action', $sessionId, $player, $quest, [
-            'action' => 'leave-quest',
-            'actionData' => ['reason' => 'left_voluntarily']
-        ]);
-        $event->process();
-
-        return $this->redirect(['quest/index']);
-    }
-
     public function actionAjaxStart() {
         // Set JSON response format
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -471,7 +435,7 @@ class QuestController extends Controller {
         }
 
         // Process player onboarding
-        if (QuestOnboarding::addPlayerToQuest($player, $tavern)) {
+        if (!QuestOnboarding::addPlayerToQuest($player, $tavern)) {
             return UserErrorMessage::throw($this, 'error', 'Unable to onboard player ' . $player->name . ' to the quest', self::DEFAULT_REDIRECT);
         }
 
@@ -481,6 +445,36 @@ class QuestController extends Controller {
         Yii::$app->session->set('inQuest', true);
 
         return $this->render('tavern', ['model' => $tavern]);
+    }
+
+    public function actionAjaxLeaveQuest() {
+        // Configure response format
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        // Validate request type
+        if (!$this->request->isPost || !$this->request->isAjax) {
+            return ['canStart' => false, 'msg' => 'Not an Ajax POST request'];
+        }
+
+        $player = Yii::$app->session->get('currentPlayer');
+        if (!$player) {
+            return ['success' => false, 'message' => 'Player not found'];
+        }
+
+        $quest = Yii::$app->session->get('currentQuest');
+        if (!$quest) {
+            return ['success' => false, 'message' => 'Quest not found'];
+        }
+
+        $reason = Yii::$app->request->post('reason');
+        // Process player onboarding
+        if (!QuestOnboarding::withdrawPlayer($player, $quest, $reason)) {
+            return ['success' => false, 'message' => "Unable to withdraw player {$player->name} to the quest"];
+        }
+        Yii::$app->session->set('currentQuest', null);
+        Yii::$app->session->set('questId', null);
+        Yii::$app->session->set('inQuest', false);
+        return ['success' => true, 'message' => "Player {$player->name} successfully withdrown from quest {$quest->story->name}"];
     }
 
     /**

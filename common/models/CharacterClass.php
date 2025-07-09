@@ -27,7 +27,6 @@ namespace common\models;
  * @property ClassSkill[] $classSkills
  * @property ClassSpell[] $classSpells
  * @property Image[] $images
- * @property Item[] $items
  * @property Player[] $players
  * @property Skill[] $skills
  * @property Spell[] $spells
@@ -90,7 +89,16 @@ class CharacterClass extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getAbilities() {
-        return $this->hasMany(Ability::class, ['id' => 'ability_id'])->via('classAbilities');
+        return $this->hasMany(Ability::class, ['id' => 'ability_id'])->viaTable('class_ability', ['class_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[AbilityDefaults]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getAbilityDefaults() {
+        return $this->hasMany(AbilityDefault::class, ['class_id' => 'id']);
     }
 
     /**
@@ -171,16 +179,7 @@ class CharacterClass extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getImages() {
-        return $this->hasMany(Image::class, ['id' => 'image_id'])->via('classImages');
-    }
-
-    /**
-     * Gets query for [[Items]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getItems() {
-        return $this->hasMany(Item::class, ['id' => 'item_id'])->via('classItems');
+        return $this->hasMany(Image::class, ['id' => 'image_id'])->viaTable('class_image', ['class_id' => 'id']);
     }
 
     /**
@@ -198,7 +197,7 @@ class CharacterClass extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getSkills() {
-        return $this->hasMany(Skill::class, ['id' => 'skill_id'])->via('classSkills');
+        return $this->hasMany(Skill::class, ['id' => 'skill_id'])->viaTable('class_skill', ['class_id' => 'id']);
     }
 
     /**
@@ -207,7 +206,7 @@ class CharacterClass extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getSpells() {
-        return $this->hasMany(Spell::class, ['id' => 'spell_id'])->via('classSpells');
+        return $this->hasMany(Spell::class, ['id' => 'spell_id'])->viaTable('class_spell', ['class_id' => 'id']);
     }
 
     /**
@@ -216,7 +215,7 @@ class CharacterClass extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getStories() {
-        return $this->hasMany(Story::class, ['id' => 'story_id'])->via('storyClasses');
+        return $this->hasMany(Story::class, ['id' => 'story_id'])->viaTable('story_class', ['class_id' => 'id']);
     }
 
     /**

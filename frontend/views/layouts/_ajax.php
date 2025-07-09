@@ -10,7 +10,7 @@ $limit = $limit ?? 10;
 $initId = $initId ?? "";
 $functionCall = $functionCall ?? null;
 ?>
-<div class="d-none" id="hiddenAjaxParams">
+<div class="d-none" id="ajaxHiddenParams">
     <span id="limit"><?= $limit ?></span>
     <span id="route"><?= $route ?></span>
     <span id="container"><?= $initTab ? "ajax-" . $initTab : "" ?></span>

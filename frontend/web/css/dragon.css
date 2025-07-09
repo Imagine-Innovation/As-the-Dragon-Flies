@@ -1954,7 +1954,7 @@ a.badge-dark.focus,a.badge-dark:focus {
     padding-left:0;
     border-radius:0;
 }
-
+/*
 @-webkit-keyframes progress-bar-stripes {
     from {
         background-position:3px 0;
@@ -2025,7 +2025,7 @@ a.badge-dark.focus,a.badge-dark:focus {
         animation:none;
     }
 }
-
+*/
 .media {
     display:-webkit-box;
     display:-ms-flexbox;
@@ -3622,7 +3622,7 @@ a.text-dark:focus,a.text-dark:hover {
 .dropdown-menu--invert .dropdown-item:hover {
     background-color: var(--dark-10);
 }
-
+/*
 .progress {
     border-radius:0;
     height:3px;
@@ -3631,7 +3631,7 @@ a.text-dark:focus,a.text-dark:hover {
 .progress-bar {
     height:100%;
 }
-
+*/
 .card {
     margin-bottom:2.3rem;
     -webkit-box-shadow:0 1px 5px  var(--dark-10);
