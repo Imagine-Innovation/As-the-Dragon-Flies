@@ -20,8 +20,6 @@ $firstTab = array_key_first($tabs);
 
 $isAdmin = (Yii::$app->user->identity->is_admin === 1);
 ?>
-<script src="js/atdf-chart-drawer.js"></script>
-
 <div class="card" id="playerBuilder-update">
     <div class="card-body">
         <h4 class="card-title text-decoration"><?= Html::encode($this->title) ?></h4>

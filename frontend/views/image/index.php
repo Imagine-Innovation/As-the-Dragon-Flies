@@ -15,7 +15,6 @@ $initId = $raceGroups[0]['id'];
 
 $categories = ['Misc', 'Image', 'Item', 'Monster'];
 ?>
-<script src="js/atdf-image-manager.js"></script>
 <h3><?= Html::encode($this->title) ?></h3>
 <div class="card">
     <div class="card-body">

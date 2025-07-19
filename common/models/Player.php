@@ -58,7 +58,6 @@ use Yii;
  * @property PlayerSpell[] $playerSpells
  * @property PlayerTrait[] $playerTraits
  * @property Quest $quest
- * @property QuestChat[] $questChats
  * @property QuestPlayer[] $questPlayers
  * @property QuestSession[] $questSessions
  * @property Quest[] $quests
@@ -365,15 +364,6 @@ class Player extends \yii\db\ActiveRecord {
      */
     public function getQuest() {
         return $this->hasOne(Quest::class, ['id' => 'quest_id']);
-    }
-
-    /**
-     * Gets query for [[QuestChats]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getQuestChats() {
-        return $this->hasMany(QuestChat::class, ['player_id' => 'id']);
     }
 
     /**

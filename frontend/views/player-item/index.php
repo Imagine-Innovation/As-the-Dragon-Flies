@@ -19,8 +19,6 @@ $playerItems = $inventory->loadItemsData($models);
 $itemTypes = $inventory->getItemTypes($models);
 $firstType = $itemTypes[0] ?? "";
 ?>
-<script src="js/atdf-item-manager.js"></script>
-
 <div class="container g-0 p-0">
     <div class="card">
         <div class="card-body">
@@ -38,21 +36,21 @@ $firstType = $itemTypes[0] ?? "";
                 </a>
             </div>
 
-<?php if ($itemTypes): ?>
+            <?php if ($itemTypes): ?>
                 <div class="tab-container">
                     <ul class="nav nav-tabs" role="tablist">
-    <?php foreach ($itemTypes as $itemType): ?>
+                        <?php foreach ($itemTypes as $itemType): ?>
                             <li class="nav-item">
                                 <a class="nav-link<?= $itemType == $firstType ? " active" : "" ?>"
                                    data-bs-toggle="tab" href="#tab-<?= $itemType ?>" role="tab" href="#">
-        <?= $itemType ?>
+                                       <?= $itemType ?>
                                 </a>
                             </li>
-    <?php endforeach; ?>
+                        <?php endforeach; ?>
                     </ul>
 
                     <div class="tab-content">
-    <?php foreach ($itemTypes as $itemType): ?>
+                        <?php foreach ($itemTypes as $itemType): ?>
                             <div class="tab-pane <?= $itemType == $firstType ? "active fade show" : "fade" ?>"
                                  id="tab-<?= $itemType ?>" role="tabpanel">
                                      <?=
@@ -62,12 +60,12 @@ $firstType = $itemTypes[0] ?? "";
                                      ]);
                                      ?>
                             </div>
-    <?php endforeach; ?>
+                        <?php endforeach; ?>
                     </div>
                 </div>
             <?php else: ?>
                 <h5>Player <?= $currentPlayer->name ?> doesn't own anything yet</h5>
-<?php endif; ?>
+            <?php endif; ?>
         </div>
     </div>
 </div>

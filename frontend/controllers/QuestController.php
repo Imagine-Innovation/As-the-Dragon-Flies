@@ -20,12 +20,12 @@ namespace frontend\controllers;
  */
 use common\components\AppStatus;
 use common\models\Quest;
+use common\models\Player;
 use common\models\Story;
 use common\components\ManageAccessRights;
 use common\helpers\UserErrorMessage;
 use frontend\components\AjaxRequest;
 use frontend\components\QuestMessages;
-use frontend\components\QuestNotification;
 use frontend\components\QuestOnboarding;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -62,8 +62,8 @@ class QuestController extends Controller {
                                 'actions' => [
                                     'index', 'update', 'delete', 'create', 'view',
                                     'join-quest', 'resume', 'get-messages', 'leave-quest',
-                                    'ajax-tavern', 'ajax-tavern-counter',
-                                    'ajax-new-message', 'ajax-get-messages', 'ajax-send-message',
+                                    'ajax-tavern', 'ajax-welcome-messages', 'ajax-missing-classes',
+                                    'ajax-get-messages', 'ajax-send-message',
                                     'ajax-start', 'ajax-can-start', 'ajax-leave-quest'
                                 ],
                                 'allow' => ManageAccessRights::isRouteAllowed($this),
@@ -182,7 +182,35 @@ class QuestController extends Controller {
      *   - msg: status message (empty on success)
      *   - content: HTML content with welcome message
      */
-    public function actionAjaxTavernCounter() {
+    public function actionAjaxWelcomeMessages() {
+        // Configure response as JSON format
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        // Validate request type and method
+        if (!$this->request->isGet || !$this->request->isAjax) {
+            return ['error' => true, 'msg' => 'Not an Ajax GET request'];
+        }
+
+        // Get current quest information from context
+        $quest = Yii::$app->session->get('currentQuest');
+
+        $playerCount = Player::find()
+                ->where(['quest_id' => $quest->id])
+                ->count();
+
+        $welcomeMessage = QuestOnboarding::welcomeMessage($playerCount);
+        $missingPlayers = QuestOnboarding::missingPlayers($quest, $playerCount);
+        $missingClasses = QuestOnboarding::missingClasses($quest);
+
+        // Return success response with welcome message
+        return ['error' => false, 'msg' => '',
+            'welcomeMessage' => $welcomeMessage,
+            'missingPlayers' => $missingPlayers,
+            'missingClasses' => $missingClasses
+        ];
+    }
+
+    public function actionAjaxMissingClasses() {
         // Configure response as JSON format
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -192,50 +220,14 @@ class QuestController extends Controller {
         }
 
         // Get current user context and quest information
-        $user = Yii::$app->user->identity;
-        $player = $user->currentPlayer;
-        $questId = $player->quest_id;
+        $quest = Yii::$app->session->get('currentQuest');
 
         // Generate welcome message for current quest
-        $wellcomeMessage = QuestOnboarding::wellcomeMessage($questId);
+        $missingClasses = QuestOnboarding::missingClasses($quest);
 
         // Return success response with welcome message
-        return ['error' => false, 'msg' => '', 'content' => $wellcomeMessage];
-    }
-
-    /**
-     * Processes new chat messages in the tavern
-     *
-     * Handles message creation, persistence, and notification dispatch.
-     * Supports real-time chat functionality.
-     *
-     * @return array JSON response containing:
-     *   - error: boolean indicating operation success
-     *   - msg: status message
-     *   - content: rendered chat messages HTML
-     */
-    public function actionAjaxNewMessage() {
-        // Set JSON response format
-        Yii::$app->response->format = Response::FORMAT_JSON;
-
-        // Validate request method and type
-        if (!$this->request->isPost || !$this->request->isAjax) {
-            return ['error' => true, 'msg' => 'Not an Ajax POST request'];
-        }
-
-        // Extract message data from request
-        $request = Yii::$app->request;
-        //$ts = $request->post('ts');
-        $playerId = $request->post('playerId');
-        $questId = $request->post('questId');
-
-        // Dispatch notification
-        QuestNotification::push('new-message', $questId, $playerId, 'Sent a message');
-
-        //return ['error' => false, 'msg' => 'New message is saved', 'content' => $content];
-        return ['error' => false, 'msg' => 'New message is saved', 'content' => ''];
-        //}
-        //return ['error' => true, 'msg' => 'Could not create a new message'];
+        $content = $missingClasses ? "We still need a {$missingClasses} to meet all the conditions." : null;
+        return ['error' => false, 'msg' => '', 'content' => $content];
     }
 
     public function actionAjaxSendMessage() {
@@ -429,13 +421,17 @@ class QuestController extends Controller {
         // Validate player eligibility
         $canJoin = QuestOnboarding::canPlayerJoinQuest($player, $tavern);
         if ($canJoin['denied']) {
+            Yii::debug("QuestOnboarding::canPlayerJoinQuest");
+            Yii::debug($canJoin);
             return UserErrorMessage::throw($this, 'error', $canJoin['reason'], self::DEFAULT_REDIRECT);
         }
 
         // Process player onboarding
         $onboarded = QuestOnboarding::addPlayerToQuest($player, $tavern);
-        if ($onboarded['denied']) {
-            return UserErrorMessage::throw($this, 'error', $onboarded['reason'], self::DEFAULT_REDIRECT);
+        if ($onboarded['error']) {
+            Yii::debug("QuestOnboarding::addPlayerToQuest");
+            Yii::debug($onboarded);
+            return UserErrorMessage::throw($this, 'error', $onboarded['message'], self::DEFAULT_REDIRECT);
         }
 
         // Set session variables for quest context
@@ -466,9 +462,10 @@ class QuestController extends Controller {
         }
 
         $reason = Yii::$app->request->post('reason');
-        // Process player onboarding
-        if (!QuestOnboarding::withdrawPlayer($player, $quest, $reason)) {
-            return ['success' => false, 'message' => "Unable to withdraw player {$player->name} to the quest"];
+        // Process player offboarding
+        $withdraw = QuestOnboarding::withdrawPlayerFromQuest($player, $quest, $reason);
+        if ($withdraw['error']) {
+            return ['success' => false, 'message' => $withdraw['message']];
         }
         Yii::$app->session->set('currentQuest', null);
         Yii::$app->session->set('questId', null);

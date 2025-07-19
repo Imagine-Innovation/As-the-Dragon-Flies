@@ -6,7 +6,68 @@ $params = array_merge(
         require __DIR__ . '/params.php',
         require __DIR__ . '/params-local.php'
 );
-
+$offline = true;
+if ($offline) {
+    $assetManager = [
+        'bundles' => [
+            'yii\\bootstrap5\\BootstrapAsset' => [
+                'sourcePath' => null, // do not publish the bundle from default path
+                'css' => [
+                    '/frontend/web/offline/css/bootstrap.min.css',
+                    '/frontend/web/offline/css/bootstrap-icons.min.css',
+                    '/frontend/web/offline/css/all.min.css',
+                ],
+                'js' => [
+                    '/frontend/web/offline/js/bootstrap.bundle.min.js',
+                    '/frontend/web/offline/js/all.min.js'
+                ],
+            ],
+            'yii\\web\\JqueryAsset' => [
+                'sourcePath' => null, // do not publish the bundle from default path
+                'js' => [
+                    '/frontend/web/offline/js/jquery.min.js',
+                ]
+            ],
+        ],
+    ];
+} else {
+    $assetManager = [
+        'bundles' => [
+            'yii\\bootstrap5\\BootstrapAsset' => [
+                'sourcePath' => null, // do not publish the bundle from default path
+                'css' => [
+                    'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.7/css/bootstrap.min.css',
+                    'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.1/font/bootstrap-icons.min.css',
+                    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css',
+                ],
+                'js' => [
+                    'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.7/js/bootstrap.bundle.min.js',
+                    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/js/all.min.js'
+                ],
+            // Optional: Add integrity and crossorigin attributes if needed
+            // 'cssOptions' => [
+            //    'integrity' => 'sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN',
+            //    'crossorigin' => 'anonymous',
+            // ],
+            // 'jsOptions' => [
+            //    'integrity' => 'sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL',
+            //    'crossorigin' => 'anonymous',
+            // ],
+            ],
+            'yii\\web\\JqueryAsset' => [
+                'sourcePath' => null, // do not publish the bundle from default path
+                'js' => [
+                    'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js',
+                ]
+            // Optional: Add integrity and crossorigin attributes if needed
+            // 'jsOptions' => [
+            //    'integrity' => 'sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=',
+            //    'crossorigin' => 'anonymous',
+            // ],
+            ],
+        ],
+    ];
+}
 return [
     'id' => 'app-frontend',
     'name' => 'As the Dragon Flies',
@@ -77,42 +138,7 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        'assetManager' => [
-            'bundles' => [
-                'yii\\bootstrap5\\BootstrapAsset' => [
-                    'sourcePath' => null, // do not publish the bundle from default path
-                    'css' => [
-                        'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.7/css/bootstrap.min.css',
-                        'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.1/font/bootstrap-icons.min.css',
-                        'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css',
-                    ],
-                    'js' => [
-                        'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.7/js/bootstrap.bundle.min.js',
-                        'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/js/all.min.js'
-                    ],
-                // Optional: Add integrity and crossorigin attributes if needed
-                // 'cssOptions' => [
-                //    'integrity' => 'sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN',
-                //    'crossorigin' => 'anonymous',
-                // ],
-                // 'jsOptions' => [
-                //    'integrity' => 'sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL',
-                //    'crossorigin' => 'anonymous',
-                // ],
-                ],
-                'yii\\web\\JqueryAsset' => [
-                    'sourcePath' => null, // do not publish the bundle from default path
-                    'js' => [
-                        'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js',
-                    ]
-                // Optional: Add integrity and crossorigin attributes if needed
-                // 'jsOptions' => [
-                //    'integrity' => 'sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=',
-                //    'crossorigin' => 'anonymous',
-                // ],
-                ],
-            ],
-        ],
+        'assetManager' => $assetManager,
     /*
       'urlManager' => [
       'enablePrettyUrl' => true,

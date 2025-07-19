@@ -162,6 +162,8 @@ class NotificationClient {
                 };
                 this.executeRequest(config, data);
                 ToastManager.show('Event Handler', message, 'info');
+                this.checkIfQuestCanStart();
+                this.updateWelcomeMessages();
             } else {
                 console.warn('Received new_player_joined event with incomplete payload:', data);
             }
@@ -181,8 +183,10 @@ class NotificationClient {
                 };
                 this.executeRequest(config, data);
                 ToastManager.show('Event Handler', message, 'info');
+                this.checkIfQuestCanStart();
+                this.updateWelcomeMessages();
             } else {
-                console.warn('Received new_player_left event with incomplete payload:', data);
+                console.warn('Received player_left event with incomplete payload:', data);
             }
         });
     }
@@ -213,18 +217,8 @@ class NotificationClient {
 
             this.triggerEvent('open');
             this.sendWithPayload('player_joining', `${this.playerName} is joining the quest`);
-
-            AjaxUtils.request({
-                url: 'quest/ajax-can-start',
-                data: {sessionId: this.sessionId},
-                successCallback: (response) => {
-                    Logger.log(2, 'connect', `Can start? ${JSON.stringify(response)}`);
-                    if (response.canStart) {
-                        this.send({type: 'quest_can_start', payload: response});
-                    }
-                }
-            });
-
+            this.checkIfQuestCanStart();
+            this.updateWelcomeMessages();
         };
 
         this.socket.onmessage = (event) => {
@@ -254,6 +248,49 @@ class NotificationClient {
             console.error('WebSocket error:', error);
             this.triggerEvent('error', error);
         };
+    }
+
+    checkIfQuestCanStart() {
+        Logger.log(2, 'checkIfQuestCanStart', ``);
+        AjaxUtils.request({
+            url: 'quest/ajax-can-start',
+            data: {sessionId: this.sessionId},
+            successCallback: (response) => {
+                Logger.log(3, 'checkIfQuestCanStart', `Can start? ${JSON.stringify(response)}`);
+                if (response.canStart) {
+                    this.send({type: 'quest_can_start', payload: response});
+                }
+            }
+        });
+    }
+
+    updateWelcomeMessages() {
+        Logger.log(2, 'updateWelcomeMessages', ``);
+        let target = `#tavernWelcomeMessage`;
+        if (!DOMUtils.exists(target))
+            return;
+
+        AjaxUtils.request({
+            url: 'quest/ajax-welcome-messages',
+            method: 'GET',
+            successCallback: (response) => {
+                console.log('Callback', response);
+                if (!response.error) {
+                    target = `#tavernWelcomeMessage`;
+                    if (DOMUtils.exists(target))
+                        $(target).html(response.welcomeMessage);
+                    
+                    target = `#tavernMissingPlayers`;
+                    if (DOMUtils.exists(target))
+                        $(target).html(response.missingPlayers);
+                    
+                    target = `#tavernMissingClasses`;
+                    if (DOMUtils.exists(target))
+                        $(target).html(response.missingClasses);
+                }
+            }
+        });
+
     }
 
     /**
@@ -456,7 +493,6 @@ class NotificationClient {
             questId: this.questId
         };
 
-        console.log('Before Ajax');
         AjaxUtils.request({
             url: config.route,
             method: config.method,
@@ -468,8 +504,6 @@ class NotificationClient {
                 }
             }
         });
-        console.log('After Ajax');
-        return true;
     }
 
     /**

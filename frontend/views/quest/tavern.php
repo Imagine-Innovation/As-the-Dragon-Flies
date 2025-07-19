@@ -17,112 +17,6 @@ $this->params['breadcrumbs'][] = ['label' => 'Quests', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $questName;
 $messages = QuestMessages::getLastMessages($model->id, $playerId);
 ?>
-<style>
-    /* Chat Panel Height Management */
-    .chat-container {
-        height: calc(100vh - 200px); /* Adjust 200px based on your header/footer height */
-        display: flex;
-        flex-direction: column;
-    }
-
-    .chat-container .card-body {
-        flex: 1;
-        overflow-y: auto;
-        max-height: calc(100vh - 350px); /* Adjust based on header + form + padding */
-        min-height: 300px;
-    }
-
-    /* Alternative approach using viewport units */
-    @media (min-width: 768px) {
-        .chat-panel-container {
-            height: calc(100vh - 180px);
-            overflow: hidden;
-        }
-
-        .chat-panel-container .card {
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .chat-panel-container .card-body {
-            flex: 1;
-            overflow-y: auto;
-            padding-bottom: 1rem;
-        }
-    }
-
-    /* Scrollbar styling for better UX */
-    .card-body.overflow-auto::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    .card-body.overflow-auto::-webkit-scrollbar-track {
-        background: var(--bs-gray-100);
-        border-radius: 3px;
-    }
-
-    .card-body.overflow-auto::-webkit-scrollbar-thumb {
-        background: var(--bs-gray-400);
-        border-radius: 3px;
-    }
-
-    .card-body.overflow-auto::-webkit-scrollbar-thumb:hover {
-        background: var(--bs-gray-500);
-    }
-    /* Chat Panel Height Management */
-    .chat-container {
-        height: calc(100vh - 200px); /* Adjust 200px based on your header/footer height */
-        display: flex;
-        flex-direction: column;
-    }
-
-    .chat-container .card-body {
-        flex: 1;
-        overflow-y: auto;
-        max-height: calc(100vh - 350px); /* Adjust based on header + form + padding */
-        min-height: 300px;
-    }
-
-    /* Alternative approach using viewport units */
-    @media (min-width: 768px) {
-        .chat-panel-container {
-            height: calc(100vh - 180px);
-            overflow: hidden;
-        }
-
-        .chat-panel-container .card {
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .chat-panel-container .card-body {
-            flex: 1;
-            overflow-y: auto;
-            padding-bottom: 1rem;
-        }
-    }
-
-    /* Scrollbar styling for better UX */
-    .card-body.overflow-auto::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    .card-body.overflow-auto::-webkit-scrollbar-track {
-        background: var(--bs-gray-100);
-        border-radius: 3px;
-    }
-
-    .card-body.overflow-auto::-webkit-scrollbar-thumb {
-        background: var(--bs-gray-400);
-        border-radius: 3px;
-    }
-
-    .card-body.overflow-auto::-webkit-scrollbar-thumb:hover {
-        background: var(--bs-gray-500);
-    }
-</style>
 <div class="row g-3">
     <!-- Quest Panel -->
     <div class="col-md-6 col-xl-8">
@@ -132,9 +26,9 @@ $messages = QuestMessages::getLastMessages($model->id, $playerId);
             </div>
             <div class="card-body">
                 <p class="text-decoration mb-3"><?= $model->story->description ?></p>
-                <p class="mb-3">This quest will require <?= $model->story->companySize ?> <?= strtolower($model->story->requiredLevels) ?>.</p>
-                <p class="mb-3">We're still waiting for 2 other members to join us before starting</p>
-                <p class="mb-0">We still need a bard and a sorcerer to meet all the conditions.</p>
+                <p class="mb-3">This quest allows <?= $model->story->companySize ?> <?= strtolower($model->story->requiredLevels) ?> to take part in the game.</p>
+                <p class="mb-3" id="tavernMissingPlayers"></p>
+                <p class="mb-0" id="tavernMissingClasses"></p>
             </div>
         </div>
 
@@ -142,6 +36,7 @@ $messages = QuestMessages::getLastMessages($model->id, $playerId);
         <div class="card p-4">
             <div class="card-header">
                 <h5 class="text-decoration">The adventuring companionship that is building up</h5>
+                <p class="text-decoration mb-3" id="tavernWelcomeMessage"></p>
             </div>
             <div class="card-body">
                 <div class="row g-4">

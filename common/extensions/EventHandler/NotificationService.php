@@ -8,7 +8,6 @@ use common\extensions\EventHandler\factories\BroadcastMessageFactory;
 use common\extensions\EventHandler\LoggerService; // Ensured LoggerService is used
 use common\models\Notification;
 use common\models\Player;
-use common\models\QuestChat;
 use frontend\components\QuestMessages;
 
 class NotificationService {

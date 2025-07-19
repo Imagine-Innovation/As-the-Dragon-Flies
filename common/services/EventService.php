@@ -49,24 +49,4 @@ class EventService {
 
         return $notifications;
     }
-
-    /**
-     * Mark multiple notifications as read for a player
-     *
-     * @param Player $player The player
-     * @param array|int $notificationIds Array of notification IDs or single notification ID
-     * @return int Number of rows updated
-     */
-    public function markNotificationsAsRead(Player $player, $notificationIds): int {
-        return NotificationPlayer::updateAll(
-                        [
-                            'is_read' => 1,
-                            'read_at' => time()
-                        ],
-                        [
-                            'player_id' => $player->id,
-                            'notification_id' => $notificationIds
-                        ]
-                );
-    }
 }

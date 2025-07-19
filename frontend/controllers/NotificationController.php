@@ -36,9 +36,8 @@ class NotificationController extends Controller {
                             ],
                             [
                                 'actions' => [
-                                    'index', 'view', 'check',
-                                    'ajax', 'ajax-counter', 'ajax-list',
-                                    'ajax-mark-as-read'
+                                    'index', 'view',
+                                    'ajax', 'ajax-mark-as-read'
                                 ],
                                 'allow' => ManageAccessRights::isRouteAllowed($this),
                                 'roles' => ['@'],
@@ -103,73 +102,6 @@ class NotificationController extends Controller {
             return $ajaxRequest->response;
         }
         return ['error' => true, 'msg' => 'Error encountered'];
-    }
-
-    public function actionCheck() {
-        // Set the response format to JSON
-        Yii::$app->response->format = Response::FORMAT_JSON;
-        return ['error' => true, 'msg' => 'No new notification'];
-
-        // Check if the request is a GET request and if it is an AJAX request
-        if (!$this->request->isGet || !$this->request->isAjax) {
-            // If not, return an error response
-            return ['error' => true, 'msg' => 'Not a GET Ajax request'];
-        }
-        $playerId = Yii::$app->request->get('playerId');
-
-        if (!$playerId) {
-            return ['error' => true, 'msg' => 'No selected player'];
-        }
-
-        $newNotifications = QuestNotification::getNewNotifications($playerId);
-        if ($newNotifications) {
-            return ['error' => false, 'notifications' => $newNotifications];
-        }
-        return ['error' => true, 'msg' => 'No new notification'];
-    }
-
-    public function actionAjaxList() {
-        // Set the response format to JSON
-        Yii::$app->response->format = Response::FORMAT_JSON;
-
-        // Check if the request is a GET request and if it is an AJAX request
-        if (!$this->request->isGet || !$this->request->isAjax) {
-            // If not, return an error response
-            return ['error' => true, 'msg' => 'Not an Ajax request'];
-        }
-        /*
-          $user = Yii::$app->user->identity;
-          $playerId = $user->current_player_id;
-         *
-         */
-        $playerId = Yii::$app->request->get('playerId');
-        $dateFrom = time() - (24 * 3600);
-
-        $notificationList = QuestNotification::getList($playerId, $dateFrom);
-
-        $render = $this->renderPartial('ajax-list', ['models' => $notificationList]);
-        return ['error' => false, 'msg' => '', 'content' => $render];
-    }
-
-    public function actionAjaxCounter() {
-        // Set the response format to JSON
-        Yii::$app->response->format = Response::FORMAT_JSON;
-
-        // Check if the request is a GET request and if it is an AJAX request
-        if (!$this->request->isGet || !$this->request->isAjax) {
-            // If not, return an error response
-            return ['error' => true, 'msg' => 'Not an Ajax GET request'];
-        }
-
-        /*
-          $user = Yii::$app->user->identity;
-          $playerId = $user->current_player_id;
-         *
-         */
-        $playerId = Yii::$app->request->get('playerId');
-        $count = QuestNotification::getCount($playerId);
-
-        return ['error' => false, 'msg' => '', 'content' => $count];
     }
 
     public function actionAjaxMarkAsRead() {

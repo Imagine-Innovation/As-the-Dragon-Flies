@@ -2,7 +2,6 @@
 
 namespace common\models\events;
 
-use common\models\NotificationPlayer;
 use Yii;
 
 class NewPlayerEvent extends Event {
@@ -30,35 +29,13 @@ class NewPlayerEvent extends Event {
     }
 
     public function process(): void {
+        Yii::debug("*** Debug *** NewPlayerEvent - process");
         // Create notification
         $notification = $this->createNotification();
 
-        // Create notification_player entries for all players in quest
-        $players = $this->quest->currentPlayers;
-        foreach ($players as $player) {
-            if ($player->id != $this->player->id) {
-                $notificationPlayer = new NotificationPlayer([
-                    'notification_id' => $notification->id,
-                    'player_id' => $player->id,
-                    'is_read' => 0
-                ]);
-                $notificationPlayer->save();
-            }
-        }
+        $this->savePlayerNotification($notification->id);
 
         $this->broadcast();
-        /*
-          $array = $this->toArray();
-          // First, register the session for the quest
-          if (Yii::$app->eventHandler->registerSessionForQuest($this->sessionId, $array)) {
-          // Broadcast event to all connected clients
-          Yii::$app->eventHandler->broadcastToQuest(
-          $this->quest->id,
-          $array
-          );
-          }
-         *
-         */
 
         // Check if quest should start (max players reached)
         if (count($players) >= $this->quest->story->max_players) {

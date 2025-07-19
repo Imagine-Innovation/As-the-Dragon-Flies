@@ -63,6 +63,22 @@ abstract class Event extends BaseObject {
         }
     }
 
+    protected function savePlayerNotification($notificationId): void {
+        // Create notification_player entries for all players in quest
+        $players = $this->quest->currentPlayers;
+        foreach ($players as $player) {
+            if ($player->id != $this->player->id) {
+                Yii::debug("*** Debug *** Event - savePlayerNotification - notificationId={$notificationId}, player->id={$player->id}");
+                $notificationPlayer = new NotificationPlayer([
+                    'notification_id' => $notificationId,
+                    'player_id' => $player->id,
+                    'is_read' => 0
+                ]);
+                $notificationPlayer->save();
+            }
+        }
+    }
+
     protected function createNotification(): Notification {
         $notification = new Notification([
             'initiator_id' => $this->player->id,

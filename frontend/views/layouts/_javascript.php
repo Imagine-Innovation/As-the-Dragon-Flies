@@ -1,16 +1,26 @@
 <?php
-if (Yii::$app->user->isGuest) {
-    // specific jquery initialization for a guest
-    echo "";
-}
+// Specific javascript libraries to load according to controller name
+$controllerCustomJavascriptLib = [
+    'player-builder' => ['atdf-player-builder', 'atdf-chart-drawer'],
+    'player-cart' => ['atdf-shop-manager'],
+    'quest' => ['atdf-quest-events'],
+    'item' => ['atdf-item-manager'],
+    'player-item' => ['atdf-item-manager'],
+    'image' => ['atdf-image-manager'],
+];
 
 $controllerId = Yii::$app->controller->id;
 $actionId = Yii::$app->controller->action->id;
 $route = "{$controllerId}/{$actionId}";
+
+if (array_key_exists($controllerId, $controllerCustomJavascriptLib)) {
+    $javascriptLibraries = $controllerCustomJavascriptLib[$controllerId];
+
+    foreach ($javascriptLibraries as $javascriptLibrary) {
+        echo('<script src="js/' . $javascriptLibrary . '.js"></script>\n');
+    }
+}
 ?>
-<?php if ($route === "player-cart/shop"): ?>
-    <script src="js/atdf-shop-manager.js"></script>
-<?php endif; ?>
 
 <script type="text/javascript">
     var currentPlayerId = <?= Yii::$app->session->get('playerId') ?? 'null' ?>;
@@ -73,7 +83,8 @@ $route = "{$controllerId}/{$actionId}";
                 placeholder: 'questTavernPlayersContainer',
                 badge: false
             };
-            notificationClient.executeRequest(config, '');
+            //notificationClient.executeRequest(config, '');
+            //notificationClient.updateWelcomeMessages();
         });
 <?php endif; ?>
 

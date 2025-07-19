@@ -19,8 +19,6 @@ $playerItems = $inventory->loadItemsData($models);
 $itemTypes = $inventory->getItemTypes($models);
 $firstType = $itemTypes[0] ?? "";
 ?>
-<script src="js/atdf-item-manager.js"></script>
-
 <div class="container g-0 p-0">
     <div class="card">
         <div class="card-body">

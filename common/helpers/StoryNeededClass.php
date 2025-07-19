@@ -20,6 +20,7 @@
 namespace common\helpers;
 
 use frontend\widgets\CheckBox;
+use common\models\CharacterClass;
 use common\models\Story;
 
 class StoryNeededClass {
@@ -58,18 +59,18 @@ class StoryNeededClass {
      * Checks if a character class should be marked as checked based on players in the tavern.
      * A checkbox is marked as checked if a player in the tavern has the specified class.
      *
-     * @param  object $story The story object containing:
+     * @param  Story $story The story object containing:
      *                       - `tavern`: (Optional) Object containing `players` array.
-     * @param  object $class The character class object to check, with property:
+     * @param  CharacterClass $class The character class object to check, with property:
      *                       - `id`: Unique identifier for the character class.
      * @return string        Returns " checked" if the class is found in the tavern's players;
      *                       otherwise, returns an empty string.
      */
-    private static function checked($story, $class) {
+    private static function checked(Story $story, CharacterClass $class): string {
         $tavern = $story->tavern;
 
         if ($tavern) {
-            foreach ($tavern->players as $player) {
+            foreach ($tavern->currentPlayers as $player) {
                 // Check if the player's class ID matches the specified class ID
                 if ($player->class->id === $class->id) {
                     return "checked";

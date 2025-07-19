@@ -21,8 +21,6 @@ $itemTypes = ItemType::find()
 
 $firstTypeId = $itemTypes[0]->id;
 ?>
-<script src="js/atdf-item-manager.js"></script>
-
 <h3><?= Html::encode($this->title) ?></h3>
 <div class="card">
     <div class="card-body">

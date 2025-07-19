@@ -21,7 +21,6 @@ use Yii;
  * @property Notification[] $notifications
  * @property Player[] $currentPlayers
  * @property Player[] $allPlayers
- * @property QuestChat[] $questChats
  * @property QuestLog[] $questLogs
  * @property QuestPlayer[] $questPlayers
  * @property QuestSession[] $questSessions
@@ -102,15 +101,6 @@ class Quest extends \yii\db\ActiveRecord {
      */
     public function getAllPlayers() {
         return $this->hasMany(Player::class, ['id' => 'player_id'])->via('questPlayers');
-    }
-
-    /**
-     * Gets query for [[QuestChats]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getQuestChats() {
-        return $this->hasMany(QuestChat::class, ['quest_id' => 'id']);
     }
 
     /**

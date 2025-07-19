@@ -9,7 +9,7 @@ use frontend\widgets\ToolMenu;
 ?>
 <header class="content__title h3">
     <p>
-        Wellcome back <span class="text-decoration"><?= $playerName ?></span>
+        Welcome back <span class="text-decoration"><?= $playerName ?></span>
     </p>
 </header>
 <h5>What would you like to do?</h5>
