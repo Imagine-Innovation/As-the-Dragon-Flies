@@ -440,34 +440,6 @@ class LayoutInitializer {
             });
         });
     }
-
-    static initQuestTavernPage(playerId, avatar, playerName, questId, questName, chatInputId) {
-        $(document).ready(function () {
-            const currentHost = window.location.hostname;
-            const url = `ws://${currentHost}:8082`;
-
-            if (typeof NotificationClient !== 'undefined') {
-                console.log(`NotificationClient(url=${url}, playerId=${playerId}, avatar=${avatar}, questId=${questId}, playerName=${playerName}, questName=${questName}, chatInput=${chatInputId})`);
-                const notificationClient = new NotificationClient(url, playerId, avatar, questId, playerName, questName, chatInputId);
-                notificationClient.init();
-
-                // Initial load of tavern players
-                if (notificationClient.executeRequest) {
-                    let config = {
-                        route: 'quest/ajax-tavern',
-                        method: 'GET',
-                        placeholder: 'questTavernPlayersContainer', // Ensure this placeholder exists
-                        badge: false
-                    };
-                    notificationClient.executeRequest(config, '');
-                } else {
-                    console.error('NotificationClient.executeRequest method not found.');
-                }
-            } else {
-                console.error('NotificationClient class not found.');
-            }
-        });
-    }
 }
 
 // Initialize library when DOM is ready

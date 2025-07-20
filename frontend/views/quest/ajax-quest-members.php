@@ -13,7 +13,7 @@ $playerId = Yii::$app->session->get('playerId');
                             <h5><?= $player->name ?></h5>
                             <p class="small mb-1"><?= $player->age ?>-year-old <?= $player->gender == 'M' ? 'male' : 'female' ?> <?= $player->race->name ?></p>
                             <p class="small mb-0"><?= $player->level->name ?> <?= $player->alignment->name ?> <?= $player->class->name ?></p>
-                            <?php if ($player->id === $playerId): ?>
+                            <?php if ($player->id === $playerId && $player->id !== $model->initiator_id): // Initiatoru cannot leave the quest ?>
                                 <button class="btn btn-warning btn-sm mt-2 w-100" id="leaveTavernButton" type="button">
                                     <i class="bi bi-box-arrow-right"></i> Leave Tavern
                                 </button>

@@ -40,7 +40,7 @@ $messages = QuestMessages::getLastMessages($model->id, $playerId);
             </div>
             <div class="card-body">
                 <div class="row g-4">
-                    <?= AjaxContainer::widget(['name' => 'questTavernPlayersContainer']) ?>
+                    <?= AjaxContainer::widget(['name' => 'tavernPlayersContainer']) ?>
                 </div>
             </div>
         </div>
@@ -70,6 +70,18 @@ $messages = QuestMessages::getLastMessages($model->id, $playerId);
                     </div>
                 </div>
 
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="startQuestModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button class="btn btn-warning btn-sm mt-2 w-50" type="button">
+                    <i class="bi bi-action-move"></i> Start the quest
+                </button>
             </div>
         </div>
     </div>

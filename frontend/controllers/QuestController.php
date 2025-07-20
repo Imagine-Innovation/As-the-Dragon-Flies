@@ -60,9 +60,9 @@ class QuestController extends Controller {
                             ],
                             [
                                 'actions' => [
-                                    'index', 'update', 'delete', 'create', 'view',
+                                    'index', 'update', 'delete', 'create', 'view', 'tavern',
                                     'join-quest', 'resume', 'get-messages', 'leave-quest',
-                                    'ajax-tavern', 'ajax-welcome-messages', 'ajax-missing-classes',
+                                    'ajax-tavern', 'ajax-welcome-messages',
                                     'ajax-get-messages', 'ajax-send-message',
                                     'ajax-start', 'ajax-can-start', 'ajax-leave-quest'
                                 ],
@@ -158,7 +158,7 @@ class QuestController extends Controller {
         // Prepare Ajax request parameters
         $param = [
             'modelName' => 'Quest',
-            'render' => 'ajax-tavern',
+            'render' => 'ajax-quest-members',
             'filter' => ['id' => $player->quest_id],
         ];
 
@@ -208,26 +208,6 @@ class QuestController extends Controller {
             'missingPlayers' => $missingPlayers,
             'missingClasses' => $missingClasses
         ];
-    }
-
-    public function actionAjaxMissingClasses() {
-        // Configure response as JSON format
-        Yii::$app->response->format = Response::FORMAT_JSON;
-
-        // Validate request type and method
-        if (!$this->request->isGet || !$this->request->isAjax) {
-            return ['error' => true, 'msg' => 'Not an Ajax GET request'];
-        }
-
-        // Get current user context and quest information
-        $quest = Yii::$app->session->get('currentQuest');
-
-        // Generate welcome message for current quest
-        $missingClasses = QuestOnboarding::missingClasses($quest);
-
-        // Return success response with welcome message
-        $content = $missingClasses ? "We still need a {$missingClasses} to meet all the conditions." : null;
-        return ['error' => false, 'msg' => '', 'content' => $content];
     }
 
     public function actionAjaxSendMessage() {
@@ -421,18 +401,19 @@ class QuestController extends Controller {
         // Validate player eligibility
         $canJoin = QuestOnboarding::canPlayerJoinQuest($player, $tavern);
         if ($canJoin['denied']) {
-            Yii::debug("QuestOnboarding::canPlayerJoinQuest");
-            Yii::debug($canJoin);
             return UserErrorMessage::throw($this, 'error', $canJoin['reason'], self::DEFAULT_REDIRECT);
         }
 
         // Process player onboarding
         $onboarded = QuestOnboarding::addPlayerToQuest($player, $tavern);
         if ($onboarded['error']) {
-            Yii::debug("QuestOnboarding::addPlayerToQuest");
-            Yii::debug($onboarded);
             return UserErrorMessage::throw($this, 'error', $onboarded['message'], self::DEFAULT_REDIRECT);
         }
+        return $this->redirect(['tavern', 'id' => $tavern->id]);
+    }
+
+    public function actionTavern($id) {
+        $tavern = $this->findModel($id);
 
         // Set session variables for quest context
         Yii::$app->session->set('currentQuest', $tavern);
@@ -485,12 +466,10 @@ class QuestController extends Controller {
         $quest = Yii::$app->session->get('currentQuest');
 
         if ($quest->status == AppStatus::PLAYING->value) {
-            return $this->redirect(['quest/view', 'id' => $quest->id]);
+            return $this->redirect(['view', 'id' => $quest->id]);
         }
 
-        return $this->render('tavern', [
-                    'model' => $quest,
-        ]);
+        return $this->redirect(['tavern', 'id' => $quest->id]);
     }
 
     /**
@@ -600,13 +579,9 @@ class QuestController extends Controller {
                 'local_time' => time(),
             ]);
             if (!$tavern->save()) {
-                Yii::debug("*** Debug *** findTavern  ===>  Could not save new Quest");
                 throw new \Exception(implode("<br />", \yii\helpers\ArrayHelper::getColumn($tavern->errors, 0, false)));
-                //return null;
             }
-            Yii::debug("*** Debug *** findTavern  ===>  new Quest is saved");
         }
-        Yii::debug("*** Debug *** findTavern  ===>  Tavern was found");
 
         return $tavern;
     }

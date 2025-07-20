@@ -95,15 +95,25 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
                 ],
             ])
             ?>
+            <?php if (1 === 2): ?>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-theme btn--icon" id="nextQuestionButton"
+                            onclick="PlayerBuilder.nextQuestion(); return false;">
+                        <i class="bi bi-caret-right"></i>
+                    </button>
+                    &nbsp;
+                    <button type="button" class="btn btn-theme btn--icon" data-bs-dismiss="modal">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+            <?php endif; ?>
             <div class="modal-footer">
-                <button type="button" class="btn btn-theme btn--icon" id="nextQuestionButton"
+                <button class="btn btn-warning btn-sm mt-2 w-25" id="nextQuestionButton" type="button"
                         onclick="PlayerBuilder.nextQuestion(); return false;">
-                    <i class="bi bi-caret-right"></i>
+                    <i class="bi bi-caret-right"></i> Next question
                 </button>
                 &nbsp;
-                <button type="button" class="btn btn-theme btn--icon" data-bs-dismiss="modal">
-                    <i class="bi bi-x-lg"></i>
-                </button>
+                <button class="btn btn-secondary btn-sm mt-2 w-25" type="button" data-bs-dismiss="modal">OK</button>
             </div>
         </div>
     </div>
@@ -120,9 +130,9 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
                 <p>In the next step, you'll have the opportunity to explore and enhance your player, but race, class, background, and history will remain as you've defined them.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-theme btn--icon"
-                        onclick="$('#save-button').click();">
-                    <i class="bi bi-floppy"></i>
+                <button class="btn btn-warning btn-sm mt-2 w-50" type="button"
+                        onclick="$('#save-button').click(); return false;">
+                    <i class="bi bi-floppy"></i> Save and continue
                 </button>
             </div>
         </div>

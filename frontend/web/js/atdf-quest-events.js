@@ -50,6 +50,7 @@ class NotificationClient {
 
         // Event delegation for the "Leave Tavern" button
         document.addEventListener('click', (event) => {
+            console.log(`------> click, event.target.id=${event.target.id}`);
             if (event.target && event.target.id === 'leaveTavernButton') {
                 Logger.log(2, 'init', `Delegated click event for leaveTavernButton`);
                 this.leaveTavern();
@@ -154,14 +155,8 @@ class NotificationClient {
                 // Construct the message from the payload
                 const message = `Player ${data.payload.playerName} has joined quest "${data.payload.questName}".`;
 
-                let config = {
-                    route: 'quest/ajax-tavern',
-                    method: 'GET',
-                    placeholder: 'questTavernPlayersContainer',
-                    badge: false
-                };
-                this.executeRequest(config, data);
                 ToastManager.show('Event Handler', message, 'info');
+                this.updateTavernMembers();
                 this.checkIfQuestCanStart();
                 this.updateWelcomeMessages();
             } else {
@@ -175,14 +170,8 @@ class NotificationClient {
                 // Construct the message from the payload
                 const message = `Player ${data.payload.playerName} has left the quest`;
 
-                let config = {
-                    route: 'quest/ajax-tavern',
-                    method: 'GET',
-                    placeholder: 'questTavernPlayersContainer',
-                    badge: false
-                };
-                this.executeRequest(config, data);
                 ToastManager.show('Event Handler', message, 'info');
+                this.updateTavernMembers();
                 this.checkIfQuestCanStart();
                 this.updateWelcomeMessages();
             } else {
@@ -264,6 +253,25 @@ class NotificationClient {
         });
     }
 
+    updateTavernMembers() {
+        Logger.log(2, 'updateTavernMembers', ``);
+        let target = `#tavernPlayersContainer`;
+        if (!DOMUtils.exists(target))
+            return;
+
+        AjaxUtils.request({
+            url: 'quest/ajax-tavern',
+            method: 'GET',
+            successCallback: (response) => {
+                console.log('Callback', response);
+                if (!response.error) {
+                    $(target).html(response.content);
+                }
+            }
+        });
+
+    }
+
     updateWelcomeMessages() {
         Logger.log(2, 'updateWelcomeMessages', ``);
         let target = `#tavernWelcomeMessage`;
@@ -279,11 +287,11 @@ class NotificationClient {
                     target = `#tavernWelcomeMessage`;
                     if (DOMUtils.exists(target))
                         $(target).html(response.welcomeMessage);
-                    
+
                     target = `#tavernMissingPlayers`;
                     if (DOMUtils.exists(target))
                         $(target).html(response.missingPlayers);
-                    
+
                     target = `#tavernMissingClasses`;
                     if (DOMUtils.exists(target))
                         $(target).html(response.missingClasses);

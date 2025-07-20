@@ -138,9 +138,9 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
                 <p class="text-muted">Please note: once validated, it will no longer be possible to modify the player's characteristics.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-theme btn--icon"
+                <button class="btn btn-warning btn-sm mt-2 w-50" type="button"
                         onclick="PlayerBuilder.setProperty('status', <?= AppStatus::ACTIVE->value ?>);$('#save-button').click();">
-                    <i class="bi bi-check"></i>
+                    <i class="bi bi-check"></i> Save & Play
                 </button>
             </div>
         </div>

@@ -17,10 +17,12 @@ use Yii;
  * @property int $in_quest A player involved in a quest can access
  *
  * @property AccessRightActionButton[] $accessRightActionButtons
- * @property Menu[] $menus
+ * @property Menu $menu
  * @property UserLog[] $userLogs
  */
-class AccessRight extends \yii\db\ActiveRecord {
+class AccessRight extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -68,12 +70,12 @@ class AccessRight extends \yii\db\ActiveRecord {
     }
 
     /**
-     * Gets query for [[Menus]].
+     * Gets query for [[Menu]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getMenus() {
-        return $this->hasMany(Menu::class, ['access_right_id' => 'id']);
+    public function getMenu() {
+        return $this->hasOne(Menu::class, ['access_right_id' => 'id']);
     }
 
     /**
@@ -84,4 +86,5 @@ class AccessRight extends \yii\db\ActiveRecord {
     public function getUserLogs() {
         return $this->hasMany(UserLog::class, ['access_right_id' => 'id']);
     }
+
 }

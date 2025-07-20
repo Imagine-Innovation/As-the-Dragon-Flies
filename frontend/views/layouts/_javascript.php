@@ -31,29 +31,42 @@ if (array_key_exists($controllerId, $controllerCustomJavascriptLib)) {
         LayoutInitializer.initAjaxPage();
     }
 
-<?php if ($route === "player-builder/create"): ?>
-        PlayerBuilder.initCreatePage();
-<?php elseif ($route === "player-builder/update"): ?>
-        PlayerBuilder.initUpdatePage();
+<?php
+/**
+ * Player-builder specific local script
+ */
+if ($controllerId === "player-builder"):
+    ?>
+    <?php if ($route === "player-builder/create"): ?>
+            PlayerBuilder.initCreatePage();
+    <?php elseif ($route === "player-builder/update"): ?>
+            PlayerBuilder.initUpdatePage();
 
-        const gender = $('#playerbuilder-gender').val();
-        const alignmentId = $('#playerbuilder-alignment_id').val();
-        const age = $('#playerbuilder-age').val();
+            const gender = $('#playerbuilder-gender').val();
+            const alignmentId = $('#playerbuilder-alignment_id').val();
+            const age = $('#playerbuilder-age').val();
 
-        PlayerBuilder.initDescriptionTab(gender, alignmentId, age);
-        PlayerBuilder.initAbilitiesTab();
-        PlayerBuilder.initAvatarTab();
-        PlayerBuilder.initSkillsTab();
-<?php elseif ($route === "player-cart/cart"): ?>
+            PlayerBuilder.initDescriptionTab(gender, alignmentId, age);
+            PlayerBuilder.initAbilitiesTab();
+            PlayerBuilder.initAvatarTab();
+            PlayerBuilder.initSkillsTab();
+    <?php endif; ?>
+<?php endif; ?>
+<?php
+/**
+ * Player-cart specific local script
+ */
+if ($controllerId === "player-cart"):
+    ?>
         $(document).ready(function () {
             ShopManager.getCartInfo();
         });
-<?php elseif ($route === "player-cart/shop"): ?>
-        $(document).ready(function () {
-            ShopManager.getCartInfo();
-        });
-<?php elseif ($controllerId === "quest"): ?>
-    <?php
+<?php endif; ?>
+<?php
+/**
+ * Quest specific local script
+ */
+if ($controllerId === "quest"):
     $player = Yii::$app->session->get('currentPlayer');
     $playerId = $player->id;
     $playerName = $player->name;
@@ -75,16 +88,8 @@ if (array_key_exists($controllerId, $controllerCustomJavascriptLib)) {
             console.log(`NotificationClient(url=${url}, playerId=${playerId}, avatar=${avatar}, questId=${questId}, playerName=${playerName}, questName=${questName}, chatInput=${chatInput}`);
             const notificationClient = new NotificationClient(url, playerId, avatar, questId, playerName, questName, chatInput);
 
-            notificationClient.init();
-
-            let config = {
-                route: 'quest/ajax-tavern',
-                method: 'GET',
-                placeholder: 'questTavernPlayersContainer',
-                badge: false
-            };
-            //notificationClient.executeRequest(config, '');
-            //notificationClient.updateWelcomeMessages();
+            notificationClient.updateTavernMembers();
+            notificationClient.updateWelcomeMessages();
         });
 <?php endif; ?>
 

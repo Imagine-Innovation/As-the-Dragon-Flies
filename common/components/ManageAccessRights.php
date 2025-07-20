@@ -100,6 +100,7 @@ class ManageAccessRights extends Component {
      * Checks if a user is authorized to access a specific route
      *
      * @param yii\web\Controller $controller The source controller
+     * @param string $redirect route url to redirect avec throwing an error
      * @return bool True if access is granted, false otherwise
      */
     public static function isRouteAllowed($controller, $redirect = null) {
@@ -141,7 +142,7 @@ class ManageAccessRights extends Component {
         $action = $controller->action->id;
 
         if (self::isPublic($route, $action)) {
-            return self::logAccess(null, false, 'success', 'Access granted by default to public route');
+            return self::logAccess(null, false, 'success', "Access granted by default to public route [{$route}/{$action}]");
         }
         // Get access rights for the route
         $accessRight = AccessRight::findOne(['route' => $route, 'action' => $action]);
@@ -204,23 +205,23 @@ class ManageAccessRights extends Component {
      * @return array
      */
     private static function logAccess($accessRightId, $denied, $severity, $reason) {
-        if ($accessRightId) {
-            $sessionUser = Yii::$app->session->get('user');
-            $user = $sessionUser ?? Yii::$app->user->identity;
-            $questId = Yii::$app->session->get('questId');
+        //if ($accessRightId) {
+        $sessionUser = Yii::$app->session->get('user');
+        $user = $sessionUser ?? Yii::$app->user->identity;
+        $questId = Yii::$app->session->get('questId');
 
-            $userLog = new UserLog([
-                'user_id' => $user->id,
-                'access_right_id' => $accessRightId,
-                'player_id' => $user->current_player_id,
-                'quest_id' => $questId,
-                'ip_address' => Yii::$app->getRequest()->getUserIP(),
-                'action_at' => time(),
-                'denied' => $denied ? 1 : 0,
-                'reason' => $reason,
-            ]);
-            $userLog->save();
-        }
+        $userLog = new UserLog([
+            'user_id' => $user->id,
+            'access_right_id' => $accessRightId,
+            'player_id' => $user->current_player_id,
+            'quest_id' => $questId,
+            'ip_address' => Yii::$app->getRequest()->getUserIP(),
+            'action_at' => time(),
+            'denied' => $denied ? 1 : 0,
+            'reason' => $reason,
+        ]);
+        $userLog->save();
+        //}
 
         return [
             'denied' => $denied,
