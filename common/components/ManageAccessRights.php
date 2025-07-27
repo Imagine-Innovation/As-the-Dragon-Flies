@@ -12,38 +12,6 @@ use yii\base\Component;
 class ManageAccessRights extends Component {
 
     /**
-     * Store user and active player information in the current session
-     *
-     * @return void
-     */
-    public static function updateSession() {
-        if (Yii::$app->user->isGuest) {
-            return;
-        }
-
-        $user = Yii::$app->user->identity;
-
-        Yii::$app->session->set('user', $user);
-
-        $hasPlayer = $user->current_player_id ? true : false;
-        Yii::$app->session->set('hasPlayer', $hasPlayer);
-        Yii::$app->session->set('playerId', $user->current_player_id);
-
-        $currentPlayer = $hasPlayer ? $user->currentPlayer : null;
-        Yii::$app->session->set('currentPlayer', $currentPlayer);
-
-        if ($hasPlayer && $currentPlayer?->quest_id) {
-            Yii::$app->session->set('inQuest', true);
-            Yii::$app->session->set('questId', $currentPlayer->quest_id);
-            Yii::$app->session->set('currentQuest', $currentPlayer->quest);
-        } else {
-            Yii::$app->session->set('inQuest', false);
-            Yii::$app->session->set('questId', null);
-            Yii::$app->session->set('currentQuest', null);
-        }
-    }
-
-    /**
      * Gets all authorized access rights for a user based on their roles and status
      *
      * Algorithm:

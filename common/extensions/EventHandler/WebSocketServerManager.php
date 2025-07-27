@@ -7,10 +7,11 @@ use Ratchet\Http\HttpServer;
 use Ratchet\WebSocket\WsServer;
 use React\EventLoop\LoopInterface;
 use React\Socket\SocketServer;
-use common\extensions\EventHandler\contracts\MessageHandlerInterface; // Updated
-use common\extensions\EventHandler\LoggerService; // Added use statement
-use common\extensions\EventHandler\QuestSessionManager; // Added use statement
-use Ratchet\ConnectionInterface; // Added because it's used in addClient
+use common\extensions\EventHandler\contracts\MessageHandlerInterface;
+use common\extensions\EventHandler\LoggerService;
+use common\extensions\EventHandler\QuestSessionManager;
+use common\extensions\EventHandler\handlers\WebSocketHandler;
+use Ratchet\ConnectionInterface;
 
 class WebSocketServerManager {
 

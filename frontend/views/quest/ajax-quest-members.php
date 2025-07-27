@@ -1,4 +1,7 @@
 <?php
+
+use yii\helpers\Url;
+
 /** @var yii\web\View $this */
 /** @var common\models\Quest $models */
 $playerId = Yii::$app->session->get('playerId');
@@ -14,7 +17,10 @@ $playerId = Yii::$app->session->get('playerId');
                             <p class="small mb-1"><?= $player->age ?>-year-old <?= $player->gender == 'M' ? 'male' : 'female' ?> <?= $player->race->name ?></p>
                             <p class="small mb-0"><?= $player->level->name ?> <?= $player->alignment->name ?> <?= $player->class->name ?></p>
                             <?php if ($player->id === $playerId && $player->id !== $model->initiator_id): // Initiatoru cannot leave the quest ?>
-                                <button class="btn btn-warning btn-sm mt-2 w-100" id="leaveTavernButton" type="button">
+                                <a href="<?= Url::toRoute(['quest/quit']) ?>" class="btn btn-warning btn-sm mt-2 w-50" type="button">
+                                    <i class="bi bi-box-arrow-right"></i> Leave Tavern
+                                </a>
+                                <button class="btn btn-warning btn-sm mt-2 w-50" id="leaveTavernButton" type="button">
                                     <i class="bi bi-box-arrow-right"></i> Leave Tavern
                                 </button>
                             <?php endif; ?>

@@ -9,12 +9,13 @@ class PlayerLeftDto implements BroadcastMessageInterface {
     private string $type = 'player_left';
     private array $payload;
 
-    public function __construct(string $playerName, string $sessionId, string $questName) {
+    public function __construct(string $playerName, string $sessionId, string $questName, string $reason) {
         $this->payload = [
             'playerName' => $playerName,
             'sessionId' => $sessionId,
             'questName' => $questName,
-            'timestamp' => time()
+            'reason' => $reason,
+            'timestamp' => time(),
         ];
     }
 

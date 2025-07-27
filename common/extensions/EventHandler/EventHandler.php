@@ -2,16 +2,17 @@
 
 namespace common\extensions\EventHandler;
 
-use Yii; // Assuming Yii is used for path aliasing
-use yii\base\Component;
-use React\EventLoop\Loop; // Required for Loop::get() if used directly, but likely encapsulated now
-// Specific Handlers (assuming they are in the same namespace)
+use React\EventLoop\Loop; // Required for Loop::get()
 use common\extensions\EventHandler\handlers\RegistrationHandler;
 use common\extensions\EventHandler\handlers\ChatMessageHandler;
 use common\extensions\EventHandler\handlers\GameActionHandler;
 use common\extensions\EventHandler\handlers\PlayerJoiningHandler;
 use common\extensions\EventHandler\handlers\PlayerLeavingHandler;
-use common\extensions\EventHandler\factories\BroadcastMessageFactory; // Added
+use common\extensions\EventHandler\handlers\QuestCanStartHandler;
+use common\extensions\EventHandler\factories\BroadcastMessageFactory;
+use common\models\Notification;
+use Yii;
+use yii\base\Component;
 
 class EventHandler extends Component {
 
@@ -130,5 +131,14 @@ class EventHandler extends Component {
         }
         // The QuestSessionManager already has its own logger, so it will log its own start/end.
         return $this->questSessionManager->registerSessionForQuest($sessionId, $data);
+    }
+
+    public function broadcastToQuest(int $questId, BroadcastMessageInterface $message, ?string $excludeSessionId = null): Notification {
+        if (!$this->notificationService) {
+            $this->loggerService?->log("EventHandler: notificationService not initialized when calling broadcastToQuest.", null, 'error');
+            return null;
+        }
+        // The QuestSessionManager already has its own logger, so it will log its own start/end.
+        $this->notificationService->createNotificationAndBroadcast($questId, $message, $type, $excludeSessionId);
     }
 }

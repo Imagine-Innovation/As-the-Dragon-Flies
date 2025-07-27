@@ -22,6 +22,7 @@ class EventFactory {
         Yii::debug("*** debug *** EventFactory.createEvent type=$eventType, sessionId={$sessionId}, playerId={$player->id}, questId={$quest->id}, data=" . print_r($data, true));
         return match ($eventType) {
             'new-player' => new NewPlayerEvent($sessionId, $player, $quest),
+            'player-left' => new PlayerLeftEvent($sessionId, $player, $quest, $data['reason'] ?? 'Unknown reason'),
             'new-message' => new NewMessageEvent($sessionId, $player, $quest, $data['message'] ?? ''),
             'start-quest' => new StartQuestEvent($sessionId, $player, $quest),
             'game-action' => new GameActionEvent($sessionId, $player, $quest, $data['action'] ?? '', $data['actionData'] ?? []),

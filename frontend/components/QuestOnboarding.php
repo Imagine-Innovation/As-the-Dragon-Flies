@@ -178,11 +178,11 @@ class QuestOnboarding {
     /**
      * Check if a player is valid to join a new quest
      *
-     * @param Player $player reference to a Player object
+     * @param Player|null $player reference to a Player object
      * @param Quest|null $quest a Quest object, null if the player is not in a quest
      * @return array Associative array with an error status, a deny status and the reason why
      */
-    private static function isPlayerValid(Player &$player, Quest|null $quest = null): array {
+    private static function isPlayerValid(Player|null $player, Quest|null $quest = null): array {
         // Check if player is selected
         if (!$player) {
             return ['error' => true, 'denied' => true, 'reason' => "canPlayerJoinQuest->No player is selected"];
@@ -359,7 +359,7 @@ class QuestOnboarding {
         $questPlayer->reason = $reasonWhyPlayerLeft;
 
         if ($questPlayer->save()) {
-            return ['error' => false, 'message' => "Player successfully onboarded on the quest"];
+            return ['error' => false, 'message' => "Player successfully " . ($reasonWhyPlayerLeft ? "left" : "joined") . " on the quest"];
         }
         return ['error' => true, 'message' => "Could not save QuestPlayer : " . implode("\n", \yii\helpers\ArrayHelper::getColumn($questPlayer->errors, 0, false))];
     }

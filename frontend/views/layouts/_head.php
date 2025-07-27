@@ -19,9 +19,5 @@ $webRoot = Url::base();
     <title><?= Html::encode($this->title) ?></title>
 
     <meta name="ajax-root-url" content="<?= $webRoot ?>">
-    <?php if (1 === 2): ?>)
-        <link href="/frontend/web/css/bootstrap532.min.css" rel="stylesheet">
-        <link href="/frontend/web/css/bootstrap-icons.css" rel="stylesheet">
-    <?php endif; ?>
     <?php $this->head() ?>
 </head>

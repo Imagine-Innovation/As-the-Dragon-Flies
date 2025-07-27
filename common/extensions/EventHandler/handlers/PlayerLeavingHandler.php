@@ -31,9 +31,10 @@ class PlayerLeavingHandler implements SpecificMessageHandlerInterface {
         $this->logger->logStart("PlayerLeavingHandler: handle for session {$sessionId}, client {$clientId}", $data);
 
         $payload = $data['payload'];
-        $playerName = (string) $payload['playerName'] ?? 'Unknown';
-        $questId = (int) $payload['questId'] ?? null;
-        $questName = (string) $payload['questName'] ?? 'Unknown';
+        $playerName = array_key_exists('playerName', $payload) ? $payload['playerName'] : 'Unknown';
+        $questId = array_key_exists('questId', $payload) ? (int) $payload['questId'] : null;
+        $questName = array_key_exists('questName', $payload) ? $payload['questName'] : 'Unknown';
+        $reason = array_key_exists('reason', $payload) ? $payload['reason'] : 'Unknown';
 
         if ($questId === null || $questId === '' || $questName === 'Unknown') {
             $this->logger->log("PlayerLeavingHandler: Missing questId, or questName in data['payload'].", $data, 'warning');
@@ -43,10 +44,10 @@ class PlayerLeavingHandler implements SpecificMessageHandlerInterface {
             return;
         }
 
-        $playerLeftDto = $this->messageFactory->createPlayerLeftMessage($playerName, $sessionId, $questName);
+        $playerLeftDto = $this->messageFactory->createPlayerLeftMessage($playerName, $sessionId, $questName, $reason);
         $this->broadcastService->broadcastToQuest($questId, $playerLeftDto, $sessionId);
 
-        $this->broadcastService->sendBack($from, 'ack', ['type' => 'player_leaving_processed', 'playerName' => $playerName, 'questId' => $questId, 'questName' => $questName]);
+        $this->broadcastService->sendBack($from, 'ack', ['type' => 'player_leaving_processed', 'playerName' => $playerName, 'questId' => $questId, 'questName' => $questName, 'reason' => $reason]);
 
         $this->logger->logEnd("PlayerLeavingHandler: handle");
     }

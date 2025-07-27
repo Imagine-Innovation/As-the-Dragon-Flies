@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\components\AppStatus;
+use common\components\ContextManager;
 use common\components\ManageAccessRights;
 use common\helpers\Status;
 use common\models\Player;
@@ -157,14 +158,15 @@ class PlayerController extends Controller {
 
         $request = Yii::$app->request;
 
-        $userId = $request->post('userId');
-        $playerId = $request->post('playerId');
+        $userId = (int) $request->post('userId');
+        $playerId = (int) $request->post('playerId');
 
         $success = User::updateAll(
                 ['current_player_id' => $playerId],
                 ['id' => $userId]
         );
-        ManageAccessRights::updateSession();
+
+        ContextManager::updatePlayerContext($playerId);
 
         return [
             'error' => false,

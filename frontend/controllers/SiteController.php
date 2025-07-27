@@ -2,14 +2,8 @@
 
 namespace frontend\controllers;
 
-use Yii;
-use yii\base\InvalidArgumentException;
-use yii\web\BadRequestHttpException;
-use yii\web\Controller;
-use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
-use yii\web\Response;
 use common\models\LoginForm;
+use common\components\ContextManager;
 use common\components\ManageAccessRights;
 use frontend\models\ResendVerificationEmailForm;
 use frontend\models\VerifyEmailForm;
@@ -19,6 +13,13 @@ use frontend\models\SignupForm;
 use frontend\models\ContactForm;
 use common\helpers\Utilities;
 use frontend\models\ImageUploadForm;
+use Yii;
+use yii\base\InvalidArgumentException;
+use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
+use yii\web\BadRequestHttpException;
+use yii\web\Controller;
+use yii\web\Response;
 use yii\web\UploadedFile;
 
 /**
@@ -78,7 +79,7 @@ class SiteController extends Controller {
      * @return mixed
      */
     public function actionIndex() {
-        ManageAccessRights::updateSession();
+        ContextManager::initContext();
 
         return $this->render('index');
     }

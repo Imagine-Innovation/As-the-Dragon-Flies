@@ -21,8 +21,8 @@ class BroadcastMessageFactory {
         return new PlayerJoinedDto($playerName, $sessionId, $questName);
     }
 
-    public function createPlayerLeftMessage(string $playerName, string $sessionId, string $questName): PlayerLeftDto {
-        return new PlayerLeftDto($playerName, $sessionId, $questName);
+    public function createPlayerLeftMessage(string $playerName, string $sessionId, string $questName, string $reason): PlayerLeftDto {
+        return new PlayerLeftDto($playerName, $sessionId, $questName, $reason);
     }
 
     public function createQuestCanStartMessage(string $sessionId, string $questName): QuestCanStartDto {
@@ -68,7 +68,7 @@ class BroadcastMessageFactory {
                 break;
             case 'player_left':
                 if (isset($payload['playerName'], $payload['sessionId'], $payload['questName'])) {
-                    return new PlayerLeftDto($payload['playerName'], $payload['sessionId'], $payload['questName']);
+                    return new PlayerLeftDto($payload['playerName'], $payload['sessionId'], $payload['questName'], $payload['reasaon']);
                 }
                 // Consider adding an else or logging if payload is incomplete for this type
                 break;

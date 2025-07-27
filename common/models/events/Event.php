@@ -3,6 +3,7 @@
 namespace common\models\events;
 
 use common\models\Notification;
+use common\models\NotificationPlayer;
 use common\models\Player;
 use common\models\Quest;
 use Yii;

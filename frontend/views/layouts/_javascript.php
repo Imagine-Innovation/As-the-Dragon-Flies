@@ -67,30 +67,32 @@ if ($controllerId === "player-cart"):
  * Quest specific local script
  */
 if ($controllerId === "quest"):
-    $player = Yii::$app->session->get('currentPlayer');
-    $playerId = $player->id;
-    $playerName = $player->name;
-    $avatar = $player->image->file_name;
-    $quest = Yii::$app->session->get('currentQuest');
-    $questName = $quest->story->name;
+    $sessionId = Yii::$app->session->get('sessionId');
+    $playerId = Yii::$app->session->get('playerId');
+    $playerName = Yii::$app->session->get('playerName');
+    $avatar = Yii::$app->session->get('avatar');
+    $questId = Yii::$app->session->get('questId');
+    $questName = Yii::$app->session->get('questName');
     ?>
-        $(document).ready(function () {
-            // Create and initialize the notification client instance
-            const currentHost = window.location.hostname;
-            const url = `ws://${currentHost}:8082`;
-            const playerId = <?= $playerId ?>;
-            const avatar = `<?= $avatar ?>`;
-            const playerName = `<?= $playerName ?>`;
-            const questId = <?= $quest->id ?>;
-            const questName = `<?= $questName ?>`;
-            const chatInput = `questChatInput`;
+        //$(document).ready(function () {
+        // Create and initialize the notification client instance
+        const currentHost = window.location.hostname;
+        const url = `ws://${currentHost}:8082`;
+        const sessionId = `<?= $sessionId ?>`;
+        const playerId = <?= $playerId ?>;
+        const avatar = `<?= $avatar ?>`;
+        const playerName = `<?= $playerName ?>`;
+        const questId = <?= $questId ?>;
+        const questName = `<?= $questName ?>`;
+        const chatInput = `questChatInput`;
 
-            console.log(`NotificationClient(url=${url}, playerId=${playerId}, avatar=${avatar}, questId=${questId}, playerName=${playerName}, questName=${questName}, chatInput=${chatInput}`);
-            const notificationClient = new NotificationClient(url, playerId, avatar, questId, playerName, questName, chatInput);
+        console.log(`NotificationClient(url=${url}, sessionId=${sessionId}, playerId=${playerId}, playerName=${playerName}, avatar=${avatar}, questId=${questId}, questName=${questName}, chatInput=${chatInput}`);
+        const notificationClient = new NotificationClient(url, sessionId, playerId, playerName, avatar, questId, questName, chatInput);
 
-            notificationClient.updateTavernMembers();
-            notificationClient.updateWelcomeMessages();
-        });
+        notificationClient.init();
+        notificationClient.updateTavernMembers();
+        notificationClient.updateWelcomeMessages();
+        // });
 <?php endif; ?>
 
 </script>

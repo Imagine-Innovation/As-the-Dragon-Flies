@@ -19,10 +19,12 @@ namespace frontend\controllers;
  * @version 1.0
  */
 use common\components\AppStatus;
-use common\models\Quest;
-use common\models\Player;
-use common\models\Story;
+use common\components\ContextManager;
 use common\components\ManageAccessRights;
+use common\models\Player;
+use common\models\Quest;
+use common\models\Story;
+use common\models\events\EventFactory;
 use common\helpers\UserErrorMessage;
 use frontend\components\AjaxRequest;
 use frontend\components\QuestMessages;
@@ -60,8 +62,8 @@ class QuestController extends Controller {
                             ],
                             [
                                 'actions' => [
-                                    'index', 'update', 'delete', 'create', 'view', 'tavern',
-                                    'join-quest', 'resume', 'get-messages', 'leave-quest',
+                                    'index', 'update', 'delete', 'create', 'view', 'quit',
+                                    'tavern', 'join-quest', 'resume', 'get-messages',
                                     'ajax-tavern', 'ajax-welcome-messages',
                                     'ajax-get-messages', 'ajax-send-message',
                                     'ajax-start', 'ajax-can-start', 'ajax-leave-quest'
@@ -409,18 +411,40 @@ class QuestController extends Controller {
         if ($onboarded['error']) {
             return UserErrorMessage::throw($this, 'error', $onboarded['message'], self::DEFAULT_REDIRECT);
         }
-        return $this->redirect(['tavern', 'id' => $tavern->id]);
+        return $this->redirect(['tavern',
+                    'id' => $tavern->id
+        ]);
     }
 
     public function actionTavern($id) {
         $tavern = $this->findModel($id);
 
-        // Set session variables for quest context
-        Yii::$app->session->set('currentQuest', $tavern);
-        Yii::$app->session->set('questId', $tavern->id);
-        Yii::$app->session->set('inQuest', true);
+        ContextManager::updateQuestContext($tavern->id);
 
-        return $this->render('tavern', ['model' => $tavern]);
+        return $this->render('tavern', [
+                    'model' => $tavern
+        ]);
+    }
+
+    public function actionQuit(): array {
+
+        $player = Yii::$app->session->get('currentPlayer');
+        $quest = Yii::$app->session->get('currentQuest');
+        $reason = 'Player decided to quit the quest';
+        // Process player offboarding
+        $withdraw = QuestOnboarding::withdrawPlayerFromQuest($player, $quest, $reason);
+        if ($withdraw['error']) {
+            Yii::$app->session->setFlash('error', $withdraw['message']);
+            return $this->redirect(['quest/view', 'id' => $quest->id]);
+        }
+
+        ContextManager::updateQuestContext(null);
+
+        $sessionId = Yii::$app->session->get('sessionId');
+        $event = EventFactory::createEvent('player-left', $sessionId, $player, $quest, ['reason' => $reason]);
+        $event->process();
+
+        return $this->redirect(['story/index']);
     }
 
     public function actionAjaxLeaveQuest() {
@@ -429,7 +453,7 @@ class QuestController extends Controller {
 
         // Validate request type
         if (!$this->request->isPost || !$this->request->isAjax) {
-            return ['canStart' => false, 'msg' => 'Not an Ajax POST request'];
+            return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
         $player = Yii::$app->session->get('currentPlayer');
@@ -448,9 +472,9 @@ class QuestController extends Controller {
         if ($withdraw['error']) {
             return ['success' => false, 'message' => $withdraw['message']];
         }
-        Yii::$app->session->set('currentQuest', null);
-        Yii::$app->session->set('questId', null);
-        Yii::$app->session->set('inQuest', false);
+
+        ContextManager::updateQuestContext(null);
+
         return ['success' => true, 'message' => "Player {$player->name} successfully withdrown from quest {$quest->story->name}"];
     }
 

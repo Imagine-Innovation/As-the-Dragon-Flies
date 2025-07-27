@@ -1,6 +1,6 @@
 <?php
 
-namespace common\extensions\EventHandler;
+namespace common\extensions\EventHandler\handlers;
 
 use common\extensions\EventHandler\contracts\BroadcastServiceInterface;
 use common\extensions\EventHandler\contracts\SpecificMessageHandlerInterface;
@@ -25,7 +25,7 @@ class QuestCanStartHandler implements SpecificMessageHandlerInterface {
     }
 
     /**
-     * Handles player_joining messages.
+     * Handles quest_can_start messages.
      */
     public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
         $this->logger->logStart("QuestCanStartHandler: handle for session {$sessionId}, client {$clientId}");
