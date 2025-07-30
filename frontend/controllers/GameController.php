@@ -2,34 +2,11 @@
 
 namespace frontend\controllers;
 
-/**
- * Quest Management Controller
- *
- * Handles all quest-related operations including CRUD operations, tavern management,
- * and real-time chat functionality through AJAX endpoints.
- *
- * Key features:
- * - Quest listing and management
- * - Tavern system for quest joining
- * - Real-time chat system
- * - Access control for authenticated users
- *
- * @package frontend\controllers
- * @author François Gros
- * @version 1.0
- */
-use common\components\AppStatus;
-use common\models\Quest;
-use common\models\Story;
+use common\components\ContextManager;
 use common\components\ManageAccessRights;
-use common\helpers\UserErrorMessage;
-use frontend\components\AjaxRequest;
-use frontend\components\QuestMessages;
-use frontend\components\QuestNotification;
+use common\models\Quest;
 use frontend\components\QuestOnboarding;
 use Yii;
-use yii\data\ActiveDataProvider;
-use yii\db\Query;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -61,8 +38,8 @@ class GameController extends Controller {
                             [
                                 'actions' => [
                                     'index', 'update', 'delete', 'create', 'view',
-                                    'resume', 'get-messages', 'leave-quest',
-                                    'ajax-get-messages', 'ajax-send-message', 'ajax-leave-quest'
+                                    'resume', 'get-messages', 'quit',
+                                    'ajax-get-messages', 'ajax-send-message', 'ajax-quit'
                                 ],
                                 'allow' => ManageAccessRights::isRouteAllowed($this),
                                 'roles' => ['@'],
@@ -89,18 +66,19 @@ class GameController extends Controller {
      * @throws NotFoundHttpException if quest not found
      */
     public function actionView($id) {
+        $this->layout = 'game';
         return $this->render('view', [
                     'model' => $this->findModel($id),
         ]);
     }
 
-    public function actionAjaxLeaveQuest() {
+    public function actionAjaxQuit() {
         // Configure response format
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         // Validate request type
         if (!$this->request->isPost || !$this->request->isAjax) {
-            return ['canStart' => false, 'msg' => 'Not an Ajax POST request'];
+            return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
         $player = Yii::$app->session->get('currentPlayer');
@@ -114,13 +92,14 @@ class GameController extends Controller {
         }
 
         $reason = Yii::$app->request->post('reason');
-        // Process player onboarding
-        if (!QuestOnboarding::withdrawPlayerFromQuest($player, $quest, $reason)) {
-            return ['success' => false, 'message' => "Unable to withdraw player {$player->name} to the quest"];
+        // Process player offboarding
+        $withdraw = QuestOnboarding::withdrawPlayerFromQuest($player, $quest, $reason);
+        if ($withdraw['error']) {
+            return ['success' => false, 'message' => $withdraw['message']];
         }
-        Yii::$app->session->set('currentQuest', null);
-        Yii::$app->session->set('questId', null);
-        Yii::$app->session->set('inQuest', false);
+
+        ContextManager::updateQuestContext(null);
+
         return ['success' => true, 'message' => "Player {$player->name} successfully withdrown from quest {$quest->story->name}"];
     }
 

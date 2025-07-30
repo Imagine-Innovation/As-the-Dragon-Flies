@@ -67,34 +67,24 @@ class QuestOnboarding {
      * @param Quest $quest reference to a Quest object
      * @return string|null Missing classes message, null if no class is required
      */
-    public static function missingClasses(Quest &$quest): string|null {
-        // Get the missing classes
+    public static function missingClasses(Quest &$quest): ?string {
         $missingClassIds = self::getMissingClassIds($quest);
 
-        // If no specific class is required, consider that they are all present
         if ($missingClassIds === null) {
             return null;
         }
 
-        $classes = CharacterClass::findAll(['id' => $missingClassIds]);
-        $classNames = [];
+        $classNames = array_map(
+                fn($class) => $class->name,
+                CharacterClass::findAll(['id' => $missingClassIds])
+        );
 
-        foreach ($classes as $class) {
-            $classNames[] = $class->name;
-        }
-        $classCount = count($classNames);
-        if ($classCount === 0) {
-            return "Every expected class is represented in the company!";
-        } elseif ($classCount === 1) {
-            $missingClasses = $classNames[0];
-        } elseif ($classCount === 2) {
-            $missingClasses = "{$classNames[0]} and a {$classNames[1]}";
-        } else {
-            $lastClassName = $classNames[$classCount - 1];
-            $otherClassNames = array_pop($classNames);
-            $missingClasses = implode(', ', $otherClassNames) . " and a {$lastClassName}";
-        }
-        return "We still need a {$missingClasses} to meet all the conditions.";
+        return match (count($classNames)) {
+            0 => "Every expected class is represented in the company!",
+            1 => "We still need a {$classNames[0]} to meet all the conditions.",
+            2 => "We still need a {$classNames[0]} and a {$classNames[1]} to meet all the conditions.",
+            default => "We still need a " . implode(', a ', array_slice($classNames, 0, -1)) . " and a " . end($classNames) . " to meet all the conditions."
+        };
     }
 
     /**

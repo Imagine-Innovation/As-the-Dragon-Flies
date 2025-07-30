@@ -4,6 +4,7 @@ namespace frontend\components;
 
 use common\models\ClassItemProficiency;
 use common\models\ItemCategory;
+use common\models\PlayerAbility;
 use Yii;
 
 class PlayerTool {
@@ -47,5 +48,25 @@ class PlayerTool {
 
         Yii::debug("*** Debug *** isProficient return " . ($proficient ? 'true' : 'false'));
         return $proficient ? true : false;
+    }
+
+    public static function getAbilitiesAndSavingThrow(array $playerAbilities, int $proficiencyBonus): array {
+        // set the initialization order to the common way of displaying abilities
+        $abilities = ['STR' => [], 'DEX' => [], 'CON' => [], 'INT' => [], 'WIS' => [], 'CHA' => []];
+
+        foreach ($playerAbilities as $playerAbility) {
+            $ability = $playerAbility->ability;
+            $savingThrow = $playerAbility->modifier + ($playerAbility->is_saving_throw ? $proficiencyBonus : 0);
+            $playerData = [
+                'code' => $ability->code,
+                'name' => $ability->name,
+                'score' => $playerAbility->score,
+                'modifier' => $playerAbility->modifier,
+                'savingThrow' => $savingThrow
+            ];
+            $abilities[$ability->code] = $playerData;
+        }
+
+        return $abilities;
     }
 }

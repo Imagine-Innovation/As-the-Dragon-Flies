@@ -66,7 +66,7 @@ class QuestController extends Controller {
                                     'tavern', 'join-quest', 'resume', 'get-messages',
                                     'ajax-tavern', 'ajax-welcome-messages',
                                     'ajax-get-messages', 'ajax-send-message',
-                                    'ajax-start', 'ajax-can-start', 'ajax-leave-quest'
+                                    'ajax-start', 'ajax-can-start', 'ajax-quit'
                                 ],
                                 'allow' => ManageAccessRights::isRouteAllowed($this),
                                 'roles' => ['@'],
@@ -288,26 +288,21 @@ class QuestController extends Controller {
 
         // Validate request method and type
         if (!$this->request->isPost || !$this->request->isAjax) {
-            return ['error' => true, 'msg' => 'Not an Ajax POST request'];
+            return ['success' => false, 'msg' => 'Not an Ajax POST request'];
         }
 
-        // Extract message data from request
-        $request = Yii::$app->request;
-        $questId = $request->post('questId');
-        $quest = $this->findModel($questId);
-
-        if ($quest) {
-            $updated = Quest::updateAll(
-                    ['status' => AppStatus::PLAYING->value, 'started_at' => time()],
-                    ['id' => $questId]
-            );
-            if ($updated > 0) {
-                $render = $this->render('view', ['model' => $quest]);
-                return ['error' => false, 'msg' => 'Quest is started', 'content' => $render];
-            }
-            return ['error' => true, 'msg' => 'Could not start quest'];
+        $quest = Yii::$app->session->get('currentQuest');
+        if (!$quest) {
+            return ['success' => false, 'message' => 'Quest not found'];
         }
-        return ['error' => true, 'msg' => 'Quest not found'];
+
+        $quest->status = AppStatus::PLAYING->value;
+        $quest->started_at = time();
+
+        if ($quest->save()) {
+            return ['success' => true, 'msg' => 'Quest is started'];
+        }
+        return ['success' => false, 'msg' => 'Could not start quest'];
     }
 
     /**
@@ -356,6 +351,11 @@ class QuestController extends Controller {
 
         // Extract request parameters
         $quest = Yii::$app->session->get('currentQuest');
+        $playerId = Yii::$app->session->get('playerId');
+        Yii::debug("*** debug *** - actionAjaxCanStart - questId={$quest->id}, initiatorId={$quest->initiator_id}, playerId={$playerId}");
+        if ($playerId !== $quest->initiator_id) {
+            return ['canStart' => false, 'msg' => "Your are the quest initiator"];
+        }
         $story = $quest->story;
 
         if ($quest->status !== AppStatus::WAITING->value) {
@@ -447,7 +447,7 @@ class QuestController extends Controller {
         return $this->redirect(['story/index']);
     }
 
-    public function actionAjaxLeaveQuest() {
+    public function actionAjaxQuit() {
         // Configure response format
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -490,7 +490,7 @@ class QuestController extends Controller {
         $quest = Yii::$app->session->get('currentQuest');
 
         if ($quest->status == AppStatus::PLAYING->value) {
-            return $this->redirect(['view', 'id' => $quest->id]);
+            return $this->redirect(['game/view', 'id' => $quest->id]);
         }
 
         return $this->redirect(['tavern', 'id' => $quest->id]);

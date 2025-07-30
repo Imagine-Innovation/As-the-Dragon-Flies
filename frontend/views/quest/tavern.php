@@ -23,6 +23,7 @@ $messages = QuestMessages::getLastMessages($model->id, $playerId);
         <div class="card p-4 mb-3">
             <div class="card-header">
                 <h5 class="text-decoration">Welcome <?= $playerName ?> in <?= $questName ?> Quest</h5>
+                <p class="text-decoration mb-3" id="tavernWelcomeMessage"></p>
             </div>
             <div class="card-body">
                 <p class="text-decoration mb-3"><?= $model->story->description ?></p>
@@ -36,7 +37,6 @@ $messages = QuestMessages::getLastMessages($model->id, $playerId);
         <div class="card p-4">
             <div class="card-header">
                 <h5 class="text-decoration">The adventuring companionship that is building up</h5>
-                <p class="text-decoration mb-3" id="tavernWelcomeMessage"></p>
             </div>
             <div class="card-body">
                 <div class="row g-4">
@@ -45,44 +45,36 @@ $messages = QuestMessages::getLastMessages($model->id, $playerId);
             </div>
         </div>
     </div>
-
-    <!-- Chat Panel -->
     <div class="col-md-6 col-xl-4">
-        <div class="chat-panel-container">
-            <div class="card p-4 h-100 d-flex flex-column">
-                <div class="card-header">
-                    <h5 class="text-decoration">Tavern Chat</h5>
-                </div>
-
-                <div class="mt-auto">
-                    <form id="questChatMessageForm">
-                        <div class="input-group">
-                            <input type="text" class="form-control" id="questChatInput" placeholder="Type your message...">
-                            <button id="sendChatMessageButton" class="btn btn-primary" type="button">Send</button>
-                        </div>
-                    </form>
-                    <small class="text-muted mt-2 d-block">Press Enter to send • Be respectful to fellow adventurers</small>
-                </div>
-
-                <div class="card-body overflow-auto flex-grow-1 mb-3">
-                    <div id="questChatContent">
-                        <?= $this->render('ajax-messages', ['messages' => $messages]) ?>
+        <?= $this->renderFile('@app/views/quest/_chat.php', ['questId' => $model->id, 'playerId' => $playerId]) ?>
+    </div>
+    <?php if (1 === 2) : ?>
+        <!-- Chat Panel -->
+        <div class="col-md-6 col-xl-4">
+            <div class="chat-panel-container">
+                <div class="card p-4 h-100 d-flex flex-column">
+                    <div class="card-header">
+                        <h5 class="text-decoration">Tavern Chat</h5>
                     </div>
+
+                    <div class="mt-auto">
+                        <form id="questChatMessageForm">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="questChatInput" placeholder="Type your message...">
+                                <button id="sendChatMessageButton" class="btn btn-primary" type="button">Send</button>
+                            </div>
+                        </form>
+                        <small class="text-muted mt-2 d-block">Press Enter to send • Be respectful to fellow adventurers</small>
+                    </div>
+
+                    <div class="card-body overflow-auto flex-grow-1 mb-3">
+                        <div id="questChatContent">
+                            <?= $this->render('ajax-messages', ['messages' => $messages]) ?>
+                        </div>
+                    </div>
+
                 </div>
-
             </div>
         </div>
-    </div>
-</div>
-
-<div class="modal fade" id="startQuestModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-body">
-                <button class="btn btn-warning btn-sm mt-2 w-50" type="button">
-                    <i class="bi bi-action-move"></i> Start the quest
-                </button>
-            </div>
-        </div>
-    </div>
+    <?php endif; ?>
 </div>

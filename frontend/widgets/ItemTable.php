@@ -27,9 +27,9 @@ class ItemTable extends Widget {
     private const COLS = [
         'Category' => [
             'column-header' => 'Category',
-            'property' => 'categories',
+            'property' => 'category',
             'class' => '',
-            'is-repeated' => true,
+            'is-repeated' => false,
             'is-link' => false,
             'iconography' => null,
             'filter' => ['Armor', 'Weapon', 'Tool', 'Gear', 'Poison'],
@@ -38,16 +38,16 @@ class ItemTable extends Widget {
             'column-header' => 'Name',
             'property' => 'name',
             'class' => '',
-            'is-repeated' => false,
+            'is-repeated' => true,
             'is-link' => true,
             'iconography' => null,
             'filter' => ['Armor', 'Weapon', 'Tool', 'Gear', 'Pack', 'Poison'],
         ],
         'Image' => [
             'column-header' => 'Image',
-            'property' => 'fileName',
+            'property' => 'picture',
             'class' => '',
-            'is-repeated' => false,
+            'is-repeated' => true,
             'is-link' => false,
             'iconography' => 'image',
             'filter' => ['Armor', 'Weapon', 'Tool', 'Gear', 'Pack', 'Poison'],
@@ -55,8 +55,8 @@ class ItemTable extends Widget {
         'Description' => [
             'column-header' => 'Description',
             'property' => 'description',
-            'class' => '',
-            'is-repeated' => false,
+            'class' => 'w-50',
+            'is-repeated' => true,
             'is-link' => false,
             'iconography' => null,
             'filter' => ['Pack'],
@@ -65,7 +65,7 @@ class ItemTable extends Widget {
             'column-header' => 'Cost',
             'property' => 'price',
             'class' => 'text-center',
-            'is-repeated' => false,
+            'is-repeated' => true,
             'is-link' => false,
             'iconography' => null,
             'filter' => ['Armor', 'Weapon', 'Tool', 'Gear', 'Pack', 'Poison'],
@@ -74,16 +74,16 @@ class ItemTable extends Widget {
             'column-header' => 'Quantity',
             'property' => 'quantity',
             'class' => 'text-center',
-            'is-repeated' => false,
+            'is-repeated' => true,
             'is-link' => false,
             'iconography' => null,
             'filter' => ['Tool', 'Gear'],
         ],
         'Weight' => [
             'column-header' => 'Weight',
-            'property' => 'weightString',
+            'property' => 'pounds',
             'class' => 'text-center',
-            'is-repeated' => false,
+            'is-repeated' => true,
             'is-link' => false,
             'iconography' => null,
             'filter' => ['Armor', 'Weapon', 'Tool', 'Gear', 'Pack'],
@@ -92,7 +92,7 @@ class ItemTable extends Widget {
             'column-header' => 'Armor Class (AC)',
             'property' => 'armorClass',
             'class' => 'text-center',
-            'is-repeated' => false,
+            'is-repeated' => true,
             'is-link' => false,
             'iconography' => null,
             'filter' => ['Armor'],
@@ -101,7 +101,7 @@ class ItemTable extends Widget {
             'column-header' => 'Strength',
             'property' => 'armorStrength',
             'class' => 'text-center',
-            'is-repeated' => false,
+            'is-repeated' => true,
             'is-link' => false,
             'iconography' => null,
             'filter' => ['Armor'],
@@ -110,16 +110,16 @@ class ItemTable extends Widget {
             'column-header' => 'Disadvantage',
             'property' => 'armorDisadvantage',
             'class' => 'text-center',
-            'is-repeated' => false,
+            'is-repeated' => true,
             'is-link' => false,
             'iconography' => 'icon',
             'filter' => ['Armor'],
         ],
         'Damage' => [
             'column-header' => 'Damage',
-            'property' => 'weaponDamageDice',
+            'property' => 'damageDice',
             'class' => 'text-center',
-            'is-repeated' => false,
+            'is-repeated' => true,
             'is-link' => false,
             'iconography' => null,
             'filter' => ['Weapon'],
@@ -128,7 +128,7 @@ class ItemTable extends Widget {
             'column-header' => 'Properties',
             'property' => 'weaponProperties',
             'class' => '',
-            'is-repeated' => false,
+            'is-repeated' => true,
             'is-link' => false,
             'iconography' => null,
             'filter' => ['Weapon'],
@@ -137,7 +137,7 @@ class ItemTable extends Widget {
             'column-header' => 'Poison type',
             'property' => 'poisonType',
             'class' => '',
-            'is-repeated' => false,
+            'is-repeated' => true,
             'is-link' => false,
             'iconography' => null,
             'filter' => ['Poison'],
@@ -189,19 +189,9 @@ class ItemTable extends Widget {
     private static function renderTableCell($col, $model, $colIndex) {
         Yii::debug("*** Debug ***  ItemTable Widget - renderTableCell() - colIndex=$colIndex, col['property']=" . $col['property'], __METHOD__);
         // Retrieve the content for the table cell using the model's property.
-        /*
-          if ($col['property'] === "categories") {
-          $categories = [];
-          foreach ($model->categories as $category) {
-          $categories[] = $category->name;
-          }
-          $cellContent = implode(", ", $categories);
-          } else {
-          $cellContent = $model[$col['property']];
-          }
-         *
-         */
-        $cellContent = $col['property'] === "categories" ? implode(", ", ArrayHelper::getColumn($model->categories, 'name')) : $model[$col['property']];
+        $cellContent = $col['property'] === "categories" ?
+                implode(", ", ArrayHelper::getColumn($model->categories, 'name')) :
+                $model[$col['property']];
 
         // Format the content for display, considering whether it's an icon, an image
         // or needs HTML encoding.

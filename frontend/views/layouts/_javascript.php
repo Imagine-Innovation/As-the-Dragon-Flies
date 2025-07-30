@@ -4,6 +4,7 @@ $controllerCustomJavascriptLib = [
     'player-builder' => ['atdf-player-builder', 'atdf-chart-drawer'],
     'player-cart' => ['atdf-shop-manager'],
     'quest' => ['atdf-quest-events'],
+    'game' => ['atdf-quest-events'],
     'item' => ['atdf-item-manager'],
     'player-item' => ['atdf-item-manager'],
     'image' => ['atdf-image-manager'],
@@ -17,7 +18,7 @@ if (array_key_exists($controllerId, $controllerCustomJavascriptLib)) {
     $javascriptLibraries = $controllerCustomJavascriptLib[$controllerId];
 
     foreach ($javascriptLibraries as $javascriptLibrary) {
-        echo('<script src="js/' . $javascriptLibrary . '.js"></script>\n');
+        echo('<script src="js/' . $javascriptLibrary . '.js"></script>');
     }
 }
 ?>
@@ -66,7 +67,7 @@ if ($controllerId === "player-cart"):
 /**
  * Quest specific local script
  */
-if ($controllerId === "quest"):
+if ($controllerId === "quest" || $controllerId === "game"):
     $sessionId = Yii::$app->session->get('sessionId');
     $playerId = Yii::$app->session->get('playerId');
     $playerName = Yii::$app->session->get('playerName');
@@ -74,7 +75,6 @@ if ($controllerId === "quest"):
     $questId = Yii::$app->session->get('questId');
     $questName = Yii::$app->session->get('questName');
     ?>
-        //$(document).ready(function () {
         // Create and initialize the notification client instance
         const currentHost = window.location.hostname;
         const url = `ws://${currentHost}:8082`;
@@ -84,15 +84,10 @@ if ($controllerId === "quest"):
         const playerName = `<?= $playerName ?>`;
         const questId = <?= $questId ?>;
         const questName = `<?= $questName ?>`;
-        const chatInput = `questChatInput`;
 
-        console.log(`NotificationClient(url=${url}, sessionId=${sessionId}, playerId=${playerId}, playerName=${playerName}, avatar=${avatar}, questId=${questId}, questName=${questName}, chatInput=${chatInput}`);
-        const notificationClient = new NotificationClient(url, sessionId, playerId, playerName, avatar, questId, questName, chatInput);
+        const notificationClient = new NotificationClient(url, sessionId, playerId, playerName, avatar, questId, questName);
 
         notificationClient.init();
-        notificationClient.updateTavernMembers();
-        notificationClient.updateWelcomeMessages();
-        // });
 <?php endif; ?>
 
 </script>

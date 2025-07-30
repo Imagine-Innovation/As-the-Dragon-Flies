@@ -3,6 +3,7 @@
 namespace common\models;
 
 use frontend\components\Shopping;
+use Yii;
 
 /**
  * This is the model class for table "item".
@@ -37,6 +38,7 @@ use frontend\components\Shopping;
  * @property Item[] $packItems
  * @property Pack[] $packs
  * @property Item[] $parentItems
+ * @property Category $mainCategory
  * @property PassageStatusItem[] $passageStatusItems
  * @property PlayerCart[] $playerCarts
  * @property PlayerItem[] $playerItems
@@ -47,16 +49,17 @@ use frontend\components\Shopping;
  * @property Weapon $weapon
  * @property Weapon[] $weapons
  *
- * @property string weightString
- * @property string price
- * @property int copperValue
- * @property string armorClass
- * @property int armorStrength
- * @property string armorDisadvantage
- * @property string weaponDamageDice
- * @property string weaponProperties
- * @property string poisonType
- * @property string fileName
+ * @property string $category
+ * @property string $pounds
+ * @property string $price
+ * @property int    $copperValue
+ * @property string $armorClassString
+ * @property int    $armorStrength
+ * @property string $armorDisadvantage
+ * @property string $damageDice
+ * @property string $weaponPropertiesString
+ * @property string $poisonType
+ * @property string $picture
  */
 class Item extends \yii\db\ActiveRecord {
 
@@ -237,6 +240,18 @@ class Item extends \yii\db\ActiveRecord {
     }
 
     /**
+     * Gets the main category of the item.
+     *
+     * @return ActiveQuery
+     */
+    public function getMainCategory() {
+        return $this->hasOne(Category::class, ['id' => 'category_id'])
+                        ->viaTable('item_category', ['item_id' => 'id'], function ($query) {
+                            $query->andWhere(['item_category.is_main' => 1]);
+                        });
+    }
+
+    /**
      * Gets query for [[PassageStatusItems]].
      *
      * @return \yii\db\ActiveQuery
@@ -323,13 +338,28 @@ class Item extends \yii\db\ActiveRecord {
      * ***************************** */
 
     /**
+     * Select the main category name among the different item categories
+     *
+     * @return string
+     */
+    public function getCategory(): string {
+        $mainCategory = Category::find()
+                ->joinWith('itemCategories')
+                ->joinWith('itemCategories.item')
+                ->where(['item_category.is_main' => 1, 'item_category.item_id' => $this->id])
+                ->one();
+
+        return $mainCategory ? $mainCategory->name : "Undefined";
+    }
+
+    /**
      * Calculates and returns the total weight of an item or pack in both pounds
      * (lb) and kilograms (kg).
      *
      * @return string The formatted weight string in the format "X lb. (Y kg)" or
      *                an empty string if the weight is zero.
      */
-    public function getWeightString() {
+    public function getPounds() {
         // Initialize the weight variable to zero.
         $weight = 0;
 
@@ -397,22 +427,7 @@ class Item extends \yii\db\ActiveRecord {
      *                DEX modifier, max modifier, and armor bonus.
      */
     public function getArmorClass() {
-        $armor = $this->armor;
-        $armorClass = "";
-
-        // Append base armor class if greater than zero.
-        $armorClass .= $armor->armor_class > 0 ? $armor->armor_class : "";
-
-        // Append DEX modifier if present.
-        $armorClass .= $armor->dex_modifier ? " +DEX" : "";
-
-        // Append max modifier if greater than zero.
-        $armorClass .= $armor->max_modifier > 0 ? " (max " . $armor->max_modifier . ")" : "";
-
-        // Append armor bonus if greater than zero.
-        $armorClass .= $armor->armor_bonus > 0 ? " +" . $armor->armor_bonus : "";
-
-        return trim($armorClass);
+        return $this->armor->armorClass;
     }
 
     /**
@@ -444,48 +459,8 @@ class Item extends \yii\db\ActiveRecord {
      *
      * @return string The formatted string listing weapon properties, separated by commas.
      */
-    public function getWeaponProperties() {
-        // Define the available weapon properties as an associative array.
-        $weaponProperties = [
-            'need_ammunition' => 'Ammunition',
-            'is_finesse' => 'Finesse',
-            'is_heavy' => 'Heavy',
-            'is_light' => 'Light',
-            'is_loading' => 'Loading',
-            'is_range' => 'Range (%s-%s)',
-            'is_reach' => 'Reach',
-            'is_special' => 'Special',
-            'is_thrown' => 'Thrown',
-            'is_two_handed' => 'Two Handed',
-            'is_versatile' => 'Versatile (%s)',
-        ];
-
-        // Retrieve the weapon details from the provided model.
-        $weapon = $this->weapon;
-
-        // Initialize an array to store the formatted content for each property.
-        $properties = [];
-
-        // Iterate through each weapon property and check if the weapon possesses
-        // the property.
-        foreach ($weaponProperties as $property => $content) {
-            if ($weapon->$property) {
-                // If the property content contains '%s', use sprintf to replace
-                // it with specific values.
-                if (strpos($content, '%s') !== false) {
-                    // Special handling for 'is_versatile' property to include versatile dice.
-                    $properties[] = $property == 'is_versatile' ?
-                            sprintf($content, $weapon->versatile_dice) :
-                            sprintf($content, $weapon->range_min, $weapon->range_max);
-                } else {
-                    // If the property content does not contain '%s', add it as is.
-                    $properties[] = $content;
-                }
-            }
-        }
-
-        // Combine the formatted content into a single string, separated by commas.
-        return implode(", ", $properties);
+    public function getWeaponProperties(): string {
+        return $this->weapon->properties;
     }
 
     /**
@@ -493,7 +468,7 @@ class Item extends \yii\db\ActiveRecord {
      *
      * @return string The damage dice string of the weapon.
      */
-    public function getWeaponDamageDice() {
+    public function getDamageDice() {
         return $this->weapon->damage_dice;
     }
 
@@ -511,7 +486,7 @@ class Item extends \yii\db\ActiveRecord {
      *
      * @return string The image file name
      */
-    public function getFileName() {
+    public function getPicture() {
         if ($this->image) {
             return $this->image->file_name;
         }

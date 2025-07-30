@@ -95,18 +95,6 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
                 ],
             ])
             ?>
-            <?php if (1 === 2): ?>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-theme btn--icon" id="nextQuestionButton"
-                            onclick="PlayerBuilder.nextQuestion(); return false;">
-                        <i class="bi bi-caret-right"></i>
-                    </button>
-                    &nbsp;
-                    <button type="button" class="btn btn-theme btn--icon" data-bs-dismiss="modal">
-                        <i class="bi bi-x-lg"></i>
-                    </button>
-                </div>
-            <?php endif; ?>
             <div class="modal-footer">
                 <button class="btn btn-warning btn-sm mt-2 w-25" id="nextQuestionButton" type="button"
                         onclick="PlayerBuilder.nextQuestion(); return false;">

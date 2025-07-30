@@ -42,6 +42,7 @@ use Yii;
  * @property Image $image
  * @property Item[] $cartItems
  * @property Item[] $items
+ * @property Weapon[] $weapons
 
  * @property Language[] $languages
  * @property Level $level
@@ -229,6 +230,15 @@ class Player extends \yii\db\ActiveRecord {
      */
     public function getItems() {
         return $this->hasMany(Item::class, ['id' => 'item_id'])->via('playerItems');
+    }
+
+    /**
+     * Gets query for [[Weapons]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getWeapons() {
+        return $this->hasMany(Weapons::class, ['id' => 'item_id'])->via('playerItems');
     }
 
     /**

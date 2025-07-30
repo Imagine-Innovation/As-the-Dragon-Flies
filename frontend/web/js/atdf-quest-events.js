@@ -1,6 +1,6 @@
 class NotificationClient {
-    constructor(url, sessionId, playerId, playerName, avatar, questId, questName, chatInput) {
-        Logger.log(1, 'constructor', `url=${url}, sessionId=${sessionId}, playerId=${playerId}, playerName=${playerName}, avatar=${avatar}, questId=${questId}, questName=${questName}, chatInput=${chatInput}`);
+    constructor(url, sessionId, playerId, playerName, avatar, questId, questName) {
+        Logger.log(1, 'constructor', `url=${url}, sessionId=${sessionId}, playerId=${playerId}, playerName=${playerName}, avatar=${avatar}, questId=${questId}, questName=${questName}`);
         // loading init parameters
         this.url = url;
         this.sessionId = sessionId;
@@ -9,14 +9,13 @@ class NotificationClient {
         this.avatar = avatar;
         this.questId = questId;
         this.questName = questName;
-        this.chatInput = chatInput;
 
         // init internal variables
         this.socket = null;
         this.connected = false;
         this.messageQueue = [];
         this.eventListeners = {};
-        //this.sessionId = NotificationClient.getSessionId();
+        this.heartbeatInterval = 30000; // 30s
     }
 
     /**
@@ -28,7 +27,7 @@ class NotificationClient {
         // Set up default event handlers
         this.setupDefaultHandlers();
         // Set up chat input enter key handler
-        const chatInput = document.getElementById(this.chatInput);
+        const chatInput = document.getElementById('questChatInput');
         if (chatInput) {
             chatInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
@@ -39,21 +38,37 @@ class NotificationClient {
         }
 
         // Set up send chat button
-        const sendChatBtn = document.getElementById('sendChatMessageButton');
-        if (sendChatBtn) {
-            sendChatBtn.addEventListener('click', () => {
-                if (chatInput) {
-                    this.sendChatMessage(chatInput);
-                }
-            });
-        }
+        /*
+         const sendChatBtn = document.getElementById('sendChatMessageButton');
+         if (sendChatBtn) {
+         sendChatBtn.addEventListener('click', () => {
+         if (chatInput) {
+         this.sendChatMessage(chatInput);
+         }
+         });
+         }
+         */
 
         // Event delegation for the "Leave Tavern" button
         document.addEventListener('click', (event) => {
-            console.log(`------> click, event.target.id=${event.target.id}`);
-            if (event.target && event.target.id === 'leaveTavernButton') {
-                Logger.log(2, 'init', `Delegated click event for leaveTavernButton`);
-                this.leaveTavern();
+            if (event.target) {
+                console.log(`------> click, event.target.id=${event.target.id}`);
+                switch (event.target.id) {
+                    case 'leaveQuestButton':
+                        Logger.log(2, 'init', `Delegated click event for leaveQuestButton`);
+                        this.leaveQuest();
+                        break;
+                    case 'startQuestButton':
+                        Logger.log(2, 'init', `Delegated click event for startQuestButton`);
+                        this.startQuest();
+                        break;
+                    case 'sendChatMessageButton':
+                        Logger.log(2, 'init', `Delegated click event for sendChatMessageButton`);
+                        if (chatInput) {
+                            this.sendChatMessage(chatInput);
+                        }
+                        break;
+                }
             }
         });
 
@@ -129,11 +144,7 @@ class NotificationClient {
             if (data.payload && data.payload.playerName && data.payload.questName) {
                 // Construct the message from the payload
                 const message = `Player ${data.payload.playerName} has joined quest "${data.payload.questName}".`;
-
-                ToastManager.show('Event Handler', message, 'info');
-                this.updateTavernMembers();
-                this.checkIfQuestCanStart();
-                this.updateWelcomeMessages();
+                this.refreshTavern(message);
             } else {
                 console.warn('Received new_player_joined event with incomplete payload:', data);
             }
@@ -144,11 +155,7 @@ class NotificationClient {
             if (data.payload && data.payload.playerName && data.payload.questName) {
                 // Construct the message from the payload
                 const message = `Player ${data.payload.playerName} has left the quest`;
-
-                ToastManager.show('Event Handler', message, 'info');
-                this.updateTavernMembers();
-                this.checkIfQuestCanStart();
-                this.updateWelcomeMessages();
+                this.refreshTavern(message);
             } else {
                 console.warn('Received player_left event with incomplete payload:', data);
             }
@@ -181,8 +188,7 @@ class NotificationClient {
 
             this.triggerEvent('open');
             this.sendWithPayload('player_joining', `${this.playerName} is joining the quest`);
-            this.checkIfQuestCanStart();
-            this.updateWelcomeMessages();
+            this.refreshTavern();
         };
 
         this.socket.onmessage = (event) => {
@@ -214,18 +220,28 @@ class NotificationClient {
         };
     }
 
-    leaveTavern() {
-        Logger.log(1, 'leaveTavern', `Received leaveTavernButton click event`);
+    refreshTavern(message = null) {
+        Logger.log(1, 'refreshTavern', `message=${message}`);
+
+        if (message)
+            ToastManager.show('Event Handler', message, 'info');
+
+        this.updateTavernMembers();
+        this.updateWelcomeMessages();
+    }
+
+    leaveQuest() {
+        Logger.log(1, 'leaveQuest', `Received leaveQuestButton click event`);
         const message = `${this.playerName} has decided not to take part in the quest`;
         const reason = `Player's decision`;
         AjaxUtils.request({
-            url: 'quest/ajax-leave-quest',
+            url: 'quest/ajax-quit',
             data: {
                 sessionId: this.sessionId,
                 reason: reason
             },
             successCallback: (response) => {
-                Logger.log(2, 'leaveTavern', `leaveTavern ${JSON.stringify(response)}`);
+                Logger.log(2, 'leaveQuest', `leaveQuest ${JSON.stringify(response)}`);
                 if (response.success) {
                     this.sendWithPayload('player_leaving', message, {reason: reason});
                     window.location.href = '/frontend/web/index.php?r=story/index';
@@ -234,15 +250,40 @@ class NotificationClient {
         });
     }
 
+    startQuest() {
+        Logger.log(1, 'startQuest', `Received startQuestButton click event`);
+        const message = `Start quest`;
+        AjaxUtils.request({
+            url: 'quest/ajax-start',
+            data: {
+                sessionId: this.sessionId
+            },
+            successCallback: (response) => {
+                //Logger.log(2, 'startQuest', `startQuest ${JSON.stringify(response)}`);
+                if (response.success) {
+                    this.sendWithPayload('starting', message);
+                    window.location.href = `/frontend/web/index.php?r=game/view&id=${this.questId}`;
+                }
+            }
+        });
+    }
+
     checkIfQuestCanStart() {
         Logger.log(2, 'checkIfQuestCanStart', ``);
+
+        const button = `#startQuestButton`;
+        if (!DOMUtils.exists(button))
+            return;
+
         AjaxUtils.request({
             url: 'quest/ajax-can-start',
             data: {sessionId: this.sessionId},
             successCallback: (response) => {
                 Logger.log(3, 'checkIfQuestCanStart', `Can start? ${JSON.stringify(response)}`);
                 if (response.canStart) {
-                    this.send({type: 'quest_can_start', payload: response});
+                    $(button).removeClass('d-none');
+                } else {
+                    $(button).addClass('d-none');
                 }
             }
         });
@@ -250,7 +291,8 @@ class NotificationClient {
 
     updateTavernMembers() {
         Logger.log(2, 'updateTavernMembers', ``);
-        let target = `#tavernPlayersContainer`;
+
+        const target = `#tavernPlayersContainer`;
         if (!DOMUtils.exists(target))
             return;
 
@@ -261,6 +303,7 @@ class NotificationClient {
                 console.log('Callback', response);
                 if (!response.error) {
                     $(target).html(response.content);
+                    this.checkIfQuestCanStart();
                 }
             }
         });
@@ -303,7 +346,7 @@ class NotificationClient {
      * @returns {void}
      */
     send(messageArray) {
-        Logger.log(1, 'send', `send messageArray=${JSON.stringify(messageArray)}, sessionId=${this.sessionId}, playerId=${this.playerId}, questId=${this.questId}`);
+        Logger.log(1, 'send', `send sessionId=${this.sessionId}, playerId=${this.playerId}, questId=${this.questId}`);
         // Ensure all messages include the session ID, player ID, and quest ID
         const completeMessage = {
             ...messageArray,

@@ -9,11 +9,14 @@ use Yii;
  *
  * @property int $item_id Foreign key to "item" table
  * @property int $category_id Foreign key to "category" table
+ * @property int $is_main Is main category
  *
  * @property Category $category
  * @property Item $item
  */
-class ItemCategory extends \yii\db\ActiveRecord {
+class ItemCategory extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -27,8 +30,9 @@ class ItemCategory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['is_main'], 'default', 'value' => 0],
             [['item_id', 'category_id'], 'required'],
-            [['item_id', 'category_id'], 'integer'],
+            [['item_id', 'category_id', 'is_main'], 'integer'],
             [['item_id', 'category_id'], 'unique', 'targetAttribute' => ['item_id', 'category_id']],
             [['item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['item_id' => 'id']],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::class, 'targetAttribute' => ['category_id' => 'id']],
@@ -42,6 +46,7 @@ class ItemCategory extends \yii\db\ActiveRecord {
         return [
             'item_id' => 'Foreign key to \"item\" table',
             'category_id' => 'Foreign key to \"category\" table',
+            'is_main' => 'Is main category',
         ];
     }
 
@@ -62,4 +67,5 @@ class ItemCategory extends \yii\db\ActiveRecord {
     public function getItem() {
         return $this->hasOne(Item::class, ['id' => 'item_id']);
     }
+
 }

@@ -34,25 +34,10 @@ use Yii;
  * @property DamageType $damageType
  * @property Item $item
  * @property ShapeAttack[] $shapeAttacks
- * @property string $properties
  */
-class Weapon extends Item {
+class Weapon extends \yii\db\ActiveRecord
+{
 
-    // Define the available weapon properties as an associative array.
-    // /!\ Don't forget to update this array when the data model changes
-    Const PROPERTIES = [
-        'need_ammunition' => 'Need ammunition',
-        'is_finesse' => 'Finesse',
-        'is_heavy' => 'Heavy',
-        'is_light' => 'Light',
-        'is_loading' => 'Loading',
-        'is_range' => 'Range (%s)',
-        'is_reach' => 'Reach',
-        'is_special' => 'Special',
-        'is_thrown' => 'Thrown',
-        'is_two_handed' => 'Two Handed',
-        'is_versatile' => 'Versatile (%s)',
-    ];
 
     /**
      * {@inheritdoc}
@@ -65,8 +50,7 @@ class Weapon extends Item {
      * {@inheritdoc}
      */
     public function rules() {
-        // Define or override validation rules specific to Weapon
-        return array_merge(parent::rules(), [
+        return [
             [['amunition_id', 'damage_type_id', 'damage_dice', 'range_min', 'range_max', 'versatile_dice'], 'default', 'value' => null],
             [['is_simple'], 'default', 'value' => 1],
             [['is_versatile'], 'default', 'value' => 0],
@@ -77,15 +61,14 @@ class Weapon extends Item {
             [['item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['item_id' => 'id']],
             [['amunition_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['amunition_id' => 'id']],
             [['damage_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => DamageType::class, 'targetAttribute' => ['damage_type_id' => 'id']],
-        ]);
+        ];
     }
 
     /**
      * {@inheritdoc}
      */
     public function attributeLabels() {
-        // Define or override validation rules specific to Weapon
-        return array_merge(parent::attributeLabels(), [
+        return [
             'item_id' => 'Primary key synchronized 1:1 with the \"item\" table',
             'amunition_id' => 'Optional foreign key to weapon ammunition item. Used only when the \"need_amunition\" flag is set to TRUE.',
             'damage_type_id' => 'Optional foreign key to the \"damage_type\" table',
@@ -108,7 +91,7 @@ class Weapon extends Item {
             'is_two_handed' => 'This weapon requires two hands when you attack with it',
             'is_versatile' => 'This weapon can be used with one or two hands',
             'versatile_dice' => 'Roll dice to determine the damage when the weapon is used with two hands to make a melee attack',
-        ]);
+        ];
     }
 
     /**
@@ -147,33 +130,4 @@ class Weapon extends Item {
         return $this->hasMany(ShapeAttack::class, ['weapon_id' => 'item_id']);
     }
 
-    /**
-     * ***** adhoc properties
-     */
-
-    /**
-     * Retrieves a formatted string listing the properties of the specified Weapon.
-     *
-     * This function iterates through the defined weapon properties, checks if the
-     * weapon has each property, and constructs a formatted string with relevant
-     * information such as range, versatile dice, etc.
-     *
-     * @return string The formatted string listing weapon properties, separated by commas.
-     */
-    public function getProperties(): string {
-
-        $properties = [];
-
-        foreach (self::PROPERTIES as $property => $displayName) {
-            if ($this->$property) {
-                if (str_contains($displayName, '%s')) {
-                    $value = $property == 'is_versatile' ? $this->versatile_dice : $this->range_min . '-' . $this->range_max;
-                    $properties[] = sprintf($displayName, $value);
-                } else {
-                    $properties[] = $displayName;
-                }
-            }
-        }
-        return implode(", ", $properties);
-    }
 }

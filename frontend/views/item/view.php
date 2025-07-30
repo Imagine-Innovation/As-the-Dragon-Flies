@@ -30,14 +30,20 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'id',
-            'name',
             'item_type_id',
+            'image_id',
+            'name',
             'description:ntext',
-            'category',
+            'sort_order',
             'cost',
             'coin',
             'quantity',
             'weight',
+            'max_load',
+            'max_volume',
+            'is_packable',
+            'is_wearable',
+            'is_purchasable',
         ],
     ]) ?>
 

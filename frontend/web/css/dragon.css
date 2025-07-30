@@ -5382,6 +5382,20 @@ pre {
     margin-right:1.2rem
 }
 
+.avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 2px solid var(--yellow);
+    object-fit: cover;
+}
+
+.avatar:hover{
+    transform:scale(3);
+    position:relative;
+    z-index:1000;
+}
+
 /* Custom Image Card Styles */
 .image-card {
     border-radius: 0.5rem;
@@ -5480,3 +5494,16 @@ pre {
     background: var(--bs-gray-500);
 }
 
+/*****/
+
+@media (max-width:767.98px) {
+    .virtual-tabletop {
+        padding:15px 15px 15px 15px;
+    }
+}
+
+@media (min-width:768px) {
+    .virtual-tabletop {
+        padding:102px 15px 15px 15px;
+    }
+}

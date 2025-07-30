@@ -16,13 +16,18 @@ $playerId = Yii::$app->session->get('playerId');
                             <h5><?= $player->name ?></h5>
                             <p class="small mb-1"><?= $player->age ?>-year-old <?= $player->gender == 'M' ? 'male' : 'female' ?> <?= $player->race->name ?></p>
                             <p class="small mb-0"><?= $player->level->name ?> <?= $player->alignment->name ?> <?= $player->class->name ?></p>
-                            <?php if ($player->id === $playerId && $player->id !== $model->initiator_id): // Initiatoru cannot leave the quest ?>
-                                <a href="<?= Url::toRoute(['quest/quit']) ?>" class="btn btn-warning btn-sm mt-2 w-50" type="button">
-                                    <i class="bi bi-box-arrow-right"></i> Leave Tavern
-                                </a>
-                                <button class="btn btn-warning btn-sm mt-2 w-50" id="leaveTavernButton" type="button">
-                                    <i class="bi bi-box-arrow-right"></i> Leave Tavern
-                                </button>
+                            <?php if ($player->id !== $model->initiator_id): // Initiator cannot leave the quest ?>
+                                <?php if ($player->id === $playerId): // Only the current player can leave the quest ?>
+                                    <button class="btn btn-warning btn-sm mt-2 w-100" id="leaveQuestButton" type="button">
+                                        <i class="bi bi-box-arrow-right"></i> Leave Tavern
+                                    </button>
+                                <?php endif; ?>
+                            <?php else: // This is the initiator part ?>
+                                <?php if ($player->id === $playerId): // only initiator can start the quest ?>
+                                    <button class="btn btn-warning btn-sm mt-2 w-100 d-none" id="startQuestButton" type="button">
+                                        <i class="bi bi-action-move"></i> Start the quest
+                                    </button>
+                                <?php endif; ?>
                             <?php endif; ?>
                         </div>
                     </div>
