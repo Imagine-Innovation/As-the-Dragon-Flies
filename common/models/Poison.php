@@ -17,7 +17,7 @@ use Yii;
  * @property DamageType $damageType
  * @property Item $item
  */
-class Poison extends \yii\db\ActiveRecord {
+class Poison extends Item {
 
     /**
      * {@inheritdoc}
@@ -30,7 +30,7 @@ class Poison extends \yii\db\ActiveRecord {
      * {@inheritdoc}
      */
     public function rules() {
-        return [
+        return array_merge(parent::rules(), [
             [['item_id', 'damage_type_id', 'ability_id', 'poison_type'], 'required'],
             [['item_id', 'damage_type_id', 'ability_id', 'dc'], 'integer'],
             [['poison_type'], 'string', 'max' => 32],
@@ -38,20 +38,20 @@ class Poison extends \yii\db\ActiveRecord {
             [['item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['item_id' => 'id']],
             [['ability_id'], 'exist', 'skipOnError' => true, 'targetClass' => Ability::class, 'targetAttribute' => ['ability_id' => 'id']],
             [['damage_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => DamageType::class, 'targetAttribute' => ['damage_type_id' => 'id']],
-        ];
+        ]);
     }
 
     /**
      * {@inheritdoc}
      */
     public function attributeLabels() {
-        return [
+        return array_merge(parent::attributeLabels(), [
             'item_id' => 'Foreign key to \"item\" table',
             'damage_type_id' => 'Foreign key to \"damage_type\" table',
             'ability_id' => 'Foreign key to \"ability\" table',
             'poison_type' => 'Poison type',
             'dc' => 'Difficulty Class (DC)',
-        ];
+        ]);
     }
 
     /**

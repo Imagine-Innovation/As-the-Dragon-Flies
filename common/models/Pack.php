@@ -27,24 +27,24 @@ class Pack extends \yii\db\ActiveRecord {
      * {@inheritdoc}
      */
     public function rules() {
-        return [
+        return array_merge(parent::rules(), [
             [['parent_item_id', 'item_id', 'quantity'], 'required'],
             [['parent_item_id', 'item_id', 'quantity'], 'integer'],
             [['parent_item_id', 'item_id'], 'unique', 'targetAttribute' => ['parent_item_id', 'item_id']],
             [['item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['item_id' => 'id']],
             [['parent_item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['parent_item_id' => 'id']],
-        ];
+        ]);
     }
 
     /**
      * {@inheritdoc}
      */
     public function attributeLabels() {
-        return [
+        return array_merge(parent::attributeLabels(), [
             'parent_item_id' => 'Foreign key to \"item\" table. The table\'s record will be the container.',
             'item_id' => 'Foreign key to \"item\" table. The table\'s record will be the content.',
             'quantity' => 'Quantity contained',
-        ];
+        ]);
     }
 
     /**
