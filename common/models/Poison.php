@@ -15,7 +15,6 @@ use Yii;
  *
  * @property Ability $ability
  * @property DamageType $damageType
- * @property Item $item
  */
 class Poison extends Item {
 
@@ -70,14 +69,5 @@ class Poison extends Item {
      */
     public function getDamageType() {
         return $this->hasOne(DamageType::class, ['id' => 'damage_type_id']);
-    }
-
-    /**
-     * Gets query for [[Item]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getItem() {
-        return $this->hasOne(Item::class, ['id' => 'item_id']);
     }
 }

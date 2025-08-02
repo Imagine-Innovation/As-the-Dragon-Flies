@@ -53,7 +53,7 @@ class Shopping {
      * @param PlayerCoins[] $playerCoins Content of the player's purse.
      * @return array Associative array representing the player's purse with coin types as keys.
      */
-    private function initPurse($playerCoins) {
+    private function initPurse(array $playerCoins): array {
         // Initialize the purse array.
         if ($this->purse) {
             return $this->purse;
@@ -66,8 +66,9 @@ class Shopping {
             $coin = $playerCoin->coin;
 
             // Retrieve the coin details for the current coin type.
+            $thisCoin = $this->coins[$coin];
             // Check if the coin details exist.
-            if ($thisCoin = $this->coins[$coin]) {
+            if ($thisCoin) {
                 // Create an entry in the purse array with quantity,
                 // copper value, and link to the previous coin type.
                 $this->purse[$coin] = [
@@ -101,7 +102,7 @@ class Shopping {
      *
      * @return bool True if saving is successful for all PlayerCoin objects, false otherwise.
      */
-    private function setPlayerCoins($playerCoins) {
+    private function setPlayerCoins(array $playerCoins): bool {
         // Initialize the return variable to true.
         $success = true;
 
@@ -138,7 +139,7 @@ class Shopping {
      * @param int $added The quantity of coins to add to the wallet.
      * @return void
      */
-    private function updateWallet($coin, $added) {
+    private function updateWallet(string $coin, int $added): void {
         // Retrieve the current wallet for the specified coin.
         $wallet = $this->purse[$coin];
 
@@ -161,7 +162,7 @@ class Shopping {
      * @param string $targetCoin The target coin type to exchange to.
      * @return bool True if the exchange is successful, false otherwise.
      */
-    private function changeHigherValueCoin($targetCoin) {
+    private function changeHigherValueCoin(string $targetCoin): bool {
         // Check if the target coin exists in the coins array.
         if (!isset($this->coins[$targetCoin])) {
             return false;
@@ -253,7 +254,7 @@ class Shopping {
      *
      * @return bool True if the spending is successful, false otherwise.
      */
-    public function spend($playerCoins, $cost, $coin) {
+    public function spend(array $playerCoins, float $cost, string $coin): bool {
         // Check if the player has sufficient funding for the specified cost and coin type.
         $itemCopperValue = $this->getFunding($playerCoins, $cost, $coin);
 
@@ -287,7 +288,7 @@ class Shopping {
      * @param string $coin The type of coin to be restored.
      * @return bool Whether the restoration was successful.
      */
-    public function restoreFunding($playerCoins, $cost, $coin) {
+    public function restoreFunding(array $playerCoins, int $cost, string $coin): bool {
         $this->initPurse($playerCoins);
 
         // Iterate over the player's coins
@@ -313,7 +314,7 @@ class Shopping {
      *
      * @return float The maximum funding the player can contribute towards the item purchase in copper coins.
      */
-    public function getFunding($playerCoins, $cost, $coin) {
+    public function getFunding(array $playerCoins, float $cost, string $coin): float {
         // Check if the specified coin type exists in the coins array,
         // and if the item cost is positive.
         if (!isset($this->coins[$coin]) || $cost <= 0) {
@@ -343,7 +344,7 @@ class Shopping {
      * @param string $coin Current coin unit.
      * @return int Value converted into copper coins.
      */
-    public function copperValue($cost, $coin) {
+    public function copperValue(float $cost, string $coin): int {
         // Check if the coin type is valid or the cost is non-positive.
         if (!isset($this->coins[$coin]) || $cost <= 0) {
             // Handle invalid coin types or negative cost.
@@ -361,9 +362,10 @@ class Shopping {
      * for each non-zero quantity wallet in the format "{quantity}{coin}",
      * and then joins these strings with a plus sign.
      *
+     * @param array $playerCoins The player's current coin holdings represented as an associative array.
      * @return string The string representation of the player's purse.
      */
-    public function getPurseValueString($playerCoins) {
+    public function getPurseValueString(array $playerCoins): string {
         // Initialize an array to store formatted strings for each wallet.
         $string = [];
         $this->initPurse($playerCoins);
@@ -386,7 +388,7 @@ class Shopping {
      * @param array $playerCarts The player's cart containing items.
      * @return string The cart value string.
      */
-    public function getCartValueString($playerCarts) {
+    public function getCartValueString(array $playerCarts): string {
         // Return empty string if player's cart is empty
         if (empty($playerCarts)) {
             return "";
@@ -429,11 +431,11 @@ class Shopping {
      * Generates a message indicating why a purchase is not possible based on the player's coins and item cost.
      *
      * @param int $playerCoins The amount of coins the player has.
-     * @param common\models\Item $item The item to be purchased.
+     * @param Item $item The item to be purchased.
      *
      * @return string The purchase status message.
      */
-    public function purchaseNotPossibleMessage($playerCoins, $item) {
+    public function purchaseNotPossibleMessage(int $playerCoins, Item $item): string {
         // Initialize the player's purse with the current coins.
         $this->initPurse($playerCoins);
 
@@ -465,7 +467,7 @@ class Shopping {
      * @param int $quantity The quantity of the item to be removed.
      * @return array An associative array containing the result of the operation.
      */
-    public function removeFromCart($player, $item, $quantity) {
+    public function removeFromCart(Player $player, Item $item, int $quantity): array {
         // Find the cart entry for the specified item
         $playerCart = PlayerCart::findOne(['player_id' => $player->id, 'item_id' => $item->id]);
 
@@ -511,17 +513,18 @@ class Shopping {
      *
      * @param Player $player The Player model representing the player.
      * @param Item $item The Item model representing the item to be added to the cart.
+     * @param int|null $quantity The Item model representing the item to be added to the cart.
      * @return array An associative array containing the result of the operation.
      */
-    public function addToCart($player, $item, $quantity = 1) {
+    public function addToCart(Player $player, Item $item, int|null $quantity = null): array {
         // Find if the item already exists in the player's cart
         $playerCart = PlayerCart::findOne(['player_id' => $player->id, 'item_id' => $item->id]);
 
         // If the item already exists, increment its quantity; otherwise, create a new PlayerCart model
         if ($playerCart) {
-            $playerCart->quantity += $quantity;
+            $playerCart->quantity += $quantity ?? 1;
         } else {
-            $playerCart = new PlayerCart(['player_id' => $player->id, 'item_id' => $item->id, 'quantity' => $quantity]);
+            $playerCart = new PlayerCart(['player_id' => $player->id, 'item_id' => $item->id, 'quantity' => $quantity ?? 1]);
         }
 
         // Attempt to save the changes to the database
@@ -550,7 +553,7 @@ class Shopping {
      * @param PlayerCart $playerCart The player cart item to validate.
      * @return array The JSON response indicating the success or failure of the validation.
      */
-    private function validateSingleItemPurchase($playerCart) {
+    private function validateSingleItemPurchase(PlayerCart &$playerCart): array {
         // Find the corresponding PlayerItem for the player cart item
         $playerItem = PlayerItem::findOne([
             'player_id' => $playerCart->player_id,
@@ -562,14 +565,7 @@ class Shopping {
             // Update the quantity of the existing PlayerItem
             $playerItem->quantity += $playerCart->quantity;
         } else {
-            $classId = $playerCart->player->class_id;
-            // Create a new PlayerItem if it does not exist
-            $playerItem = new PlayerItem([
-                'player_id' => $playerCart->player_id,
-                'item_id' => $playerCart->item_id,
-                'quantity' => $playerCart->quantity * $playerCart->item->quantity,
-                'is_proficient' => PlayerTool::isProficient($classId, $playerCart->item_id) ? 1 : 0
-            ]);
+            $playerItem = $this->addToInventory($playerCart);
         }
 
         // Save the PlayerItem and return success if saving is successful
@@ -581,6 +577,21 @@ class Shopping {
         return ['error' => true, 'msg' => "Could not validate the purchase of {$playerCart->item->name}"];
     }
 
+    private function addToInventory(PlayerCart &$playerCart): PlayerItem {
+        $classId = $playerCart->player->class_id;
+        $isProficient = PlayerTool::isProficient($classId, $playerCart->item_id) ? 1 : 0;
+
+        // Create a new PlayerItem if it does not exist
+        $playerItem = new PlayerItem([
+            'player_id' => $playerCart->player_id,
+            'item_id' => $playerCart->item_id,
+            'quantity' => $playerCart->quantity * $playerCart->item->quantity,
+            'is_proficient' => $isProficient
+        ]);
+
+        return $playerItem;
+    }
+
     /**
      * Validates the purchase of a pack in the player's cart.
      *
@@ -590,11 +601,11 @@ class Shopping {
      * If all items are successfully validated, the original cart item is removed,
      * and a success message is returned.
      *
-     * @param object $playerCart The player's cart item to be validated.
+     * @param PlayerCart $playerCart The player's cart item to be validated.
      * @return array An associative array containing 'error' and 'msg' keys to
      *               indicate the validation result.
      */
-    private function validatePackPurchase($playerCart) {
+    private function validatePackPurchase(PlayerCart &$playerCart): array {
         // Retrieve the list of packs associated with the item in the cart
         $packs = $playerCart->item->packs;
 
@@ -632,11 +643,11 @@ class Shopping {
      * If the item is of type 'Pack', it validates the purchase as a pack.
      * Otherwise, it validates the purchase as a single item.
      *
-     * @param object $playerCart The player's cart item to be validated.
+     * @param PlayerCart $playerCart The player's cart item to be validated.
      * @return array An associative array containing 'error' and 'msg' keys to
      *               indicate the validation result.
      */
-    public function validatePurchase($playerCart) {
+    public function validatePurchase(PlayerCart $playerCart): array {
         // Check if the item type in the cart is 'Pack'
         if ($playerCart->item->itemType->name === 'Pack') {
             // Validate the purchase as a pack
@@ -667,25 +678,25 @@ class Shopping {
      * and sorts the items within each category by their copper values
      * in ascending order.
      *
-     * @param array $models The models to load data for.
+     * @param Item[] $items The models to load data for.
      * @return array The organized data for rendering the shop page.
      */
-    public function loadShopData($models) {
+    public function loadShopData(array $items): array {
         // Initialize an array to store organized shop data.
         $data = [];
 
         // Iterate through each model and populate the data array.
-        foreach ($models as $model) {
-            $itemType = $model->itemType->name;
+        foreach ($items as $item) {
+            $itemType = $item->itemType->name;
             $data[$itemType][] = [
-                'id' => $model->id,
+                'id' => $item->id,
                 'type' => $itemType,
-                'name' => $model->name,
-                'description' => $model->description,
-                'price' => $model->price,
-                'value' => $model->copperValue,
-                'quantity' => $model->quantity,
-                'image' => $model->fileName,
+                'name' => $item->name,
+                'description' => $item->description,
+                'price' => $item->price,
+                'value' => $item->copperValue,
+                'quantity' => $item->quantity,
+                'image' => $item->picture,
             ];
         }
 

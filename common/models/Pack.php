@@ -12,9 +12,8 @@ use Yii;
  * @property int $quantity Quantity contained
  *
  * @property Item[] $items
- * @property Item $parentItem
  */
-class Pack extends \yii\db\ActiveRecord {
+class Pack extends Item {
 
     /**
      * {@inheritdoc}
@@ -54,14 +53,5 @@ class Pack extends \yii\db\ActiveRecord {
      */
     public function getItems() {
         return $this->hasMany(Item::class, ['id' => 'item_id']);
-    }
-
-    /**
-     * Gets query for [[ParentItem]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getParentItem() {
-        return $this->hasOne(Item::class, ['id' => 'parent_item_id']);
     }
 }

@@ -5,9 +5,14 @@ namespace frontend\components;
 use common\models\ClassItemProficiency;
 use common\models\ItemCategory;
 use common\models\PlayerAbility;
+use common\models\PlayerItem;
+use common\models\Weapon;
 use Yii;
+use yii\helpers\ArrayHelper;
 
 class PlayerTool {
+
+    const EMPTY_ABILITIES = ['STR' => [], 'DEX' => [], 'CON' => [], 'INT' => [], 'WIS' => [], 'CHA' => []];
 
     /**
      * Calculates ability modifier based on ability score
@@ -23,14 +28,14 @@ class PlayerTool {
      * Checks if a player is proficient with a specific item.
      *
      * @param int $classId The ID of the player class.
-     * @param int $item_id The ID of the item to check proficiency for.
+     * @param int $itemId The ID of the item to check proficiency for.
      * @return bool|null Returns true if the player is proficient with the item, false if not,
      *                   or null if the player parameter is null.
      */
-    public static function isProficient(int $classId, int $item_id): bool {
+    public static function isProficient(int $classId, int $itemId): bool {
         // Check whether the player's class gives a direct proficiency for the item.
-        Yii::debug("*** Debug *** isProficient({$classId}, {$item_id})");
-        $proficientForItem = ClassItemProficiency::findOne(['class_id' => $classId, 'item_id' => $item_id]);
+        Yii::debug("*** Debug *** isProficient({$classId}, {$itemId})");
+        $proficientForItem = ClassItemProficiency::findOne(['class_id' => $classId, 'item_id' => $itemId]);
         if ($proficientForItem) {
             Yii::debug("*** Debug *** isProficient is proficient for item");
             return true;
@@ -44,19 +49,26 @@ class PlayerTool {
                 ->andWhere(['is not', 'category_id', null])
                 ->all();
 
-        $proficient = ItemCategory::findAll(['item_id' => $item_id, 'category_id' => $categoryIds]);
+        $proficient = ItemCategory::findAll(['item_id' => $itemId, 'category_id' => $categoryIds]);
 
         Yii::debug("*** Debug *** isProficient return " . ($proficient ? 'true' : 'false'));
         return $proficient ? true : false;
     }
 
-    public static function getAbilitiesAndSavingThrow(array $playerAbilities, int $proficiencyBonus): array {
+    /**
+     * Gathers the different ability and saving throw data into a simple associative array
+     *
+     * @param PlayerAbility[] $playerAbilities
+     * @param int $proficiencyModifier
+     * @return array
+     */
+    public static function getAbilitiesAndSavingThrow(array $playerAbilities, int $proficiencyModifier): array {
         // set the initialization order to the common way of displaying abilities
-        $abilities = ['STR' => [], 'DEX' => [], 'CON' => [], 'INT' => [], 'WIS' => [], 'CHA' => []];
+        $abilities = self::EMPTY_ABILITIES;
 
         foreach ($playerAbilities as $playerAbility) {
             $ability = $playerAbility->ability;
-            $savingThrow = $playerAbility->modifier + ($playerAbility->is_saving_throw ? $proficiencyBonus : 0);
+            $savingThrow = $playerAbility->modifier + ($playerAbility->is_saving_throw ? $proficiencyModifier : 0);
             $playerData = [
                 'code' => $ability->code,
                 'name' => $ability->name,
@@ -68,5 +80,53 @@ class PlayerTool {
         }
 
         return $abilities;
+    }
+
+    /**
+     * Retrieve the player's ability modifier for a specific code
+     *
+     * @param int $playerId
+     * @param string $abilityCode
+     * @return int
+     */
+    public static function getAbilityModifier(int $playerId, string $abilityCode): int {
+        $playerAbility = PlayerAbility::find()
+                ->joinWith('player')
+                ->joinWith('ability')
+                ->where(['player.id' => $playerId, 'ability.code' => $abilityCode])
+                ->one();
+
+        return $playerAbility->modifier ?? 0;
+    }
+
+    /**
+     * Get the weapon's attack modifier and damage
+     *
+     * @param int $playerId
+     * @param int $weaponId
+     * @param int $proficiencyModifier
+     * @return array
+     */
+    public static function getPlayerWeaponProperties(int $playerId, int $weaponId, int $proficiencyModifier): array {
+
+        $weapon = Weapon::findOne(['item_id' => $weaponId]);
+        if (!$weapon) {
+            return ['attackModifier' => null, 'damage' => null];
+        }
+
+        if ($weapon->is_finesse) {
+            $strength = self::getAbilityModifier($playerId, 'STR');
+            $dexterity = self::getAbilityModifier($playerId, 'DEX');
+            $abilityModifier = max($dexterity, $strength);
+        } else {
+            $categories = ArrayHelper::getColumn($weapon->categories, 'name');
+            $abilityCode = (in_array("Ranged Weapon", $categories)) ? 'DEX' : 'STR';
+            $abilityModifier = self::getAbilityModifier($playerId, $abilityCode);
+        }
+
+        return [
+            'attackModifier' => $abilityModifier + $proficiencyModifier,
+            'damage' => "{$weapon->damage_dice}+{$abilityModifier}"
+        ];
     }
 }

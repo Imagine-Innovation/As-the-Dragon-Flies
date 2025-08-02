@@ -7,7 +7,21 @@
     font-family: "bootstrap-icons";
 }
 
-.bi-d20::before {
+.dnd-dev::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/chest-svgrepo-com.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/chest-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-d20::before {
     content: "";
     font-size: inherit;
     height: 1em;
@@ -21,7 +35,63 @@
     vertical-align: -0.125em;
 }
 
-.bi-chest::before {
+.dnd-badge::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/badge.svg') no-repeat center center;
+    mask: url('dnd-icons/badge.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-banner::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/banner.svg') no-repeat center center;
+    mask: url('dnd-icons/banner.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-castel::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/castel.svg') no-repeat center center;
+    mask: url('dnd-icons/castel.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-large-castel::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/large-castel.svg') no-repeat center center;
+    mask: url('dnd-icons/large-castel.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-chest::before {
     content: "";
     font-size: inherit;
     height: 1em;
@@ -35,7 +105,175 @@
     vertical-align: -0.125em;
 }
 
-.bi-action-rest::before {
+.dnd-crown::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/crown.svg') no-repeat center center;
+    mask: url('dnd-icons/crown.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-danger::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/danger.svg') no-repeat center center;
+    mask: url('dnd-icons/danger.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-diamond::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/diamond.svg') no-repeat center center;
+    mask: url('dnd-icons/diamond.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-diamond-ring::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/diamond-ring.svg') no-repeat center center;
+    mask: url('dnd-icons/diamond-ring.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-key::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/key.svg') no-repeat center center;
+    mask: url('dnd-icons/key.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-key2::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/key2.svg') no-repeat center center;
+    mask: url('dnd-icons/key2.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-pirate::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/pirate.svg') no-repeat center center;
+    mask: url('dnd-icons/pirate.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-ring::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/ring.svg') no-repeat center center;
+    mask: url('dnd-icons/ring.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-spell-book::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/spell-book.svg') no-repeat center center;
+    mask: url('dnd-icons/spell-book.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-tent::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/tent.svg') no-repeat center center;
+    mask: url('dnd-icons/tent.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-tower::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/tower.svg') no-repeat center center;
+    mask: url('dnd-icons/tower.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-action-attack::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/action-attack.svg') no-repeat center center;
+    mask: url('dnd-icons/action-attack.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-action-rest::before {
     content: "";
     font-size: inherit;
     height: 1em;
@@ -49,7 +287,7 @@
     vertical-align: -0.125em;
 }
 
-.bi-action-run::before {
+.dnd-action-run::before {
     content: "";
     font-size: inherit;
     height: 1em;
@@ -63,7 +301,7 @@
     vertical-align: -0.125em;
 }
 
-.bi-action-fight::before {
+.dnd-action-fight::before {
     content: "";
     font-size: inherit;
     height: 1em;
@@ -77,7 +315,21 @@
     vertical-align: -0.125em;
 }
 
-.bi-action-hide::before {
+.dnd-action-unarmed-strike::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/action-unarmed-strike.svg') no-repeat center center;
+    mask: url('dnd-icons/action-unarmed-strike.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-action-hide::before {
     content: "";
     font-size: inherit;
     height: 1em;
@@ -91,7 +343,7 @@
     vertical-align: -0.125em;
 }
 
-.bi-action-move::before {
+.dnd-action-move::before {
     content: "";
     font-size: inherit;
     height: 1em;
@@ -105,7 +357,7 @@
     vertical-align: -0.125em;
 }
 
-.bi-action-climb::before {
+.dnd-action-climb::before {
     content: "";
     font-size: inherit;
     height: 1em;
@@ -119,7 +371,7 @@
     vertical-align: -0.125em;
 }
 
-.bi-action-prepare-spell::before {
+.dnd-action-prepare-spell::before {
     content: "";
     font-size: inherit;
     height: 1em;
@@ -133,7 +385,35 @@
     vertical-align: -0.125em;
 }
 
-.bi-weapon-sword::before {
+.dnd-weapon::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/weapon.svg') no-repeat center center;
+    mask: url('dnd-icons/weapon.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-weapon-arrows::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/weapon-arrows.svg') no-repeat center center;
+    mask: url('dnd-icons/weapon-arrows.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-weapon-sword::before {
     content: "";
     font-size: inherit;
     height: 1em;
@@ -147,7 +427,7 @@
     vertical-align: -0.125em;
 }
 
-.bi-weapon-bow::before {
+.dnd-weapon-bow::before {
     content: "";
     font-size: inherit;
     height: 1em;
@@ -161,7 +441,21 @@
     vertical-align: -0.125em;
 }
 
-.bi-armor-plate::before {
+.dnd-armor::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/armor.svg') no-repeat center center;
+    mask: url('dnd-icons/armor.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-armor-plate::before {
     content: "";
     font-size: inherit;
     height: 1em;
@@ -175,7 +469,7 @@
     vertical-align: -0.125em;
 }
 
-.bi-armor-shield::before {
+.dnd-armor-shield::before {
     content: "";
     font-size: inherit;
     height: 1em;
@@ -189,7 +483,21 @@
     vertical-align: -0.125em;
 }
 
-.bi-armor-helmet::before {
+.dnd-armor-round-shield::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/armor-round-shield.svg') no-repeat center center;
+    mask: url('dnd-icons/armor-round-shield.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-armor-helmet::before {
     content: "";
     font-size: inherit;
     height: 1em;
@@ -203,7 +511,49 @@
     vertical-align: -0.125em;
 }
 
-.bi-class-wizard::before {
+.dnd-armor-helmet-large::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/armor-helmet-large.svg') no-repeat center center;
+    mask: url('dnd-icons/armor-helmet-large.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-armor-helmet-plume::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/armor-helmet-plume.svg') no-repeat center center;
+    mask: url('dnd-icons/armor-helmet-plume.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-armor-spartan::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/armor-spartan.svg') no-repeat center center;
+    mask: url('dnd-icons/armor-spartan.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-class-wizard::before {
     content: "";
     font-size: inherit;
     height: 1em;
@@ -217,21 +567,7 @@
     vertical-align: -0.125em;
 }
 
-.bi-class-artificer::before {
-    content: "";
-    font-size: inherit;
-    height: 1em;
-    width: 1em;
-    display: inline-block;
-    background: currentColor;
-    -webkit-mask: url('dnd-icons/Artificer.svg') no-repeat center center;
-    mask: url('dnd-icons/Artificer.svg') no-repeat center center;
-    -webkit-mask-size: 100% 100%;
-    mask-size: 100% 100%;
-    vertical-align: -0.125em;
-}
-
-.bi-class-barbarian::before {
+.dnd-class-barbarian::before {
     content: "";
     font-size: inherit;
     height: 1em;
@@ -245,7 +581,7 @@
     vertical-align: -0.125em;
 }
 
-.bi-class-bard::before {
+.dnd-class-bard::before {
     content: "";
     font-size: inherit;
     height: 1em;
@@ -259,7 +595,7 @@
     vertical-align: -0.125em;
 }
 
-.bi-class-rogue::before {
+.dnd-class-rogue::before {
     content: "";
     font-size: inherit;
     height: 1em;
@@ -273,7 +609,7 @@
     vertical-align: -0.125em;
 }
 
-.bi-class-sorcerer::before {
+.dnd-class-sorcerer::before {
     content: "";
     font-size: inherit;
     height: 1em;

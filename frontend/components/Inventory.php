@@ -63,7 +63,7 @@ class Inventory {
                 'description' => $item->description,
                 'weight' => $item->weight * $model->quantity / $item->quantity,
                 'quantity' => $model->quantity,
-                'image' => $item->fileName,
+                'image' => $item->picture,
                 'is_carrying' => $model->is_carrying,
             ];
         }

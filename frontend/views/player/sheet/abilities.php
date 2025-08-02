@@ -11,7 +11,7 @@ $playerAbilities = PlayerTool::getAbilitiesAndSavingThrow($model->playerAbilitie
 ?>
 <div class="card mb-4">
     <div class="<?= $cardHeaderClass ?>">
-        <i class="fas fa-dice-d20 me-2"></i>Abilities & Saving Throws
+        <i class="bi dnd-d20 me-2"></i>Abilities & Saving Throws
     </div>
     <div class="card-body p-4">
         <table class="w-100">

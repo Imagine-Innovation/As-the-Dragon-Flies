@@ -6,7 +6,7 @@
 <!-- Skills -->
 <div class="card mb-4">
     <div class="<?= $cardHeaderClass ?>">
-        <i class="fas fa-tools me-2"></i>Skills
+        <i class="bi bi-tools me-2"></i>Skills
     </div>
     <div class="card-body p-4">
         <table class="w-100">

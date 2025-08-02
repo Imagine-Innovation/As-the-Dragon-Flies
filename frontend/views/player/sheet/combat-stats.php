@@ -14,7 +14,7 @@ $combatStat = [
 <!--Combat Stats-->
 <div class="card">
     <div class="<?= $cardHeaderClass ?>">
-        <i class="fas fa-shield-alt me-2"></i>Combat Stats
+        <i class="bi bi-shield-shaded me-2"></i>Combat Stats
     </div>
     <div class="card-body">
         <div class="row row-cols-3 row-cols-sm-4 row-cols-md-3 row-cols-xl-4">

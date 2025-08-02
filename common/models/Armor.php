@@ -18,7 +18,6 @@ use Yii;
  * @property int $doff_delay This is the time it takes to take off armor. If you have help, reduce this time by half.
  * @property string $delay_unit Delay unit (minute or action)
  *
- * @property Item $item
  * @property ShapeArmor[] $shapeArmors
  * @property Shape[] $shapes
  *
@@ -62,15 +61,6 @@ class Armor extends Item {
             'doff_delay' => 'This is the time it takes to take off armor. If you have help, reduce this time by half.',
             'delay_unit' => 'Delay unit (minute or action)',
         ]);
-    }
-
-    /**
-     * Gets query for [[Item]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getItem() {
-        return $this->hasOne(Item::class, ['id' => 'item_id']);
     }
 
     /**

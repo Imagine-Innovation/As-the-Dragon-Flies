@@ -62,13 +62,13 @@ $this->title = Yii::$app->session->get('questName');
                     </aside>
                     <nav class="scene-actions">
                         <button class="btn btn-action btn-sm me-2" onclick="performAction('examine-throne')" aria-label="Examine throne">
-                            <i class="fas fa-search" aria-hidden="true"></i>
+                            <i class="bi bi-search" aria-hidden="true"></i>
                         </button>
                         <button class="btn btn-action btn-sm me-2" onclick="performAction('approach-throne')" aria-label="Approach throne">
-                            <i class="fas fa-walking" aria-hidden="true"></i>
+                            <i class="bi bi-person-walking" aria-hidden="true"></i>
                         </button>
                         <button class="btn btn-action btn-sm" onclick="performAction('cast-detect-magic')" aria-label="Cast detect magic">
-                            <i class="fas fa-magic" aria-hidden="true"></i>
+                            <i class="bi bi-magic" aria-hidden="true"></i>
                         </button>
                     </nav>
                 </article>

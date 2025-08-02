@@ -15,11 +15,11 @@ if ($offline) {
                 'css' => [
                     '/frontend/web/offline/css/bootstrap.min.css',
                     '/frontend/web/offline/css/bootstrap-icons.min.css',
-                    '/frontend/web/offline/css/all.min.css',
+                //'/frontend/web/offline/css/all.min.css',
                 ],
                 'js' => [
                     '/frontend/web/offline/js/bootstrap.bundle.min.js',
-                    '/frontend/web/offline/js/all.min.js'
+                //'/frontend/web/offline/js/all.min.js'
                 ],
             ],
             'yii\\web\\JqueryAsset' => [
@@ -38,11 +38,11 @@ if ($offline) {
                 'css' => [
                     'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.7/css/bootstrap.min.css',
                     'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.1/font/bootstrap-icons.min.css',
-                    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css',
+                //'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css',
                 ],
                 'js' => [
                     'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.7/js/bootstrap.bundle.min.js',
-                    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/js/all.min.js'
+                //'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/js/all.min.js'
                 ],
             // Optional: Add integrity and crossorigin attributes if needed
             // 'cssOptions' => [

@@ -14,6 +14,7 @@ use common\models\PlayerCoin;
 use common\models\PlayerSkill;
 use common\models\PlayerTrait;
 use common\models\Race;
+use common\models\Weapon;
 use common\models\Wizard;
 use Yii;
 

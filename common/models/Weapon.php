@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use frontend\helpers\ItemTool;
 use Yii;
 
 /**
@@ -37,22 +38,6 @@ use Yii;
  * @property string $properties
  */
 class Weapon extends Item {
-
-    // Define the available weapon properties as an associative array.
-    // /!\ Don't forget to update this array when the data model changes
-    Const PROPERTIES = [
-        'need_ammunition' => 'Need ammunition',
-        'is_finesse' => 'Finesse',
-        'is_heavy' => 'Heavy',
-        'is_light' => 'Light',
-        'is_loading' => 'Loading',
-        'is_range' => 'Range (%s)',
-        'is_reach' => 'Reach',
-        'is_special' => 'Special',
-        'is_thrown' => 'Thrown',
-        'is_two_handed' => 'Two Handed',
-        'is_versatile' => 'Versatile (%s)',
-    ];
 
     /**
      * {@inheritdoc}
@@ -161,19 +146,6 @@ class Weapon extends Item {
      * @return string The formatted string listing weapon properties, separated by commas.
      */
     public function getProperties(): string {
-
-        $properties = [];
-
-        foreach (self::PROPERTIES as $property => $displayName) {
-            if ($this->$property) {
-                if (str_contains($displayName, '%s')) {
-                    $value = $property == 'is_versatile' ? $this->versatile_dice : $this->range_min . '-' . $this->range_max;
-                    $properties[] = sprintf($displayName, $value);
-                } else {
-                    $properties[] = $displayName;
-                }
-            }
-        }
-        return implode(", ", $properties);
+        return ItemTool::getFullWeaponProperties($this);
     }
 }

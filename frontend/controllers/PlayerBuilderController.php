@@ -2,11 +2,12 @@
 
 namespace frontend\controllers;
 
+use common\models\ClassEquipment;
+use common\models\Image;
 use common\models\Player;
 use common\models\PlayerItem;
 use common\models\PlayerSkill;
-use common\models\ClassEquipment;
-use common\models\Image;
+use common\models\Weapon;
 use common\components\AppStatus;
 use common\components\ManageAccessRights;
 use frontend\models\PlayerBuilder;
@@ -14,6 +15,7 @@ use frontend\components\AjaxRequest;
 use frontend\components\BuilderTool;
 use frontend\components\PlayerTool;
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\AccessControl;
@@ -249,7 +251,6 @@ class PlayerBuilderController extends Controller {
         return [
             'error' => false,
             'content' => $content,
-                // 'content' => ['items' => implode(',', $items), 'categories' => implode(',', $categories)],
         ];
     }
 
@@ -272,49 +273,84 @@ class PlayerBuilderController extends Controller {
         return [
             'error' => false,
             'content' => $content,
-                // 'content' => ['choice' => $choice, 'items' => implode(',', $items), 'categories' => implode(',', $categories)],
         ];
     }
 
-    private function getItemsFromJson($itemIds) {
-        Yii::debug($itemIds, 'getItemsFromJson');
-
-        $items = [];
+    /**
+     * Parse the json string into an associative array
+     *
+     * @param string[] $itemIds
+     * @return array Associative array with the following structure ['itemId' => 123, 'quantity' => 1]
+     */
+    private function getItemQuantityFromJson(array $itemIds): array {
+        $itemQuantity = [];
         foreach ($itemIds as $itemId) {
             $selections = explode(',', $itemId);
             foreach ($selections as $selection) {
                 $data = explode('|', $selection);
-                $item['id'] = $data[0];
-                $item['quantity'] = $data[1];
-                $items[] = $item;
+                $itemQuantity[] = [
+                    'itemId' => $data[0],
+                    'quantity' => $data[1]
+                ];
             }
         }
-        return $items;
+        return $itemQuantity;
     }
 
-    private function addNewItem($player, $item) {
+    /**
+     * Add an item in the player's inventory
+     *
+     * @param Player $player
+     * @param int $itemId
+     * @param int $quantity
+     * @return bool
+     * @throws \Exception
+     */
+    private function addItem(Player &$player, int $itemId, int $quantity): bool {
 
-        $playerItem = PlayerItem::findOne(['player_id' => $player->id, 'item_id' => $item['id']]);
+        $playerItem = PlayerItem::findOne([
+            'player_id' => $player->id,
+            'item_id' => $itemId
+        ]);
 
         if ($playerItem) {
-            $playerItem->quantity = $item['quantity'];
-            $playerItem->is_carrying = 1;
-            $playerItem->is_equiped = 1;
-            $playerItem->is_proficient = PlayerTool::isProficient($player->class->id, $item['id']) ? 1 : 0;
+            $playerItem->quantity += $quantity;
         } else {
-            $playerItem = new PlayerItem([
-                'player_id' => $player->id,
-                'item_id' => $item['id'],
-                'quantity' => $item['quantity'],
-                'is_carrying' => 1,
-                'is_equiped' => 1,
-                'is_proficient' => PlayerTool::isProficient($player->class->id, $item['id']) ? 1 : 0
-            ]);
+            $playerItem = $this->newPlayerItem($player, $itemId, $quantity);
         }
+
         if ($playerItem->save()) {
             return true;
         }
-        throw new \Exception(implode("<br />", \yii\helpers\ArrayHelper::getColumn($playerItem->errors, 0, false)));
+        throw new \Exception(implode("<br />", ArrayHelper::getColumn($playerItem->errors, 0, false)));
+    }
+
+    /**
+     * Create and initialize a new instance of PlayerItem object
+     *
+     * @param Player $player
+     * @param int $itemId
+     * @param int $quantity
+     * @return PlayerItem
+     */
+    private function newPlayerItem(Player $player, int $itemId, int $quantity): PlayerItem {
+        $isProficient = PlayerTool::isProficient($player->class->id, $itemId) ? 1 : 0;
+        $proficiencyModifier = $isProficient ? $player->level->proficiency_bonus : 0;
+
+        $weaponProperties = PlayerTool::getPlayerWeaponProperties($player->id, $itemId, $proficiencyModifier);
+
+        $playerItem = new PlayerItem([
+            'player_id' => $player->id,
+            'item_id' => $itemId,
+            'quantity' => $quantity,
+            'is_carrying' => 1,
+            'is_equiped' => 1,
+            'is_proficient' => $isProficient,
+            'attack_modifier' => $weaponProperties['attackModifier'],
+            'damage' => $weaponProperties['damage'],
+        ]);
+
+        return $playerItem;
     }
 
     public function actionAjaxSaveEquipment() {
@@ -340,31 +376,26 @@ class PlayerBuilderController extends Controller {
             return ['error' => true, 'msg' => 'Missing item ids'];
         }
 
-        $items = $this->getItemsFromJson($itemIds);
+        $itemQuantity = $this->getItemQuantityFromJson($itemIds);
         $player = $this->findModel($playerId);
-        $success = true;
-        foreach ($items as $item) {
-            $success = $success && $this->addNewItem($player, $item);
+        foreach ($itemQuantity as $itemQuantity) {
+            $this->addItem($player, $itemQuantity['itemId'], $itemQuantity['quantity']);
         }
 
-        return ['error' => !$success, 'msg' => $success ? 'Initial items are saved' : 'Could not save initial items'];
+        return ['error' => 'false', 'msg' => 'Initial items are saved'];
     }
 
     private function getItemsCategory($request) {
         // First split by comma to get each pair
         $ids = $request->post('categoryIds');
-        Yii::debug($ids, 'getItemsCategory');
         $pairs = explode(',', $ids);
-        Yii::debug($pairs, 'getItemsCategory');
 
         $quantity = explode('|', $pairs[0])[1];
-        Yii::debug($quantity, 'getItemsCategory');
 
         // Extract first elements (ids) using array_map
         $categoryIds = array_map(function ($pair) {
             return explode('|', $pair)[0];
         }, $pairs);
-        Yii::debug($categoryIds, 'getItemsCategory');
 
         $param = [
             'modelName' => 'ItemCategory',
@@ -413,21 +444,21 @@ class PlayerBuilderController extends Controller {
         $request = Yii::$app->request;
         $playerId = $request->post('playerId');
 
-        $reset = PlayerSkill::updateAll(['is_proficient' => 0], ['player_id' => $playerId]);
+        // Reset the player skills to 0
+        // updateAll does not need "save()" and returns the number of updated rows
+        PlayerSkill::updateAll(//            update player_skill
+                ['is_proficient' => 0], //   set is_proficient=0
+                ['player_id' => $playerId]// where player_id=:playerId
+        );
 
         // get the list of skill ids from the ajax param "skills"
         $skills = $request->post('skills');
-        $success = $reset & PlayerSkill::updateAll(['is_proficient' => 1], ['player_id' => $playerId, 'skill_id' => $skills]);
-        Yii::debug($skills, 'actionAjaxSaveSkills', 'from JSON');
-        /*
-          foreach ($skills as $skillId) {
-          $playerSkill = new PlayerSkill(['player_id' => $playerId, 'skill_id' => $skillId]);
-          $save = $playerSkill->save();
-          $success = $success && $save;
-          }
-         *
-         */
+        $update = PlayerSkill::updateAll(
+                ['is_proficient' => 1],
+                ['player_id' => $playerId, 'skill_id' => $skills]
+        );
 
+        $success = ($update > 0);
         return ['error' => !$success, 'msg' => $success ? 'Skills are saved' : 'Could not save skills'];
     }
 
@@ -442,24 +473,20 @@ class PlayerBuilderController extends Controller {
 
         $request = Yii::$app->request;
         $model = $this->findModel($request->post('playerId'));
-        $success = true;
         if ($model) {
             $abilities = $request->post('abilities');
-            Yii::debug($abilities, 'arrays', 'Save abilities');
             foreach ($model->playerAbilities as $playerAbility) {
                 $ability_id = $playerAbility->ability_id;
                 $score = $abilities[$ability_id];
                 $playerAbility->score = $score;
                 $playerAbility->modifier = PlayerTool::calcAbilityModifier($score);
-
-                if (!$playerAbility->validate()) {
-                    Yii::$app->session->setFlash('error',);
+                if (!$playerAbility->save()) {
+                    throw new \Exception(implode("<br />", ArrayHelper::getColumn($playerAbility->errors, 0, false)));
                 }
-                $success = $success && $playerAbility->save();
             }
         }
 
-        return ['error' => !$success, 'msg' => $success ? 'Abilities are saved' : 'Could not save abilities'];
+        return ['error' => 'false', 'msg' => 'Abilities are saved'];
     }
 
     /**
@@ -494,7 +521,7 @@ class PlayerBuilderController extends Controller {
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id) {
+    public function actionUpdate(int $id) {
         $model = $this->findModel($id);
 
         if ($model->status === AppStatus::ACTIVE->value) {
@@ -512,11 +539,12 @@ class PlayerBuilderController extends Controller {
 
     /**
      * Displays a single ActionButton model.
+     *
      * @param int $id Primary key
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id) {
+    public function actionView(int $id) {
         return $this->redirect(['player/view', 'id' => $id]);
     }
 
@@ -527,7 +555,7 @@ class PlayerBuilderController extends Controller {
      * @return Player the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id) {
+    protected function findModel(int $id) {
 
         $query = PlayerBuilder::find()
                 ->with(['race', 'class', 'background', 'history', 'playerAbilities', 'playerSkills', 'playerTraits'])

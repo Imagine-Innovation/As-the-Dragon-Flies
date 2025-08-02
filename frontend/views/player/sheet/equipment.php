@@ -6,14 +6,14 @@
 <!-- Equipment -->
 <div class="card mb-4">
     <div class="<?= $cardHeaderClass ?>">
-        <i class="fas fa-backpack me-2"></i>Equipment
+        <i class="bi bi-backpack2 me-2"></i>Equipment
     </div>
     <div class="card-body">
         <div class="accordion" id="equipmentAccordion">
             <div class="accordion-item bg-transparent border-secondary">
                 <h2 class="accordion-header">
                     <button class="accordion-button bg-transparent text-light border-0" type="button" data-bs-toggle="collapse" data-bs-target="#weaponsArmor">
-                        <i class="fas fa-shield-alt me-2 text-warning"></i>Weapons & Armor
+                        <i class="bi bi-shield-shaded me-2 text-warning"></i>Weapons & Armor
                     </button>
                 </h2>
                 <div id="weaponsArmor" class="accordion-collapse collapse show" data-bs-parent="#equipmentAccordion">
@@ -42,7 +42,7 @@
             <div class="accordion-item bg-transparent border-secondary">
                 <h2 class="accordion-header">
                     <button class="accordion-button collapsed bg-transparent text-light border-0" type="button" data-bs-toggle="collapse" data-bs-target="#gear">
-                        <i class="fas fa-tools me-2 text-warning"></i>Gear & Items
+                        <i class="bi bi-tools me-2 text-warning"></i>Gear & Items
                     </button>
                 </h2>
                 <div id="gear" class="accordion-collapse collapse" data-bs-parent="#equipmentAccordion">
@@ -66,7 +66,7 @@
 
         <!-- Currency -->
         <div class="mt-4">
-            <h6 class="text-warning mb-3"><i class="fas fa-coins me-2"></i>Currency</h6>
+            <h6 class="text-warning mb-3"><i class="fi fi-cash-coin me-2"></i>Currency</h6>
             <div class="row g-2">
                 <div class="col-4">
                     <div class="card currency-card text-center">

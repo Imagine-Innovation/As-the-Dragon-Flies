@@ -6,7 +6,7 @@
 <!-- Features & Traits -->
 <div class="card mb-4">
     <div class="<?= $cardHeaderClass ?>">
-        <i class="fas fa-magic me-2"></i>Features & Traits
+        <i class="bi bi-magic me-2"></i>Features & Traits
     </div>
     <div class="card-body">
         <div class="card feature-card mb-3">
