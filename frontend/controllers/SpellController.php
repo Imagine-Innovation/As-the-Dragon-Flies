@@ -109,6 +109,6 @@ class SpellController extends Controller {
             return $model;
         }
 
-        throw new NotFoundHttpException('The requested page does not exist.');
+        throw new NotFoundHttpException('The spell your are looking for does not exist.');
     }
 }

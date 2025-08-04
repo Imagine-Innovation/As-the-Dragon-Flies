@@ -14,7 +14,7 @@ if (Yii::$app->user->isGuest) {
     $this->title = 'Game lobby';
 
     $user = Yii::$app->user->identity;
-    $userName = $user->fullname ? $user->fullname : $user->username;
+    $userName = $user->fullname ?? $user->username;
     $playerName = $user->currentPlayer ? $user->currentPlayer->name : $userName;
 
     $render = $this->renderFile('@app/views/site/_lobby.php', [
@@ -23,5 +23,4 @@ if (Yii::$app->user->isGuest) {
         'webRoot' => $webRoot,
     ]);
 }
-
 echo $render;

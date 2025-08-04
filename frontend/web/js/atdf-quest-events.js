@@ -113,7 +113,7 @@ class NotificationClient {
         // Handle incoming notifications
         this.on('ack', (data) => {
             Logger.log(2, 'setupDefaultHandlers', 'Received aknowledgement:', data);
-            this.displayNotification(data);
+            //this.displayNotification(data);
         });
 
         // Handle chat messages
@@ -442,14 +442,25 @@ class NotificationClient {
      */
     updateConnectionStatus(status) {
         let severity = '';
+        //const statusIcon = $(#eventHandlerStatus);
+        const statusIcon = document.getElementById('eventHandlerStatus');
         switch (status) {
             case 'Connected':
+                statusIcon.classList.remove('blink');
+                statusIcon.style.color = 'var(--success)';
+
                 severity = 'info';
                 break;
             case 'Error':
+                statusIcon.classList.add('blink');
+                statusIcon.style.color = 'var(--error)';
+
                 severity = 'error';
                 break;
             default:
+                statusIcon.classList.add('blink');
+                statusIcon.style.color = 'var(--warning)';
+
                 severity = 'warning';
         }
         ToastManager.show('Connection status', status, severity);

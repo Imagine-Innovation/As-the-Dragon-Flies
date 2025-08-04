@@ -136,6 +136,7 @@ return [
             ],
         ],
         'errorHandler' => [
+            'class' => 'yii\web\ErrorHandler',
             'errorAction' => 'site/error',
         ],
         'assetManager' => $assetManager,

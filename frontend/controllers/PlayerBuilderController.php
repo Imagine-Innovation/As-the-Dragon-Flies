@@ -658,7 +658,7 @@ class PlayerBuilderController extends Controller {
             return $model;
         }
 
-        throw new NotFoundHttpException('The requested page does not exist.');
+        throw new NotFoundHttpException('The player you are looking for does not exist.');
     }
 
     protected function findSkill(int $id) {
@@ -666,7 +666,7 @@ class PlayerBuilderController extends Controller {
             return $model;
         }
 
-        throw new NotFoundHttpException('The requested page does not exist.');
+        throw new NotFoundHttpException('The skill you are looking for does not exist.');
     }
 
     protected function findItem(int $id) {
@@ -674,6 +674,6 @@ class PlayerBuilderController extends Controller {
             return $model;
         }
 
-        throw new NotFoundHttpException('The requested page does not exist.');
+        throw new NotFoundHttpException('The item you are looking for does not exist.');
     }
 }

@@ -34,7 +34,7 @@ class PlayerItemController extends Controller {
                             ],
                             [
                                 'actions' => [
-                                    'index', 'pack',
+                                    'index', 'see-package',
                                     'ajax-can-pack', 'ajax-toggle', 'ajax-pack-info'
                                 ],
                                 'allow' => ManageAccessRights::isRouteAllowed($this),
@@ -70,9 +70,7 @@ class PlayerItemController extends Controller {
                 ->where(['player_item.player_id' => $playerId])
                 ->orderBy(['item_type.sort_order' => SORT_ASC, 'item.name' => SORT_ASC])
                 ->all();
-        /**/
-        //$models = $this->findPlayerItems();
-        // Render the index view with the data provider
+
         return $this->render('index', [
                     'models' => $models,
         ]);
@@ -81,24 +79,30 @@ class PlayerItemController extends Controller {
     /**
      * Displays the shopping pack.
      *
-     * This action renders the 'pack' view, which displays the shopping pack 
+     * This action renders the 'pack' view, which displays the shopping pack
      * containing PlayerItem models.
      * If the specified model cannot be found, it throws a NotFoundHttpException.
      *
      * @return string The rendered pack view.
      * @throws NotFoundHttpException if the model cannot be found.
      */
-    public function actionPack() {
-        // Find the PlayerItem model
-        $models = $this->findPack();
+    public function actionSeePackage() {
+        // Find the PlayerItem model based on its primary key value
+        $player = $this->findPlayer();
+
+        // If a player is found, return the player's packs
+        $package = PlayerItem::findAll([
+            'player_id' => $player->id,
+            'is_carrying' => 1
+        ]);
 
         // Render the pack view with the found model
         return $this->render('pack', [
-                    'models' => $models,
+                    'models' => $package,
         ]);
     }
 
-    private function _prepareAjax($request) {
+    private function prepareAjax($request) {
         if (!$request->isPost || !$request->isAjax) {
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
@@ -120,7 +124,7 @@ class PlayerItemController extends Controller {
     public function actionAjaxToggle() {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        $checkAjax = $this->_prepareAjax($this->request);
+        $checkAjax = $this->prepareAjax($this->request);
 
         if ($checkAjax['error']) {
             return $checkAjax;
@@ -147,7 +151,7 @@ class PlayerItemController extends Controller {
      * Finds the PlayerItem model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      *
-     * This method is used internally to retrieve the PlayerItem model based on 
+     * This method is used internally to retrieve the PlayerItem model based on
      * the provided player ID and item ID.
      * It queries the PlayerItem table for a record with matching player_id and item_id values.
      * If a matching model is found, it is returned. Otherwise, a NotFoundHttpException is thrown.
@@ -164,42 +168,7 @@ class PlayerItemController extends Controller {
         }
 
         // If the model is not found, throw a 404 HTTP exception
-        throw new NotFoundHttpException('The requested page does not exist.');
-    }
-
-    /**
-     * Finds the pack associated with the selected player.
-     *
-     * This method is used internally to retrieve the pack associated with the selected player.
-     * It first retrieves the player using the `findPlayer` method.
-     * If a player is found, it returns the player's packs. Otherwise, 
-     * it throws a NotFoundHttpException.
-     *
-     * @return PlayerItem[] The player's packs
-     * @throws NotFoundHttpException if no player is selected
-     */
-    protected function findPack() {
-        // Find the PlayerItem model based on its primary key value
-        $player = $this->findPlayer();
-        // If a player is found, return the player's packs
-        if ($player) {
-            $pack = PlayerItem::findAll(['player_id' => $player->id, 'is_carrying' => 1]);
-
-            return $pack;
-        }
-
-        // If no player is selected, throw a NotFoundHttpException
-        throw new NotFoundHttpException('No player is selected. Select one and try again.');
-    }
-
-    protected function findPlayerItems() {
-        $player = $this->findPlayer();
-
-        if ($player) {
-            return $player->playerItems;
-        }
-
-        throw new NotFoundHttpException('No player is selected. Select one and try again.');
+        throw new NotFoundHttpException("The player's item you are looking for does not exist.");
     }
 
     protected function findPlayer() {
@@ -209,6 +178,6 @@ class PlayerItemController extends Controller {
             return Yii::$app->session->get('currentPlayer');
         }
 
-        throw new NotFoundHttpException('Internal error, User not found');
+        throw new NotFoundHttpException("The player you are looking for does not exist.");
     }
 }

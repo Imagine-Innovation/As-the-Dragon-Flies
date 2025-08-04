@@ -117,6 +117,6 @@ class WizardController extends Controller {
             return $model;
         }
 
-        throw new NotFoundHttpException('The requested page does not exist.');
+        throw new NotFoundHttpException('The requested wizard does not exist.');
     }
 }

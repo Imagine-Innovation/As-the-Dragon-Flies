@@ -5507,3 +5507,62 @@ pre {
         padding:102px 15px 15px 15px;
     }
 }
+.error {
+    display:-webkit-box;
+    display:-ms-flexbox;
+    display:flex;
+    -webkit-box-align:center;
+    -ms-flex-align:center;
+    align-items:center;
+    -webkit-box-orient:horizontal;
+    -webkit-box-direction:normal;
+    -ms-flex-direction:row;
+    flex-direction:row;
+    -webkit-box-pack:center;
+    -ms-flex-pack:center;
+    justify-content:center;
+    height:100vh;
+    width:100%
+}
+
+.error__inner {
+    max-width:600px;
+    width:100%;
+    padding:3rem;
+    text-align:center;
+    border-radius:10px;
+    background-color:rgba(0,0,0,.2)
+}
+
+.error__inner>h1 {
+    font-size:4rem;
+    font-weight:700;
+    color:#fff;
+    text-shadow:0 0 10px rgba(0,0,0,.03);
+    line-height:100%;
+    margin-bottom:1.5rem
+}
+
+.error__inner>h2 {
+    color:rgba(255,255,255,.85);
+    font-weight:400;
+    margin:1.3rem 0;
+    font-size:1.5rem
+}
+
+.error__inner>p {
+    color:rgba(255,255,255,.5);
+    font-size:1.1rem
+}
+
+@keyframes blink {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+}
+.blink {
+    animation: blink 1s step-end infinite;
+}

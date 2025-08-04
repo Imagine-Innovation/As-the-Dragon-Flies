@@ -233,6 +233,6 @@ class ImageController extends Controller {
             return $model;
         }
 
-        throw new NotFoundHttpException('The requested page does not exist.');
+        throw new NotFoundHttpException('The image you are looking for does not exist.');
     }
 }

@@ -53,7 +53,7 @@ class UserLoginController extends Controller {
 
     /**
      * Lists all UserLogin models.
-     * 
+     *
      * This action is limited to user with Admin role
      *
      * @return string
@@ -117,6 +117,6 @@ class UserLoginController extends Controller {
             return $model;
         }
 
-        throw new NotFoundHttpException('The requested page does not exist.');
+        throw new NotFoundHttpException('The login event you are looking for does not exist.');
     }
 }

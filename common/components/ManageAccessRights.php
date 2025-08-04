@@ -76,7 +76,8 @@ class ManageAccessRights extends Component {
         $access = self::checkAccess($controller);
 
         if ($access['denied']) {
-            return UserErrorMessage::throw($controller, $access['severity'], $access['reason'], $redirect);
+            throw new \yii\web\ForbiddenHttpException($access['reason']);
+            //return UserErrorMessage::throw($controller, $access['severity'], $access['reason'], $redirect);
         }
         return true;
     }
@@ -89,7 +90,8 @@ class ManageAccessRights extends Component {
      * @return bool
      */
     private static function isPublic(string $route, string $action): bool {
-        $publicSiteActions = ['error', 'login', 'captcha', 'index', 'signup', 'colors', 'icons', 'fonts', 'game',
+        $publicSiteActions = ['error', 'login', 'captcha', 'index', 'signup', 'error',
+            'colors', 'icons', 'fonts', 'game',
             'request-password-reset', 'reset-password', 'verify-email', 'resend-verification-email'];
         // Allow access to site/error, site/login, site/captcha, site/index,...
         // or to any ajax call (side effect, every ajax call actions should be prefixed with 'ajax'
@@ -151,7 +153,8 @@ class ManageAccessRights extends Component {
      */
     private static function checkPlayerAccess($accessRight) {
         // Deny if player selection is required but none selected
-        $hasPlayer = Yii::$app->session->get('hasPlayer');
+        $hasPlayer = Yii::$app->session->get('hasPlayer') ?? false;
+
         if (!$hasPlayer && $accessRight->has_player) {
             return [
                 'denied' => true, 'severity' => 'error',
@@ -161,16 +164,16 @@ class ManageAccessRights extends Component {
 
         // Deny if quest participation is required but player is not in a quest
         $inQuest = Yii::$app->session->get('inQuest');
-        $player = Yii::$app->session->get('currentPlayer');
+        $playerName = Yii::$app->session->get('playerName');
         if (!$inQuest && $accessRight->in_quest) {
             return [
                 'denied' => true, 'severity' => 'error',
-                'reason' => "Player {$player->name} is not engaged in any quest"
+                'reason' => "Player {$playerName} is not engaged in any quest"
             ];
         }
         return [
             'denied' => false, 'severity' => 'success',
-            'reason' => 'Access granted' . ($player ? ' for ' . $player->name : '')
+            'reason' => 'Access granted' . ($playerName ? ' for ' . $playerName : '')
         ];
     }
 
@@ -202,11 +205,7 @@ class ManageAccessRights extends Component {
             throw new \Exception(implode("<br />", ArrayHelper::getColumn($userLog->errors, 0, false)));
         }
 
-        return [
-            'denied' => $denied,
-            'severity' => $severity,
-            'reason' => $reason
-        ];
+        return ['denied' => $denied, 'severity' => $severity, 'reason' => $reason];
     }
 
     /**

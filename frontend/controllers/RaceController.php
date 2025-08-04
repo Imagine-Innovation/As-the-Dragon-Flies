@@ -76,21 +76,6 @@ class RaceController extends Controller {
         ]);
     }
 
-    /**
-     * Finds the Race model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id ID
-     * @return Race the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id) {
-        if (($model = Race::findOne(['id' => $id])) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The requested page does not exist.');
-    }
-
     public function actionAjaxWizard() {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -111,5 +96,20 @@ class RaceController extends Controller {
         ]);
 
         return ['error' => false, 'msg' => '', 'content' => $content];
+    }
+
+    /**
+     * Finds the Race model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param int $id ID
+     * @return Race the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id) {
+        if (($model = Race::findOne(['id' => $id])) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The race your are looking for does not exist.');
     }
 }

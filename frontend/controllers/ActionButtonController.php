@@ -133,6 +133,6 @@ class ActionButtonController extends Controller {
             return $model;
         }
 
-        throw new NotFoundHttpException('The requested page does not exist.');
+        throw new NotFoundHttpException('The action button does not exist.');
     }
 }

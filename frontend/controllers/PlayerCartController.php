@@ -590,7 +590,7 @@ class PlayerCartController extends Controller {
         if ($model !== null) {
             return $model;
         } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
+            throw new NotFoundHttpException("The player's cart you are looking for does not exist.");
         }
     }
 }

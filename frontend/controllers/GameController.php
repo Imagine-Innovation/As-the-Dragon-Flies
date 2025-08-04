@@ -117,6 +117,6 @@ class GameController extends Controller {
         if (($model = Quest::findOne(['id' => $id])) !== null) {
             return $model;
         }
-        throw new NotFoundHttpException('The requested page does not exist.');
+        throw new NotFoundHttpException('The quest you are looking for does not exist.');
     }
 }
