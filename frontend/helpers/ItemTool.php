@@ -65,20 +65,21 @@ class ItemTool {
         if (!$weapon->need_ammunition || !$weapon->amunition_id) {
             return null;
         }
-        $amunition = $weapon->amunition;
-        $weaponAmunition = PlayerItem::findOne(['player_id' => $playerItem->player_id, 'item_id' => $weapon->amunition_id]);
 
+        $amunition = $weapon->amunition->name;
+
+        $weaponAmunition = PlayerItem::findOne(['player_id' => $playerItem->player_id, 'item_id' => $weapon->amunition_id]);
         if (!$weaponAmunition) {
-            return null;
+            return "You need {$amunition} to use it";
         }
 
         switch ($weaponAmunition->quantity) {
             case 0;
-                return "No more {$amunition->name}";
+                return "No more {$amunition}";
             case 1;
-                return "Only one {$amunition->name} left";
+                return "Only one {$amunition} left";
             default:
-                return "{$weaponAmunition->quantity} {$amunition->name}s left";
+                return "{$weaponAmunition->quantity} {$amunition}s left";
         }
     }
 }

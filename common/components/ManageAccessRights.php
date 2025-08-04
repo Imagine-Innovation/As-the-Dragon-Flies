@@ -8,6 +8,7 @@ use common\models\UserLog;
 use common\helpers\UserErrorMessage;
 use Yii;
 use yii\base\Component;
+use yii\helpers\ArrayHelper;
 
 class ManageAccessRights extends Component {
 
@@ -110,35 +111,36 @@ class ManageAccessRights extends Component {
         $action = $controller->action->id;
 
         if (self::isPublic($route, $action)) {
-            return self::logAccess(null, false, 'success', "Access granted by default to public route [{$route}/{$action}]");
+            return self::logAccess(null, false, 'success', "[{$route}/{$action}] Access granted by default to public route");
         }
         // Get access rights for the route
         $accessRight = AccessRight::findOne(['route' => $route, 'action' => $action]);
 
         // If no access rights defined, grant access to public "route/action"
         if (!$accessRight) {
-            return self::logAccess(null, true, 'error', "Access denied by default for [{$route}/{$action}]: no specific AccessRight found");
+            return self::logAccess(null, true, 'error', "[{$route}/{$action}] Access denied by default: no specific AccessRight found");
         }
 
         $user = Yii::$app->session->get('user') ?? Yii::$app->user->identity;
 
         // Grant access if user is admin and route allows admin access
         if ($user->is_admin && $accessRight->is_admin) {
-            return self::logAccess($accessRight->id, false, 'success', 'Access granted for Admin role');
+            return self::logAccess($accessRight->id, false, 'success', "[{$route}/{$action}] Access granted for Admin role");
         }
 
         // Grant access if user is designer and route allows designer access
         if ($user->is_designer && $accessRight->is_designer) {
-            return self::logAccess($accessRight->id, false, 'success', 'Access granted for Designer role');
+            return self::logAccess($accessRight->id, false, 'success', "[{$route}/{$action}] Access granted for Designer role");
         }
 
         // Check player-specific access conditions
         if ($user->is_player && $accessRight->is_player) {
-            return self::checkPlayerAccess($accessRight);
+            $playerAccess = self::checkPlayerAccess($accessRight);
+            return self::logAccess($accessRight->id, $playerAccess['denied'], $playerAccess['severity'], "[{$route}/{$action}] {$playerAccess['reason']}");
         }
 
         // Deny access by default
-        return self::logAccess($accessRight->id, true, 'fatal', 'Access denied');
+        return self::logAccess($accessRight->id, true, 'fatal', "[{$route}/{$action}] Access denied");
     }
 
     /**
@@ -151,16 +153,25 @@ class ManageAccessRights extends Component {
         // Deny if player selection is required but none selected
         $hasPlayer = Yii::$app->session->get('hasPlayer');
         if (!$hasPlayer && $accessRight->has_player) {
-            return self::logAccess($accessRight->id, true, 'error', 'No players have been selected');
+            return [
+                'denied' => true, 'severity' => 'error',
+                'reason' => 'No player have been selected'
+            ];
         }
 
         // Deny if quest participation is required but player is not in a quest
         $inQuest = Yii::$app->session->get('inQuest');
         $player = Yii::$app->session->get('currentPlayer');
         if (!$inQuest && $accessRight->in_quest) {
-            return self::logAccess($accessRight->id, true, 'error', 'Player ' . $player->name . ' is not engaged in any quest');
+            return [
+                'denied' => true, 'severity' => 'error',
+                'reason' => "Player {$player->name} is not engaged in any quest"
+            ];
         }
-        return self::logAccess($accessRight->id, false, 'success', 'Access granted' . ($player ? ' for ' . $player->name : ''));
+        return [
+            'denied' => false, 'severity' => 'success',
+            'reason' => 'Access granted' . ($player ? ' for ' . $player->name : '')
+        ];
     }
 
     /**
@@ -173,23 +184,23 @@ class ManageAccessRights extends Component {
      * @return array
      */
     private static function logAccess($accessRightId, $denied, $severity, $reason) {
-        //if ($accessRightId) {
-        $sessionUser = Yii::$app->session->get('user');
-        $user = $sessionUser ?? Yii::$app->user->identity;
+        $user = Yii::$app->session->get('user') ?? Yii::$app->user->identity;
+        $playerId = Yii::$app->session->get('playerId');
         $questId = Yii::$app->session->get('questId');
 
         $userLog = new UserLog([
             'user_id' => $user->id,
             'access_right_id' => $accessRightId,
-            'player_id' => $user->current_player_id,
+            'player_id' => $playerId,
             'quest_id' => $questId,
             'ip_address' => Yii::$app->getRequest()->getUserIP(),
             'action_at' => time(),
             'denied' => $denied ? 1 : 0,
             'reason' => $reason,
         ]);
-        $userLog->save();
-        //}
+        if (!$userLog->save()) {
+            throw new \Exception(implode("<br />", ArrayHelper::getColumn($userLog->errors, 0, false)));
+        }
 
         return [
             'denied' => $denied,

@@ -9,11 +9,11 @@ $proficiencyBonus = $model->level->proficiency_bonus;
 
 $playerAbilities = PlayerTool::getAbilitiesAndSavingThrow($model->playerAbilities, $proficiencyBonus);
 ?>
-<div class="card mb-4">
+<section class="card mb-4">
     <div class="<?= $cardHeaderClass ?>">
         <i class="bi dnd-d20 me-2"></i>Abilities & Saving Throws
     </div>
-    <div class="card-body p-4">
+    <article class="card-body p-4">
         <table class="w-100">
             <thead>
                 <tr>
@@ -44,5 +44,5 @@ $playerAbilities = PlayerTool::getAbilitiesAndSavingThrow($model->playerAbilitie
                 </tr>
             <?php endforeach; ?>
         </table>
-    </div>
-</div>
+    </article>>
+</section>

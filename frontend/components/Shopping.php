@@ -2,6 +2,8 @@
 
 namespace frontend\components;
 
+use common\models\Item;
+use common\models\Player;
 use common\models\PlayerCart;
 use common\models\PlayerItem;
 
@@ -563,7 +565,7 @@ class Shopping {
         // Check if a PlayerItem exists
         if ($playerItem) {
             // Update the quantity of the existing PlayerItem
-            $playerItem->quantity += $playerCart->quantity;
+            $playerItem->quantity += $playerCart->quantity * ($playerCart->item->quantity ?? 1);
         } else {
             $playerItem = $this->addToInventory($playerCart);
         }
@@ -585,6 +587,7 @@ class Shopping {
         $playerItem = new PlayerItem([
             'player_id' => $playerCart->player_id,
             'item_id' => $playerCart->item_id,
+            'item_type' => $playerCart->item->itemType->name,
             'quantity' => $playerCart->quantity * $playerCart->item->quantity,
             'is_proficient' => $isProficient
         ]);

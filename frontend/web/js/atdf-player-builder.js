@@ -176,14 +176,10 @@ class PlayerBuilder {
         });
     }
 
-    static initSkillsTab() {
+    static initAvatarTab() {
         $(document).ready(function () {
-            Logger.log(1, 'initSkillsTab', '');
-            PlayerBuilder.loadAdvancedProperties('skills', 'ajaxSkills');
-            $('a.bi-arrow-repeat').click(function (event) {
-                event.preventDefault();
-                PlayerBuilder.loadAdvancedProperties('traits', 'ajaxTraits');
-            });
+            Logger.log(1, 'initAvatarTab', '');
+            PlayerBuilder.loadAdvancedProperties('images', 'ajaxAvatarChoice');
         });
     }
 
@@ -198,10 +194,14 @@ class PlayerBuilder {
         });
     }
 
-    static initAvatarTab() {
+    static initSkillsTab() {
         $(document).ready(function () {
-            Logger.log(1, 'initAvatarTab', '');
-            PlayerBuilder.loadAdvancedProperties('images', 'ajaxAvatarChoice');
+            Logger.log(1, 'initSkillsTab', '');
+            PlayerBuilder.loadAdvancedProperties('skills', 'ajaxSkills');
+            $('a.bi-arrow-repeat').click(function (event) {
+                event.preventDefault();
+                PlayerBuilder.loadAdvancedProperties('traits', 'ajaxTraits');
+            });
         });
     }
 
@@ -463,32 +463,29 @@ class PlayerBuilder {
     }
 
     /***********************************************/
-    /*             Skills score Methods            */
+    /*                Skills Methods               */
     /***********************************************/
 
     /**
      * Persists selected skills to the server
      * 
+     * @param {number} skillId - Skill identifier
      * @returns {undefined}
      */
-    static _saveSkills() {
-        Logger.log(2, '_saveSkills', '');
+    static _saveSkill(skillId) {
+        Logger.log(2, '_saveSkill', `id=${skillId}`);
 
-        const checkboxes = $("[id*=skillCheckbox-]");
-        Logger.log(10, '_saveSkills', `checkboxes.length=${checkboxes.length}`);
-
-        const selectedSkills = Array.from(checkboxes)
-                .filter(checkbox => checkbox.checked)
-                .map(checkbox => Number(checkbox.id.split('-')[1]));
-
+        const isChecked = $(`#skillCheckbox-${skillId}`).is(':checked');
         const playerId = $('#hiddenPlayerId').html();
-        Logger.log(10, '_saveSkills', `playerId=${playerId}, selectedSkills=${selectedSkills}`);
+
+        Logger.log(10, '_saveSkills', `playerId=${playerId}, checkbox=${isChecked ? 1 : 0}`);
 
         AjaxUtils.request({
-            url: 'player-builder/ajax-save-skills',
+            url: 'player-builder/ajax-update-skill',
             data: {
                 playerId: playerId,
-                skills: selectedSkills
+                skillId: skillId,
+                isProficient: isChecked ? 1 : 0
             },
             successCallback: (response) => {
                 ToastManager.show('Skills', response.msg, response.error ? 'error' : 'info');
@@ -513,7 +510,8 @@ class PlayerBuilder {
             $(`#skillCheckbox-${id}`).prop('checked', false);
             ToastManager.show('Skills', `You have reached the maximum number of skills (${max})`, 'warning');
         } else {
-            this._saveSkills();
+            //this._saveSkills();
+            this._saveSkill(id);
             this.setProperty('skills', selectedCount === max ? 'ok' : '');
         }
     }
@@ -693,5 +691,60 @@ class PlayerBuilder {
 
         this._loadItemImages();
         this._saveEquipment();
+    }
+    
+    
+    /***********************************************/
+    /*             Languages Methods               */
+    /***********************************************/
+
+    /**
+     * Persists selected languages to the server
+     * 
+     * @param {number} languageId - Language identifier
+     * @returns {undefined}
+     */
+    static _saveLanguage(languageId) {
+        Logger.log(2, '_saveLanguage', `id=${languageId}`);
+
+        const isChecked = $(`#languageCheckbox-${languageId}`).is(':checked');
+        const playerId = $('#hiddenPlayerId').html();
+
+        Logger.log(10, '_saveLanguages', `playerId=${playerId}, checkbox=${isChecked ? 1 : 0}`);
+
+        AjaxUtils.request({
+            url: 'player-builder/ajax-update-language',
+            data: {
+                playerId: playerId,
+                languageId: languageId,
+                isProficient: isChecked ? 1 : 0
+            },
+            successCallback: (response) => {
+                ToastManager.show('Languages', response.msg, response.error ? 'error' : 'info');
+            }
+        });
+    }
+
+    /**
+     * Validates selected languages against maximum allowed
+     * 
+     * @param {number} id - Language identifier
+     * @param {number} max - Maximum allowed languages
+     */
+    static validateLanguages(id, max) {
+        Logger.log(1, 'validateLanguages', `id=${id}, max=${max}`);
+
+        const checkboxes = document.querySelectorAll('input[type="checkbox"][name="playerLanguages"]');
+        const selectedCount = Array.from(checkboxes).reduce((count, checkbox) =>
+            count + (checkbox.checked ? 1 : 0), 0);
+
+        if (selectedCount > max) {
+            $(`#languageCheckbox-${id}`).prop('checked', false);
+            ToastManager.show('Languages', `You have reached the maximum number of languages (${max})`, 'warning');
+        } else {
+            //this._saveLanguages();
+            this._saveLanguage(id);
+            this.setProperty('languages', selectedCount === max ? 'ok' : '');
+        }
     }
 }

@@ -14,8 +14,8 @@
     width: 1em;
     display: inline-block;
     background: currentColor;
-    -webkit-mask: url('dnd-icons/draft/chest-svgrepo-com.svg') no-repeat center center;
-    mask: url('dnd-icons/draft/chest-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask: url('dnd-icons/draft/coins-svgrepo-com.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/coins-svgrepo-com.svg') no-repeat center center;
     -webkit-mask-size: 100% 100%;
     mask-size: 100% 100%;
     vertical-align: -0.125em;
@@ -114,6 +114,20 @@
     background: currentColor;
     -webkit-mask: url('dnd-icons/crown.svg') no-repeat center center;
     mask: url('dnd-icons/crown.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-coins::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/coins.svg') no-repeat center center;
+    mask: url('dnd-icons/coins.svg') no-repeat center center;
     -webkit-mask-size: 100% 100%;
     mask-size: 100% 100%;
     vertical-align: -0.125em;

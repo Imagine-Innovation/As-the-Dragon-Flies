@@ -9,6 +9,7 @@ use Yii;
  *
  * @property int $player_id Foreign key to "player" table
  * @property int $item_id Foreign key to "item" table
+ * @property string $item_type Item type
  * @property int $quantity Quantity
  * @property int $is_carrying Indicates that the item is currently in the player back bag
  * @property int $is_equiped Indicates that the item is currently equiped and the player can use it
@@ -20,7 +21,7 @@ use Yii;
  * @property Player $player
  *
  * Custom properties for Item inherited sub-classes
- * 
+ *
  * @property Armor $armor
  * @property Pack $pack
  * @property Poison $poison
@@ -44,9 +45,9 @@ class PlayerItem extends \yii\db\ActiveRecord {
             [['attack_modifier', 'damage'], 'default', 'value' => null],
             [['quantity'], 'default', 'value' => 1],
             [['is_proficient'], 'default', 'value' => 0],
-            [['player_id', 'item_id'], 'required'],
+            [['player_id', 'item_id', 'item_type'], 'required'],
             [['player_id', 'item_id', 'quantity', 'is_carrying', 'is_equiped', 'is_proficient', 'attack_modifier'], 'integer'],
-            [['damage'], 'string', 'max' => 32],
+            [['item_type', 'damage'], 'string', 'max' => 32],
             [['player_id', 'item_id'], 'unique', 'targetAttribute' => ['player_id', 'item_id']],
             [['player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['player_id' => 'id']],
             [['item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['item_id' => 'id']],
@@ -60,6 +61,7 @@ class PlayerItem extends \yii\db\ActiveRecord {
         return [
             'player_id' => 'Foreign key to \"player\" table',
             'item_id' => 'Foreign key to \"item\" table',
+            'item_type' => 'Item type',
             'quantity' => 'Quantity',
             'is_carrying' => 'Indicates that the item is currently in the player back bag',
             'is_equiped' => 'Indicates that the item is currently equiped and the player can use it',

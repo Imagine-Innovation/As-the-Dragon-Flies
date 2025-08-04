@@ -5,7 +5,6 @@ use frontend\helpers\ItemTool;
 /** @var yii\web\View $this */
 /** @var common\models\Player $model */
 /** @var string $cardHeaderClass */
-$equipedWeapons = $model->playerItems;
 ?>
 <!-- Attacks -->
 <section class="card mb-4">
@@ -15,7 +14,7 @@ $equipedWeapons = $model->playerItems;
     <div class="card-body">
         <?php foreach ($model->playerItems as $playerItem): ?>
             <?php
-            if ($playerItem->damage):
+            if ($playerItem->item_type === "Weapon"):
                 $weapon = $playerItem->weapon;
                 $properties = ItemTool::getLiteWeaponProperties($weapon);
                 $remaining = ItemTool::getRemainingAmunitions($playerItem);

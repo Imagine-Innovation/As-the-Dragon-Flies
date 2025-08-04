@@ -39,19 +39,19 @@ class PlayerBuilder extends Player {
         $success = parent::save($runValidation, $attributeNames);
 
         if (!$this->playerTraits) {
-            $success = $success && BuilderTool::initTraits($this);
+            BuilderTool::initTraits($this);
         }
 
         if (!$this->playerCoins) {
-            $success = $success && BuilderTool::initCoinage($this);
+            BuilderTool::initCoinage($this);
         }
 
         if (!$this->playerAbilities) {
-            $success = $success && BuilderTool::initAbilities($this);
+            BuilderTool::initAbilities($this);
         }
 
         if (!$this->playerSkills) {
-            $success = $success && BuilderTool::initSkills($this);
+            BuilderTool::initSkills($this);
         }
 
         return $success;

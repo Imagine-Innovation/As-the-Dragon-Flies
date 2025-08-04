@@ -14,9 +14,10 @@ use common\models\PlayerCoin;
 use common\models\PlayerSkill;
 use common\models\PlayerTrait;
 use common\models\Race;
-use common\models\Weapon;
+use common\models\Skill;
 use common\models\Wizard;
 use Yii;
+use yii\helpers\ArrayHelper;
 
 class BuilderTool {
 
@@ -152,6 +153,20 @@ class BuilderTool {
         ]
     ];
 
+    /*
+     * *******************************
+     *     Player name handling      *
+     * *******************************
+     */
+
+    /**
+     * Returns an array of random names that takes into account the player's race and gender
+     *
+     * @param int $raceId
+     * @param string $gender
+     * @param int $n
+     * @return array
+     */
     public static function loadRandomNames(int $raceId, string $gender, int $n): array {
         $race = Race::findOne(['id' => $raceId]);
         $ethnicity = $race->raceGroup->ethnicities[0];
@@ -180,9 +195,17 @@ class BuilderTool {
         return $names;
     }
 
-    private static function getEthnicNames(int $ethnicityId, string $nameClassName, string|null $gender = null): array {
-        $className = "common\\models\\$nameClassName";
-        $query = $className::find()
+    /**
+     * Returns an array of first names or last names available for a given ethnic group.
+     *
+     * @param int $ethnicityId
+     * @param string $className Can be either FirstName or LastName
+     * @param string|null $gender
+     * @return array
+     */
+    private static function getEthnicNames(int $ethnicityId, string $className, string|null $gender = null): array {
+        $nameClass = "common\\models\\$className";
+        $query = $nameClass::find()
                 ->select('name')
                 ->where(['ethnicity_id' => $ethnicityId]);
         if ($gender) {
@@ -195,11 +218,17 @@ class BuilderTool {
      * Randomly selects a name from the provided array of names.
      *
      * @param string[] $names
-     * @return string
+     * @return string|null
      */
-    private static function randomize($names) {
+    private static function randomize(array $names): string|null {
         return $names ? $names[array_rand($names)]['name'] : null;
     }
+
+    /*
+     * *******************************
+     *      Player age handling      *
+     * *******************************
+     */
 
     /**
      * Populates an array representing different stages of age based
@@ -208,7 +237,7 @@ class BuilderTool {
      * and the corresponding age ('age').
      *
      * @param int $raceId The race internal id.
-     * @return array An array of age categories with their corresponding ages.
+     * @return array An associative array of age categories with their corresponding ages.
      */
     public static function loadAgeTable(int $raceId): array {
         $race = Race::findOne(['id' => $raceId]);
@@ -232,6 +261,12 @@ class BuilderTool {
             ]
         ];
     }
+
+    /*
+     * *******************************
+     *        Wizard handling        *
+     * *******************************
+     */
 
     /**
      * Retrieves the ID of the first question for a given topic.
@@ -261,6 +296,18 @@ class BuilderTool {
         return $firstQuestions[array_rand($firstQuestions)];
     }
 
+    /*
+     * *******************************
+     *   Player equipment handling   *
+     * *******************************
+     */
+
+    /**
+     *
+     * @param array $equipments
+     * @param type $choice
+     * @return array
+     */
     public static function setEquipmentResponse(array $equipments, $choice = null): array {
         $items = [];
         $categories = [];
@@ -279,7 +326,43 @@ class BuilderTool {
         ];
     }
 
-    private static function getFundingFromBackground(Player $player) {
+    /*
+     * *******************************
+     *    Player funding handling    *
+     * *******************************
+     */
+
+    /**
+     * Initializes coin funding for a player model.
+     *
+     * This method initializes the coin funding for a player model by creating
+     * and saving player coin records for each type of coin (e.g., copper, silver,
+     * gold) based on the player's background settings.
+     *
+     * @param Player $player
+     * @return void
+     * @throws \Exception
+     */
+    public static function initCoinage(Player $player): void {
+        $coins = ['cp', 'sp', 'ep', 'gp', 'pp'];
+
+        // Iterate over each coin type
+        foreach ($coins as $coin) {
+            // Create a new player coin instance
+            $playerCoin = new PlayerCoin([
+                'player_id' => $player->id,
+                'coin' => $coin,
+                'quantity' => ($coin == 'gp') ? self::getFundingFromBackground($player) : 0
+            ]);
+
+            // Save the player coin and track success status
+            if (!$playerCoin->save()) {
+                throw new \Exception(implode("<br />", ArrayHelper::getColumn($playerCoin->errors, 0, false)));
+            }
+        }
+    }
+
+    private static function getFundingFromBackground(Player &$player) {
         $backgroundItems = $player->background->backgroundItems;
 
         $funding = 0;
@@ -289,148 +372,135 @@ class BuilderTool {
         return $funding;
     }
 
-    /**
-     * Initializes coin funding for a player model.
-     *
-     * This method initializes the coin funding for a player model by creating
-     * and saving player coin records for each type of coin (e.g., copper, silver,
-     * gold) based on the player's background settings.
-     *
-     * @return bool Returns true if the coin funding is successfully initialized,
-     *                      false otherwise.
+    /*
+     * *******************************
+     *     Player skill handling     *
+     * *******************************
      */
-    public static function initCoinage(Player $player): bool {
-        $coins = ['cp', 'sp', 'ep', 'pp'];
-
-        // Iterate over each coin type
-        foreach ($coins as $coin) {
-            // Create a new player coin instance
-            $playerCoin = new PlayerCoin([
-                'player_id' => $player->id,
-                'coin' => $coin,
-                'quantity' => ($coin == 'gp' ? self::getFundingFromBackground($player) : 0)
-            ]);
-
-            // Save the player coin and track success status
-            if (!$playerCoin->save()) {
-                throw new \Exception(implode("<br />", \yii\helpers\ArrayHelper::getColumn($playerCoin->errors, 0, false)));
-            }
-        }
-
-        // Return whether coin funding initialization was successful
-        return true;
-    }
 
     /**
-     * Initialize or update every skill bonus for a player
+     * Set the initial list of skills regarding the actual player class and backgroung
      *
      * @param Player $player
-     * @return bool
-     * @throws \Exception
+     * @return array Array of possible skills with default proficiency
      */
-    private static function initSkillBonuses(Player $player): bool {
-        $proficiencyBonus = $player->level->proficiency_bonus;
-        $abilityModifiers = [];
-        foreach ($player->playerAbilities as $playerAbility) {
-            $abilityModifiers[$playerAbility->ability_id] = $playerAbility->modifier;
+    public static function initSkills(Player &$player): void {
+        $proficiencies = [];
+
+        // Getting the liste of skills provided by the player background
+        $backgroudSkills = BackgroundSkill::findAll(['background_id' => $player->background_id]);
+        foreach ($backgroudSkills as $backgroudSkill) {
+            $skill = $backgroudSkill->skill;
+            $proficiencies[$skill->id] = 1;
         }
 
-        $playerSkills = $player->playerSkills;
+        self::initPlayerSkillTable($player, $proficiencies);
+    }
 
-        foreach ($playerSkills as $playerSkill) {
-            $abilityId = $playerSkill->skill->ability_id;
-            $abilityModifier = $abilityModifiers[$abilityId] ?? 0;
-            $playerSkill->bonus = $abilityModifier + ($playerSkill->is_proficient ? $proficiencyBonus : 0);
-            if (!$playerSkill->save()) {
-                throw new \Exception(implode("<br />", \yii\helpers\ArrayHelper::getColumn($playerSkill->errors, 0, false)));
-            }
+    public static function updateSkill(Player &$player, Skill &$skill, int $isProficient): void {
+        $playerSkill = PlayerSkill::findOne(['player_id' => $player->id, 'skill_id' => $skill->id]);
+
+        if (!$playerSkill) {
+            // PlayerSkill is supposed to be initialized with every defines skills
+            // if not found, do not attempt to update further any further
+            return;
         }
-        return true;
+
+        $playerAbility = PlayerAbility::findOne(['player_id' => $player->id, 'ability_id' => $skill->ability_id]);
+
+        $playerSkill->is_proficient = $isProficient;
+        $playerSkill->bonus = $playerAbility->bonus ?? 0;
+
+        if (!$playerSkill->save()) {
+            throw new \Exception(implode("<br />", ArrayHelper::getColumn($playerSkill->errors, 0, false)));
+        }
     }
 
     /**
      * Set the initial list of skills regarding the actual player class and backgroung
      *
      * @param Player $player
-     * @param array|null $previousPlayerSkills Optional array of previously entered skills proficiency
      * @return array Array of possible skills with default proficiency
      */
-    private static function initSkillList(Player $player, array|null $previousPlayerSkills): array {
-        $skillList = [];
+    public static function initPlayerSkills(Player &$player): array {
+        $skillList = [
+            'ClassSkills' => [],
+            'BackgroundSkills' => [],
+        ];
+
+        $proficiencies = self::getPlayerSkillProficiencies($player);
+
         // Using the ID as a table key means you don't have to duplicate records
         // Getting the liste of skills provided by the player class
         $classSkills = ClassSkill::findAll(['class_id' => $player->class_id]);
         foreach ($classSkills as $classSkill) {
-            $id = $classSkill->skill_id;
-            $skill['skill_id'] = $id;
-            $skill['is_proficient'] = $previousPlayerSkills[$id] ?? 0; // not proficient by default
-            $skillList[$id] = $skill;
+            $skill = $classSkill->skill;
+            $isProficient = $proficiencies[$skill->id] ?? 0; // not proficiency by default
+            $skillList['ClassSkills'][$skill->id] = self::initSkillData($skill, $isProficient);
         }
 
         // Getting the liste of skills provided by the player background
         $backgroudSkills = BackgroundSkill::findAll(['background_id' => $player->background_id]);
         foreach ($backgroudSkills as $backgroudSkill) {
-            $id = $backgroudSkill->skill_id;
-            $skill['skill_id'] = $id;
-            $skill['is_proficient'] = 1; // proficient by default
-            $skillList[$id] = $skill;
+            $skill = $backgroudSkill->skill;
+            $skillList['BackgroundSkills'][$skill->id] = self::initSkillData($skill, 1); // proficient by default
         }
 
         return $skillList;
     }
 
-    /**
-     * Reset the previously entered skills:
-     * 1. Saves skills for which the player is proficient
-     * 2. Delete the initial data and starting from scratch
-     *
-     * @param Player $player
-     * @return array Array of previously entered skills proficiency
-     */
-    private static function resetPlayerSkills(Player $player): array {
-        // If skills had not been previously entered, do nothing
-        if (!$player->playerSkills) {
-            return [];
-        }
-
-        // Saves skills for which the player is proficient
-        $previousPlayerSkills = [];
-        foreach ($player->playerSkills as $playerSkill) {
-            $id = $playerSkill->skill_id;
-            $previousPlayerSkills[$id] = $playerSkill->is_proficient;
-        }
-        // And the delete the initial data and starting from scratch
-        Yii::debug($previousPlayerSkills);
-        PlayerSkill::deleteAll(['player_id' => $player->id]);
-
-        return $previousPlayerSkills;
-    }
-
-    /**
-     * Initialize tge set of skills for player
-     * @param Player $player
-     * @return bool
-     * @throws \Exception
-     */
-    public static function initSkills(Player $player): bool {
-        // Delete the skills of existing players if the initial parameters have changed.
-        $previousPlayerSkills = self::resetPlayerSkills($player);
-
-        $skillList = self::initSkillList($player, $previousPlayerSkills);
-
-        foreach ($skillList as $skill) {
-            $playerSkill = new PlayerSkill([
-                'player_id' => $player->id,
-                'skill_id' => $skill['skill_id'],
-                'is_proficient' => $skill['is_proficient'],
-                'bonus' => 0
-            ]);
-            if (!$playerSkill->save()) {
-                throw new \Exception(implode("<br />", \yii\helpers\ArrayHelper::getColumn($playerSkill->errors, 0, false)));
+    private static function getPlayerSkillProficiencies(Player &$player): array {
+        $proficiencies = [];
+        if ($player->playerSkills) {
+            foreach ($player->playerSkills as $playerSkill) {
+                $proficiencies[$playerSkill->skill_id] = $playerSkill->is_proficient;
             }
         }
-        return self::initSkillBonuses($player);
+        return $proficiencies;
     }
+
+    private static function initSkillData(Skill &$skill, int $isProficient): array {
+        $skillData = [
+            'skill_id' => $skill->id,
+            'name' => $skill->name,
+            'is_proficient' => $isProficient
+        ];
+
+        return $skillData;
+    }
+
+    private static function initPlayerSkillTable(Player &$player, array $proficiencies): void {
+        $abilityModifiers = [];
+        foreach ($player->playerAbilities as $playerAbility) {
+            $abilityModifiers[$playerAbility->ability_id] = $playerAbility->modifier;
+        }
+
+        // Clear the existing skill for the player
+        PlayerSkill::deleteAll(['player_id' => $player->id]);
+
+        $skills = Skill::find()->orderBy('name')->all();
+
+        foreach ($skills as $skill) {
+            $abilityId = $skill->ability_id;
+            $abilityModifier = $abilityModifiers[$abilityId] ?? 0;
+
+            $playerSkill = new PlayerSkill([
+                'player_id' => $player->id,
+                'skill_id' => $skill->id,
+                'is_proficient' => $proficiencies[$skill->id] ?? 0,
+                'bonus' => $abilityModifier
+            ]);
+            if (!$playerSkill->save()) {
+                throw new \Exception(implode("<br />", ArrayHelper::getColumn($playerSkill->errors, 0, false)));
+            }
+        }
+    }
+
+    /*
+     * *******************************
+     *     Player traits handling    *
+     * *******************************
+     */
 
     /**
      * Populates the initial join table player_trait with traits based on
@@ -441,9 +511,9 @@ class BuilderTool {
      * player's background.
      *
      * @param common\models\Player $player
-     * @return bool Whether the initialization of traits was successful.
+     * @return void
      */
-    public static function initTraits(Player $player): bool {
+    public static function initTraits(Player $player): void {
         // Initialize return value
         $player->playerTraits ? PlayerTrait::deleteAll(['player_id' => $player->id]) : true;
 
@@ -467,12 +537,52 @@ class BuilderTool {
 
                 // Save the player trait and update return value
                 if (!$playerTrait->save()) {
-                    throw new \Exception(implode("<br />", \yii\helpers\ArrayHelper::getColumn($playerTrait->errors, 0, false)));
+                    throw new \Exception(implode("<br />", ArrayHelper::getColumn($playerTrait->errors, 0, false)));
                 }
             }
         }
+    }
 
-        return true;
+    /*
+     * *******************************
+     *    Player ability handling    *
+     * *******************************
+     */
+
+    /**
+     * Populates the initial join table player_ability with abilities based on
+     * race and class.
+     *
+     * This method initializes the player's abilities by populating the initial
+     * join table player_ability based on the abilities associated with the
+     * player's race and class.
+     *
+     * @param Player $player
+     * @return void
+     * @throws \Exception
+     */
+    public static function initAbilities(Player &$player): void {
+
+        $initAbilityArray = self::initAbilityArray();
+        self::addDefaultAbilityScore($player, $initAbilityArray);
+        self::addRaceAbilities($player, $initAbilityArray);
+        self::addClassSavingThrow($player, $initAbilityArray);
+
+        foreach ($initAbilityArray as $ability) {
+            $playerAbility = new PlayerAbility([
+                'player_id' => $player->id,
+                'ability_id' => $ability['ability_id'],
+                'score' => $ability['score'],
+                'bonus' => $ability['bonus'],
+                'modifier' => $ability['modifier'],
+                'is_primary_ability' => $ability['is_primary_ability'],
+                'is_saving_throw' => $ability['is_saving_throw'],
+            ]);
+
+            if (!$playerAbility->save()) {
+                throw new \Exception(implode("<br />", ArrayHelper::getColumn($playerAbility->errors, 0, false)));
+            }
+        }
     }
 
     /**
@@ -561,40 +671,51 @@ class BuilderTool {
         return $initAbilityArray;
     }
 
-    /**
-     * Populates the initial join table player_ability with abilities based on
-     * race and class.
-     *
-     * This method initializes the player's abilities by populating the initial
-     * join table player_ability based on the abilities associated with the
-     * player's race and class.
-     *
-     * @param common\models\Player $player
-     * @return bool Whether the initialization of abilities was successful.
+    /*
+     * *******************************
+     *    Player language handling   *
+     * *******************************
      */
-    public static function initAbilities($player): bool {
 
-        $initAbilityArray = self::initAbilityArray();
-        self::addDefaultAbilityScore($player, $initAbilityArray);
-        self::addRaceAbilities($player, $initAbilityArray);
-        self::addClassSavingThrow($player, $initAbilityArray);
+    /**
+     * Set the initial list of languages regarding the actual player class and backgroung
+     *
+     * @param Player $player
+     * @return array Array of possible languages with default proficiency
+     */
+    public static function initPlayerLanguages(Player &$player): array {
+        $languageList = ['RaceLanguages' => [], 'OtherLanguages' => []];
 
-        foreach ($initAbilityArray as $ability) {
-            $playerAbility = new PlayerAbility([
-                'player_id' => $player->id,
-                'ability_id' => $ability['ability_id'],
-                'score' => $ability['score'],
-                'bonus' => $ability['bonus'],
-                'modifier' => $ability['modifier'],
-                'is_primary_ability' => $ability['is_primary_ability'],
-                'is_saving_throw' => $ability['is_saving_throw'],
-            ]);
+        $raceLanguages = RaceGroupLanguage::findAll(['race_goup_id' => $player->race->race_group_id]);
 
-            if (!$playerAbility->save()) {
-                throw new \Exception(implode("<br />", \yii\helpers\ArrayHelper::getColumn($playerAbility->errors, 0, false)));
+        $languageIds = [];
+        foreach ($raceLanguages as $raceLanguage) {
+            $language = $raceLanguage->language;
+            $languageList['RaceLanguages'][$language->id] = self::initLanguageData($language);
+            $languageIds[] = $language->id;
+        }
+
+        if (!$player->background->languages) {
+            return $languageList;
+        }
+        $languages = Language::find()->orderBy('name')->all();
+        foreach ($languages as $language) {
+            // If the language is already part of the race languages,
+            // don't add it to the other languages
+            if (!in_array($language->id, $languageIds)) {
+                $languageList['OtherLanguages'][$language->id] = self::initLanguageData($language);
             }
         }
 
-        return self::initSkillBonuses($player);
+        return $languageList;
+    }
+
+    private static function initLanguageData(Language &$language): array {
+        $languageData = [
+            'language_id' => $language->id,
+            'name' => $language->name,
+        ];
+
+        return $languageData;
     }
 }

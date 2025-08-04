@@ -66,7 +66,7 @@
 
         <!-- Currency -->
         <div class="mt-4">
-            <h6 class="text-warning mb-3"><i class="fi fi-cash-coin me-2"></i>Currency</h6>
+            <h6 class="text-warning mb-3"><i class="bi bi-cash-coin me-2"></i>Currency</h6>
             <div class="row g-2">
                 <div class="col-4">
                     <div class="card currency-card text-center">

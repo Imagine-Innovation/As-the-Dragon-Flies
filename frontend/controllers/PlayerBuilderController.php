@@ -4,10 +4,11 @@ namespace frontend\controllers;
 
 use common\models\ClassEquipment;
 use common\models\Image;
+use common\models\Item;
 use common\models\Player;
 use common\models\PlayerItem;
-use common\models\PlayerSkill;
-use common\models\Weapon;
+use common\models\PlayerLanguage;
+use common\models\Skill;
 use common\components\AppStatus;
 use common\components\ManageAccessRights;
 use frontend\models\PlayerBuilder;
@@ -48,9 +49,9 @@ class PlayerBuilderController extends Controller {
                                 'actions' => [
                                     'create', 'update', 'view',
                                     'ajax-age', 'ajax-endowment', 'ajax-equipment', 'ajax-images',
-                                    'ajax-item-category', 'ajax-names',
-                                    'ajax-save-abilities', 'ajax-save-equipment', 'ajax-save-skills',
-                                    'ajax-skills', 'ajax-traits',
+                                    'ajax-names', 'ajax-skills', 'ajax-traits', 'ajax-languages',
+                                    'ajax-item-category', 'ajax-update-skill', 'ajax-save-abilities',
+                                    'ajax-save-equipment', 'ajax-update-language',
                                 ],
                                 'allow' => ManageAccessRights::isRouteAllowed($this),
                                 'roles' => ['@'],
@@ -168,18 +169,97 @@ class PlayerBuilderController extends Controller {
         $playerId = $request->post('playerId');
         $player = $this->findModel($playerId);
 
-        $success = BuilderTool::initSkills($player);
+        $skills = BuilderTool::initPlayerSkills($player);
         return [
-            'error' => $success ? false : true,
+            'error' => false,
             'content' => $this->renderPartial('ajax-skills', [
                 'player' => $player,
-                'backgroundSkills' => $player->background->backgroundSkills,
-                'playerSkills' => $player->playerSkills,
+                'backgroundSkills' => $skills['BackgroundSkills'],
+                'classSkills' => $skills['ClassSkills'],
                 'n' => $player->class->max_skills,
             ]),
         ];
     }
 
+    /**
+     * Player Languages handling
+     */
+    public function actionAjaxLanguages() {
+        // Set the response format to JSON
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        // Check if the request is a POST request and if it is an AJAX request
+        if (!$this->request->isPost || !$this->request->isAjax) {
+            // If not, return an error response
+            return ['error' => true, 'msg' => 'Not an Ajax POST request'];
+        }
+
+        $request = Yii::$app->request;
+        $playerId = $request->post('playerId');
+        $player = $this->findModel($playerId);
+
+        $languages = BuilderTool::initPlayerLanguages($player);
+        return [
+            'error' => false,
+            'content' => $this->renderPartial('ajax-languages', [
+                'player' => $player,
+                'raceLanguages' => $languages['RaceLanguages'],
+                'otherLanguages' => $languages['OtherLanguages'],
+                'n' => $player->background->languages,
+            ]),
+        ];
+    }
+
+    public function actionAjaxUpdateLanguage() {
+        // Set the response format to JSON
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        // Check if the request is a POST request and if it is an AJAX request
+        if (!$this->request->isPost || !$this->request->isAjax) {
+            // If not, return an error response
+            return ['error' => true, 'msg' => 'Not an Ajax POST request'];
+        }
+
+        $request = Yii::$app->request;
+        $playerId = $request->post('playerId');
+        $languageId = $request->post('languageId');
+        $selected = $request->post('selected');
+
+        if ($selected) {
+            $this->addLanguage($playerId, $languageId);
+        } else {
+            PlayerLanguage::deleteAll([
+                'player_id' => $playerId,
+                'language_id' => $languageId
+            ]);
+        }
+
+        return ['error' => false, 'msg' => 'Language is updated'];
+    }
+
+    private function addLanguage(int $playerId, int $languageId): void {
+
+        $playerLanguage = PlayerLanguage::findOne([
+            'player_id' => $playerId,
+            'language_id' => $languageId
+        ]);
+
+        if (!$playerLanguage) {
+            $playerLanguage = new PlayerItem([
+                'player_id' => $playerId,
+                'language_id' => $languageId
+            ]);
+
+            if ($playerLanguage->save()) {
+                return;
+            }
+            throw new \Exception(implode("<br/>", ArrayHelper::getColumn($playerLanguage->errors, 0, false)));
+        }
+    }
+
+    /**
+     * Player Traits handling
+     */
     public function actionAjaxTraits() {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -303,54 +383,68 @@ class PlayerBuilderController extends Controller {
      * @param Player $player
      * @param int $itemId
      * @param int $quantity
-     * @return bool
+     * @return void
      * @throws \Exception
      */
-    private function addItem(Player &$player, int $itemId, int $quantity): bool {
+    private function addItem(Player &$player, int $itemId, int $quantity): void {
 
-        $playerItem = PlayerItem::findOne([
-            'player_id' => $player->id,
-            'item_id' => $itemId
-        ]);
-
-        if ($playerItem) {
-            $playerItem->quantity += $quantity;
+        $item = Item::findOne(['id' => $itemId]);
+        $itemType = $item->itemType->name;
+        if ($itemType === 'Pack') {
+            $this->unpack($player, $item, $quantity);
         } else {
-            $playerItem = $this->newPlayerItem($player, $itemId, $quantity);
-        }
+            $playerItem = PlayerItem::findOne([
+                'player_id' => $player->id,
+                'item_id' => $itemId
+            ]);
 
-        if ($playerItem->save()) {
-            return true;
+            if ($playerItem) {
+                $item = $playerItem->item;
+                $playerItem->quantity += $item->quantity * $quantity;
+            } else {
+                $playerItem = $this->newPlayerItem($player, $item, $quantity);
+            }
+
+            if ($playerItem->save()) {
+                return;
+            }
+            throw new \Exception(implode("<br />", ArrayHelper::getColumn($playerItem->errors, 0, false)));
         }
-        throw new \Exception(implode("<br />", ArrayHelper::getColumn($playerItem->errors, 0, false)));
     }
 
     /**
      * Create and initialize a new instance of PlayerItem object
      *
      * @param Player $player
-     * @param int $itemId
+     * @param Item $item
      * @param int $quantity
      * @return PlayerItem
      */
-    private function newPlayerItem(Player $player, int $itemId, int $quantity): PlayerItem {
-        $isProficient = PlayerTool::isProficient($player->class->id, $itemId) ? 1 : 0;
+    private function newPlayerItem(Player &$player, Item &$item, int $quantity): ?PlayerItem {
+        $isProficient = PlayerTool::isProficient($player->class->id, $item->id) ? 1 : 0;
         $proficiencyModifier = $isProficient ? $player->level->proficiency_bonus : 0;
 
-        $weaponProperties = PlayerTool::getPlayerWeaponProperties($player->id, $itemId, $proficiencyModifier);
+        $weaponProperties = PlayerTool::getPlayerWeaponProperties($player->id, $item->id, $proficiencyModifier);
+        $itemType = $item->itemType->name;
 
-        $playerItem = new PlayerItem([
+        return new PlayerItem([
             'player_id' => $player->id,
-            'item_id' => $itemId,
-            'quantity' => $quantity,
+            'item_id' => $item->id,
+            'item_type' => $itemType,
+            'quantity' => ($item->quantity ?? 1) * $quantity,
             'is_carrying' => 1,
             'is_equiped' => 1,
             'is_proficient' => $isProficient,
             'attack_modifier' => $weaponProperties['attackModifier'],
             'damage' => $weaponProperties['damage'],
         ]);
+    }
 
-        return $playerItem;
+    private function unpack(Player &$player, Item &$pack, int $quantity): void {
+        $packItems = $pack->packItems;
+        foreach ($packItems as $item) {
+            $this->addItem($player, $item->id, $quantity);
+        }
     }
 
     public function actionAjaxSaveEquipment() {
@@ -365,6 +459,8 @@ class PlayerBuilderController extends Controller {
 
         $request = Yii::$app->request;
         $playerId = $request->post('playerId');
+        $player = $this->findModel($playerId);
+
         $itemIds = $request->post('itemIds');
 
         // first of all, delete existing items.
@@ -377,7 +473,6 @@ class PlayerBuilderController extends Controller {
         }
 
         $itemQuantity = $this->getItemQuantityFromJson($itemIds);
-        $player = $this->findModel($playerId);
         foreach ($itemQuantity as $itemQuantity) {
             $this->addItem($player, $itemQuantity['itemId'], $itemQuantity['quantity']);
         }
@@ -431,7 +526,7 @@ class PlayerBuilderController extends Controller {
         return ['error' => true, 'msg' => 'Error encountered'];
     }
 
-    public function actionAjaxSaveSkills() {
+    public function actionAjaxUpdateSkill() {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -443,23 +538,16 @@ class PlayerBuilderController extends Controller {
 
         $request = Yii::$app->request;
         $playerId = $request->post('playerId');
+        $player = $this->findModel($playerId);
 
-        // Reset the player skills to 0
-        // updateAll does not need "save()" and returns the number of updated rows
-        PlayerSkill::updateAll(//            update player_skill
-                ['is_proficient' => 0], //   set is_proficient=0
-                ['player_id' => $playerId]// where player_id=:playerId
-        );
+        $skillId = $request->post('skillId');
+        $skill = $this->findSkill($skillId);
 
-        // get the list of skill ids from the ajax param "skills"
-        $skills = $request->post('skills');
-        $update = PlayerSkill::updateAll(
-                ['is_proficient' => 1],
-                ['player_id' => $playerId, 'skill_id' => $skills]
-        );
+        $isProficient = $request->post('isProficient');
 
-        $success = ($update > 0);
-        return ['error' => !$success, 'msg' => $success ? 'Skills are saved' : 'Could not save skills'];
+        BuilderTool::updateSkill($player, $skill, $isProficient);
+
+        return ['error' => false, 'msg' => 'Skill is updated'];
     }
 
     public function actionAjaxSaveAbilities() {
@@ -567,6 +655,22 @@ class PlayerBuilderController extends Controller {
         }
 
         if (($model = $query->one()) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    protected function findSkill(int $id) {
+        if (($model = Skill::findOne(['id' => $id])) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    protected function findItem(int $id) {
+        if (($model = Item::findOne(['id' => $id])) !== null) {
             return $model;
         }
 

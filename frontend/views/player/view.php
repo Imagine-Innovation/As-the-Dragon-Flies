@@ -5,9 +5,7 @@ $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Players', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
-$cardHeaderClass = "card-header bg-purple text-decoration fw-bold h-100 py-2";
 $cards = ['abilities', 'combat-stats', 'skills', 'attacks', 'equipment', 'features'];
-$div = '<div class="col-12 col-md-6 col-xl-4 col-xxl-3">';
 ?>
 <div class="container py-3">
     <!-- Character Header -->
@@ -26,6 +24,9 @@ $div = '<div class="col-12 col-md-6 col-xl-4 col-xxl-3">';
     <!-- Main Content -->
     <div class="row g-4">
         <?php
+        $cardHeaderClass = "card-header bg-purple text-decoration fw-bold h-100 py-2";
+        $div = '<div class="col-12 col-md-6 col-xl-4 col-xxl-3">';
+
         foreach ($cards as $card) {
             $cardContent = $this->renderFile("@app/views/player/sheet/{$card}.php", [
                 'model' => $model,

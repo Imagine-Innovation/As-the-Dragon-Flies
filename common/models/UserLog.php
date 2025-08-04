@@ -21,7 +21,9 @@ use Yii;
  * @property Quest $quest
  * @property User $user
  */
-class UserLog extends \yii\db\ActiveRecord {
+class UserLog extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -35,6 +37,8 @@ class UserLog extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['access_right_id', 'player_id', 'quest_id', 'action_at', 'ip_address', 'reason'], 'default', 'value' => null],
+            [['denied'], 'default', 'value' => 0],
             [['user_id'], 'required'],
             [['user_id', 'access_right_id', 'player_id', 'quest_id', 'action_at', 'denied'], 'integer'],
             [['ip_address'], 'string', 'max' => 64],
@@ -97,4 +101,5 @@ class UserLog extends \yii\db\ActiveRecord {
     public function getUser() {
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
+
 }
