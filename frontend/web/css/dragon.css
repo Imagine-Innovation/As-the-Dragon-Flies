@@ -5566,3 +5566,8 @@ pre {
 .blink {
     animation: blink 1s step-end infinite;
 }
+
+.carousel-item img {
+	width:100%;
+	border-radius:2px
+}

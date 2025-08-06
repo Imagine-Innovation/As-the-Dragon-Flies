@@ -1,13 +1,13 @@
 <?php
 
-use frontend\components\PlayerTool;
+use frontend\components\PlayerComponent;
 
 /** @var yii\web\View $this */
 /** @var common\models\Player $model */
 /** @var string $cardHeaderClass */
 $proficiencyBonus = $model->level->proficiency_bonus;
 
-$playerAbilities = PlayerTool::getAbilitiesAndSavingThrow($model->playerAbilities, $proficiencyBonus);
+$playerAbilities = PlayerComponent::getAbilitiesAndSavingThrow($model->playerAbilities, $proficiencyBonus);
 ?>
 <section class="card mb-4">
     <div class="<?= $cardHeaderClass ?>">

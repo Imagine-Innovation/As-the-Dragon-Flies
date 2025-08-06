@@ -19,10 +19,9 @@ $this->params['breadcrumbs'][] = $this->title;
             <h4 class="card-title">List of available stories to start a quest</h4>
             <?php if ($user->is_designer): ?>
                 <div class="actions">
-                    <a href="<?= Url::toRoute(['story/create']) ?>" class="actions__item position-relative">
-                        <span data-bs-toggle="tooltip" title="Create a new story" data-placement="bottom"
-                              <i class="bi bi-journal-plus"></i>
-                        </span>
+                    <a href="<?= Url::toRoute(['story/create']) ?>" role="button" class="actions__item position-relative"
+                       data-bs-toggle="tooltip" title="Create a new story" data-placement="bottom">
+                        <i class="bi bi-journal-plus"></i>
                     </a>
                 </div>
             <?php endif; ?>

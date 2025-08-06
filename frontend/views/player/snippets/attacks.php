@@ -1,6 +1,6 @@
 <?php
 
-use frontend\helpers\ItemTool;
+use frontend\helpers\ItemHelper;
 
 /** @var yii\web\View $this */
 /** @var common\models\Player $model */
@@ -16,8 +16,8 @@ use frontend\helpers\ItemTool;
             <?php
             if ($playerItem->item_type === "Weapon"):
                 $weapon = $playerItem->weapon;
-                $properties = ItemTool::getLiteWeaponProperties($weapon);
-                $remaining = ItemTool::getRemainingAmunitions($playerItem);
+                $properties = ItemHelper::getLiteWeaponProperties($weapon);
+                $remaining = ItemHelper::getRemainingAmunitions($playerItem);
                 ?>
                 <article class="card mb-3">
                     <div class="card-body p-2">

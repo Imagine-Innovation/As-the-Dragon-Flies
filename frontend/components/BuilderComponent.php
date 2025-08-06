@@ -19,7 +19,7 @@ use common\models\Wizard;
 use Yii;
 use yii\helpers\ArrayHelper;
 
-class BuilderTool {
+class BuilderComponent {
 
     const RETRY = 5;
     const CREATE_TABS = [
@@ -603,7 +603,7 @@ class BuilderTool {
             $id = $defaultAbility->ability_id;
             $score = $defaultAbility->score ?? 10;
             $initAbilityArray[$id]['score'] = $score;
-            $initAbilityArray[$id]['modifier'] = PlayerTool::calcAbilityModifier($score);
+            $initAbilityArray[$id]['modifier'] = PlayerComponent::calcAbilityModifier($score);
         }
 
         return $initAbilityArray;

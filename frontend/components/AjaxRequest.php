@@ -52,25 +52,16 @@ class AjaxRequest {
     public $sortOrder = [];
     public $defaultResponse;
 
-    public function __construct($param) {
+    public function __construct(array $param) {
         $this->defaultResponse = self::RESPONSE;
-        Yii::debug("*** Debug ***  __construct this->render=" . ($this->render ?? "null"), __METHOD__);
-        //$this->render = $this->render ?? "ajax"; //default value
         foreach ($param as $key => $value) {
-            if (is_array($value)) {
-                Yii::debug($value, 'arrays', 'your-context-here');
-            } else {
-                Yii::debug("*** Debug ***  __construct param['$key']=" . ($value ?? 'null'), __METHOD__);
-            }
             if (property_exists($this, $key)) {
                 $this->$key = $value;
-            } else {
-                Yii::debug("*** Debug ***  __construct property '$key' does not exist", __METHOD__);
             }
         }
     }
 
-    private function loadModels($query, $limit, $page) {
+    private function loadModels(yii\db\ActiveQuery $query, int $limit, int $page): array {
         $offset = $limit * $page;
         $models = $query->offset($offset)->limit($limit);
 
@@ -81,12 +72,10 @@ class AjaxRequest {
         return $models->all();
     }
 
-    private function buildQuery() {
+    private function buildQuery(): yii\db\ActiveQuery {
         $modelName = 'common\\models\\' . $this->modelName;
 
         if ($this->innerJoin) {
-            Yii::debug("*** Debug ***  buildQuery innerJoin " . count($this->innerJoin), __METHOD__);
-            //$query = $model->find()->select($this->select ?? '*');
             $query = $modelName::find()->select($this->select ?? '*');
 
             foreach ($this->innerJoin as $join) {
@@ -102,7 +91,7 @@ class AjaxRequest {
         return $this->filter ? $modelName::find()->where($this->filter) : $modelName::find();
     }
 
-    public function makeResponse($request) {
+    public function makeResponse(yii\web\Request $request): bool {
         $limit = $request->post('limit', 100);
         $pageNo = $request->post('page', 0);
         $query = $this->buildQuery();

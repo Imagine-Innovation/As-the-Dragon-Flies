@@ -3,7 +3,7 @@
 namespace frontend\models;
 
 use common\models\Player;
-use frontend\components\BuilderTool;
+use frontend\components\BuilderComponent;
 use Yii;
 
 /**
@@ -39,19 +39,19 @@ class PlayerBuilder extends Player {
         $success = parent::save($runValidation, $attributeNames);
 
         if (!$this->playerTraits) {
-            BuilderTool::initTraits($this);
+            BuilderComponent::initTraits($this);
         }
 
         if (!$this->playerCoins) {
-            BuilderTool::initCoinage($this);
+            BuilderComponent::initCoinage($this);
         }
 
         if (!$this->playerAbilities) {
-            BuilderTool::initAbilities($this);
+            BuilderComponent::initAbilities($this);
         }
 
         if (!$this->playerSkills) {
-            BuilderTool::initSkills($this);
+            BuilderComponent::initSkills($this);
         }
 
         return $success;

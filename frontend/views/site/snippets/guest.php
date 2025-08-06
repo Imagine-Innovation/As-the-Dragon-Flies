@@ -35,7 +35,7 @@ use yii\helpers\Url;
                             </p>
                         </div>
                         <div class="col-12 col-md-6 h-100">
-                            <div class="carousel slide carousel-fade transition: transform 1s ease, opacity 1s ease-out" data-ride="carousel">
+                            <div class="carousel slide carousel-fade transition: transform 1s ease, opacity 1s ease-out" data-bs-ride="carousel">
                                 <div class="carousel-inner" role="listbox">
                                     <div class="carousel-item active">
                                         <img src="img/carousel/car1.jpg" alt="First slide">

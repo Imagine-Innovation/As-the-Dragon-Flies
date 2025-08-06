@@ -39,10 +39,10 @@ $this->title = Yii::$app->session->get('questName');
         <div class="card p-3 h-100 d-flex flex-column">
             <div class="actions">
                 <!-- Button to trigger the offcanvas on smaller screens -->
-                <a class="actions__item d-xl-none" role="button" data-bs-toggle="offcanvas" href="#offcanvasPlayers" aria-controls="offcanvasPlayers">
+                <a role="button"class="actions__item d-xl-none"  data-bs-toggle="offcanvas" href="#offcanvasPlayers" aria-controls="offcanvasPlayers">
                     <i class="bi bi-person-square"></i>
                 </a>
-                <a class="actions__item d-md-none" role="button" href="<?= Url::toRoute(['site/index']) ?>" data-bs-toggle="tooltip" title="Back to lobby" data-placement="bottom">
+                <a role="button" class="actions__item d-md-none" href="<?= Url::toRoute(['site/index']) ?>" data-bs-toggle="tooltip" title="Back to lobby" data-placement="bottom">
                     <i class="bi bi-box-arrow-right"></i>
                 </a>
             </div>

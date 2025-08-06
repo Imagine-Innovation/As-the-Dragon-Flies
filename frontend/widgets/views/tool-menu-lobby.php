@@ -14,13 +14,12 @@ $story = $questId ? $quest->story : null;
 <div class="row g-4">
     <?php foreach ($menus as $menu): ?>
         <?php if ($menu->card_title): ?>
-            <div class="col-12 col-md-6 col-lg-4 col-xxl-4">
+            <div class="col-12 col-md-6 col-lg-4 col-xxl-3">
                 <div class="card h-100">
                     <div class="actions">
-                        <a href="<?= Url::toRoute($menu->accessRight->route . '/' . $menu->accessRight->action) ?>" class="actions__item position-relative">
-                            <span data-bs-toggle="tooltip" title="<?= $menu->tooltip ?>" data-placement="bottom">
-                                <i class="bi <?= $menu->icon ?>"></i>
-                            </span>
+                        <a href="<?= Url::toRoute($menu->accessRight->route . '/' . $menu->accessRight->action) ?>" role="button" class="actions__item position-relative"
+                           data-bs-toggle="tooltip" title="<?= $menu->tooltip ?>" data-placement="bottom">
+                            <i class="bi <?= $menu->icon ?>"></i>
                         </a>
                     </div>
                     <a href="<?= Url::toRoute($menu->accessRight->route . '/' . $menu->accessRight->action) ?>">
@@ -28,8 +27,7 @@ $story = $questId ? $quest->story : null;
                     </a>
                     <div class="card-body">
                         <p>
-                            <a class = "btn btn-warning text-decoration"
-                               href = "<?= Url::toRoute($menu->accessRight->route . '/' . $menu->accessRight->action) ?>">
+                            <a href="<?= Url::toRoute($menu->accessRight->route . '/' . $menu->accessRight->action) ?>" role="button" class="btn btn-warning text-decoration">
                                 <i class="bi <?= $menu->icon ?>"></i> <?= $menu->card_title ?>
                             </a>
                         </p>

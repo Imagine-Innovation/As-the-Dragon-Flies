@@ -581,7 +581,7 @@ class Shopping {
 
     private function addToInventory(PlayerCart &$playerCart): PlayerItem {
         $classId = $playerCart->player->class_id;
-        $isProficient = PlayerTool::isProficient($classId, $playerCart->item_id) ? 1 : 0;
+        $isProficient = PlayerComponent::isProficient($classId, $playerCart->item_id) ? 1 : 0;
 
         // Create a new PlayerItem if it does not exist
         $playerItem = new PlayerItem([

@@ -21,25 +21,22 @@ $shopping = new Shopping();
                     <div class="card mb-3">
                         <div class="card-body">
                             <div class="actions">
-                                <a href="#" class="actions__item" onclick="ShopManager.addToCart(<?= $model->item_id ?>);">
-                                    <span data-bs-toggle="tooltip" title="Add one item" data-placement="bottom"
-                                          <i class="bi bi-cart-plus"></i>
-                                    </span>
+                                <a href="#" role="button" class="actions__item" onclick="ShopManager.addToCart(<?= $model->item_id ?>);"
+                                   data-bs-toggle="tooltip" title="Add one item" data-placement="bottom">
+                                    <i class="bi bi-cart-plus"></i>
                                 </a>
-                                <a href="#" class="actions__item" onclick="ShopManager.removeFromCart(<?= $model->item_id ?>, 1);">
-                                    <span data-bs-toggle="tooltip" title="Remove one item" data-placement="bottom"
-                                          <i class="bi bi-cart-dash"></i>
-                                    </span>
+                                <a href="#" role="button" class="actions__item" onclick="ShopManager.removeFromCart(<?= $model->item_id ?>, 1);"
+                                   data-bs-toggle="tooltip" title="Remove one item" data-placement="bottom">
+                                    <i class="bi bi-cart-dash"></i>
                                 </a>
-                                <a href="#" class="actions__item" onclick="ShopManager.removeFromCart(<?= $model->item_id ?>, $('#cartCount-<?= $model->item_id ?>').html());">
-                                    <span data-bs-toggle="tooltip" title="Delete this item from your cart" data-placement="bottom"
-                                          <i class="bi bi-trash3"></i>
-                                    </span>
+                                <a href="#" role="button" class="actions__item"
+                                   onclick="ShopManager.removeFromCart(<?= $model->item_id ?>, $('#cartCount-<?= $model->item_id ?>').html());"
+                                   data-bs-toggle="tooltip" title="Delete this item from your cart" data-placement="bottom">
+                                    <i class="bi bi-trash3"></i>
                                 </a>
-                                <a href="#" class="actions__item">
-                                    <span data-bs-toggle="tooltip" title="Items in your cart" data-placement="bottom"
-                                          <i class="bi bi-cart"></i>
-                                    </span>
+                                <a href="#" role="button" class="actions__item"
+                                   data-bs-toggle="tooltip" title="Items in your cart" data-placement="bottom">
+                                    <i class="bi bi-cart"></i>
                                     <div style="font-size: 12.35px">
                                         <span id="cartCount-<?= $model->item_id ?>" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"><?= $model->quantity ?></span>
                                     </div>
@@ -85,7 +82,7 @@ $shopping = new Shopping();
             <div class="card">
                 <div class="card-body">
                     <div class="actions">
-                        <a href="<?= Url::toRoute('player-cart/shop') ?>" class="actions__item bi bi-shop"></a>
+                        <a href="<?= Url::toRoute('player-cart/shop') ?>" role="button" class="actions__item bi bi-shop"></a>
                     </div>
                     <h4 class="card-title">Your cart</h4>
                     <h6 class="card-subtitle text-muted">

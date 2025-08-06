@@ -13,8 +13,8 @@ use common\components\AppStatus;
 use common\components\ManageAccessRights;
 use frontend\models\PlayerBuilder;
 use frontend\components\AjaxRequest;
-use frontend\components\BuilderTool;
-use frontend\components\PlayerTool;
+use frontend\components\BuilderComponent;
+use frontend\components\PlayerComponent;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
@@ -77,7 +77,7 @@ class PlayerBuilderController extends Controller {
         $age = $request->post('age', 0);
         Yii::debug("*** Debug *** actionAjaxAge raceId=$raceId, age=$age", __METHOD__);
 
-        $ageTable = BuilderTool::loadAgeTable($raceId);
+        $ageTable = BuilderComponent::loadAgeTable($raceId);
 
         $content = $this->renderPartial('ajax/age', [
             'age' => $age,
@@ -109,7 +109,7 @@ class PlayerBuilderController extends Controller {
         return [
             'error' => false,
             'content' => $this->renderPartial('ajax/names', [
-                'names' => BuilderTool::loadRandomNames($raceId, $gender, $n)
+                'names' => BuilderComponent::loadRandomNames($raceId, $gender, $n)
             ]),
         ];
     }
@@ -169,7 +169,7 @@ class PlayerBuilderController extends Controller {
         $playerId = $request->post('playerId');
         $player = $this->findModel($playerId);
 
-        $skills = BuilderTool::initPlayerSkills($player);
+        $skills = BuilderComponent::initPlayerSkills($player);
         return [
             'error' => false,
             'content' => $this->renderPartial('ajax/skills', [
@@ -198,7 +198,7 @@ class PlayerBuilderController extends Controller {
         $playerId = $request->post('playerId');
         $player = $this->findModel($playerId);
 
-        $languages = BuilderTool::initPlayerLanguages($player);
+        $languages = BuilderComponent::initPlayerLanguages($player);
         return [
             'error' => false,
             'content' => $this->renderPartial('ajax/languages', [
@@ -273,7 +273,7 @@ class PlayerBuilderController extends Controller {
         $request = Yii::$app->request;
 
         $player = $this->findModel($request->post('playerId'));
-        $success = BuilderTool::initTraits($player);
+        $success = BuilderComponent::initTraits($player);
 
         if ($success) {
             return [
@@ -327,7 +327,7 @@ class PlayerBuilderController extends Controller {
         $request = Yii::$app->request;
         $equipments = BackgroundItem::findAll(['background_id' => $request->post('backgroundId')]);
 
-        $content = BuilderTool::setEquipmentResponse($equipments);
+        $content = BuilderComponent::setEquipmentResponse($equipments);
         return [
             'error' => false,
             'content' => $content,
@@ -349,7 +349,7 @@ class PlayerBuilderController extends Controller {
 
         $equipments = ClassEquipment::findAll(['endowment_id' => $request->post('endowmentId')]);
 
-        $content = BuilderTool::setEquipmentResponse($equipments, $choice);
+        $content = BuilderComponent::setEquipmentResponse($equipments, $choice);
         return [
             'error' => false,
             'content' => $content,
@@ -421,10 +421,10 @@ class PlayerBuilderController extends Controller {
      * @return PlayerItem
      */
     private function newPlayerItem(Player &$player, Item &$item, int $quantity): ?PlayerItem {
-        $isProficient = PlayerTool::isProficient($player->class->id, $item->id) ? 1 : 0;
+        $isProficient = PlayerComponent::isProficient($player->class->id, $item->id) ? 1 : 0;
         $proficiencyModifier = $isProficient ? $player->level->proficiency_bonus : 0;
 
-        $weaponProperties = PlayerTool::getPlayerWeaponProperties($player->id, $item->id, $proficiencyModifier);
+        $weaponProperties = PlayerComponent::getPlayerWeaponProperties($player->id, $item->id, $proficiencyModifier);
         $itemType = $item->itemType->name;
 
         return new PlayerItem([
@@ -545,7 +545,7 @@ class PlayerBuilderController extends Controller {
 
         $isProficient = $request->post('isProficient');
 
-        BuilderTool::updateSkill($player, $skill, $isProficient);
+        BuilderComponent::updateSkill($player, $skill, $isProficient);
 
         return ['error' => false, 'msg' => 'Skill is updated'];
     }
@@ -567,7 +567,7 @@ class PlayerBuilderController extends Controller {
                 $ability_id = $playerAbility->ability_id;
                 $score = $abilities[$ability_id];
                 $playerAbility->score = $score;
-                $playerAbility->modifier = PlayerTool::calcAbilityModifier($score);
+                $playerAbility->modifier = PlayerComponent::calcAbilityModifier($score);
                 if (!$playerAbility->save()) {
                     throw new \Exception(implode("<br />", ArrayHelper::getColumn($playerAbility->errors, 0, false)));
                 }

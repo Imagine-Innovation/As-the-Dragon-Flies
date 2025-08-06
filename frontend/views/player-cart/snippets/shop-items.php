@@ -17,7 +17,8 @@ use frontend\widgets\ModalDesc;
                     <?php endif; ?>
                     <div class="card-body">
                         <div class="actions">
-                            <a href="#" class="actions__item" data-bs-toggle="tooltip" title="Add to cart" data-placement="bottom" onclick="ShopManager.addToCart(<?= $item['id'] ?>); return false;">
+                            <a href="#" role="button" class="actions__item"
+                               data-bs-toggle="tooltip" title="Add to cart" data-placement="bottom" onclick="ShopManager.addToCart(<?= $item['id'] ?>); return false;">
                                 <i class="bi bi-cart-plus h2"></i>
                             </a>
                         </div>

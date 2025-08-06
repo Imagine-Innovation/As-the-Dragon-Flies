@@ -45,7 +45,7 @@ AppAsset::register($this);
                     Messages
 
                     <div class="actions">
-                        <a class="actions__item bi-envelope" href="<?= Url::toRoute(['site/index']) ?>"></a>
+                        <a href="<?= Url::toRoute(['site/index']) ?>" role="button" class="actions__item bi-envelope"></a>
                     </div>
                 </div>
 
@@ -94,7 +94,7 @@ AppAsset::register($this);
                     Notifications
 
                     <div class="actions">
-                        <a class="actions__item bi-bell" href="<?= Url::toRoute(['site/index']) ?>" data-sa-action="notifications-clear"></a>
+                        <a href="<?= Url::toRoute(['site/index']) ?>" role="button" class="actions__item bi-bell" data-sa-action="notifications-clear"></a>
                     </div>
                 </div>
 

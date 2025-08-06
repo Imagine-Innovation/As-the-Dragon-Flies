@@ -9,7 +9,7 @@ use frontend\widgets\ModalDesc;
 <div class="container">
     <div class="row g-4">
         <?php foreach ($items as $item): ?>
-            <div class="col-12 col-md-6 col-lg-4">
+            <div class="col-12 col-md-6 col-lg-4 col-xxl-3">
                 <div class="card h-100">
                     <?php if ($item['image']): ?>
                         <img class="card-img-top" src="img/item/<?= $item['image'] ?>">

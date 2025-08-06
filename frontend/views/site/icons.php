@@ -4,7 +4,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 $icons = ['dev',
     'd20', 'badge', 'chest', 'castel', 'large-castel', 'crown', 'crown2', 'coins', 'danger', 'diamond', 'diamond-ring',
-    'key', 'key2', 'pirate', 'ring', 'spell-book', 'tent', 'tower', 'trophy', 'scroll', 'ghost', 'magic-wand',
+    'key', 'key2', 'pirate', 'ring', 'spell-book', 'tent', 'tower', 'trophy', 'scroll', 'ghost', 'magic-wand', 'logo',
     'action-rest', 'action-run', 'action-fight', 'action-prepare-spell', 'action-hide', 'action-move', 'action-climb',
     'action-unarmed-strike', 'action-attack',
     'armor', 'armor-plate', 'armor-shield', 'armor-round-shield', 'armor-helmet', 'armor-helmet-large', 'armor-helmet-plume', 'armor-spartan',
@@ -20,7 +20,7 @@ $icons = ['dev',
                     <div class="card-body">
                         <h4 class="card-title"><?= $icon ?></h4>
                         <div class="actions">
-                            <a type="button" class="actions__item dnd-<?= $icon ?>" href="#"></a>
+                            <a role="button" class="actions__item dnd-<?= $icon ?>" href="#"></a>
                         </div>
                         <i class="bi dnd-<?= $icon ?> h1"></i>
                         <i class="bi dnd-<?= $icon ?> h2"></i>
@@ -29,8 +29,9 @@ $icons = ['dev',
                         <i class="bi dnd-<?= $icon ?> h5"></i>
                         <i class="bi dnd-<?= $icon ?> h6"></i>
                         <i class="bi dnd-<?= $icon ?>"></i>
+                        <i class="bi dnd-<?= $icon ?>" style="color: var(--yellow);"></i>
                         <br>
-                        <a class="btn btn-theme-dark btn--icon" href="">
+                        <a class="btn btn--icon" href="">
                             <i class="bi dnd-<?= $icon ?>"></i>
                         </a>
                         <div class="btn-group">

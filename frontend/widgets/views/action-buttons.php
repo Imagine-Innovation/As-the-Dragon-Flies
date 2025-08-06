@@ -9,7 +9,6 @@ use common\components\ManageAccessRights;
 /** @var array $actions */
 /** @var bool $isOwner */
 /** @var string $mode */
-
 if ($mode === "table") {
     $divClass = 'btn-group';
     $buttonClass = 'btn btn-theme';
@@ -24,12 +23,12 @@ if ($mode === "table") {
 
         <?php if (ManageAccessRights::isActionButtonAllowed($action, $modelName, $isOwner, $mode)): ?>
 
-            <a type="button" class="<?= $buttonClass ?>" href="#" data-bs-toggle="tooltip" title="<?= $action['tooltip'] ?>" data-placement="bottom"
+            <a role="button" class="<?= $buttonClass ?>" href="#" data-bs-toggle="tooltip" title="<?= $action['tooltip'] ?>" data-placement="bottom"
                onclick="$('#<?= $action['verb'] ?>-form-<?= $model->id ?>').submit();">
                 <i class="bi bi-<?= $action['icon'] ?>"></i>
                 <form action="<?= Url::toRoute([$action['route'] . '/' . $action['verb'], 'id' => $model->id]) ?>" id="<?= $action['verb'] ?>-form-<?= $model->id ?>" method="post">
                     <input type="hidden"
-                           name="<?= Yii::$app->request->csrfParam ?>" 
+                           name="<?= Yii::$app->request->csrfParam ?>"
                            value="<?= Yii::$app->request->csrfToken ?>">
                 </form>
             </a>

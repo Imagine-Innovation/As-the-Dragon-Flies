@@ -19,7 +19,7 @@ $categories = ['Misc', 'Image', 'Item', 'Monster'];
 <div class="card">
     <div class="card-body">
         <div class="actions">
-            <a href="#" id="imageUpload-button" class="actions__item" data-bs-toggle="tooltip" title="Upload a new image" data-placement="bottom">
+            <a href="#" role="button" class="actions__item" id="imageUpload-button" data-bs-toggle="tooltip" title="Upload a new image" data-placement="bottom">
                 <span data-bs-toggle="modal" data-bs-target="#imageUploadModal">
                     <i class="bi bi-upload"></i>
                 </span>

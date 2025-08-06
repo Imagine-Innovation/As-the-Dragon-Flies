@@ -2,7 +2,7 @@
 
 use frontend\widgets\AjaxContainer;
 use frontend\widgets\BuilderTab;
-use frontend\components\BuilderTool;
+use frontend\components\BuilderComponent;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
@@ -12,10 +12,10 @@ $this->title = 'Player builder';
 $this->params['breadcrumbs'][] = ['label' => 'Players', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
-$firstClassQuestion = BuilderTool::getFirstQuestion('class');
-$firstRaceQuestion = BuilderTool::getFirstQuestion('race');
+$firstClassQuestion = BuilderComponent::getFirstQuestion('class');
+$firstRaceQuestion = BuilderComponent::getFirstQuestion('race');
 
-$tabs = BuilderTool::CREATE_TABS;
+$tabs = BuilderComponent::CREATE_TABS;
 $firstTab = array_key_first($tabs);
 
 $isAdmin = (Yii::$app->user->identity->is_admin === 1);
@@ -24,7 +24,7 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
     <div class="card-body">
         <h4 class="card-title text-decoration"><?= Html::encode($this->title) ?></h4>
         <div class="actions">
-            <a href="#" id="showBuilderWizardModal-button" class="actions__item" data-bs-toggle="tooltip" title="Character builder wizard" data-placement="bottom">
+            <a href="#" role="button" class="actions__item" id="showBuilderWizardModal-button" data-bs-toggle="tooltip" title="Character builder wizard" data-placement="bottom">
                 <span data-bs-toggle="modal" data-bs-target="#builderWizardModal">
                     <i class="bi bi-magic"></i>
                 </span>

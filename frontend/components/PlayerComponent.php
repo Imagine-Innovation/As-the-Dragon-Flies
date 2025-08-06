@@ -10,7 +10,7 @@ use common\models\Weapon;
 use Yii;
 use yii\helpers\ArrayHelper;
 
-class PlayerTool {
+class PlayerComponent {
 
     const EMPTY_ABILITIES = ['STR' => [], 'DEX' => [], 'CON' => [], 'INT' => [], 'WIS' => [], 'CHA' => []];
 

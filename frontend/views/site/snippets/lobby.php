@@ -5,7 +5,6 @@ use frontend\widgets\ToolMenu;
 /* @var $this yii\web\View */
 /* @var string $userName */
 /* @var string $playerName */
-/* @var string $webRoot */
 ?>
 <header class="content__title h3">
     <p>

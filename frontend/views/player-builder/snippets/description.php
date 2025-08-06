@@ -66,7 +66,7 @@ foreach ($alignments as $alignment) {
                 <div class="col">
                     <div class="card">
                         <div class="actions">
-                            <a href="#" class="actions__item bi-arrow-repeat"></a>
+                            <a href="#" role="button" class="actions__item bi-arrow-repeat"></a>
                         </div>
                         <div class="card-body" id="ajaxNameSelection">
                             <h4 class="card-title text-decoration">Name</h4>
@@ -83,7 +83,7 @@ foreach ($alignments as $alignment) {
                 <div class="col">
                     <div class="card">
                         <div class="actions">
-                            <a href="#" id="showBuilderWizardModal-button" class="actions__item" data-bs-toggle="tooltip" title="Alignment wizard" data-placement="bottom">
+                            <a href="#" role="button" class="actions__item" id="showBuilderWizardModal-button" data-bs-toggle="tooltip" title="Alignment wizard" data-placement="bottom">
                                 <span data-bs-toggle="modal" data-bs-target="#builderWizardModal">
                                     <i class="bi bi-magic"></i>
                                 </span>

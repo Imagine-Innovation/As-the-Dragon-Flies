@@ -24,15 +24,13 @@ $firstType = $itemTypes[0] ?? "";
         <div class="card-body">
             <p id="purseContent"></p>
             <div class="actions">
-                <a href="<?= Url::toRoute(['player-item/pack']) ?>" class="actions__item position-relative">
-                    <span data-bs-toggle="tooltip" title="See the pack" data-placement="bottom"
-                          <i class="bi bi-backpack2"></i>
-                    </span>
+                <a href="<?= Url::toRoute(['player-item/pack']) ?>" role="button" class="actions__item position-relative"
+                   data-bs-toggle="tooltip" title="See the pack" data-placement="bottom">
+                    <i class="bi bi-backpack2"></i>
                 </a>
-                <a href="<?= Url::toRoute(['player-cart/shop']) ?>" class="actions__item position-relative">
-                    <span data-bs-toggle="tooltip" title="Buy some more items" data-placement="bottom"
-                          <i class="bi bi-shop"></i>
-                    </span>
+                <a href="<?= Url::toRoute(['player-cart/shop']) ?>" role="button" class="actions__item position-relative"
+                   data-bs-toggle="tooltip" title="Buy some more items" data-placement="bottom">
+                    <i class="bi bi-shop"></i>
                 </a>
             </div>
 

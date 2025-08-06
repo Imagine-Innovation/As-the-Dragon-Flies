@@ -25,7 +25,7 @@ foreach ($players as $player) {
             Select your current Player
 
             <div class="actions">
-                <a class="actions__item bi-file-earmark-person" href="<?= Url::toRoute(['site/index']) ?>"></a>
+                <a href="<?= Url::toRoute(['site/index']) ?>" role="button" class="actions__item bi-file-earmark-person"></a>
             </div>
         </div>
 

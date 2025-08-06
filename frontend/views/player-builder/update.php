@@ -4,7 +4,7 @@ use common\components\AppStatus;
 use frontend\widgets\AjaxContainer;
 use frontend\widgets\BuilderOnclick;
 use frontend\widgets\BuilderTab;
-use frontend\components\BuilderTool;
+use frontend\components\BuilderComponent;
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
@@ -13,9 +13,9 @@ $this->title = 'Player builder';
 $this->params['breadcrumbs'][] = ['label' => 'Players', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
-$firstAlignmentQuestion = BuilderTool::getFirstQuestion('alignment');
+$firstAlignmentQuestion = BuilderComponent::getFirstQuestion('alignment');
 
-$tabs = BuilderTool::UPDATE_TABS;
+$tabs = BuilderComponent::UPDATE_TABS;
 $firstTab = array_key_first($tabs);
 
 $isAdmin = (Yii::$app->user->identity->is_admin === 1);

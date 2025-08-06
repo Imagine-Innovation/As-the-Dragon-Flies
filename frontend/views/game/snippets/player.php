@@ -1,13 +1,13 @@
 <?php
 
-use frontend\components\PlayerTool;
+use frontend\components\PlayerComponent;
 
 /** @var yii\web\View $this */
 /** @var common\models\Player $player */
 $avatar = Yii::$app->session->get('avatar');
 $proficiencyBonus = $player->level->proficiency_bonus;
 
-$playerAbilities = PlayerTool::getAbilitiesAndSavingThrow($player->playerAbilities, $proficiencyBonus);
+$playerAbilities = PlayerComponent::getAbilitiesAndSavingThrow($player->playerAbilities, $proficiencyBonus);
 ?>
 <!-- Character Info -->
 <section class="mb-3">

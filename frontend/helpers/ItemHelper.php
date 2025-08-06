@@ -5,7 +5,7 @@ namespace frontend\helpers;
 use common\models\PlayerItem;
 use common\models\Weapon;
 
-class ItemTool {
+class ItemHelper {
 
     // Define the available weapon properties as an associative array.
     // /!\ Don't forget to update this array when the data model changes
