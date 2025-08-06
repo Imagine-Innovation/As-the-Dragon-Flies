@@ -31,7 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?php foreach ($stories as $story): ?>
                         <div class="col-12 col-md-6 col-lg-4">
                             <?=
-                            $this->renderFile('@app/views/story/_card.php', [
+                            $this->renderFile('@app/views/story/snippets/card.php', [
                                 'user' => $user,
                                 'player' => $player,
                                 'story' => $story,
@@ -44,7 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?php endforeach; ?>
                 </div>
             <?php else: ?>
-                We're sorry. No story is available yet, but we're working on it! 
+                We're sorry. No story is available yet, but we're working on it!
             <?php endif; // if stories is not null    ?>
         </div>
     </div>

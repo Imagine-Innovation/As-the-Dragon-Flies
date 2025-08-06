@@ -54,7 +54,7 @@ $firstType = $itemTypes[0] ?? "";
                             <div class="tab-pane <?= $itemType == $firstType ? "active fade show" : "fade" ?>"
                                  id="tab-<?= $itemType ?>" role="tabpanel">
                                      <?=
-                                     $this->render('_inventory', [
+                                     $this->render('snippets/inventory', [
                                          'items' => $playerItems[$itemType],
                                          'player' => $currentPlayer,
                                      ]);

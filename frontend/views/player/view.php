@@ -28,7 +28,7 @@ $cards = ['abilities', 'combat-stats', 'skills', 'attacks', 'equipment', 'featur
         $div = '<div class="col-12 col-md-6 col-xl-4 col-xxl-3">';
 
         foreach ($cards as $card) {
-            $cardContent = $this->renderFile("@app/views/player/sheet/{$card}.php", [
+            $cardContent = $this->renderFile("@app/views/player/snippets/{$card}.php", [
                 'model' => $model,
                 'cardHeaderClass' => $cardHeaderClass
             ]);

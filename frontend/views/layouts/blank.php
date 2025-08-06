@@ -11,7 +11,7 @@ AppAsset::register($this);
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>" data-bs-theme="dark">
 
-    <?= $this->renderFile('@app/views/layouts/_head.php') ?>
+    <?= $this->renderFile('@app/views/layouts/snippets/head.php') ?>
 
     <body style="background-image: url('img/carousel/car<?= random_int(1, 27) ?>.jpg');background-size: cover;background-position: center;background-repeat: no-repeat;">
 

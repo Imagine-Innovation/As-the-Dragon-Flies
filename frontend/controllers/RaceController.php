@@ -91,7 +91,7 @@ class RaceController extends Controller {
 
         $model = $this->findModel($id);
 
-        $content = $this->renderPartial('ajax-wizard', [
+        $content = $this->renderPartial('ajax/wizard', [
             'model' => $model,
         ]);
 

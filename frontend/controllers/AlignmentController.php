@@ -68,7 +68,7 @@ class AlignmentController extends Controller {
         Yii::debug("*** Debug *** actionAjaxWizard - id=" . $id ?? "null");
         $model = $this->findModel($id);
 
-        $content = $this->renderPartial('ajax-wizard', [
+        $content = $this->renderPartial('ajax/wizard', [
             'model' => $model,
         ]);
 

@@ -8,7 +8,7 @@ use yii\helpers\Url;
 $webRoot = Url::base();
 if (Yii::$app->user->isGuest) {
     $this->title = Html::encode(Yii::$app->name);
-    $render = $this->renderFile('@app/views/site/_guest.php', ['webRoot' => $webRoot]);
+    $render = $this->renderFile('@app/views/site/snippets/guest.php', ['webRoot' => $webRoot]);
 } else {
 
     $this->title = 'Game lobby';
@@ -17,7 +17,7 @@ if (Yii::$app->user->isGuest) {
     $userName = $user->fullname ?? $user->username;
     $playerName = $user->currentPlayer ? $user->currentPlayer->name : $userName;
 
-    $render = $this->renderFile('@app/views/site/_lobby.php', [
+    $render = $this->renderFile('@app/views/site/snippets/lobby.php', [
         'userName' => $userName,
         'playerName' => $playerName,
         'webRoot' => $webRoot,

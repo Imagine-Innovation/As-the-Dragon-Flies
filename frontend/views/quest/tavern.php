@@ -46,7 +46,7 @@ $messages = QuestMessages::getLastMessages($model->id, $playerId);
         </div>
     </div>
     <div class="col-md-6 col-xl-4">
-        <?= $this->renderFile('@app/views/quest/_chat.php', ['questId' => $model->id, 'playerId' => $playerId]) ?>
+        <?= $this->renderFile('@app/views/quest/snippets/chat.php', ['questId' => $model->id, 'playerId' => $playerId]) ?>
     </div>
     <?php if (1 === 2) : ?>
         <!-- Chat Panel -->

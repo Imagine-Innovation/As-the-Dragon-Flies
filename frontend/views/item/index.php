@@ -49,7 +49,7 @@ $firstTypeId = $itemTypes[0]->id;
     </div>
 </div>
 <?=
-$this->renderFile('@app/views/layouts/_ajax.php', [
+$this->renderFile('@app/views/layouts/snippets/ajax-params.php', [
     'route' => 'item/ajax', // default route
     'initTab' => $firstTypeId,
 ])

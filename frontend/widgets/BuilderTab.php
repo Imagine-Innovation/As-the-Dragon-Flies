@@ -19,7 +19,7 @@ class BuilderTab extends Widget {
                         'paragraphs' => $tab['paragraphs'],
             ]);
         } else {
-            $partialView = '@app/views/player-builder/_' . $tab['anchor'] . '.php';
+            $partialView = '@app/views/player-builder/snippets/' . $tab['anchor'] . '.php';
             return $this->renderFile($partialView, ['model' => $this->player, 'paragraphs' => $tab['paragraphs']]);
         }
     }

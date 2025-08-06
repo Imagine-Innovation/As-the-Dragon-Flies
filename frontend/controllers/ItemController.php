@@ -88,7 +88,6 @@ class ItemController extends Controller {
         Yii::debug("*** debug *** actionAjax - itemTypeId=" . $itemTypeId ?? 'null');
         $param = [
             'modelName' => 'Item',
-            'render' => 'ajax',
             'param' => ['itemType' => $itemTypeId],
             'filter' => ['item_type_id' => $itemTypeId],
             'sortOrder' => [
@@ -119,7 +118,7 @@ class ItemController extends Controller {
         Yii::debug("*** debug *** actionAjaxImages - itemIds=" . $itemIds ?? 'null');
         $param = [
             'modelName' => 'Item',
-            'render' => 'ajax-images',
+            'render' => 'images',
             'filter' => ['id' => explode(',', $itemIds)],
         ];
         $ajaxRequest = new AjaxRequest($param);

@@ -109,10 +109,10 @@ class AjaxRequest {
         $count = $query->count();
         $pageCount = $count == 0 ? 1 : ceil($count / $limit);
         $page = max(0, min($pageNo, $pageCount));
-        $render = $this->render ?? 'ajax';
+        $render = $this->render ?? 'index';
         $this->response = [
             'error' => false, 'msg' => '',
-            'content' => Yii::$app->controller->renderPartial($render, array_merge(
+            'content' => Yii::$app->controller->renderPartial("ajax/{$render}", array_merge(
                             [
                                 'models' => $this->loadModels($query, $limit, $page),
                                 'count' => $count,

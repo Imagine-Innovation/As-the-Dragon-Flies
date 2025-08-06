@@ -13,19 +13,19 @@ AppAsset::register($this);
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>" data-bs-theme="dark">
 
-    <?= $this->renderFile('@app/views/layouts/_head.php') ?>
+    <?= $this->renderFile('@app/views/layouts/snippets/head.php') ?>
 
     <body>
         <?php $this->beginBody(); ?>
 
-        <?= $this->renderFile("@app/views/layouts/_content-game.php", ['content' => $content]) ?>
+        <?= $this->renderFile("@app/views/layouts/contents/game.php", ['content' => $content]) ?>
 
         <script type="text/javascript">
             console.log('loading game layout');
         </script>
 
         <?php $this->endBody(); ?>
-        <?= $this->renderFile('@app/views/layouts/_javascript.php') ?>
+        <?= $this->renderFile('@app/views/layouts/snippets/javascript.php') ?>
     </body>
 </html>
 <?php $this->endPage() ?>

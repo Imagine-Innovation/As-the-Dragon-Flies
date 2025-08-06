@@ -110,7 +110,7 @@ class PlayerController extends Controller {
 
         $param = [
             'modelName' => 'Player',
-            'render' => 'ajax-admin',
+            'render' => 'admin',
         ];
         $ajaxRequest = new AjaxRequest($param);
 
@@ -135,7 +135,7 @@ class PlayerController extends Controller {
 
         $param = [
             'modelName' => 'Player',
-            'render' => 'ajax-lite',
+            'render' => 'lite',
             'filter' => ['user_id' => $userId]
         ];
         $ajaxRequest = new AjaxRequest($param);

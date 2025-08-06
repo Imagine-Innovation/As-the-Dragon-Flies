@@ -160,7 +160,7 @@ class QuestController extends Controller {
         // Prepare Ajax request parameters
         $param = [
             'modelName' => 'Quest',
-            'render' => 'ajax-quest-members',
+            'render' => 'quest-members',
             'filter' => ['id' => $player->quest_id],
         ];
 
@@ -330,7 +330,7 @@ class QuestController extends Controller {
 
         // Fetch and render messages
         $messages = QuestMessages::getLastMessages($questId, $playerId, $roundedTime);
-        $content = $this->renderPartial('ajax-messages', ['messages' => $messages]);
+        $content = $this->renderPartial('ajax/messages', ['messages' => $messages]);
 
         return ['error' => false, 'msg' => '', 'content' => $content];
     }

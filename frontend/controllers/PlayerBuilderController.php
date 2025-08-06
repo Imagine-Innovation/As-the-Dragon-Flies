@@ -79,7 +79,7 @@ class PlayerBuilderController extends Controller {
 
         $ageTable = BuilderTool::loadAgeTable($raceId);
 
-        $content = $this->renderPartial('ajax-age', [
+        $content = $this->renderPartial('ajax/age', [
             'age' => $age,
             'ageTable' => $ageTable
         ]);
@@ -108,7 +108,7 @@ class PlayerBuilderController extends Controller {
 
         return [
             'error' => false,
-            'content' => $this->renderPartial('ajax-names', [
+            'content' => $this->renderPartial('ajax/names', [
                 'names' => BuilderTool::loadRandomNames($raceId, $gender, $n)
             ]),
         ];
@@ -128,7 +128,7 @@ class PlayerBuilderController extends Controller {
 
         return [
             'error' => false, 'msg' => '',
-            'content' => $this->renderPartial('ajax-image', ['imageId' => $imageId, 'images' => $images])];
+            'content' => $this->renderPartial('ajax/image', ['imageId' => $imageId, 'images' => $images])];
     }
 
     public function actionAjaxImages() {
@@ -172,7 +172,7 @@ class PlayerBuilderController extends Controller {
         $skills = BuilderTool::initPlayerSkills($player);
         return [
             'error' => false,
-            'content' => $this->renderPartial('ajax-skills', [
+            'content' => $this->renderPartial('ajax/skills', [
                 'player' => $player,
                 'backgroundSkills' => $skills['BackgroundSkills'],
                 'classSkills' => $skills['ClassSkills'],
@@ -201,7 +201,7 @@ class PlayerBuilderController extends Controller {
         $languages = BuilderTool::initPlayerLanguages($player);
         return [
             'error' => false,
-            'content' => $this->renderPartial('ajax-languages', [
+            'content' => $this->renderPartial('ajax/languages', [
                 'player' => $player,
                 'raceLanguages' => $languages['RaceLanguages'],
                 'otherLanguages' => $languages['OtherLanguages'],
@@ -278,7 +278,7 @@ class PlayerBuilderController extends Controller {
         if ($success) {
             return [
                 'error' => false,
-                'content' => $this->renderPartial('ajax-traits', [
+                'content' => $this->renderPartial('ajax/traits', [
                     'player' => $player,
                 ]),
             ];
@@ -305,7 +305,7 @@ class PlayerBuilderController extends Controller {
 
         return [
             'error' => false,
-            'content' => $this->renderPartial('ajax-endowment', [
+            'content' => $this->renderPartial('ajax/endowment', [
                 'player' => $player,
                 'endowments' => $endowmentTable,
                 'backgroundItems' => $backgroundItems,
@@ -494,7 +494,7 @@ class PlayerBuilderController extends Controller {
 
         $param = [
             'modelName' => 'ItemCategory',
-            'render' => 'ajax-item-category',
+            'render' => 'item-category',
             'with' => ['item', 'image'],
             'param' => [
                 'choice' => $request->post('choice'),

@@ -14,8 +14,8 @@
     width: 1em;
     display: inline-block;
     background: currentColor;
-    -webkit-mask: url('dnd-icons/draft/coins-svgrepo-com.svg') no-repeat center center;
-    mask: url('dnd-icons/draft/coins-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask: url('dnd-icons/draft/sword.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/sword.svg') no-repeat center center;
     -webkit-mask-size: 100% 100%;
     mask-size: 100% 100%;
     vertical-align: -0.125em;
@@ -119,6 +119,20 @@
     vertical-align: -0.125em;
 }
 
+.dnd-crown2::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/crown2.svg') no-repeat center center;
+    mask: url('dnd-icons/crown2.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
 .dnd-coins::before {
     content: "";
     font-size: inherit;
@@ -175,6 +189,20 @@
     vertical-align: -0.125em;
 }
 
+.dnd-ghost::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/ghost.svg') no-repeat center center;
+    mask: url('dnd-icons/ghost.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
 .dnd-key::before {
     content: "";
     font-size: inherit;
@@ -203,6 +231,20 @@
     vertical-align: -0.125em;
 }
 
+.dnd-magic-wand::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/magic-wand.svg') no-repeat center center;
+    mask: url('dnd-icons/magic-wand.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
 .dnd-pirate::before {
     content: "";
     font-size: inherit;
@@ -226,6 +268,20 @@
     background: currentColor;
     -webkit-mask: url('dnd-icons/ring.svg') no-repeat center center;
     mask: url('dnd-icons/ring.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-scroll::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/scroll.svg') no-repeat center center;
+    mask: url('dnd-icons/scroll.svg') no-repeat center center;
     -webkit-mask-size: 100% 100%;
     mask-size: 100% 100%;
     vertical-align: -0.125em;
@@ -268,6 +324,20 @@
     background: currentColor;
     -webkit-mask: url('dnd-icons/tower.svg') no-repeat center center;
     mask: url('dnd-icons/tower.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-trophy::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/trophy.svg') no-repeat center center;
+    mask: url('dnd-icons/trophy.svg') no-repeat center center;
     -webkit-mask-size: 100% 100%;
     mask-size: 100% 100%;
     vertical-align: -0.125em;

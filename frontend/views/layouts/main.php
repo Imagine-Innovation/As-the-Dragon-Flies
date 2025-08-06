@@ -13,16 +13,16 @@ $snippet = Yii::$app->user->isGuest ? 'guest' : 'lobby';
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>" data-bs-theme="dark">
 
-    <?= $this->renderFile('@app/views/layouts/_head.php') ?>
+    <?= $this->renderFile('@app/views/layouts/snippets/head.php') ?>
 
     <body>
         <?php $this->beginBody(); ?>
 
         <main role="main" class="main">
-            <?= $this->renderFile("@app/views/layouts/_content-$snippet.php", ['content' => $content]) ?>
+            <?= $this->renderFile("@app/views/layouts/contents/$snippet.php", ['content' => $content]) ?>
         </main>
 
-        <?= $this->renderFile('@app/views/layouts/_footer.php') ?>
+        <?= $this->renderFile('@app/views/layouts/snippets/footer.php') ?>
 
         <?php if (!Yii::$app->user->isGuest): ?>
             <script type="text/javascript">
@@ -31,7 +31,7 @@ $snippet = Yii::$app->user->isGuest ? 'guest' : 'lobby';
         <?php endif; ?>
 
         <?php $this->endBody(); ?>
-        <?= $this->renderFile('@app/views/layouts/_javascript.php') ?>
+        <?= $this->renderFile('@app/views/layouts/snippets/javascript.php') ?>
     </body>
 </html>
 <?php $this->endPage() ?>

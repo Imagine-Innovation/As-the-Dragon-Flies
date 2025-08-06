@@ -93,7 +93,7 @@ class WizardController extends Controller {
 
         $model = WizardQuestion::findOne(['id' => $id]);
 
-        $content = $this->renderPartial('ajax-question', [
+        $content = $this->renderPartial('ajax/question', [
             'topic' => $topic,
             'model' => $model,
         ]);

@@ -95,16 +95,15 @@ class Status {
     public static function hyperlink($model, $property = 'name'): string {
         $controller = Utilities::modelName($model); // Get the controller name for the model
 
+        $propertyVal = $model->$property;
         $display = isset($model->$property) ?
-                Utilities::encode(empty($model->$property) ? 'Unknown' : $model->$property) :
+                Utilities::encode(empty($propertyVal) ? 'Unknown' : $propertyVal) :
                 '<i class="bi bi-exclamation-square"></i>';
 
-        if (!$controller || !isset($model->id) || !property_exists($model, 'status')) {
-            return $display;
+        if ($controller && isset($model->id) && isset($model->status)) {
+            $route = "{$controller}/view";
+            return '<a href="' . Url::toRoute([$route, 'id' => $model->id]) . '">' . $display . '</a>';
         }
-
-        $route = "{$controller}/view";
-
-        return '<a href="' . Url::toRoute([$route, 'id' => $model->id]) . '">' . $display . '</a>';
+        return $display;
     }
 }

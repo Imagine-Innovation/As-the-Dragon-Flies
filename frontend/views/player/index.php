@@ -23,7 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="row g-4">
                 <?php foreach ($players as $player): ?>
                     <div class="col-12 col-md-6 col-lg-4">
-                        <?= $this->renderFile('@app/views/player/_card.php', ['player' => $player,]) ?>
+                        <?= $this->renderFile('@app/views/player/snippets/card.php', ['player' => $player,]) ?>
                     </div>
                 <?php endforeach; ?>
             </div>

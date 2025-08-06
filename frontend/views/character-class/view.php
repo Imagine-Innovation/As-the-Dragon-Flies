@@ -21,20 +21,20 @@ foreach ($model->classProficiencies as $p) {
 $tabs = ['init' =>
     [
         'name' => 'Presentation',
-        'snippet' => '_presentation',
+        'snippet' => 'presentation',
         'anchor' => 'presentation',
     ],
     [
         'name' => 'Proficiencies',
-        'snippet' => '_proficiencies',
+        'snippet' => 'proficiencies',
         'anchor' => 'proficiencies',
     ],
 ];
 if ($has_spells) {
     $tabs[] = [
-            'name' => 'Spells',
-            'snippet' => '_spells',
-            'anchor' => 'spells',
+        'name' => 'Spells',
+        'snippet' => 'spells',
+        'anchor' => 'spells',
     ];
 }
 
@@ -64,15 +64,15 @@ $first_anchor = $tabs['init']['anchor'];
                     if ($tab['anchor'] == $first_anchor) {
                         ?>
                         <div class="tab-pane active fade show" id="<?= $tab['anchor'] ?>" role="tabpanel">
-                            <?= $this->renderFile('@app/views/character-class/' . $tab['snippet'] . '.php', ['model' => $model]) ?>
+                            <?= $this->renderFile('@app/views/character-class/snippets/' . $tab['snippet'] . '.php', ['model' => $model]) ?>
                         </div>
                     <?php } else { ?>
                         <div class="tab-pane fade" id="<?= $tab['anchor'] ?>" role="tabpanel">
-                            <?= $this->renderFile('@app/views/character-class/' . $tab['snippet'] . '.php', ['model' => $model]) ?>
+                            <?= $this->renderFile('@app/views/character-class/snippets/' . $tab['snippet'] . '.php', ['model' => $model]) ?>
                         </div>
                         <?php
                     }   // End if first anchor
-                }  // endforeach tabs; 
+                }  // endforeach tabs;
                 ?>
             </div>
         </div>

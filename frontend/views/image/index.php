@@ -62,7 +62,7 @@ $categories = ['Misc', 'Image', 'Item', 'Monster'];
     </div>
 </div>
 <?=
-$this->renderFile('@app/views/layouts/_ajax.php', [
+$this->renderFile('@app/views/layouts/snippets/ajax-params.php', [
     'route' => 'image/ajax', // default route
     'limit' => 20,
     'initTab' => $initTab,

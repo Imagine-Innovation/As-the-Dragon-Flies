@@ -302,7 +302,7 @@ class SiteController extends Controller {
             'error' => false,
             'msg' => '',
             'UUID' => $UUID,
-            'content' => $this->renderPartial('ajax-toast', [
+            'content' => $this->renderPartial('ajax/toast', [
                 'UUID' => $UUID,
                 'messageHeader' => $messageHeader,
                 'message' => $message,

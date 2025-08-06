@@ -3,8 +3,8 @@ $this->title = 'Custom Icons';
 $this->params['breadcrumbs'][] = $this->title;
 
 $icons = ['dev',
-    'd20', 'badge', 'chest', 'castel', 'large-castel', 'crown', 'coins', 'danger', 'diamond', 'diamond-ring',
-    'key', 'key2', 'pirate', 'ring', 'spell-book', 'tent', 'tower',
+    'd20', 'badge', 'chest', 'castel', 'large-castel', 'crown', 'crown2', 'coins', 'danger', 'diamond', 'diamond-ring',
+    'key', 'key2', 'pirate', 'ring', 'spell-book', 'tent', 'tower', 'trophy', 'scroll', 'ghost', 'magic-wand',
     'action-rest', 'action-run', 'action-fight', 'action-prepare-spell', 'action-hide', 'action-move', 'action-climb',
     'action-unarmed-strike', 'action-attack',
     'armor', 'armor-plate', 'armor-shield', 'armor-round-shield', 'armor-helmet', 'armor-helmet-large', 'armor-helmet-plume', 'armor-spartan',

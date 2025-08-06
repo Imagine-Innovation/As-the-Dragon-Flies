@@ -20,8 +20,8 @@ $this->title = Yii::$app->session->get('questName');
         </div>
         <div class="offcanvas-body">
             <section class="card p-3">
-                <?= $this->renderFile('@app/views/game/_player.php', ['player' => $player]) ?>
-                <?= $this->renderFile('@app/views/game/_partners.php', ['playerId' => $player->id, 'quest' => $quest]) ?>
+                <?= $this->renderFile('@app/views/game/snippets/player.php', ['player' => $player]) ?>
+                <?= $this->renderFile('@app/views/game/snippets/partners.php', ['playerId' => $player->id, 'quest' => $quest]) ?>
             </section>
         </div>
     </aside>
@@ -29,8 +29,8 @@ $this->title = Yii::$app->session->get('questName');
     <!-- Visible Aside for xl and larger screens -->
     <aside class="col-xl-3 d-none d-xl-block">
         <section class="card p-3 h-100">
-            <?= $this->renderFile('@app/views/game/_player.php', ['player' => $player]) ?>
-            <?= $this->renderFile('@app/views/game/_partners.php', ['playerId' => $player->id, 'quest' => $quest]) ?>
+            <?= $this->renderFile('@app/views/game/snippets/player.php', ['player' => $player]) ?>
+            <?= $this->renderFile('@app/views/game/snippets/partners.php', ['playerId' => $player->id, 'quest' => $quest]) ?>
         </section>
     </aside>
 
@@ -75,7 +75,7 @@ $this->title = Yii::$app->session->get('questName');
 
                 <!-- Chat System -->
                 <section class="col-12 col-lg-6 pt-3 h-auto">
-                    <?= $this->renderFile('@app/views/quest/_chat.php', ['questId' => $quest->id, 'playerId' => $player->id]) ?>
+                    <?= $this->renderFile('@app/views/quest/snippets/chat.php', ['questId' => $quest->id, 'playerId' => $player->id]) ?>
                 </section>
             </div>
     </section>

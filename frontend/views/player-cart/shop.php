@@ -56,7 +56,7 @@ $firstType = $itemTypes[0];
                         <div class="tab-pane <?= $itemType == $firstType ? "active fade show" : "fade" ?>"
                              id="tab-<?= $itemType ?>" role="tabpanel">
                                  <?=
-                                 $this->render('_shop-items', [
+                                 $this->render('snippets/shop-items', [
                                      'shopData' => $shopData[$itemType],
                                      'player' => $currentPlayer,
                                      'active' => $active,
