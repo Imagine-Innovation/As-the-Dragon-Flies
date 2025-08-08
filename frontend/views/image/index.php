@@ -3,6 +3,7 @@
 use common\models\RaceGroup;
 use yii\helpers\Html;
 use frontend\widgets\AjaxContainer;
+use frontend\widgets\IconButton;
 
 /** @var yii\web\View $this */
 /** @var yii\data\ActiveDataProvider $dataProvider */
@@ -19,11 +20,12 @@ $categories = ['Misc', 'Image', 'Item', 'Monster'];
 <div class="card">
     <div class="card-body">
         <div class="actions">
-            <a href="#" role="button" class="actions__item" id="imageUpload-button" data-bs-toggle="tooltip" title="Upload a new image" data-placement="bottom">
-                <span data-bs-toggle="modal" data-bs-target="#imageUploadModal">
-                    <i class="bi bi-upload"></i>
-                </span>
-            </a>
+            <?=
+            IconButton::widget([
+                'icon' => 'bi-upload',
+                'tooltip' => 'Upload an image'
+            ])
+            ?>
         </div>
         <div>
             <div class="custom-control custom-radio custom-control-inline mb-2">

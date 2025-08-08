@@ -1,6 +1,7 @@
 <?php
 
 use frontend\components\Inventory;
+use frontend\widgets\IconButton;
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */
@@ -24,13 +25,16 @@ $firstType = $itemTypes[0] ?? "";
         <div class="card-body">
             <p id="purseContent"></p>
             <div class="actions">
-                <a href="<?= Url::toRoute(['player-item/index']) ?>" role="button" class="actions__item position-relative"
-                   data-bs-toggle="tooltip" title="Pack your items" data-placement="bottom">
-                    <i class="bi bi-backpack2"></i>
-                    <div style="font-size: 12.35px">
-                        <span id="cartItemCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"></span>
-                    </div>
-                </a>
+                <?=
+                IconButton::widget([
+                    'url' => Url::toRoute(['player-item/index']),
+                    'icon' => 'bi-backpack2',
+                    'tooltip' => "See what you are carrying"
+                ])
+                ?>
+                <div style="font-size: 12.35px">
+                    <span id="cartItemCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"></span>
+                </div>
             </div>
 
             <?php if ($itemTypes): ?>
@@ -51,7 +55,7 @@ $firstType = $itemTypes[0] ?? "";
                             <div class="tab-pane <?= $itemType == $firstType ? "active fade show" : "fade" ?>"
                                  id="tab-<?= $itemType ?>" role="tabpanel">
                                      <?=
-                                     $this->render('_inventory', [
+                                     $this->render('snippets\inventory', [
                                          'items' => $playerItems[$itemType],
                                          'player' => $currentPlayer,
                                      ]);

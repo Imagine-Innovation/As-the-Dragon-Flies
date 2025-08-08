@@ -2,6 +2,8 @@
 
 namespace common\components;
 
+use Yii;
+
 enum AppStatus: int {
 
     // Global/User/Player statuses
@@ -85,7 +87,11 @@ enum AppStatus: int {
     }
 
     public static function isValidForEntity(string $entityName, int $statusValue): bool {
-        $validStatusesForEntity = match (strtolower($entityName)) {
+        Yii::debug("*** Debug *** - isValidForEntity entityName={$entityName}, statusValue={$statusValue}");
+        $folders = explode("\\", $entityName);
+        $className = end($folders);
+        Yii::debug("*** Debug *** - isValidForEntity className={$className}");
+        $validStatusesForEntity = match (strtolower($className)) {
             'user' => self::getValuesForUser(),
             'player' => self::getValuesForPlayer(),
             'quest' => self::getValuesForQuest(),
@@ -93,7 +99,7 @@ enum AppStatus: int {
             // Add other entity types here if they have specific status sets
             default => [], // Or throw an exception for unknown entity type
         };
-
+        Yii::debug($validStatusesForEntity);
         return in_array($statusValue, $validStatusesForEntity);
     }
 }

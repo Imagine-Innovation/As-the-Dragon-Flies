@@ -2,6 +2,7 @@
 
 use yii\helpers\Url;
 use frontend\components\Shopping;
+use frontend\widgets\IconButton;
 use frontend\widgets\ModalDesc;
 
 /** @var yii\web\View $this */
@@ -21,27 +22,37 @@ $shopping = new Shopping();
                     <div class="card mb-3">
                         <div class="card-body">
                             <div class="actions">
-                                <a href="#" role="button" class="actions__item" onclick="ShopManager.addToCart(<?= $model->item_id ?>);"
-                                   data-bs-toggle="tooltip" title="Add one item" data-placement="bottom">
-                                    <i class="bi bi-cart-plus"></i>
-                                </a>
-                                <a href="#" role="button" class="actions__item" onclick="ShopManager.removeFromCart(<?= $model->item_id ?>, 1);"
-                                   data-bs-toggle="tooltip" title="Remove one item" data-placement="bottom">
-                                    <i class="bi bi-cart-dash"></i>
-                                </a>
-                                <a href="#" role="button" class="actions__item"
-                                   onclick="ShopManager.removeFromCart(<?= $model->item_id ?>, $('#cartCount-<?= $model->item_id ?>').html());"
-                                   data-bs-toggle="tooltip" title="Delete this item from your cart" data-placement="bottom">
-                                    <i class="bi bi-trash3"></i>
-                                </a>
-                                <a href="#" role="button" class="actions__item"
-                                   data-bs-toggle="tooltip" title="Items in your cart" data-placement="bottom">
-                                    <i class="bi bi-cart"></i>
-                                    <div style="font-size: 12.35px">
-                                        <span id="cartCount-<?= $model->item_id ?>" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"><?= $model->quantity ?></span>
-                                    </div>
-                                </a>
-                                <a href="#" class="invisible" id="somethingWrongModel-hiddenButton" data-bs-toggle="modal" data-bs-target="#somethingWrongModal"></a>
+                                <?=
+                                IconButton::widget([
+                                    'id' => "cartButton-add-{$model->item_id}",
+                                    'icon' => 'bi-cart-plus',
+                                    'tooltip' => "Add a {$model->item->name} to cart"
+                                ])
+                                ?>
+                                <?=
+                                IconButton::widget([
+                                    'id' => "cartButton-remove-{$model->item_id}",
+                                    'icon' => 'bi-cart-dash',
+                                    'tooltip' => "Remove a {$model->item->name} from cart"
+                                ])
+                                ?>
+                                <?=
+                                IconButton::widget([
+                                    'id' => "cartButton-delete-{$model->item_id}",
+                                    'icon' => 'bi-trash3',
+                                    'tooltip' => "Delete every {$model->item->name} from cart"
+                                ])
+                                ?>
+                                <?=
+                                IconButton::widget([
+                                    'icon' => 'bi-cart',
+                                    'tooltip' => "{$model->item->name} in your cart"
+                                ])
+                                ?>
+                                <a href="#" class="invisible" id="somethingWrongModal-hiddenButton" data-bs-toggle="modal" data-bs-target="#somethingWrongModal"></a>
+                                <div style="font-size: 12.35px">
+                                    <span id="cartCount-<?= $model->item_id ?>" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"><?= $model->quantity ?></span>
+                                </div>
                             </div>
                             <img src="img/item/<?= $model->item->image->file_name ?>" class="image-thumbnail float-start" style="width: 80px;height: 80px;">
                             <h6 class="card-subtitle">
@@ -97,20 +108,20 @@ $shopping = new Shopping();
             </div>
         </div>
     </div>
-    <div class="modal fade" id="somethingWrongModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h6 class="modal-title">Sorry, you can't buy this item</h6>
-                </div>
-                <div class="modal-body">
-                    <p class="text-muted" id="noFundLabel"></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-theme btn--icon" data-bs-dismiss="modal">
-                        <i class="bi bi-x-lg"></i>
-                    </button>
-                </div>
+</div>
+<div class="modal fade" id="somethingWrongModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Sorry, you can't buy this item</h6>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted" id="noFundLabel"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-theme btn--icon" data-bs-dismiss="modal">
+                    <i class="bi bi-x-lg"></i>
+                </button>
             </div>
         </div>
     </div>

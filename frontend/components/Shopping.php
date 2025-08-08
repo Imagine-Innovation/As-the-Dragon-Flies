@@ -6,6 +6,7 @@ use common\models\Item;
 use common\models\Player;
 use common\models\PlayerCart;
 use common\models\PlayerItem;
+use Yii;
 
 class Shopping {
 
@@ -384,10 +385,22 @@ class Shopping {
         return implode(" + ", $string);
     }
 
+    private function initCoinage(): array {
+        $coinage = [];
+        foreach (array_keys($this->coins) as $coin) {
+            $coinage[$coin] = [
+                'value' => 0,
+                'coin' => $coin,
+                'rate' => $this->coins[$coin]['rate']
+            ];
+        }
+        return $coinage;
+    }
+
     /**
      * Generate a cart value string representing the total value of items in the player's cart.
      *
-     * @param array $playerCarts The player's cart containing items.
+     * @param PlayerCart[] $playerCarts The player's cart containing items.
      * @return string The cart value string.
      */
     public function getCartValueString(array $playerCarts): string {
@@ -396,48 +409,40 @@ class Shopping {
             return "";
         }
 
-        // Initialize an array to store the total cost for each coin type
-        $price = [];
-        foreach (array_keys($this->coins) as $coin) {
-            $price[$coin] = [
-                'cost' => 0,
-                'coin' => $coin,
-                'rate' => $this->coins[$coin]['rate'],
-            ];
-        }
+        $coinage = $this->initCoinage();
 
         // Calculate the total cost for each coin type based on items in the cart
         foreach ($playerCarts as $cart) {
             $item = $cart->item;
             $coin = $item->coin;
-            $price[$coin]['cost'] += $item->cost * $cart->quantity;
+            $coinage[$coin]['value'] += $item->cost * $cart->quantity;
         }
 
         // Sort the price array by descending change rate value
-        usort($price, function ($a, $b) {
+        usort($coinage, function ($a, $b) {
             return $b['rate'] <=> $a['rate'];
         });
 
         // Generate the cart value string
-        $string = [];
-        foreach ($price as $p) {
-            if ($p['cost'] > 0) {
-                $string[] = $p['cost'] . " " . $p['coin'];
+        $cartValueString = [];
+        foreach ($coinage as $c) {
+            if ($c['value'] > 0) {
+                $cartValueString[] = $c['value'] . " " . $c['coin'];
             }
         }
 
-        return implode(" + ", $string);
+        return implode(" + ", $cartValueString);
     }
 
     /**
      * Generates a message indicating why a purchase is not possible based on the player's coins and item cost.
      *
-     * @param int $playerCoins The amount of coins the player has.
-     * @param Item $item The item to be purchased.
+     * @param PlayerCoin[] $playerCoins The amount of coins the player has.
+     * @param Item &$item The item to be purchased.
      *
      * @return string The purchase status message.
      */
-    public function purchaseNotPossibleMessage(int $playerCoins, Item $item): string {
+    public function purchaseNotPossibleMessage(array $playerCoins, Item &$item): string {
         // Initialize the player's purse with the current coins.
         $this->initPurse($playerCoins);
 
@@ -456,85 +461,91 @@ class Shopping {
     /**
      * Removes an item from the player's cart.
      *
-     * This method removes the specified quantity of the item from the player's cart.
-     * If the quantity becomes zero or less, the item is deleted from the cart.
-     * The method then attempts to save the changes to the database.
-     * If successful, the method restores the spent cost of the item to the
-     * player's coins and returns a success message.
-     * If the save operation fails or the item does not exist in the cart,
-     * an error message is returned.
-     *
-     * @param Player $player The Player model representing the player.
-     * @param Item $item The Item model representing the item to be removed from the cart.
-     * @param int $quantity The quantity of the item to be removed.
+     * @param Player &$player The Player model representing the player.
+     * @param Item &$item The Item model representing the item to be removed from the cart.
+     * @param int|null $quantity The quantity of the item to be removed.
      * @return array An associative array containing the result of the operation.
      */
-    public function removeFromCart(Player $player, Item $item, int $quantity): array {
+    public function removeFromCart(Player &$player, Item &$item, int|null $quantity = null): array {
         // Find the cart entry for the specified item
-        $playerCart = PlayerCart::findOne(['player_id' => $player->id, 'item_id' => $item->id]);
+        $cartItem = PlayerCart::findOne(['player_id' => $player->id, 'item_id' => $item->id]);
 
-        // If the cart entry exists
-        if ($playerCart) {
-            // Calculate the cost of the items to be removed
-            $cost = $item->cost * $quantity;
-
-            // Decrease the quantity of the item in the cart
-            $playerCart->quantity -= $quantity;
-
-            // If the quantity becomes zero or less, delete the cart entry; otherwise, save the changes
-            if ($playerCart->quantity <= 0) {
-                $ok = $playerCart->delete();
-                $verb = "deleted";
-            } else {
-                $ok = $playerCart->save();
-                $verb = "removed";
-            }
-
-            // Restore the spent cost of the item to the player's coins
-            if ($ok && $this->restoreFunding($player->playerCoins, $cost, $item->coin)) {
-                // Return a success message
-                return ['error' => false, 'msg' => "Item $verb from your cart"];
-            }
-
-            // If the save operation fails or funding restoration fails, return an error message
-            return ['error' => true, 'msg' => 'Save failed'];
+        if (!$cartItem) {
+            // If the item does not exist in the cart, return an error message
+            return ['error' => true, 'msg' => 'Nothing to remove'];
         }
 
-        // If the item does not exist in the cart, return an error message
-        return ['error' => true, 'msg' => 'Nothing to delete'];
+        $qty = $quantity ?? 1;
+        $refund = $item->cost * $qty;
+        $cartItem->quantity -= $qty;
+
+        // If the quantity becomes zero or less, delete the cart entry; otherwise, save the changes
+        if ($cartItem->quantity <= 0) {
+            $ok = $cartItem->delete();
+            $verb = "deleted";
+        } else {
+            $ok = $cartItem->save();
+            $verb = "removed";
+        }
+
+        // Restore the spent cost of the item to the player's coins
+        if ($ok && $this->restoreFunding($player->playerCoins, $refund, $item->coin)) {
+            // Return a success message
+            return ['error' => false, 'msg' => "{$qty} {$item->name}{($qty>1 ? 's':'')} $verb from your cart"];
+        }
+
+        // If the save operation fails or funding restoration fails, return an error message
+        return ['error' => true, 'msg' => 'Save failed'];
+    }
+
+    public function deleteFromCart(Player &$player, Item &$item): array {
+        // Find the cart entry for the specified item
+        $cartItem = PlayerCart::findOne(['player_id' => $player->id, 'item_id' => $item->id]);
+
+        if (!$cartItem) {
+            // If the item does not exist in the cart, return an error message
+            return ['error' => true, 'msg' => 'Nothing to delete'];
+        }
+
+        // Calculate the cost of the items to be deleted
+        $refund = $item->cost * $cartItem->quantity;
+
+        // Restore the spent cost of the item to the player's coins
+        if (!$this->restoreFunding($player->playerCoins, $refund, $item->coin)) {
+            // If funding restoration fails, return an error message
+            return ['error' => true, 'msg' => 'Refund failed'];
+        }
+        PlayerCart::deleteAll(['player_id' => $player->id, 'item_id' => $item->id]);
+        // Return a success message
+        return ['error' => false, 'msg' => "Item {$item->name} is deleted from your cart"];
     }
 
     /**
      * Adds an item to the player's cart.
      *
-     * This method adds the specified item to the player's cart. If the item already exists
-     * in the cart, its quantity is incremented by one. If the item does not exist in the cart,
-     * a new PlayerCart model is created with a quantity of one. The method then attempts to save
-     * the changes to the database. If successful, the method deducts the item cost from the player's
-     * coins and returns a success message. If the save operation fails, an error message is returned.
-     *
-     * @param Player $player The Player model representing the player.
-     * @param Item $item The Item model representing the item to be added to the cart.
-     * @param int|null $quantity The Item model representing the item to be added to the cart.
+     * @param Player &$player The Player model representing the player.
+     * @param Item &$item The Item model representing the item to be added to the cart.
+     * @param int|null $quantity The quantity to be added to the cart.
      * @return array An associative array containing the result of the operation.
      */
-    public function addToCart(Player $player, Item $item, int|null $quantity = null): array {
+    public function addToCart(Player &$player, Item &$item, int|null $quantity = null): array {
         // Find if the item already exists in the player's cart
-        $playerCart = PlayerCart::findOne(['player_id' => $player->id, 'item_id' => $item->id]);
+        $cartItem = PlayerCart::findOne(['player_id' => $player->id, 'item_id' => $item->id]);
 
         // If the item already exists, increment its quantity; otherwise, create a new PlayerCart model
-        if ($playerCart) {
-            $playerCart->quantity += $quantity ?? 1;
+        if ($cartItem) {
+            $cartItem->quantity += $quantity ?? 1;
         } else {
-            $playerCart = new PlayerCart(['player_id' => $player->id, 'item_id' => $item->id, 'quantity' => $quantity ?? 1]);
+            $cartItem = new PlayerCart(['player_id' => $player->id, 'item_id' => $item->id, 'quantity' => $quantity ?? 1]);
         }
 
         // Attempt to save the changes to the database
-        if ($playerCart->save()) {
+        if ($cartItem->save()) {
+            $spent = $item->cost * $quantity;
             // If the save operation is successful, deduct the item cost from the player's coins
-            $this->spend($player->playerCoins, $item->cost, $item->coin);
+            $this->spend($player->playerCoins, $spent, $item->coin);
             // Return a success message
-            return ['error' => false, 'msg' => 'Item added to your cart'];
+            return ['error' => false, 'msg' => "Item {$item->name} is added to your cart"];
         }
 
         // If the save operation fails, return an error message

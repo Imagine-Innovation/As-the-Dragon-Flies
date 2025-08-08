@@ -514,8 +514,8 @@ class BuilderComponent {
      * @return void
      */
     public static function initTraits(Player $player): void {
-        // Initialize return value
-        $player->playerTraits ? PlayerTrait::deleteAll(['player_id' => $player->id]) : true;
+        // Delete any existing values if there are any
+        PlayerTrait::deleteAll(['player_id' => $player->id]);
 
         $traits = CharacterTrait::find()->all();
         $background_id = $player->background->id;

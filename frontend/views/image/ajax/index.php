@@ -54,16 +54,6 @@ foreach ($models as $model) {
                             </th>
                             <?php foreach ($classes as $class): ?>
                                 <td class="text-center">
-                                    <?php if (1 === 2): ?>
-                                        <div class="custom-control custom-checkbox mb-2">
-                                            <a href="#" title="<?= $class->name ?>" data-bs-toggle="tooltip" data-placement="right">
-                                                <input type="checkbox" class="custom-control-input" id="image-<?= $model->id ?>-<?= $class->id ?>"
-                                                       onclick="ImageManager.setClass(<?= $model->id ?>, <?= $class->id ?>, '<?= $class->name ?>');"
-                                                       <?= $checked[$model->id][$class->id] ? "checked" : "" ?>>
-                                                <label class="custom-control-label" for="image-<?= $model->id ?>-<?= $class->id ?>"></label>
-                                            </a>
-                                        </div>
-                                    <?php endif; ?>
                                     <?=
                                     CheckBox::widget([
                                         'id' => "image-{$model->id}-{$class->id}",

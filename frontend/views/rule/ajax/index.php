@@ -23,9 +23,8 @@ use frontend\widgets\ActionButtons;
             'adjective' => 'defined',
             'actions' => [
                 [
+                    'url' => Url::toRoute(['rule/create']),
                     'icon' => 'bi-file-earmark-plus',
-                    'trigger' => 'href',
-                    'action' => Url::toRoute(['rule/create']),
                     'tooltip' => 'Create a new rule',
                 ],
             ]

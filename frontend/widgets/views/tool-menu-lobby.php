@@ -1,6 +1,7 @@
 <?php
 
 use common\helpers\Utilities;
+use frontend\widgets\IconButton;
 use yii\helpers\Url;
 use yii\helpers\HtmlPurifier;
 
@@ -21,6 +22,13 @@ $story = $questId ? $quest->story : null;
                            data-bs-toggle="tooltip" title="<?= $menu->tooltip ?>" data-placement="bottom">
                             <i class="bi <?= $menu->icon ?>"></i>
                         </a>
+                        <?=
+                        IconButton::widget([
+                            'url' => Url::toRoute($menu->accessRight->route . '/' . $menu->accessRight->action),
+                            'icon' => $menu->icon,
+                            'tooltip' => $menu->tooltip
+                        ])
+                        ?>
                     </div>
                     <a href="<?= Url::toRoute($menu->accessRight->route . '/' . $menu->accessRight->action) ?>">
                         <img class="card-img-top" src="<?= Utilities::toolImage($menu->image, $menu->is_context) ?>">

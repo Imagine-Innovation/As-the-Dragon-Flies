@@ -3,51 +3,61 @@
  * Handles shopping cart operations and item management
  */
 class ShopManager {
-    
+
     /***********************************************/
     /*        Page initialization Methods          */
     /***********************************************/
 
     static initCartPage() {
+        Logger.log(1, 'initCartPage', ``);
         $(document).ready(function () {
-            if (typeof ShopManager !== 'undefined' && ShopManager.getCartInfo) {
-                ShopManager.getCartInfo();
-            } else {
-                console.error('ShopManager or getCartInfo method not found.');
-            }
+            ShopManager.getCartInfo();
+
+            // Select all elements with an ID that starts with 'addToCartButton-'
+            const buttons = document.querySelectorAll('[id^="cartButton-"]');
+
+            // Loop through each button and add the event listener
+            buttons.forEach(button => {
+                Logger.log(10, 'initCartPage', `Found button ${button.getAttribute('id')}`);
+                button.addEventListener('click', function (event) {
+                    Logger.log(10, 'initCartPage', `Click on button ${button.getAttribute('id')}`);
+                    // Prevent the default action
+                    event.preventDefault();
+
+                    // Retrieve the suffix from the button's ID
+                    const suffix = button.getAttribute('id');
+
+                    // Split the ID to extract the operation and item ID
+                    var parts = suffix.split('-');
+                    var operation = parts[1]; // This will be 'add', 'remove', or 'delete'
+                    var itemId = parts[2]; // This will be the item ID (e.g., '20', '22', '120')
+
+                    // Log the operation and item ID or use them as needed
+                    console.log('Operation:', operation);
+                    console.log('Item ID:', itemId);
+
+                    // You can now use the operation and itemId to perform the desired action
+                    // For example, call a function to handle the cart operation
+                    ShopManager.handleCartOperation(operation, itemId);
+                });
+            });
         });
     }
 
-    static initShopPage(userId, initialPlayerId, currentSessionPlayerId) {
-        $(document).ready(function () {
-            if (typeof ShopManager !== 'undefined' && ShopManager.getCartInfo) {
-                ShopManager.getCartInfo();
-            } else {
-                console.error('ShopManager or getCartInfo method not found.');
-            }
-
-            if (typeof PlayerSelector !== 'undefined' && PlayerSelector.select) {
-                if (currentSessionPlayerId) { // A player is set in session
-                    if (initialPlayerId && currentSessionPlayerId !== initialPlayerId) {
-                        // Player in session is different from URL param, prioritize session
-                        // Potentially, could also choose to prioritize URL param by calling:
-                        // PlayerSelector.select(userId, initialPlayerId);
-                        // For now, we assume session is the correct current context if it exists
-                         console.log('Player in session, no select action needed unless URL param forces a change.');
-                    }
-                } else { // No player in session
-                    if (initialPlayerId) { // Player ID from URL
-                        PlayerSelector.select(userId, initialPlayerId);
-                    } else { // No player in session and no ID from URL
-                        if ($('#showCurrentPlayerModal-button').length) {
-                            $('#showCurrentPlayerModal-button').click();
-                        } else {
-                            console.error('#showCurrentPlayerModal-button not found.');
-                        }
-                    }
+    static handleCartOperation(operation, itemId) {
+        Logger.log(1, 'handleCartOperation', `operation=${operation}, itemId=${itemId}`);
+        AjaxUtils.request({
+            url: `player-cart/ajax-${operation}`,
+            data: {itemId},
+            successCallback: (response) => {
+                if (response.error) {
+                    $('#noFundLabel').html(response.msg);
+                    $('#somethingWrongModal-hiddenButton').click();
+                } else {
+                    ShopManager.getCartInfo();
+                    ShopManager._getItemCount(itemId);
                 }
-            } else {
-                console.error('PlayerSelector or select method not found.');
+                ToastManager.show('Shop', response.msg, response.error ? 'error' : 'info');
             }
         });
     }
@@ -55,22 +65,23 @@ class ShopManager {
     /**
      * Adds an item to shopping cart
      * @param {number} itemId - Item identifier to add
+     * @param {number} quantity - Quantity to remove
      */
-    static addToCart(itemId) {
-        Logger.log(1, 'addToCart', `itemId=${itemId}`);
+    static addToCart(itemId, quantity = 1) {
+        Logger.log(1, 'addToCart', `itemId=${itemId}, quantity=${quantity}`);
 
         AjaxUtils.request({
             url: 'player-cart/ajax-add',
-            data: { itemId },
+            data: {itemId, quantity},
             successCallback: (response) => {
                 if (response.error) {
                     $('#noFundLabel').html(response.msg);
-                    $('#hiddenSomethingWrongModelButton').click();
+                    $('#somethingWrongModal-hiddenButton').click();
                 } else {
                     this.getCartInfo();
                     this._getItemCount(itemId);
-                    ToastManager.show('Shop', response.msg, 'info');
                 }
+                ToastManager.show('Shop', response.msg, response.error ? 'error' : 'info');
             }
         });
     }
@@ -80,16 +91,16 @@ class ShopManager {
      * @param {number} itemId - Item identifier to remove
      * @param {number} quantity - Quantity to remove
      */
-    static removeFromCart(itemId, quantity) {
+    static removeFromCart(itemId, quantity = 1) {
         Logger.log(1, 'removeFromCart', `itemId=${itemId}, quantity=${quantity}`);
 
         AjaxUtils.request({
             url: 'player-cart/ajax-remove',
-            data: { itemId, quantity },
+            data: {itemId, quantity},
             successCallback: (response) => {
                 if (response.error) {
                     $('#noFundLabel').html(response.msg);
-                    $('#hiddenSomethingWrongModelButton').click();
+                    $('#somethingWrongModal-hiddenButton').click();
                 } else {
                     if (document.title === 'Cart') {
                         location.reload();
@@ -104,21 +115,51 @@ class ShopManager {
     }
 
     /**
+     * Delete one item from shopping cart
+     * @param {number} itemId - Item identifier to remove
+     */
+    static deleteFromCart(itemId) {
+        Logger.log(1, 'deleteFromCart', `itemId=${itemId}`);
+
+        AjaxUtils.request({
+            url: 'player-cart/ajax-delete',
+            data: {itemId},
+            successCallback: (response) => {
+                if (response.error) {
+                    $('#noFundLabel').html(response.msg);
+                    $('#somethingWrongModal-hiddenButton').click();
+                } else {
+                    this.getCartInfo();
+                    this._getItemCount(itemId);
+                }
+                ToastManager.show('Shop', response.msg, response.error ? 'error' : 'info');
+            }
+        });
+    }
+
+    /**
      * Gets item count in cart
      * @param {number} itemId - Item identifier to check
      */
     static _getItemCount(itemId) {
         Logger.log(2, '_getItemCount', `itemId=${itemId}`);
-        
+
         const target = `#cartCount-${itemId}`;
-        if (!DOMUtils.exists(target)) return;
+        if (!DOMUtils.exists(target))
+            return;
 
         AjaxUtils.request({
             url: 'player-cart/ajax-item-count',
-            data: { itemId },
+            data: {itemId},
             successCallback: (response) => {
                 if (!response.error) {
-                    $(target).html(response.count);
+                    const n = response.count;
+                    if (n === 0) {
+                        // an item is no more in the cart, refresh the whole page
+                        location.reload();
+                    } else {
+                        $(target).html(n);
+                    }
                 }
             }
         });
@@ -129,14 +170,16 @@ class ShopManager {
      */
     static getCartInfo() {
         Logger.log(1, 'getCartInfo', '');
-        
+
         const target = '#cartItemCount';
-        if (!DOMUtils.exists(target)) return;
+        if (!DOMUtils.exists(target))
+            return;
 
         AjaxUtils.request({
             url: 'player-cart/ajax-info',
             successCallback: (response) => {
                 if (!response.error) {
+                    Logger.log(1, 'getCartInfo', JSON.stringify(response));
                     this._updateCartDisplay(response);
                 }
             }

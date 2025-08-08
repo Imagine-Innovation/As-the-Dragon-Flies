@@ -3,7 +3,7 @@
 namespace common\models;
 
 use common\components\AppStatus;
-use frontend\components\PlayerTool;
+use frontend\components\PlayerComponent;
 use common\models\Image;
 use common\models\PlayerCoin;
 use Yii;
@@ -553,7 +553,7 @@ class Player extends \yii\db\ActiveRecord {
     }
 
     public function getInitiative() {
-        return PlayerTool::getInitiative($this->abilities);
+        return PlayerComponent::getInitiative($this->abilities);
     }
 
     /**
@@ -566,7 +566,7 @@ class Player extends \yii\db\ActiveRecord {
     public function isProficient($item_id) {
         $class = $this->class;
 
-        return PlayerTool::isProficient($class->id, $item_id);
+        return PlayerComponent::isProficient($class->id, $item_id);
     }
 
     /**

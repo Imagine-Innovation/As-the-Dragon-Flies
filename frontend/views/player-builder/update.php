@@ -1,10 +1,11 @@
 <?php
 
 use common\components\AppStatus;
+use frontend\components\BuilderComponent;
 use frontend\widgets\AjaxContainer;
 use frontend\widgets\BuilderOnclick;
 use frontend\widgets\BuilderTab;
-use frontend\components\BuilderComponent;
+use frontend\widgets\IconButton;
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
@@ -29,6 +30,13 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
                     <i class="bi bi-floppy"></i>
                 </span>
             </a>
+            <?=
+            IconButton::widget([
+                'icon' => 'bi-floppy',
+                'tooltip' => "Save",
+                'onclick' => "$('#save-button').click();"
+            ])
+            ?>
         </div>
         <h6 class="card-subtitle">
             You've chosen to be a <?= $model->race->name ?> <?= $model->class->name ?> with a <?= $model->background->name ?> background, now you just need to fine-tune your characteristics before embarking on new adventures.

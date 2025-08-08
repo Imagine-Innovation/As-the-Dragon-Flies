@@ -1,5 +1,6 @@
 <?php
 
+use frontend\widgets\IconButton;
 use frontend\widgets\ModalDesc;
 
 /** @var yii\web\View $this */
@@ -17,10 +18,13 @@ use frontend\widgets\ModalDesc;
                     <?php endif; ?>
                     <div class="card-body">
                         <div class="actions">
-                            <a href="#" role="button" class="actions__item"
-                               data-bs-toggle="tooltip" title="Add to cart" data-placement="bottom" onclick="ShopManager.addToCart(<?= $item['id'] ?>); return false;">
-                                <i class="bi bi-cart-plus h2"></i>
-                            </a>
+                            <?=
+                            IconButton::widget([
+                                'id' => "cartButton-add-{$item['id']}",
+                                'icon' => 'bi-cart-plus h2',
+                                'tooltip' => "Add a {$item['name']} to cart"
+                            ])
+                            ?>
                         </div>
                         <h4 class="card-title text-center">
                             <?= $item['name'] ?>

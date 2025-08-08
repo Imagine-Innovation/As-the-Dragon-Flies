@@ -273,17 +273,14 @@ class PlayerBuilderController extends Controller {
         $request = Yii::$app->request;
 
         $player = $this->findModel($request->post('playerId'));
-        $success = BuilderComponent::initTraits($player);
+        BuilderComponent::initTraits($player);
 
-        if ($success) {
-            return [
-                'error' => false,
-                'content' => $this->renderPartial('ajax/traits', [
-                    'player' => $player,
-                ]),
-            ];
-        }
-        return ['error' => true, 'msg' => 'Unable to generate player traits and bounds'];
+        return [
+            'error' => false,
+            'content' => $this->renderPartial('ajax/traits', [
+                'player' => $player,
+            ]),
+        ];
     }
 
     public function actionAjaxEndowment() {

@@ -1,8 +1,9 @@
 <?php
 
+use frontend\components\BuilderComponent;
 use frontend\widgets\AjaxContainer;
 use frontend\widgets\BuilderTab;
-use frontend\components\BuilderComponent;
+use frontend\widgets\IconButton;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
@@ -24,11 +25,14 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
     <div class="card-body">
         <h4 class="card-title text-decoration"><?= Html::encode($this->title) ?></h4>
         <div class="actions">
-            <a href="#" role="button" class="actions__item" id="showBuilderWizardModal-button" data-bs-toggle="tooltip" title="Character builder wizard" data-placement="bottom">
-                <span data-bs-toggle="modal" data-bs-target="#builderWizardModal">
-                    <i class="bi bi-magic"></i>
-                </span>
-            </a>
+            <?=
+            IconButton::widget([
+                'id' => 'showBuilderWizardModal-button',
+                'icon' => 'bi-magic',
+                'tooltip' => 'Character builder wizard',
+                'modal' => 'builderWizardModal'
+            ])
+            ?>
         </div>
         <h6 class="card-subtitle">
             A step-by-step wizard to help you create your player

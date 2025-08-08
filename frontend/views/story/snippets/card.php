@@ -4,6 +4,7 @@ use common\helpers\StoryNeededClass;
 use common\helpers\StoryPlayers;
 use frontend\components\QuestOnboarding;
 use frontend\widgets\Button;
+use frontend\widgets\IconButton;
 use frontend\widgets\ModalDesc;
 use yii\helpers\Url;
 
@@ -27,14 +28,20 @@ $image = $story->image ?
     </div>
     <?php if ($user->is_designer): ?>
         <div class="actions">
-            <a href="<?= Url::toRoute(['story/view', 'id' => $story->id]) ?>" role="button" class="actions__item position-relative"
-               data-bs-toggle="tooltip" title="View story details" data-placement="bottom">
-                <i class="bi bi-journal"></i>
-            </a>
-            <a href="<?= Url::toRoute(['story/update', 'id' => $story->id]) ?>" role="button" class="actions__item position-relative"
-               data-bs-toggle="tooltip" title="Edit story" data-placement="bottom">
-                <i class="bi bi-journal-code"></i>
-            </a>
+            <?=
+            IconButton::widget([
+                'url' => Url::toRoute(['story/view', 'id' => $story->id]),
+                'icon' => 'bi-journal',
+                'tooltip' => "View story details"
+            ])
+            ?>
+            <?=
+            IconButton::widget([
+                'url' => Url::toRoute(['story/update', 'id' => $story->id]),
+                'icon' => 'bi-journal-code',
+                'tooltip' => "Edit story"
+            ])
+            ?>
         </div>
     <?php endif; ?>
 

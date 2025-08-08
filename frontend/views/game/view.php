@@ -1,5 +1,6 @@
 <?php
 
+use frontend\widgets\IconButton;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
@@ -42,9 +43,14 @@ $this->title = Yii::$app->session->get('questName');
                 <a role="button"class="actions__item d-xl-none"  data-bs-toggle="offcanvas" href="#offcanvasPlayers" aria-controls="offcanvasPlayers">
                     <i class="bi bi-person-square"></i>
                 </a>
-                <a role="button" class="actions__item d-md-none" href="<?= Url::toRoute(['site/index']) ?>" data-bs-toggle="tooltip" title="Back to lobby" data-placement="bottom">
-                    <i class="bi bi-box-arrow-right"></i>
-                </a>
+                <?=
+                IconButton::widget([
+                    'url' => Url::toRoute(['site/index']),
+                    'css' => 'd-md-none',
+                    'icon' => 'bi-box-arrow-right',
+                    'tooltip' => 'Back to lobby'
+                ])
+                ?>
             </div>
 
             <div class="card-header">

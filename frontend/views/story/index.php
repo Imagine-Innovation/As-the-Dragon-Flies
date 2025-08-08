@@ -1,5 +1,6 @@
 <?php
 
+use frontend\widgets\IconButton;
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */
@@ -19,10 +20,13 @@ $this->params['breadcrumbs'][] = $this->title;
             <h4 class="card-title">List of available stories to start a quest</h4>
             <?php if ($user->is_designer): ?>
                 <div class="actions">
-                    <a href="<?= Url::toRoute(['story/create']) ?>" role="button" class="actions__item position-relative"
-                       data-bs-toggle="tooltip" title="Create a new story" data-placement="bottom">
-                        <i class="bi bi-journal-plus"></i>
-                    </a>
+                    <?=
+                    IconButton::widget([
+                        'url' => Url::toRoute(['story/create']),
+                        'icon' => 'bi-journal-plus',
+                        'tooltip' => "Create a new story"
+                    ])
+                    ?>
                 </div>
             <?php endif; ?>
             <?php if ($stories): ?>
@@ -44,7 +48,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
             <?php else: ?>
                 We're sorry. No story is available yet, but we're working on it!
-            <?php endif; // if stories is not null    ?>
+            <?php endif; // if stories is not null     ?>
         </div>
     </div>
 </div>

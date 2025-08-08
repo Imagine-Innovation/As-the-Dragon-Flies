@@ -111,7 +111,9 @@ class AjaxUtils {
                 .done(response => {
                     Logger.log(4, 'request', `success => error=${response.error} response=${JSON.stringify(response.msg)}`);
                     //response.error ? errorCallback?.(response) : successCallback?.(response);
-                    response.error ? Logger.getCallerStack(response.msg) : successCallback?.(response);
+                    //response.error ? Logger.getCallerStack(response.msg) : successCallback?.(response);
+                    response.error ? Logger.getCallerStack(response.msg) : "";
+                    successCallback?.(response);
                 })
                 .fail(error => {
                     Logger.log(4, 'request', `error=${error}`);

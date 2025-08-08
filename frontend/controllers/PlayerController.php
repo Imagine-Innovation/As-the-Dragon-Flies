@@ -50,6 +50,7 @@ class PlayerController extends Controller {
                         'class' => VerbFilter::className(),
                         'actions' => [
                             'delete' => ['POST'],
+                            'restore' => ['POST'],
                             'validate' => ['POST'],
                         ],
                     ],
@@ -217,7 +218,8 @@ class PlayerController extends Controller {
     public function actionValidate($id) {
         $model = $this->findModel($id);
         if (Status::changeStatus($model, AppStatus::ACTIVE->value)) {
-            return $this->redirect(['index']);
+            $viewName = $this->request->isPost ? ['admin'] : ['index'];
+            return $this->redirect($viewName);
         }
         throw new NotFoundHttpException('Could not validate this player');
     }

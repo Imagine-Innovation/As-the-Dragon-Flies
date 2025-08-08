@@ -27,6 +27,7 @@ if (array_key_exists($controllerId, $controllerCustomJavascriptLib)) {
     var currentPlayerId = <?= Yii::$app->session->get('playerId') ?? 'null' ?>;
     PlayerSelector.initializeFromDOM();
     LayoutInitializer.initNavbarLobby();
+    ActionButtonManager.initActionButton();
 
     if (DOMUtils.exists('#ajaxHiddenParams')) {
         LayoutInitializer.initAjaxPage();
@@ -60,7 +61,7 @@ if ($controllerId === "player-builder"):
 if ($controllerId === "player-cart"):
     ?>
         $(document).ready(function () {
-            ShopManager.getCartInfo();
+            ShopManager.initCartPage();
         });
 <?php endif; ?>
 <?php

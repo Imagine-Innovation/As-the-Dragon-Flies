@@ -2,6 +2,7 @@
 
 use common\models\Alignment;
 use common\helpers\Utilities;
+use frontend\widgets\IconButton;
 
 /** @var yii\web\View $this */
 /** @var common\models\PlayerBuilder $model */
@@ -66,7 +67,13 @@ foreach ($alignments as $alignment) {
                 <div class="col">
                     <div class="card">
                         <div class="actions">
-                            <a href="#" role="button" class="actions__item bi-arrow-repeat"></a>
+                            <?=
+                            IconButton::widget([
+                                'id' => 'generateNewNamesButton',
+                                'icon' => 'bi-arrow-repeat',
+                                'tooltip' => 'New random names'
+                            ])
+                            ?>
                         </div>
                         <div class="card-body" id="ajaxNameSelection">
                             <h4 class="card-title text-decoration">Name</h4>
@@ -83,11 +90,13 @@ foreach ($alignments as $alignment) {
                 <div class="col">
                     <div class="card">
                         <div class="actions">
-                            <a href="#" role="button" class="actions__item" id="showBuilderWizardModal-button" data-bs-toggle="tooltip" title="Alignment wizard" data-placement="bottom">
-                                <span data-bs-toggle="modal" data-bs-target="#builderWizardModal">
-                                    <i class="bi bi-magic"></i>
-                                </span>
-                            </a>
+                            <?=
+                            IconButton::widget([
+                                'icon' => 'bi-magic',
+                                'tooltip' => 'Alignment wizard',
+                                'modal' => 'builderWizardModal'
+                            ])
+                            ?>
                         </div>
                         <div class="card-body">
                             <h4 class="card-title text-decoration">Alignment</h4>

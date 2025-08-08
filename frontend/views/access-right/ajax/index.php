@@ -21,9 +21,8 @@ use yii\helpers\Url;
             'adjective' => 'defined',
             'actions' => [
                 [
+                    'url' => Url::toRoute(['access-right/create']),
                     'icon' => 'bi-shield-plus',
-                    'trigger' => 'href',
-                    'action' => Url::toRoute(['access-right/create']),
                     'tooltip' => 'Add a new access right',
                 ],
             ]

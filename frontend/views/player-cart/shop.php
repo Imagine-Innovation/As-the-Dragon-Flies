@@ -3,6 +3,7 @@
 use yii\helpers\Url;
 use frontend\components\Shopping;
 use frontend\widgets\CurrentPlayer;
+use frontend\widgets\IconButton;
 
 /** @var yii\web\View $this */
 /** @var yii\data\ActiveDataProvider $dataProvider */
@@ -28,14 +29,17 @@ $firstType = $itemTypes[0];
         <div class="card-body">
             <p id="purseContent"></p>
             <div class="actions">
-                <a href="<?= Url::toRoute(['player-cart/cart']) ?>" role="button" class="actions__item position-relative"
-                   data-bs-toggle="tooltip" title="Go to your cart" data-placement="bottom">
-                    <i class="bi bi-cart"></i>
-                    <div style="font-size: 12.35px">
-                        <span id="cartItemCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"></span>
-                    </div>
-                </a>
-                <a href="#" class="invisible" id="somethingWrongModel-hiddenButton" data-bs-toggle="modal" data-bs-target="#somethingWrongModal"></a>
+                <?=
+                IconButton::widget([
+                    'url' => Url::toRoute(['player-cart/cart']),
+                    'icon' => 'bi-cart',
+                    'tooltip' => "Go to your cart"
+                ])
+                ?>
+                <div style="font-size: 12.35px">
+                    <span id="cartItemCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"></span>
+                </div>
+                <a href="#" class="invisible" id="somethingWrongModal-hiddenButton" data-bs-toggle="modal" data-bs-target="#somethingWrongModal"></a>
             </div>
 
             <div class="tab-container">

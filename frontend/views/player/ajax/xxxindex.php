@@ -1,5 +1,6 @@
 <?php
 
+use frontend\widgets\IconButton;
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */
@@ -18,6 +19,13 @@ use yii\helpers\Url;
                     data-bs-toggle="tooltip" title="Create a new player" data-placement="bottom">
                     <i class="bi bi-journal-plus"></i>
                 </a>
+                <?=
+                IconButton::widget([
+                    'url' => Url::toRoute(['player/builder']),
+                    'icon' => 'bi-journal-plus',
+                    'tooltip' => 'Create a new player'
+                ])
+                ?>
             </div>
             <div class="row g-4">
                 <?php foreach ($models as $player): ?>

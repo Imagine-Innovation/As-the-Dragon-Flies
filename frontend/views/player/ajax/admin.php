@@ -23,9 +23,8 @@ if (Yii::$app->user->identity->is_player) {
         'adjective' => 'defined',
         'actions' => [
             [
+                'url' => Url::toRoute(['player/builder']),
                 'icon' => 'bi-person-add',
-                'trigger' => 'href',
-                'action' => Url::toRoute(['player/builder']),
                 'tooltip' => 'Create a new player',
             ],
         ]

@@ -1,6 +1,7 @@
 <?php
 
 use frontend\components\Inventory;
+use frontend\widgets\IconButton;
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */
@@ -24,14 +25,20 @@ $firstType = $itemTypes[0] ?? "";
         <div class="card-body">
             <p id="purseContent"></p>
             <div class="actions">
-                <a href="<?= Url::toRoute(['player-item/pack']) ?>" role="button" class="actions__item position-relative"
-                   data-bs-toggle="tooltip" title="See the pack" data-placement="bottom">
-                    <i class="bi bi-backpack2"></i>
-                </a>
-                <a href="<?= Url::toRoute(['player-cart/shop']) ?>" role="button" class="actions__item position-relative"
-                   data-bs-toggle="tooltip" title="Buy some more items" data-placement="bottom">
-                    <i class="bi bi-shop"></i>
-                </a>
+                <?=
+                IconButton::widget([
+                    'url' => Url::toRoute(['player-item/see-package']),
+                    'icon' => 'bi-backpack2',
+                    'tooltip' => "See what you are carrying"
+                ])
+                ?>
+                <?=
+                IconButton::widget([
+                    'url' => Url::toRoute(['player-cart/shop']),
+                    'icon' => 'bi-shop',
+                    'tooltip' => "Make some shopping"
+                ])
+                ?>
             </div>
 
             <?php if ($itemTypes): ?>

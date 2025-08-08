@@ -1,6 +1,7 @@
 <?php
 
 use common\helpers\Utilities;
+use frontend\widgets\IconButton;
 
 /** @var yii\web\View $this */
 /** @var common\models\PlayerBuilder $model */
@@ -14,7 +15,13 @@ use common\helpers\Utilities;
         <div class="col-12 col-sm-6">
             <div class="card h-100">
                 <div class="actions">
-                    <a href="#" class="actions__item bi bi-arrow-repeat"></a>
+                    <?=
+                    IconButton::widget([
+                        'id' => 'generateNewTraitsButton',
+                        'icon' => 'bi-arrow-repeat',
+                        'tooltip' => 'New random traits'
+                    ])
+                    ?>
                 </div>
                 <div class="card-body" id="ajaxTraits">
                     <?= $this->renderFile('@app/views/player-builder/ajax/traits.php', ['player' => $model]) ?>

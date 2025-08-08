@@ -169,7 +169,7 @@ class PlayerBuilder {
                 $('#alignment' + alignmentId).prop('checked', true);
             }
 
-            $('a.bi-arrow-repeat').click(function (event) {
+            $('#generateNewNamesButton').click(function (event) {
                 event.preventDefault();
                 PlayerBuilder.loadRandomNames();
             });
@@ -191,6 +191,11 @@ class PlayerBuilder {
             } else {
                 console.error('ChartDrawer or drawAbilityCharts method not found.');
             }
+            
+            $('#clearAbilitiesButton').click(function (event) {
+                event.preventDefault();
+                PlayerBuilder.clearAbilities();
+            });
         });
     }
 
@@ -198,7 +203,7 @@ class PlayerBuilder {
         $(document).ready(function () {
             Logger.log(1, 'initSkillsTab', '');
             PlayerBuilder.loadAdvancedProperties('skills', 'ajaxSkills');
-            $('a.bi-arrow-repeat').click(function (event) {
+            $('#generateNewTraitsButton').click(function (event) {
                 event.preventDefault();
                 PlayerBuilder.loadAdvancedProperties('traits', 'ajaxTraits');
             });
@@ -692,8 +697,7 @@ class PlayerBuilder {
         this._loadItemImages();
         this._saveEquipment();
     }
-    
-    
+
     /***********************************************/
     /*             Languages Methods               */
     /***********************************************/

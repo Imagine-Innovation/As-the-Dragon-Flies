@@ -48,33 +48,4 @@ $messages = QuestMessages::getLastMessages($model->id, $playerId);
     <div class="col-md-6 col-xl-4">
         <?= $this->renderFile('@app/views/quest/snippets/chat.php', ['questId' => $model->id, 'playerId' => $playerId]) ?>
     </div>
-    <?php if (1 === 2) : ?>
-        <!-- Chat Panel -->
-        <div class="col-md-6 col-xl-4">
-            <div class="chat-panel-container">
-                <div class="card p-4 h-100 d-flex flex-column">
-                    <div class="card-header">
-                        <h5 class="text-decoration">Tavern Chat</h5>
-                    </div>
-
-                    <div class="mt-auto">
-                        <form id="questChatMessageForm">
-                            <div class="input-group">
-                                <input type="text" class="form-control" id="questChatInput" placeholder="Type your message...">
-                                <button id="sendChatMessageButton" class="btn btn-primary" type="button">Send</button>
-                            </div>
-                        </form>
-                        <small class="text-muted mt-2 d-block">Press Enter to send • Be respectful to fellow adventurers</small>
-                    </div>
-
-                    <div class="card-body overflow-auto flex-grow-1 mb-3">
-                        <div id="questChatContent">
-                            <?= $this->render('ajax-messages', ['messages' => $messages]) ?>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    <?php endif; ?>
 </div>

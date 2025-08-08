@@ -26,7 +26,7 @@ $messages = QuestMessages::getLastMessages($questId, $playerId);
 
         <div class="card-body overflow-auto flex-grow-1 mb-3">
             <div id="questChatContent">
-                <?= $this->render('ajax-messages', ['messages' => $messages]) ?>
+                <?= $this->render('../ajax/messages', ['messages' => $messages]) ?>
             </div>
         </div>
 

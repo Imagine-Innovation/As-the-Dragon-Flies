@@ -61,14 +61,15 @@ class Status {
 
         $className = get_class($model);
 
-        if (!property_exists($model, 'status')) {
+        //if (!property_exists($model, 'status')) {
+        if (!$model->hasProperty('status')) {
             Yii::error("Model {$className} does not have a 'status' property.", __METHOD__);
             return false;
         }
 
         if (!AppStatus::isValidForEntity($className, $statusCode)) {
             $statusCase = AppStatus::tryFrom($statusCode);
-            $label = $statusCase ? $statusCase->label : 'Unknown Status';
+            $label = $statusCase ? $statusCase->getLabel() : 'Unknown Status';
             Yii::error("{$label} is not a valid status for {$className} class", __METHOD__);
             return false;
         }

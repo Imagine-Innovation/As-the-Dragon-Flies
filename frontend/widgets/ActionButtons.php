@@ -21,6 +21,7 @@ class ActionButtons extends Widget {
                     'tooltip' => 'Restore',
                     'route' => $modelName,
                     'verb' => 'restore',
+                    'mode' => 'POST',
                     'icon' => 'arrow-left-square',
                     'admin' => true,
                     'player' => false,
@@ -35,6 +36,7 @@ class ActionButtons extends Widget {
                     'tooltip' => 'View',
                     'route' => $modelName,
                     'verb' => 'view',
+                    'mode' => 'GET',
                     'icon' => 'info-square',
                     'admin' => false,
                     'player' => false,
@@ -47,6 +49,7 @@ class ActionButtons extends Widget {
                     'tooltip' => 'Validate',
                     'route' => $modelName,
                     'verb' => 'validate',
+                    'mode' => 'POST',
                     'icon' => 'check-square',
                     'admin' => false,
                     'player' => false,
@@ -59,6 +62,7 @@ class ActionButtons extends Widget {
                     'tooltip' => 'Delete',
                     'route' => $modelName,
                     'verb' => 'delete',
+                    'mode' => 'POST',
                     'icon' => 'x-square',
                     'admin' => false,
                     'player' => false,
@@ -73,6 +77,7 @@ class ActionButtons extends Widget {
                     'tooltip' => 'Unvalidate',
                     'route' => $modelName,
                     'verb' => 'restore',
+                    'mode' => 'POST',
                     'icon' => 'pencil-square',
                     'admin' => false,
                     'player' => false,
@@ -85,6 +90,7 @@ class ActionButtons extends Widget {
                     'tooltip' => 'Shop',
                     'route' => 'player-cart',
                     'verb' => 'shop',
+                    'mode' => 'GET',
                     'icon' => 'plus-square',
                     'admin' => false,
                     'player' => true,
@@ -97,6 +103,7 @@ class ActionButtons extends Widget {
                     'tooltip' => 'Delete',
                     'route' => $modelName,
                     'verb' => 'delete',
+                    'mode' => 'POST',
                     'icon' => 'x-square',
                     'admin' => false,
                     'player' => false,
@@ -107,12 +114,14 @@ class ActionButtons extends Widget {
                 ],
             ],
         ];
-        return $this->render('action-buttons', [
+
+        $widgetView = $this->mode == "table" ? 'action-buttons-table' : 'action-buttons-icon';
+
+        return $this->render($widgetView, [
                     'model' => $this->model,
                     'modelName' => $modelName,
                     'actions' => $actions[$this->model->status],
                     'isOwner' => $this->isOwner ?? true,
-                    'mode' => $this->mode,
         ]);
     }
 }
