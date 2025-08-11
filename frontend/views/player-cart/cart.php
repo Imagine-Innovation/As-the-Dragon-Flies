@@ -2,7 +2,7 @@
 
 use yii\helpers\Url;
 use frontend\components\Shopping;
-use frontend\widgets\IconButton;
+use frontend\widgets\Button;
 use frontend\widgets\ModalDesc;
 
 /** @var yii\web\View $this */
@@ -23,28 +23,32 @@ $shopping = new Shopping();
                         <div class="card-body">
                             <div class="actions">
                                 <?=
-                                IconButton::widget([
+                                Button::widget([
+                                    'mode' => 'icon',
                                     'id' => "cartButton-add-{$model->item_id}",
                                     'icon' => 'bi-cart-plus',
                                     'tooltip' => "Add a {$model->item->name} to cart"
                                 ])
                                 ?>
                                 <?=
-                                IconButton::widget([
+                                Button::widget([
+                                    'mode' => 'icon',
                                     'id' => "cartButton-remove-{$model->item_id}",
                                     'icon' => 'bi-cart-dash',
                                     'tooltip' => "Remove a {$model->item->name} from cart"
                                 ])
                                 ?>
                                 <?=
-                                IconButton::widget([
+                                Button::widget([
+                                    'mode' => 'icon',
                                     'id' => "cartButton-delete-{$model->item_id}",
                                     'icon' => 'bi-trash3',
                                     'tooltip' => "Delete every {$model->item->name} from cart"
                                 ])
                                 ?>
                                 <?=
-                                IconButton::widget([
+                                Button::widget([
+                                    'mode' => 'icon',
                                     'icon' => 'bi-cart',
                                     'tooltip' => "{$model->item->name} in your cart"
                                 ])
@@ -54,7 +58,7 @@ $shopping = new Shopping();
                                     <span id="cartCount-<?= $model->item_id ?>" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"><?= $model->quantity ?></span>
                                 </div>
                             </div>
-                            <img src="img/item/<?= $model->item->image->file_name ?>" class="image-thumbnail float-start" style="width: 80px;height: 80px;">
+                            <img src="img/item/<?= $model->item->image ?>" class="image-thumbnail float-start" style="width: 80px;height: 80px;">
                             <h6 class="card-subtitle">
                                 <?= $model->item->name ?>
                                 <?php if ($model->item->quantity > 1): ?>

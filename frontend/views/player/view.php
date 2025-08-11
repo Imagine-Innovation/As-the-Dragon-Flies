@@ -5,13 +5,13 @@ $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Players', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
-$cards = ['abilities', 'combat-stats', 'skills', 'attacks', 'equipment', 'features'];
+$cards = ['abilities', 'skills'];
 ?>
-<div class="container py-3">
+<div class="container">
     <!-- Character Header -->
     <table>
         <tr>
-            <td>
+            <td style="min-width: 100px">
                 <img src="img/characters/<?= $model->avatar ?>" class="avatar">
             </td>
             <td>
@@ -20,12 +20,13 @@ $cards = ['abilities', 'combat-stats', 'skills', 'attacks', 'equipment', 'featur
             </td>
         </tr>
     </table>
+    <hr>
 
     <!-- Main Content -->
-    <div class="row g-4">
+    <div class="row">
         <?php
         $cardHeaderClass = "card-header bg-purple text-decoration fw-bold h-100 py-2";
-        $div = '<div class="col-12 col-md-6 col-xl-4 col-xxl-3">';
+        $div = '<div class="col-12 col-md-6">';
 
         foreach ($cards as $card) {
             $cardContent = $this->renderFile("@app/views/player/snippets/{$card}.php", [

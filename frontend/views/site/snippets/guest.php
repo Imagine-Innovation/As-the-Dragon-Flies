@@ -1,6 +1,7 @@
 <?php
 
 use frontend\helpers\Caligraphy;
+use frontend\widgets\Button;
 use yii\helpers\Url;
 
 /* @var $this yii\web\View */
@@ -32,6 +33,13 @@ use yii\helpers\Url;
                                 <a class="btn btn-lg btn-warning text-decoration" href="<?= Url::toRoute(['site/login']) ?>">
                                     <img src="img/Dragonfly.svg" style="height:32px;" alt=""> Come and join us!
                                 </a>
+                                <?=
+                                Button::widget([
+                                    'url' => Url::toRoute(['site/login']),
+                                    'style' => 'text-decoration',
+                                    'callToAction' => true
+                                ])
+                                ?>
                             </p>
                         </div>
                         <div class="col-12 col-md-6 h-100">

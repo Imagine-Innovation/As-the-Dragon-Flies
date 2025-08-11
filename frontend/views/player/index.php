@@ -1,7 +1,7 @@
 <?php
 
 use common\helpers\Utilities;
-use frontend\widgets\IconButton;
+use frontend\widgets\Button;
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */
@@ -16,7 +16,8 @@ $this->params['breadcrumbs'][] = $this->title;
             <h4 class="card-title">List of the players you have already defined</h4>
             <div class="actions">
                 <?=
-                IconButton::widget([
+                Button::widget([
+                    'mode' => 'icon',
                     'url' => Url::toRoute(['player-builder/create']),
                     'icon' => 'bi-dpad',
                     'tooltip' => 'Create a new player'

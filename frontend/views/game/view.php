@@ -1,6 +1,6 @@
 <?php
 
-use frontend\widgets\IconButton;
+use frontend\widgets\Button;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
@@ -44,9 +44,10 @@ $this->title = Yii::$app->session->get('questName');
                     <i class="bi bi-person-square"></i>
                 </a>
                 <?=
-                IconButton::widget([
+                Button::widget([
+                    'mode' => 'icon',
                     'url' => Url::toRoute(['site/index']),
-                    'css' => 'd-md-none',
+                    'style' => 'd-md-none',
                     'icon' => 'bi-box-arrow-right',
                     'tooltip' => 'Back to lobby'
                 ])

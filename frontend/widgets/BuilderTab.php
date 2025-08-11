@@ -20,12 +20,15 @@ class BuilderTab extends Widget {
             ]);
         } else {
             $partialView = '@app/views/player-builder/snippets/' . $tab['anchor'] . '.php';
-            return $this->renderFile($partialView, ['model' => $this->player, 'paragraphs' => $tab['paragraphs']]);
+            return $this->renderFile($partialView, [
+                        'model' => $this->player,
+                        'paragraphs' => $tab['paragraphs']
+            ]);
         }
     }
 
-    private function getModels($model_name) {
-        $model = "common\\models\\" . $model_name;
+    private function getModels($modelName) {
+        $model = "common\\models\\" . $modelName;
         return $model::find()->all();
     }
 }

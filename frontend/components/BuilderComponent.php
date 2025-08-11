@@ -8,12 +8,14 @@ use common\models\BackgroundSkill;
 use common\models\BackgroundTrait;
 use common\models\CharacterTrait;
 use common\models\ClassSkill;
+use common\models\Language;
 use common\models\Player;
 use common\models\PlayerAbility;
 use common\models\PlayerCoin;
 use common\models\PlayerSkill;
 use common\models\PlayerTrait;
 use common\models\Race;
+use common\models\RaceGroupLanguage;
 use common\models\Skill;
 use common\models\Wizard;
 use Yii;
@@ -59,16 +61,16 @@ class BuilderComponent {
             'field_name' => 'background',
             'admin' => 0,
         ],
-        'histories' => [
+        'history' => [
             'name' => 'Choose your history',
-            'anchor' => 'histories',
+            'anchor' => 'history',
             'wizard' => null,
-            'model_name' => 'BackgroundHistory',
+            'model_name' => null,
             'paragraphs' => [
-                "Your character’s background describes where he or she came from, his or her original occupation,     and the character’s place in the D&D world. Your DM might offer additional backgrounds beyond     the ones included in that chapter, and might be willing to work with you to craft a background     that’s a more precise fit for your character concept.",
+                "Your character’s background describes where he or she came from, his or her original occupation, and the character’s place in the D&D world. Your DM might offer additional backgrounds beyond     the ones included in that chapter, and might be willing to work with you to craft a background that’s a more precise fit for your character concept.",
                 "A background gives your character a background feature (a general benefit) and proficiency in two skills, and it might also give you additional languages or proficiency with certain kinds of tools.",
             ],
-            'field_name' => 'history',
+            'field_name' => null,
             'admin' => 0,
         ],
         'form' => [
@@ -305,10 +307,10 @@ class BuilderComponent {
     /**
      *
      * @param array $equipments
-     * @param type $choice
+     * @param int|null $choice
      * @return array
      */
-    public static function setEquipmentResponse(array $equipments, $choice = null): array {
+    public static function setEquipmentResponse(array $equipments, int|null $choice = null): array {
         $items = [];
         $categories = [];
         foreach ($equipments as $equipment) {
@@ -686,7 +688,7 @@ class BuilderComponent {
     public static function initPlayerLanguages(Player &$player): array {
         $languageList = ['RaceLanguages' => [], 'OtherLanguages' => []];
 
-        $raceLanguages = RaceGroupLanguage::findAll(['race_goup_id' => $player->race->race_group_id]);
+        $raceLanguages = RaceGroupLanguage::findAll(['race_group_id' => $player->race->race_group_id]);
 
         $languageIds = [];
         foreach ($raceLanguages as $raceLanguage) {

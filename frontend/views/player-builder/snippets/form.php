@@ -24,7 +24,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'background_id')->textInput() ?>
 
-    <?= $form->field($model, 'history_id')->textInput() ?>
+    <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
 
     <?= $form->field($model, 'image_id')->textInput() ?>
 
@@ -45,6 +45,11 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'armor_class')->textInput() ?>
 
     <-- Custom fields -->
+    <div class="form-group field-playerbuilder-languages">
+        <label class="control-label" for="playerbuilder-languages">Languages</label>
+        <input type="text" id="playerbuilder-languages" class="form-control" name="dummy-languages" value="<?= $model->playerLanguages ? "ok" : "" ?>">
+    </div>
+
     <div class="form-group field-playerbuilder-abilities">
         <label class="control-label" for="playerbuilder-abilities">Abilities</label>
         <input type="text" id="playerbuilder-abilities" class="form-control" name="dummy-abilities" value="<?= $model->playerAbilities ? "ok" : "" ?>">
@@ -57,7 +62,8 @@ use yii\widgets\ActiveForm;
 
     <div class="form-group field-playerbuilder-items">
         <label class="control-label" for="playerbuilder-items">Initial equipment</label>
-        <input type="text" id="playerbuilder-items" class="form-control" name="dummy-items" value="<?= $model->playerItems ? "ok" : "" ?>">
+        <!-- Forced to null when editing a player -->
+        <input type="text" id="playerbuilder-items" class="form-control" name="dummy-items">
     </div>
 
     <div class="form-group">

@@ -1,6 +1,6 @@
 <?php
 
-use frontend\widgets\IconButton;
+use frontend\widgets\Button;
 
 /** @var string $countLabel */
 /** @var array() $actions action buttons associated with the context */
@@ -11,7 +11,8 @@ use frontend\widgets\IconButton;
         <!-- Record Count -->
         <?php foreach ($actions as $action): ?>
             <?=
-            IconButton::widget([
+            Button::widget([
+                'mode' => 'icon',
                 'url' => $action['url'],
                 'icon' => $action['icon'],
                 'tooltip' => $action['tooltip'],

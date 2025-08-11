@@ -15,7 +15,7 @@
             <div class="col-6 col-sm-4 col-md-3 col-lg-2">
                 <div class="card h-100">
                     <?php if ($item->image): ?>
-                        <img class="card-img-top" src="img/item/<?= $item->image->file_name ?>">
+                        <img class="card-img-top" src="img/item/<?= $item->image ?>">
                     <?php endif; ?>
                     <div class="card-body">
                         <div class="custom-control custom-radio mb-2">

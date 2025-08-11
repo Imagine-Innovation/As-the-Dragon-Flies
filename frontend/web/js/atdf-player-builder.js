@@ -73,8 +73,8 @@ class PlayerBuilder {
         // Define required properties for completion
         const playerId = $('#hiddenPlayerId').html();
         const properties = (playerId === '') ?
-                ['race_id', 'class_id', 'background_id', 'history_id'] :
-                ['alignment_id', 'image_id', 'name', 'gender', 'age', 'abilities', 'skills', 'items'];
+                ['race_id', 'class_id', 'background_id', 'description'] :
+                ['alignment_id', 'image_id', 'name', 'gender', 'age', 'languages', 'abilities', 'skills', 'items'];
 
         // Count completed properties
         const completedProperties = properties.filter(
@@ -112,6 +112,11 @@ class PlayerBuilder {
             if (!DOMUtils.exists(target))
                 return;
 
+            $('#playerBuilderSaveButton').click(function () {
+                $("#w0").submit();
+            });
+
+            PlayerBuilder.initOnTabClick();
             PlayerBuilder.initWizard($(target).html());
             PlayerBuilder.updateProgress();
         });
@@ -125,11 +130,22 @@ class PlayerBuilder {
             if (!DOMUtils.exists(target))
                 return;
 
+            PlayerBuilder.initOnTabClick();
             PlayerBuilder.initWizard($(target).html());
             PlayerBuilder.updateProgress();
             PlayerBuilder.loadAdvancedProperties('images', 'ajaxAvatarChoice');
 
-            $('#builderEquipmentModal').on('click', '#exitEquipmentModal-button', function () {
+            $('#playerBuilderSaveButton').click(function () {
+                $("#w0").submit();
+            });
+
+            $('#playerBuilderValidateButton').click(function () {
+                PlayerBuilder.setProperty('status', 10);
+                $("#w0").submit();
+            });
+
+            $('#builderEquipmentModal').on('click', '#exitEquipmentModal-button', function ()
+            {
                 const selectedValue = $('input[name="initialEquipmentRadio"]:checked').val();
                 if (selectedValue) {
                     // Blur the button before closing the modal to prevent focus issues
@@ -145,7 +161,8 @@ class PlayerBuilder {
                 }
             });
             // More robust focus management on modal hide
-            $('#builderEquipmentModal').on('hide.bs.modal', function () {
+            $('#builderEquipmentModal').on('hide.bs.modal', function ()
+            {
                 const focusedElement = document.activeElement;
                 if (this.contains(focusedElement)) {
                     focusedElement.blur();
@@ -156,11 +173,44 @@ class PlayerBuilder {
         });
     }
 
+    static initOnTabClick()
+    {
+        // Select all elements with an ID that starts with 'addToCartButton-'
+        const tabs = document.querySelectorAll('[id^="builderTab-"]');
+
+        // Loop through each tab and add the event listener
+        tabs.forEach(tab => {
+            Logger.log(10, 'initOnTabClick', `Found tab ${tab.getAttribute('id')}`);
+            tab.addEventListener('click', function (event) {
+                Logger.log(10, 'initOnTabClick', `Click on tab ${tab.getAttribute('id')}`);
+                // Prevent the default action
+                event.preventDefault();
+
+                // Retrieve the suffix from the tab's ID
+                const suffix = tab.getAttribute('id');
+
+                // Split the ID to extract the tab name and wizard
+                const parts = suffix.split('-');
+                const tabName = parts[1];
+                const wizard = parts[2];
+                console.log(`---------------- tabName=${tabName}, wizard=${wizard}`);
+                if (tabName === 'equipment') {
+                    // Special feature for equipement tab: 
+                    // load the content only when displayed
+                    PlayerBuilder.initEquipementTab();
+                }
+                PlayerBuilder.initWizard(wizard);
+            });
+        }
+        );
+    }
+
     static initDescriptionTab(gender, alignmentId, age) {
         $(document).ready(function () {
             Logger.log(1, 'initDescriptionTab', `gender=${gender}, alignmentId=${alignmentId}, age=${age}`);
             PlayerBuilder.loadRandomNames();
             PlayerBuilder.loadAges(age);
+            PlayerBuilder.loadAdvancedProperties('languages', 'ajaxLanguageSelection');
 
             if (gender) {
                 $('#gender' + gender).prop('checked', true);
@@ -173,14 +223,16 @@ class PlayerBuilder {
                 event.preventDefault();
                 PlayerBuilder.loadRandomNames();
             });
-        });
+        }
+        );
     }
 
     static initAvatarTab() {
         $(document).ready(function () {
             Logger.log(1, 'initAvatarTab', '');
             PlayerBuilder.loadAdvancedProperties('images', 'ajaxAvatarChoice');
-        });
+        }
+        );
     }
 
     static initAbilitiesTab() {
@@ -191,12 +243,13 @@ class PlayerBuilder {
             } else {
                 console.error('ChartDrawer or drawAbilityCharts method not found.');
             }
-            
+
             $('#clearAbilitiesButton').click(function (event) {
                 event.preventDefault();
                 PlayerBuilder.clearAbilities();
             });
-        });
+        }
+        );
     }
 
     static initSkillsTab() {
@@ -207,21 +260,23 @@ class PlayerBuilder {
                 event.preventDefault();
                 PlayerBuilder.loadAdvancedProperties('traits', 'ajaxTraits');
             });
-        });
+        }
+        );
     }
 
-    static initEndowmentTab(category, choices, endowments) {
+    static initEquipementTab() {
         $(document).ready(function () {
-            Logger.log(1, 'initEndowmentTab', `category=${category}, choices=${choices}, endowments=${endowments}`);
-            if (category) {
+            Logger.log(1, 'initEquipementTab', '');
+
+            const target = "#hiddenCategory";
+            if (DOMUtils.exists(target)) {
+                const category = $(target).html();
                 PlayerBuilder.chooseBackgroundEquipment(category);
             }
-            for (let choice = 1; choice <= choices; choice++) {
-                if (endowments[choice] && endowments[choice][1] && Object.keys(endowments[choice]).length === 1) {
-                    PlayerBuilder.chooseEquipment(choice, endowments[choice][1].id);
-                }
-            }
-        });
+
+            PlayerBuilder.loadEquipmentTab();
+        }
+        );
     }
 
     /***********************************************/
@@ -262,7 +317,8 @@ class PlayerBuilder {
             class: () => this._loadWizardModalContent('class', id, 'character-class/ajax-wizard'),
             race: () => this._loadWizardModalContent('race', id, 'race/ajax-wizard'),
             alignment: () => this._loadWizardModalContent('alignment', id, 'alignment/ajax-wizard')
-        };
+        }
+        ;
 
         loaders[model]?.();
     }
@@ -293,7 +349,8 @@ class PlayerBuilder {
                     this.setProperty(`${type}_id`, id);
                 }
             }
-        });
+        }
+        );
     }
 
     /***********************************************/
@@ -495,7 +552,8 @@ class PlayerBuilder {
             successCallback: (response) => {
                 ToastManager.show('Skills', response.msg, response.error ? 'error' : 'info');
             }
-        });
+        }
+        );
     }
 
     /**
@@ -527,17 +585,35 @@ class PlayerBuilder {
 
     /**
      * 
-     * @param {type} playerId
      * @returns {undefined}
      */
-    static loadEquipmentTab(playerId) {
+    static loadEquipmentTab() {
+        const playerId = $('#hiddenPlayerId').html();
         Logger.log(1, 'loadEquipmentTab', `playerId=${playerId}`);
 
-        AjaxUtils.getContent({
-            target: `#equipment-tab`,
+        const target = `#playerBuilderEndowment`;
+        if (!DOMUtils.exists(target))
+            return;
+
+        AjaxUtils.request({
             url: 'player-builder/ajax-endowment',
-            data: {playerId: playerId}
-        });
+            data: {
+                playerId: playerId
+            },
+            successCallback: (response) => {
+                if (!response.error) {
+                    $(target).html(response.content);
+                    let endowment = {};
+                    for (let choice = 1; choice <= response.choices; choice++) {
+                        endowment = response.endowments[choice];
+                        if (endowment && endowment[1] && Object.keys(endowment).length === 1) {
+                            PlayerBuilder.chooseEquipment(choice, endowment[1].id);
+                        }
+                    }
+                }
+            }
+        }
+        );
     }
 
     /**
@@ -547,10 +623,11 @@ class PlayerBuilder {
     static __getItems() {
         Logger.log(3, '__getItems', ``);
 
-        const itemsArray = $('div[id^="ajaxItemChoice-"]')
+        const itemsArray = $('span[id^="ajaxItemChoice-"]')
                 .map(function () {
                     return $(this).html().trim();
-                }).get()
+                }
+                ).get()
                 .filter(content => content !== '');
 
         Logger.log(10, '__getItems', `itemsArray=${itemsArray}`);
@@ -564,7 +641,7 @@ class PlayerBuilder {
         const playerId = $('#hiddenPlayerId').html();
         const selectedIds = this.__getItems();
         const selectedCount = selectedIds.length;
-        const max = $('div[id^="ajaxItemChoice-"]').length;
+        const max = $('span[id^="ajaxItemChoice-"]').length;
         Logger.log(10, '_saveEquipment', `playerId=${playerId}, selectedIds=${selectedIds}`);
         Logger.log(10, '_saveEquipment', `selectedCount=${selectedCount}, max=${max}`);
 
@@ -578,7 +655,8 @@ class PlayerBuilder {
                 ToastManager.show('Initial equipment', response.msg, response.error ? 'error' : 'info');
                 this.setProperty('items', selectedCount === max ? 'ok' : '');
             }
-        });
+        }
+        );
     }
 
     /**
@@ -606,7 +684,8 @@ class PlayerBuilder {
                     modal.show();
                 }
             }
-        });
+        }
+        );
     }
 
     /**
@@ -622,7 +701,8 @@ class PlayerBuilder {
             target: `#ajaxItemImages`,
             url: 'item/ajax-images',
             data: {itemIds: itemsArray.join(',')}
-        });
+        }
+        );
     }
 
     /**
@@ -699,8 +779,41 @@ class PlayerBuilder {
     }
 
     /***********************************************/
-    /*             Languages Methods               */
+    /*              Languages Methods              */
     /***********************************************/
+
+    static initLangages() {
+        Logger.log(1, 'initLangages', ``);
+
+        target = `#ajaxLanguageSelection`;
+        if (!DOMUtils.exists(target))
+            return;
+
+        // Gather all required parameters
+        const params = {
+            playerId: $('#hiddenPlayerId').html(),
+            raceId: $('#playerbuilder-race_id').val(),
+            backgroundId: $('#playerbuilder-background_id').val()
+        };
+
+        AjaxUtils.request({
+            url: 'player-builder/ajax-langages',
+            data: {
+                playerId: $('#hiddenPlayerId').html(),
+                raceId: $('#playerbuilder-race_id').val(),
+                backgroundId: $('#playerbuilder-background_id').val()
+            },
+            successCallback: (response) => {
+                if (response.error === false) {
+                    Logger.log(10, 'initLangages', `response.content.n=${response.content.n}`);
+                    if (!response.content.n) {
+                        this.setProperty('languages', 'ok');
+                    }
+                    $(target).html(response.content);
+                }
+            }
+        });
+    }
 
     /**
      * Persists selected languages to the server
@@ -721,12 +834,13 @@ class PlayerBuilder {
             data: {
                 playerId: playerId,
                 languageId: languageId,
-                isProficient: isChecked ? 1 : 0
+                selected: isChecked ? 1 : 0
             },
             successCallback: (response) => {
                 ToastManager.show('Languages', response.msg, response.error ? 'error' : 'info');
             }
-        });
+        }
+        );
     }
 
     /**
@@ -746,7 +860,6 @@ class PlayerBuilder {
             $(`#languageCheckbox-${id}`).prop('checked', false);
             ToastManager.show('Languages', `You have reached the maximum number of languages (${max})`, 'warning');
         } else {
-            //this._saveLanguages();
             this._saveLanguage(id);
             this.setProperty('languages', selectedCount === max ? 'ok' : '');
         }

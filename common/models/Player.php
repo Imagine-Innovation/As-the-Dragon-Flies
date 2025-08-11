@@ -17,7 +17,7 @@ use Yii;
  * @property int $race_id Foreign key to "race" table
  * @property int $class_id Foreign key to "character_class" table
  * @property int $background_id Foreign key to "background" table
- * @property int $history_id Foreign key to "history" table
+ * @property string|null $description Player description
  * @property int|null $alignment_id Foreign key to "alignment" table
  * @property int|null $image_id Foreign key to "image" table. May be empty if no avatar is chosen.
  * @property int|null $quest_id Optional foreign key to "quest" table
@@ -38,7 +38,6 @@ use Yii;
  * @property Background $background
  * @property CharacterClass $class
  * @property CreatureCondition[] $conditions
- * @property BackgroundHistory $history
  * @property Image $image
  * @property Item[] $cartItems
  * @property Item[] $items
@@ -96,15 +95,15 @@ class Player extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['alignment_id', 'image_id', 'quest_id', 'name', 'gender', 'age', 'speed', 'created_at', 'updated_at'], 'default', 'value' => null],
+            [['description', 'alignment_id', 'image_id', 'quest_id', 'name', 'gender', 'age', 'speed', 'created_at', 'updated_at'], 'default', 'value' => null],
             [['level_id'], 'default', 'value' => 1],
             [['status'], 'default', 'value' => AppStatus::INACTIVE->value],
             [['status'], 'in', 'range' => AppStatus::getValuesForPlayer()],
             [['experience_points'], 'default', 'value' => 0],
             [['armor_class'], 'default', 'value' => 10],
-            [['level_id', 'user_id', 'race_id', 'class_id', 'background_id', 'history_id', 'alignment_id', 'image_id', 'quest_id', 'status', 'age', 'experience_points', 'hit_points', 'max_hit_points', 'armor_class', 'speed', 'created_at', 'updated_at'], 'integer'],
-            [['user_id', 'race_id', 'class_id', 'background_id', 'history_id'], 'required'],
-            [['gender'], 'string'],
+            [['level_id', 'user_id', 'race_id', 'class_id', 'background_id', 'alignment_id', 'image_id', 'quest_id', 'status', 'age', 'experience_points', 'hit_points', 'max_hit_points', 'armor_class', 'speed', 'created_at', 'updated_at'], 'integer'],
+            [['user_id', 'race_id', 'class_id', 'background_id'], 'required'],
+            [['description', 'gender'], 'string'],
             [['name'], 'string', 'max' => 64],
             ['gender', 'in', 'range' => array_keys(self::optsGender())],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
@@ -112,7 +111,6 @@ class Player extends \yii\db\ActiveRecord {
             [['class_id'], 'exist', 'skipOnError' => true, 'targetClass' => CharacterClass::class, 'targetAttribute' => ['class_id' => 'id']],
             [['alignment_id'], 'exist', 'skipOnError' => true, 'targetClass' => Alignment::class, 'targetAttribute' => ['alignment_id' => 'id']],
             [['background_id'], 'exist', 'skipOnError' => true, 'targetClass' => Background::class, 'targetAttribute' => ['background_id' => 'id']],
-            [['history_id'], 'exist', 'skipOnError' => true, 'targetClass' => BackgroundHistory::class, 'targetAttribute' => ['history_id' => 'id']],
             [['level_id'], 'exist', 'skipOnError' => true, 'targetClass' => Level::class, 'targetAttribute' => ['level_id' => 'id']],
             [['image_id'], 'exist', 'skipOnError' => true, 'targetClass' => Image::class, 'targetAttribute' => ['image_id' => 'id']],
             [['quest_id'], 'exist', 'skipOnError' => true, 'targetClass' => Quest::class, 'targetAttribute' => ['quest_id' => 'id']],
@@ -130,7 +128,7 @@ class Player extends \yii\db\ActiveRecord {
             'race_id' => 'Foreign key to \"race\" table',
             'class_id' => 'Foreign key to \"character_class\" table',
             'background_id' => 'Foreign key to \"background\" table',
-            'history_id' => 'Foreign key to \"history\" table',
+            'description' => 'Player description',
             'alignment_id' => 'Foreign key to \"alignment\" table',
             'image_id' => 'Foreign key to \"image\" table. May be empty if no avatar is chosen.',
             'quest_id' => 'Optional foreign key to \"quest\" table',
@@ -154,7 +152,7 @@ class Player extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getAbilities() {
-        return $this->hasMany(Ability::class, ['id' => 'ability_id'])->via('playerAbilities');
+        return $this->hasMany(Ability::class, ['id' => 'ability_id'])->viaTable('player_ability', ['player_id' => 'id']);
     }
 
     /**
@@ -190,16 +188,7 @@ class Player extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getConditions() {
-        return $this->hasMany(CreatureCondition::class, ['id' => 'condition_id'])->via('playerConditions');
-    }
-
-    /**
-     * Gets query for [[History]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getHistory() {
-        return $this->hasOne(BackgroundHistory::class, ['id' => 'history_id']);
+        return $this->hasMany(CreatureCondition::class, ['id' => 'condition_id'])->viaTable('player_condition', ['player_id' => 'id']);
     }
 
     /**
@@ -220,7 +209,7 @@ class Player extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getCartItems() {
-        return $this->hasMany(Item::class, ['id' => 'item_id'])->via('playerCarts');
+        return $this->hasMany(Item::class, ['id' => 'item_id'])->viaTable('player_cart', ['player_id' => 'id']);
     }
 
     /**
@@ -229,7 +218,7 @@ class Player extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getItems() {
-        return $this->hasMany(Item::class, ['id' => 'item_id'])->via('playerItems');
+        return $this->hasMany(Item::class, ['id' => 'item_id'])->viaTable('player_item', ['player_id' => 'id']);
     }
 
     /**
@@ -238,7 +227,7 @@ class Player extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getWeapons() {
-        return $this->hasMany(Weapons::class, ['id' => 'item_id'])->via('playerItems');
+        return $this->hasMany(Weapons::class, ['id' => 'item_id'])->viaTable('player_item', ['player_id' => 'id']);
     }
 
     /**
@@ -247,7 +236,7 @@ class Player extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getLanguages() {
-        return $this->hasMany(Language::class, ['id' => 'language_id'])->via('playerLanguages');
+        return $this->hasMany(Language::class, ['id' => 'language_id'])->viaTable('player_language', ['player_id' => 'id']);
     }
 
     /**
@@ -283,7 +272,7 @@ class Player extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getNotifications() {
-        return $this->hasMany(Notification::class, ['id' => 'notification_id'])->via('notificationPlayers');
+        return $this->hasMany(Notification::class, ['id' => 'notification_id'])->viaTable('notification_player', ['player_id' => 'id']);
     }
 
     /**
@@ -400,7 +389,7 @@ class Player extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getQuests() {
-        return $this->hasMany(Quest::class, ['id' => 'quest_id'])->via('questPlayers');
+        return $this->hasMany(Quest::class, ['id' => 'quest_id'])->viaTable('quest_player', ['player_id' => 'id']);
     }
 
     /**
@@ -418,7 +407,7 @@ class Player extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getSkills() {
-        return $this->hasMany(Skill::class, ['id' => 'skill_id'])->via('playerSkills');
+        return $this->hasMany(Skill::class, ['id' => 'skill_id'])->viaTable('player_skill', ['player_id' => 'id']);
     }
 
     /**
@@ -427,7 +416,7 @@ class Player extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getSpells() {
-        return $this->hasMany(Spell::class, ['id' => 'spell_id'])->via('playerSpells');
+        return $this->hasMany(Spell::class, ['id' => 'spell_id'])->viaTable('player_spell', ['player_id' => 'id']);
     }
 
     /**
@@ -436,7 +425,7 @@ class Player extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getTraits() {
-        return $this->hasMany(CharacterTrait::class, ['id' => 'skill_id'])->via('playerTraits');
+        return $this->hasMany(CharacterTrait::class, ['id' => 'trait_id'])->viaTable('player_trait', ['player_id' => 'id']);
     }
 
     /**
@@ -535,10 +524,7 @@ class Player extends \yii\db\ActiveRecord {
         }
         $images = $query->column();
 
-        if (empty($images)) {
-            return null;
-        }
-        return $images[array_rand($images)];
+        return empty($images) ? null : $images[array_rand($images)];
     }
 
     /**
@@ -547,8 +533,14 @@ class Player extends \yii\db\ActiveRecord {
      * @return string The description of the player character.
      */
     public function getDescription() {
-        $gender = $this->gender == 'M' ? 'male' : 'femele';
-        $description = "{$this->age}-years-old {$gender} {$this->race->name}, {$this->level->name} {$this->alignment->name} {$this->class->name}";
+        $gender = match ($this->gender) {
+            'M' => 'male',
+            'F' => 'female',
+            default => '',
+        };
+        $age = $this->age ? "{$this->age}-years-old" : "";
+        $alignment = $this->alignment ? $this->alignment->name : "";
+        $description = "{$age} {$gender} {$this->race->name}, {$this->level->name} {$alignment} {$this->class->name}";
         return strtolower($description);
     }
 

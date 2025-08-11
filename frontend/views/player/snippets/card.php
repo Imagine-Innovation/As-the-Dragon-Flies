@@ -2,7 +2,7 @@
 
 use common\components\AppStatus;
 use yii\helpers\Url;
-use frontend\widgets\IconButton;
+use frontend\widgets\Button;
 use frontend\widgets\PlayerCharacteristics;
 
 /** @var yii\web\View $this */
@@ -15,7 +15,8 @@ $route = $player->status == AppStatus::ACTIVE->value ? 'player/view' : 'player/u
         <h4><?= $player->name ?></h4>
         <div class="actions">
             <?=
-            IconButton::widget([
+            Button::widget([
+                'mode' => 'icon',
                 'url' => Url::toRoute([$route, 'id' => $player->id]),
                 'icon' => 'bi-controller',
                 'tooltip' => 'View player details'

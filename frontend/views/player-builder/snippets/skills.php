@@ -1,7 +1,7 @@
 <?php
 
 use common\helpers\Utilities;
-use frontend\widgets\IconButton;
+use frontend\widgets\Button;
 
 /** @var yii\web\View $this */
 /** @var common\models\PlayerBuilder $model */
@@ -16,7 +16,8 @@ use frontend\widgets\IconButton;
             <div class="card h-100">
                 <div class="actions">
                     <?=
-                    IconButton::widget([
+                    Button::widget([
+                        'mode' => 'icon',
                         'id' => 'generateNewTraitsButton',
                         'icon' => 'bi-arrow-repeat',
                         'tooltip' => 'New random traits'

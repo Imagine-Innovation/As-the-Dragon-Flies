@@ -1,7 +1,7 @@
 <?php
 
 use frontend\widgets\AbilityChart;
-use frontend\widgets\IconButton;
+use frontend\widgets\Button;
 use common\helpers\Utilities;
 
 /** @var yii\web\View $this */
@@ -16,7 +16,8 @@ $abilityValues = [15, 14, 13, 12, 10, 8];
     <div class="card h-100">
         <div class="actions">
             <?=
-            IconButton::widget([
+            Button::widget([
+                'mode' => 'icon',
                 'icon' => 'bi-eraser',
                 'tooltip' => 'Reset abilities',
                 'id' => 'clearAbilitiesButton',

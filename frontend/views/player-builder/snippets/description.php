@@ -2,7 +2,7 @@
 
 use common\models\Alignment;
 use common\helpers\Utilities;
-use frontend\widgets\IconButton;
+use frontend\widgets\Button;
 
 /** @var yii\web\View $this */
 /** @var common\models\PlayerBuilder $model */
@@ -33,11 +33,11 @@ foreach ($alignments as $alignment) {
 <?= Utilities::formatMultiLine($paragraphs) ?>
 
 <div class="container">
-    <div class="row g-0">
-        <div class="col-12 col-lg-6 col-xl-4">
-            <!-- Gender -->
+    <div class="row g-4">
+        <div class="col-12 col-lg-6 col-xxl-4">
             <div class="card">
                 <div class="card-body">
+                    <!-- Gender -->
                     <h4 class="card-title text-decoration">Gender</h4>
                     <div class="custom-control custom-radio custom-control-inline mb-2">
                         <input type="radio" id="genderM" name="gender" class="custom-control-input"
@@ -49,86 +49,92 @@ foreach ($alignments as $alignment) {
                                onchange='PlayerBuilder.setProperty("gender", "F");'>
                         <label class="custom-control-label" for="genderF">Female</label>
                     </div>
+                    <hr>
+                    <!-- Age -->
+                    <div id="ajaxAgeSelection">
+                        <h4 class="card-title text-decoration">Age</h4>
+                        <h6 class="card-subtitle">Each race has its own age range. Please select a race before choosing an age.</h6>
+                    </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Age -->
+        <!-- Languages -->
+        <div class="col-12 col-lg-6 col-xxl-4">
             <div class="card">
-                <div class="card-body" id="ajaxAgeSelection">
-                    <h4 class="card-title text-decoration">Age</h4>
-                    <h6 class="card-subtitle">Each race has its own age range. Please select a race before choosing an age.</h6>
+                <div class="card-body" id="ajaxLanguageSelection">
+                    <h4 class="card-title text-decoration">Languages</h4>
+                    <h6 class="card-subtitle">Choose the languages that your race (<?= $model->race->name ?>) and background (<?= $model->background->name ?>) allow you to speak.</h6>
                 </div>
             </div>
         </div>
 
         <!-- Name -->
-        <div class="col-12 col-lg-6 col-xl-8">
-            <div class="row row-cols-1 row-cols-xl-2 g-0">
-                <div class="col">
-                    <div class="card">
-                        <div class="actions">
-                            <?=
-                            IconButton::widget([
-                                'id' => 'generateNewNamesButton',
-                                'icon' => 'bi-arrow-repeat',
-                                'tooltip' => 'New random names'
-                            ])
-                            ?>
-                        </div>
-                        <div class="card-body" id="ajaxNameSelection">
-                            <h4 class="card-title text-decoration">Name</h4>
-                            <?php if ($model->name): ?>
-                                <h6 class="card-subtitle">Your player is called "<?= $model->name ?>"</h6>
-                            <?php else: ?>
-                                <h6 class="card-subtitle">Select a race and a gender before selecting a name.</h6>
-                            <?php endif; ?>
-                        </div>
-                    </div>
+        <div class="col-12 col-lg-6 col-xxl-4">
+            <div class="card">
+                <div class="actions">
+                    <?=
+                    Button::widget([
+                        'mode' => 'icon',
+                        'id' => 'generateNewNamesButton',
+                        'icon' => 'bi-arrow-repeat',
+                        'tooltip' => 'New random names'
+                    ])
+                    ?>
                 </div>
+                <div class="card-body" id="ajaxNameSelection">
+                    <h4 class="card-title text-decoration">Name</h4>
+                    <?php if ($model->name): ?>
+                        <h6 class="card-subtitle">Your player is called "<?= $model->name ?>"</h6>
+                    <?php else: ?>
+                        <h6 class="card-subtitle">Select a race and a gender before selecting a name.</h6>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
 
-                <!-- Alignment -->
-                <div class="col">
-                    <div class="card">
-                        <div class="actions">
-                            <?=
-                            IconButton::widget([
-                                'icon' => 'bi-magic',
-                                'tooltip' => 'Alignment wizard',
-                                'modal' => 'builderWizardModal'
-                            ])
-                            ?>
-                        </div>
-                        <div class="card-body">
-                            <h4 class="card-title text-decoration">Alignment</h4>
-                            <div class="table-responsive">
-                                <table class="table table-dark table-hover mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th>&nbsp;</th>
-                                            <?php foreach ($alignmentCol as $col): ?>
-                                                <th class="text-center"><?= $col ?></th>
-                                            <?php endforeach; ?>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php foreach ($alignmentRow as $row): ?>
-                                            <tr>
-                                                <th scope="row"><?= $row ?></th>
-                                                <?php foreach ($alignmentCol as $col): ?>
-                                                    <td class="text-center">
-                                                        <div class="custom-control custom-radio mb-2">
-                                                            <input type="radio" id="alignment<?= $alignmentIds[$col][$row] ?>" name="alignment" class="custom-control-input"
-                                                                   onchange='PlayerBuilder.setProperty("alignment_id", <?= $alignmentIds[$col][$row] ?>);'>
-                                                            <label class="custom-control-label" for="alignment<?= $alignmentIds[$col][$row] ?>"> </label>
-                                                        </div>
-                                                    </td>
-                                                <?php endforeach; ?>
-                                            </tr>
+        <!-- Alignment -->
+        <div class="col-12 col-lg-6 col-xxl-4">
+            <div class="card">
+                <div class="actions">
+                    <?=
+                    Button::widget([
+                        'mode' => 'icon',
+                        'icon' => 'bi-magic',
+                        'tooltip' => 'Alignment wizard',
+                        'modal' => 'builderWizardModal'
+                    ])
+                    ?>
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title text-decoration">Alignment</h4>
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>&nbsp;</th>
+                                    <?php foreach ($alignmentCol as $col): ?>
+                                        <th class="text-center"><?= $col ?></th>
+                                    <?php endforeach; ?>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($alignmentRow as $row): ?>
+                                    <tr>
+                                        <th scope="row"><?= $row ?></th>
+                                        <?php foreach ($alignmentCol as $col): ?>
+                                            <td class="text-center">
+                                                <div class="custom-control custom-radio mb-2">
+                                                    <input type="radio" id="alignment<?= $alignmentIds[$col][$row] ?>" name="alignment" class="custom-control-input"
+                                                           onchange='PlayerBuilder.setProperty("alignment_id", <?= $alignmentIds[$col][$row] ?>);'>
+                                                    <label class="custom-control-label" for="alignment<?= $alignmentIds[$col][$row] ?>"> </label>
+                                                </div>
+                                            </td>
                                         <?php endforeach; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

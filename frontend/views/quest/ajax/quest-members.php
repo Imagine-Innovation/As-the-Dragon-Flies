@@ -1,6 +1,6 @@
 <?php
 
-use yii\helpers\Url;
+use frontend\widgets\Button;
 
 /** @var yii\web\View $this */
 /** @var common\models\Quest $models */
@@ -18,15 +18,28 @@ $playerId = Yii::$app->session->get('playerId');
                             <p class="small mb-0"><?= $player->level->name ?> <?= $player->alignment->name ?> <?= $player->class->name ?></p>
                             <?php if ($player->id !== $model->initiator_id): // Initiator cannot leave the quest ?>
                                 <?php if ($player->id === $playerId): // Only the current player can leave the quest ?>
-                                    <button class="btn btn-warning btn-sm mt-2 w-100" id="leaveQuestButton" type="button">
-                                        <i class="bi bi-box-arrow-right"></i> Leave Tavern
-                                    </button>
+                                    <?=
+                                    Button::widget([
+                                        'style' => 'btn-sm mt-2 w-100',
+                                        'callToAction' => true,
+                                        'id' => 'leaveQuestButton',
+                                        'icon' => 'bi-box-arrow-right',
+                                        'title' => 'Leave Tavern'
+                                    ])
+                                    ?>
                                 <?php endif; ?>
                             <?php else: // This is the initiator part ?>
                                 <?php if ($player->id === $playerId): // only initiator can start the quest ?>
-                                    <button class="btn btn-warning btn-sm mt-2 w-100 d-none" id="startQuestButton" type="button">
-                                        <i class="bi bi-action-move"></i> Start the quest
-                                    </button>
+                                    <?=
+                                    Button::widget([
+                                        'style' => 'btn-sm mt-2 w-100 d-none',
+                                        'callToAction' => true,
+                                        'id' => 'startQuestButton',
+                                        'icon' => 'dnd-action-move',
+                                        'title' => 'Start the quest'
+                                    ])
+                                    ?>
+
                                 <?php endif; ?>
                             <?php endif; ?>
                         </div>

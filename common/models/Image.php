@@ -12,7 +12,6 @@ namespace common\models;
  * @property ClassImage[] $classImages
  * @property CharacterClass[] $classes
  * @property Floor[] $floors
- * @property Item[] $items
  * @property Player[] $players
  * @property RaceGroupImage[] $raceGroupImages
  * @property RaceGroup[] $raceGroups
@@ -68,7 +67,7 @@ class Image extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getClasses() {
-        return $this->hasMany(CharacterClass::class, ['id' => 'class_id'])->via('classImages');
+        return $this->hasMany(CharacterClass::class, ['id' => 'class_id'])->viaTable('class_image', ['image_id' => 'id']);
     }
 
     /**
@@ -78,15 +77,6 @@ class Image extends \yii\db\ActiveRecord {
      */
     public function getFloors() {
         return $this->hasMany(Floor::class, ['image_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[Items]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getItems() {
-        return $this->hasMany(Item::class, ['image_id' => 'id']);
     }
 
     /**
@@ -113,7 +103,7 @@ class Image extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getRaceGroups() {
-        return $this->hasMany(RaceGroup::class, ['id' => 'race_group_id'])->via('raceGroupImages');
+        return $this->hasMany(RaceGroup::class, ['id' => 'race_group_id'])->viaTable('race_group_image', ['image_id' => 'id']);
     }
 
     /**
@@ -131,7 +121,7 @@ class Image extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getRooms() {
-        return $this->hasMany(Room::class, ['id' => 'room_id'])->via('roomImages');
+        return $this->hasMany(Room::class, ['id' => 'room_id'])->viaTable('room_image', ['image_id' => 'id']);
     }
 
     /**

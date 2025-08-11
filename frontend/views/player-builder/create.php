@@ -3,7 +3,7 @@
 use frontend\components\BuilderComponent;
 use frontend\widgets\AjaxContainer;
 use frontend\widgets\BuilderTab;
-use frontend\widgets\IconButton;
+use frontend\widgets\Button;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
@@ -26,7 +26,8 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
         <h4 class="card-title text-decoration"><?= Html::encode($this->title) ?></h4>
         <div class="actions">
             <?=
-            IconButton::widget([
+            Button::widget([
+                'mode' => 'icon',
                 'id' => 'showBuilderWizardModal-button',
                 'icon' => 'bi-magic',
                 'tooltip' => 'Character builder wizard',
@@ -58,9 +59,9 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
                 <?php foreach ($tabs as $tab): ?>
                     <?php if (($isAdmin && $tab['admin']) || !$tab['admin']): ?>
                         <li class="nav-item">
-                            <a class="nav-link<?= $tab['anchor'] == $firstTab ? " active" : "" ?>"
-                               data-bs-toggle="tab" href="#<?= $tab['anchor'] ?>-tab" role="tab"
-                               onclick="PlayerBuilder.initWizard('<?= $tab['wizard'] ?>');">
+                            <a role="tab" class="nav-link<?= $tab['anchor'] == $firstTab ? " active" : "" ?>"
+                               id="builderTab-<?= $tab['anchor'] ?>-<?= $tab['wizard'] ?>"
+                               data-bs-toggle="tab" href="#<?= $tab['anchor'] ?>-tabContent">
                                    <?= $tab['name'] ?>
                             </a>
                         </li>
@@ -70,13 +71,14 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
 
             <div class="tab-content">
                 <?php foreach ($tabs as $tab): ?>
-                    <div class="tab-pane <?= $tab['anchor'] == $firstTab ? "active fade show" : "fade" ?>" id="<?= $tab['anchor'] ?>-tab" role="tabpanel">
-                        <?=
-                        BuilderTab::widget([
-                            'player' => $model,
-                            'tabContent' => $tab,
-                        ])
-                        ?>
+                    <div role="tabpanel" id="<?= $tab['anchor'] ?>-tabContent"
+                         class="tab-pane <?= $tab['anchor'] == $firstTab ? " active show" : "" ?> fade">
+                             <?=
+                             BuilderTab::widget([
+                                 'player' => $model,
+                                 'tabContent' => $tab,
+                             ])
+                             ?>
                     </div>
                 <?php endforeach; ?>
             </div>
@@ -122,10 +124,15 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
                 <p>In the next step, you'll have the opportunity to explore and enhance your player, but race, class, background, and history will remain as you've defined them.</p>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-warning btn-sm mt-2 w-50" type="button"
-                        onclick="$('#save-button').click(); return false;">
-                    <i class="bi bi-floppy"></i> Save and continue
-                </button>
+                <?=
+                Button::widget([
+                    'icon' => 'bi-floppy',
+                    'title' => 'Save and continue',
+                    'id' => 'playerBuilderSaveButton',
+                    'callToAction' => true,
+                    'style' => 'btn-sm mt-2 w-50',
+                ])
+                ?>
             </div>
         </div>
     </div>

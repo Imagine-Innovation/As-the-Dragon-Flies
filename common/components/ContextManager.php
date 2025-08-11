@@ -17,6 +17,7 @@ class ContextManager extends Component {
 
         $user = Yii::$app->user->identity;
         Yii::$app->session->set('user', $user);
+        Yii::$app->session->set('userId', $user->id);
 
         self::updatePlayerContext($user->current_player_id);
     }

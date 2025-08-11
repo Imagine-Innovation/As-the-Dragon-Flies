@@ -1,7 +1,7 @@
 <?php
 
 use common\components\ManageAccessRights;
-use frontend\widgets\IconButton;
+use frontend\widgets\Button;
 
 /** @var yii\web\View $this */
 /** @var common\model $model */
@@ -14,13 +14,15 @@ use frontend\widgets\IconButton;
     foreach ($actions as $action) {
         if (ManageAccessRights::isActionButtonAllowed($action, $modelName, $isOwner, "view")) {
             if ($action['mode'] === "POST") {
-                echo IconButton::widget([
+                echo Button::widget([
+                    'mode' => 'icon',
                     'id' => "actionButton-{$action['route']}-{$action['verb']}-{$model->id}",
                     'icon' => "bi bi-{$action['icon']}",
                     'tooltip' => $action['tooltip']
                 ]);
             } else {
-                echo IconButton::widget([
+                echo Button::widget([
+                    'mode' => 'icon',
                     'url' => Url::toRoute([$action['route'] . '/' . $action['verb'], 'id' => $model->id]),
                     'icon' => "bi bi-{$action['icon']}",
                     'tooltip' => $action['tooltip']

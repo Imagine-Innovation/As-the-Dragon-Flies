@@ -4,7 +4,6 @@ use common\helpers\StoryNeededClass;
 use common\helpers\StoryPlayers;
 use frontend\components\QuestOnboarding;
 use frontend\widgets\Button;
-use frontend\widgets\IconButton;
 use frontend\widgets\ModalDesc;
 use yii\helpers\Url;
 
@@ -29,14 +28,16 @@ $image = $story->image ?
     <?php if ($user->is_designer): ?>
         <div class="actions">
             <?=
-            IconButton::widget([
+            Button::widget([
+                'mode' => 'icon',
                 'url' => Url::toRoute(['story/view', 'id' => $story->id]),
                 'icon' => 'bi-journal',
                 'tooltip' => "View story details"
             ])
             ?>
             <?=
-            IconButton::widget([
+            Button::widget([
+                'mode' => 'icon',
                 'url' => Url::toRoute(['story/update', 'id' => $story->id]),
                 'icon' => 'bi-journal-code',
                 'tooltip' => "Edit story"
@@ -52,9 +53,11 @@ $image = $story->image ?
             <p>
                 <?=
                 Button::widget([
-                    'route' => ['quest/join-quest', 'storyId' => $story->id],
-                    'icon' => 'bi-action-move',
-                    'title' => 'Join the quest'
+                    'url' => Url::toRoute(['quest/join-quest', 'storyId' => $story->id]),
+                    'icon' => 'dnd-tower',
+                    'title' => 'Join the quest',
+                    'style' => 'text-decoration',
+                    'callToAction' => true
                 ])
                 ?>
             </p>

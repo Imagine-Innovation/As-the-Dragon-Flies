@@ -1,7 +1,7 @@
 <?php
 
 use frontend\components\Inventory;
-use frontend\widgets\IconButton;
+use frontend\widgets\Button;
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */
@@ -26,7 +26,8 @@ $firstType = $itemTypes[0] ?? "";
             <p id="purseContent"></p>
             <div class="actions">
                 <?=
-                IconButton::widget([
+                Button::widget([
+                    'mode' => 'icon',
                     'url' => Url::toRoute(['player-item/index']),
                     'icon' => 'bi-backpack2',
                     'tooltip' => "See what you are carrying"

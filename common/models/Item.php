@@ -10,9 +10,9 @@ use Yii;
  *
  * @property int $id Primary key
  * @property int $item_type_id Foreign key to "item_type" table
- * @property int|null $image_id Foreign key to "image" table. Null if no image is linked to the item.
  * @property string $name Item
  * @property string|null $description A textual description of the equipment, providing additional details about its appearance, properties, or usage.
+ * @property string|null $image Image
  * @property int $sort_order Sort order
  * @property int|null $cost Unitary cost of the item
  * @property string|null $coin Currency
@@ -32,7 +32,6 @@ use Yii;
  * @property CharacterClass[] $classes
  * @property GridItem[] $gridItems
  * @property Grid[] $grids
- * @property Image $image
  * @property ItemCategory[] $itemCategories
  * @property ItemType $itemType
  * @property Item[] $packItems
@@ -75,17 +74,16 @@ class Item extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['image_id', 'description', 'cost', 'coin', 'weight', 'max_load', 'max_volume'], 'default', 'value' => null],
+            [['description', 'image', 'cost', 'coin', 'weight', 'max_load', 'max_volume'], 'default', 'value' => null],
             [['is_purchasable'], 'default', 'value' => 1],
             [['is_wearable'], 'default', 'value' => 0],
             [['item_type_id', 'name'], 'required'],
-            [['item_type_id', 'image_id', 'sort_order', 'cost', 'quantity', 'is_packable', 'is_wearable', 'is_purchasable'], 'integer'],
+            [['item_type_id', 'sort_order', 'cost', 'quantity', 'is_packable', 'is_wearable', 'is_purchasable'], 'integer'],
             [['description'], 'string'],
             [['weight', 'max_load', 'max_volume'], 'number'],
-            [['name'], 'string', 'max' => 32],
+            [['name', 'image'], 'string', 'max' => 32],
             [['coin'], 'string', 'max' => 2],
             [['name'], 'unique'],
-            [['image_id'], 'exist', 'skipOnError' => true, 'targetClass' => Image::class, 'targetAttribute' => ['image_id' => 'id']],
             [['item_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => ItemType::class, 'targetAttribute' => ['item_type_id' => 'id']],
         ];
     }
@@ -97,9 +95,9 @@ class Item extends \yii\db\ActiveRecord {
         return [
             'id' => 'Primary key',
             'item_type_id' => 'Foreign key to \"item_type\" table',
-            'image_id' => 'Foreign key to \"image\" table. Null if no image is linked to the item.',
             'name' => 'Item',
             'description' => 'A textual description of the equipment, providing additional details about its appearance, properties, or usage.',
+            'image' => 'Image',
             'sort_order' => 'Sort order',
             'cost' => 'Unitary cost of the item',
             'coin' => 'Currency',
@@ -137,7 +135,7 @@ class Item extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getCategories() {
-        return $this->hasMany(Category::class, ['id' => 'category_id'])->via('itemCategories');
+        return $this->hasMany(Category::class, ['id' => 'category_id'])->viaTable('item_category', ['item_id' => 'id']);
     }
 
     /**
@@ -164,7 +162,7 @@ class Item extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getClasses() {
-        return $this->hasMany(CharacterClass::class, ['id' => 'class_id'])->via('classItems');
+        return $this->hasMany(CharacterClass::class, ['id' => 'class_id'])->viaTable('class_item', ['item_id' => 'id']);
     }
 
     /**
@@ -182,16 +180,7 @@ class Item extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getGrids() {
-        return $this->hasMany(Grid::class, ['id' => 'grid_id'])->via('gridItems');
-    }
-
-    /**
-     * Gets query for [[Image]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getImage() {
-        return $this->hasOne(Image::class, ['id' => 'image_id']);
+        return $this->hasMany(Grid::class, ['id' => 'grid_id'])->viaTable('grid_item', ['item_id' => 'id']);
     }
 
     /**
@@ -227,7 +216,7 @@ class Item extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getPackItems() {
-        return $this->hasMany(Item::class, ['id' => 'item_id'])->via('packs');
+        return $this->hasMany(Item::class, ['id' => 'item_id'])->viaTable('pack', ['parent_item_id' => 'id']);
     }
 
     /**
@@ -236,7 +225,7 @@ class Item extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getParentItems() {
-        return $this->hasMany(Item::class, ['id' => 'parent_item_id'])->via('packs');
+        return $this->hasMany(Item::class, ['id' => 'parent_item_id'])->viaTable('pack', ['item_id' => 'id']);
     }
 
     /**
@@ -284,7 +273,7 @@ class Item extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getPlayers() {
-        return $this->hasMany(Player::class, ['id' => 'player_id'])->via('playerCarts');
+        return $this->hasMany(Player::class, ['id' => 'player_id'])->viaTable('player_cart', ['item_id' => 'id']);
     }
 
     /**
@@ -293,7 +282,7 @@ class Item extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getPlayers0() {
-        return $this->hasMany(Player::class, ['id' => 'player_id'])->via('playerItems');
+        return $this->hasMany(Player::class, ['id' => 'player_id'])->viaTable('player_item', ['item_id' => 'id']);
     }
 
     /**
@@ -311,7 +300,7 @@ class Item extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getStatuses() {
-        return $this->hasMany(PassageStatus::class, ['id' => 'status_id'])->via('passageStatusItems');
+        return $this->hasMany(PassageStatus::class, ['id' => 'status_id'])->viaTable('passage_status_item', ['item_id' => 'id']);
     }
 
     /**
@@ -487,9 +476,13 @@ class Item extends \yii\db\ActiveRecord {
      * @return string The image file name
      */
     public function getPicture() {
-        if ($this->image) {
-            return $this->image->file_name;
-        }
-        return null;
+        /*
+          if ($this->image) {
+          return $this->image->file_name;
+          }
+          return null;
+         *
+         */
+        return $this->image;
     }
 }

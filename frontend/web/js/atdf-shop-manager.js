@@ -28,16 +28,10 @@ class ShopManager {
                     const suffix = button.getAttribute('id');
 
                     // Split the ID to extract the operation and item ID
-                    var parts = suffix.split('-');
-                    var operation = parts[1]; // This will be 'add', 'remove', or 'delete'
-                    var itemId = parts[2]; // This will be the item ID (e.g., '20', '22', '120')
+                    const parts = suffix.split('-');
+                    const operation = parts[1]; // This will be 'add', 'remove', or 'delete'
+                    const itemId = parts[2]; // This will be the item ID (e.g., '20', '22', '120')
 
-                    // Log the operation and item ID or use them as needed
-                    console.log('Operation:', operation);
-                    console.log('Item ID:', itemId);
-
-                    // You can now use the operation and itemId to perform the desired action
-                    // For example, call a function to handle the cart operation
                     ShopManager.handleCartOperation(operation, itemId);
                 });
             });

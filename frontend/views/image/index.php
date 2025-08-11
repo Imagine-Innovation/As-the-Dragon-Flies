@@ -3,7 +3,7 @@
 use common\models\RaceGroup;
 use yii\helpers\Html;
 use frontend\widgets\AjaxContainer;
-use frontend\widgets\IconButton;
+use frontend\widgets\Button;
 
 /** @var yii\web\View $this */
 /** @var yii\data\ActiveDataProvider $dataProvider */
@@ -21,7 +21,8 @@ $categories = ['Misc', 'Image', 'Item', 'Monster'];
     <div class="card-body">
         <div class="actions">
             <?=
-            IconButton::widget([
+            Button::widget([
+                'mode' => 'icon',
                 'icon' => 'bi-upload',
                 'tooltip' => 'Upload an image'
             ])

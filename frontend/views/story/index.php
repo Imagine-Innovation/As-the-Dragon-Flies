@@ -1,6 +1,6 @@
 <?php
 
-use frontend\widgets\IconButton;
+use frontend\widgets\Button;
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */
@@ -21,7 +21,8 @@ $this->params['breadcrumbs'][] = $this->title;
             <?php if ($user->is_designer): ?>
                 <div class="actions">
                     <?=
-                    IconButton::widget([
+                    Button::widget([
+                        'mode' => 'icon',
                         'url' => Url::toRoute(['story/create']),
                         'icon' => 'bi-journal-plus',
                         'tooltip' => "Create a new story"

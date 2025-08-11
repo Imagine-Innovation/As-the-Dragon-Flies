@@ -1,6 +1,6 @@
 <?php
 
-use frontend\widgets\IconButton;
+use frontend\widgets\Button;
 use frontend\widgets\ModalDesc;
 
 /** @var yii\web\View $this */
@@ -19,7 +19,8 @@ use frontend\widgets\ModalDesc;
                     <div class="card-body">
                         <div class="actions">
                             <?=
-                            IconButton::widget([
+                            Button::widget([
+                                'mode' => 'icon',
                                 'id' => "cartButton-add-{$item['id']}",
                                 'icon' => 'bi-cart-plus h2',
                                 'tooltip' => "Add a {$item['name']} to cart"

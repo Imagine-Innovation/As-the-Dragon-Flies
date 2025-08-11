@@ -8,7 +8,7 @@
             <div class="col-12 col-sm-4 col-md-6 col-lg-4 col-xxl-3">
                 <div class="card h-100">
                     <?php if ($model->image): ?>
-                        <img class="card-img-top" src="img/item/<?= $model->image->file_name ?>">
+                        <img class="card-img-top" src="img/item/<?= $model->image ?>">
                     <?php endif; ?>
                     <div class="card-body">
                         <h6><?= $model->name ?></h6>

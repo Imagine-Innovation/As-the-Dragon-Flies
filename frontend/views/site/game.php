@@ -1,139 +1,159 @@
+<?php
+
+use frontend\helpers\Caligraphy;
+use frontend\widgets\Button;
+?>
+
+
 <style>
-    .hero-section {
-        padding: 4rem 0 6rem;
-    }
+<?php if (1 === 1): ?>
+        .hero-text {
+            font-size: 1.25rem;
+            line-height: 1.6;
+            color: var(--dragon-text-muted);
+            margin-bottom: 2rem;
+        }
 
-    .hero-text {
-        font-size: 1.25rem;
-        line-height: 1.6;
-        color: var(--dragon-text-muted);
-        margin-bottom: 2rem;
-    }
+        .hero-text .initial {
+            color: var(--dragon-amber);
+            font-weight: 600;
+            font-size: 1.5rem;
+        }
 
-    .hero-text .initial {
-        color: var(--dragon-amber);
-        font-weight: 600;
-        font-size: 1.5rem;
-    }
+        .btn-dragon {
+            background-color: var(--dragon-amber);
+            border-color: var(--dragon-amber);
+            color: var(--dragon-dark);
+            font-weight: 600;
+            padding: 0.75rem 2rem;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+            transition: all 0.2s ease;
+        }
 
-    .btn-dragon {
-        background-color: var(--dragon-amber);
-        border-color: var(--dragon-amber);
-        color: var(--dragon-dark);
-        font-weight: 600;
-        padding: 0.75rem 2rem;
-        font-size: 1.1rem;
-        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
-        transition: all 0.2s ease;
-    }
+        .btn-dragon:hover {
+            background-color: var(--dragon-amber-hover);
+            border-color: var(--dragon-amber-hover);
+            color: var(--dragon-dark);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+            transform: translateY(-2px);
+        }
 
-    .btn-dragon:hover {
-        background-color: var(--dragon-amber-hover);
-        border-color: var(--dragon-amber-hover);
-        color: var(--dragon-dark);
-        box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
-        transform: translateY(-2px);
-    }
+        .btn-outline-dragon {
+            border-color: var(--dragon-text-muted);
+            color: var(--dragon-text-muted);
+            padding: 0.75rem 2rem;
+            font-size: 1.1rem;
+            transition: all 0.2s ease;
+        }
 
-    .btn-outline-dragon {
-        border-color: var(--dragon-text-muted);
-        color: var(--dragon-text-muted);
-        padding: 0.75rem 2rem;
-        font-size: 1.1rem;
-        transition: all 0.2s ease;
-    }
+        .btn-outline-dragon:hover {
+            background-color: var(--dragon-slate);
+            border-color: var(--dragon-text);
+            color: var(--dragon-text);
+        }
 
-    .btn-outline-dragon:hover {
-        background-color: var(--dragon-slate);
-        border-color: var(--dragon-text);
-        color: var(--dragon-text);
-    }
+        .hero-image {
+            border-radius: 1rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
 
-    .hero-image {
-        border-radius: 1rem;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-        position: relative;
-        overflow: hidden;
-    }
+        .hero-image::before {
+            content: '';
+            position: absolute;
+            inset: -1rem;
+            background: linear-gradient(45deg, rgba(245, 158, 11, 0.2), rgba(251, 146, 60, 0.2));
+            border-radius: 1.5rem;
+            z-index: -1;
+            filter: blur(20px);
+        }
 
-    .hero-image::before {
-        content: '';
-        position: absolute;
-        inset: -1rem;
-        background: linear-gradient(45deg, rgba(245, 158, 11, 0.2), rgba(251, 146, 60, 0.2));
-        border-radius: 1.5rem;
-        z-index: -1;
-        filter: blur(20px);
-    }
+        .content-section {
+            padding: 5rem 0;
+        }
 
-    .content-section {
-        padding: 5rem 0;
-    }
+        .content-card {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid var(--dragon-slate-light);
+            border-radius: 1rem;
+            padding: 3rem;
+            height: 100%;
+            backdrop-filter: blur(10px);
+            transition: transform 0.2s ease;
+        }
 
-    .content-card {
-        background: rgba(30, 41, 59, 0.6);
-        border: 1px solid var(--dragon-slate-light);
-        border-radius: 1rem;
-        padding: 3rem;
-        height: 100%;
-        backdrop-filter: blur(10px);
-        transition: transform 0.2s ease;
-    }
+        .content-card:hover {
+            transform: translateY(-4px);
+        }
 
-    .content-card:hover {
-        transform: translateY(-4px);
-    }
+        .content-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--dragon-amber);
+            margin-bottom: 2rem;
+            line-height: 1.2;
+        }
 
-    .content-title {
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: var(--dragon-amber);
-        margin-bottom: 2rem;
-        line-height: 1.2;
-    }
+        .content-text {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: var(--dragon-text-muted);
+            margin-bottom: 1.5rem;
+        }
 
-    .content-text {
-        font-size: 1.1rem;
-        line-height: 1.7;
-        color: var(--dragon-text-muted);
-        margin-bottom: 1.5rem;
-    }
+        .content-text .initial {
+            color: var(--dragon-amber);
+            font-weight: 600;
+            font-size: 1.3rem;
+        }
 
-    .content-text .initial {
-        color: var(--dragon-amber);
-        font-weight: 600;
-        font-size: 1.3rem;
-    }
-
-    .section-divider {
-        height: 1px;
-        background: var(--dragon-slate-light);
-        border: none;
-        margin: 0;
-    }
+        .section-divider {
+            height: 1px;
+            background: var(--dragon-slate-light);
+            border: none;
+            margin: 0;
+        }
+<?php endif; ?>
 
 </style>
 <body>
     <!-- Hero Section -->
-    <section class="hero-section">
+    <section>
         <div class="container">
             <div class="row align-items-center g-5">
                 <div class="col-lg-6">
                     <div class="hero-content">
-                        <h1 class=" text-decoration">
-                            Venture into a Realm of Dragons!
-                        </h1>
-
-                        <div class="hero-text">
-                            <p class="mb-4">
-                                <span class="initial">E</span>mbark on an epic adventure with As the Dragon Flies, where you can create your character, explore a vast interactive map, and connect with fellow adventurers.
-                            </p>
-                            <p class="mb-0">
-                                <span class="initial">J</span>oin our community and weave your legend today!
-                            </p>
-                        </div>
+                        <h1 class="text-decoration">Venture into a Realm of Dragons!</h1>
+                        <br />
+                        <p style="font-weight: 100">
+                            <?=
+                            Caligraphy::illuminate([
+                                'Embark on an epic adventure with ' . Caligraphy::appName() . ',
+                                     where you can create your character, explore a vast interactive map,
+                                     and connect with fellow adventurers.',
+                                'Join our community and weave your legend today!'
+                                    ],
+                                    'hero-text'//style
+                            )
+                            ?>
+                        </p>
+                        <br>
 
                         <div class="d-flex flex-column flex-sm-row gap-3 mt-4">
+                            <?=
+                            Button::widget([
+                                'icon' => 'bi-arrow-right-circle',
+                                'title' => 'Come and join us!',
+                                'callToAction' => true
+                            ])
+                            ?>
+                            <?=
+                            Button::widget([
+                                'title' => 'Learn More',
+                            ])
+                            ?>
                             <button class="btn btn-dragon btn-lg">
                                 <i class="fas fa-dragon me-2"></i>Come and join us!
                             </button>

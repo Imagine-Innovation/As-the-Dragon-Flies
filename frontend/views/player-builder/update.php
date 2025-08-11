@@ -5,7 +5,7 @@ use frontend\components\BuilderComponent;
 use frontend\widgets\AjaxContainer;
 use frontend\widgets\BuilderOnclick;
 use frontend\widgets\BuilderTab;
-use frontend\widgets\IconButton;
+use frontend\widgets\Button;
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
@@ -25,16 +25,12 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
     <div class="card-body">
         <h4 class="card-title text-decoration"><?= Html::encode($this->title) ?></h4>
         <div class="actions">
-            <a href="#" class="actions__item" data-bs-toggle="tooltip" title="Save" data-placement="bottom">
-                <span onclick="$('#save-button').click();">
-                    <i class="bi bi-floppy"></i>
-                </span>
-            </a>
             <?=
-            IconButton::widget([
+            Button::widget([
+                'id' => 'playerBuilderSaveButton',
+                'mode' => 'icon',
                 'icon' => 'bi-floppy',
                 'tooltip' => "Save",
-                'onclick' => "$('#save-button').click();"
             ])
             ?>
         </div>
@@ -61,9 +57,9 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
                 <?php foreach ($tabs as $tab): ?>
                     <?php if (($isAdmin && $tab['admin']) || !$tab['admin']): ?>
                         <li class="nav-item">
-                            <a class="nav-link<?= $tab['anchor'] == $firstTab ? " active" : "" ?>"
-                               data-bs-toggle="tab" href="#<?= $tab['anchor'] ?>-tab" role="tab"
-                               <?= BuilderOnclick::widget(['player' => $model, 'wizard' => $tab['wizard'], 'onclick' => $tab['onclick']]) ?>                               >
+                            <a role="tab" class="nav-link<?= $tab['anchor'] == $firstTab ? " active" : "" ?>"
+                               id="builderTab-<?= $tab['anchor'] ?>-<?= $tab['wizard'] ?>"
+                               data-bs-toggle="tab" href="#<?= $tab['anchor'] ?>-tabContent">
                                    <?= $tab['name'] ?>
                             </a>
                         </li>
@@ -73,8 +69,8 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
 
             <div class="tab-content">
                 <?php foreach ($tabs as $tab): ?>
-                    <div class="tab-pane <?= $tab['anchor'] == $firstTab ? "active fade show" : "fade" ?>" id="<?= $tab['anchor'] ?>-tab" role="tabpanel">
-                        <?= $tab['onclick'] ?? BuilderTab::widget(['player' => $model, 'tabContent' => $tab]) ?>
+                    <div class="tab-pane <?= $tab['anchor'] == $firstTab ? "active fade show" : "fade" ?>" id="<?= $tab['anchor'] ?>-tabContent" role="tabpanel">
+                        <?= BuilderTab::widget(['player' => $model, 'tabContent' => $tab]) ?>
                     </div>
                 <?php endforeach; ?>
             </div>
@@ -141,15 +137,20 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
                 <h6 class="modal-title">Let's go on an adventure</h6>
             </div>
             <div class="modal-body">
-                <p class="text-muted">Your player is now completely created.</p>
-                <p class="text-muted">To continue and launch him on new adventures, you need to validate him.</p>
+                <p class="text-muted"><?= $model->name ?> is now completely created.</p>
+                <p class="text-muted">To continue and launch <?= $model->gender == 'F' ? "her" : "him" ?> on new adventures, you need to validate <?= $model->gender == 'F' ? "her" : "him" ?>.</p>
                 <p class="text-muted">Please note: once validated, it will no longer be possible to modify the player's characteristics.</p>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-warning btn-sm mt-2 w-50" type="button"
-                        onclick="PlayerBuilder.setProperty('status', <?= AppStatus::ACTIVE->value ?>);$('#save-button').click();">
-                    <i class="bi bi-check"></i> Save & Play
-                </button>
+                <?=
+                Button::widget([
+                    'icon' => 'bi-check',
+                    'title' => 'Save & play',
+                    'id' => 'playerBuilderValidateButton',
+                    'callToAction' => true,
+                    'style' => 'btn-sm mt-2 w-50',
+                ])
+                ?>
             </div>
         </div>
     </div>

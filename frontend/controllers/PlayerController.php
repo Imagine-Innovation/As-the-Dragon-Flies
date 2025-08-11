@@ -242,7 +242,7 @@ class PlayerController extends Controller {
     protected function findModel($id) {
 
         $query = Player::find()
-                ->with(['race', 'class', 'background', 'history', 'playerAbilities', 'playerSkills', 'playerTraits'])
+                ->with(['race', 'class', 'background', 'playerAbilities', 'playerSkills', 'playerTraits'])
                 ->where(['id' => $id]);
 
         $user = Yii::$app->user->identity;

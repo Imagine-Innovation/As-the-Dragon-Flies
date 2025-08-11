@@ -1,6 +1,6 @@
 <?php
 
-use frontend\widgets\IconButton;
+use frontend\widgets\Button;
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */
@@ -27,7 +27,8 @@ foreach ($players as $player) {
 
             <div class="actions">
                 <?=
-                IconButton::widget([
+                Button::widget([
+                    'mode' => 'icon',
                     'url' => Url::toRoute(['site/index']),
                     'icon' => 'bi-file-earmark-person',
                 ])

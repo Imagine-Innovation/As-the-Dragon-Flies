@@ -3,7 +3,7 @@
 use yii\helpers\Url;
 use frontend\components\Shopping;
 use frontend\widgets\CurrentPlayer;
-use frontend\widgets\IconButton;
+use frontend\widgets\Button;
 
 /** @var yii\web\View $this */
 /** @var yii\data\ActiveDataProvider $dataProvider */
@@ -30,7 +30,8 @@ $firstType = $itemTypes[0];
             <p id="purseContent"></p>
             <div class="actions">
                 <?=
-                IconButton::widget([
+                Button::widget([
+                    'mode' => 'icon',
                     'url' => Url::toRoute(['player-cart/cart']),
                     'icon' => 'bi-cart',
                     'tooltip' => "Go to your cart"

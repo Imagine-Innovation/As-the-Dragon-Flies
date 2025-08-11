@@ -199,6 +199,7 @@ class PlayerBuilderController extends Controller {
         $player = $this->findModel($playerId);
 
         $languages = BuilderComponent::initPlayerLanguages($player);
+        $this->saveLanguages($playerId, $languages['RaceLanguages']);
         return [
             'error' => false,
             'content' => $this->renderPartial('ajax/languages', [
@@ -207,6 +208,7 @@ class PlayerBuilderController extends Controller {
                 'otherLanguages' => $languages['OtherLanguages'],
                 'n' => $player->background->languages,
             ]),
+            'n' => $player->background->languages,
         ];
     }
 
@@ -224,7 +226,7 @@ class PlayerBuilderController extends Controller {
         $playerId = $request->post('playerId');
         $languageId = $request->post('languageId');
         $selected = $request->post('selected');
-
+        Yii::debug("*** debug *** actionAjaxUpdateLanguage - playerId={$playerId}, languageId=[$languageId}, selected={$selected}");
         if ($selected) {
             $this->addLanguage($playerId, $languageId);
         } else {
@@ -237,15 +239,22 @@ class PlayerBuilderController extends Controller {
         return ['error' => false, 'msg' => 'Language is updated'];
     }
 
-    private function addLanguage(int $playerId, int $languageId): void {
+    private function saveLanguages(int $playerId, array $languages): void {
+        Yii::debug("*** debug *** saveLanguages - playerId={$playerId}, languageId=" . print_r($languages, true));
+        foreach ($languages as $lang) {
+            $this->addLanguage($playerId, $lang['language_id']);
+        }
+    }
 
+    private function addLanguage(int $playerId, int $languageId): void {
+        Yii::debug("*** debug *** addLanguage - playerId={$playerId}, languageId=[$languageId}");
         $playerLanguage = PlayerLanguage::findOne([
             'player_id' => $playerId,
             'language_id' => $languageId
         ]);
 
         if (!$playerLanguage) {
-            $playerLanguage = new PlayerItem([
+            $playerLanguage = new PlayerLanguage([
                 'player_id' => $playerId,
                 'language_id' => $languageId
             ]);
@@ -298,16 +307,16 @@ class PlayerBuilderController extends Controller {
         $player = $this->findModel($playerId);
 
         $endowmentTable = $player->initialEndowment;
-        $backgroundItems = $player->background->backgroundItems;
-
+        $choices = max(array_keys($endowmentTable));
+        Yii::debug($endowmentTable);
         return [
             'error' => false,
             'content' => $this->renderPartial('ajax/endowment', [
-                'player' => $player,
                 'endowments' => $endowmentTable,
-                'backgroundItems' => $backgroundItems,
-                'choices' => max(array_keys($endowmentTable)),
+                'choices' => $choices,
             ]),
+            'endowments' => $endowmentTable,
+            'choices' => $choices,
         ];
     }
 
@@ -643,7 +652,7 @@ class PlayerBuilderController extends Controller {
     protected function findModel(int $id) {
 
         $query = PlayerBuilder::find()
-                ->with(['race', 'class', 'background', 'history', 'playerAbilities', 'playerSkills', 'playerTraits'])
+                ->with(['race', 'class', 'background', 'playerAbilities', 'playerSkills', 'playerTraits'])
                 ->where(['id' => $id]);
 
         $user = Yii::$app->user->identity;

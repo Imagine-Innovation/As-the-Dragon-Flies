@@ -1,16 +1,17 @@
 <?php
-
-use common\models\User;
+//use common\models\User;
 
 /** @var yii\web\View $this */
 /** @var common\models\Player[] $models */
-$user = User::findOne(['id' => Yii::$app->user->identity->id]);
+//$user = User::findOne(['id' => Yii::$app->user->identity->id]);
+$userId = Yii::$app->session->get('userId');
+$playerName = Yii::$app->session->get('playerName');
 $initial = null;
 $checkedId = null;
-if ($user->currentPlayer) {
-    $names = explode(' ', $user->currentPlayer->name);
+if ($playerName) {
+    $names = explode(' ', $playerName);
     $initial = $names[0][0] . $names[1][0];
-    $checkedId = $user->currentPlayer->id;
+    $checkedId = Yii::$app->session->get('playerId');
 }
 ?>
 <?php if ($models): ?>
@@ -34,7 +35,7 @@ if ($user->currentPlayer) {
                                 <input type="radio" class="custom-control-input"
                                        id="player-<?= $model->id ?>" name="player"
                                        <?= $model->id == $checkedId ? "checked" : "" ?>
-                                       onclick='PlayerSelector.select(<?= $user->id ?>, <?= $model->id ?>);'
+                                       onclick='PlayerSelector.select(<?= $userId ?>, <?= $model->id ?>);'
                                        />
                                 <label class="custom-control-label" for="player-<?= $model->id ?>"><?= $model->name ?></label>
                             </div>
