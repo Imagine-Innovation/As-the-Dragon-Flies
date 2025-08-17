@@ -4,7 +4,7 @@
 /** @var common\models\Quest $quest */
 ?>
 <!-- Party Members -->
-<section class="card mb-3">
+<section id="game-partners" class="card mb-3">
     <h6 class="text-warning m-3">Partners</h6>
     <?php foreach ($quest->questPlayers as $questPlayer): ?>
         <?php

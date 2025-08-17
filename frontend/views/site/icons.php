@@ -2,15 +2,54 @@
 $this->title = 'Custom Icons';
 $this->params['breadcrumbs'][] = $this->title;
 
-$icons = ['dev',
-    'd20', 'badge', 'chest', 'castel', 'large-castel', 'crown', 'crown2', 'coins', 'danger', 'diamond', 'diamond-ring',
-    'key', 'key2', 'pirate', 'ring', 'spell-book', 'tent', 'tower', 'trophy', 'scroll', 'ghost', 'magic-wand', 'logo',
-    'action-rest', 'action-run', 'action-fight', 'action-prepare-spell', 'action-hide', 'action-move', 'action-climb',
-    'action-unarmed-strike', 'action-attack',
-    'armor', 'armor-plate', 'armor-shield', 'armor-round-shield', 'armor-helmet', 'armor-helmet-large', 'armor-helmet-plume', 'armor-spartan',
-    'weapon', 'weapon-arrows', 'weapon-sword', 'weapon-bow',
-    'class-barbarian', 'class-bard', 'class-rogue', 'class-sorcerer', 'class-wizard',
-];
+$devIcons = false;
+
+if ($devIcons) {
+    $icons = [
+        'dungeon-gate-svgrepo-com', 'goblin-head-svgrepo-com', 'gargoyle-svgrepo-com', 'hatchet-svgrepo-com',
+        'horse-head-svgrepo-com', 'man-doing-pushups-svgrepo-com', 'man-jumping-up-svgrepo-com', 'iying-down-svgrepo-com',
+        'woman-looking-by-a-spyglass-svgrepo-com', 'man-riding-a-horse-svgrepo-com',
+        'daggers-svgrepo-com', 'falling-svgrepo-com', 'wyvern-svgrepo-com',
+        'secret-book-svgrepo-com', 'set-kara-svgrepo-com', 'skeleton-16-svgrepo-com',
+        'stake-hammer-svgrepo-com', 'stringed-isntrument-violin-viola-cello-svgrepo-com',
+        'troll-svgrepo-com', 'tshirt-svgrepo-com', 'white-book-svgrepo-com',
+        'bad-gnome', 'basic-silhouette', 'battle', 'book-solid', 'bookmark',
+        'crossed-swords', 'crystal-shrine', 'hood', 'knight-helmet', 'knight',
+        'pirate-flag', 'robe',
+    ];
+} else {
+    $icons = [
+        // Misc
+        'd20', 'apothecary', 'badge', 'banner', 'castle', 'castle2', 'castle3', 'chest',
+        'coins', 'coins2', 'danger', 'dungeon', 'equipment', 'fire', 'horse',
+        'pirate', 'power-off', 'spell', 'spell-book', 'tent', 'tower', 'treble-clef',
+        'trophy', 'scroll', 'ghost', 'logo', 'skull',
+        // items
+        'candle', 'cauldron', 'crown', 'crown2', 'diamond', 'key', 'key2',
+        'pouch', 'ring', 'ring-diamond', 'rope', 'magic-wand', 'magic-wand2',
+        // actions
+        'action-attack', 'action-climb', 'action-fight', 'action-hide',
+        'action-inventory', 'action-move', 'action-prepare-spell', 'action-pull-lever',
+        'action-rest', 'action-run', 'action-unarmed-strike',
+        'action-smash-down',
+        // armors
+        'armor', 'armor-plate', 'armor-shield', 'armor-round-shield',
+        'armor-helmet', 'armor-helmet-large', 'armor-helmet-plume',
+        'armor-spartan',
+        // weapons
+        'weapon', 'weapon-arrows', 'weapon-axe', 'weapon-crossbow',
+        'weapon-glaive', 'weapon-sword', 'weapon-bow',
+        // classes
+        'class-barbarian', 'class-bard', 'class-rogue', 'class-sorcerer',
+        'class-wizard',
+        // races
+        'race-dwarf', 'race-elf', 'race-orc',
+        // monsters
+        'monster', 'monster2', 'monster-dragon',
+        // conditions
+        'condition-stunned',
+    ];
+}
 ?>
 <div class="container-fluid">
     <div class="row g-4">

@@ -1,0 +1,118 @@
+:root {
+    --icon-color: currentColor;
+    --icon-size: 1em;
+    --icon-vertical-align: -0.125em;
+}
+
+/* Base properties for all DnD icons */
+[class^="dnd-"],
+[class*=" dnd-"] {
+    display: inline-block;
+    width: var(--icon-size);
+    height: var(--icon-size);
+    background-color: var(--icon-color) !important;
+    -webkit-mask-repeat: no-repeat !important;
+    mask-repeat: no-repeat !important;
+    -webkit-mask-position: center !important;
+    mask-position: center !important;
+    -webkit-mask-size: 100% 100% !important;
+    mask-size: 100% 100% !important;
+    vertical-align: var(--icon-vertical-align) !important;
+    font-size: inherit !important;
+    line-height: 1 !important;
+}
+
+/* Individual icon classes */
+.dnd-dev { --icon-url: url('dnd-icons/sword.svg'); }
+.dnd-d20 { --icon-url: url('dnd-icons/d20.svg'); }
+.dnd-apothecary { --icon-url: url('dnd-icons/apothecary.svg'); }
+.dnd-badge { --icon-url: url('dnd-icons/badge.svg'); }
+.dnd-banner { --icon-url: url('dnd-icons/banner.svg'); }
+.dnd-candle { --icon-url: url('dnd-icons/candle.svg'); }
+.dnd-castle { --icon-url: url('dnd-icons/castle.svg'); }
+.dnd-castle2 { --icon-url: url('dnd-icons/castle2.svg'); }
+.dnd-castle3 { --icon-url: url('dnd-icons/castle3.svg'); }
+.dnd-cauldron { --icon-url: url('dnd-icons/cauldron.svg'); }
+.dnd-chest { --icon-url: url('dnd-icons/chest.svg'); }
+.dnd-crown { --icon-url: url('dnd-icons/crown.svg'); }
+.dnd-crown2 { --icon-url: url('dnd-icons/crown2.svg'); }
+.dnd-coin-pouch { --icon-url: url('dnd-icons/coin-pouch.svg'); }
+.dnd-coins { --icon-url: url('dnd-icons/coins.svg'); }
+.dnd-coins2 { --icon-url: url('dnd-icons/coins2.svg'); }
+.dnd-danger { --icon-url: url('dnd-icons/danger.svg'); }
+.dnd-diamond { --icon-url: url('dnd-icons/diamond.svg'); }
+.dnd-dungeon { --icon-url: url('dnd-icons/dungeon.svg'); }
+.dnd-equipment { --icon-url: url('dnd-icons/equipment.svg'); }
+.dnd-fire { --icon-url: url('dnd-icons/fire.svg'); }
+.dnd-ghost { --icon-url: url('dnd-icons/ghost.svg'); }
+.dnd-horse { --icon-url: url('dnd-icons/horse.svg'); }
+.dnd-key { --icon-url: url('dnd-icons/key.svg'); }
+.dnd-key2 { --icon-url: url('dnd-icons/key2.svg'); }
+.dnd-logo { --icon-url: url('dnd-icons/logo.svg'); }
+.dnd-magic-wand { --icon-url: url('dnd-icons/magic-wand.svg'); }
+.dnd-magic-wand2 { --icon-url: url('dnd-icons/magic-wand2.svg'); }
+.dnd-pirate { --icon-url: url('dnd-icons/pirate.svg'); }
+.dnd-pouch { --icon-url: url('dnd-icons/pouch.svg'); }
+.dnd-power-off { --icon-url: url('dnd-icons/power-off.svg'); }
+.dnd-ring { --icon-url: url('dnd-icons/ring.svg'); }
+.dnd-ring-diamond { --icon-url: url('dnd-icons/ring-diamond.svg'); }
+.dnd-rope { --icon-url: url('dnd-icons/rope.svg'); }
+.dnd-scroll { --icon-url: url('dnd-icons/scroll.svg'); }
+.dnd-skull { --icon-url: url('dnd-icons/skull.svg'); }
+.dnd-spell { --icon-url: url('dnd-icons/spell.svg'); }
+.dnd-spell-book { --icon-url: url('dnd-icons/spell-book.svg'); }
+.dnd-tent { --icon-url: url('dnd-icons/tent.svg'); }
+.dnd-tower { --icon-url: url('dnd-icons/tower.svg'); }
+.dnd-treble-clef { --icon-url: url('dnd-icons/treble-clef.svg'); }
+.dnd-trophy { --icon-url: url('dnd-icons/trophy.svg'); }
+.dnd-action-attack { --icon-url: url('dnd-icons/action-attack.svg'); }
+.dnd-action-climb { --icon-url: url('dnd-icons/action-climb.svg'); }
+.dnd-action-fight { --icon-url: url('dnd-icons/action-fight.svg'); }
+.dnd-action-inventory { --icon-url: url('dnd-icons/action-inventory.svg'); }
+.dnd-action-unarmed-strike { --icon-url: url('dnd-icons/action-unarmed-strike.svg'); }
+.dnd-action-hide { --icon-url: url('dnd-icons/action-hide.svg'); }
+.dnd-action-move { --icon-url: url('dnd-icons/action-move.svg'); }
+.dnd-action-prepare-spell { --icon-url: url('dnd-icons/action-prepare-spell.svg'); }
+.dnd-action-pull-lever { --icon-url: url('dnd-icons/action-pull-lever.svg'); }
+.dnd-action-rest { --icon-url: url('dnd-icons/action-rest.svg'); }
+.dnd-action-smash-down { --icon-url: url('dnd-icons/action-smash-down.svg'); }
+.dnd-action-run { --icon-url: url('dnd-icons/action-run.svg'); }
+.dnd-weapon { --icon-url: url('dnd-icons/weapon.svg'); }
+.dnd-weapon-arrows { --icon-url: url('dnd-icons/weapon-arrows.svg'); }
+.dnd-weapon-axe { --icon-url: url('dnd-icons/weapon-axe.svg'); }
+.dnd-weapon-crossbow { --icon-url: url('dnd-icons/weapon-crossbow.svg'); }
+.dnd-weapon-glaive { --icon-url: url('dnd-icons/weapon-glaive.svg'); }
+.dnd-weapon-sword { --icon-url: url('dnd-icons/weapon-sword.svg'); }
+.dnd-weapon-bow { --icon-url: url('dnd-icons/weapon-bow.svg'); }
+.dnd-armor { --icon-url: url('dnd-icons/armor.svg'); }
+.dnd-armor-plate { --icon-url: url('dnd-icons/armor-plate.svg'); }
+.dnd-armor-shield { --icon-url: url('dnd-icons/armor-shield.svg'); }
+.dnd-armor-round-shield { --icon-url: url('dnd-icons/armor-round-shield.svg'); }
+.dnd-armor-helmet { --icon-url: url('dnd-icons/armor-helmet.svg'); }
+.dnd-armor-helmet-large { --icon-url: url('dnd-icons/armor-helmet-large.svg'); }
+.dnd-armor-helmet-plume { --icon-url: url('dnd-icons/armor-helmet-plume.svg'); }
+.dnd-armor-spartan { --icon-url: url('dnd-icons/armor-spartan.svg'); }
+.dnd-class-wizard { --icon-url: url('dnd-icons/class-wizard.svg'); }
+.dnd-class-barbarian { --icon-url: url('dnd-icons/class-barbarian.svg'); }
+.dnd-class-bard { --icon-url: url('dnd-icons/class-bard.svg'); }
+.dnd-class-rogue { --icon-url: url('dnd-icons/class-rogue.svg'); }
+.dnd-class-sorcerer { --icon-url: url('dnd-icons/class-sorcerer.svg'); }
+.dnd-monster { --icon-url: url('dnd-icons/monster.svg'); }
+.dnd-monster2 { --icon-url: url('dnd-icons/monster2.svg'); }
+.dnd-monster-dragon { --icon-url: url('dnd-icons/monster-dragon.svg'); }
+.dnd-race-dwarf { --icon-url: url('dnd-icons/race-dwarf.svg'); }
+.dnd-race-elf { --icon-url: url('dnd-icons/race-elf.svg'); }
+.dnd-race-orc { --icon-url: url('dnd-icons/race-orc.svg'); }
+.dnd-condition-stunned { --icon-url: url('dnd-icons/condition-stunned.svg'); }
+
+/* Apply the mask using the custom property */
+[class^="dnd-"]::before,
+[class*=" dnd-"]::before {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    -webkit-mask-image: var(--icon-url) !important;
+    mask-image: var(--icon-url) !important;
+    background-color: var(--icon-color) !important;
+}

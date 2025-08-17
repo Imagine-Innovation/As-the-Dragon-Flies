@@ -1,0 +1,572 @@
+:root {
+    --icon-color: currentColor; /* This will make icons inherit text color */
+}
+
+@font-face {
+    font-display: block;
+    font-family: "bootstrap-icons";
+}
+
+.dnd-bad-gnome::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/bad-gnome.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/bad-gnome.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-basic-silhouette::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/basic-silhouette.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/basic-silhouette.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-battle::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/battle.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/battle.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-book-solid::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/book-solid.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/book-solid.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-bookmark::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/bookmark.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/bookmark.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-crossed-swords::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/crossed-swords.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/crossed-swords.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-crystal-shrine::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/crystal-shrine.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/crystal-shrine.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-hood::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/hood.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/hood.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-knight-helmet::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/knight-helmet.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/knight-helmet.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-knight::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/knight.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/knight.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-pirate-flag::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/pirate-flag.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/pirate-flag.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-pirate-symbol-mark-svgrepo-com::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/pirate-symbol-mark-svgrepo-com.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/pirate-symbol-mark-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-point-svgrepo-com::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/point-svgrepo-com.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/point-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-potion-of-madness-svgrepo-com::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/potion-of-madness-svgrepo-com.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/potion-of-madness-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-power-off-svgrepo-com::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/power-off-svgrepo-com.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/power-off-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-receipt-3-svgrepo-com::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/receipt-3-svgrepo-com.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/receipt-3-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-ring-svgrepo-com::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/ring-svgrepo-com.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/ring-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-ring::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/ring.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/ring.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-robe::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/robe.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/robe.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-rock-svgrepo-com::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/rock-svgrepo-com.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/rock-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-secret-book-svgrepo-com::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/secret-book-svgrepo-com.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/secret-book-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-set-kara-svgrepo-com::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/set-kara-svgrepo-com.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/set-kara-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-skeleton-16-svgrepo-com::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/skeleton-16-svgrepo-com.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/skeleton-16-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-stake-hammer-svgrepo-com::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/stake-hammer-svgrepo-com.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/stake-hammer-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-stringed-isntrument-violin-viola-cello-svgrepo-com::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/stringed-isntrument-violin-viola-cello-svgrepo-com.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/stringed-isntrument-violin-viola-cello-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-troll-svgrepo-com::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/troll-svgrepo-com.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/troll-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-tshirt-svgrepo-com::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/tshirt-svgrepo-com.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/tshirt-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-vector-square-svgrepo-com::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/vector-square-svgrepo-com.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/vector-square-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-walking-1-svgrepo-com::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/walking-1-svgrepo-com.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/walking-1-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-white-book-svgrepo-com::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/white-book-svgrepo-com.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/white-book-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-dungeon-gate-svgrepo-com::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/dungeon-gate-svgrepo-com.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/dungeon-gate-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-goblin-head-svgrepo-com::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/goblin-head-svgrepo-com.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/goblin-head-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-gargoyle-svgrepo-com::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/gargoyle-svgrepo-com.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/gargoyle-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-hatchet-svgrepo-com::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/hatchet-svgrepo-com.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/hatchet-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-horse-head-svgrepo-com::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/horse-head-svgrepo-com.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/horse-head-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-man-doing-pushups-svgrepo-com::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/man-doing-pushups-svgrepo-com.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/man-doing-pushups-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-man-jumping-up-svgrepo-com::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/man-jumping-up-svgrepo-com.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/man-jumping-up-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-iying-down-svgrepo-com::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/iying-down-svgrepo-com.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/iying-down-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-woman-looking-by-a-spyglass-svgrepo-com::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/woman-looking-by-a-spyglass-svgrepo-com.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/woman-looking-by-a-spyglass-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-man-riding-a-horse-svgrepo-com::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/man-riding-a-horse-svgrepo-com.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/man-riding-a-horse-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-daggers-svgrepo-com::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/daggers-svgrepo-com.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/daggers-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-falling-svgrepo-com::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/falling-svgrepo-com.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/falling-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+.dnd-wyvern-svgrepo-com::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/draft/wyvern-svgrepo-com.svg') no-repeat center center;
+    mask: url('dnd-icons/draft/wyvern-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+

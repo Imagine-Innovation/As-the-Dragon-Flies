@@ -26,25 +26,13 @@ class Button extends Widget {
     private function button() {
         $cta = $this->callToAction ?? false;
         // Caution: The spaces at the beginning of the line are intentional; do not delete them.
-        $style = ($cta ? ' btn-warning' : '') . ' ' . ($this->style ?? '');
+        $style = ($cta ? ' btn-warning' : ' btn-secondary') . ' ' . ($this->style ?? '');
 
         $icon = $this->icon ? $this->iconElement() : "";
 
         $html = '<a href="' . ($this->url ?? '#') . '"' . $this->idElement() . ' role="button" class="btn' . $style . '"' . $this->tooltipElement() . '>';
         $html .= "{$icon} " . Html::encode($this->title);
         $html .= "</a>";
-
-        return $html;
-    }
-
-    private function buttonV1() {
-        $url = ($this->url ?? '#');
-        $icon = $this->icon ? '<i class = "bi ' . $this->icon . '"></i>' : "";
-
-        $html = '<a class="btn btn-warning text-decoration" href="' . $url . '">' .
-                $icon . ' ' .
-                $this->title .
-                '</a>';
 
         return $html;
     }

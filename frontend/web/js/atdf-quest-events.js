@@ -37,18 +37,6 @@ class NotificationClient {
             });
         }
 
-        // Set up send chat button
-        /*
-         const sendChatBtn = document.getElementById('sendChatMessageButton');
-         if (sendChatBtn) {
-         sendChatBtn.addEventListener('click', () => {
-         if (chatInput) {
-         this.sendChatMessage(chatInput);
-         }
-         });
-         }
-         */
-
         // Event delegation for the "Leave Tavern" button
         document.addEventListener('click', (event) => {
             if (event.target) {
