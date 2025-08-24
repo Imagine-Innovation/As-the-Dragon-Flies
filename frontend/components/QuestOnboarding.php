@@ -9,6 +9,7 @@ use common\models\QuestPlayer;
 use common\models\Player;
 use common\models\Story;
 use common\models\StoryClass;
+use common\models\events\NewPlayerEvent;
 use Yii;
 
 class QuestOnboarding {
@@ -372,7 +373,19 @@ class QuestOnboarding {
             return $playerUpdate;
         }
 
-        return self::upsertQuestPlayer($quest->id, $player->id);
+        $result = self::upsertQuestPlayer($quest->id, $player->id);
+        if ($result['error']) {
+            return $result;
+        }
+
+        // Dispatch the new player event
+        $sessionId = Yii::$app->session->get('sessionId');
+        if ($sessionId) {
+            $event = new NewPlayerEvent($sessionId, $player, $quest);
+            $event->process();
+        }
+
+        return $result;
     }
 
     /**

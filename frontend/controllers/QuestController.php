@@ -238,11 +238,6 @@ class QuestController extends Controller {
             return ['success' => false, 'message' => 'Message cannot be empty'];
         }
 
-        // Create and process new message event
-        // $event = EventFactory::createEvent('new-message', $sessionId, $player, $quest, ['message' => $message]);
-        // $event->process();
-        // Yii::debug("*** Debug *** actionAjaxSendMessage - Event processing removed. Chat now handled via WebSocket direct message.");
-
         return ['success' => true, 'msg' => 'Message send attempt acknowledged. Actual processing via WebSocket.'];
     }
 

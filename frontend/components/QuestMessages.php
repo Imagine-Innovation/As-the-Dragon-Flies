@@ -85,9 +85,9 @@ class QuestMessages {
         $timestamp = time();
 
         return [
-            'playerName' => $player->name,
+            'playerName' => $player->name ?? 'Someone',
             'playerId' => $player->id,
-            'avatar' => $player->image->file_name,
+            'avatar' => $player->image ? $player->image->file_name : 'human-male-1.png',
             'questId' => $player->quest_id,
             'message' => $message,
             'timestamp' => date('Y-m-d H:i:s', $timestamp),

@@ -2371,9 +2371,7 @@ button.close {
 a.close.disabled {
     pointer-events:none;
 }
-.modal.fade .modal-dialog {
-    transform:translate(0,-50px);
-}
+
 .modal-content {
     background-color: var(--dark-95);
 }
@@ -5578,4 +5576,22 @@ pre {
     color: var(--light-gray);
     box-shadow: 0 3px 20px var(--light-gray-50);
     transform: translateY(-2px);
+}
+
+
+.modal-custom-size {
+    max-width: 95vw;
+    width: 95vw;
+    height: 80vh;
+    max-height: 80vh;
+    margin: auto;
+}
+
+@media (min-width: 576px) {
+    .modal-custom-size {
+        max-width: 900px;
+        width: 75vw;
+        max-height: 600px;
+        margin: auto;
+    }
 }

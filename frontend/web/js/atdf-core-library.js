@@ -23,7 +23,8 @@ class Logger {
     static log(level, fx, msg) {
         if (level <= CONFIG.LOG_LEVEL) {
             const offset = level < 5 ? ' '.repeat(level * 4) : '--> ';
-            console.log(`[${this._getFullTimestamp()}] ${offset}${this._getCaller()}.${fx}: ${msg}`);
+            //console.log(`[${this._getFullTimestamp()}] ${offset}${this._getCaller()}.${fx}: ${msg}`);
+            console.log(`${offset}${this._getCaller()}.${fx}: ${msg}`);
         }
     }
 

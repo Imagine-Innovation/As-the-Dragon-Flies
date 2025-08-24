@@ -3,6 +3,9 @@
 namespace frontend\controllers;
 
 use Yii;
+use common\models\Item;
+use common\models\Player;
+use common\models\PlayerBody;
 use common\models\PlayerItem;
 use frontend\components\Inventory;
 use common\components\ManageAccessRights;
@@ -10,12 +13,31 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use yii\helpers\ArrayHelper;
 use yii\web\Response;
 
 /**
  * PlayerItemController implements the CRUD actions for PlayerItem model.
  */
 class PlayerItemController extends Controller {
+
+    const BODY_HEAD = 'equipmentHeadZone';
+    const BODY_CHEST = 'equipmentChestZone';
+    const BODY_RIGHT_HAND = 'equipmentRightHandZone';
+    const BODY_LEFT_HAND = 'equipmentLeftHandZone';
+    // Define the properties to be used based on hand laterality
+    const PROPERTIES = [
+        self::BODY_RIGHT_HAND => [
+            'otherHand' => 'leftHand',
+            'otherZoneId' => 'left_hand_item_id',
+            'zoneIdToEquip' => 'right_hand_item_id'
+        ],
+        self::BODY_LEFT_HAND => [
+            'otherHand' => 'rightHand',
+            'otherZoneId' => 'right_hand_item_id',
+            'zoneIdToEquip' => 'left_hand_item_id'
+        ]
+    ];
 
     /**
      * @inheritDoc
@@ -35,7 +57,7 @@ class PlayerItemController extends Controller {
                             [
                                 'actions' => [
                                     'index', 'see-package',
-                                    'ajax-can-pack', 'ajax-toggle', 'ajax-pack-info'
+                                    'ajax-equipment', 'ajax-toggle', 'ajax-equip-player'
                                 ],
                                 'allow' => ManageAccessRights::isRouteAllowed($this),
                                 'roles' => ['@'],
@@ -102,6 +124,312 @@ class PlayerItemController extends Controller {
         ]);
     }
 
+    private function getEquipmentData(array $playerItems): array {
+        $itemTypes = [];
+        $playerItemData = [];
+        $itemData = [];
+
+        foreach ($playerItems as $playerItem) {
+            $itemType = $playerItem->item_type;
+
+            $itemTypes[$itemType] = $itemType;
+            $item = $playerItem->item;
+            $data = [
+                'itemId' => $item->id,
+                'name' => $item->name,
+                'image' => $item->image,
+                'isProficient' => $playerItem->is_proficient,
+                'isEquiped' => $playerItem->is_equiped,
+                'isTwoHanded' => $playerItem->is_two_handed,
+                'buttonId' => "equipButton-{$item->id}"
+            ];
+            $playerItemData[$itemType][] = $data;
+            $itemData[] = $data;
+        }
+
+        return [
+            'itemTypes' => $itemTypes,
+            'playerItems' => $playerItemData,
+            'itemData' => $itemData
+        ];
+    }
+
+    public function actionAjaxEquipment() {
+        // Set the response format to JSON
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        // Check if the request is a GET request and if it is an AJAX request
+        if (!$this->request->isGet || !$this->request->isAjax) {
+            // If not, return an error response
+            return ['error' => true, 'msg' => 'Not an Ajax GET request'];
+        }
+
+        $request = Yii::$app->request;
+        $playerId = $request->get('playerId');
+        if (!$playerId) {
+            return ['error' => true, 'msg' => 'Player not found'];
+        }
+
+        // If a player is found, return the player's packs
+        $playerItems = PlayerItem::findAll(['player_id' => $playerId, 'is_carrying' => 1]);
+
+        $equipmentData = $this->getEquipmentData($playerItems);
+
+        // Render the pack view with the found model
+        $content = $this->renderPartial('ajax\package', [
+            'itemTypes' => $equipmentData['itemTypes'],
+            'playerItems' => $equipmentData['playerItems'],
+        ]);
+        return ['error' => false, 'msg' => '',
+            'content' => $content,
+            'itemData' => $equipmentData['itemData']
+        ];
+    }
+
+    private function getItemIds(PlayerBody &$playerBody, string $property, array &$itemIds): void {
+        $itemId = $playerBody->$property;
+        if ($itemId) {
+            $itemIds[] = $itemId;
+        }
+    }
+
+    private function getPlayerBodyData(PlayerBody &$playerBody): array {
+        $itemIds = [];
+        $data = [];
+
+        $this->getItemIds($playerBody, 'head_item_id', $itemIds);
+        $this->getItemIds($playerBody, 'chest_item_id', $itemIds);
+        $this->getItemIds($playerBody, 'right_hand_item_id', $itemIds);
+        $this->getItemIds($playerBody, 'left_hand_item_id', $itemIds);
+
+        $items = Item::findAll(['id' => $itemIds]);
+
+        foreach ($items as $item) {
+            $data[] = [
+                'itemId' => $item->id,
+                'itemName' => $item->name,
+                'image' => $item->image,
+            ];
+        }
+
+        return [
+            'itemIds' => $itemIds,
+            'data' => $data
+        ];
+    }
+
+    private function savePlayerBody(PlayerBody &$playerBody, Item &$item): array {
+        Yii::debug("*** debug *** savePlayerBody - playerId={$playerBody->player_id}, item={$item->name}");
+        if ($playerBody->save()) {
+            // Set the 'is_equiped' attribute of PlayerItem model to false
+            PlayerItem::updateAll(
+                    ['is_equiped' => 0],
+                    ['player_id' => $playerBody->player_id]
+            );
+
+            $playerBodyData = $this->getPlayerBodyData($playerBody);
+
+            PlayerItem::updateAll(
+                    ['is_equiped' => 1],
+                    ['player_id' => $playerBody->player_id, 'item_id' => $playerBodyData['itemIds']]
+            );
+
+            return [
+                'error' => false,
+                'msg' => "{$item->name} is equiped",
+                'data' => $playerBodyData['data']
+            ];
+        }
+        return [
+            'error' => true,
+            'msg' => 'Player equipment failed: ' . ArrayHelper::getColumn($playerBody->errors, 0, false)[0]
+        ];
+    }
+
+    private function equipPlayerWithArmor(PlayerItem &$playerItem, Item &$item, PlayerBody &$playerBody, string $bodyZone): array {
+        if ($bodyZone !== self::BODY_CHEST) {
+            return [
+                'error' => true,
+                'msg' => 'Invalid body zone'
+            ];
+        }
+        $playerBody->chest_item_id = $playerItem->item_id;
+
+        return $this->savePlayerBody($playerBody, $item);
+    }
+
+    private function equipPlayerWithHelmet(PlayerItem &$playerItem, Item &$item, PlayerBody &$playerBody, string $bodyZone): array {
+        if ($bodyZone !== self::BODY_HEAD) {
+            return [
+                'error' => true,
+                'msg' => 'Invalid body zone'
+            ];
+        }
+        $playerBody->head_item_id = $playerItem->item_id;
+        return $this->savePlayerBody($playerBody, $item);
+    }
+
+    private function equipPlayerWithShield(PlayerItem &$playerItem, Item &$item, PlayerBody &$playerBody, string $bodyZone): array {
+        if ($bodyZone !== self::BODY_LEFT_HAND) {
+            return [
+                'error' => true,
+                'msg' => 'Invalid body zone'
+            ];
+        }
+
+        $properties = self::PROPERTIES[self::BODY_LEFT_HAND];
+        $this->disarmTheOtherHand($playerBody, $properties);
+
+        $playerBody->left_hand_item_id = $playerItem->item_id;
+
+        return $this->savePlayerBody($playerBody, $item);
+    }
+
+    private function equipPlayerWithTool(PlayerItem &$playerItem, Item &$item, PlayerBody &$playerBody, string $bodyZone): array {
+        if ($bodyZone !== self::BODY_RIGHT_HAND) {
+            return [
+                'error' => true,
+                'msg' => 'Invalid body zone'
+            ];
+        }
+
+        $properties = self::PROPERTIES[self::BODY_RIGHT_HAND];
+        $this->disarmTheOtherHand($playerBody, $properties);
+
+        $playerBody->right_hand_item_id = $playerItem->item_id;
+        return $this->savePlayerBody($playerBody, $item);
+    }
+
+    private function equipPlayerWithWeapon(PlayerItem &$playerItem, Item &$item, PlayerBody &$playerBody, string $bodyZone): array {
+        Yii::debug("*** debug *** equipPlayerWithWeapon - bodyZone={$bodyZone}");
+        if ($bodyZone !== self::BODY_RIGHT_HAND && $bodyZone !== self::BODY_LEFT_HAND) {
+            return [
+                'error' => true,
+                'msg' => 'Invalid body zone'
+            ];
+        }
+
+        // If the weapon is two-handed, simply use both hands.
+        if ($playerItem->is_two_handed) {
+            $playerBody->right_hand_item_id = $playerItem->item_id;
+            $playerBody->left_hand_item_id = $playerItem->item_id;
+            return $this->savePlayerBody($playerBody, $item);
+        }
+
+        // For a one-handed weapon
+        return $this->equipPlayerWithOneHandedWeapon($item, $playerBody, $bodyZone);
+    }
+
+    private function equipPlayerWithOneHandedWeapon(Item &$item, PlayerBody &$playerBody, string $bodyZone): array {
+        // When this function is called, we already know that
+        // it is either the right hand or the left hand.
+        $properties = self::PROPERTIES[$bodyZone];
+        $this->disarmTheOtherHand($playerBody, $properties);
+
+        return $this->holdWeapon($item, $playerBody, $properties);
+    }
+
+    /**
+     * Test if the player was previously holding a two-handed weapon.
+     * If so, disarm the other hand before picking up the one-handed weapon.
+     * This function is made generic and relies on the properties array
+     * to manage hand laterality.
+     *
+     * @param PlayerBody $playerBody
+     * @param array $properties
+     * @return void
+     */
+    private function disarmTheOtherHand(PlayerBody &$playerBody, array $properties): void {
+        Yii::debug($properties);
+        $property = $properties['otherZoneId'];
+        Yii::debug("*** debug *** disarmTheOtherHand - property={$property}");
+        if ($playerBody->$property) {
+            // check if the other hand is not holding a two-handed weapon
+            $property = $properties['otherHand'];
+            $otherHand = $playerBody->$property;
+            if ($otherHand->is_two_handed) {
+                // The player has a two-handed weapon in his hand.
+                // It is therefore also in the other hand.
+                // Disarm it!
+                $property = $properties['otherZoneId'];
+                $playerBody->$property = null;
+            }
+        }
+    }
+
+    /**
+     * Before allowing the player to hold the weapon, check that he is not
+     * holding an identical weapon in the other hand.
+     * If this is the case, check that they have at least two.
+     * If they only have one, disarm the other hand.
+     *
+     * @param Item $item
+     * @param PlayerBody $playerBody
+     * @param array $properties
+     * @return array
+     */
+    private function holdWeapon(Item &$item, PlayerBody &$playerBody, array $properties): array {
+        Yii::debug($properties);
+        $property = $properties['otherZoneId'];
+        Yii::debug("*** debug *** holdWeapon - property={$property}");
+        if ($playerBody->$property) {
+            // check if the other hand is not holding the same one-handed weapon
+            $property = $properties['otherHand'];
+            $otherHand = $playerBody->$property;
+            $itemIdProperty = $properties['otherZoneId'];
+            if (
+                    !$otherHand->is_two_handed &&
+                    $playerBody->$itemIdProperty === $item->id &&
+                    $otherHand->quantity < 2
+            ) {
+                // The player does not have 2 identical weapon.
+                // Disarm the other hand.
+                $playerBody->$itemIdProperty = null;
+            }
+        }
+        $itemIdProperty = $properties['zoneIdToEquip'];
+        $playerBody->$itemIdProperty = $item->id;
+
+        return $this->savePlayerBody($playerBody, $item);
+    }
+
+    private function equipPlayer(PlayerItem &$playerItem, string $bodyZone): array {
+        $playerBody = $this->findPlayerBody($playerItem->player_id);
+        $item = $playerItem->item;
+        $itemType = $playerItem->item_type;
+        Yii::debug("*** debug *** equipPlayer - itemType={$itemType}, bodyZone={$bodyZone}");
+        return match ($itemType) {
+            'Armor' => $this->equipPlayerWithArmor($playerItem, $item, $playerBody, $bodyZone),
+            'Helmet' => $this->equipPlayerWithHelmet($playerItem, $item, $playerBody, $bodyZone),
+            'Shield' => $this->equipPlayerWithShield($playerItem, $item, $playerBody, $bodyZone),
+            'Tool' => $this->equipPlayerWithTool($playerItem, $item, $playerBody, $bodyZone),
+            'Weapon' => $this->equipPlayerWithWeapon($playerItem, $item, $playerBody, $bodyZone),
+            default => throw new \InvalidArgumentException("Unknown item type: {$itemType}"),
+        };
+    }
+
+    public function actionAjaxEquipPlayer() {
+        // Set the response format to JSON
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        // Check if the request is a POST request and if it is an AJAX request
+        if (!$this->request->isPost || !$this->request->isAjax) {
+            // If not, return an error response
+            return ['error' => true, 'msg' => 'Not an Ajax POST request'];
+        }
+
+        $request = Yii::$app->request;
+        $playerId = $request->post('playerId');
+        $itemId = $request->post('itemId');
+
+        $playerItem = $this->findModel($playerId, $itemId);
+
+        $bodyZone = $request->post('bodyZone');
+        Yii::debug("*** debug *** actionAjaxEquipPlayer - playerId={$playerId}, itemId={$itemId}, bodyZone={$bodyZone}");
+
+        return $this->equipPlayer($playerItem, $bodyZone);
+    }
+
     private function prepareAjax($request) {
         if (!$request->isPost || !$request->isAjax) {
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
@@ -156,28 +484,44 @@ class PlayerItemController extends Controller {
      * It queries the PlayerItem table for a record with matching player_id and item_id values.
      * If a matching model is found, it is returned. Otherwise, a NotFoundHttpException is thrown.
      *
-     * @param int $player_id Player ID
+     * @param int $playerId Player ID
      * @param int $itemId Item ID
      * @return PlayerItem The loaded PlayerItem model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($player_id, $itemId) {
+    protected function findModel($playerId, $itemId) {
         // Find the PlayerItem model based on its primary key value
-        if (($model = PlayerItem::findOne(['player_id' => $player_id, 'item_id' => $itemId])) !== null) {
+        if (($model = PlayerItem::findOne(['player_id' => $playerId, 'item_id' => $itemId])) !== null) {
             return $model;
         }
 
         // If the model is not found, throw a 404 HTTP exception
-        throw new NotFoundHttpException("The player's item you are looking for does not exist.");
+        throw new NotFoundHttpException("The player's item you are looking for does not exist. playerId={$playerId}, itemId={$itemId}");
     }
 
-    protected function findPlayer() {
-        $user = Yii::$app->user->identity;
+    protected function findPlayer(int|null $playerId = null): Player {
+        $player = $playerId ?
+                Player::findOne(['id' => $playerId]) :
+                Yii::$app->session->get('currentPlayer');
 
-        if ($user) {
-            return Yii::$app->session->get('currentPlayer');
+        if ($player) {
+            return $player;
         }
 
-        throw new NotFoundHttpException("The player you are looking for does not exist.");
+        throw new NotFoundHttpException("The player (playerId={$playerId}) you are looking for does not exist.");
+    }
+
+    protected function findPlayerBody(int|null $playerId = null) {
+        $player = $this->findPlayer($playerId);
+
+        $playerBody = $player->playerBody;
+
+        if (!$playerBody) {
+            $playerBody = new PlayerBody(['player_id' => $player->id]);
+            if (!$playerBody->save()) {
+                throw new \Exception(implode("<br />", ArrayHelper::getColumn($playerBody->errors, 0, false)));
+            }
+        }
+        return $playerBody;
     }
 }

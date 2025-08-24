@@ -439,8 +439,8 @@ class PlayerBuilderController extends Controller {
             'item_type' => $itemType,
             'quantity' => ($item->quantity ?? 1) * $quantity,
             'is_carrying' => 1,
-            'is_equiped' => 1,
             'is_proficient' => $isProficient,
+            'is_two_handed' => ($item->weapon ? $item->weapon->is_two_handed : 0),
             'attack_modifier' => $weaponProperties['attackModifier'],
             'damage' => $weaponProperties['damage'],
         ]);

@@ -19,6 +19,7 @@ use Yii;
  *
  * @property Item $item
  * @property Player $player
+ * @property PlayerBody $playerBody
  *
  * Custom properties for Item inherited sub-classes
  *
@@ -87,6 +88,15 @@ class PlayerItem extends \yii\db\ActiveRecord {
      */
     public function getPlayer() {
         return $this->hasOne(Player::class, ['id' => 'player_id']);
+    }
+
+    /**
+     * Gets query for [[PlayerBody]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPlayerBody() {
+        return $this->hasOne(PlayerBody::class, ['player_id' => 'player_id']);
     }
 
     /**

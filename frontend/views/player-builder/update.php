@@ -1,9 +1,7 @@
 <?php
 
-use common\components\AppStatus;
 use frontend\components\BuilderComponent;
 use frontend\widgets\AjaxContainer;
-use frontend\widgets\BuilderOnclick;
 use frontend\widgets\BuilderTab;
 use frontend\widgets\Button;
 use yii\helpers\Html;

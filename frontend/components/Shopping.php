@@ -600,7 +600,8 @@ class Shopping {
             'item_id' => $playerCart->item_id,
             'item_type' => $playerCart->item->itemType->name,
             'quantity' => $playerCart->quantity * $playerCart->item->quantity,
-            'is_proficient' => $isProficient
+            'is_proficient' => $isProficient,
+            'is_two_handed' => ($playerCart->item->weapon ? $playerCart->item->weapon->is_two_handed : 0),
         ]);
 
         return $playerItem;

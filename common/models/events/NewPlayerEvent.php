@@ -2,6 +2,8 @@
 
 namespace common\models\events;
 
+use common\models\Player;
+use common\models\events\NewMessageEvent;
 use Yii;
 
 class NewPlayerEvent extends Event {
@@ -37,8 +39,16 @@ class NewPlayerEvent extends Event {
 
         $this->broadcast();
 
+        // Dungeon master says hello
+        $dungeonMaster = Player::findOne(1);
+        if ($dungeonMaster) {
+            $message = "Player {$this->player->name} has joined the quest";
+            $newMessageEvent = new NewMessageEvent($this->sessionId, $dungeonMaster, $this->quest, $message);
+            $newMessageEvent->process();
+        }
+
         // Check if quest should start (max players reached)
-        if (count($players) >= $this->quest->story->max_players) {
+        if (count($this->quest->currentPlayers) >= $this->quest->story->max_players) {
             $startQuestEvent = new StartQuestEvent($this->player, $this->quest);
             $startQuestEvent->process();
         }

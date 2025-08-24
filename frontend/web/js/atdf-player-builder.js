@@ -201,8 +201,7 @@ class PlayerBuilder {
                 }
                 PlayerBuilder.initWizard(wizard);
             });
-        }
-        );
+        });
     }
 
     static initDescriptionTab(gender, alignmentId, age) {

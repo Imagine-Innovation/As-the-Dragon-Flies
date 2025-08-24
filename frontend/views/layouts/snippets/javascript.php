@@ -4,7 +4,7 @@ $controllerCustomJavascriptLib = [
     'player-builder' => ['atdf-player-builder', 'atdf-chart-drawer'],
     'player-cart' => ['atdf-shop-manager'],
     'quest' => ['atdf-quest-events'],
-    'game' => ['atdf-quest-events'],
+    'game' => ['atdf-quest-events', 'atdf-equipment-manager'],
     'item' => ['atdf-item-manager'],
     'player-item' => ['atdf-item-manager'],
     'image' => ['atdf-image-manager'],
@@ -89,6 +89,17 @@ if ($controllerId === "quest" || $controllerId === "game"):
         const notificationClient = new NotificationClient(url, sessionId, playerId, playerName, avatar, questId, questName);
 
         notificationClient.init();
-<?php endif; ?>
 
+    <?php
+    /**
+     * Game specific local script
+     */
+    if ($controllerId === "game"):
+        ?>
+            const equipmentHandler = new EquipmentHandler();
+            const svg = document.querySelector('svg');
+            equipmentHandler.init(playerId, svg);
+
+    <?php endif; ?>
+<?php endif; ?>
 </script>

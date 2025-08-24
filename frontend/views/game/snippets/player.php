@@ -1,6 +1,7 @@
 <?php
 
 use frontend\components\PlayerComponent;
+use frontend\widgets\Button;
 
 /** @var yii\web\View $this */
 /** @var common\models\Player $player */
@@ -10,7 +11,18 @@ $proficiencyBonus = $player->level->proficiency_bonus;
 $playerAbilities = PlayerComponent::getAbilitiesAndSavingThrow($player->playerAbilities, $proficiencyBonus);
 ?>
 <!-- Character Info -->
-<section id="game-player" class="card mb-3">
+<article id="game-player" class="card mb-3">
+    <div class="actions">
+        <?=
+        Button::widget([
+            'id' => 'showEquipmentModal-Button',
+            'mode' => 'icon',
+            'icon' => 'dnd-equipment',
+            'tooltip' => "Player's equipement",
+            'modal' => 'equipmentModal'
+        ])
+        ?>
+    </div>
     <header class="text-center m-3">
         <img src="img/characters/<?= $avatar ?>" alt="Avatar" class="avatar mb-2">
         <h6 class="text-warning text-decoration"><?= $player->name ?></h6>
@@ -18,7 +30,7 @@ $playerAbilities = PlayerComponent::getAbilitiesAndSavingThrow($player->playerAb
     </header>
 
     <!-- Health -->
-    <article id="game-player-health">
+    <div id="game-player-health">
         <p class="mx-3">Health</p>
         <div class="progress mx-3" role="progressbar" aria-label="Hit points"
              aria-valuenow="<?= $player->hit_points ?>" aria-valuemin="0" aria-valuemax="<?= $player->max_hit_points ?>">
@@ -27,10 +39,10 @@ $playerAbilities = PlayerComponent::getAbilitiesAndSavingThrow($player->playerAb
                 <?= $player->hit_points ?>/<?= $player->max_hit_points ?>
             </div>
         </div>
-    </article>
+    </div>
 
     <!-- Stats -->
-    <article id="game-player-abilities">
+    <div id="game-player-abilities">
         <h6 class="text-warning m-3">Abilities</h6>
 
         <div class="row mx-3">
@@ -42,5 +54,5 @@ $playerAbilities = PlayerComponent::getAbilitiesAndSavingThrow($player->playerAb
             <?php endforeach; ?>
             <div class="col-12 g-2 mb-2">Armor Class <?= $player->armor_class ?></div>
         </div>
-    </article>
-</section>
+    </div>
+</article>

@@ -49,6 +49,7 @@ use Yii;
  * @property Notification[] $triggeredNotifications
  * @property Notification[] $notifications
  * @property PlayerAbility[] $playerAbilities
+ * @property PlayerBody $playerBody
  * @property PlayerCart[] $playerCarts
  * @property PlayerCoin[] $playerCoins
  * @property PlayerCondition[] $playerConditions
@@ -282,6 +283,15 @@ class Player extends \yii\db\ActiveRecord {
      */
     public function getPlayerAbilities() {
         return $this->hasMany(PlayerAbility::class, ['player_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[PlayerBody]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPlayerBody() {
+        return $this->hasOne(PlayerBody::class, ['player_id' => 'id']);
     }
 
     /**

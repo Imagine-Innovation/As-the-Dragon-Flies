@@ -5,7 +5,6 @@ namespace frontend\components;
 use common\models\ClassItemProficiency;
 use common\models\ItemCategory;
 use common\models\PlayerAbility;
-use common\models\PlayerItem;
 use common\models\Weapon;
 use Yii;
 use yii\helpers\ArrayHelper;
