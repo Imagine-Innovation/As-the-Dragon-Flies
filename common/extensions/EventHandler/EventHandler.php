@@ -14,7 +14,8 @@ use common\models\Notification;
 use Yii;
 use yii\base\Component;
 
-class EventHandler extends Component {
+class EventHandler extends Component
+{
 
     public $host = '0.0.0.0';
     public $port = 8082;
@@ -133,12 +134,12 @@ class EventHandler extends Component {
         return $this->questSessionManager->registerSessionForQuest($sessionId, $data);
     }
 
-    public function broadcastToQuest(int $questId, BroadcastMessageInterface $message, ?string $excludeSessionId = null): Notification {
+    public function broadcastToQuest(int $questId, array $message, ?string $excludeSessionId = null): void {
         if (!$this->notificationService) {
             $this->loggerService?->log("EventHandler: notificationService not initialized when calling broadcastToQuest.", null, 'error');
-            return null;
+            return;
         }
         // The QuestSessionManager already has its own logger, so it will log its own start/end.
-        $this->notificationService->createNotificationAndBroadcast($questId, $message, $type, $excludeSessionId);
+        $this->notificationService->createNotificationAndBroadcast($questId, $message, $excludeSessionId);
     }
 }

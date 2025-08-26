@@ -8,7 +8,8 @@ use common\models\PlayerCart;
 use common\models\PlayerItem;
 use Yii;
 
-class Shopping {
+class Shopping
+{
 
     public $itemTypes = ['Armor', 'Weapon', 'Pack', 'Gear', 'Tool', 'Poison'];
 
@@ -74,13 +75,16 @@ class Shopping {
             if ($thisCoin) {
                 // Create an entry in the purse array with quantity,
                 // copper value, and link to the previous coin type.
-                $this->purse[$coin] = [
+                $purseContent = [
                     'coin' => $coin,
                     'quantity' => $playerCoin->quantity,
                     'copperValue' => $playerCoin->quantity * $thisCoin['rate'],
                     'prev' => $thisCoin['prev'],
                     'rate' => $thisCoin['rate'],
                 ];
+                Yii::debug("*** debug *** initPurse");
+                Yii::debug($purseContent);
+                $this->purse[$coin] = $purseContent;
             }
         }
         // Sort the player's purse by descending change rate value

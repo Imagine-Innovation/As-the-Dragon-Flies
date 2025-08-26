@@ -18,7 +18,8 @@ use yii\web\Response;
 /**
  * PlayerCartController implements the CRUD actions for PlayerCart model.
  */
-class PlayerCartController extends Controller {
+class PlayerCartController extends Controller
+{
 
     /**
      * @inheritDoc
@@ -115,7 +116,8 @@ class PlayerCartController extends Controller {
         }
 
         // Retrieve the player
-        $player = Yii::$app->session->get('currentPlayer');
+        $playerId = Yii::$app->session->get('playerId');
+        $player = Player::findOne(['id' => $playerId]);
 
         // If no player is found, return an error response
         if (!$player) {
@@ -163,7 +165,8 @@ class PlayerCartController extends Controller {
         }
 
         // Retrieve the player
-        $player = Yii::$app->session->get('currentPlayer');
+        $playerId = Yii::$app->session->get('playerId');
+        $player = Player::findOne(['id' => $playerId]);
 
         // If no player is found, return an error response
         if (!$player) {
@@ -200,7 +203,8 @@ class PlayerCartController extends Controller {
         }
 
         // Retrieve the player
-        $player = Yii::$app->session->get('currentPlayer');
+        $playerId = Yii::$app->session->get('playerId');
+        $player = Player::findOne(['id' => $playerId]);
 
         // If no player is found, return an error response
         if (!$player) {
@@ -231,7 +235,8 @@ class PlayerCartController extends Controller {
         }
 
         // Retrieve the player
-        $player = Yii::$app->session->get('currentPlayer');
+        $playerId = Yii::$app->session->get('playerId');
+        $player = Player::findOne(['id' => $playerId]);
         // If no player is found, return an error response
         if (!$player) {
             return ['error' => true, 'msg' => 'Player not found'];
@@ -268,7 +273,8 @@ class PlayerCartController extends Controller {
         }
 
         // Retrieve the player
-        $player = Yii::$app->session->get('currentPlayer');
+        $playerId = Yii::$app->session->get('playerId');
+        $player = Player::findOne(['id' => $playerId]);
         // If no player is found, return an error response
         if (!$player) {
             return ['error' => true, 'msg' => 'Player not found'];
@@ -308,7 +314,8 @@ class PlayerCartController extends Controller {
         }
 
         // Retrieve the player
-        $player = Yii::$app->session->get('currentPlayer');
+        $playerId = Yii::$app->session->get('playerId');
+        $player = Player::findOne(['id' => $playerId]);
         // If no player is found, return an error response
         if (!$player) {
             return ['error' => true, 'msg' => 'Player not found'];

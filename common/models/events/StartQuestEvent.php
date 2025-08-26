@@ -4,7 +4,8 @@ namespace common\models\events;
 
 use Yii;
 
-class StartQuestEvent extends Event {
+class StartQuestEvent extends Event
+{
 
     public function getType(): string {
         return 'start_quest';
@@ -15,13 +16,13 @@ class StartQuestEvent extends Event {
     }
 
     public function getMessage(): string {
-        return "{$this->quest->name} has started";
+        return "{$this->quest->story->name} has started";
     }
 
     public function getPayload(): array {
         return [
             'questId' => $this->quest->id,
-            'questName' => $this->quest->name,
+            'questName' => $this->quest->story->name,
             'startTime' => date('Y-m-d H:i:s', $this->timestamp)
         ];
     }

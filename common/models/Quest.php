@@ -14,6 +14,7 @@ use Yii;
  * @property int $status Quest status (waiting, playing, paused, completed, aborted)
  * @property int $created_at Created at
  * @property int|null $started_at Started at
+ * @property int|null $completed_at Completed at
  * @property int $local_time Local time
  * @property int $elapsed_time Elapsed time (minute)
  *
@@ -27,7 +28,8 @@ use Yii;
  * @property Story $story
  * @property UserLog[] $userLogs
  */
-class Quest extends \yii\db\ActiveRecord {
+class Quest extends \yii\db\ActiveRecord
+{
 
     /**
      * {@inheritdoc}
@@ -41,11 +43,11 @@ class Quest extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['initiator_id', 'started_at'], 'default', 'value' => null],
+            [['initiator_id', 'started_at', 'completed_at'], 'default', 'value' => null],
             [['status'], 'default', 'value' => AppStatus::WAITING->value],
             [['elapsed_time'], 'default', 'value' => 0],
             [['story_id'], 'required'],
-            [['story_id', 'initiator_id', 'status', 'created_at', 'started_at', 'local_time', 'elapsed_time'], 'integer'],
+            [['story_id', 'initiator_id', 'status', 'created_at', 'started_at', 'completed_at', 'local_time', 'elapsed_time'], 'integer'],
             [['story_id'], 'exist', 'skipOnError' => true, 'targetClass' => Story::class, 'targetAttribute' => ['story_id' => 'id']],
             [['initiator_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['initiator_id' => 'id']],
         ];
@@ -62,6 +64,7 @@ class Quest extends \yii\db\ActiveRecord {
             'status' => 'Quest status (waiting, playing, paused, completed, aborted)',
             'created_at' => 'Created at',
             'started_at' => 'Started at',
+            'completed_at' => 'Completed at',
             'local_time' => 'Local time',
             'elapsed_time' => 'Elapsed time (minute)',
         ];

@@ -3,10 +3,16 @@
 namespace common\models\events;
 
 use common\models\Player;
+use common\models\Quest;
 use common\models\events\NewMessageEvent;
 use Yii;
 
-class NewPlayerEvent extends Event {
+class NewPlayerEvent extends Event
+{
+
+    public function __construct(string $sessionId, Player $player, Quest $quest, array $config = []) {
+        parent::__construct($sessionId, $player, $quest, $config);
+    }
 
     public function getType(): string {
         return 'new-player';
@@ -49,7 +55,7 @@ class NewPlayerEvent extends Event {
 
         // Check if quest should start (max players reached)
         if (count($this->quest->currentPlayers) >= $this->quest->story->max_players) {
-            $startQuestEvent = new StartQuestEvent($this->player, $this->quest);
+            $startQuestEvent = new StartQuestEvent($this->sessionId, $this->player, $this->quest);
             $startQuestEvent->process();
         }
     }

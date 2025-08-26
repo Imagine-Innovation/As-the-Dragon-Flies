@@ -18,9 +18,7 @@ class ShopManager {
 
             // Loop through each button and add the event listener
             buttons.forEach(button => {
-                Logger.log(10, 'initCartPage', `Found button ${button.getAttribute('id')}`);
                 button.addEventListener('click', function (event) {
-                    Logger.log(10, 'initCartPage', `Click on button ${button.getAttribute('id')}`);
                     // Prevent the default action
                     event.preventDefault();
 

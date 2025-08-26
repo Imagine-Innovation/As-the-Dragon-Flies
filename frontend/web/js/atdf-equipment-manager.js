@@ -2,39 +2,39 @@ class EquipmentHandler {
 
     constructor(options = {}) {
         this.zoneId = null;
-        this.field = null;
         this.options = {
             onHeadClick: () => {
                 this.zoneId = 'equipmentHeadZone';
-                this.field = 'head_id';
-                this._filterItems(['Helmet']);
+                this._filterItemType(['Helmet']);
                 console.log("Head clicked");
+                this._disarmPlayer(this.zoneId);
             },
             onChestClick: () => {
                 this.zoneId = 'equipmentChestZone';
-                this.field = 'chest_id';
-                this._filterItems(['Armor']);
+                this._filterItemType(['Armor']);
                 console.log("Chest clicked");
+                this._disarmPlayer(this.zoneId);
             },
             onRightHandClick: () => {
                 this.zoneId = 'equipmentRightHandZone';
-                this.field = 'right_hand_id';
-                this._filterItems(['Weapon', 'Tool']);
+                this._filterItemType(['Weapon', 'Tool']);
                 console.log("Right hand clicked");
+                this._disarmPlayer(this.zoneId);
             },
             onLeftHandClick: () => {
                 this.zoneId = 'equipmentLeftHandZone';
-                this.field = 'left_hand_id';
-                this._filterItems(['Weapon', 'Shield']);
+                this._filterItemType(['Weapon', 'Shield']);
                 console.log("Left hand clicked");
+                this._disarmPlayer(this.zoneId);
             },
             ...options
         };
         this.zoneStates = {
-            equipmentHeadZone: {filled: false, image: null},
-            equipmentChestZone: {filled: false, image: null},
-            equipmentRightHandZone: {filled: false, image: null},
-            equipmentLeftHandZone: {filled: false, image: null}
+            equipmentHeadZone: {filled: false, image: null, defaultColor: 'white'},
+            equipmentChestZone: {filled: false, image: null, defaultColor: 'white'},
+            equipmentRightHandZone: {filled: false, image: null, defaultColor: 'white'},
+            equipmentLeftHandZone: {filled: false, image: null, defaultColor: 'white'},
+            equipmentBackZone: {filled: false, image: null, defaultColor: 'black'}
         };
     }
 
@@ -62,29 +62,83 @@ class EquipmentHandler {
                 console.log('Callback', response);
                 if (!response.error) {
                     $(target).html(response.content);
-                    // Loop through the data and attach click events
-                    $.each(response.itemData, (index, item) => {
-                        this._attachEquipButtonEventListener(item);
-                    });
+                    this._attachEquipButtonEventListeners(response.items);
+                    this._updateZones(response.data);
                 }
             }
         });
     }
 
-    _attachEquipButtonEventListener(item) {
-        const $button = $(`#${item.buttonId}`);
+    _attachEquipButtonEventListeners(items) {
+        $.each(items, (index, item) => {
+            const $button = $(`#${item.buttonId}`);
 
-        if ($button.length) {
-            $button.click(() => {
-                console.log(`Button with ID ${item.buttonId} clicked!`);
-                console.log(`Image: ${item.image}`);
-                this._toggleZoneState(this.zoneId, item.image);
-            });
-        }
+            if ($button.length) {
+                $button.click(() => {
+                    console.log(`Button with ID ${item.buttonId} clicked!`);
+                    console.log(`Image: ${item.image}`);
+                    this._equipPlayer(this.zoneId, item);
+                });
+            }
+        });
     }
 
-    _filterItems(visibleTypes) {
-        Logger.log(1, 'filter', `visibleTypes=${JSON.stringify(visibleTypes)}`);
+    _equipPlayer(zoneId, item) {
+        const data = {
+            playerId: this.playerId,
+            itemId: item.itemId,
+            bodyZone: zoneId
+        };
+        console.log(`_equipPlayer - data: ${JSON.stringify(data)}`);
+
+        AjaxUtils.request({
+            url: 'player-item/ajax-equip-player',
+            data: data,
+            successCallback: (response) => {
+                console.log('Callback', response);
+                if (!response.error) {
+                    this._updateZones(response.data);
+                }
+            }
+        });
+    }
+
+    _disarmPlayer(zoneId) {
+        const state = this.zoneStates[zoneId];
+
+        if (state.filled === false)
+            return;
+
+        const data = {
+            playerId: this.playerId,
+            bodyZone: zoneId
+        };
+        console.log(`_disarmPlayer - data: ${JSON.stringify(data)}`);
+
+        AjaxUtils.request({
+            url: 'player-item/ajax-disarm-player',
+            data: data,
+            successCallback: (response) => {
+                console.log('Callback', response);
+                if (!response.error) {
+                    this._updateZones(response.data);
+                }
+            }
+        });
+    }
+
+    _updateZones(data) {
+        $.each(data, (zoneId, item) => {
+            if (item.itemId === null) {
+                this._clearZone(zoneId);
+            } else {
+                this._fillZoneWithImage(zoneId, item);
+            }
+        });
+    }
+
+    _filterItemType(visibleTypes) {
+        Logger.log(1, '_filterItemType', `visibleTypes=${JSON.stringify(visibleTypes)}`);
         const divs = document.querySelectorAll('[id^="itemType-"]');
 
         // Loop through each div and check for visibility
@@ -118,37 +172,26 @@ class EquipmentHandler {
         this._attachEventListener('equipmentChestZone', this.options.onChestClick);
         this._attachEventListener('equipmentRightHandZone', this.options.onRightHandClick);
         this._attachEventListener('equipmentLeftHandZone', this.options.onLeftHandClick);
-    }
-
-    /**
-     * Toggle the appearance of a zone between a colored zone and a filled image.
-     * @param {string} zoneId - The ID of the zone to toggle.
-     * @param {string} image - The URL of the PNG image to fill the zone.
-     */
-    _toggleZoneState(zoneId, image) {
-        Logger.log(1, '_toggleZoneState', `zoneId=${zoneId}, image=${image}`);
-        const zone = this.svgElement.querySelector(`#${zoneId}`);
-        if (!zone)
-            return;
-
-        const state = this.zoneStates[zoneId];
-        if (state.filled) {
-            // Revert to the initial colored zone
-            this._revertZoneToInitialState(zone, zoneId);
-        } else {
-            // Fill the zone with the provided image
-            this._fillZoneWithImage(zone, image);
-            state.image = image;
-        }
-        state.filled = !state.filled;
+        // No listener on the back zone on purpose
     }
 
     /**
      * Fill a zone with a PNG image.
-     * @param {SVGZoneElement} zone - The zone element to fill.
-     * @param {string} image - The URL of the PNG image.
+     * 
+     * @param {string} zoneId - The ID of the zone to fill.
+     * @param {array} item - Item data (id, name, image).
      */
-    _fillZoneWithImage(zone, imageFile) {
+    _fillZoneWithImage(zoneId, item) {
+        const imageFile = item.image;
+        console.log(`_fillZoneWithImage - imageFile=${imageFile}, zoneId=${zoneId}`);
+        const state = this.zoneStates[zoneId];
+
+        if (state.filled === true && state.image === imageFile) {
+            console.log(`_fillZoneWithImage - imageFile=${imageFile} already in zoneId=${zoneId}`);
+            return;
+        }
+
+        const zone = this.svgElement.querySelector(`#${zoneId}`);
         const {cx, cy, r} = zone.getAttributeNames().reduce((acc, name) => {
             acc[name] = zone.getAttribute(name);
             return acc;
@@ -177,16 +220,24 @@ class EquipmentHandler {
 
         zone.setAttribute("fill", `url(#pattern-${zone.id})`);
         zone.setAttribute("fill-opacity", "1"); // Set fill-opacity to 1
+
+        state.filled = true;
+        state.image = imageFile;
     }
 
     /**
      * Revert a zone to its initial colored state.
-     * @param {SVGZoneElement} zone - The zone element to revert.
-     * @param {string} zoneId - The ID of the zone.
+     * @param {string} zoneId - The ID of the zone to fill.
      */
-    _revertZoneToInitialState(zone, zoneId) {
+    _clearZone(zoneId) {
+        console.log(`_clearZone - zoneId=${zoneId}`);
+
         const state = this.zoneStates[zoneId];
-        zone.setAttribute("fill", "white");
+        if (state.filled === false)
+            return;
+
+        const zone = this.svgElement.querySelector(`#${zoneId}`);
+        zone.setAttribute("fill", state.defaultColor);
         zone.setAttribute("fill-opacity", "0.5");
 
         // Remove the pattern if it exists
@@ -194,6 +245,8 @@ class EquipmentHandler {
         if (pattern) {
             pattern.remove();
         }
+        state.filled = false;
+        state.image = null;
     }
 
     /**

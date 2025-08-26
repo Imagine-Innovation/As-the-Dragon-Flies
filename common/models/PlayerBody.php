@@ -18,6 +18,7 @@ use Yii;
  * @property PlayerItem $chest
  * @property PlayerItem $rightHand
  * @property PlayerItem $leftHand
+ * @property PlayerItem $back
  */
 class PlayerBody extends \yii\db\ActiveRecord {
 
@@ -61,20 +62,12 @@ class PlayerBody extends \yii\db\ActiveRecord {
                     return $model->left_hand_item_id !== null;
                 }
             ],
-        ];
-    }
-
-    public function rulesV1() {
-        return [
-            [['head_item_id', 'chest_item_id', 'right_hand_item_id', 'left_hand_item_id'], 'default', 'value' => null],
-            [['player_id'], 'required'],
-            [['player_id'], 'unique'],
-            [['player_id', 'head_item_id', 'chest_item_id', 'right_hand_item_id', 'left_hand_item_id'], 'integer'],
-            [['player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['player_id' => 'id']],
-            [['player_id', 'head_item_id'], 'exist', 'skipOnError' => true, 'skipOnEmpty' => true, 'targetClass' => PlayerItem::class, 'targetAttribute' => ['player_id' => 'player_id', 'head_item_id' => 'item_id']],
-            [['player_id', 'chest_item_id'], 'exist', 'skipOnError' => true, 'skipOnEmpty' => true, 'targetClass' => PlayerItem::class, 'targetAttribute' => ['player_id' => 'player_id', 'chest_item_id' => 'item_id']],
-            [['player_id', 'right_hand_item_id'], 'exist', 'skipOnError' => true, 'skipOnEmpty' => true, 'targetClass' => PlayerItem::class, 'targetAttribute' => ['player_id' => 'player_id', 'right_hand_item_id' => 'item_id']],
-            [['player_id', 'left_hand_item_id'], 'exist', 'skipOnError' => true, 'skipOnEmpty' => true, 'targetClass' => PlayerItem::class, 'targetAttribute' => ['player_id' => 'player_id', 'left_hand_item_id' => 'item_id']],
+            [['player_id', 'back_item_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlayerItem::class,
+                'targetAttribute' => ['player_id' => 'player_id', 'back_item_id' => 'item_id'],
+                'when' => function ($model) {
+                    return $model->back_item_id !== null;
+                }
+            ],
         ];
     }
 
@@ -88,6 +81,7 @@ class PlayerBody extends \yii\db\ActiveRecord {
             'chest_item_id' => 'Optional foreign key to \"player_item\" table. Item that protect the chest',
             'right_hand_item_id' => 'Optional foreign key to \"player_item\" table. Item handled in the right hand',
             'left_hand_item_id' => 'Optional foreign key to \"player_item\" table. Item handled in the left hand',
+            'left_hand_item_id' => 'Optional foreign key to \"player_item\" table. Item carried on the back',
         ];
     }
 
@@ -134,5 +128,14 @@ class PlayerBody extends \yii\db\ActiveRecord {
      */
     public function getLeftHand() {
         return $this->hasOne(PlayerItem::class, ['player_id' => 'player_id', 'item_id' => 'left_hand_item_id']);
+    }
+
+    /**
+     * Gets query for [[Back]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getBack() {
+        return $this->hasOne(PlayerItem::class, ['player_id' => 'player_id', 'item_id' => 'back_item_id']);
     }
 }

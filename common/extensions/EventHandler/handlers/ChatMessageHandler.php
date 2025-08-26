@@ -9,7 +9,8 @@ use common\extensions\EventHandler\NotificationService;
 use common\extensions\EventHandler\LoggerService;
 use Ratchet\ConnectionInterface;
 
-class ChatMessageHandler implements SpecificMessageHandlerInterface {
+class ChatMessageHandler implements SpecificMessageHandlerInterface
+{
 
     private LoggerService $logger;
     private NotificationService $notificationService;
@@ -57,7 +58,6 @@ class ChatMessageHandler implements SpecificMessageHandlerInterface {
         $notificationModel = $this->notificationService->createNotificationAndBroadcast(
                 (int) $questId,
                 $data, // Pass the whole $data array, NotificationService will extract what it needs
-                'chat', // Explicitly pass type
                 $sessionId, // excludeSessionId
                 (int) $userId
         );

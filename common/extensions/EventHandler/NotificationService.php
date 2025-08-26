@@ -10,7 +10,8 @@ use common\models\Notification;
 use common\models\Player;
 use frontend\components\QuestMessages;
 
-class NotificationService {
+class NotificationService
+{
 
     private LoggerService $logger;
     private BroadcastServiceInterface $broadcastService;
@@ -86,13 +87,12 @@ class NotificationService {
      *
      * @param int $questId
      * @param array $data Contains message details, including potentially 'sender_name'
-     * @param string $type Notification type, e.g., 'chat'
      * @param string|null $excludeSessionId Session to exclude from broadcast
      * @param int|null $userId User initiating the action
      * @return Notification|null
      */
-    public function createNotificationAndBroadcast(int $questId, array $data, string $type, ?string $excludeSessionId = null, ?int $userId = null): ?Notification {
-        $this->logger->logStart("NotificationService: createNotificationAndBroadcast questId=[{$questId}], type=[{$type}]", ['data' => $data, 'excludeSessionId' => $excludeSessionId, 'userId' => $userId]);
+    public function createNotificationAndBroadcast(int $questId, array $data, ?string $excludeSessionId = null, ?int $userId = null): ?Notification {
+        $this->logger->logStart("NotificationService: createNotificationAndBroadcast questId=[{$questId}]", ['data' => $data, 'excludeSessionId' => $excludeSessionId, 'userId' => $userId]);
 
         // Assuming $userId is equivalent to player_id for the notification
         $playerId = $userId ?? ($data['player_id'] ?? null);
