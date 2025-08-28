@@ -13,7 +13,7 @@ $this->title = Yii::$app->session->get('questName');
 $playerSnippet = $this->renderFile('@app/views/game/snippets/player.php', [
     'player' => $player
         ]);
-$partnersSnippet = $this->renderFile('@app/views/game/snippets/partners.php', [
+$partnersSnippet = $this->renderFile('@app/views/game/ajax/partners.php', [
     'playerId' => $player->id,
     'quest' => $quest
         ]);
@@ -28,39 +28,73 @@ $partnersSnippet = $this->renderFile('@app/views/game/snippets/partners.php', [
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
-            <section class="card p-3">
-                <?= $playerSnippet ?>
-                <?= $partnersSnippet ?>
+            <section class="">
+                <article id="game-player" class="card">
+                    <?= $playerSnippet ?>
+                </article>
+                <article id="game-equipement" class="card">
+                    <!-- Equipement -->
+                    <div class="actions">
+                        <?=
+                        Button::widget([
+                            'id' => 'showEquipmentModal-Button',
+                            'mode' => 'icon',
+                            'icon' => 'dnd-equipment',
+                            'tooltip' => "Player's equipement",
+                            'modal' => 'equipmentModal'
+                        ])
+                        ?>
+                    </div>
+                    <div class="m-3">
+                        <h6 class="text-warning">Equipment</h6>
+                        <div class="equipment-card" id="svg-aside-offcanvas"></div>
+                    </div>
+                </article>
+                <article id="game-partners" class="card">
+                    <?= $partnersSnippet ?>
+                </article>
             </section>
         </div>
     </aside>
 
     <!-- Visible Aside for xl and larger screens -->
-    <aside class="col-xl-3 d-none d-xl-block">
-        <section class="card p-3 h-100">
-            <?= $playerSnippet ?>
-            <?= $partnersSnippet ?>
+    <aside class="col-xl-3 col-xxl-2 d-none d-xl-block">
+        <section class="h-100">
+            <article id="game-player" class="card">
+                <?= $playerSnippet ?>
+            </article>
+            <article id="game-equipement" class="card">
+                <!-- Equipement -->
+                <div class="actions">
+                    <?=
+                    Button::widget([
+                        'id' => 'showEquipmentModal-Button',
+                        'mode' => 'icon',
+                        'icon' => 'dnd-equipment',
+                        'tooltip' => "Player's equipement",
+                        'modal' => 'equipmentModal'
+                    ])
+                    ?>
+                </div>
+                <div class="m-3">
+                    <h6 class="text-warning">Equipment</h6>
+                    <div class="equipment-card" id="svg-aside"></div>
+                </div>
+            </article>
+            <article id="game-partners" class="card">
+                <?= $partnersSnippet ?>
+            </article>
         </section>
     </aside>
 
     <!-- Center Panel - Game World -->
-    <section class="col-12 col-xl-9">
+    <section class="col-12 col-xl-9 col-xxl-10">
         <div class="row">
             <div class="col-12 col-lg-6 col-xxl-8">
                 <!-- Game Scene -->
                 <div class="card p-3 h-100 d-flex flex-column">
                     <div class="actions">
                         <!-- Button to trigger the offcanvas on smaller screens -->
-                        <?=
-                        Button::widget([
-                            'id' => 'showEquipmentModal-Button',
-                            'mode' => 'icon',
-                            'style' => 'd-xl-none',
-                            'icon' => 'dnd-equipment',
-                            'tooltip' => "Player's equipement",
-                            'modal' => 'equipmentModal'
-                        ])
-                        ?>
                         <a role="button"class="actions__item d-xl-none"  data-bs-toggle="offcanvas" href="#offcanvasPlayer" aria-controls="offcanvasPlayer">
                             <i class="bi bi-person-square"></i>
                         </a>
@@ -103,7 +137,7 @@ $partnersSnippet = $this->renderFile('@app/views/game/snippets/partners.php', [
                 </div>
             </div>
             <div class="col-12 col-lg-6 col-xxl-4">
-                <div class="card p-3 h-100 d-flex flex-column">
+                <div class="h-100 d-flex flex-column">
                     <!-- Chat System -->
                     <?=
                     $this->renderFile('@app/views/quest/snippets/chat.php', [
@@ -118,7 +152,7 @@ $partnersSnippet = $this->renderFile('@app/views/game/snippets/partners.php', [
 </main>
 
 <?=
-$this->renderFile('@app/views/game/snippets/equipment.php', [
+$this->renderFile('@app/views/game/snippets/equipment-modal.php', [
     'player' => $player
 ])
 ?>

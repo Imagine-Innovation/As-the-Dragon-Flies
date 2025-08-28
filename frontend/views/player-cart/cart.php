@@ -18,7 +18,10 @@ $shopping = new Shopping();
     <div class="row g-2">
         <div class="col-9">
             <?php if ($models): ?>
-                <?php foreach ($models as $model): ?>
+                <?php
+                foreach ($models as $model):
+                    $item = $model->item;
+                    ?>
                     <div class="card mb-3">
                         <div class="card-body">
                             <div class="actions">
@@ -27,7 +30,7 @@ $shopping = new Shopping();
                                     'mode' => 'icon',
                                     'id' => "cartButton-add-{$model->item_id}",
                                     'icon' => 'bi-cart-plus',
-                                    'tooltip' => "Add a {$model->item->name} to cart"
+                                    'tooltip' => "Add a {$item->name} to cart"
                                 ])
                                 ?>
                                 <?=
@@ -35,7 +38,7 @@ $shopping = new Shopping();
                                     'mode' => 'icon',
                                     'id' => "cartButton-remove-{$model->item_id}",
                                     'icon' => 'bi-cart-dash',
-                                    'tooltip' => "Remove a {$model->item->name} from cart"
+                                    'tooltip' => "Remove a {$item->name} from cart"
                                 ])
                                 ?>
                                 <?=
@@ -43,14 +46,14 @@ $shopping = new Shopping();
                                     'mode' => 'icon',
                                     'id' => "cartButton-delete-{$model->item_id}",
                                     'icon' => 'bi-trash3',
-                                    'tooltip' => "Delete every {$model->item->name} from cart"
+                                    'tooltip' => "Delete every {$item->name} from cart"
                                 ])
                                 ?>
                                 <?=
                                 Button::widget([
                                     'mode' => 'icon',
                                     'icon' => 'bi-cart',
-                                    'tooltip' => "{$model->item->name} in your cart"
+                                    'tooltip' => "{$item->name} in your cart"
                                 ])
                                 ?>
                                 <a href="#" class="invisible" id="somethingWrongModal-hiddenButton" data-bs-toggle="modal" data-bs-target="#somethingWrongModal"></a>
@@ -58,20 +61,17 @@ $shopping = new Shopping();
                                     <span id="cartCount-<?= $model->item_id ?>" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"><?= $model->quantity ?></span>
                                 </div>
                             </div>
-                            <img src="img/item/<?= $model->item->image ?>" class="image-thumbnail float-start" style="width: 80px;height: 80px;">
+                            <img src="img/item/<?= $item->image ?>" class="image-thumbnail float-start" style="width: 80px;height: 80px;">
                             <h6 class="card-subtitle">
-                                <?= $model->item->name ?>
-                                <?php if ($model->item->quantity > 1): ?>
-                                    (x<?= $model->item->quantity ?>)
-                                <?php endif; ?>
-                                (<?= $model->item->price ?>)</h6>
+        <?= $item->name ?><?= ($item->quantity > 1) ? "(x{$item->quantity})" : "" ?>(<?= $item->price ?>)
+                            </h6>
                             <h6 class="card-subtitle text-muted w-75">
                                 <?=
                                 ModalDesc::widget([
-                                    'name' => $model->item->name,
-                                    'description' => $model->item->description,
+                                    'name' => $item->name,
+                                    'description' => $item->description,
                                     'maxLength' => 180,
-                                    'type' => $model->item->itemType->name,
+                                    'type' => $item->itemType->name,
                                     'id' => $model->item_id,
                                 ])
                                 ?>
@@ -79,7 +79,7 @@ $shopping = new Shopping();
                         </div>
                     </div>
                 <?php endforeach; ?>
-            <?php else: ?>
+<?php else: ?>
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Your cart is empty</h5>
@@ -91,7 +91,7 @@ $shopping = new Shopping();
                         </h6>
                     </div>
                 </div>
-            <?php endif; ?>
+<?php endif; ?>
         </div>
         <div class="col">
             <div class="card">

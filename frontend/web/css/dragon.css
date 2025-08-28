@@ -4159,6 +4159,7 @@ pre {
     font-size:1.5rem;
     cursor:pointer;
     color:var(--light-85);
+    background-color: var(--dark-75);
     -webkit-transition:background-color .3s,color .3s;
     transition:background-color .3s,color .3s;
     width:35px;
@@ -5590,3 +5591,30 @@ pre {
         max-width: 900px;
     }
 }
+
+.equipment-modal-body {
+    max-height: 70vh; /* or any fixed height you prefer */
+    padding: 0;
+}
+
+.equipment-modal-body .col-sm-6 {
+    height: 100%;
+    padding: 10px;
+}
+
+.equipment-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.svg-container {
+    overflow: hidden;
+}
+
+.svg-container svg {
+    width: 100%;
+    height: auto;
+    max-height: 100%;
+}
+

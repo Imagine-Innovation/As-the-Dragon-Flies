@@ -3,9 +3,9 @@
 /** @var int $playerId */
 /** @var common\models\Quest $quest */
 ?>
-<!-- Party Members -->
-<article id="game-partners" class="card mb-3">
-    <h6 class="text-warning m-3">Partners</h6>
+<div class="m-3">
+    <!-- Party Members -->
+    <h6 class="text-warning">Partners</h6>
     <?php if (count($quest->questPlayers) > 1): ?>
         <?php foreach ($quest->questPlayers as $questPlayer): ?>
             <?php
@@ -30,4 +30,4 @@
     <?php else: ?>
         <p class="mx-3">You are alone in the quest</p>
     <?php endif; ?>
-</article>
+</div>

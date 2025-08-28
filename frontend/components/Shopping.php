@@ -577,10 +577,14 @@ class Shopping
             'item_id' => $playerCart->item_id
         ]);
 
+        $item = $playerCart->item;
+        if (!$item) {
+            return ['error' => true, 'msg' => "No item found in the cart"];
+        }
         // Check if a PlayerItem exists
         if ($playerItem) {
             // Update the quantity of the existing PlayerItem
-            $playerItem->quantity += $playerCart->quantity * ($playerCart->item->quantity ?? 1);
+            $playerItem->quantity += $playerCart->quantity * ($item->quantity ?? 1);
         } else {
             $playerItem = $this->addToInventory($playerCart);
         }
@@ -591,21 +595,24 @@ class Shopping
         }
 
         // Return an error response if saving failed
-        return ['error' => true, 'msg' => "Could not validate the purchase of {$playerCart->item->name}"];
+        return ['error' => true, 'msg' => "Could not validate the purchase of {$item->name}"];
     }
 
     private function addToInventory(PlayerCart &$playerCart): PlayerItem {
         $classId = $playerCart->player->class_id;
         $isProficient = PlayerComponent::isProficient($classId, $playerCart->item_id) ? 1 : 0;
 
+        $item = $playerCart->item;
         // Create a new PlayerItem if it does not exist
         $playerItem = new PlayerItem([
             'player_id' => $playerCart->player_id,
             'item_id' => $playerCart->item_id,
-            'item_type' => $playerCart->item->itemType->name,
-            'quantity' => $playerCart->quantity * $playerCart->item->quantity,
+            'item_name' => $item->name,
+            'item_type' => $item->itemType->name,
+            'image' => $item->image,
+            'quantity' => $playerCart->quantity * $item->quantity,
             'is_proficient' => $isProficient,
-            'is_two_handed' => ($playerCart->item->weapon ? $playerCart->item->weapon->is_two_handed : 0),
+            'is_two_handed' => ($item->weapon ? $item->weapon->is_two_handed : 0),
         ]);
 
         return $playerItem;

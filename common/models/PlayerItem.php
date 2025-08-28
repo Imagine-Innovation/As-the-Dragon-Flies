@@ -9,10 +9,13 @@ use Yii;
  *
  * @property int $player_id Foreign key to "player" table
  * @property int $item_id Foreign key to "item" table
+ * @property string $item_name Item name
  * @property string $item_type Item type
+ * @property string|null $image Image
  * @property int $quantity Quantity
  * @property int $is_carrying Indicates that the item is currently in the player back bag
  * @property int $is_proficient Indicates that the player is proficient with the item
+ * @property int $is_two_handed This weapon requires two hands when you attack with it
  * @property int|null $attack_modifier Score you add to a d20 roll when attempting to attack with a weapon
  * @property string|null $damage Amount of damage you do to the target on a successful hit
  *
@@ -31,6 +34,58 @@ use Yii;
 class PlayerItem extends \yii\db\ActiveRecord
 {
 
+    const BODY_HEAD_ZONE = 'equipmentHeadZone';
+    const BODY_CHEST_ZONE = 'equipmentChestZone';
+    const BODY_RIGHT_HAND_ZONE = 'equipmentRightHandZone';
+    const BODY_LEFT_HAND_ZONE = 'equipmentLeftHandZone';
+    const BODY_BACK_ZONE = 'equipmentBackZone';
+    // Define the properties to be used based on hand laterality
+    const HAND_PROPERTIES = [
+        self::BODY_RIGHT_HAND_ZONE => [
+            'otherHandProperty' => 'leftHand',
+            'otherHandItemIdField' => 'left_hand_item_id',
+            'otherHandBodyZone' => self::BODY_LEFT_HAND_ZONE,
+            'itemIdField' => 'right_hand_item_id'
+        ],
+        self::BODY_LEFT_HAND_ZONE => [
+            'otherHandProperty' => 'rightHand',
+            'otherHandItemIdField' => 'right_hand_item_id',
+            'otherHandBodyZone' => self::BODY_RIGHT_HAND_ZONE,
+            'itemIdField' => 'left_hand_item_id'
+        ],
+    ];
+    // Match the properties of the PlayerBody object to the image area
+    const BODY_ZONE = [
+        'head' => self::BODY_HEAD_ZONE,
+        'chest' => self::BODY_CHEST_ZONE,
+        'rightHand' => self::BODY_RIGHT_HAND_ZONE,
+        'leftHand' => self::BODY_LEFT_HAND_ZONE,
+        'back' => self::BODY_BACK_ZONE,
+    ];
+    // Match the body zone with the PlayerBody properties.
+    const BODY_PROPERTIES = [
+        self::BODY_HEAD_ZONE => [
+            'itemIdField' => 'head_item_id',
+            'property' => 'head'
+        ],
+        self::BODY_CHEST_ZONE => [
+            'itemIdField' => 'chest_item_id',
+            'property' => 'chest'
+        ],
+        self::BODY_RIGHT_HAND_ZONE => [
+            'itemIdField' => 'right_hand_item_id',
+            'property' => 'rightHand'
+        ],
+        self::BODY_LEFT_HAND_ZONE => [
+            'itemIdField' => 'left_hand_item_id',
+            'property' => 'leftHand'
+        ],
+        self::BODY_BACK_ZONE => [
+            'itemIdField' => 'back_item_id',
+            'property' => 'back'
+        ],
+    ];
+
     /**
      * {@inheritdoc}
      */
@@ -43,12 +98,12 @@ class PlayerItem extends \yii\db\ActiveRecord
      */
     public function rules() {
         return [
-            [['attack_modifier', 'damage'], 'default', 'value' => null],
+            [['image', 'attack_modifier', 'damage'], 'default', 'value' => null],
             [['quantity'], 'default', 'value' => 1],
-            [['is_proficient'], 'default', 'value' => 0],
-            [['player_id', 'item_id', 'item_type'], 'required'],
-            [['player_id', 'item_id', 'quantity', 'is_carrying', 'is_proficient', 'attack_modifier'], 'integer'],
-            [['item_type', 'damage'], 'string', 'max' => 32],
+            [['is_proficient', 'is_two_handed'], 'default', 'value' => 0],
+            [['player_id', 'item_id', 'item_name', 'item_type'], 'required'],
+            [['player_id', 'item_id', 'quantity', 'is_carrying', 'is_proficient', 'is_two_handed', 'attack_modifier'], 'integer'],
+            [['item_name', 'item_type', 'image', 'damage'], 'string', 'max' => 32],
             [['player_id', 'item_id'], 'unique', 'targetAttribute' => ['player_id', 'item_id']],
             [['player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['player_id' => 'id']],
             [['item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['item_id' => 'id']],
@@ -62,10 +117,13 @@ class PlayerItem extends \yii\db\ActiveRecord
         return [
             'player_id' => 'Foreign key to \"player\" table',
             'item_id' => 'Foreign key to \"item\" table',
+            'item_name' => 'Item name',
             'item_type' => 'Item type',
+            'image' => 'Image',
             'quantity' => 'Quantity',
             'is_carrying' => 'Indicates that the item is currently in the player back bag',
             'is_proficient' => 'Indicates that the player is proficient with the item',
+            'is_two_handed' => 'This weapon requires two hands when you attack with it',
             'attack_modifier' => 'Score you add to a d20 roll when attempting to attack with a weapon',
             'damage' => 'Amount of damage you do to the target on a successful hit',
         ];

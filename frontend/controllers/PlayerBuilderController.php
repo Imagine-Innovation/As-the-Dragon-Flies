@@ -28,7 +28,8 @@ use yii\web\Response;
 /**
  * PlayerController implements the CRUD actions for Player model.
  */
-class PlayerBuilderController extends Controller {
+class PlayerBuilderController extends Controller
+{
 
     /**
      * @inheritDoc
@@ -436,7 +437,9 @@ class PlayerBuilderController extends Controller {
         return new PlayerItem([
             'player_id' => $player->id,
             'item_id' => $item->id,
+            'item_name' => $item->name,
             'item_type' => $itemType,
+            'image' => $item->image,
             'quantity' => ($item->quantity ?? 1) * $quantity,
             'is_carrying' => 1,
             'is_proficient' => $isProficient,

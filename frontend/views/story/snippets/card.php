@@ -17,7 +17,7 @@ use yii\helpers\Url;
 $canJoin = QuestOnboarding::canPlayerJoinQuest($player, $quest);
 
 $image = $story->image ?
-        "img/story/{$story->id}/{$story->image->file_name}" :
+        "img/story/{$story->id}/{$story->image}" :
         "img/sm/" . mt_rand(1, 8) . ".jpg";
 ?>
 

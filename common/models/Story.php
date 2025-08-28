@@ -10,10 +10,10 @@ use Yii;
  * This is the model class for table "story".
  *
  * @property int $id Primary key
- * @property int|null $image_id Optional foreign key to "image" table
  * @property string $name Story title
  * @property string|null $description Short description
- * @property int $status Status of the story (9=draft, 10=published, 0=archived)
+ * @property string|null $image Image
+ * @property int $status Status of the story (200=draft, 201=published, 202=archived)
  * @property int $min_level Minimum level required to enter the story
  * @property int $max_level Maximum level required to enter the story
  * @property int $min_players Minimum number of players
@@ -21,7 +21,6 @@ use Yii;
  *
  * @property CharacterClass[] $classes
  * @property EntryPoint[] $entryPoints
- * @property Image $image
  * @property Quest[] $quests
  * @property StoryClass[] $storyClasses
  * @property StoryIntro[] $storyIntros
@@ -35,7 +34,8 @@ use Yii;
  * @property sting $requestedLevels
  * @property sting $companySize
  */
-class Story extends \yii\db\ActiveRecord {
+class Story extends \yii\db\ActiveRecord
+{
 
     /**
      * {@inheritdoc}
@@ -49,14 +49,16 @@ class Story extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['image_id', 'status', 'min_level', 'max_level', 'min_players', 'max_players'], 'integer'],
+            [['description', 'image'], 'default', 'value' => null],
+            [['status'], 'default', 'value' => AppStatus::DRAFT->value],
+            [['min_players'], 'default', 'value' => 1],
+            [['max_players'], 'default', 'value' => 4],
             [['name'], 'required'],
             [['description'], 'string'],
-            [['name'], 'string', 'max' => 32],
+            [['status', 'min_level', 'max_level', 'min_players', 'max_players'], 'integer'],
+            [['status'], 'in', 'range' => AppStatus::getValuesForStory()],
+            [['name', 'image'], 'string', 'max' => 32],
             [['name'], 'unique'],
-            [['image_id'], 'exist', 'skipOnError' => true, 'targetClass' => Image::class, 'targetAttribute' => ['image_id' => 'id']],
-            ['status', 'default', 'value' => AppStatus::DRAFT->value],
-            ['status', 'in', 'range' => AppStatus::getValuesForStory()],
         ];
     }
 
@@ -66,10 +68,10 @@ class Story extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'image_id' => 'Optional foreign key to \"image\" table',
             'name' => 'Story title',
             'description' => 'Short description',
-            'status' => 'Status of the story (9=draft, 10=published, 0=archived)',
+            'image' => 'Image',
+            'status' => 'Status of the story (200=draft, 201=published, 202=archived)',
             'min_level' => 'Minimum level required to enter the story',
             'max_level' => 'Maximum level required to enter the story',
             'min_players' => 'Minimum number of players',
@@ -83,7 +85,7 @@ class Story extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getClasses() {
-        return $this->hasMany(CharacterClass::class, ['id' => 'class_id'])->via('storyClasses');
+        return $this->hasMany(CharacterClass::class, ['id' => 'class_id'])->viaTable('story_class', ['story_id' => 'id']);
     }
 
     /**
@@ -93,15 +95,6 @@ class Story extends \yii\db\ActiveRecord {
      */
     public function getEntryPoints() {
         return $this->hasMany(EntryPoint::class, ['story_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[Image]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getImage() {
-        return $this->hasOne(Image::class, ['id' => 'image_id']);
     }
 
     /**
@@ -146,7 +139,7 @@ class Story extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getTags() {
-        return $this->hasMany(Tag::class, ['id' => 'tag_id'])->via('storyTags');
+        return $this->hasMany(Tag::class, ['id' => 'tag_id'])->viaTable('story_tag', ['story_id' => 'id']);
     }
 
     /**
@@ -155,7 +148,7 @@ class Story extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getTiles() {
-        return $this->hasMany(Tile::class, ['id' => 'tile_id'])->via('entryPoints');
+        return $this->hasMany(Tile::class, ['id' => 'tile_id'])->viaTable('entry_point', ['story_id' => 'id']);
     }
 
     /*     * *********************************
@@ -211,6 +204,9 @@ class Story extends \yii\db\ActiveRecord {
         }
         if ($max === 1) {
             return "Single player";
+        }
+        if (($max - $min) === 0) {
+            return "{$min} players";
         }
         if (($max - $min) === 1) {
             return "{$min} or {$max} players";

@@ -97,7 +97,8 @@ if ($controllerId === "quest" || $controllerId === "game"):
     if ($controllerId === "game"):
         ?>
             const equipmentHandler = new EquipmentHandler();
-            const svg = document.querySelector('svg');
+            //const svg = document.querySelector('svg');
+            const svg = document.getElementById('equipmentSvg');
             equipmentHandler.init(playerId, svg);
 
     <?php endif; ?>
