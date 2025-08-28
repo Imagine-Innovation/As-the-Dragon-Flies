@@ -9,6 +9,7 @@ use common\extensions\EventHandler\handlers\GameActionHandler;
 use common\extensions\EventHandler\handlers\PlayerJoiningHandler;
 use common\extensions\EventHandler\handlers\PlayerLeavingHandler;
 use common\extensions\EventHandler\handlers\QuestCanStartHandler;
+use common\extensions\EventHandler\handlers\QuestStartingHandler;
 use common\extensions\EventHandler\factories\BroadcastMessageFactory;
 use common\models\Notification;
 use Yii;
@@ -72,6 +73,7 @@ class EventHandler extends Component
             'player_joining' => new PlayerJoiningHandler($this->loggerService, $this->broadcastService, $messageFactory),
             'player_leaving' => new PlayerLeavingHandler($this->loggerService, $this->broadcastService, $messageFactory),
             'quest_can_start' => new QuestCanStartHandler($this->loggerService, $this->broadcastService, $messageFactory),
+            'quest_starting' => new QuestStartingHandler($this->loggerService, $this->broadcastService, $messageFactory),
         ];
 
         // 7. Initialize MessageHandlerOrchestrator

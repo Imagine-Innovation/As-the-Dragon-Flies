@@ -46,7 +46,7 @@ class NotificationClient {
                         Logger.log(2, 'init', `Delegated click event for leaveQuestButton`);
                         this.leaveQuest();
                         break;
-                    case 'startQuestButton':
+                    case 'startQuestButtonxxxxxxxxxxxxxxxxxx':
                         Logger.log(2, 'init', `Delegated click event for startQuestButton`);
                         this.startQuest();
                         break;
@@ -125,6 +125,13 @@ class NotificationClient {
         this.on('quest_can_start', (data) => {
             Logger.log(2, 'setupDefaultHandlers', 'Received quest can start message:', data);
             this.displayNotification(data);
+        });
+
+        this.on('quest_started', (data) => {
+            Logger.log(2, 'setupDefaultHandlers', 'Received quest_started message:', data);
+            if (data.payload && data.payload.redirectUrl) {
+                window.location.href = data.payload.redirectUrl;
+            }
         });
 
         this.on('player_joined', (data) => {
@@ -238,7 +245,7 @@ class NotificationClient {
         });
     }
 
-    startQuest() {
+    xxxxxxxxxxxxxxxxxstartQuest() {
         Logger.log(1, 'startQuest', `Received startQuestButton click event`);
         const message = `Start quest`;
         AjaxUtils.request({
@@ -258,6 +265,7 @@ class NotificationClient {
 
     checkIfQuestCanStart() {
         Logger.log(2, 'checkIfQuestCanStart', ``);
+        return;
 
         const button = `#startQuestButton`;
         if (!DOMUtils.exists(button))

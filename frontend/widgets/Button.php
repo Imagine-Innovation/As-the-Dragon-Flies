@@ -6,8 +6,10 @@ use Yii;
 use yii\base\Widget;
 use yii\helpers\Html;
 
-class Button extends Widget {
+class Button extends Widget
+{
 
+    public $isPost = false;
     public $url;
     public $id;
     public $style;
@@ -20,6 +22,9 @@ class Button extends Widget {
     public $callToAction;
 
     public function run() {
+        if ($this->isPost) {
+            return $this->postForm();
+        }
         return $this->mode == 'icon' ? $this->iconButton() : $this->button();
     }
 
@@ -70,5 +75,28 @@ class Button extends Widget {
     private function idElement(): string {
         // Caution: The spaces at the beginning of the line are intentional; do not delete them.
         return $this->id ? ' id="' . $this->id . '"' : '';
+    }
+
+    private function postForm(): string {
+        $html = '<form action="' . $this->url . '" method="POST">';
+        $html .= '<input type="hidden" name="' . Yii::$app->request->csrfParam . '" value="' . Yii::$app->request->csrfToken . '">';
+        $html .= $this->postButton();
+        $html .= '</form>';
+
+        return $html;
+    }
+
+    private function postButton() {
+        $cta = $this->callToAction ?? false;
+        // Caution: The spaces at the beginning of the line are intentional; do not delete them.
+        $style = ($cta ? ' btn-warning' : ' btn-secondary') . ' ' . ($this->style ?? '');
+
+        $icon = $this->icon ? $this->iconElement() : "";
+
+        $html = '<button ' . $this->idElement() . ' role="button" class="btn' . $style . '"' . $this->tooltipElement() . '>';
+        $html .= "{$icon} " . Html::encode($this->title);
+        $html .= "</button>";
+
+        return $html;
     }
 }

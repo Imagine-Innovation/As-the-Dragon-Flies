@@ -7,12 +7,20 @@ use common\components\ManageAccessRights;
 use Yii;
 use yii\base\Widget;
 
-class ToolMenu extends Widget {
+class ToolMenu extends Widget
+{
 
     public $mode = 'nav';
+    public $isAdmin = false;
 
     public function run() {
-        $render = $this->mode == 'nav' ? 'tool-menu-nav' : 'tool-menu-lobby';
+        if ($this->isAdmin) {
+            $render = $this->mode == 'nav' ? 'tool-menu-nav' : 'tool-menu-admin';
+        } elseif ($this->mode === 'nav') {
+            return '';
+        } else {
+            $render = 'tool-menu-lobby';
+        }
 
         return $this->render($render, [
                     'menus' => $this->getMenus(),

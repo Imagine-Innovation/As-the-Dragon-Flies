@@ -8,6 +8,7 @@ use frontend\widgets\ToolMenu;
 $currentUser = Yii::$app->user->identity;
 $questName = Yii::$app->session->get('questName');
 AppAsset::register($this);
+$isAdmin = $currentUser->is_admin;
 ?>
 <header class="header d-none d-md-flex">
 
@@ -20,7 +21,7 @@ AppAsset::register($this);
     </div>
 
     <ul class="top-nav">
-        <?= ToolMenu::widget() ?>
+        <?= ToolMenu::widget(['isAdmin' => $isAdmin]) ?>
 
         <li class="dropdown top-nav__notifications">
             <i class="bi bi-circle-fill blink" id="eventHandlerStatus"></i>

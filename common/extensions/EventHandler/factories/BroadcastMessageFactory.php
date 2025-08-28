@@ -6,12 +6,14 @@ use common\extensions\EventHandler\dtos\ChatMessageDto;
 use common\extensions\EventHandler\dtos\PlayerJoinedDto;
 use common\extensions\EventHandler\dtos\PlayerLeftDto;
 use common\extensions\EventHandler\dtos\QuestCanStartDto;
+use common\extensions\EventHandler\dtos\QuestStartedDto;
 use common\extensions\EventHandler\dtos\GameActionDto;
 use common\extensions\EventHandler\dtos\NotificationDto;
 use common\extensions\EventHandler\dtos\ErrorDto;
 use common\extensions\EventHandler\contracts\BroadcastMessageInterface;
 
-class BroadcastMessageFactory {
+class BroadcastMessageFactory
+{
 
     public function createChatMessage(string $message, string $sender, ?string $recipient = null): ChatMessageDto {
         return new ChatMessageDto($message, $sender, $recipient);
@@ -27,6 +29,10 @@ class BroadcastMessageFactory {
 
     public function createQuestCanStartMessage(string $sessionId, string $questName): QuestCanStartDto {
         return new QuestCanStartDto($sessionId, $questName);
+    }
+
+    public function createQuestStartedMessage(int $questId, string $questName): QuestStartedDto {
+        return new QuestStartedDto($questId, $questName);
     }
 
     public function createGameActionMessage(string $action, array $details): GameActionDto {
@@ -85,6 +91,11 @@ class BroadcastMessageFactory {
             case 'quest_can_start':
                 if (isset($payload['sessionId'], $payload['questName'])) {
                     return new QuestCanStartDto($payload['sessionId'], $payload['questName']);
+                }
+                break;
+            case 'quest_started':
+                if (isset($payload['sessionId'], $payload['questName'])) {
+                    return new QuestStartedDto($payload['questId'], $payload['questName']);
                 }
                 break;
             case 'error':

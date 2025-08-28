@@ -41,7 +41,8 @@ use yii\web\Response;
 /**
  * QuestController implements the CRUD actions for Quest model.
  */
-class QuestController extends Controller {
+class QuestController extends Controller
+{
 
     const DEFAULT_REDIRECT = 'story/index';
 
@@ -62,7 +63,7 @@ class QuestController extends Controller {
                             ],
                             [
                                 'actions' => [
-                                    'index', 'update', 'delete', 'create', 'view', 'quit',
+                                    'index', 'update', 'delete', 'create', 'view', 'quit', 'start',
                                     'tavern', 'join-quest', 'resume', 'get-messages',
                                     'ajax-tavern', 'ajax-welcome-messages',
                                     'ajax-get-messages', 'ajax-send-message',
@@ -298,6 +299,22 @@ class QuestController extends Controller {
             return ['success' => true, 'msg' => 'Quest is started'];
         }
         return ['success' => false, 'msg' => 'Could not start quest'];
+    }
+
+    public function actionStart($id) {
+        $quest = $this->findModel($id);
+
+        $player = Yii::$app->session->get('currentPlayer');
+        $sessionId = Yii::$app->session->getId();
+
+        try {
+            $event = EventFactory::createEvent('quest_starting', $sessionId, $player, $quest);
+            $event->process();
+        } catch (\Exception $e) {
+            Yii::error("Failed to broadcast quest_starting event: " . $e->getMessage());
+        }
+
+        return $this->redirect(['game/view', 'id' => $id]);
     }
 
     /**

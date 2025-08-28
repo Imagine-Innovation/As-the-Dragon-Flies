@@ -18,7 +18,8 @@ use Yii;
 use yii\helpers\Html;
 use yii\helpers\Inflector;
 
-class Utilities extends Html {
+class Utilities extends Html
+{
 
     /**
      * Trims the input string to a specified maximum length, adding ellipsis
@@ -154,7 +155,7 @@ class Utilities extends Html {
 
             // Return story-specific image if available
             if ($story->image) {
-                return "img/story/" . $story->id . "/" . $story->image->file_name;
+                return "img/story/" . $story->id . "/" . $story->image;
             }
         }
 

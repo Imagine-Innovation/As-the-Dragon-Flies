@@ -58,9 +58,9 @@ use Yii;
  * @property string $damageDice
  * @property string $weaponPropertiesString
  * @property string $poisonType
- * @property string $picture
  */
-class Item extends \yii\db\ActiveRecord {
+class Item extends \yii\db\ActiveRecord
+{
 
     /**
      * {@inheritdoc}
@@ -468,21 +468,5 @@ class Item extends \yii\db\ActiveRecord {
      */
     public function getPoisonType() {
         return $this->poison->poison_type;
-    }
-
-    /**
-     * Retrieves the file name of the item's image.
-     *
-     * @return string The image file name
-     */
-    public function getPicture() {
-        /*
-          if ($this->image) {
-          return $this->image->file_name;
-          }
-          return null;
-         *
-         */
-        return $this->image;
     }
 }

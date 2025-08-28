@@ -722,7 +722,7 @@ class Shopping
                 'price' => $item->price,
                 'value' => $item->copperValue,
                 'quantity' => $item->quantity,
-                'image' => $item->picture,
+                'image' => $item->image,
             ];
         }
 
