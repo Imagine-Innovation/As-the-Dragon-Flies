@@ -4,8 +4,10 @@ namespace common\extensions\EventHandler\dtos;
 
 use common\extensions\EventHandler\contracts\BroadcastMessageInterface;
 
-class ChatMessageDto implements BroadcastMessageInterface {
-    private string $type = 'chat';
+class ChatMessageDto implements BroadcastMessageInterface
+{
+
+    private string $type = 'new-message';
     private array $payload;
 
     public function __construct(string $message, string $sender, ?string $recipient = null) {

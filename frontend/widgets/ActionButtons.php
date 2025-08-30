@@ -2,12 +2,12 @@
 
 namespace frontend\widgets;
 
-use common\components\AppStatus;
 use common\helpers\Utilities;
-use Yii;
+use frontend\helpers\ActionButtonsConfig;
 use yii\base\Widget;
 
-class ActionButtons extends Widget {
+class ActionButtons extends Widget
+{
 
     public $model;
     public $isOwner;
@@ -15,112 +15,14 @@ class ActionButtons extends Widget {
 
     public function run() {
         $modelName = Utilities::modelName($this->model);
-        $actions = [
-            AppStatus::DELETED->value => [
-                [
-                    'tooltip' => 'Restore',
-                    'route' => $modelName,
-                    'verb' => 'restore',
-                    'mode' => 'POST',
-                    'icon' => 'arrow-left-square',
-                    'admin' => true,
-                    'player' => false,
-                    'owner' => false,
-                    'modelName' => ['user', 'player', 'rule'],
-                    'table' => true,
-                    'view' => true,
-                ],
-            ],
-            AppStatus::INACTIVE->value => [
-                [
-                    'tooltip' => 'View',
-                    'route' => $modelName,
-                    'verb' => 'view',
-                    'mode' => 'GET',
-                    'icon' => 'info-square',
-                    'admin' => false,
-                    'player' => false,
-                    'owner' => false,
-                    'modelName' => ['rule'],
-                    'table' => true,
-                    'view' => false,
-                ],
-                [
-                    'tooltip' => 'Validate',
-                    'route' => $modelName,
-                    'verb' => 'validate',
-                    'mode' => 'POST',
-                    'icon' => 'check-square',
-                    'admin' => false,
-                    'player' => false,
-                    'owner' => false,
-                    'modelName' => ['user', 'player', 'rule'],
-                    'table' => true,
-                    'view' => true,
-                ],
-                [
-                    'tooltip' => 'Delete',
-                    'route' => $modelName,
-                    'verb' => 'delete',
-                    'mode' => 'POST',
-                    'icon' => 'x-square',
-                    'admin' => false,
-                    'player' => false,
-                    'owner' => false,
-                    'modelName' => ['user', 'player', 'rule'],
-                    'table' => true,
-                    'view' => true,
-                ],
-            ],
-            AppStatus::ACTIVE->value => [
-                [
-                    'tooltip' => 'Unvalidate',
-                    'route' => $modelName,
-                    'verb' => 'restore',
-                    'mode' => 'POST',
-                    'icon' => 'pencil-square',
-                    'admin' => false,
-                    'player' => false,
-                    'owner' => false,
-                    'modelName' => ['user', 'rule'],
-                    'table' => true,
-                    'view' => true,
-                ],
-                [
-                    'tooltip' => 'Shop',
-                    'route' => 'player-cart',
-                    'verb' => 'shop',
-                    'mode' => 'GET',
-                    'icon' => 'plus-square',
-                    'admin' => false,
-                    'player' => true,
-                    'owner' => true,
-                    'modelName' => ['player'],
-                    'table' => true,
-                    'view' => true,
-                ],
-                [
-                    'tooltip' => 'Delete',
-                    'route' => $modelName,
-                    'verb' => 'delete',
-                    'mode' => 'POST',
-                    'icon' => 'x-square',
-                    'admin' => false,
-                    'player' => false,
-                    'owner' => false,
-                    'modelName' => ['user', 'player', 'rule'],
-                    'table' => true,
-                    'view' => true,
-                ],
-            ],
-        ];
+        $actions = ActionButtonsConfig::getActions($modelName, $this->model->status);
 
         $widgetView = $this->mode == "table" ? 'action-buttons-table' : 'action-buttons-icon';
 
         return $this->render($widgetView, [
                     'model' => $this->model,
                     'modelName' => $modelName,
-                    'actions' => $actions[$this->model->status],
+                    'actions' => $actions,
                     'isOwner' => $this->isOwner ?? true,
         ]);
     }

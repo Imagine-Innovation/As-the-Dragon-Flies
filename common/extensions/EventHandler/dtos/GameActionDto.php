@@ -5,7 +5,7 @@ namespace common\extensions\EventHandler\dtos;
 use common\extensions\EventHandler\contracts\BroadcastMessageInterface;
 
 class GameActionDto implements BroadcastMessageInterface {
-    private string $type = 'game_action';
+    private string $type = 'game-action';
     private array $payload;
 
     public function __construct(string $action, array $details) {

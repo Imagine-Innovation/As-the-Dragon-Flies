@@ -7,7 +7,7 @@ use common\extensions\EventHandler\contracts\BroadcastMessageInterface;
 class PlayerJoinedDto implements BroadcastMessageInterface
 {
 
-    private string $type = 'player_joined';
+    private string $type = 'player-joined';
     private array $payload;
 
     public function __construct(string $playerName, string $sessionId, string $questName) {

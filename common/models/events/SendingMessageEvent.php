@@ -2,26 +2,26 @@
 
 namespace common\models\events;
 
-use common\models\Quest;
 use common\models\Player;
-use common\components\QuestMessages;
+use common\models\Quest;
 use Yii;
 
-class NewMessageEvent extends Event {
+class SendingMessageEvent extends Event
+{
 
     public $message;
 
     public function __construct(string $sessionId, Player $player, Quest $quest, string $message, array $config = []) {
-        $this->message = $message;
         parent::__construct($sessionId, $player, $quest, $config);
+        $this->message = $message;
     }
 
     public function getType(): string {
-        return 'new-message';
+        return 'sending-message';
     }
 
     public function getTitle(): string {
-        return 'New message';
+        return 'Sending Message';
     }
 
     public function getMessage(): string {
@@ -29,16 +29,17 @@ class NewMessageEvent extends Event {
     }
 
     public function getPayload(): array {
-        return QuestMessages::payload($this->player, $this->message);
+        return [
+            'playerName' => $this->player->name,
+            'playerId' => $this->player->id,
+            'questId' => $this->quest->id,
+            'message' => $this->message,
+            'sentAt' => date('Y-m-d H:i:s', $this->timestamp)
+        ];
     }
 
     public function process(): void {
-        Yii::debug("*** Debug *** NewMessageEvent - process");
-        // Create notification
-        $notification = $this->createNotification();
-
-        $this->savePlayerNotification($notification->id);
-
+        Yii::debug("*** Debug *** SendingMessageEvent - process");
         $this->broadcast();
     }
 }

@@ -7,7 +7,7 @@ use common\extensions\EventHandler\contracts\BroadcastMessageInterface;
 class QuestStartedDto implements BroadcastMessageInterface
 {
 
-    public string $type = 'quest_started';
+    public string $type = 'quest-started';
     private array $payload;
 
     public function __construct(string $sessionId, int $questId, string $questName) {
@@ -17,7 +17,8 @@ class QuestStartedDto implements BroadcastMessageInterface
             'questName' => $questName,
             'message' => "Quest '{$questName}' has started!",
             'redirectUrl' => '/frontend/web/index.php?r=game/view&id=' . $questId,
-            'timestamp' => time()
+            'timestamp' => time(),
+            'startedAt' => date('Y-m-d H:i:s', time())
         ];
     }
 

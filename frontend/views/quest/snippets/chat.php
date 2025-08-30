@@ -1,6 +1,6 @@
 <?php
 
-use frontend\components\QuestMessages;
+use common\components\QuestMessages;
 
 /** @var yii\web\View $this */
 /** @var int $questId */

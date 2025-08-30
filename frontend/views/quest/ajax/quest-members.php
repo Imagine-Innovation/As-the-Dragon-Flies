@@ -21,6 +21,8 @@ $playerId = Yii::$app->session->get('playerId');
                                 <?php if ($player->id === $playerId): // Only the current player can leave the quest ?>
                                     <?=
                                     Button::widget([
+                                        'isPost' => true,
+                                        'url' => Url::toRoute(['quest/quit', 'playerId' => $playerId, 'id' => $model->id]),
                                         'style' => 'btn-sm mt-2 w-100',
                                         'callToAction' => true,
                                         'id' => 'leaveQuestButton',

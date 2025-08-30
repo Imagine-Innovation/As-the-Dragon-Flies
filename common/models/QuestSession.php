@@ -16,7 +16,8 @@ use Yii;
  * @property Player $player
  * @property Quest $quest
  */
-class QuestSession extends \yii\db\ActiveRecord {
+class QuestSession extends \yii\db\ActiveRecord
+{
 
     /**
      * {@inheritdoc}
@@ -30,6 +31,8 @@ class QuestSession extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['quest_id', 'player_id', 'client_id'], 'default', 'value' => null],
+            [['last_ts'], 'default', 'value' => time()],
             [['id'], 'required'],
             [['quest_id', 'player_id', 'last_ts'], 'integer'],
             [['id', 'client_id'], 'string', 'max' => 64],

@@ -27,12 +27,12 @@ class BroadcastMessageFactory
         return new PlayerLeftDto($playerName, $sessionId, $questName, $reason);
     }
 
-    public function createQuestCanStartMessage(string $sessionId, string $questName): QuestCanStartDto {
-        return new QuestCanStartDto($sessionId, $questName);
+    public function createQuestCanStartMessage(string $sessionId, string $questName, ?int $questId = null): QuestCanStartDto {
+        return new QuestCanStartDto($sessionId, $questName, $questId);
     }
 
-    public function createQuestStartedMessage(int $questId, string $questName): QuestStartedDto {
-        return new QuestStartedDto($questId, $questName);
+    public function createQuestStartedMessage(string $sessionId, int $questId, string $questName): QuestStartedDto {
+        return new QuestStartedDto($sessionId, $questId, $questName);
     }
 
     public function createGameActionMessage(string $action, array $details): GameActionDto {
@@ -53,7 +53,7 @@ class BroadcastMessageFactory
      */
     public function createMessage(string $type, array $payload): ?BroadcastMessageInterface {
         switch ($type) {
-            case 'chat':
+            case 'new-message':
                 // Assuming payload keys match ChatMessageDto constructor or a setter method
                 // This part needs careful implementation based on how payload is structured
                 // For simplicity, let's assume direct payload usage isn't the primary path for this factory
@@ -66,19 +66,19 @@ class BroadcastMessageFactory
                     return new ChatMessageDto($payload['message'], $payload['sender'], $payload['recipient'] ?? null);
                 }
                 break;
-            case 'player_joined':
+            case 'player-joined':
                 if (isset($payload['playerName'], $payload['sessionId'], $payload['questName'])) {
                     return new PlayerJoinedDto($payload['playerName'], $payload['sessionId'], $payload['questName']);
                 }
                 // Consider adding an else or logging if payload is incomplete for this type
                 break;
-            case 'player_left':
+            case 'player-left':
                 if (isset($payload['playerName'], $payload['sessionId'], $payload['questName'])) {
                     return new PlayerLeftDto($payload['playerName'], $payload['sessionId'], $payload['questName'], $payload['reasaon']);
                 }
                 // Consider adding an else or logging if payload is incomplete for this type
                 break;
-            case 'game_action':
+            case 'game-action':
                 if (isset($payload['action'], $payload['details'])) {
                     return new GameActionDto($payload['action'], $payload['details']);
                 }
@@ -88,14 +88,14 @@ class BroadcastMessageFactory
                     return new NotificationDto($payload['message'], $payload['level'] ?? 'info', $payload['details'] ?? null);
                 }
                 break;
-            case 'quest_can_start':
-                if (isset($payload['sessionId'], $payload['questName'])) {
-                    return new QuestCanStartDto($payload['sessionId'], $payload['questName']);
+            case 'quest-can-start':
+                if (isset($payload['sessionId'], $payload['questName'], $payload['questId'])) {
+                    return new QuestCanStartDto($payload['sessionId'], $payload['questName'], $payload['questId']);
                 }
                 break;
-            case 'quest_started':
-                if (isset($payload['sessionId'], $payload['questName'])) {
-                    return new QuestStartedDto($payload['questId'], $payload['questName']);
+            case 'quest-started':
+                if (isset($payload['sessionId'], $payload['questName'], $payload['questId'])) {
+                    return new QuestStartedDto($payload['sessionId'], $payload['questName'], $payload['questId']);
                 }
                 break;
             case 'error':

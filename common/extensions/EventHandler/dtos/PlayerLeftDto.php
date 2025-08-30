@@ -6,7 +6,7 @@ use common\extensions\EventHandler\contracts\BroadcastMessageInterface;
 
 class PlayerLeftDto implements BroadcastMessageInterface {
 
-    private string $type = 'player_left';
+    private string $type = 'player-left';
     private array $payload;
 
     public function __construct(string $playerName, string $sessionId, string $questName, string $reason) {

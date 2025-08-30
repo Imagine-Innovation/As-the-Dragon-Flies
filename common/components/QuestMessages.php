@@ -1,13 +1,14 @@
 <?php
 
-namespace frontend\components;
+namespace common\components;
 
 use common\models\Notification;
 use common\models\Player;
 use common\helpers\Utilities;
 use Yii;
 
-class QuestMessages {
+class QuestMessages
+{
 
     const DEFAULT_LIMIT = 20;
     const CHAT_NOTIFICATION_TYPE = 'chat';

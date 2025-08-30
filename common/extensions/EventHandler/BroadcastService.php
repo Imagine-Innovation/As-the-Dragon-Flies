@@ -9,7 +9,8 @@ use common\models\QuestSession;
 
 // Assuming LoggerService, WebSocketServerManager, QuestSessionManager, NotificationService are properly imported or aliased if not in this namespace.
 
-class BroadcastService implements BroadcastServiceInterface {
+class BroadcastService implements BroadcastServiceInterface
+{
 
     private LoggerService $logger;
     private WebSocketServerManager $webSocketServerManager;
@@ -186,9 +187,9 @@ class BroadcastService implements BroadcastServiceInterface {
     }
 
     private function sendChatHistory(ConnectionInterface $clientConnection, QuestSession $session): int {
-        $chatNotifications = $this->notificationService->getNotifications($session->quest_id, 'chat', $session->last_ts);
+        $chatNotifications = $this->notificationService->getNotifications($session->quest_id, 'new-message', $session->last_ts);
         $notificationCount = count($chatNotifications);
-        $this->logger->log("BroadcastService: Processing {$notificationCount} 'chat' notifications for history recovery.");
+        $this->logger->log("BroadcastService: Processing {$notificationCount} 'new-message' notifications for history recovery.");
 
         $recoveredMessagesCount = 0;
         foreach ($chatNotifications as $notification) {

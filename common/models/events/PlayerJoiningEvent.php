@@ -1,0 +1,42 @@
+<?php
+
+namespace common\models\events;
+
+use common\models\Player;
+use common\models\Quest;
+use Yii;
+
+class PlayerJoiningEvent extends Event
+{
+
+    public function __construct(string $sessionId, Player $player, Quest $quest, array $config = []) {
+        parent::__construct($sessionId, $player, $quest, $config);
+    }
+
+    public function getType(): string {
+        return 'player-joining';
+    }
+
+    public function getTitle(): string {
+        return 'Player Joining';
+    }
+
+    public function getMessage(): string {
+        return "{$this->player->name} is joining the quest";
+    }
+
+    public function getPayload(): array {
+        return [
+            'playerName' => $this->player->name,
+            'playerId' => $this->player->id,
+            'questName' => ($this->quest) ? $this->quest->story->name : null,
+            'questId' => ($this->quest) ? $this->quest->id : null,
+            'joinedAt' => date('Y-m-d H:i:s', $this->timestamp)
+        ];
+    }
+
+    public function process(): void {
+        Yii::debug("*** Debug *** PlayerJoiningEvent - process");
+        $this->broadcast();
+    }
+}

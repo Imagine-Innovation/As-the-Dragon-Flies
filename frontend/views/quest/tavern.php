@@ -1,6 +1,6 @@
 <?php
 
-use frontend\components\QuestMessages;
+use common\components\QuestMessages;
 use frontend\widgets\AjaxContainer;
 
 /** @var yii\web\View $this */

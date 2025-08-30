@@ -27,7 +27,7 @@ use common\models\Story;
 use common\models\events\EventFactory;
 use common\helpers\UserErrorMessage;
 use frontend\components\AjaxRequest;
-use frontend\components\QuestMessages;
+use common\components\QuestMessages;
 use frontend\components\QuestOnboarding;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -64,7 +64,7 @@ class QuestController extends Controller
                             [
                                 'actions' => [
                                     'index', 'update', 'delete', 'create', 'view', 'quit', 'start',
-                                    'tavern', 'join-quest', 'resume', 'get-messages',
+                                    'tavern', 'join', 'resume', 'get-messages',
                                     'ajax-tavern', 'ajax-welcome-messages',
                                     'ajax-get-messages', 'ajax-send-message',
                                     'ajax-start', 'ajax-can-start', 'ajax-quit'
@@ -78,6 +78,9 @@ class QuestController extends Controller
                         'class' => VerbFilter::className(),
                         'actions' => [
                             'delete' => ['POST'],
+                            'start' => ['POST'],
+                            'quit' => ['POST'],
+                            'join' => ['POST'],
                         ],
                     ],
                 ]
@@ -131,6 +134,63 @@ class QuestController extends Controller
     public function actionView($id) {
         return $this->render('view', [
                     'model' => $this->findModel($id),
+        ]);
+    }
+
+    /**     * ***************************************** */
+    /**     *            Basic POST requests            */
+    /**     * ***************************************** */
+
+    /**
+     * Handles tavern entry and player onboarding for a specific story
+     *
+     * Validates story access, creates or joins quest, and manages player onboarding flow.
+     * Core entry point for quest participation.
+     *
+     * @param int $storyId The ID of the story to join
+     * @return string|Response Rendered tavern view or error redirect
+     */
+    public function actionJoin(int $storyId, int|null $playerId = null) {
+        // Validate story existence and accessibility
+        $story = $this->findValidStory($storyId);
+        if (!$story) {
+            return UserErrorMessage::throw($this, 'fatal', 'Invalid story ID (' . ($storyId ?? 'NULL') . ')');
+        }
+
+        // Find or create tavern quest instance
+        $tavern = $this->findTavern($story);
+        if (!$tavern) {
+            return UserErrorMessage::throw($this, 'error', 'Unable to find or create a new quest', self::DEFAULT_REDIRECT);
+        }
+
+        // Get current player context
+        $player = $this->findPlayer($playerId);
+
+        // Validate player eligibility
+        $canJoin = QuestOnboarding::canPlayerJoinQuest($player, $tavern);
+        if ($canJoin['denied']) {
+            return UserErrorMessage::throw($this, 'error', $canJoin['reason'], self::DEFAULT_REDIRECT);
+        }
+
+        // Process player onboarding
+        $onboarded = QuestOnboarding::addPlayerToQuest($player, $tavern);
+        if ($onboarded['error']) {
+            return UserErrorMessage::throw($this, 'error', $onboarded['message'], self::DEFAULT_REDIRECT);
+        }
+
+        $sessionId = Yii::$app->session->get('sessionId');
+        $event = EventFactory::createEvent('player-joining', $sessionId, $player, $tavern);
+        $event->process();
+
+        // Check if quest can start
+        $playersCount = $tavern->getCurrentPlayers()->count();
+        if ($playersCount >= $tavern->story->min_players && QuestOnboarding::areRequiredClassesPresent($tavern)) {
+            $event = EventFactory::createEvent('quest-can-start', $sessionId, $player, $tavern);
+            $event->process();
+        }
+
+        return $this->redirect(['tavern',
+                    'id' => $tavern->id
         ]);
     }
 
@@ -239,6 +299,10 @@ class QuestController extends Controller
             return ['success' => false, 'message' => 'Message cannot be empty'];
         }
 
+        $sessionId = Yii::$app->session->get('sessionId');
+        $event = EventFactory::createEvent('sending-message', $sessionId, $player, $quest, ['message' => $message]);
+        $event->process();
+
         return ['success' => true, 'msg' => 'Message send attempt acknowledged. Actual processing via WebSocket.'];
     }
 
@@ -301,17 +365,24 @@ class QuestController extends Controller
         return ['success' => false, 'msg' => 'Could not start quest'];
     }
 
-    public function actionStart($id) {
+    public function actionStart(int|null $id) {
         $quest = $this->findModel($id);
 
-        $player = Yii::$app->session->get('currentPlayer');
+        $player = $quest->initiator;
         $sessionId = Yii::$app->session->getId();
 
+        $quest->status = AppStatus::PLAYING->value;
+        $quest->started_at = time();
+
+        if (!$quest->save()) {
+            throw new \Exception(implode("<br />", \yii\helpers\ArrayHelper::getColumn($quest->errors, 0, false)));
+        }
+
         try {
-            $event = EventFactory::createEvent('quest_starting', $sessionId, $player, $quest);
+            $event = EventFactory::createEvent('quest-starting', $sessionId, $player, $quest);
             $event->process();
         } catch (\Exception $e) {
-            Yii::error("Failed to broadcast quest_starting event: " . $e->getMessage());
+            Yii::error("Failed to broadcast quest-starting event: " . $e->getMessage());
         }
 
         return $this->redirect(['game/view', 'id' => $id]);
@@ -387,47 +458,6 @@ class QuestController extends Controller
         return ['canStart' => true, 'msg' => "Quest can start", 'questName' => $story->name, 'questId' => $quest->id];
     }
 
-    /**
-     * Handles tavern entry and player onboarding for a specific story
-     *
-     * Validates story access, creates or joins quest, and manages player onboarding flow.
-     * Core entry point for quest participation.
-     *
-     * @param int $storyId The ID of the story to join
-     * @return string|Response Rendered tavern view or error redirect
-     */
-    public function actionJoinQuest($storyId) {
-        // Validate story existence and accessibility
-        $story = $this->findValidStory($storyId);
-        if (!$story) {
-            return UserErrorMessage::throw($this, 'fatal', 'Invalid story ID (' . ($storyId ?? 'NULL') . ')');
-        }
-
-        // Find or create tavern quest instance
-        $tavern = $this->findTavern($story);
-        if (!$tavern) {
-            return UserErrorMessage::throw($this, 'error', 'Unable to find or create a new quest', self::DEFAULT_REDIRECT);
-        }
-
-        // Get current player context
-        $player = Yii::$app->session->get('currentPlayer');
-
-        // Validate player eligibility
-        $canJoin = QuestOnboarding::canPlayerJoinQuest($player, $tavern);
-        if ($canJoin['denied']) {
-            return UserErrorMessage::throw($this, 'error', $canJoin['reason'], self::DEFAULT_REDIRECT);
-        }
-
-        // Process player onboarding
-        $onboarded = QuestOnboarding::addPlayerToQuest($player, $tavern);
-        if ($onboarded['error']) {
-            return UserErrorMessage::throw($this, 'error', $onboarded['message'], self::DEFAULT_REDIRECT);
-        }
-        return $this->redirect(['tavern',
-                    'id' => $tavern->id
-        ]);
-    }
-
     public function actionTavern($id) {
         $tavern = $this->findModel($id);
 
@@ -439,10 +469,10 @@ class QuestController extends Controller
         ]);
     }
 
-    public function actionQuit(): array {
+    public function actionQuit(int|null $playerId, int|null $id) {
 
-        $player = Yii::$app->session->get('currentPlayer');
-        $quest = Yii::$app->session->get('currentQuest');
+        $player = $this->findPlayer($playerId);
+        $quest = $this->findModel($id);
         $reason = 'Player decided to quit the quest';
         // Process player offboarding
         $withdraw = QuestOnboarding::withdrawPlayerFromQuest($player, $quest, $reason);
@@ -454,7 +484,7 @@ class QuestController extends Controller
         ContextManager::updateQuestContext(null);
 
         $sessionId = Yii::$app->session->get('sessionId');
-        $event = EventFactory::createEvent('player-left', $sessionId, $player, $quest, ['reason' => $reason]);
+        $event = EventFactory::createEvent('player-leaving', $sessionId, $player, $quest, ['reason' => $reason]);
         $event->process();
 
         return $this->redirect(['story/index']);
@@ -582,14 +612,27 @@ class QuestController extends Controller
      * @return Quest Found quest model
      * @throws NotFoundHttpException if quest not found
      */
-    protected function findModel($id) {
-        if (($model = Quest::findOne(['id' => $id])) !== null) {
+    protected function findModel(int|null $id = null): Quest {
+        $model = Quest::findOne(['id' => ($id ?? Yii::$app->session->get('questId'))]);
+
+        if ($model) {
             return $model;
         }
-        throw new NotFoundHttpException('The quest you are looking for does not exist.');
+
+        throw new NotFoundHttpException("The quest (id={$id}) you are looking for does not exist.");
     }
 
-    protected function findValidStory($storyId) {
+    protected function findPlayer(int|null $playerId = null): Player {
+        $player = Player::findOne(['id' => ($playerId ?? Yii::$app->session->get('playerId'))]);
+
+        if ($player) {
+            return $player;
+        }
+
+        throw new NotFoundHttpException("The player (playerId={$playerId}) you are looking for does not exist.");
+    }
+
+    protected function findValidStory($storyId): ?Story {
         if ($storyId) {
             return Story::findOne(['id' => $storyId, 'status' => AppStatus::PUBLISHED->value]);
         }

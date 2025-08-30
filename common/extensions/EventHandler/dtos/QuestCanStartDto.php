@@ -4,15 +4,17 @@ namespace common\extensions\EventHandler\dtos;
 
 use common\extensions\EventHandler\contracts\BroadcastMessageInterface;
 
-class QuestCanStartDto implements BroadcastMessageInterface {
+class QuestCanStartDto implements BroadcastMessageInterface
+{
 
-    private string $type = 'quest_can_start';
+    private string $type = 'quest-can-start';
     private array $payload;
 
-    public function __construct(string $sessionId, string $questName) {
+    public function __construct(string $sessionId, string $questName, ?int $questId = null) {
         $this->payload = [
             'sessionId' => $sessionId,
             'questName' => $questName,
+            'questId' => $questId,
             'timestamp' => time()
         ];
     }

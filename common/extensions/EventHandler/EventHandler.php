@@ -69,11 +69,13 @@ class EventHandler extends Component
         $specificHandlers = [
             'register' => new RegistrationHandler($this->loggerService, $this->questSessionManager, $this->broadcastService),
             'chat' => new ChatMessageHandler($this->loggerService, $this->notificationService, $this->broadcastService, $messageFactory),
+            'new-message' => new ChatMessageHandler($this->loggerService, $this->notificationService, $this->broadcastService, $messageFactory),
+            'sending-message' => new ChatMessageHandler($this->loggerService, $this->notificationService, $this->broadcastService, $messageFactory),
             'action' => new GameActionHandler($this->loggerService, $this->broadcastService, $messageFactory),
-            'player_joining' => new PlayerJoiningHandler($this->loggerService, $this->broadcastService, $messageFactory),
-            'player_leaving' => new PlayerLeavingHandler($this->loggerService, $this->broadcastService, $messageFactory),
-            'quest_can_start' => new QuestCanStartHandler($this->loggerService, $this->broadcastService, $messageFactory),
-            'quest_starting' => new QuestStartingHandler($this->loggerService, $this->broadcastService, $messageFactory),
+            'player-joining' => new PlayerJoiningHandler($this->loggerService, $this->broadcastService, $messageFactory),
+            'player-leaving' => new PlayerLeavingHandler($this->loggerService, $this->broadcastService, $messageFactory),
+            'quest-can-start' => new QuestCanStartHandler($this->loggerService, $this->broadcastService, $messageFactory),
+            'quest-starting' => new QuestStartingHandler($this->loggerService, $this->broadcastService, $messageFactory),
         ];
 
         // 7. Initialize MessageHandlerOrchestrator
@@ -124,7 +126,9 @@ class EventHandler extends Component
      * @return bool
      */
     public function registerSessionForQuest(string $sessionId, array $data): bool {
+        Yii::debug("*** debug *** registerSessionForQuest - sessionId={$sessionId}, data=" . print_r($data, true));
         if (!$this->questSessionManager) {
+            Yii::debug("*** debug *** registerSessionForQuest - QuestSessionManager not initialized when calling registerSessionForQuest.");
             // Fallback or error if init() hasn't run - though for a Yii component, init() should run automatically.
             // This might indicate a usage problem if called before the component is fully initialized.
             $this->loggerService?->log("EventHandler: QuestSessionManager not initialized when calling registerSessionForQuest.", null, 'error');

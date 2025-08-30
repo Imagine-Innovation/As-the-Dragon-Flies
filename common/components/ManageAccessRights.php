@@ -10,7 +10,8 @@ use Yii;
 use yii\base\Component;
 use yii\helpers\ArrayHelper;
 
-class ManageAccessRights extends Component {
+class ManageAccessRights extends Component
+{
 
     /**
      * Gets all authorized access rights for a user based on their roles and status
@@ -77,7 +78,6 @@ class ManageAccessRights extends Component {
 
         if ($access['denied']) {
             throw new \yii\web\ForbiddenHttpException($access['reason']);
-            //return UserErrorMessage::throw($controller, $access['severity'], $access['reason'], $redirect);
         }
         return true;
     }

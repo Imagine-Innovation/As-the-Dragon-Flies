@@ -6,23 +6,20 @@ use Yii;
 
 class QuestStartedEvent extends Event
 {
-    public function getType(): string
-    {
-        return 'quest_started';
+
+    public function getType(): string {
+        return 'quest-started';
     }
 
-    public function getTitle(): string
-    {
+    public function getTitle(): string {
         return 'The quest has started';
     }
 
-    public function getMessage(): string
-    {
+    public function getMessage(): string {
         return "{$this->quest->story->name} has started";
     }
 
-    public function getPayload(): array
-    {
+    public function getPayload(): array {
         return [
             'questId' => $this->quest->id,
             'questName' => $this->quest->story->name,
@@ -31,10 +28,9 @@ class QuestStartedEvent extends Event
         ];
     }
 
-    public function process(): void
-    {
+    public function process(): void {
         Yii::debug("*** Debug *** QuestStartedEvent - process");
-        
+
         // Create notification
         $notification = $this->createNotification();
         $this->savePlayerNotification($notification->id);

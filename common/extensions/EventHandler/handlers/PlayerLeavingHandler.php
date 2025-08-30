@@ -25,7 +25,7 @@ class PlayerLeavingHandler implements SpecificMessageHandlerInterface {
     }
 
     /**
-     * Handles player_leaving messages.
+     * Handles player-leaving messages.
      */
     public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
         $this->logger->logStart("PlayerLeavingHandler: handle for session {$sessionId}, client {$clientId}", $data);
@@ -47,7 +47,7 @@ class PlayerLeavingHandler implements SpecificMessageHandlerInterface {
         $playerLeftDto = $this->messageFactory->createPlayerLeftMessage($playerName, $sessionId, $questName, $reason);
         $this->broadcastService->broadcastToQuest($questId, $playerLeftDto, $sessionId);
 
-        $this->broadcastService->sendBack($from, 'ack', ['type' => 'player_leaving_processed', 'playerName' => $playerName, 'questId' => $questId, 'questName' => $questName, 'reason' => $reason]);
+        $this->broadcastService->sendBack($from, 'ack', ['type' => 'player-leaving_processed', 'playerName' => $playerName, 'questId' => $questId, 'questName' => $questName, 'reason' => $reason]);
 
         $this->logger->logEnd("PlayerLeavingHandler: handle");
     }

@@ -8,7 +8,8 @@ use common\extensions\EventHandler\factories\BroadcastMessageFactory;
 use common\extensions\EventHandler\LoggerService;
 use Ratchet\ConnectionInterface;
 
-class QuestCanStartHandler implements SpecificMessageHandlerInterface {
+class QuestCanStartHandler implements SpecificMessageHandlerInterface
+{
 
     private LoggerService $logger;
     private BroadcastServiceInterface $broadcastService;
@@ -25,7 +26,7 @@ class QuestCanStartHandler implements SpecificMessageHandlerInterface {
     }
 
     /**
-     * Handles quest_can_start messages.
+     * Handles quest-can-start messages.
      */
     public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
         $this->logger->logStart("QuestCanStartHandler: handle for session {$sessionId}, client {$clientId}");
@@ -42,10 +43,10 @@ class QuestCanStartHandler implements SpecificMessageHandlerInterface {
             return;
         }
 
-        $questCanStartDto = $this->messageFactory->createQuestCanStartMessage($sessionId, $questName);
+        $questCanStartDto = $this->messageFactory->createQuestCanStartMessage($sessionId, $questName, $questId);
         $this->broadcastService->broadcastToQuest($questId, $questCanStartDto, $sessionId);
 
-        $this->broadcastService->sendBack($from, 'ack', ['type' => 'quest_can_start', 'questId' => $questId, 'questName' => $questName]);
+        $this->broadcastService->sendBack($from, 'ack', ['type' => 'quest-can-start', 'questId' => $questId, 'questName' => $questName]);
 
         $this->logger->logEnd("QuestCanStartHandler: handle");
     }

@@ -101,7 +101,7 @@ class QuestSessionManager
             'quest_id' => $questId,
             'player_id' => $playerId,
             'client_id' => $clientId,
-                // 'last_ts' => time(), // Consider setting last_ts on creation
+            'last_ts' => time(), // Consider setting last_ts on creation
         ]);
         $this->logger->log("QuestSessionManager: Attempting to save new QuestSession", $session->getAttributes());
 

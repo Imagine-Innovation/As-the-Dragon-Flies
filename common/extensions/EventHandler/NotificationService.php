@@ -8,7 +8,9 @@ use common\extensions\EventHandler\factories\BroadcastMessageFactory;
 use common\extensions\EventHandler\LoggerService; // Ensured LoggerService is used
 use common\models\Notification;
 use common\models\Player;
-use frontend\components\QuestMessages;
+use common\components\QuestMessages;
+use Yii;
+use yii\helpers\ArrayHelper;
 
 class NotificationService
 {
@@ -35,10 +37,6 @@ class NotificationService
     public function saveNotification(int $playerId, int $questId, array $data): ?Notification {
         $this->logger->logStart("NotificationService: saveNotification playerId=[{$playerId}], questId=[{$questId}]", $data);
 
-        $message = $data['message'] ?? '';
-        $type = $data['type'] ?? 'unknown';
-        $createdAt = $data['timestamp'] ?? time(); // Use timestamp from data if available, fallback to now
-
         $sender = Player::findOne($playerId);
         if (!$sender) {
             $this->logger->log("NotificationService: Player not found for playerId=[{$playerId}] when creating payload.", null, 'warning');
@@ -49,26 +47,32 @@ class NotificationService
         $playerName = $sender ? $sender->name : 'Unknown Player';
 
         // Construct payload. This might vary based on notification type in a more complex system.
-        $payload = QuestMessages::payload($sender, $message);
-        $title = $data['title'] ?? ($type === 'chat' ? "New chat message from " . $playerName : "Notification");
+        $type = $data['type'] ?? 'unknown';
+        $title = $data['title'] ?? (($type === 'sending-message' || $type === 'new-message') ? "New {$type} from " . $playerName : "Notification");
+        //$title = $data['title'] ?? "Notification";
+        $message = $data['message'] ?? $title;
+        //$payload = QuestMessages::payload($sender, $message);
+        $payload = $data['payload'] ?? [];
+        $createdAt = $data['timestamp'] ?? time(); // Use timestamp from data if available, fallback to now
 
-        $notification = new Notification([
-            'initiator_id' => $playerId,
+
+        $record = [
+            'initiator_id' => $playerId ?? 1,
             'quest_id' => $questId,
             'notification_type' => $type,
-            'title' => $title,
-            'message' => $message, // Main message for the notification record itself
+            'title' => $title ?? 'Unknown',
+            'message' => $message,
             'created_at' => $createdAt,
             'is_private' => $data['is_private'] ?? 0, // Default to public
             'payload' => json_encode($payload),
-        ]);
+        ];
+
+        $this->logger->log("NotificationService: saveNotification new record ", $record);
+        Yii::debug("*** debug *** NotificationService: saveNotification new record " . print_r($record, true));
+        $notification = new Notification($record);
 
         try {
-            if (!$notification->save()) {
-                $this->logger->log("NotificationService: Failed to save Notification. Errors: " . print_r($notification->getErrors(), true), $notification->getAttributes(), 'error');
-                $this->logger->logEnd("NotificationService: saveNotification");
-                return null;
-            }
+            $notification->save();
         } catch (\Exception $e) {
             $this->logger->log("NotificationService: Exception while saving Notification. Error: " . $e->getMessage(), $e->getTraceAsString(), 'error');
             $this->logger->logEnd("NotificationService: saveNotification");
@@ -95,7 +99,7 @@ class NotificationService
         $this->logger->logStart("NotificationService: createNotificationAndBroadcast questId=[{$questId}]", ['data' => $data, 'excludeSessionId' => $excludeSessionId, 'userId' => $userId]);
 
         // Assuming $userId is equivalent to player_id for the notification
-        $playerId = $userId ?? ($data['player_id'] ?? null);
+        $playerId = $userId ?? ($data['playerId'] ?? null);
         if (!$playerId) {
             $this->logger->log("NotificationService: Player ID not provided for notification.", $data, 'error');
             // Depending on requirements, might create an error DTO and send back to originator if possible
@@ -112,8 +116,7 @@ class NotificationService
             return null;
         }
 
-        // If notification type is 'chat' (or other types you want to broadcast using DTOs)
-        if ($notificationModel->notification_type === 'chat') {
+        if ($notificationModel->notification_type === 'new-message') {
             // $data is assumed to have a 'sender_name' key from the original message context
             // Or, derive senderName from $notificationModel->player if relation is loaded and preferred.
             $senderName = $data['sender_name'] ?? $notificationModel->player->name ?? 'Unknown Sender';

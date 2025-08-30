@@ -25,7 +25,7 @@ class PlayerJoiningHandler implements SpecificMessageHandlerInterface {
     }
 
     /**
-     * Handles player_joining messages.
+     * Handles player-joining messages.
      */
     public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
         $this->logger->logStart("PlayerJoiningHandler: handle for session {$sessionId}, client {$clientId}", $data);
@@ -48,7 +48,7 @@ class PlayerJoiningHandler implements SpecificMessageHandlerInterface {
 
         $this->broadcastService->recoverMessageHistory($sessionId);
 
-        $this->broadcastService->sendBack($from, 'ack', ['type' => 'player_joining_processed', 'playerName' => $playerName, 'questId' => $questId, 'questName' => $questName]);
+        $this->broadcastService->sendBack($from, 'ack', ['type' => 'player-joining_processed', 'playerName' => $playerName, 'questId' => $questId, 'questName' => $questName]);
 
         $this->logger->logEnd("PlayerJoiningHandler: handle");
     }
