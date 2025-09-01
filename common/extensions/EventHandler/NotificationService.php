@@ -5,12 +5,10 @@ namespace common\extensions\EventHandler;
 use common\extensions\EventHandler\contracts\BroadcastServiceInterface;
 use common\extensions\EventHandler\dtos\ChatMessageDto;
 use common\extensions\EventHandler\factories\BroadcastMessageFactory;
-use common\extensions\EventHandler\LoggerService; // Ensured LoggerService is used
+use common\extensions\EventHandler\LoggerService;
 use common\models\Notification;
 use common\models\Player;
-use common\components\QuestMessages;
 use Yii;
-use yii\helpers\ArrayHelper;
 
 class NotificationService
 {
@@ -95,7 +93,7 @@ class NotificationService
      * @param int|null $userId User initiating the action
      * @return Notification|null
      */
-    public function createNotificationAndBroadcast(int $questId, array $data, ?string $excludeSessionId = null, ?int $userId = null): ?Notification {
+    public function xxxcreateNotificationAndBroadcast(int $questId, array $data, ?string $excludeSessionId = null, ?int $userId = null): ?Notification {
         $this->logger->logStart("NotificationService: createNotificationAndBroadcast questId=[{$questId}]", ['data' => $data, 'excludeSessionId' => $excludeSessionId, 'userId' => $userId]);
 
         // Assuming $userId is equivalent to player_id for the notification
@@ -130,11 +128,48 @@ class NotificationService
             $this->logger->log("NotificationService: Chat DTO broadcasted for questId=[{$notificationModel->quest_id}]", ['type' => $chatDto->getType()]);
         } else {
             // Handle other notification types or non-DTO broadcasts if necessary
-            $this->logger->log("NotificationService: Notification type [{$notificationModel->notification_type}] not handled by DTO broadcast in this example.", ['notificationId' => $notificationModel->id]);
+            //$this->logger->log("NotificationService: Notification type [{$notificationModel->notification_type}] not handled by DTO broadcast in this example (['notificationId' => {$notificationModel->id}])");
+            $this->logger->log("NotificationService: From notification model, Notification type={$notificationModel->notification_type}, payload)", $notificationModel->payload);
+            $this->logger->log("NotificationService: create massageDto -> Notification type={$data['type']}, payload=", $data['payload']);
+            $payload = $data['payload'];
+            $payload['sessionId'] = $data['sessionId']; // ensure sessionId is in the payload
+            $messageDto = $this->messageFactory->createMessage($data['type'], $payload);
+
+            $this->broadcastService->broadcastToQuest((int) $notificationModel->quest_id, $messageDto, $excludeSessionId);
+            $this->logger->log("NotificationService: Message DTO broadcasted for questId=[{$notificationModel->quest_id}]", ['type' => $messageDto->getType()]);
         }
 
         $this->logger->logEnd("NotificationService: createNotificationAndBroadcast");
         return $notificationModel;
+    }
+
+    public function createNotificationAndBroadcast(int $questId, array $data, ?string $excludeSessionId = null, ?int $userId = null): void {
+        $this->logger->logStart("NotificationService: createNotificationAndBroadcast questId=[{$questId}]", ['data' => $data, 'excludeSessionId' => $excludeSessionId, 'userId' => $userId]);
+
+        // Assuming $userId is equivalent to player_id for the notification
+        $playerId = $userId ?? ($data['playerId'] ?? null);
+        if (!$playerId) {
+            $this->logger->log("NotificationService: Player ID not provided for notification.", $data, 'error');
+            // Depending on requirements, might create an error DTO and send back to originator if possible
+            return;
+        }
+
+        $payload = $data['payload'];
+        if ($data['type'] === 'new-message') {
+            $messageDto = $this->messageFactory->createChatMessage(
+                    $data['message'] ?? $payload['message'],
+                    $data['sender_name'] ?? $payload['playerName'] ?? 'Unknown Sender'
+            );
+        } else {
+            // Handle other notification types or non-DTO broadcasts if necessary
+            $this->logger->log("NotificationService: create massageDto -> Notification type={$data['type']}, payload=", $data['payload']);
+            $payload['sessionId'] = $data['sessionId']; // ensure sessionId is in the payload
+            $messageDto = $this->messageFactory->createMessage($data['type'], $payload);
+        }
+        $this->broadcastService->broadcastToQuest($questId, $messageDto, $excludeSessionId);
+        $this->logger->log("NotificationService: Message DTO broadcasted for questId=[{$questId}]", ['type' => $messageDto->getType()]);
+
+        $this->logger->logEnd("NotificationService: createNotificationAndBroadcast");
     }
 
     /**

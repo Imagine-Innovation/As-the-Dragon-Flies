@@ -5,15 +5,18 @@ namespace common\extensions\EventHandler\factories;
 use common\extensions\EventHandler\dtos\ChatMessageDto;
 use common\extensions\EventHandler\dtos\PlayerJoinedDto;
 use common\extensions\EventHandler\dtos\PlayerLeftDto;
-use common\extensions\EventHandler\dtos\QuestCanStartDto;
 use common\extensions\EventHandler\dtos\QuestStartedDto;
 use common\extensions\EventHandler\dtos\GameActionDto;
 use common\extensions\EventHandler\dtos\NotificationDto;
 use common\extensions\EventHandler\dtos\ErrorDto;
 use common\extensions\EventHandler\contracts\BroadcastMessageInterface;
+use common\extensions\EventHandler\LoggerService;
+use Yii;
 
 class BroadcastMessageFactory
 {
+
+    private ?LoggerService $loggerService = null;
 
     public function createChatMessage(string $message, string $sender, ?string $recipient = null): ChatMessageDto {
         return new ChatMessageDto($message, $sender, $recipient);
@@ -25,10 +28,6 @@ class BroadcastMessageFactory
 
     public function createPlayerLeftMessage(string $playerName, string $sessionId, string $questName, string $reason): PlayerLeftDto {
         return new PlayerLeftDto($playerName, $sessionId, $questName, $reason);
-    }
-
-    public function createQuestCanStartMessage(string $sessionId, string $questName, ?int $questId = null): QuestCanStartDto {
-        return new QuestCanStartDto($sessionId, $questName, $questId);
     }
 
     public function createQuestStartedMessage(string $sessionId, int $questId, string $questName): QuestStartedDto {
@@ -52,61 +51,71 @@ class BroadcastMessageFactory
      * This can be useful for reconstructing messages or for dynamic creation.
      */
     public function createMessage(string $type, array $payload): ?BroadcastMessageInterface {
+        $actualLogFilePath = 'c:/temp/EventHandler.log';
+        $this->loggerService = new LoggerService($actualLogFilePath, true);
+        $this->loggerService->logStart("BroadcastMessageFactory - createMessage - type={$type}, payload=", $payload);
         switch ($type) {
             case 'new-message':
-                // Assuming payload keys match ChatMessageDto constructor or a setter method
-                // This part needs careful implementation based on how payload is structured
-                // For simplicity, let's assume direct payload usage isn't the primary path for this factory
-                // and specific creator methods are preferred.
-                // If direct creation from payload is needed, each DTO should have a constructor
-                // that accepts an array or dedicated setters.
-                // Example: return new ChatMessageDto($payload['message'], $payload['sender']);
-                // This is a placeholder and might need adjustment based on DTO constructor signatures.
                 if (isset($payload['message'], $payload['sender'])) {
                     return new ChatMessageDto($payload['message'], $payload['sender'], $payload['recipient'] ?? null);
                 }
                 break;
-            case 'player-joined':
+            case 'player-joining':
                 if (isset($payload['playerName'], $payload['sessionId'], $payload['questName'])) {
                     return new PlayerJoinedDto($payload['playerName'], $payload['sessionId'], $payload['questName']);
+                } else {
+                    $this->loggerService->log("BroadcastMessageFactory - createMessage - type={$type}, invalid payload", null, 'warning');
+                    $this->loggerService->log("BroadcastMessageFactory - createMessage - expected payload attributes: playerName, sessionId, questName");
                 }
                 // Consider adding an else or logging if payload is incomplete for this type
                 break;
-            case 'player-left':
+            case 'player-leaving':
                 if (isset($payload['playerName'], $payload['sessionId'], $payload['questName'])) {
-                    return new PlayerLeftDto($payload['playerName'], $payload['sessionId'], $payload['questName'], $payload['reasaon']);
+                    return new PlayerLeftDto($payload['playerName'], $payload['sessionId'], $payload['questName'], $payload['reason']);
+                } else {
+                    $this->loggerService->log("BroadcastMessageFactory - createMessage - type={$type}, invalid payload", null, 'warning');
+                    $this->loggerService->log("BroadcastMessageFactory - createMessage - expected payload attributes: playerName, sessionId, questName, reason");
                 }
                 // Consider adding an else or logging if payload is incomplete for this type
                 break;
             case 'game-action':
                 if (isset($payload['action'], $payload['details'])) {
                     return new GameActionDto($payload['action'], $payload['details']);
+                } else {
+                    $this->loggerService->log("BroadcastMessageFactory - createMessage - type={$type}, invalid payload", null, 'warning');
+                    $this->loggerService->log("BroadcastMessageFactory - createMessage - expected payload attributes: action, details");
                 }
                 break;
             case 'notification':
                 if (isset($payload['message'])) {
                     return new NotificationDto($payload['message'], $payload['level'] ?? 'info', $payload['details'] ?? null);
+                } else {
+                    $this->loggerService->log("BroadcastMessageFactory - createMessage - type={$type}, invalid payload", null, 'warning');
+                    $this->loggerService->log("BroadcastMessageFactory - createMessage - expected payload attributes: message, level, details");
                 }
                 break;
-            case 'quest-can-start':
-                if (isset($payload['sessionId'], $payload['questName'], $payload['questId'])) {
-                    return new QuestCanStartDto($payload['sessionId'], $payload['questName'], $payload['questId']);
-                }
-                break;
-            case 'quest-started':
+            case 'quest-starting':
                 if (isset($payload['sessionId'], $payload['questName'], $payload['questId'])) {
                     return new QuestStartedDto($payload['sessionId'], $payload['questName'], $payload['questId']);
+                } else {
+                    $this->loggerService->log("BroadcastMessageFactory - createMessage - type={$type}, invalid payload", null, 'warning');
+                    $this->loggerService->log("BroadcastMessageFactory - createMessage - expected payload attributes: sessionId, questName, questId");
                 }
                 break;
             case 'error':
                 if (isset($payload['message'])) {
                     return new ErrorDto($payload['message'], $payload['code'] ?? null, $payload['details'] ?? null);
+                } else {
+                    $this->loggerService->log("BroadcastMessageFactory - createMessage - type={$type}, invalid payload", null, 'warning');
+                    $this->loggerService->log("BroadcastMessageFactory - createMessage - expected payload attributes: message");
                 }
                 break;
-            // Add other types as needed
+            default:
+                $this->loggerService->log("BroadcastMessageFactory - createMessage - unhandled type={$type}", null, 'warning');
+                break;
         }
-        // Log error or throw exception for unknown type or invalid payload
-        // error_log("BroadcastMessageFactory: Unknown message type '{$type}' or invalid payload for generic creation.");
+        $this->loggerService->logEnd("BroadcastMessageFactory - createMessage");
+
         return null;
     }
 }

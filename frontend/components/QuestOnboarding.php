@@ -9,10 +9,11 @@ use common\models\QuestPlayer;
 use common\models\Player;
 use common\models\Story;
 use common\models\StoryClass;
-use common\models\events\NewPlayerEvent;
+use common\models\events\PlayerJoiningEvent;
 use Yii;
 
-class QuestOnboarding {
+class QuestOnboarding
+{
 
     const WELLCOME_MESSAGES = [
         0 => "There's nobody here!",
@@ -381,7 +382,7 @@ class QuestOnboarding {
         // Dispatch the new player event
         $sessionId = Yii::$app->session->get('sessionId');
         if ($sessionId) {
-            $event = new NewPlayerEvent($sessionId, $player, $quest);
+            $event = new PlayerJoiningEvent($sessionId, $player, $quest);
             $event->process();
         }
 

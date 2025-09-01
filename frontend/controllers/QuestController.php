@@ -182,13 +182,6 @@ class QuestController extends Controller
         $event = EventFactory::createEvent('player-joining', $sessionId, $player, $tavern);
         $event->process();
 
-        // Check if quest can start
-        $playersCount = $tavern->getCurrentPlayers()->count();
-        if ($playersCount >= $tavern->story->min_players && QuestOnboarding::areRequiredClassesPresent($tavern)) {
-            $event = EventFactory::createEvent('quest-can-start', $sessionId, $player, $tavern);
-            $event->process();
-        }
-
         return $this->redirect(['tavern',
                     'id' => $tavern->id
         ]);
@@ -342,7 +335,7 @@ class QuestController extends Controller
         ];
     }
 
-    public function actionAjaxStart() {
+    public function xxxactionAjaxStart() {
         // Set JSON response format
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -490,7 +483,7 @@ class QuestController extends Controller
         return $this->redirect(['story/index']);
     }
 
-    public function actionAjaxQuit() {
+    public function xxxactionAjaxQuit() {
         // Configure response format
         Yii::$app->response->format = Response::FORMAT_JSON;
 

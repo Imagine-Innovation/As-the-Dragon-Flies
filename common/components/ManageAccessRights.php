@@ -97,7 +97,8 @@ class ManageAccessRights extends Component
         // or to any ajax call (side effect, every ajax call actions should be prefixed with 'ajax'
         return (
                 ($route === 'site' && in_array($action, $publicSiteActions)) ||
-                substr($action, 0, 4) === 'ajax'
+                //substr($action, 0, 4) === 'ajax' ||
+                strncmp($action, 'ajax', 4) === 0
         );
     }
 

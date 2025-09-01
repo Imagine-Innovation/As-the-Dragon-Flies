@@ -17,24 +17,15 @@ $playerId = Yii::$app->session->get('playerId');
                             <h5><?= $player->name ?></h5>
                             <p class="small mb-1"><?= $player->age ?>-year-old <?= $player->gender == 'M' ? 'male' : 'female' ?> <?= $player->race->name ?></p>
                             <p class="small mb-0"><?= $player->level->name ?> <?= $player->alignment->name ?> <?= $player->class->name ?></p>
-                            <?php if ($player->id !== $model->initiator_id): // Initiator cannot leave the quest  ?>
-                                <?php if ($player->id === $playerId): // Only the current player can leave the quest ?>
-                                    <?=
-                                    Button::widget([
-                                        'isPost' => true,
-                                        'url' => Url::toRoute(['quest/quit', 'playerId' => $playerId, 'id' => $model->id]),
-                                        'style' => 'btn-sm mt-2 w-100',
-                                        'callToAction' => true,
-                                        'id' => 'leaveQuestButton',
-                                        'icon' => 'bi-box-arrow-right',
-                                        'title' => 'Leave Tavern'
-                                    ])
-                                    ?>
-                                <?php endif; ?>
-                            <?php else: // This is the initiator part ?>
-                                <?php if ($player->id === $playerId): // only initiator can start the quest ?>
-                                    <?=
-                                    Button::widget([
+                            <?php
+                            // Buttons are displayed only for the current player
+                            if ($player->id === $playerId) {
+                                // if the current user is the quest initiator,
+                                // he is the only one actually allowed to start the quest.
+                                if ($player->id === $model->initiator_id) {
+                                    // The "Start the quest" button remains hidden until
+                                    // the browser receives a "quest-can-start" event
+                                    echo Button::widget([
                                         'isPost' => true,
                                         'url' => Url::toRoute(['quest/start', 'id' => $model->id]),
                                         'style' => 'btn-sm mt-2 w-100 d-none',
@@ -42,11 +33,22 @@ $playerId = Yii::$app->session->get('playerId');
                                         'id' => 'startQuestButton',
                                         'icon' => 'dnd-action-move',
                                         'title' => 'Start the quest'
-                                    ])
-                                    ?>
-
-                                <?php endif; ?>
-                            <?php endif; ?>
+                                    ]);
+                                } else {
+                                    // If he is not the one who create the quest (the initiator),
+                                    // he is allowed to quit the quest
+                                    echo Button::widget([
+                                        'isPost' => true,
+                                        'url' => Url::toRoute(['quest/quit', 'playerId' => $playerId, 'id' => $model->id]),
+                                        'style' => 'btn-sm mt-2 w-100',
+                                        'callToAction' => true,
+                                        'id' => 'leaveQuestButton',
+                                        'icon' => 'bi-box-arrow-right',
+                                        'title' => 'Leave Tavern'
+                                    ]);
+                                }
+                            }
+                            ?>
                         </div>
                     </div>
                 </div>

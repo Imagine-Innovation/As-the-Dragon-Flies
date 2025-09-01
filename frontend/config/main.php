@@ -140,6 +140,16 @@ return [
             'errorAction' => 'site/error',
         ],
         'assetManager' => $assetManager,
+        'httpclient' => [
+            'class' => 'yii\httpclient\Client',
+            // Optional: Configure default options
+            'requestConfig' => [
+                'format' => yii\httpclient\Client::FORMAT_JSON,
+            ],
+            'responseConfig' => [
+                'format' => yii\httpclient\Client::FORMAT_JSON,
+            ],
+        ],
     /*
       'urlManager' => [
       'enablePrettyUrl' => true,

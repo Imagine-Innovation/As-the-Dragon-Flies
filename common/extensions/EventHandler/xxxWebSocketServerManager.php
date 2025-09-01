@@ -13,8 +13,7 @@ use common\extensions\EventHandler\QuestSessionManager;
 use common\extensions\EventHandler\handlers\WebSocketHandler;
 use Ratchet\ConnectionInterface;
 
-class WebSocketServerManager
-{
+class WebSocketServerManager {
 
     private array $clients = []; // Changed from static
     // private MessageHandlerInterface $messageHandler; // Removed as property
@@ -57,9 +56,17 @@ class WebSocketServerManager
         $this->questSessionManager->clearClientId($clientId);
     }
 
-    public function setup(MessageHandlerInterface $messageHandler, string $host, int $port): void {
+    // run method signature changed
+    public function run(MessageHandlerInterface $messageHandler, string $host, int $port): void {
+        // Create your WebSocket handler
+        // Note: WebSocketHandler class needs to be adjusted to use the passed $messageHandler
+        // and $this (WebSocketServerManager instance for addClient/removeClient calls from WebSocketHandler)
         $webSocketHandler = new WebSocketHandler($messageHandler, $this->logger, $this);
+
+        // Create a Ratchet WsServer
         $wsServer = new WsServer($webSocketHandler);
+
+        // Create an HTTP server to handle the WebSocket handshake
         $httpServer = new HttpServer($wsServer);
 
         $this->logger->log("WebSocketServerManager: Attempting to create SocketServer on {$host}:{$port}...");
@@ -68,7 +75,7 @@ class WebSocketServerManager
             $this->logger->log("WebSocketServerManager: SocketServer created successfully.");
         } catch (\Throwable $e) {
             $this->logger->log("WebSocketServerManager: Error creating SocketServer: " . $e->getMessage() . " - Trace: " . $e->getTraceAsString(), null, 'error');
-            throw $e;
+            throw $e; // Re-throw to allow higher-level handlers to catch it if needed
         }
 
         $this->logger->log("WebSocketServerManager: Attempting to create IoServer...");
@@ -77,10 +84,19 @@ class WebSocketServerManager
             $this->logger->log("WebSocketServerManager: IoServer created successfully.");
         } catch (\Throwable $e) {
             $this->logger->log("WebSocketServerManager: Error creating IoServer: " . $e->getMessage() . " - Trace: " . $e->getTraceAsString(), null, 'error');
-            throw $e;
+            throw $e; // Re-throw
         }
 
-        $this->logger->log("WebSocketServerManager: WebSocket server setup complete.");
+        $this->logger->log("WebSocketServerManager: WebSocket server setup complete. About to start event loop...");
+        // The previous log: "$this->logger->log("WebSocket server running at {$host}:{$port}");" is functionally similar to the line above.
+        // We can keep one that indicates setup is complete before loop->run().
+
+        $this->loop->run();
+
+        // Note: Any log immediately after $this->loop->run() within THIS method
+        // will only be hit if $this->loop->run() terminates AND execution returns here,
+        // which is the normal blocking behavior. The log in EventHandler.php after its call
+        // to this run() method is the one that indicates the loop has stopped.
     }
 
     public function shutdown(): void {

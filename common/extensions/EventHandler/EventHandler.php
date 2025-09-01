@@ -2,150 +2,184 @@
 
 namespace common\extensions\EventHandler;
 
-use React\EventLoop\Loop; // Required for Loop::get()
+use React\EventLoop\Loop;
+use React\Http\Server as HttpServer;
+use React\Http\Message\Response;
+use React\Socket\SocketServer;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use common\extensions\EventHandler\handlers\RegistrationHandler;
 use common\extensions\EventHandler\handlers\ChatMessageHandler;
 use common\extensions\EventHandler\handlers\GameActionHandler;
 use common\extensions\EventHandler\handlers\PlayerJoiningHandler;
 use common\extensions\EventHandler\handlers\PlayerLeavingHandler;
-use common\extensions\EventHandler\handlers\QuestCanStartHandler;
 use common\extensions\EventHandler\handlers\QuestStartingHandler;
 use common\extensions\EventHandler\factories\BroadcastMessageFactory;
-use common\models\Notification;
 use Yii;
 use yii\base\Component;
 
 class EventHandler extends Component
 {
 
-    public $host = '0.0.0.0';
-    public $port = 8082;
-    //public $logFilePath = '@runtime/logs/eventhandler.log'; // Default log file path
-    public $logFilePath = 'c:/temp/EventHandler.log';
-    public $debug = true;
+    public string $host = '0.0.0.0';
+    public int $port = 8082;
+    public int $internalPort = 8083;
+    public string $logFilePath = 'c:/temp/EventHandler.log';
+    public bool $debug = true;
     private ?LoggerService $loggerService = null;
     private ?QuestSessionManager $questSessionManager = null;
     private ?NotificationService $notificationService = null;
     private ?WebSocketServerManager $webSocketServerManager = null;
     private ?BroadcastService $broadcastService = null;
     private ?MessageHandlerOrchestrator $messageHandlerOrchestrator = null;
+    private $loop;
 
-    public function init() {
+    public function init(): void {
         parent::init();
+        $this->loop = Loop::get();
+        $this->initializeServices();
+        $this->initializeMessageHandlers();
+    }
 
-        $actualLogFilePath = Yii::getAlias($this->logFilePath);
-
-        // 1. Initialize LoggerService
+    protected function initializeServices(): void {
+        $actualLogFilePath = $this->logFilePath;
         $this->loggerService = new LoggerService($actualLogFilePath, $this->debug);
-
-        // 2. Initialize QuestSessionManager
         $this->questSessionManager = new QuestSessionManager($this->loggerService);
-
-        // 3. Initialize BroadcastService (depends on WebSocketServerManager, QuestSessionManager, NotificationService)
         $messageFactory = new BroadcastMessageFactory();
-
-        // 4. Initialize WebSocketServerManager (Loop can be retrieved globally or passed if needed)
-        $loop = Loop::get(); // Get the global loop instance.
-        $this->webSocketServerManager = new WebSocketServerManager($this->loggerService, $loop, $this->questSessionManager);
-
-        // 5. Initialize BroadcastService (without NotificationService in constructor)
+        $this->webSocketServerManager = new WebSocketServerManager($this->loggerService, $this->loop, $this->questSessionManager);
         $this->broadcastService = new BroadcastService(
                 $this->loggerService,
                 $this->webSocketServerManager,
                 $this->questSessionManager
         );
-
-        // Create Message Factory (already created $messageFactory above, this is just for order context)
         $this->notificationService = new NotificationService(
                 $this->loggerService,
                 $this->broadcastService,
                 $messageFactory
         );
-
-        // Now, inject NotificationService back into BroadcastService using the setter
         $this->broadcastService->setNotificationService($this->notificationService);
+    }
 
-        // 6. Initialize Specific Message Handlers
+    protected function initializeMessageHandlers(): void {
         $specificHandlers = [
             'register' => new RegistrationHandler($this->loggerService, $this->questSessionManager, $this->broadcastService),
-            'chat' => new ChatMessageHandler($this->loggerService, $this->notificationService, $this->broadcastService, $messageFactory),
-            'new-message' => new ChatMessageHandler($this->loggerService, $this->notificationService, $this->broadcastService, $messageFactory),
-            'sending-message' => new ChatMessageHandler($this->loggerService, $this->notificationService, $this->broadcastService, $messageFactory),
-            'action' => new GameActionHandler($this->loggerService, $this->broadcastService, $messageFactory),
-            'player-joining' => new PlayerJoiningHandler($this->loggerService, $this->broadcastService, $messageFactory),
-            'player-leaving' => new PlayerLeavingHandler($this->loggerService, $this->broadcastService, $messageFactory),
-            'quest-can-start' => new QuestCanStartHandler($this->loggerService, $this->broadcastService, $messageFactory),
-            'quest-starting' => new QuestStartingHandler($this->loggerService, $this->broadcastService, $messageFactory),
+            'chat' => new ChatMessageHandler($this->loggerService, $this->notificationService, $this->broadcastService, new BroadcastMessageFactory()),
+            'new-message' => new ChatMessageHandler($this->loggerService, $this->notificationService, $this->broadcastService, new BroadcastMessageFactory()),
+            'sending-message' => new ChatMessageHandler($this->loggerService, $this->notificationService, $this->broadcastService, new BroadcastMessageFactory()),
+            'action' => new GameActionHandler($this->loggerService, $this->broadcastService, new BroadcastMessageFactory()),
+            'player-joining' => new PlayerJoiningHandler($this->loggerService, $this->broadcastService, new BroadcastMessageFactory()),
+            'player-leaving' => new PlayerLeavingHandler($this->loggerService, $this->broadcastService, new BroadcastMessageFactory()),
+            'quest-starting' => new QuestStartingHandler($this->loggerService, $this->broadcastService, new BroadcastMessageFactory()),
         ];
-
-        // 7. Initialize MessageHandlerOrchestrator
         $this->messageHandlerOrchestrator = new MessageHandlerOrchestrator(
                 $this->loggerService,
                 $this->broadcastService,
-                $specificHandlers // Corrected order: specificHandlers first
+                $specificHandlers
         );
     }
 
-    public function run() {
-        $originalErrorReportingLevel = error_reporting();
-        error_reporting($originalErrorReportingLevel & ~E_DEPRECATED);
-
-        // Existing guard clause for service initialization
-        if (!$this->loggerService || !$this->webSocketServerManager || !$this->messageHandlerOrchestrator) {
-            if ($this->loggerService) {
-                $this->loggerService->log("EventHandler: Essential services not initialized. Cannot run.", null, 'error');
-            } else {
-                error_log("EventHandler: LoggerService not initialized. Cannot run.");
-            }
-            error_reporting($originalErrorReportingLevel); // Restore error reporting before returning
+    public function run(): void {
+        $this->suppressDeprecationWarnings();
+        if (!$this->areServicesInitialized()) {
             return;
         }
 
-        $this->loggerService->logStart("EventHandler: WebSocket server starting...");
+        $this->setupWebSocketServer();
+        $this->setupInternalHttpServer();
+        $this->startEventLoop();
+    }
+
+    protected function suppressDeprecationWarnings(): void {
+        error_reporting(error_reporting() & ~E_DEPRECATED);
+    }
+
+    protected function areServicesInitialized(): bool {
+        if (!$this->loggerService || !$this->webSocketServerManager || !$this->messageHandlerOrchestrator) {
+            $this->loggerService?->log("EventHandler: Essential services not initialized. Cannot run.", null, 'error');
+            return false;
+        }
+        return true;
+    }
+
+    protected function setupWebSocketServer(): void {
+        $this->webSocketServerManager->setup($this->messageHandlerOrchestrator, $this->host, $this->port);
+        $this->loggerService->log("EventHandler: WebSocket server configured to run at {$this->host}:{$this->port}");
+    }
+
+    protected function setupInternalHttpServer(): void {
+        $http = new HttpServer($this->loop, [$this, 'handleBroadcastRequest']);
+        $socket = new SocketServer("{$this->host}:{$this->internalPort}", [], $this->loop);
+        $http->listen($socket);
+        $this->loggerService->log("EventHandler: Internal HTTP server listening on {$this->host}:{$this->internalPort}");
+    }
+
+    public function handleBroadcastRequest(ServerRequestInterface $request): ResponseInterface {
+        $this->loggerService->logStart("EventHandler: handleBroadcastRequest - Received request: {$request->getMethod()} {$request->getUri()->getPath()}");
+
+        if (!$this->isValidBroadcastRequest($request)) {
+            $response = new Response(404, ['Content-Type' => 'text/plain'], 'Not found');
+            $this->loggerService->logEnd("EventHandler: handleBroadcastRequest - Rejected request (not POST or not /broadcast).", null, 'warning');
+            return $response;
+        }
+
+        $data = $this->parseRequestBody($request);
+        if ($data === null) {
+            $response = new Response(400, ['Content-Type' => 'text/plain'], 'Invalid JSON');
+            $this->loggerService->logEnd("EventHandler: handleBroadcastRequest - Invalid JSON received.", null, 'warning');
+            return $response;
+        }
         try {
-            $this->loggerService->log("EventHandler: WebSocket server configured to run at {$this->host}:{$this->port}");
-
-            // Pass the orchestrator to the server manager's run method
-            $this->webSocketServerManager->run($this->messageHandlerOrchestrator, $this->host, $this->port);
-
-            $this->loggerService->log("EventHandler: WebSocket server has stopped.");
-        } catch (\Exception $e) {
-            $this->loggerService->log("EventHandler: Exception during server run: " . $e->getMessage(), $e->getTraceAsString(), 'error');
-        } finally {
-            $this->loggerService->logEnd("EventHandler: WebSocket server run method finished.");
-            error_reporting($originalErrorReportingLevel); // Restore original error reporting level
+            $response = $this->processBroadcastRequest($data);
+            $this->loggerService->logEnd("EventHandler: handleBroadcastRequest - Request processed successfully.");
+            return $response;
+        } catch (\Throwable $e) {
+            $this->loggerService->log("EventHandler: Exception in processBroadcastRequest: " . $e->getMessage(), null, 'error');
+            $response = new Response(500, ['Content-Type' => 'text/plain'], 'Internal Server Error');
+            $this->loggerService->logEnd("EventHandler: handleBroadcastRequest - Broadcast request failed", null, 'error');
         }
     }
 
-    /**
-     * Public entry point to register a session for a quest.
-     * Uses the initialized QuestSessionManager.
-     *
-     * @param string $sessionId
-     * @param array $data
-     * @return bool
-     */
-    public function registerSessionForQuest(string $sessionId, array $data): bool {
-        Yii::debug("*** debug *** registerSessionForQuest - sessionId={$sessionId}, data=" . print_r($data, true));
-        if (!$this->questSessionManager) {
-            Yii::debug("*** debug *** registerSessionForQuest - QuestSessionManager not initialized when calling registerSessionForQuest.");
-            // Fallback or error if init() hasn't run - though for a Yii component, init() should run automatically.
-            // This might indicate a usage problem if called before the component is fully initialized.
-            $this->loggerService?->log("EventHandler: QuestSessionManager not initialized when calling registerSessionForQuest.", null, 'error');
-            // For robustness, could initialize it here if absolutely necessary, but it's better if init() handles it.
-            // $this->init(); // Avoid this if possible, could lead to multiple initializations.
-            return false;
+    protected function isValidBroadcastRequest(ServerRequestInterface $request): bool {
+        return $request->getMethod() === 'POST' && $request->getUri()->getPath() === '/broadcast';
+    }
+
+    protected function parseRequestBody(ServerRequestInterface $request): ?array {
+        $body = $request->getBody()->getContents();
+        $data = json_decode($body, true);
+        return json_last_error() === JSON_ERROR_NONE ? $data : null;
+    }
+
+    protected function processBroadcastRequest(array $data): ResponseInterface {
+        $questId = $data['questId'] ?? null;
+        $message = $data['message'] ?? null;
+        $excludeSessionId = $data['excludeSessionId'] ?? null;
+
+        if ($questId && $message) {
+            $this->broadcastToQuest($questId, $message, $excludeSessionId);
+            return new Response(200, ['Content-Type' => 'application/json'], json_encode(['status' => 'ok', 'message' => 'Broadcast initiated.']));
         }
-        // The QuestSessionManager already has its own logger, so it will log its own start/end.
-        return $this->questSessionManager->registerSessionForQuest($sessionId, $data);
+
+        return new Response(400, ['Content-Type' => 'text/plain'], 'Missing questId or message');
+    }
+
+    protected function startEventLoop(): void {
+        $this->loggerService->logStart("EventHandler: Starting event loop...");
+        $this->loop->run();
+        $this->loggerService->logEnd("EventHandler: Event loop stopped.");
     }
 
     public function broadcastToQuest(int $questId, array $message, ?string $excludeSessionId = null): void {
+        $this->loggerService->logStart("EventHandler: broadcastToQuest questId={$questId}, excludeSessionId={$excludeSessionId}, message:", $message);
         if (!$this->notificationService) {
-            $this->loggerService?->log("EventHandler: notificationService not initialized when calling broadcastToQuest.", null, 'error');
+            $this->loggerService?->logEnd("EventHandler: broadcastToQuest => notificationService not initialized when calling broadcastToQuest.", null, 'error');
             return;
         }
-        // The QuestSessionManager already has its own logger, so it will log its own start/end.
-        $this->notificationService->createNotificationAndBroadcast($questId, $message, $excludeSessionId);
+
+        try {
+            $this->notificationService->createNotificationAndBroadcast($questId, $message, $excludeSessionId);
+            $this->loggerService?->logEnd("EventHandler: broadcastToQuest");
+        } catch (\Throwable $e) {
+            $this->loggerService->logEnd("EventHandler: broadcastToQuest - Exception in broadcastToQuest: " . $e->getMessage(), null, 'error');
+        }
     }
 }

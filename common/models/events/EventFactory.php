@@ -26,12 +26,14 @@ class EventFactory
             'player-leaving' => new PlayerLeavingEvent($sessionId, $player, $quest, $data['reason'] ?? 'Unknown reason'),
             'quest-starting' => new QuestStartingEvent($sessionId, $player, $quest),
             'sending-message' => new SendingMessageEvent($sessionId, $player, $quest, $data['message'] ?? ''),
-            'quest-can-start' => new QuestCanStartEvent($sessionId, $player, $quest),
-            'new-player' => new NewPlayerEvent($sessionId, $player, $quest),
-            'player-left' => new PlayerLeftEvent($sessionId, $player, $quest, $data['reason'] ?? 'Unknown reason'),
-            'new-message' => new NewMessageEvent($sessionId, $player, $quest, $data['message'] ?? ''),
-            'start-quest' => new StartQuestEvent($sessionId, $player, $quest),
             'game-action' => new GameActionEvent($sessionId, $player, $quest, $data['action'] ?? '', $data['actionData'] ?? []),
+            /*
+              'new-player' => new NewPlayerEvent($sessionId, $player, $quest),
+              'player-left' => new PlayerLeftEvent($sessionId, $player, $quest, $data['reason'] ?? 'Unknown reason'),
+              'new-message' => new NewMessageEvent($sessionId, $player, $quest, $data['message'] ?? ''),
+              'start-quest' => new StartQuestEvent($sessionId, $player, $quest),
+             *
+             */
             default => throw new \InvalidArgumentException("Unknown event type: $eventType"),
         };
     }

@@ -75,7 +75,8 @@ use Yii;
  * @property Notification[] $unreadNotifications
  *
  */
-class Player extends \yii\db\ActiveRecord {
+class Player extends \yii\db\ActiveRecord
+{
 
     /**
      * ENUM field values
@@ -83,6 +84,8 @@ class Player extends \yii\db\ActiveRecord {
     const GENDER_C = 'C';
     const GENDER_F = 'F';
     const GENDER_M = 'M';
+    // Game master Id
+    const GAME_MASTER_ID = 1;
 
     /**
      * {@inheritdoc}

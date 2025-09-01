@@ -108,16 +108,6 @@ class NotificationClient {
             this.displayNotification(data);
         });
 
-        this.on('quest-can-start', (data) => {
-            Logger.log(2, 'setupDefaultHandlers', 'Received quest can start message:', data);
-            const button = `#startQuestButton`;
-            if (DOMUtils.exists(button)) {
-                $(button).removeClass('d-none');
-            }
-            const message = `Quest "${data.payload.questName}" is now ready to start!`;
-            ToastManager.show('Quest Ready', message, 'success');
-        });
-
         this.on('quest-started', (data) => {
             Logger.log(2, 'setupDefaultHandlers', 'Received quest-started message:', data);
             if (data.payload && data.payload.redirectUrl) {
@@ -126,18 +116,18 @@ class NotificationClient {
         });
 
         this.on('player-joined', (data) => {
-            Logger.log(2, 'setupDefaultHandlers', 'Received new_player-joined event:', data);
+            Logger.log(2, 'setupDefaultHandlers', 'Received player-joined event:', data);
             if (data.payload && data.payload.playerName && data.payload.questName) {
                 // Construct the message from the payload
                 const message = `Player ${data.payload.playerName} has joined quest "${data.payload.questName}".`;
                 this.refreshTavern(message);
             } else {
-                console.warn('Received new_player-joined event with incomplete payload:', data);
+                console.warn('Received player-joined event with incomplete payload:', data);
             }
         });
 
         this.on('player-left', (data) => {
-            Logger.log(2, 'setupDefaultHandlers', 'Received new_player-left event:', data);
+            Logger.log(2, 'setupDefaultHandlers', 'Received player-left event:', data);
             if (data.payload && data.payload.playerName && data.payload.questName) {
                 // Construct the message from the payload
                 const message = `Player ${data.payload.playerName} has left the quest`;
@@ -228,6 +218,7 @@ class NotificationClient {
             successCallback: (response) => {
                 if (!response.error) {
                     $(target).html(response.content);
+                    this.checkIfQuestCanStart();
                 }
             }
         });
@@ -260,6 +251,27 @@ class NotificationClient {
             }
         });
 
+    }
+
+    checkIfQuestCanStart() {
+        Logger.log(2, 'checkIfQuestCanStart', ``);
+
+        const button = `#startQuestButton`;
+        if (!DOMUtils.exists(button))
+            return;
+
+        AjaxUtils.request({
+            url: 'quest/ajax-can-start',
+            data: {sessionId: this.sessionId},
+            successCallback: (response) => {
+                Logger.log(3, 'checkIfQuestCanStart', `Can start? ${JSON.stringify(response)}`);
+                if (response.canStart) {
+                    $(button).removeClass('d-none');
+                } else {
+                    $(button).addClass('d-none');
+                }
+            }
+        });
     }
 
     /**

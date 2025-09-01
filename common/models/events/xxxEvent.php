@@ -9,8 +9,7 @@ use common\models\Quest;
 use Yii;
 use yii\base\BaseObject;
 
-abstract class Event extends BaseObject
-{
+abstract class Event extends BaseObject {
 
     public $sessionId;
     public $player;
@@ -52,29 +51,16 @@ abstract class Event extends BaseObject
     }
 
     protected function broadcast() {
-        $client = new \yii\httpclient\Client();
-        $data = [
-            'questId' => $this->quest->id,
-            'message' => $this->toArray(),
-            'excludeSessionId' => $this->sessionId,
-        ];
+        $array = $this->toArray();
 
-        try {
-            $response = $client->createRequest()
-                    ->setMethod('POST')
-                    ->setUrl('http://127.0.0.1:8083/broadcast')
-                    ->setData($data)
-                    ->setFormat(\yii\httpclient\Client::FORMAT_JSON)
-                    ->send();
-
-            if (!$response->isOk) {
-                Yii::error("Failed to broadcast event. HTTP status: " . $response->getStatusCode());
-                Yii::error("Response body: " . $response->getContent());
-            } else {
-                Yii::info("Successfully sent event to event server.", 'eventhandler');
-            }
-        } catch (\yii\httpclient\Exception $e) {
-            Yii::error("Exception while trying to broadcast event: " . $e->getMessage());
+        // First, register the session for the quest
+        if (Yii::$app->eventHandler->registerSessionForQuest($this->sessionId, $array)) {
+            // Broadcast event to all connected clients
+            Yii::$app->eventHandler->broadcastToQuest(
+                    $this->quest->id,
+                    $array,
+                    $this->sessionId
+            );
         }
     }
 

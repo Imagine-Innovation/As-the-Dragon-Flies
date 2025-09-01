@@ -6,20 +6,11 @@ use common\models\Player;
 use common\models\Quest;
 use Yii;
 
-class PlayerLeftEvent extends Event {
+class PlayerLeftEvent extends Event
+{
 
-    /**
-     * @var array Additional action data
-     */
     public $reason;
 
-    /**
-     * Constructor
-     *
-     * @param Player $player The player who performed the action
-     * @param Quest $quest The quest context
-     * @param string $reason The reason why the player left
-     */
     public function __construct(string $sessionId, Player $player, Quest $quest, $reason) {
         parent::__construct($sessionId, $player, $quest);
         $this->reason = $reason;

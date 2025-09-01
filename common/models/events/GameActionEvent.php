@@ -9,7 +9,8 @@ use Yii;
 /**
  * Event for game actions
  */
-class GameActionEvent extends Event {
+class GameActionEvent extends Event
+{
 
     /**
      * @var string The action type
@@ -61,7 +62,8 @@ class GameActionEvent extends Event {
             'actionData' => $this->actionData,
             'questId' => $this->quest->id,
             'questName' => $this->quest->name,
-            'timestamp' => date('Y-m-d H:i:s', $this->timestamp)
+            //'timestamp' => date('Y-m-d H:i:s', $this->timestamp)
+            'timestamp' => $this->timestamp
         ];
     }
 

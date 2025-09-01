@@ -5,8 +5,6 @@ namespace common\models\events;
 use common\models\Player;
 use common\models\Quest;
 use common\models\events\NewMessageEvent;
-use frontend\components\QuestOnboarding;
-use common\models\events\QuestCanStartEvent;
 use Yii;
 
 class NewPlayerEvent extends Event
@@ -54,35 +52,5 @@ class NewPlayerEvent extends Event
             $newMessageEvent = new NewMessageEvent($this->sessionId, $dungeonMaster, $this->quest, $message);
             $newMessageEvent->process();
         }
-
-        /**
-          // Check if quest should start (max players reached)
-          if (count($this->quest->currentPlayers) >= $this->quest->story->max_players) {
-          $startQuestEvent = new StartQuestEvent($this->sessionId, $this->player, $this->quest);
-          $startQuestEvent->process();
-          }
-         *
-         */
-        // Check if quest can start
-        $this->checkAndNotifyQuestReady();
-    }
-
-    private function checkAndNotifyQuestReady(): void {
-        if ($this->quest->status !== \common\components\AppStatus::WAITING->value) {
-            return;
-        }
-
-        $playersCount = count($this->quest->currentPlayers);
-        if ($playersCount < $this->quest->story->min_players) {
-            return;
-        }
-
-        if (!QuestOnboarding::areRequiredClassesPresent($this->quest)) {
-            return;
-        }
-
-        // If all conditions are met, dispatch the event
-        $event = new QuestCanStartEvent($this->sessionId, $this->player, $this->quest);
-        $event->process();
     }
 }

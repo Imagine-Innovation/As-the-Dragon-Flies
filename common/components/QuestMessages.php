@@ -11,7 +11,7 @@ class QuestMessages
 {
 
     const DEFAULT_LIMIT = 20;
-    const CHAT_NOTIFICATION_TYPE = 'chat';
+    const CHAT_NOTIFICATION_TYPE = 'new-message';
     const ROUNDED_SECONDS = 60;  // rounded to the same minute by default
 
     /**

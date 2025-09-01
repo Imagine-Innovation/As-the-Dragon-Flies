@@ -41,6 +41,10 @@ class PlayerLeavingEvent extends Event
 
     public function process(): void {
         Yii::debug("*** Debug *** PlayerLeavingEvent - process");
+        $notification = $this->createNotification();
+
+        $this->savePlayerNotification($notification->id);
+
         $this->broadcast();
     }
 }
