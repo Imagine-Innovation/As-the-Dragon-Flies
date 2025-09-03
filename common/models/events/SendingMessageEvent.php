@@ -40,6 +40,10 @@ class SendingMessageEvent extends Event
 
     public function process(): void {
         Yii::debug("*** Debug *** SendingMessageEvent - process");
+        $notification = $this->createNotification();
+
+        $this->savePlayerNotification($notification->id);
+
         $this->broadcast();
     }
 }

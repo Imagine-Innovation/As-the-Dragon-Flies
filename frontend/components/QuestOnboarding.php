@@ -332,10 +332,10 @@ class QuestOnboarding
      *
      * @param int $questId ID of the quest
      * @param int $playerId ID of the player
-     * @param string|null $reasonWhyPlayerLeft Reason why the player left the quest, null when inserting a new entry
+     * @param string|null $reasonWhyPlayerQuit Reason why the player left the quest, null when inserting a new entry
      * @return array
      */
-    private static function upsertQuestPlayer(int $questId, int $playerId, string|null $reasonWhyPlayerLeft = null): array {
+    private static function upsertQuestPlayer(int $questId, int $playerId, string|null $reasonWhyPlayerQuit = null): array {
         $questPlayer = QuestPlayer::findOne(['quest_id' => $questId, 'player_id' => $playerId]);
 
         if (!$questPlayer) {
@@ -347,11 +347,11 @@ class QuestOnboarding
             ]);
         }
 
-        $questPlayer->left_at = $reasonWhyPlayerLeft ? time() : null;
-        $questPlayer->reason = $reasonWhyPlayerLeft;
+        $questPlayer->left_at = $reasonWhyPlayerQuit ? time() : null;
+        $questPlayer->reason = $reasonWhyPlayerQuit;
 
         if ($questPlayer->save()) {
-            return ['error' => false, 'message' => "Player successfully " . ($reasonWhyPlayerLeft ? "left" : "joined") . " on the quest"];
+            return ['error' => false, 'message' => "Player successfully " . ($reasonWhyPlayerQuit ? "left" : "joined") . " on the quest"];
         }
         return ['error' => true, 'message' => "Could not save QuestPlayer : " . implode("\n", \yii\helpers\ArrayHelper::getColumn($questPlayer->errors, 0, false))];
     }

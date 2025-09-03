@@ -4,7 +4,7 @@ namespace common\models\events;
 
 use common\models\Player;
 use common\models\Quest;
-use common\models\events\NewMessageEvent;
+use common\models\events\SendingMessageEvent;
 use Yii;
 
 class PlayerJoiningEvent extends Event
@@ -48,8 +48,8 @@ class PlayerJoiningEvent extends Event
         $dungeonMaster = Player::findOne(1);
         if ($dungeonMaster) {
             $message = "Player {$this->player->name} has joined the quest";
-            $newMessageEvent = new NewMessageEvent($this->sessionId, $dungeonMaster, $this->quest, $message);
-            $newMessageEvent->process();
+            $sendingMessageEvent = new SendingMessageEvent($this->sessionId, $dungeonMaster, $this->quest, $message);
+            $sendingMessageEvent->process();
         }
     }
 }

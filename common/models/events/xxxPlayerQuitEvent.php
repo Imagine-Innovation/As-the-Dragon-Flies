@@ -6,7 +6,7 @@ use common\models\Player;
 use common\models\Quest;
 use Yii;
 
-class PlayerLeftEvent extends Event
+class PlayerQuitEvent extends Event
 {
 
     public $reason;
@@ -17,7 +17,7 @@ class PlayerLeftEvent extends Event
     }
 
     public function getType(): string {
-        return 'player-left';
+        return 'player-quit';
     }
 
     public function getTitle(): string {

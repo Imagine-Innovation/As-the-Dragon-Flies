@@ -4,19 +4,21 @@ namespace common\extensions\EventHandler\dtos;
 
 use common\extensions\EventHandler\contracts\BroadcastMessageInterface;
 
-class PlayerLeftDto implements BroadcastMessageInterface {
+class MessageSentDto implements BroadcastMessageInterface
+{
 
-    private string $type = 'player-left';
+    private string $type = 'message-sent';
     private array $payload;
 
-    public function __construct(string $playerName, string $sessionId, string $questName, string $reason) {
+    public function __construct(string $message, string $sender, ?string $recipient = null) {
         $this->payload = [
-            'playerName' => $playerName,
-            'sessionId' => $sessionId,
-            'questName' => $questName,
-            'reason' => $reason,
-            'timestamp' => time(),
+            'message' => $message,
+            'sender' => $sender,
+            'timestamp' => time()
         ];
+        if ($recipient !== null) {
+            $this->payload['recipient'] = $recipient;
+        }
     }
 
     public function getType(): string {

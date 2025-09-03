@@ -178,10 +178,6 @@ class QuestController extends Controller
             return UserErrorMessage::throw($this, 'error', $onboarded['message'], self::DEFAULT_REDIRECT);
         }
 
-        $sessionId = Yii::$app->session->get('sessionId');
-        $event = EventFactory::createEvent('player-joining', $sessionId, $player, $tavern);
-        $event->process();
-
         return $this->redirect(['tavern',
                     'id' => $tavern->id
         ]);
@@ -335,29 +331,6 @@ class QuestController extends Controller
         ];
     }
 
-    public function xxxactionAjaxStart() {
-        // Set JSON response format
-        Yii::$app->response->format = Response::FORMAT_JSON;
-
-        // Validate request method and type
-        if (!$this->request->isPost || !$this->request->isAjax) {
-            return ['success' => false, 'msg' => 'Not an Ajax POST request'];
-        }
-
-        $quest = Yii::$app->session->get('currentQuest');
-        if (!$quest) {
-            return ['success' => false, 'message' => 'Quest not found'];
-        }
-
-        $quest->status = AppStatus::PLAYING->value;
-        $quest->started_at = time();
-
-        if ($quest->save()) {
-            return ['success' => true, 'msg' => 'Quest is started'];
-        }
-        return ['success' => false, 'msg' => 'Could not start quest'];
-    }
-
     public function actionStart(int|null $id) {
         $quest = $this->findModel($id);
 
@@ -477,41 +450,10 @@ class QuestController extends Controller
         ContextManager::updateQuestContext(null);
 
         $sessionId = Yii::$app->session->get('sessionId');
-        $event = EventFactory::createEvent('player-leaving', $sessionId, $player, $quest, ['reason' => $reason]);
+        $event = EventFactory::createEvent('player-quitting', $sessionId, $player, $quest, ['reason' => $reason]);
         $event->process();
 
         return $this->redirect(['story/index']);
-    }
-
-    public function xxxactionAjaxQuit() {
-        // Configure response format
-        Yii::$app->response->format = Response::FORMAT_JSON;
-
-        // Validate request type
-        if (!$this->request->isPost || !$this->request->isAjax) {
-            return ['error' => true, 'msg' => 'Not an Ajax POST request'];
-        }
-
-        $player = Yii::$app->session->get('currentPlayer');
-        if (!$player) {
-            return ['success' => false, 'message' => 'Player not found'];
-        }
-
-        $quest = Yii::$app->session->get('currentQuest');
-        if (!$quest) {
-            return ['success' => false, 'message' => 'Quest not found'];
-        }
-
-        $reason = Yii::$app->request->post('reason');
-        // Process player offboarding
-        $withdraw = QuestOnboarding::withdrawPlayerFromQuest($player, $quest, $reason);
-        if ($withdraw['error']) {
-            return ['success' => false, 'message' => $withdraw['message']];
-        }
-
-        ContextManager::updateQuestContext(null);
-
-        return ['success' => true, 'message' => "Player {$player->name} successfully withdrown from quest {$quest->story->name}"];
     }
 
     /**

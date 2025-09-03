@@ -91,8 +91,8 @@ class NotificationClient {
         });
 
         // Handle chat messages
-        this.on('new-message', (data) => {
-            Logger.log(2, 'setupDefaultHandlers', 'Received new-message message:', data);
+        this.on('message-sent', (data) => {
+            Logger.log(2, 'setupDefaultHandlers', 'Received message-sent message:', data);
             let config = {
                 route: 'quest/ajax-get-messages',
                 method: 'GET',
@@ -126,14 +126,14 @@ class NotificationClient {
             }
         });
 
-        this.on('player-left', (data) => {
-            Logger.log(2, 'setupDefaultHandlers', 'Received player-left event:', data);
+        this.on('player-quit', (data) => {
+            Logger.log(2, 'setupDefaultHandlers', 'Received player-quit event:', data);
             if (data.payload && data.payload.playerName && data.payload.questName) {
                 // Construct the message from the payload
                 const message = `Player ${data.payload.playerName} has left the quest`;
                 this.refreshTavern(message);
             } else {
-                console.warn('Received player-left event with incomplete payload:', data);
+                console.warn('Received player-quit event with incomplete payload:', data);
             }
         });
     }

@@ -8,7 +8,7 @@ use common\extensions\EventHandler\factories\BroadcastMessageFactory;
 use common\extensions\EventHandler\LoggerService;
 use Ratchet\ConnectionInterface;
 
-class PlayerLeavingHandler implements SpecificMessageHandlerInterface {
+class PlayerQuittingHandler implements SpecificMessageHandlerInterface {
 
     private LoggerService $logger;
     private BroadcastServiceInterface $broadcastService;
@@ -25,10 +25,10 @@ class PlayerLeavingHandler implements SpecificMessageHandlerInterface {
     }
 
     /**
-     * Handles player-leaving messages.
+     * Handles player-quitting messages.
      */
     public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
-        $this->logger->logStart("PlayerLeavingHandler: handle for session {$sessionId}, client {$clientId}", $data);
+        $this->logger->logStart("PlayerQuittingHandler: handle for session {$sessionId}, client {$clientId}", $data);
 
         $payload = $data['payload'];
         $playerName = array_key_exists('playerName', $payload) ? $payload['playerName'] : 'Unknown';
@@ -37,18 +37,18 @@ class PlayerLeavingHandler implements SpecificMessageHandlerInterface {
         $reason = array_key_exists('reason', $payload) ? $payload['reason'] : 'Unknown';
 
         if ($questId === null || $questId === '' || $questName === 'Unknown') {
-            $this->logger->log("PlayerLeavingHandler: Missing questId, or questName in data['payload'].", $data, 'warning');
+            $this->logger->log("PlayerQuittingHandler: Missing questId, or questName in data['payload'].", $data, 'warning');
             $errorDto = $this->messageFactory->createErrorMessage("Invalid player leaving announcement: questId, or questName missing within payload.");
             $this->broadcastService->sendToClient($clientId, $errorDto, false, $sessionId);
-            $this->logger->logEnd("PlayerLeavingHandler: handle");
+            $this->logger->logEnd("PlayerQuittingHandler: handle");
             return;
         }
 
-        $playerLeftDto = $this->messageFactory->createPlayerLeftMessage($playerName, $sessionId, $questName, $reason);
-        $this->broadcastService->broadcastToQuest($questId, $playerLeftDto, $sessionId);
+        $PlayerQuitDto = $this->messageFactory->createPlayerQuitMessage($playerName, $sessionId, $questName, $reason);
+        $this->broadcastService->broadcastToQuest($questId, $PlayerQuitDto, $sessionId);
 
-        $this->broadcastService->sendBack($from, 'ack', ['type' => 'player-leaving_processed', 'playerName' => $playerName, 'questId' => $questId, 'questName' => $questName, 'reason' => $reason]);
+        $this->broadcastService->sendBack($from, 'ack', ['type' => 'player-quitting_processed', 'playerName' => $playerName, 'questId' => $questId, 'questName' => $questName, 'reason' => $reason]);
 
-        $this->logger->logEnd("PlayerLeavingHandler: handle");
+        $this->logger->logEnd("PlayerQuittingHandler: handle");
     }
 }

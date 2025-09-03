@@ -6,7 +6,7 @@ use common\models\Player;
 use common\models\Quest;
 use Yii;
 
-class PlayerLeavingEvent extends Event
+class PlayerQuittingEvent extends Event
 {
 
     public $reason;
@@ -17,7 +17,7 @@ class PlayerLeavingEvent extends Event
     }
 
     public function getType(): string {
-        return 'player-leaving';
+        return 'player-quitting';
     }
 
     public function getTitle(): string {
@@ -40,7 +40,7 @@ class PlayerLeavingEvent extends Event
     }
 
     public function process(): void {
-        Yii::debug("*** Debug *** PlayerLeavingEvent - process");
+        Yii::debug("*** Debug *** PlayerQuittingEvent - process");
         $notification = $this->createNotification();
 
         $this->savePlayerNotification($notification->id);

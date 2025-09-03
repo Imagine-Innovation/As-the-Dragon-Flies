@@ -4,10 +4,10 @@ namespace common\extensions\EventHandler;
 
 use React\EventLoop\Loop; // Required for Loop::get()
 use common\extensions\EventHandler\handlers\RegistrationHandler;
-use common\extensions\EventHandler\handlers\ChatMessageHandler;
+use common\extensions\EventHandler\handlers\SendingMessageHandler;
 use common\extensions\EventHandler\handlers\GameActionHandler;
 use common\extensions\EventHandler\handlers\PlayerJoiningHandler;
-use common\extensions\EventHandler\handlers\PlayerLeavingHandler;
+use common\extensions\EventHandler\handlers\PlayerQuittingHandler;
 use common\extensions\EventHandler\handlers\QuestStartingHandler;
 use common\extensions\EventHandler\factories\BroadcastMessageFactory;
 use Yii;
@@ -66,12 +66,12 @@ class EventHandler extends Component
         // 6. Initialize Specific Message Handlers
         $specificHandlers = [
             'register' => new RegistrationHandler($this->loggerService, $this->questSessionManager, $this->broadcastService),
-            'chat' => new ChatMessageHandler($this->loggerService, $this->notificationService, $this->broadcastService, $messageFactory),
-            'new-message' => new ChatMessageHandler($this->loggerService, $this->notificationService, $this->broadcastService, $messageFactory),
-            'sending-message' => new ChatMessageHandler($this->loggerService, $this->notificationService, $this->broadcastService, $messageFactory),
+            'chat' => new SendingMessageHandler($this->loggerService, $this->notificationService, $this->broadcastService, $messageFactory),
+            'sending-message' => new SendingMessageHandler($this->loggerService, $this->notificationService, $this->broadcastService, $messageFactory),
+            'sending-message' => new SendingMessageHandler($this->loggerService, $this->notificationService, $this->broadcastService, $messageFactory),
             'action' => new GameActionHandler($this->loggerService, $this->broadcastService, $messageFactory),
             'player-joining' => new PlayerJoiningHandler($this->loggerService, $this->broadcastService, $messageFactory),
-            'player-leaving' => new PlayerLeavingHandler($this->loggerService, $this->broadcastService, $messageFactory),
+            'player-quitting' => new PlayerQuittingHandler($this->loggerService, $this->broadcastService, $messageFactory),
             'quest-starting' => new QuestStartingHandler($this->loggerService, $this->broadcastService, $messageFactory),
         ];
 

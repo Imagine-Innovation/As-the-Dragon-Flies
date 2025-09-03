@@ -9,7 +9,8 @@ use yii\helpers\Html;
 class Button extends Widget
 {
 
-    public $isPost = false;
+    public bool $isPost = false;
+    public $postParams = [];
     public $url;
     public $id;
     public $style;
@@ -80,6 +81,9 @@ class Button extends Widget
     private function postForm(): string {
         $html = '<form action="' . $this->url . '" method="POST">';
         $html .= '<input type="hidden" name="' . Yii::$app->request->csrfParam . '" value="' . Yii::$app->request->csrfToken . '">';
+        foreach ($this->postParams as $name => $value) {
+            $html .= '<input type="hidden" name="' . $name . '" value="' . $value . '">';
+        }
         $html .= $this->postButton();
         $html .= '</form>';
 

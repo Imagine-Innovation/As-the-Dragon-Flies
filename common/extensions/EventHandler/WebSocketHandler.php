@@ -1,6 +1,6 @@
 <?php
 
-namespace common\extensions\EventHandler\handlers;
+namespace common\extensions\EventHandler;
 
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
@@ -8,7 +8,8 @@ use common\extensions\EventHandler\contracts\MessageHandlerInterface;
 use common\extensions\EventHandler\LoggerService;
 use common\extensions\EventHandler\WebSocketServerManager;
 
-class WebSocketHandler implements MessageComponentInterface {
+class WebSocketHandler implements MessageComponentInterface
+{
 
     private MessageHandlerInterface $messageHandler;
     private LoggerService $logger;

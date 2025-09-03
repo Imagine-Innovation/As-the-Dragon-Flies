@@ -4,21 +4,19 @@ namespace common\extensions\EventHandler\dtos;
 
 use common\extensions\EventHandler\contracts\BroadcastMessageInterface;
 
-class ChatMessageDto implements BroadcastMessageInterface
-{
+class PlayerQuitDto implements BroadcastMessageInterface {
 
-    private string $type = 'new-message';
+    private string $type = 'player-quit';
     private array $payload;
 
-    public function __construct(string $message, string $sender, ?string $recipient = null) {
+    public function __construct(string $playerName, string $sessionId, string $questName, string $reason) {
         $this->payload = [
-            'message' => $message,
-            'sender' => $sender,
-            'timestamp' => time()
+            'playerName' => $playerName,
+            'sessionId' => $sessionId,
+            'questName' => $questName,
+            'reason' => $reason,
+            'timestamp' => time(),
         ];
-        if ($recipient !== null) {
-            $this->payload['recipient'] = $recipient;
-        }
     }
 
     public function getType(): string {

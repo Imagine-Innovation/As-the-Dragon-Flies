@@ -10,10 +10,11 @@ use React\Socket\SocketServer;
 use common\extensions\EventHandler\contracts\MessageHandlerInterface;
 use common\extensions\EventHandler\LoggerService;
 use common\extensions\EventHandler\QuestSessionManager;
-use common\extensions\EventHandler\handlers\WebSocketHandler;
+use common\extensions\EventHandler\WebSocketHandler;
 use Ratchet\ConnectionInterface;
 
-class WebSocketServerManager {
+class WebSocketServerManager
+{
 
     private array $clients = []; // Changed from static
     // private MessageHandlerInterface $messageHandler; // Removed as property
