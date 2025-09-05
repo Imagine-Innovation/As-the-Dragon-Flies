@@ -15,11 +15,11 @@ class PlayerJoiningEvent extends Event
     }
 
     public function getType(): string {
-        return 'player-joining';
+        return 'player-joined';
     }
 
     public function getTitle(): string {
-        return 'Player Joining';
+        return 'Player Joined';
     }
 
     public function getMessage(): string {

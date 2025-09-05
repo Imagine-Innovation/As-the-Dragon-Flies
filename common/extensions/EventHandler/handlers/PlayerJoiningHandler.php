@@ -8,7 +8,8 @@ use common\extensions\EventHandler\factories\BroadcastMessageFactory;
 use common\extensions\EventHandler\LoggerService;
 use Ratchet\ConnectionInterface;
 
-class PlayerJoiningHandler implements SpecificMessageHandlerInterface {
+class PlayerJoiningHandler implements SpecificMessageHandlerInterface
+{
 
     private LoggerService $logger;
     private BroadcastServiceInterface $broadcastService;
@@ -31,9 +32,9 @@ class PlayerJoiningHandler implements SpecificMessageHandlerInterface {
         $this->logger->logStart("PlayerJoiningHandler: handle for session {$sessionId}, client {$clientId}", $data);
 
         $payload = $data['payload'];
-        $playerName = (string) $payload['playerName'] ?? 'Unknown';
-        $questId = (int) $payload['questId'] ?? null;
-        $questName = (string) $payload['questName'] ?? 'Unknown';
+        $playerName = $payload['playerName'] ?? 'Unknown';
+        $questId = $payload['questId'] ?? null;
+        $questName = $payload['questName'] ?? 'Unknown';
 
         if ($questId === null || $questId === '' || $questName === 'Unknown') {
             $this->logger->log("PlayerJoiningHandler: Missing questId, or questName in data['payload'].", $data, 'warning');

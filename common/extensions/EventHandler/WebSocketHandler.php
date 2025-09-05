@@ -39,17 +39,25 @@ class WebSocketHandler implements MessageComponentInterface
         // Notify the MessageHandler (Orchestrator) about the new connection
         $this->messageHandler->open($conn, $clientId);
 
-        $this->logger->log("WebSocketHandler: New connection! ({$conn->remoteAddress}) assigned appClientId: {$clientId}, resourceId: {$conn->resourceId}");
+        $this->logger->log("WebSocketHandler: New connection! ({$conn->remoteAddress}) assigned appClientId: {$clientId}, resourceId: {$conn->resourceId}", $this->clientsMap);
         $this->logger->logEnd("WebSocketHandler: onOpen");
     }
 
-    public function onMessage(ConnectionInterface $from, $msg) {
+    private function getClientId(ConnectionInterface $conn): ?string {
         // Retrieve our clientId
-        if (isset($from->appClientId)) {
-            $clientId = $from->appClientId;
-        } elseif (isset($this->clientsMap[$from->resourceId])) {
-            $clientId = $this->clientsMap[$from->resourceId];
-        } else {
+        if (isset($conn->appClientId)) {
+            return $conn->appClientId;
+        }
+        if (isset($this->clientsMap[$conn->resourceId])) {
+            $this->logger->log("WebSocketHandler: getClientId - Rely on clientsMap");
+            return $this->clientsMap[$conn->resourceId];
+        }
+        return null;
+    }
+
+    public function onMessage(ConnectionInterface $from, $msg) {
+        $clientId = $this->getClientId($from);
+        if (!$clientId) {
             $this->logger->log("WebSocketHandler: Error - Could not determine client ID for message from resourceId: {$from->resourceId}", ['message' => $msg], 'error');
             $from->close(); // Close connection if client ID is unknown
             return;
@@ -64,16 +72,10 @@ class WebSocketHandler implements MessageComponentInterface
     }
 
     public function onClose(ConnectionInterface $conn) {
-        // Retrieve our clientId
-        if (isset($conn->appClientId)) {
-            $clientId = $conn->appClientId;
-        } elseif (isset($this->clientsMap[$conn->resourceId])) {
-            $clientId = $this->clientsMap[$conn->resourceId];
-        } else {
+        $clientId = $this->getClientId($conn);
+        if (!$clientId) {
             // This might happen if onError closed the connection before appClientId was set or if it was never opened properly.
             $this->logger->log("WebSocketHandler: onClose - Could not determine client ID for resourceId: {$conn->resourceId}", null, 'warning');
-            // Attempt to remove from serverManager by resourceId if it has a fallback or if we just log
-            // For now, just log and ensure local map is cleaned if entry exists
             if (isset($this->clientsMap[$conn->resourceId])) {
                 unset($this->clientsMap[$conn->resourceId]);
             }
@@ -97,17 +99,13 @@ class WebSocketHandler implements MessageComponentInterface
             unset($conn->appClientId);
         }
 
-        $this->logger->log("WebSocketHandler: Connection clientId=[{$clientId}] has disconnected.");
+        $this->logger->log("WebSocketHandler: Connection clientId=[{$clientId}] has disconnected.", $this->clientsMap);
         $this->logger->logEnd("WebSocketHandler: onClose");
     }
 
     public function onError(ConnectionInterface $conn, \Exception $e) {
-        // Retrieve our clientId
-        if (isset($conn->appClientId)) {
-            $clientId = $conn->appClientId;
-        } elseif (isset($this->clientsMap[$conn->resourceId])) {
-            $clientId = $this->clientsMap[$conn->resourceId];
-        } else {
+        $clientId = $this->getClientId($conn);
+        if (!$clientId) {
             $this->logger->log("WebSocketHandler: onError - Could not determine client ID for resourceId: {$conn->resourceId}. Error: " . $e->getMessage(), $e->getTraceAsString(), 'error');
             // Ratchet usually calls onClose after onError, so cleanup might happen there.
             // If not, we might need to manually trigger cleanup.

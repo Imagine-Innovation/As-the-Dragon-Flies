@@ -82,7 +82,9 @@ class NotificationClient {
         // Handle incoming notifications
         this.on('notification', (data) => {
             Logger.log(2, 'setupDefaultHandlers', 'Received notification:', data);
-            this.displayNotification(data);
+            // this.displayNotification(data);
+            const message = data.message ?? null;
+            VirtualTableTop.refresh(this.questId, this.sessionId, message);
         });
 
         // Handle incoming notifications
@@ -91,8 +93,8 @@ class NotificationClient {
         });
 
         // Handle chat messages
-        this.on('message-sent', (data) => {
-            Logger.log(2, 'setupDefaultHandlers', 'Received message-sent message:', data);
+        this.on('new-message', (data) => {
+            Logger.log(2, 'setupDefaultHandlers', 'Received new-message message:', data);
             let config = {
                 route: 'quest/ajax-get-messages',
                 method: 'GET',
@@ -120,7 +122,8 @@ class NotificationClient {
             if (data.payload && data.payload.playerName && data.payload.questName) {
                 // Construct the message from the payload
                 const message = `Player ${data.payload.playerName} has joined quest "${data.payload.questName}".`;
-                this.refreshTavern(message);
+                //this.refreshTavern(message);
+                VirtualTableTop.refresh(this.questId, this.sessionId, message);
             } else {
                 console.warn('Received player-joined event with incomplete payload:', data);
             }
@@ -131,7 +134,8 @@ class NotificationClient {
             if (data.payload && data.payload.playerName && data.payload.questName) {
                 // Construct the message from the payload
                 const message = `Player ${data.payload.playerName} has left the quest`;
-                this.refreshTavern(message);
+                // this.refreshTavern(message);
+                VirtualTableTop.refresh(this.questId, this.sessionId, message);
             } else {
                 console.warn('Received player-quit event with incomplete payload:', data);
             }
@@ -163,7 +167,8 @@ class NotificationClient {
             }
 
             this.triggerEvent('open');
-            this.refreshTavern();
+            //this.refreshTavern();
+            VirtualTableTop.refresh(this.questId, this.sessionId);
         };
 
         this.socket.onmessage = (event) => {
@@ -171,7 +176,6 @@ class NotificationClient {
             try {
                 const data = JSON.parse(event.data);
                 this.triggerEvent('message', data);
-                // Also trigger specific event type if applicable
                 if (data.type) {
                     this.triggerEvent(data.type, data);
                 }
@@ -425,12 +429,19 @@ class NotificationClient {
         if (!message.trim())
             return;
 
-        this.send({type: 'sending-message', message: message});
-
-        // Clear the input field
-        if (chatInput) {
-            chatInput.value = '';
-        }
+        AjaxUtils.request({
+            url: 'quest/ajax-send-message',
+            data: {
+                playerId: this.playerId,
+                questId: this.questId,
+                message: message
+            },
+            successCallback: (response) => {
+                if (!response.error) {
+                    chatInput.value = '';
+                }
+            }
+        });
     }
 
     /**

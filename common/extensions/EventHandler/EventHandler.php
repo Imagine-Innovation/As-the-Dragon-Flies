@@ -62,7 +62,7 @@ class EventHandler extends Component
 
     protected function initializeMessageHandlers(): void {
         $specificHandlers = [
-            'register' => new RegistrationHandler($this->loggerService, $this->questSessionManager, $this->broadcastService),
+            'register' => new RegistrationHandler($this->loggerService, $this->questSessionManager, $this->broadcastService, new BroadcastMessageFactory()),
             'sending-message' => new SendingMessageHandler($this->loggerService, $this->notificationService, $this->broadcastService, new BroadcastMessageFactory()),
             'action' => new GameActionHandler($this->loggerService, $this->broadcastService, new BroadcastMessageFactory()),
             'player-joining' => new PlayerJoiningHandler($this->loggerService, $this->broadcastService, new BroadcastMessageFactory()),
@@ -129,12 +129,12 @@ class EventHandler extends Component
         try {
             $response = $this->processBroadcastRequest($data);
             $this->loggerService->logEnd("EventHandler: handleBroadcastRequest - Request processed successfully.");
-            return $response;
         } catch (\Throwable $e) {
             $this->loggerService->log("EventHandler: Exception in processBroadcastRequest: " . $e->getMessage(), null, 'error');
             $response = new Response(500, ['Content-Type' => 'text/plain'], 'Internal Server Error');
             $this->loggerService->logEnd("EventHandler: handleBroadcastRequest - Broadcast request failed", null, 'error');
         }
+        return $response;
     }
 
     protected function isValidBroadcastRequest(ServerRequestInterface $request): bool {

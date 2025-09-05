@@ -187,18 +187,18 @@ class BroadcastService implements BroadcastServiceInterface
     }
 
     private function sendChatHistory(ConnectionInterface $clientConnection, QuestSession $session): int {
-        $chatNotifications = $this->notificationService->getNotifications($session->quest_id, 'message-sent', $session->last_ts);
+        $chatNotifications = $this->notificationService->getNotifications($session->quest_id, 'new-message', $session->last_ts);
         $notificationCount = count($chatNotifications);
-        $this->logger->log("BroadcastService: Processing {$notificationCount} 'message-sent' notifications for history recovery.");
+        $this->logger->log("BroadcastService: Processing {$notificationCount} 'new-message' notifications for history recovery.");
 
         $recoveredMessagesCount = 0;
         foreach ($chatNotifications as $notification) {
             $this->logger->log("BroadcastService: Preparing historical chat message: Notification.id=[{$notification->id}]");
             // Use the new DTO method from NotificationService
-            $messageSentDto = $this->notificationService->prepareMessageSentDto($notification, $session->id);
+            $newMessageDto = $this->notificationService->prepareNewMessageDto($notification, $session->id);
 
             // Send directly to the specific client's connection
-            $this->sendToConnection($clientConnection, $messageSentDto->toJson());
+            $this->sendToConnection($clientConnection, $newMessageDto->toJson());
             // No need to call sendToClient or sendToSession here to avoid loops or redundant timestamp updates for history.
             // However, the main timestamp for the session should be updated *after* all history is sent.
             $recoveredMessagesCount++;

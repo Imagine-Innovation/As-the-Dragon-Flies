@@ -11,7 +11,7 @@ class QuestMessages
 {
 
     const DEFAULT_LIMIT = 20;
-    const CHAT_NOTIFICATION_TYPE = 'message-sent';
+    const CHAT_NOTIFICATION_TYPE = 'new-message';
     const ROUNDED_SECONDS = 60;  // rounded to the same minute by default
 
     /**
@@ -112,13 +112,14 @@ class QuestMessages
 
         Yii::debug($chatNotification->payload);
         Yii::debug($payload);
+        $roundedTime = $payload['roundedTime'] ?? self::roundedTime(time());
         return [
             'isAuthor' => ($chatNotification->initiator_id == $playerId), // defines is the current player is the one who initiate the chat message
-            'displayedDateTime' => Utilities::formatDate($payload['roundedTime']),
+            'displayedDateTime' => Utilities::formatDate($roundedTime),
             'sender' => Utilities::encode($payload['playerName']),
             'messages' => [Utilities::encode($payload['message'])], // first entry of the message array
-            'avatar' => $payload['avatar'],
-            'roundedTime' => $payload['roundedTime'],
+            'avatar' => $payload['avatar'] ?? 'human-male-1.png',
+            'roundedTime' => $roundedTime,
         ];
     }
 

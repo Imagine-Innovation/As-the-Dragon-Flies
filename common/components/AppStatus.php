@@ -4,7 +4,8 @@ namespace common\components;
 
 use Yii;
 
-enum AppStatus: int {
+enum AppStatus: int
+{
 
     // Global/User/Player statuses
     case DELETED = 0;
@@ -20,6 +21,10 @@ enum AppStatus: int {
     case DRAFT = 200;
     case PUBLISHED = 201;
     case ARCHIVED = 202;
+    // QuestPlayer status
+    case ONLINE = 300;
+    case OFFLINE = 301;
+    case LEFT = 302;
 
     public function getLabel(): string {
         return match ($this) {
@@ -36,7 +41,11 @@ enum AppStatus: int {
             self::DRAFT => 'Draft',
             self::PUBLISHED => 'Published',
             self::ARCHIVED => 'Archived',
-            default => 'Unknown Status', // Not strictly needed for backed enums if all cases covered
+            // QuestPlayer status
+            self::ONLINE => 'Online',
+            self::OFFLINE => 'Offline',
+            self::LEFT => 'No longer in the game',
+            default => 'Unknown Status',
         };
     }
 
@@ -55,6 +64,10 @@ enum AppStatus: int {
             self::DRAFT => ['icon' => 'bi-journal-code', 'tooltip' => 'Draft'],
             self::PUBLISHED => ['icon' => 'bi-journal-check', 'tooltip' => 'Published'],
             self::ARCHIVED => ['icon' => 'bi-journal-x', 'tooltip' => 'Archived'],
+            // QuestPlayer status
+            self::ONLINE => ['icon' => 'bi-play-circle', 'tooltip' => 'Online'],
+            self::OFFLINE => ['icon' => 'bi-pause-circle', 'tooltip' => 'Offline'],
+            self::LEFT => ['icon' => 'bi-x-circle', 'tooltip' => 'No longer in the game'],
             default => ['icon' => 'bi-exclamation-square', 'tooltip' => 'Undefined'],
         };
     }
@@ -86,18 +99,26 @@ enum AppStatus: int {
         ];
     }
 
+    public static function getValuesForQuestPlayer(): array {
+        return [
+            self::ONLINE->value,
+            self::OFFLINE->value,
+            self::LEFT->value,
+        ];
+    }
+
     public static function isValidForEntity(string $entityName, int $statusValue): bool {
         Yii::debug("*** Debug *** - isValidForEntity entityName={$entityName}, statusValue={$statusValue}");
         $folders = explode("\\", $entityName);
         $className = end($folders);
         Yii::debug("*** Debug *** - isValidForEntity className={$className}");
-        $validStatusesForEntity = match (strtolower($className)) {
-            'user' => self::getValuesForUser(),
-            'player' => self::getValuesForPlayer(),
-            'quest' => self::getValuesForQuest(),
-            'story' => self::getValuesForStory(),
-            // Add other entity types here if they have specific status sets
-            default => [], // Or throw an exception for unknown entity type
+        $validStatusesForEntity = match ($className) {
+            'User' => self::getValuesForUser(),
+            'Player' => self::getValuesForPlayer(),
+            'Quest' => self::getValuesForQuest(),
+            'Story' => self::getValuesForStory(),
+            'QuestPlayer' => self::getValuesForQuestPlayer(),
+            default => [],
         };
         Yii::debug($validStatusesForEntity);
         return in_array($statusValue, $validStatusesForEntity);

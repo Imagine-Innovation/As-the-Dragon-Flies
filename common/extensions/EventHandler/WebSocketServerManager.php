@@ -36,16 +36,9 @@ class WebSocketServerManager
         $this->questSessionManager = $questSessionManager;
     }
 
-    // addClient now needs MessageHandlerInterface passed in, or WebSocketHandler needs direct access to it
-    // For now, this change assumes WebSocketHandler will be given the orchestrator directly.
-    // So addClient and removeClient in WebSocketServerManager itself might not need to call messageHandler.open/close
-    // if WebSocketHandler (Ratchet's MessageComponentInterface adapter) does it.
-    // Let's assume WebSocketHandler handles the open/close/error calls to the MessageHandlerOrchestrator for now.
-
     public function addClient(ConnectionInterface $conn, string $clientId): void {
         $this->logger->log("Adding client: {$clientId}");
         $this->clients[$clientId] = $conn;
-        // $messageHandler->open($conn, $clientId); // This call is likely done by WebSocketHandler
     }
 
     public function removeClient(string $clientId): void {

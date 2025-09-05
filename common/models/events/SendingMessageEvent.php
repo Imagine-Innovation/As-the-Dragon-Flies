@@ -17,11 +17,11 @@ class SendingMessageEvent extends Event
     }
 
     public function getType(): string {
-        return 'sending-message';
+        return 'new-message';
     }
 
     public function getTitle(): string {
-        return 'Sending Message';
+        return 'Sending new message';
     }
 
     public function getMessage(): string {

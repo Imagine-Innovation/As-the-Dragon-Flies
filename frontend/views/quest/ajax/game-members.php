@@ -1,20 +1,25 @@
 <?php
+
+use common\components\AppStatus;
+
 /** @var yii\web\View $this */
-/** @var int $playerId */
-/** @var common\models\Quest $quest */
+/** @var common\models\QuestPlayer[] $models */
+$playerId = Yii::$app->session->get('playerId');
 ?>
 <div class="m-3">
     <!-- Party Members -->
     <h6 class="text-warning">Partners</h6>
-    <?php if (count($quest->questPlayers) > 1): ?>
-        <?php foreach ($quest->questPlayers as $questPlayer): ?>
+    <?php if (count($models) > 1): ?>
+        <?php foreach ($models as $questPlayer): ?>
             <?php
             if ($questPlayer->player_id !== $playerId): // only the other players
                 $partner = $questPlayer->player;
+                $statusEnum = AppStatus::from($questPlayer->status);
+                $iconInfo = $statusEnum->getIcon();
                 ?>
                 <div class="m-3">
                     <p>
-                        <i class="bi bi-<?= $questPlayer->reason ? "stop" : "play" ?>-fill"></i>
+                        <i class="bi <?= $iconInfo['icon'] ?>"></i>
                         <?= $partner->name ?> (<?= $partner->race->name ?> <?= $partner->class->name ?>)
                     </p>
                     <div class="progress" role="progressbar" aria-label="Hit points"

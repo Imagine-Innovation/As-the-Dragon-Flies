@@ -3,8 +3,8 @@
 $controllerCustomJavascriptLib = [
     'player-builder' => ['atdf-player-builder', 'atdf-chart-drawer'],
     'player-cart' => ['atdf-shop-manager'],
-    'quest' => ['atdf-quest-events'],
-    'game' => ['atdf-quest-events', 'atdf-equipment-manager'],
+    'quest' => ['atdf-quest-tavern', 'atdf-quest-events'],
+    'game' => ['atdf-quest-game', 'atdf-quest-events', 'atdf-equipment-manager'],
     'item' => ['atdf-item-manager'],
     'player-item' => ['atdf-item-manager'],
     'image' => ['atdf-image-manager'],
@@ -18,9 +18,17 @@ if (array_key_exists($controllerId, $controllerCustomJavascriptLib)) {
     $javascriptLibraries = $controllerCustomJavascriptLib[$controllerId];
 
     foreach ($javascriptLibraries as $javascriptLibrary) {
-        echo('<script src="js/' . $javascriptLibrary . '.js"></script>');
+        echo('<script src="js/' . $javascriptLibrary . '.js"></script>' . PHP_EOL);
     }
 }
+
+$jsSnippet = match ($controllerId) {
+    'player-builder' => 'player-builder',
+    'player-cart' => 'player-cart',
+    'quest' => 'quest',
+    'game' => 'quest',
+    default => null,
+};
 ?>
 
 <script type="text/javascript">
@@ -33,74 +41,7 @@ if (array_key_exists($controllerId, $controllerCustomJavascriptLib)) {
         LayoutInitializer.initAjaxPage();
     }
 
-<?php
-/**
- * Player-builder specific local script
- */
-if ($controllerId === "player-builder"):
-    ?>
-    <?php if ($route === "player-builder/create"): ?>
-            PlayerBuilder.initCreatePage();
-    <?php elseif ($route === "player-builder/update"): ?>
-            PlayerBuilder.initUpdatePage();
 
-            const gender = $('#playerbuilder-gender').val();
-            const alignmentId = $('#playerbuilder-alignment_id').val();
-            const age = $('#playerbuilder-age').val();
+<?= $jsSnippet ? $this->renderFile("@app/views/layouts/snippets/js/{$jsSnippet}.php", ['controllerId' => $controllerId, 'actionId' => $actionId]) : "" ?>
 
-            PlayerBuilder.initDescriptionTab(gender, alignmentId, age);
-            PlayerBuilder.initAbilitiesTab();
-            PlayerBuilder.initAvatarTab();
-            PlayerBuilder.initSkillsTab();
-    <?php endif; ?>
-<?php endif; ?>
-<?php
-/**
- * Player-cart specific local script
- */
-if ($controllerId === "player-cart"):
-    ?>
-        $(document).ready(function () {
-            ShopManager.initCartPage();
-        });
-<?php endif; ?>
-<?php
-/**
- * Quest specific local script
- */
-if ($controllerId === "quest" || $controllerId === "game"):
-    $sessionId = Yii::$app->session->get('sessionId');
-    $playerId = Yii::$app->session->get('playerId');
-    $playerName = Yii::$app->session->get('playerName');
-    $avatar = Yii::$app->session->get('avatar');
-    $questId = Yii::$app->session->get('questId');
-    $questName = Yii::$app->session->get('questName');
-    ?>
-        // Create and initialize the notification client instance
-        const currentHost = window.location.hostname;
-        const url = `ws://${currentHost}:8082`;
-        const sessionId = `<?= $sessionId ?>`;
-        const playerId = <?= $playerId ?>;
-        const avatar = `<?= $avatar ?>`;
-        const playerName = `<?= $playerName ?>`;
-        const questId = <?= $questId ?>;
-        const questName = `<?= $questName ?>`;
-
-        const notificationClient = new NotificationClient(url, sessionId, playerId, playerName, avatar, questId, questName);
-
-        notificationClient.init();
-
-    <?php
-    /**
-     * Game specific local script
-     */
-    if ($controllerId === "game"):
-        ?>
-            const equipmentHandler = new EquipmentHandler();
-            //const svg = document.querySelector('svg');
-            const svg = document.getElementById('equipmentSvg');
-            equipmentHandler.init(playerId, svg);
-
-    <?php endif; ?>
-<?php endif; ?>
 </script>

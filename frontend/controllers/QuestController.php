@@ -65,9 +65,8 @@ class QuestController extends Controller
                                 'actions' => [
                                     'index', 'update', 'delete', 'create', 'view', 'quit', 'start',
                                     'tavern', 'join', 'resume', 'get-messages',
-                                    'ajax-tavern', 'ajax-welcome-messages',
-                                    'ajax-get-messages', 'ajax-send-message',
-                                    'ajax-start', 'ajax-can-start', 'ajax-quit'
+                                    'ajax-quest-members', 'ajax-welcome-messages',
+                                    'ajax-get-messages', 'ajax-send-message', 'ajax-can-start',
                                 ],
                                 'allow' => ManageAccessRights::isRouteAllowed($this),
                                 'roles' => ['@'],
@@ -178,9 +177,12 @@ class QuestController extends Controller
             return UserErrorMessage::throw($this, 'error', $onboarded['message'], self::DEFAULT_REDIRECT);
         }
 
-        return $this->redirect(['tavern',
-                    'id' => $tavern->id
-        ]);
+        $success = $this->createEvent('player-joining', $player, $tavern);
+        if ($success) {
+            return $this->redirect(['tavern', 'id' => $tavern->id]);
+        } else {
+            return UserErrorMessage::throw($this, 'error', "Could not trigger event", self::DEFAULT_REDIRECT);
+        }
     }
 
     /**
@@ -194,7 +196,7 @@ class QuestController extends Controller
      *   - msg: string message for client
      *   - content: HTML content for tavern update
      */
-    public function actionAjaxTavern() {
+    public function actionAjaxQuestMembers() {
         // Configure JSON response format
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -203,15 +205,18 @@ class QuestController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
         }
 
-        // Get current user context
-        $user = Yii::$app->user->identity;
-        $player = $user->currentPlayer;
+        $questId = Yii::$app->request->get('questId');
+        if (!$questId) {
+            return ['error' => true, 'msg' => 'Missing Quest ID'];
+        }
+
+        $render = Yii::$app->request->get('render');
 
         // Prepare Ajax request parameters
         $param = [
-            'modelName' => 'Quest',
-            'render' => 'quest-members',
-            'filter' => ['id' => $player->quest_id],
+            'modelName' => 'QuestPlayer',
+            'render' => $render ?? 'tavern-members',
+            'filter' => ['quest_id' => $questId],
         ];
 
         // Process request and return response
@@ -243,8 +248,8 @@ class QuestController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
         }
 
-        // Get current quest information from context
-        $quest = Yii::$app->session->get('currentQuest');
+        $questId = Yii::$app->request->get('questId');
+        $quest = $this->findModel($questId);
 
         $playerCount = Player::find()
                 ->where(['quest_id' => $quest->id])
@@ -271,28 +276,23 @@ class QuestController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
-        $player = Yii::$app->session->get('currentPlayer');
+        $quest = $this->findModel(Yii::$app->request->post('questId'));
+        if (!$quest) {
+            return ['success' => false, 'message' => 'Quest not found'];
+        }
+        $player = $this->findPlayer(Yii::$app->request->post('playerId'));
         if (!$player) {
             return ['success' => false, 'message' => 'Player not found'];
         }
 
-        $quest = Yii::$app->session->get('currentQuest');
-        if (!$quest) {
-            return ['success' => false, 'message' => 'Quest not found'];
-        }
-
-        //$sessionId = Yii::$app->request->post('sessionId');
         $message = Yii::$app->request->post('message');
-        Yii::debug("*** Debug *** actionAjaxSendMessage - Player/ {$player->name}, Quest: {$quest->story->name}, Message: " . ($message ?? 'empty'));
+        Yii::debug("*** Debug *** actionAjaxSendMessage - Player: {$player->name}, Quest: {$quest->story->name}, Message: " . ($message ?? 'empty'));
         if (empty($message)) {
             return ['success' => false, 'message' => 'Message cannot be empty'];
         }
 
-        $sessionId = Yii::$app->session->get('sessionId');
-        $event = EventFactory::createEvent('sending-message', $sessionId, $player, $quest, ['message' => $message]);
-        $event->process();
-
-        return ['success' => true, 'msg' => 'Message send attempt acknowledged. Actual processing via WebSocket.'];
+        $success = $this->createEvent('sending-message', $player, $quest, ['message' => $message]);
+        return ['success' => $success, 'msg' => "Create 'sending-message' event {($success ? 'succeded' : 'failed')}"];
     }
 
     /**
@@ -335,7 +335,6 @@ class QuestController extends Controller
         $quest = $this->findModel($id);
 
         $player = $quest->initiator;
-        $sessionId = Yii::$app->session->getId();
 
         $quest->status = AppStatus::PLAYING->value;
         $quest->started_at = time();
@@ -344,14 +343,12 @@ class QuestController extends Controller
             throw new \Exception(implode("<br />", \yii\helpers\ArrayHelper::getColumn($quest->errors, 0, false)));
         }
 
-        try {
-            $event = EventFactory::createEvent('quest-starting', $sessionId, $player, $quest);
-            $event->process();
-        } catch (\Exception $e) {
-            Yii::error("Failed to broadcast quest-starting event: " . $e->getMessage());
+        $success = $this->createEvent('quest-starting', $player, $quest);
+        if ($success) {
+            return $this->redirect(['game/view', 'id' => $id]);
+        } else {
+            return UserErrorMessage::throw($this, 'error', "Could not trigger event", self::DEFAULT_REDIRECT);
         }
-
-        return $this->redirect(['game/view', 'id' => $id]);
     }
 
     /**
@@ -447,13 +444,12 @@ class QuestController extends Controller
             return $this->redirect(['quest/view', 'id' => $quest->id]);
         }
 
-        ContextManager::updateQuestContext(null);
-
-        $sessionId = Yii::$app->session->get('sessionId');
-        $event = EventFactory::createEvent('player-quitting', $sessionId, $player, $quest, ['reason' => $reason]);
-        $event->process();
-
-        return $this->redirect(['story/index']);
+        $success = $this->createEvent('player-quitting', $player, $quest, ['reason' => $reason]);
+        if ($success) {
+            return $this->redirect(['story/index']);
+        } else {
+            return UserErrorMessage::throw($this, 'error', "Could not trigger event", self::DEFAULT_REDIRECT);
+        }
     }
 
     /**
@@ -599,5 +595,17 @@ class QuestController extends Controller
         }
 
         return $tavern;
+    }
+
+    protected function createEvent(string $eventType, Player &$player, Quest &$quest, array $data = []): bool {
+        $sessionId = Yii::$app->session->get('sessionId');
+        try {
+            $event = EventFactory::createEvent($eventType, $sessionId, $player, $quest, $data);
+            $event->process();
+            return true;
+        } catch (\Exception $e) {
+            Yii::error("Failed to broadcast '{$eventType}' event: " . $e->getMessage());
+            return false;
+        }
     }
 }

@@ -95,7 +95,7 @@ abstract class Event extends BaseObject
     }
 
     protected function createNotification(): Notification {
-        $notification = new Notification([
+        $record = ([
             'initiator_id' => $this->player->id,
             'quest_id' => $this->quest->id,
             'notification_type' => $this->getType(),
@@ -105,6 +105,9 @@ abstract class Event extends BaseObject
             'payload' => json_encode($this->getPayload()),
             'is_private' => 0,
         ]);
+        Yii::debug("*** debug *** Event - createNotification");
+        $notification = new Notification($record);
+
         $this->notificationId = ($notification->save()) ? $notification->id : null;
 
         return $notification;

@@ -6,11 +6,8 @@ use common\extensions\EventHandler\contracts\MessageHandlerInterface; // Updated
 use common\extensions\EventHandler\contracts\SpecificMessageHandlerInterface; // Updated
 use Ratchet\ConnectionInterface;
 
-// Assuming LoggerService and BroadcastService will be in this namespace or properly aliased
-// use common\extensions\EventHandler\LoggerService;
-// use common\extensions\EventHandler\BroadcastService;
-
-class MessageHandlerOrchestrator implements MessageHandlerInterface {
+class MessageHandlerOrchestrator implements MessageHandlerInterface
+{
 
     private LoggerService $logger;
     private BroadcastService $broadcastService; // Updated

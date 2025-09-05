@@ -3,13 +3,13 @@
 namespace frontend\components;
 
 use common\components\AppStatus;
+use common\components\ContextManager;
 use common\models\CharacterClass;
 use common\models\Quest;
 use common\models\QuestPlayer;
 use common\models\Player;
 use common\models\Story;
 use common\models\StoryClass;
-use common\models\events\PlayerJoiningEvent;
 use Yii;
 
 class QuestOnboarding
@@ -324,6 +324,7 @@ class QuestOnboarding
         if (!$player->save()) {
             return ['error' => true, 'message' => "Could not save Player : " . implode("\n", \yii\helpers\ArrayHelper::getColumn($player->errors, 0, false))];
         }
+        ContextManager::updateQuestContext($questId);
         return ['error' => false, 'message' => "Player's quest_id updated to {$questId}"];
     }
 
@@ -332,10 +333,11 @@ class QuestOnboarding
      *
      * @param int $questId ID of the quest
      * @param int $playerId ID of the player
+     * @param int $status Status of the player in the quest
      * @param string|null $reasonWhyPlayerQuit Reason why the player left the quest, null when inserting a new entry
      * @return array
      */
-    private static function upsertQuestPlayer(int $questId, int $playerId, string|null $reasonWhyPlayerQuit = null): array {
+    private static function upsertQuestPlayer(int $questId, int $playerId, int $status, string|null $reasonWhyPlayerQuit = null): array {
         $questPlayer = QuestPlayer::findOne(['quest_id' => $questId, 'player_id' => $playerId]);
 
         if (!$questPlayer) {
@@ -343,7 +345,8 @@ class QuestOnboarding
             $questPlayer = new QuestPlayer([
                 'quest_id' => $questId,
                 'player_id' => $playerId,
-                'onboarded_at' => time()
+                'onboarded_at' => time(),
+                'status' => $status,
             ]);
         }
 
@@ -374,16 +377,9 @@ class QuestOnboarding
             return $playerUpdate;
         }
 
-        $result = self::upsertQuestPlayer($quest->id, $player->id);
+        $result = self::upsertQuestPlayer($quest->id, $player->id, AppStatus::ONLINE->value);
         if ($result['error']) {
             return $result;
-        }
-
-        // Dispatch the new player event
-        $sessionId = Yii::$app->session->get('sessionId');
-        if ($sessionId) {
-            $event = new PlayerJoiningEvent($sessionId, $player, $quest);
-            $event->process();
         }
 
         return $result;
@@ -407,6 +403,6 @@ class QuestOnboarding
         if ($playerUpdate['error']) {
             return $playerUpdate;
         }
-        return self::upsertQuestPlayer($quest->id, $player->id, $reason);
+        return self::upsertQuestPlayer($quest->id, $player->id, AppStatus::LEFT->value, $reason);
     }
 }

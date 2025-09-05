@@ -17,15 +17,15 @@ class PlayerQuittingEvent extends Event
     }
 
     public function getType(): string {
-        return 'player-quitting';
+        return 'player-quit';
     }
 
     public function getTitle(): string {
-        return 'Player Leaving';
+        return 'Player quitting';
     }
 
     public function getMessage(): string {
-        return "{$this->player->name} is leaving the quest";
+        return "{$this->player->name} is quitting the quest";
     }
 
     public function getPayload(): array {
@@ -46,5 +46,14 @@ class PlayerQuittingEvent extends Event
         $this->savePlayerNotification($notification->id);
 
         $this->broadcast();
+        Yii::debug("*** Debug *** PlayerJoiningEvent - process");
+
+        // Dungeon master says hello
+        $dungeonMaster = Player::findOne(1);
+        if ($dungeonMaster) {
+            $message = "Player {$this->player->name} has quit the quest. Reason: {$this->reason}";
+            $sendingMessageEvent = new SendingMessageEvent($this->sessionId, $dungeonMaster, $this->quest, $message);
+            $sendingMessageEvent->process();
+        }
     }
 }

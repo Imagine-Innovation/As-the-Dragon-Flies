@@ -2,28 +2,53 @@
 
 namespace common\extensions\EventHandler\handlers;
 
+use common\components\AppStatus;
 use common\extensions\EventHandler\contracts\SpecificMessageHandlerInterface;
-use common\extensions\EventHandler\LoggerService;
+use common\extensions\EventHandler\factories\BroadcastMessageFactory;
 use common\extensions\EventHandler\BroadcastService;
+use common\extensions\EventHandler\LoggerService;
 use common\extensions\EventHandler\QuestSessionManager;
+use common\models\QuestPlayer;
 use Ratchet\ConnectionInterface;
 
 // use common\extensions\EventHandler\BroadcastService; // Placeholder
 
-class RegistrationHandler implements SpecificMessageHandlerInterface {
+class RegistrationHandler implements SpecificMessageHandlerInterface
+{
 
     private LoggerService $logger;
-    private QuestSessionManager $questSessionManager; // Use QuestSessionManager
-    private BroadcastService $broadcastService; // Updated
+    private QuestSessionManager $questSessionManager;
+    private BroadcastService $broadcastService;
+    private BroadcastMessageFactory $messageFactory;
 
     public function __construct(
             LoggerService $logger,
-            QuestSessionManager $questSessionManager, // Inject QuestSessionManager
-            BroadcastService $broadcastService // Added
+            QuestSessionManager $questSessionManager,
+            BroadcastService $broadcastService,
+            BroadcastMessageFactory $messageFactory
     ) {
         $this->logger = $logger;
         $this->questSessionManager = $questSessionManager;
         $this->broadcastService = $broadcastService;
+        $this->messageFactory = $messageFactory;
+    }
+
+    private function updateQuestPlayerStatus(int $questId, int $playerId, string $sessionId): void {
+        if ($questId === null || $playerId === null) {
+            return;
+        }
+
+        $questPlayer = QuestPlayer::findOne(['quest_id' => $questId, 'player_id' => $playerId]);
+
+        if (!$questPlayer) {
+            // The player is not defined int the quest yet. Stop here
+            return;
+        }
+        $questPlayer->status = AppStatus::ONLINE->value;
+        $questPlayer->save();
+
+        $NotificationDto = $this->messageFactory->createNotificationMessage("Player registered", 'info', []);
+        $this->broadcastService->broadcastToQuest($questId, $NotificationDto, $sessionId);
     }
 
     /**
@@ -33,14 +58,13 @@ class RegistrationHandler implements SpecificMessageHandlerInterface {
     public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
         $this->logger->logStart("RegistrationHandler: handle clientId=[{$clientId}], sessionId=[{$sessionId}]", $data);
 
-        // Use QuestSessionManager to register the session
         $playerId = $data['playerId'] ?? null;
-        $questId = $data['questId'] ?? null; // Assuming questId might be part of $data
+        $questId = $data['questId'] ?? null;
         $registered = $this->questSessionManager->registerSession($sessionId, $playerId, $questId, $clientId, $data);
-        // $registered = !is_null($playerId); // Simplified placeholder logic
         $this->logger->log("RegistrationHandler: Session registration via QuestSessionManager. Result: " . ($registered ? 'Success' : 'Failure'));
 
         if ($registered) {
+            $this->updateQuestPlayerStatus($questId, $playerId, $sessionId);
             $this->broadcastService->sendBack($from, 'connected', "Client ID [{$clientId}] attached to session [{$sessionId}]");
         } else {
             $this->logger->log("RegistrationHandler: Unable to register/find session Id [{$sessionId}] for clientId=[{$clientId}]", $data, 'warning');

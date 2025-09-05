@@ -4,21 +4,19 @@ namespace common\extensions\EventHandler\dtos;
 
 use common\extensions\EventHandler\contracts\BroadcastMessageInterface;
 
-class MessageSentDto implements BroadcastMessageInterface
+class NewMessageDto implements BroadcastMessageInterface
 {
 
-    private string $type = 'message-sent';
+    private string $type = 'new-message';
     private array $payload;
 
     public function __construct(string $message, string $sender, ?string $recipient = null) {
         $this->payload = [
             'message' => $message,
             'sender' => $sender,
-            'timestamp' => time()
+            'recipient' => $recipient,
+            'timestamp' => time(),
         ];
-        if ($recipient !== null) {
-            $this->payload['recipient'] = $recipient;
-        }
     }
 
     public function getType(): string {

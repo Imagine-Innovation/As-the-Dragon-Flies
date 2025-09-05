@@ -4,12 +4,15 @@ use frontend\widgets\Button;
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */
-/** @var common\models\Quest $models */
+/** @var common\models\QuestPlayer[] $models */
 $playerId = Yii::$app->session->get('playerId');
 ?>
 <div class="row g-4">
-    <?php foreach ($models as $model): ?>
-        <?php foreach ($model->currentPlayers as $player): ?>
+    <?php
+    foreach ($models as $questPlayer):
+        $player = $questPlayer->player
+        ?>
+        <?php if ($player->quest_id === $questPlayer->quest_id): // Ensure the player is still in the quest ?>
             <div class="col-12 col-sm-6 col-md-12 col-lg-6 col-xl-4 col-xxl-3">
                 <div class="image-card">
                     <div class="image-card-body" style="background-image: url('img/characters/<?= $player->image->file_name ?>');">
@@ -22,12 +25,12 @@ $playerId = Yii::$app->session->get('playerId');
                             if ($player->id === $playerId) {
                                 // if the current user is the quest initiator,
                                 // he is the only one actually allowed to start the quest.
-                                if ($player->id === $model->initiator_id) {
+                                if ($player->id === $questPlayer->quest->initiator_id) {
                                     // The "Start the quest" button remains hidden until
                                     // the browser receives a "quest-can-start" event
                                     echo Button::widget([
                                         'isPost' => true,
-                                        'url' => Url::toRoute(['quest/start', 'id' => $model->id]),
+                                        'url' => Url::toRoute(['quest/start', 'id' => $questPlayer->quest_id]),
                                         'style' => 'btn-sm mt-2 w-100 d-none',
                                         'callToAction' => true,
                                         'id' => 'startQuestButton',
@@ -39,7 +42,7 @@ $playerId = Yii::$app->session->get('playerId');
                                     // he is allowed to quit the quest
                                     echo Button::widget([
                                         'isPost' => true,
-                                        'url' => Url::toRoute(['quest/quit', 'playerId' => $playerId, 'id' => $model->id]),
+                                        'url' => Url::toRoute(['quest/quit', 'playerId' => $playerId, 'id' => $questPlayer->quest_id]),
                                         'style' => 'btn-sm mt-2 w-100',
                                         'callToAction' => true,
                                         'id' => 'leaveQuestButton',
@@ -53,6 +56,6 @@ $playerId = Yii::$app->session->get('playerId');
                     </div>
                 </div>
             </div>
-        <?php endforeach; ?>
+        <?php endif; ?>
     <?php endforeach; ?>
 </div>

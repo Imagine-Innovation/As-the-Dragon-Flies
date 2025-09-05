@@ -47,8 +47,8 @@ class SendingMessageHandler implements SpecificMessageHandlerInterface
             return;
         }
 
-        $messageSentDto = $this->messageFactory->createMessageSent($messageText, $playerName);
-        $this->broadcastService->broadcastToQuest($questId, $messageSentDto, $sessionId);
+        $newMessageDto = $this->messageFactory->createNewMessage($messageText, $playerName);
+        $this->broadcastService->broadcastToQuest($questId, $newMessageDto, $sessionId);
 
         $this->broadcastService->sendBack($from, 'ack', ['type' => 'sending-message-processed', 'message' => $messageText]);
 

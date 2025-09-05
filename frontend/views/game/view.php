@@ -1,5 +1,6 @@
 <?php
 
+use frontend\widgets\AjaxContainer;
 use frontend\widgets\Button;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -12,10 +13,6 @@ $this->title = Yii::$app->session->get('questName');
 
 $playerSnippet = $this->renderFile('@app/views/game/snippets/player.php', [
     'player' => $player
-        ]);
-$partnersSnippet = $this->renderFile('@app/views/game/ajax/partners.php', [
-    'playerId' => $player->id,
-    'quest' => $quest
         ]);
 ?>
 <main class="row" style="height: calc(100dvh - 120px);">
@@ -51,7 +48,7 @@ $partnersSnippet = $this->renderFile('@app/views/game/ajax/partners.php', [
                     </div>
                 </article>
                 <article id="game-partners" class="card">
-                    <?= $partnersSnippet ?>
+                    <?= AjaxContainer::widget(['name' => 'offcanvasQuestMembers']) ?>
                 </article>
             </section>
         </div>
@@ -82,7 +79,7 @@ $partnersSnippet = $this->renderFile('@app/views/game/ajax/partners.php', [
                 </div>
             </article>
             <article id="game-partners" class="card">
-                <?= $partnersSnippet ?>
+                <?= AjaxContainer::widget(['name' => 'questMembers']) ?>
             </article>
         </section>
     </aside>
