@@ -70,9 +70,11 @@ class EventHandler extends Component
             'quest-starting' => new QuestStartingHandler($this->loggerService, $this->broadcastService, new BroadcastMessageFactory()),
         ];
         $this->messageHandlerOrchestrator = new MessageHandlerOrchestrator(
-                $this->loggerService,
-                $this->broadcastService,
-                $specificHandlers
+            $this->loggerService,
+            $this->broadcastService,
+            $this->questSessionManager,
+            $this->notificationService,
+            $specificHandlers
         );
     }
 

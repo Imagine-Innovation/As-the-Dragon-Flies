@@ -307,29 +307,6 @@ class NotificationClient {
         }
     }
 
-    sendWithPayload(type, textMessage, addedPayload = null) {
-        Logger.log(2, 'sendWithPayload', `type=${type}, textMessage=${textMessage}, addedPayload=${JSON.stringify(addedPayload)}`);
-        const joinedAt = new Date();
-        const roundedTime = Math.floor(joinedAt / 60) * 60;
-        const payload = {
-            ...addedPayload,
-            playerId: this.playerId,
-            playerName: this.playerName,
-            avatar: this.avatar,
-            questId: this.questId,
-            questName: this.questName,
-            roundedTime: roundedTime,
-            timestamp: joinedAt,
-            joinedAt: joinedAt.toLocaleString()
-        };
-
-        this.send({
-            type: type,
-            message: textMessage,
-            payload: payload
-        });
-    }
-
     /**
      * Register an event handler
      * 
