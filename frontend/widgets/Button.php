@@ -9,18 +9,18 @@ use yii\helpers\Html;
 class Button extends Widget
 {
 
-    public bool $isPost = false;
-    public $postParams = [];
-    public $url;
-    public $id;
-    public $style;
-    public $tooltip;
-    public $icon;
-    public $modal;
-    public $title;
-    public $mode;
-    public $onclick;
-    public $callToAction;
+    public bool $isPost = false;    // 'true' if the button triggers a POST request, default='false'
+    public $postParams = [];        // Associative array ['param' => value, ...] for hidden POST params
+    public $url;                    // URL to call when the button is clicked, default='#'
+    public $id;                     // Button ID (for javascript purpose)
+    public $style;                  // Additional CSS class
+    public $tooltip;                // Button tooltip
+    public $icon;                   // Icon to display before the button name
+    public $modal;                  // Name of the modal to display when clicking on the button
+    public $title;                  // Button name
+    public $mode;                   // “icon” to use it as an icon button, otherwise Bootstrap button behavior
+    public $onclick;                // javascript hook to trigger onclick
+    public $isCta;                  // 'true' is call to action (CTA)
 
     public function run() {
         if ($this->isPost) {
@@ -30,7 +30,7 @@ class Button extends Widget
     }
 
     private function button() {
-        $cta = $this->callToAction ?? false;
+        $cta = $this->isCta ?? false;
         // Caution: The spaces at the beginning of the line are intentional; do not delete them.
         $style = ($cta ? ' btn-warning' : ' btn-secondary') . ' ' . ($this->style ?? '');
 
@@ -91,7 +91,7 @@ class Button extends Widget
     }
 
     private function postButton() {
-        $cta = $this->callToAction ?? false;
+        $cta = $this->isCta ?? false;
         // Caution: The spaces at the beginning of the line are intentional; do not delete them.
         $style = ($cta ? ' btn-warning' : ' btn-secondary') . ' ' . ($this->style ?? '');
 

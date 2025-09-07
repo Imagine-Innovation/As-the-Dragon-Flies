@@ -94,7 +94,7 @@ use yii\helpers\Url;
                         'url' => Url::toRoute(['site/login']),
                         'title' => 'Come and join us!',
                         'style' => 'btn-lg text-decoration w-auto',
-                        'callToAction' => true
+                        'isCta' => true
                     ])
                     ?>
                     <?=

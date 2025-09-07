@@ -32,7 +32,7 @@ $playerId = Yii::$app->session->get('playerId');
                                         'isPost' => true,
                                         'url' => Url::toRoute(['quest/start', 'id' => $questPlayer->quest_id]),
                                         'style' => 'btn-sm mt-2 w-100 d-none',
-                                        'callToAction' => true,
+                                        'isCta' => true,
                                         'id' => 'startQuestButton',
                                         'icon' => 'dnd-action-move',
                                         'title' => 'Start the quest'
@@ -44,7 +44,7 @@ $playerId = Yii::$app->session->get('playerId');
                                         'isPost' => true,
                                         'url' => Url::toRoute(['quest/quit', 'playerId' => $playerId, 'id' => $questPlayer->quest_id]),
                                         'style' => 'btn-sm mt-2 w-100',
-                                        'callToAction' => true,
+                                        'isCta' => true,
                                         'id' => 'leaveQuestButton',
                                         'icon' => 'bi-box-arrow-right',
                                         'title' => 'Leave Tavern'

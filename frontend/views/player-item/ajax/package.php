@@ -24,14 +24,14 @@ $itemTypes = ['Armor', 'Helmet', 'Shield', 'Weapon', 'Tool'];
                                     'tooltip' => ($item['isTwoHanded'] ? 'To use this weapon, you need both hands.' : 'You only need one hand to use this weapon'),
                                     'title' => 'Equip',
                                     'id' => $item['buttonId'],
-                                    'callToAction' => true,
+                                    'isCta' => true,
                                     'style' => 'btn-sm mt-2',
                                 ]);
                             } else {
                                 echo Button::widget([
                                     'title' => 'Equip',
                                     'id' => $item['buttonId'],
-                                    'callToAction' => true,
+                                    'isCta' => true,
                                     'style' => 'btn-sm mt-2',
                                 ]);
                             }

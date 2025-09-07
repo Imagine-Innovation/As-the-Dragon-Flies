@@ -128,7 +128,7 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
                     'icon' => 'bi-floppy',
                     'title' => 'Save and continue',
                     'id' => 'playerBuilderSaveButton',
-                    'callToAction' => true,
+                    'isCta' => true,
                     'style' => 'btn-sm mt-2 w-50',
                 ])
                 ?>

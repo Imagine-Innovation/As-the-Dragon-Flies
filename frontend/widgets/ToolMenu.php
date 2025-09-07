@@ -31,14 +31,14 @@ class ToolMenu extends Widget
     private function getMenus() {
         $user = Yii::$app->user->identity;
 
-        $hasPlayer = false;
+        $hasPlayerSelected = false;
         $inQuest = false;
         if ($user->is_player && $user->current_player_id !== null) {
-            $hasPlayer = true;
+            $hasPlayerSelected = true;
             $inQuest = Yii::$app->session->get('questId') ? true : false;
         }
 
-        $authorizedIds = ManageAccessRights::getAuthorizedIds($user, $hasPlayer, $inQuest);
+        $authorizedIds = ManageAccessRights::getAuthorizedIds($user, $hasPlayerSelected, $inQuest);
 
         $authorizedMenus = Menu::find()
                 ->joinWith('accessRight')

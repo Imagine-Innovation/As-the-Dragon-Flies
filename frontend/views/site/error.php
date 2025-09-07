@@ -10,7 +10,7 @@ use yii\helpers\Html;
 
 $this->title = "Oups, something went wrong";
 
-$envVars = ['hasPlayer',
+$envVars = ['hasPlayerSelected',
     'playerId',
     'playerName',
     'avatar',

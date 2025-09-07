@@ -8,7 +8,8 @@ use common\helpers\Utilities;
 use Yii;
 use yii\base\Component;
 
-class ContextManager extends Component {
+class ContextManager extends Component
+{
 
     public static function initContext() {
         if (Yii::$app->user->isGuest) {
@@ -39,14 +40,14 @@ class ContextManager extends Component {
         $currentPlayer = $playerId ? Player::findOne(['id' => $playerId]) : null;
 
         if ($currentPlayer) {
-            Yii::$app->session->set('hasPlayer', true);
+            Yii::$app->session->set('hasPlayerSelected', true);
             Yii::$app->session->set('playerId', $currentPlayer->id);
             Yii::$app->session->set('playerName', $currentPlayer->name);
             Yii::$app->session->set('avatar', $currentPlayer->image->file_name);
             Yii::$app->session->set('currentPlayer', $currentPlayer);
             self::updateQuestContext($currentPlayer->quest_id);
         } else {
-            Yii::$app->session->set('hasPlayer', false);
+            Yii::$app->session->set('hasPlayerSelected', false);
             Yii::$app->session->set('playerId', null);
             Yii::$app->session->set('playerName', null);
             Yii::$app->session->set('avatar', null);

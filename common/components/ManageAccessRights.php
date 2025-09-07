@@ -30,18 +30,18 @@ class ManageAccessRights extends Component
      * 5. Return combined access rights query
      *
      * @param User $user The user to get authorizations for
-     * @param bool $hasPlayer Whether the user has selected a player
+     * @param bool $hasPlayerSelected Whether the user has selected a player
      * @param bool $inQuest Whether the selected player is in a quest
      * @return ActiveQuery Query containing all authorized access right IDs
      */
-    public static function getAuthorizedIds($user, $hasPlayer = false, $inQuest = false) {
+    public static function getAuthorizedIds($user, $hasPlayerSelected = false, $inQuest = false) {
 
         $accesRights = AccessRight::find()->select('id')->where(['id' => 1]);
         if ($user->is_player) {
             // Get access rights for players
             $query = AccessRight::find()->select('id')->where(['is_player' => true]);
 
-            if (!$hasPlayer) {
+            if (!$hasPlayerSelected) {
                 // Remove options requiring player selection
                 $query->andWhere(['has_player' => false]);
             } elseif (!$inQuest) {
@@ -154,9 +154,9 @@ class ManageAccessRights extends Component
      */
     private static function checkPlayerAccess($accessRight) {
         // Deny if player selection is required but none selected
-        $hasPlayer = Yii::$app->session->get('hasPlayer') ?? false;
+        $hasPlayerSelected = Yii::$app->session->get('hasPlayerSelected') ?? false;
 
-        if (!$hasPlayer && $accessRight->has_player) {
+        if (!$hasPlayerSelected && $accessRight->has_player) {
             return [
                 'denied' => true, 'severity' => 'error',
                 'reason' => 'No player have been selected'

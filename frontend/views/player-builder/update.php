@@ -145,7 +145,7 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
                     'icon' => 'bi-check',
                     'title' => 'Save & play',
                     'id' => 'playerBuilderValidateButton',
-                    'callToAction' => true,
+                    'isCta' => true,
                     'style' => 'btn-sm mt-2 w-50',
                 ])
                 ?>

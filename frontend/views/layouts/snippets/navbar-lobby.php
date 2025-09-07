@@ -24,14 +24,12 @@ $isAdmin = $currentUser->is_admin;
     </div>
 
     <ul class="top-nav">
-        <?php if ($isAdmin): ?>
-            <?=
-            CurrentPlayer::widget([
-                'user' => $currentUser,
-                'mode' => 'navbar',
-            ])
-            ?>
-        <?php endif; ?>
+        <?=
+        CurrentPlayer::widget([
+            'user' => $currentUser,
+            'mode' => 'navbar',
+        ])
+        ?>
 
         <?php if (1 === 1): ?>
             <li class="dropdown top-nav__notifications">
@@ -119,18 +117,6 @@ $isAdmin = $currentUser->is_admin;
                 <a href="<?= Url::toRoute(['site/about']) ?>"
                    data-bs-toggle="tooltip" title="<?= $currentUser->username ?> user profile" data-placement="bottom">
                     <i class="bi bi-person-circle"></i>
-                </a>
-            </li>
-
-            <li class="dropdown top-nav__notifications">
-                <a href="#" data-bs-toggle="tooltip" title="Logout" data-placement="bottom"
-                   onclick="$('#logoutForm').submit();">
-                    <i class="bi bi-box-arrow-right"></i>
-                    <form action="<?= Url::toRoute(['site/logout']) ?>" id="logoutForm" method="post">
-                        <input type="hidden"
-                               name="<?= Yii::$app->request->csrfParam ?>"
-                               value="<?= Yii::$app->request->csrfToken ?>">
-                    </form>
                 </a>
             </li>
         <?php endif; ?>

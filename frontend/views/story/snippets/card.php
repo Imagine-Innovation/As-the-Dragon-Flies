@@ -58,7 +58,7 @@ $image = $story->image ?
                     'icon' => 'dnd-tower',
                     'title' => 'Join the quest',
                     'style' => 'text-decoration',
-                    'callToAction' => true
+                    'isCta' => true
                 ])
                 ?>
             </p>
