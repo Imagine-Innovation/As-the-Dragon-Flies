@@ -12,7 +12,7 @@ $playerAbilities = PlayerComponent::getAbilitiesAndSavingThrow($player->playerAb
 <div class="m-3">
     <!-- Character Info -->
     <header class="text-center">
-        <img src="img/characters/<?= $avatar ?>" alt="Avatar" class="avatar my-2">
+        <img src="img/character/<?= $avatar ?>" alt="Avatar" class="avatar my-2">
         <h6 class="text-warning text-decoration"><?= $player->name ?></h6>
         <p class="text-muted small"><?= $player->level->name ?> <?= $player->class->name ?> <?= $player->race->name ?></p>
     </header>

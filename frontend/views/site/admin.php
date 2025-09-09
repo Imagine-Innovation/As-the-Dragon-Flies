@@ -3,16 +3,17 @@
 use frontend\widgets\ToolMenu;
 
 /* @var $this yii\web\View */
-/* @var string $userName */
-/* @var string $playerName */
 
 $currentUser = Yii::$app->user->identity;
+$playerName = Yii::$app->session->get('playerName');
+$userName = $currentUser->fullname ?? $currentUser->username;
+
 $isAdmin = $currentUser->is_admin;
 ?>
 <?php if ($isAdmin || true): ?>
     <header class="content__title h3">
         <p>
-            Welcome back <span class="text-decoration"><?= $playerName ?></span>
+            Welcome back <span class="text-decoration"><?= $playerName ?? $playerName ?></span>
         </p>
     </header>
     <h5>What would you like to do?</h5>

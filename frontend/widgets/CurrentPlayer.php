@@ -6,7 +6,8 @@ use yii\base\Widget;
 use common\components\AppStatus;
 use common\models\Player;
 
-class CurrentPlayer extends Widget {
+class CurrentPlayer extends Widget
+{
 
     public $user;
     public $mode;
@@ -24,7 +25,7 @@ class CurrentPlayer extends Widget {
             return $this->render($render, [
                         'players' => $players,
                         'selectedPlayerId' => $selectedPlayerId,
-                        'user_id' => $currentUser->id,
+                        'userId' => $currentUser->id,
             ]);
         } else {
             $html = $displayMode == 'navbar' ? '' : $this->render('current-player-empty');

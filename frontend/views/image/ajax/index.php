@@ -50,7 +50,7 @@ foreach ($models as $model) {
                     <?php foreach ($models as $model): ?>
                         <tr>
                             <th scope="row">
-                                <img src="img/characters/<?= $model->file_name ?>" class="image-thumbnail">
+                                <img src="img/character/<?= $model->file_name ?>" class="image-thumbnail">
                             </th>
                             <?php foreach ($classes as $class): ?>
                                 <td class="text-center">

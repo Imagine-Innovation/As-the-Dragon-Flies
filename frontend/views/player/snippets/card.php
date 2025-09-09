@@ -25,7 +25,7 @@ $route = $player->status == AppStatus::ACTIVE->value ? 'player/view' : 'player/u
         </div>
     </div>
 
-    <img class="card-img-top" src="img/characters/<?= $player->avatar ?>" alt="avatar">
+    <img class="card-img-top" src="img/character/<?= $player->avatar ?>" alt="avatar">
 
     <div class="card-body">
         <h4 class="card-title"><?= $player->name ?? "Unkown yet" ?></h4>

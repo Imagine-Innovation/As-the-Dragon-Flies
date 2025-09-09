@@ -6,7 +6,7 @@ use yii\helpers\Url;
 /** @var yii\web\View $this */
 /** @var array $players */
 /** @var int $selectedPlayerId */
-/** @var int $user_id */
+/** @var int $userId */
 $ids = [];
 $initials = [];
 foreach ($players as $player) {
@@ -29,7 +29,7 @@ foreach ($players as $player) {
                         <input type="radio" class="custom-control-input"
                                id="selectPlayerModal-<?= $player['id'] ?>" name="selectPlayerModal"
                                <?= $player['id'] == $selectedPlayerId ? "checked" : "" ?>
-                               onclick="PlayerSelector.select(<?= $user_id ?>, <?= $player['id'] ?>); $('#CloseSelectPlayerModal-button').click();">
+                               onclick="PlayerSelector.select(<?= $userId ?>, <?= $player['id'] ?>); $('#CloseSelectPlayerModal-button').click();">
                         <label class="custom-control-label" for="selectPlayerModal-<?= $player['id'] ?>">
                             <span data-bs-toggle="tooltip" title="<?= ucfirst($player['tooltip']) ?>" data-placement="bottom">
                                 <?= Html::encode($player['name']) ?>

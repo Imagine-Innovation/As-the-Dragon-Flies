@@ -19,7 +19,8 @@ use yii\web\Response;
 /**
  * PlayerController implements the CRUD actions for Player model.
  */
-class PlayerController extends Controller {
+class PlayerController extends Controller
+{
 
     /**
      * @inheritDoc
@@ -39,7 +40,7 @@ class PlayerController extends Controller {
                             [
                                 'actions' => [
                                     'admin', 'delete', 'index', 'restore', 'update', 'validate', 'view',
-                                    'ajax', 'ajax-admin', 'ajax-lite', 'ajax-set-context',
+                                    'ajax', 'ajax-admin', 'ajax-lite', 'ajax-set-context', 'set-current', 'history'
                                 ],
                                 'allow' => ManageAccessRights::isRouteAllowed($this),
                                 'roles' => ['@'],
@@ -163,7 +164,7 @@ class PlayerController extends Controller {
         $playerId = (int) $request->post('playerId');
 
         $success = User::updateAll(
-                ['current_player_id' => $playerId],
+                ['current_player_id' => $playerId > 0 ? $playerId : null],
                 ['id' => $userId]
         );
 
@@ -173,6 +174,21 @@ class PlayerController extends Controller {
             'error' => false,
             'msg' => $success ? 'Context is saved' : 'Could not save context'
         ];
+    }
+
+    public function actionSetCurrent($id) {
+        $player = $this->findModel($id); // findModel already checks for ownership
+        $user = Yii::$app->user->identity;
+        $user->current_player_id = $player->id;
+        if ($user->save()) {
+            ContextManager::updatePlayerContext($player->id);
+        }
+        return $this->redirect(['site/index']);
+    }
+
+    public function actionHistory() {
+        // For now, just render a simple view
+        return $this->render('history');
     }
 
     /**

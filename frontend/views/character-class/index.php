@@ -27,7 +27,7 @@ $models = $dataProvider->getModels();
                     <?php foreach ($models as $model): ?>
                         <tr>
                             <th scope="row">
-                                <img src="img/characters/<?= $model->randomImage ?>" alt="<?= $model->name ?>" style="width: 100px;">
+                                <img src="img/character/<?= $model->randomImage ?>" alt="<?= $model->name ?>" style="width: 100px;">
                             </th>
                             <td>
                                 <a href="<?= Url::toRoute(['character-class/view', 'id' => $model->id]) ?>">

@@ -7,7 +7,7 @@
         <tbody>
             <tr>
                 <th scope="row">
-                    <img src="img/characters/<?= $model->randomImage ?>" alt="<?= $model->name ?>" style="max-width: 120px;">
+                    <img src="img/character/<?= $model->randomImage ?>" alt="<?= $model->name ?>" style="max-width: 120px;">
                 </th>
 
                 <td>

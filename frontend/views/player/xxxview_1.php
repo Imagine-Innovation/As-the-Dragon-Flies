@@ -20,7 +20,7 @@ $combatStat = [
         <tr>
             <td>
                 <div class="avatar-img">
-                    <img src="img/characters/<?= $model->avatar ?>" class="rounded-circle image-thumbnail">
+                    <img src="img/character/<?= $model->avatar ?>" class="rounded-circle image-thumbnail">
                 </div>
             </td>
             <td>

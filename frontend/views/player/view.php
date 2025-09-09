@@ -12,7 +12,7 @@ $cards = ['abilities', 'skills'];
     <table>
         <tr>
             <td style="min-width: 100px">
-                <img src="img/characters/<?= $model->avatar ?>" class="avatar">
+                <img src="img/character/<?= $model->avatar ?>" class="avatar">
             </td>
             <td>
                 <h3 class="mb-3 text-decoration"><?= $model->name ?></h3>

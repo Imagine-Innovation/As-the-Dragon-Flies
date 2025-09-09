@@ -460,8 +460,8 @@ class QuestController extends Controller
      *
      * @return string|Response Rendered tavern view or error redirect
      */
-    public function actionResume() {
-        $quest = Yii::$app->session->get('currentQuest');
+    public function actionResume(int|null $id = null) {
+        $quest = $this->findModel($id);
 
         if ($quest->status == AppStatus::PLAYING->value) {
             return $this->redirect(['game/view', 'id' => $quest->id]);

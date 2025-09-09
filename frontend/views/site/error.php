@@ -9,15 +9,6 @@ use yii\helpers\Html;
 //$previousException = $exception->getPrevious();
 
 $this->title = "Oups, something went wrong";
-
-$envVars = ['hasPlayerSelected',
-    'playerId',
-    'playerName',
-    'avatar',
-    'inQuest',
-    'questId',
-    'questName'
-];
 ?>
 <?php if ($exception->statusCode === 404): ?>
     <section class="error">

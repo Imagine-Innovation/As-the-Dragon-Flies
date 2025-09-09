@@ -20,7 +20,8 @@ namespace common\models;
  * @property Story[] $stories
  * @property StoryIntro[] $storyIntros
  */
-class Image extends \yii\db\ActiveRecord {
+class Image extends \yii\db\ActiveRecord
+{
 
     /**
      * {@inheritdoc}
@@ -145,6 +146,11 @@ class Image extends \yii\db\ActiveRecord {
     /**
      * ******** Custome method ************
      */
+    public function getImageUrl() {
+        $path = 'img/' . $this->category . '/' . $this->file_name;
+        return \yii\helpers\Url::to('@web/' . $path);
+    }
+
     public function upload() {
 
         $fileName = $this->id . "." . $this->image->extension;

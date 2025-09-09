@@ -2,10 +2,12 @@
 
 namespace frontend\controllers;
 
-use common\models\LoginForm;
 use common\components\ContextManager;
 use common\components\ManageAccessRights;
 use common\helpers\Utilities;
+use common\models\LoginForm;
+use common\models\Player;
+use common\models\UserLogin;
 use frontend\models\ResendVerificationEmailForm;
 use frontend\models\VerifyEmailForm;
 use frontend\models\PasswordResetRequestForm;
@@ -25,7 +27,8 @@ use yii\web\UploadedFile;
 /**
  * Site controller
  */
-class SiteController extends Controller {
+class SiteController extends Controller
+{
 
     /**
      * {@inheritdoc}
@@ -73,15 +76,92 @@ class SiteController extends Controller {
         ];
     }
 
+    private function getLastPlayer(array &$players, int $state): ?Player {
+        if ($state === 1) {
+            return $players[0] ?? null;
+        }
+        return null;
+    }
+
+    private function getOtherPlayers(array &$players, int $state, int|null $currentPlayerId): ?array {
+        switch ($state) {
+            case 1:
+                return array_slice($players, 1, 2);
+            case 2:
+            case 3:
+                if (!$currentPlayerId) {
+                    return array_slice($players, 0, 3);
+                }
+                $otherPlayers = [];
+                foreach ($players as $player) {
+                    if ($player->id !== $currentPlayerId) {
+                        $otherPlayers[] = $player;
+                    }
+                }
+                // We need 3 other players, making a total of 4 cards
+                return array_slice($otherPlayers, 0, 3);
+        }
+        return null;
+    }
+
+    /**
+     * Defines in which state is the user:
+     *  0   Starting the game, no player defined
+     *  1   At least on player is defined, but none is selected
+     *  2   A player is selected, but he is not engaged in a quest
+     *  3   A player is selected ans currently engaged in a quest
+     *
+     * @param Player[] $players
+     * @param Player|null $player
+     * @param bool $inQuest
+     * @return int
+     */
+    private function getCurrentState(array &$players, Player|null &$player, bool $inQuest): int {
+
+        if (count($players) === 0) {
+            $state = 0;
+        } elseif ($player !== null) {
+            $state = $inQuest ? 3 : 2;
+        } else {
+            $state = 1;
+        }
+        return $state;
+    }
+
     /**
      * Displays homepage.
      *
      * @return mixed
      */
     public function actionIndex() {
+        if (Yii::$app->user->isGuest) {
+            return $this->render('guest');
+        }
         ContextManager::initContext();
 
-        return $this->render('index');
+        // Get players sorted by creation date
+        $user = Yii::$app->user->identity;
+
+        if ($user->is_admin) {
+            return $this->render('admin');
+        }
+
+        $playersQuery = $user->getPlayers()->orderBy(['created_at' => SORT_DESC]);
+        $players = $playersQuery->all();
+        $player = $user->current_player_id ? $user->currentPlayer : null;
+        $inQuest = Yii::$app->session->get('questId') !== null;
+
+        $state = $this->getCurrentState($players, $player, $inQuest);
+
+        $viewParameters = [
+            'player' => $player,
+            'lastPlayer' => $this->getLastPlayer($players, $state),
+            'otherPlayers' => $this->getOtherPlayers($players, $state, $player?->id),
+        ];
+        return $this->render('lobby', [
+                    'state' => $state,
+                    'viewParameters' => $viewParameters
+        ]);
     }
 
     /**
@@ -123,6 +203,20 @@ class SiteController extends Controller {
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            $user = Yii::$app->user->identity;
+            $login_at = time();
+            $user->frontend_last_login_at = $login_at;
+            if ($user->save()) {
+                $log = new UserLogin([
+                    'user_id' => $user->id,
+                    'application' => 'frontend',
+                    'login_at' => $login_at,
+                    'ip_address' => Yii::$app->getRequest()->getUserIP()
+                ]);
+                $log->save();
+            } else {
+                throw new \Exception(implode("<br />", \yii\helpers\ArrayHelper::getColumn($user->errors, 0, false)));
+            }
             return $this->goBack();
         }
 
@@ -139,6 +233,18 @@ class SiteController extends Controller {
      * @return mixed
      */
     public function actionLogout() {
+        $user = Yii::$app->user->identity;
+        $ipAddress = Yii::$app->getRequest()->getUserIP();
+
+        UserLogin::updateAll(
+                ['logout_at' => time()],
+                [
+                    'user_id' => $user->id,
+                    'application' => 'frontend',
+                    'login_at' => $user->frontend_last_login_at,
+                    'ip_address' => $ipAddress
+                ]
+        );
         Yii::$app->user->logout();
 
         return $this->goHome();

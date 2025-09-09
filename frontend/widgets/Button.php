@@ -32,7 +32,10 @@ class Button extends Widget
     private function button() {
         $cta = $this->isCta ?? false;
         // Caution: The spaces at the beginning of the line are intentional; do not delete them.
-        $style = ($cta ? ' btn-warning' : ' btn-secondary') . ' ' . ($this->style ?? '');
+        // 
+        // If the btn style is not defined by the user, default it to 'btn-seconday'
+        $defaultBtn = (strpos($this->style, "btn-") !== false) ? '' : ' btn-secondary';
+        $style = ($cta ? ' btn-warning' : $defaultBtn) . ' ' . ($this->style ?? '');
 
         $icon = $this->icon ? $this->iconElement() : "";
 
