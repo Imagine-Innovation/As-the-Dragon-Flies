@@ -68,7 +68,7 @@ class ContextManager extends Component
         if ($quest) {
             Yii::$app->session->set('inQuest', true);
             Yii::$app->session->set('questId', $quest->id);
-            Yii::$app->session->set('questName', $quest->story->name);
+            Yii::$app->session->set('questName', $quest->name);
             Yii::$app->session->set('currentQuest', $quest);
         } else {
             Yii::$app->session->set('inQuest', false);

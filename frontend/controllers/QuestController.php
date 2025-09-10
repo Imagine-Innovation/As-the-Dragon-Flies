@@ -286,7 +286,7 @@ class QuestController extends Controller
         }
 
         $message = Yii::$app->request->post('message');
-        Yii::debug("*** Debug *** actionAjaxSendMessage - Player: {$player->name}, Quest: {$quest->story->name}, Message: " . ($message ?? 'empty'));
+        Yii::debug("*** Debug *** actionAjaxSendMessage - Player: {$player->name}, Quest: {$quest->name}, Message: " . ($message ?? 'empty'));
         if (empty($message)) {
             return ['success' => false, 'message' => 'Message cannot be empty'];
         }
@@ -585,6 +585,9 @@ class QuestController extends Controller
             $tavern = new Quest([
                 'story_id' => $story->id,
                 'initiator_id' => Yii::$app->session->get('playerId'),
+                'name' => $story->name,
+                'description' => $story->description,
+                'image' => $story->image,
                 'status' => AppStatus::WAITING->value,
                 'created_at' => time(),
                 'local_time' => time(),

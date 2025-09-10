@@ -11,7 +11,6 @@ use yii\helpers\Url;
 /* @var string $col */
 
 $quest = $player->quest;
-$story = $quest->story;
 $statusEnum = AppStatus::from($quest->status);
 $iconInfo = $statusEnum->getIcon();
 ?>
@@ -21,8 +20,8 @@ $iconInfo = $statusEnum->getIcon();
         <!-- Section 1: Resume the quest -->
         <?=
         $this->render('section1', [
-            'title' => "Resume the quest '{$story->name}'",
-            'img' => Url::to("@web/img/story/{$quest->story_id}/{$story->image}"),
+            'title' => "Resume the quest '{$quest->name}'",
+            'img' => Url::to("@web/img/story/{$quest->story_id}/{$quest->image}"),
             'paragraphs' => [
                 'Your player is currently on a quest.',
                 $iconInfo['tooltip'],

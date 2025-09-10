@@ -151,11 +151,9 @@ class Utilities extends Html
         // Handle context-specific story images
         if ($isContext && $questId) {
             $quest = Yii::$app->session->get('currentQuest');
-            $story = $quest->story;
-
             // Return story-specific image if available
-            if ($story->image) {
-                return "img/story/" . $story->id . "/" . $story->image;
+            if ($quest->image) {
+                return "img/story/" . $quest->story_id . "/" . $image;
             }
         }
 

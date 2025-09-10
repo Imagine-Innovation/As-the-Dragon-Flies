@@ -22,12 +22,12 @@ class QuestStartingEvent extends Event
     }
 
     public function getMessage(): string {
-        return "The quest {$this->quest->story->name} is starting";
+        return "The quest {$this->quest->name} is starting";
     }
 
     public function getPayload(): array {
         return [
-            'questName' => ($this->quest) ? $this->quest->story->name : null,
+            'questName' => ($this->quest) ? $this->quest->name : null,
             'questId' => ($this->quest) ? $this->quest->id : null,
             'startedAt' => date('Y-m-d H:i:s', $this->timestamp)
         ];
@@ -43,7 +43,7 @@ class QuestStartingEvent extends Event
 
         // Dungeon master says hello
         $dungeonMaster = Player::findOne(1);
-        $questName = $this->quest->story->name;
+        $questName = $this->quest->name;
         if ($dungeonMaster) {
             $message = "{$this->player->name} has started quest '{$questName}'!";
             $sendingMessageEvent = new SendingMessageEvent($this->sessionId, $dungeonMaster, $this->quest, $message);

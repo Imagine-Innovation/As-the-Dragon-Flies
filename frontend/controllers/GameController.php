@@ -100,7 +100,7 @@ class GameController extends Controller {
 
         ContextManager::updateQuestContext(null);
 
-        return ['success' => true, 'message' => "Player {$player->name} successfully withdrown from quest {$quest->story->name}"];
+        return ['success' => true, 'message' => "Player {$player->name} successfully withdrown from quest {$quest->name}"];
     }
 
     /**

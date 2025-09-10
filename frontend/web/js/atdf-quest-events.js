@@ -15,6 +15,7 @@ class NotificationClient {
         this.messageQueue = [];
         this.eventListeners = {};
         this.heartbeatInterval = 30000; // 30s
+        this.ding = new Audio("music/ding.mp3");
     }
 
     /**
@@ -27,6 +28,9 @@ class NotificationClient {
         this.setupDefaultHandlers();
         // Set up chat input enter key handler
         const chatInput = document.getElementById('questChatInput');
+
+        this.ding.preload = "auto";
+
         if (chatInput) {
             chatInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
@@ -95,13 +99,16 @@ class NotificationClient {
         // Handle chat messages
         this.on('new-message', (data) => {
             Logger.log(2, 'setupDefaultHandlers', 'Received new-message message:', data);
-            let config = {
-                route: 'quest/ajax-get-messages',
-                method: 'GET',
-                placeholder: 'questChatContent',
-                badge: false
-            };
-            this.executeRequest(config, data);
+            this.updateChatMessages();
+            /*
+             let config = {
+             route: 'quest/ajax-get-messages',
+             method: 'GET',
+             placeholder: 'questChatContent',
+             badge: false
+             };
+             this.executeRequest(config, data);
+             */
         });
 
         // Handle other player registration
@@ -255,6 +262,36 @@ class NotificationClient {
             }
         });
 
+    }
+
+    updateChatMessages() {
+        Logger.log(1, 'updateChatMessages', ``);
+
+        let target = `#questChatContent`;
+        if (!DOMUtils.exists(target))
+            return;
+
+        const contextData = {
+            playerId: this.playerId,
+            questId: this.questId
+        };
+        Logger.log(10, 'updateChatMessages', `contextData=${JSON.stringify(contextData)}`);
+
+        AjaxUtils.request({
+            url: 'quest/ajax-get-messages',
+            data: contextData,
+            method: 'GET',
+            successCallback: (response) => {
+                if (!response.error) {
+                    $(target).html(response.content);
+                    // Check if audio can be played (some browsers require user gesture first)
+                    this.ding.play().catch((error) => {
+                        console.warn("Autoplay blocked:", error);
+                        // You could show a visual notification instead
+                    });
+                }
+            }
+        });
     }
 
     checkIfQuestCanStart() {

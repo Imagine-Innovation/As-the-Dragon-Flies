@@ -13,6 +13,7 @@ $messages = QuestMessages::getLastMessages($questId, $playerId);
         <div class="card-header">
             <h5 class="text-decoration">Quest Chat</h5>
         </div>
+        <audio id="ding-sound" src="music/ding.mp3" preload="auto"></audio>
 
         <div class="mt-auto">
             <form id="questChatMessageForm">

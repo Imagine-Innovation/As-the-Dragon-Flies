@@ -10,7 +10,6 @@ use yii\helpers\HtmlPurifier;
 /** @var array $debugMode */
 $questId = Yii::$app->session->get('questId');
 $quest = Yii::$app->session->get('currentQuest');
-$story = $questId ? $quest->story : null;
 ?>
 <div class="row g-4">
     <?php foreach ($menus as $menu): ?>
@@ -32,8 +31,8 @@ $story = $questId ? $quest->story : null;
                     </a>
                     <div class="card-body">
                         <h4 class="card-title"><?= $menu->card_title ?></h4>
-                        <h6 class="card-subtitle"><?= ($menu->is_context && $questId) ? $story->name : $menu->subtitle ?></h6>
-                        <?= HtmlPurifier::process(($menu->is_context && $questId) ? $story->description : $menu->description) ?>
+                        <h6 class="card-subtitle"><?= ($menu->is_context && $questId) ? $quest->name : $menu->subtitle ?></h6>
+                        <?= HtmlPurifier::process(($menu->is_context && $questId) ? $quest->description : $menu->description) ?>
                         <p>
                             <a href="<?= Url::toRoute($menu->accessRight->route . '/' . $menu->accessRight->action) ?>" role="button" class="btn btn-warning w-100 text-decoration">
                                 <i class="bi <?= $menu->icon ?>"></i> <?= $menu->card_title ?>

@@ -30,7 +30,7 @@ class PlayerJoiningEvent extends Event
         return [
             'playerName' => $this->player->name,
             'playerId' => $this->player->id,
-            'questName' => ($this->quest) ? $this->quest->story->name : null,
+            'questName' => ($this->quest) ? $this->quest->name : null,
             'questId' => ($this->quest) ? $this->quest->id : null,
             'joinedAt' => date('Y-m-d H:i:s', $this->timestamp)
         ];

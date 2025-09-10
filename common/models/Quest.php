@@ -11,6 +11,9 @@ use Yii;
  * @property int $id Primary key
  * @property int $story_id Foreign key to "story" table
  * @property int|null $initiator_id Foreign key to "player" table
+ * @property string $name Quest name
+ * @property string|null $description Description
+ * @property string|null $image Image
  * @property int $status Quest status (waiting, playing, paused, completed, aborted)
  * @property int $created_at Created at
  * @property int|null $started_at Started at
@@ -43,11 +46,13 @@ class Quest extends \yii\db\ActiveRecord
      */
     public function rules() {
         return [
-            [['initiator_id', 'started_at', 'completed_at'], 'default', 'value' => null],
+            [['initiator_id', 'description', 'image', 'started_at', 'completed_at'], 'default', 'value' => null],
             [['status'], 'default', 'value' => AppStatus::WAITING->value],
             [['elapsed_time'], 'default', 'value' => 0],
-            [['story_id'], 'required'],
+            [['story_id', 'name'], 'required'],
             [['story_id', 'initiator_id', 'status', 'created_at', 'started_at', 'completed_at', 'local_time', 'elapsed_time'], 'integer'],
+            [['description'], 'string'],
+            [['name', 'image'], 'string', 'max' => 32],
             [['story_id'], 'exist', 'skipOnError' => true, 'targetClass' => Story::class, 'targetAttribute' => ['story_id' => 'id']],
             [['initiator_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['initiator_id' => 'id']],
         ];
@@ -61,6 +66,9 @@ class Quest extends \yii\db\ActiveRecord
             'id' => 'Primary key',
             'story_id' => 'Foreign key to \"story\" table',
             'initiator_id' => 'Foreign key to \"player\" table',
+            'name' => 'Quest name',
+            'description' => 'Description',
+            'image' => 'Image',
             'status' => 'Quest status (waiting, playing, paused, completed, aborted)',
             'created_at' => 'Created at',
             'started_at' => 'Started at',
@@ -103,7 +111,7 @@ class Quest extends \yii\db\ActiveRecord
      * @return \yii\db\ActiveQuery
      */
     public function getAllPlayers() {
-        return $this->hasMany(Player::class, ['id' => 'player_id'])->via('questPlayers');
+        return $this->hasMany(Player::class, ['id' => 'player_id'])->viaTable('quest_player', ['quest_id' => 'id']);
     }
 
     /**

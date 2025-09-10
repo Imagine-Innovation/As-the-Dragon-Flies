@@ -33,7 +33,7 @@ use frontend\widgets\RecordCount;
                 <tbody>
                     <?php foreach ($models as $model): ?>
                         <tr>
-                            <th scope="row"><?= $model->quest->story->name ?></th>
+                            <th scope="row"><?= $model->quest->name ?></th>
                             <td><?= $model->sender->name ?></td>
                             <td class="text-center"><?= Yii::$app->formatter->asDateTime($model->created_at, 'dd/MM/yyyy HH:mm') ?></td>
                             <td><?= $model->message ?></td>

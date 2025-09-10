@@ -10,7 +10,7 @@ $playerId = $player->id;
 $playerName = $player->name;
 $avatar = $player->image->file_name;
 
-$questName = $model->story->name;
+$questName = $model->name;
 
 $this->title = $questName;
 $this->params['breadcrumbs'][] = ['label' => 'Quests', 'url' => ['index']];
@@ -26,7 +26,7 @@ $messages = QuestMessages::getLastMessages($model->id, $playerId);
                 <p class="text-decoration mb-3" id="tavernWelcomeMessage"></p>
             </div>
             <div class="card-body">
-                <p class="text-decoration mb-3"><?= $model->story->description ?></p>
+                <p class="text-decoration mb-3"><?= $model->description ?></p>
                 <p class="mb-3">This quest allows <?= $model->story->companySize ?> <?= strtolower($model->story->requiredLevels) ?> to take part in the game.</p>
                 <p class="mb-3" id="tavernMissingPlayers"></p>
                 <p class="mb-0" id="tavernMissingClasses"></p>
