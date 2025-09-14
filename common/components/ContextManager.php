@@ -35,6 +35,7 @@ class ContextManager extends Component
             return;
         }
 
+        Yii::debug("*** debug *** - updatePlayerContext playerId=" . ($playerId ?? 'null'));
         self::setSessionId();
 
         $currentPlayer = $playerId ? Player::findOne(['id' => $playerId]) : null;
@@ -61,6 +62,7 @@ class ContextManager extends Component
             return;
         }
 
+        Yii::debug("*** debug *** - updateQuestContext questId=" . ($questId ?? 'null'));
         self::setSessionId();
 
         $quest = $questId ? Quest::findOne(['id' => $questId]) : null;

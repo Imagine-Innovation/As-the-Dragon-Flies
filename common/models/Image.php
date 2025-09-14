@@ -11,14 +11,9 @@ namespace common\models;
  *
  * @property ClassImage[] $classImages
  * @property CharacterClass[] $classes
- * @property Floor[] $floors
  * @property Player[] $players
  * @property RaceGroupImage[] $raceGroupImages
  * @property RaceGroup[] $raceGroups
- * @property RoomImage[] $roomImages
- * @property Room[] $rooms
- * @property Story[] $stories
- * @property StoryIntro[] $storyIntros
  */
 class Image extends \yii\db\ActiveRecord
 {
@@ -72,15 +67,6 @@ class Image extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Floors]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getFloors() {
-        return $this->hasMany(Floor::class, ['image_id' => 'id']);
-    }
-
-    /**
      * Gets query for [[Players]].
      *
      * @return \yii\db\ActiveQuery
@@ -105,42 +91,6 @@ class Image extends \yii\db\ActiveRecord
      */
     public function getRaceGroups() {
         return $this->hasMany(RaceGroup::class, ['id' => 'race_group_id'])->viaTable('race_group_image', ['image_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[RoomImages]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getRoomImages() {
-        return $this->hasMany(RoomImage::class, ['image_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[Rooms]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getRooms() {
-        return $this->hasMany(Room::class, ['id' => 'room_id'])->viaTable('room_image', ['image_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[Stories]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getStories() {
-        return $this->hasMany(Story::class, ['image_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[StoryIntros]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getStoryIntros() {
-        return $this->hasMany(StoryIntro::class, ['image_id' => 'id']);
     }
 
     /**

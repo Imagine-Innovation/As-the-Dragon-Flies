@@ -153,13 +153,13 @@ class Utilities extends Html
             $quest = Yii::$app->session->get('currentQuest');
             // Return story-specific image if available
             if ($quest->image) {
-                return "img/story/" . $quest->story_id . "/" . $image;
+                return "img/story/" . $quest->story_id . "/" . $quest->image;
             }
         }
 
         // Generate path for regular or random placeholder image
         $randomFileName = random_int(1, 8) . '.jpg';
-        return 'img/sm/' . ($imageFile ? $imageFile : $randomFileName);
+        return 'img/sm/' . ($imageFile ?? $randomFileName);
     }
 
     /**

@@ -19,14 +19,12 @@ use Yii;
  * @property int $min_players Minimum number of players
  * @property int $max_players Maximum number of players
  *
+ * @property Chapter[] $chapters
  * @property CharacterClass[] $classes
- * @property EntryPoint[] $entryPoints
  * @property Quest[] $quests
  * @property StoryClass[] $storyClasses
- * @property StoryIntro[] $storyIntros
  * @property StoryTag[] $storyTags
  * @property Tag[] $tags
- * @property Tile[] $tiles
  *
  * ************ Custom properties
  *
@@ -80,21 +78,21 @@ class Story extends \yii\db\ActiveRecord
     }
 
     /**
+     * Gets query for [[Chapters]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getChapters() {
+        return $this->hasMany(Chapter::class, ['story_id' => 'id']);
+    }
+
+    /**
      * Gets query for [[Classes]].
      *
      * @return \yii\db\ActiveQuery
      */
     public function getClasses() {
         return $this->hasMany(CharacterClass::class, ['id' => 'class_id'])->viaTable('story_class', ['story_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[EntryPoints]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getEntryPoints() {
-        return $this->hasMany(EntryPoint::class, ['story_id' => 'id']);
     }
 
     /**
@@ -116,15 +114,6 @@ class Story extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[StoryIntros]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getStoryIntros() {
-        return $this->hasMany(StoryIntro::class, ['story_id' => 'id']);
-    }
-
-    /**
      * Gets query for [[StoryTags]].
      *
      * @return \yii\db\ActiveQuery
@@ -140,15 +129,6 @@ class Story extends \yii\db\ActiveRecord
      */
     public function getTags() {
         return $this->hasMany(Tag::class, ['id' => 'tag_id'])->viaTable('story_tag', ['story_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[Tiles]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getTiles() {
-        return $this->hasMany(Tile::class, ['id' => 'tile_id'])->viaTable('entry_point', ['story_id' => 'id']);
     }
 
     /*     * *********************************

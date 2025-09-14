@@ -5,25 +5,27 @@ namespace common\models;
 use Yii;
 
 /**
- * This is the model class for table "story_intro".
+ * This is the model class for table "chapter".
  *
  * @property int $id Primary key
- * @property int|null $image_id Optional foreign key to "image" table
  * @property int $story_id Foreign key to "story" table
- * @property string $name Introduction title
+ * @property string $name Chapter
  * @property string|null $description Short description
+ * @property string|null $image Image
+ * @property int $sort_order Chapter number
  *
- * @property Image $image
- * @property IntroAttribute[] $introAttributes
+ * @property Step[] $steps
  * @property Story $story
  */
-class StoryIntro extends \yii\db\ActiveRecord {
+class Chapter extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
      */
     public static function tableName() {
-        return 'story_intro';
+        return 'chapter';
     }
 
     /**
@@ -31,12 +33,13 @@ class StoryIntro extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['image_id', 'story_id'], 'integer'],
+            [['description', 'image'], 'default', 'value' => null],
+            [['sort_order'], 'default', 'value' => 1],
             [['story_id', 'name'], 'required'],
+            [['story_id', 'sort_order'], 'integer'],
             [['description'], 'string'],
-            [['name'], 'string', 'max' => 32],
+            [['name', 'image'], 'string', 'max' => 32],
             [['story_id'], 'exist', 'skipOnError' => true, 'targetClass' => Story::class, 'targetAttribute' => ['story_id' => 'id']],
-            [['image_id'], 'exist', 'skipOnError' => true, 'targetClass' => Image::class, 'targetAttribute' => ['image_id' => 'id']],
         ];
     }
 
@@ -46,29 +49,21 @@ class StoryIntro extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'image_id' => 'Optional foreign key to \"image\" table',
             'story_id' => 'Foreign key to \"story\" table',
-            'name' => 'Introduction title',
+            'name' => 'Chapter',
             'description' => 'Short description',
+            'image' => 'Image',
+            'sort_order' => 'Chapter number',
         ];
     }
 
     /**
-     * Gets query for [[Image]].
+     * Gets query for [[Steps]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getImage() {
-        return $this->hasOne(Image::class, ['id' => 'image_id']);
-    }
-
-    /**
-     * Gets query for [[IntroAttributes]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getIntroAttributes() {
-        return $this->hasMany(IntroAttribute::class, ['intro_id' => 'id']);
+    public function getSteps() {
+        return $this->hasMany(Step::class, ['chapter_id' => 'id']);
     }
 
     /**
@@ -79,4 +74,5 @@ class StoryIntro extends \yii\db\ActiveRecord {
     public function getStory() {
         return $this->hasOne(Story::class, ['id' => 'story_id']);
     }
+
 }

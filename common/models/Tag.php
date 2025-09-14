@@ -14,7 +14,9 @@ use Yii;
  * @property Story[] $stories
  * @property StoryTag[] $storyTags
  */
-class Tag extends \yii\db\ActiveRecord {
+class Tag extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -28,9 +30,11 @@ class Tag extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['description'], 'default', 'value' => null],
             [['name'], 'required'],
             [['description'], 'string'],
             [['name'], 'string', 'max' => 32],
+            [['name'], 'unique'],
         ];
     }
 
@@ -51,7 +55,7 @@ class Tag extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getStories() {
-        return $this->hasMany(Story::class, ['id' => 'story_id'])->via('storyTags');
+        return $this->hasMany(Story::class, ['id' => 'story_id'])->viaTable('story_tag', ['tag_id' => 'id']);
     }
 
     /**
@@ -62,4 +66,5 @@ class Tag extends \yii\db\ActiveRecord {
     public function getStoryTags() {
         return $this->hasMany(StoryTag::class, ['tag_id' => 'id']);
     }
+
 }
