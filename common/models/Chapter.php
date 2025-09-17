@@ -9,12 +9,12 @@ use Yii;
  *
  * @property int $id Primary key
  * @property int $story_id Foreign key to "story" table
+ * @property int $chapter_number Chapter number
  * @property string $name Chapter
  * @property string|null $description Short description
  * @property string|null $image Image
- * @property int $sort_order Chapter number
  *
- * @property Step[] $steps
+ * @property Challenge[] $challenges
  * @property Story $story
  */
 class Chapter extends \yii\db\ActiveRecord
@@ -34,9 +34,9 @@ class Chapter extends \yii\db\ActiveRecord
     public function rules() {
         return [
             [['description', 'image'], 'default', 'value' => null],
-            [['sort_order'], 'default', 'value' => 1],
+            [['chapter_number'], 'default', 'value' => 1],
             [['story_id', 'name'], 'required'],
-            [['story_id', 'sort_order'], 'integer'],
+            [['story_id', 'chapter_number'], 'integer'],
             [['description'], 'string'],
             [['name', 'image'], 'string', 'max' => 32],
             [['story_id'], 'exist', 'skipOnError' => true, 'targetClass' => Story::class, 'targetAttribute' => ['story_id' => 'id']],
@@ -50,20 +50,20 @@ class Chapter extends \yii\db\ActiveRecord
         return [
             'id' => 'Primary key',
             'story_id' => 'Foreign key to \"story\" table',
+            'chapter_number' => 'Chapter number',
             'name' => 'Chapter',
             'description' => 'Short description',
             'image' => 'Image',
-            'sort_order' => 'Chapter number',
         ];
     }
 
     /**
-     * Gets query for [[Steps]].
+     * Gets query for [[Challenges]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getSteps() {
-        return $this->hasMany(Step::class, ['chapter_id' => 'id']);
+    public function getChallenges() {
+        return $this->hasMany(Challenge::class, ['chapter_id' => 'id']);
     }
 
     /**

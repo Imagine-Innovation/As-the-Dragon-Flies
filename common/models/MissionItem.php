@@ -5,19 +5,19 @@ namespace common\models;
 use Yii;
 
 /**
- * This is the model class for table "story_plot_item".
+ * This is the model class for table "mission_item".
  *
- * @property int $plot_id Foreign key to "story_plot" table
  * @property int $item_id Foreign key to "item" table
- * @property string $name Item name in the plot
+ * @property int $mission_id Foreign key to "mission" table
+ * @property string $name Item name in the mission
  * @property string|null $description Short description
  * @property int $found The percentage chance that the item will be found
  * @property int $identified The percentage chance that the item will be recognized
  *
  * @property Item $item
- * @property StoryPlot $plot
+ * @property Mission $mission
  */
-class StoryPlotItem extends \yii\db\ActiveRecord
+class MissionItem extends \yii\db\ActiveRecord
 {
 
 
@@ -25,7 +25,7 @@ class StoryPlotItem extends \yii\db\ActiveRecord
      * {@inheritdoc}
      */
     public static function tableName() {
-        return 'story_plot_item';
+        return 'mission_item';
     }
 
     /**
@@ -36,13 +36,13 @@ class StoryPlotItem extends \yii\db\ActiveRecord
             [['description'], 'default', 'value' => null],
             [['found'], 'default', 'value' => 25],
             [['identified'], 'default', 'value' => 50],
-            [['plot_id', 'item_id', 'name'], 'required'],
-            [['plot_id', 'item_id', 'found', 'identified'], 'integer'],
+            [['item_id', 'mission_id', 'name'], 'required'],
+            [['item_id', 'mission_id', 'found', 'identified'], 'integer'],
             [['description'], 'string'],
             [['name'], 'string', 'max' => 32],
-            [['plot_id', 'item_id'], 'unique', 'targetAttribute' => ['plot_id', 'item_id']],
+            [['item_id', 'mission_id'], 'unique', 'targetAttribute' => ['item_id', 'mission_id']],
             [['item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['item_id' => 'id']],
-            [['plot_id'], 'exist', 'skipOnError' => true, 'targetClass' => StoryPlot::class, 'targetAttribute' => ['plot_id' => 'id']],
+            [['mission_id'], 'exist', 'skipOnError' => true, 'targetClass' => Mission::class, 'targetAttribute' => ['mission_id' => 'id']],
         ];
     }
 
@@ -51,9 +51,9 @@ class StoryPlotItem extends \yii\db\ActiveRecord
      */
     public function attributeLabels() {
         return [
-            'plot_id' => 'Foreign key to \"story_plot\" table',
             'item_id' => 'Foreign key to \"item\" table',
-            'name' => 'Item name in the plot',
+            'mission_id' => 'Foreign key to \"mission\" table',
+            'name' => 'Item name in the mission',
             'description' => 'Short description',
             'found' => 'The percentage chance that the item will be found',
             'identified' => 'The percentage chance that the item will be recognized',
@@ -70,12 +70,12 @@ class StoryPlotItem extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Plot]].
+     * Gets query for [[Mission]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getPlot() {
-        return $this->hasOne(StoryPlot::class, ['id' => 'plot_id']);
+    public function getMission() {
+        return $this->hasOne(Mission::class, ['id' => 'mission_id']);
     }
 
 }

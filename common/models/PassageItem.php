@@ -5,23 +5,25 @@ namespace common\models;
 use Yii;
 
 /**
- * This is the model class for table "passage_status_item".
+ * This is the model class for table "passage_item".
  *
- * @property int $status_id Foreign key to "passage_status" table
  * @property int $item_id Foreign key to "item" table
+ * @property int $passage_id Foreign key to "passage" table
  * @property int $is_mandatory Indicates that the object is mandatory to open the passageway
  * @property int $bonus Bonus for using an object to open the door
  *
  * @property Item $item
- * @property PassageStatus $status
+ * @property Passage $passage
  */
-class PassageStatusItem extends \yii\db\ActiveRecord {
+class PassageItem extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
      */
     public static function tableName() {
-        return 'passage_status_item';
+        return 'passage_item';
     }
 
     /**
@@ -29,11 +31,12 @@ class PassageStatusItem extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['status_id', 'item_id'], 'required'],
-            [['status_id', 'item_id', 'is_mandatory', 'bonus'], 'integer'],
-            [['status_id', 'item_id'], 'unique', 'targetAttribute' => ['status_id', 'item_id']],
-            [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => PassageStatus::class, 'targetAttribute' => ['status_id' => 'id']],
+            [['bonus'], 'default', 'value' => 0],
+            [['item_id', 'passage_id'], 'required'],
+            [['item_id', 'passage_id', 'is_mandatory', 'bonus'], 'integer'],
+            [['item_id', 'passage_id'], 'unique', 'targetAttribute' => ['item_id', 'passage_id']],
             [['item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['item_id' => 'id']],
+            [['passage_id'], 'exist', 'skipOnError' => true, 'targetClass' => Passage::class, 'targetAttribute' => ['passage_id' => 'id']],
         ];
     }
 
@@ -42,8 +45,8 @@ class PassageStatusItem extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'status_id' => 'Foreign key to \"passage_status\" table',
             'item_id' => 'Foreign key to \"item\" table',
+            'passage_id' => 'Foreign key to \"passage\" table',
             'is_mandatory' => 'Indicates that the object is mandatory to open the passageway',
             'bonus' => 'Bonus for using an object to open the door',
         ];
@@ -59,11 +62,12 @@ class PassageStatusItem extends \yii\db\ActiveRecord {
     }
 
     /**
-     * Gets query for [[Status]].
+     * Gets query for [[Passage]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getStatus() {
-        return $this->hasOne(PassageStatus::class, ['id' => 'status_id']);
+    public function getPassage() {
+        return $this->hasOne(Passage::class, ['id' => 'passage_id']);
     }
+
 }

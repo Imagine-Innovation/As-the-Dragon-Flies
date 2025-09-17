@@ -19,12 +19,14 @@ use Yii;
  * @property Class[] $classes
  * @property CreatureSkill[] $creatureSkills
  * @property Creature[] $creatures
- * @property PassageStatusSkill[] $passageStatusSkills
+ * @property PassageSkill[] $passageSkills
+ * @property Passage[] $passages
  * @property PlayerSkill[] $playerSkills
  * @property Player[] $players
- * @property PassageStatus[] $statuses
  */
-class Skill extends \yii\db\ActiveRecord {
+class Skill extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -38,6 +40,7 @@ class Skill extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['description'], 'default', 'value' => null],
             [['ability_id', 'name'], 'required'],
             [['ability_id'], 'integer'],
             [['description'], 'string'],
@@ -83,7 +86,7 @@ class Skill extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getBackgrounds() {
-        return $this->hasMany(Background::class, ['id' => 'background_id'])->via('backgroundSkills');
+        return $this->hasMany(Background::class, ['id' => 'background_id'])->viaTable('background_skill', ['skill_id' => 'id']);
     }
 
     /**
@@ -101,7 +104,7 @@ class Skill extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getClasses() {
-        return $this->hasMany(CharacterClass::class, ['id' => 'class_id'])->via('classSkills');
+        return $this->hasMany(Class::class, ['id' => 'class_id'])->viaTable('class_skill', ['skill_id' => 'id']);
     }
 
     /**
@@ -119,16 +122,25 @@ class Skill extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getCreatures() {
-        return $this->hasMany(Creature::class, ['id' => 'creature_id'])->via('creatureSkills');
+        return $this->hasMany(Creature::class, ['id' => 'creature_id'])->viaTable('creature_skill', ['skill_id' => 'id']);
     }
 
     /**
-     * Gets query for [[PassageStatusSkills]].
+     * Gets query for [[PassageSkills]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getPassageStatusSkills() {
-        return $this->hasMany(PassageStatusSkill::class, ['skill_id' => 'id']);
+    public function getPassageSkills() {
+        return $this->hasMany(PassageSkill::class, ['skill_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Passages]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPassages() {
+        return $this->hasMany(Passage::class, ['id' => 'passage_id'])->viaTable('passage_skill', ['skill_id' => 'id']);
     }
 
     /**
@@ -146,15 +158,7 @@ class Skill extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getPlayers() {
-        return $this->hasMany(Player::class, ['id' => 'player_id'])->via('playerSkills');
+        return $this->hasMany(Player::class, ['id' => 'player_id'])->viaTable('player_skill', ['skill_id' => 'id']);
     }
 
-    /**
-     * Gets query for [[Statuses]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getStatuses() {
-        return $this->hasMany(PassageStatus::class, ['id' => 'status_id'])->via('passageStatusSkills');
-    }
 }

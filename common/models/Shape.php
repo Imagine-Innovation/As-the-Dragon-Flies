@@ -23,9 +23,9 @@ use Yii;
  *
  * @property Armor[] $armors
  * @property Creature $creature
- * @property GridShape[] $gridShapes
- * @property Grid[] $grids
  * @property Language[] $languages0
+ * @property MissionShape[] $missionShapes
+ * @property Mission[] $missions
  * @property Movement[] $movements
  * @property ShapeArmor[] $shapeArmors
  * @property ShapeAttack[] $shapeAttacks
@@ -33,7 +33,9 @@ use Yii;
  * @property ShapeMovement[] $shapeMovements
  * @property CreatureSize $size
  */
-class Shape extends \yii\db\ActiveRecord {
+class Shape extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -47,6 +49,9 @@ class Shape extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['ac', 'telepathy_range', 'passive_perception', 'blindsight', 'darkvision', 'tremorsense'], 'default', 'value' => null],
+            [['is_telepath'], 'default', 'value' => 0],
+            [['can_speak'], 'default', 'value' => 1],
             [['size_id', 'creature_id', 'name'], 'required'],
             [['size_id', 'creature_id', 'ac', 'languages', 'can_speak', 'is_telepath', 'telepathy_range', 'passive_perception', 'blindsight', 'darkvision', 'tremorsense'], 'integer'],
             [['name'], 'string', 'max' => 32],
@@ -82,7 +87,7 @@ class Shape extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getArmors() {
-        return $this->hasMany(Armor::class, ['item_id' => 'armor_id'])->via('shapeArmors');
+        return $this->hasMany(Armor::class, ['item_id' => 'armor_id'])->viaTable('shape_armor', ['shape_id' => 'id']);
     }
 
     /**
@@ -95,30 +100,30 @@ class Shape extends \yii\db\ActiveRecord {
     }
 
     /**
-     * Gets query for [[GridShapes]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getGridShapes() {
-        return $this->hasMany(GridShape::class, ['shape_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[Grids]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getGrids() {
-        return $this->hasMany(Grid::class, ['id' => 'grid_id'])->via('gridShapes');
-    }
-
-    /**
      * Gets query for [[Languages0]].
      *
      * @return \yii\db\ActiveQuery
      */
     public function getLanguages0() {
-        return $this->hasMany(Language::class, ['id' => 'language_id'])->via('shapeLanguages');
+        return $this->hasMany(Language::class, ['id' => 'language_id'])->viaTable('shape_language', ['shape_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[MissionShapes]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getMissionShapes() {
+        return $this->hasMany(MissionShape::class, ['shape_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Missions]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getMissions() {
+        return $this->hasMany(Mission::class, ['id' => 'mission_id'])->viaTable('mission_shape', ['shape_id' => 'id']);
     }
 
     /**
@@ -127,7 +132,7 @@ class Shape extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getMovements() {
-        return $this->hasMany(Movement::class, ['id' => 'movement_id'])->via('shapeMovements');
+        return $this->hasMany(Movement::class, ['id' => 'movement_id'])->viaTable('shape_movement', ['shape_id' => 'id']);
     }
 
     /**
@@ -174,4 +179,5 @@ class Shape extends \yii\db\ActiveRecord {
     public function getSize() {
         return $this->hasOne(CreatureSize::class, ['id' => 'size_id']);
     }
+
 }

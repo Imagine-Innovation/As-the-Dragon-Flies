@@ -29,35 +29,36 @@ use Yii;
  * @property Category[] $categories
  * @property ClassEquipment[] $classEquipments
  * @property ClassItemProficiency[] $classItemProficiencies
- * @property CharacterClass[] $classes
- * @property GridItem[] $gridItems
- * @property Grid[] $grids
  * @property ItemCategory[] $itemCategories
  * @property ItemType $itemType
- * @property Item[] $packItems
+ * @property Item[] $items
+ * @property MissionItem[] $missionItems
+ * @property Mission[] $missions
  * @property Pack[] $packs
+ * @property Pack[] $packs0
  * @property Item[] $parentItems
- * @property Category $mainCategory
- * @property PassageStatusItem[] $passageStatusItems
+ * @property PassageItem[] $passageItems
+ * @property Passage[] $passages
  * @property PlayerCart[] $playerCarts
  * @property PlayerItem[] $playerItems
  * @property Player[] $players
  * @property Player[] $players0
  * @property Poison $poison
- * @property PassageStatus[] $statuses
  * @property Weapon $weapon
  * @property Weapon[] $weapons
  *
+ * Custom properties
  * @property string $category
  * @property string $pounds
  * @property string $price
- * @property int    $copperValue
- * @property string $armorClassString
- * @property int    $armorStrength
+ * @property int $copperValue
+ * @property string $armorClass
+ * @property int $armorStrength
  * @property string $armorDisadvantage
+ * @property string $weaponProperties
  * @property string $damageDice
- * @property string $weaponPropertiesString
  * @property string $poisonType
+ *
  */
 class Item extends \yii\db\ActiveRecord
 {
@@ -157,33 +158,6 @@ class Item extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Classes]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getClasses() {
-        return $this->hasMany(CharacterClass::class, ['id' => 'class_id'])->viaTable('class_item', ['item_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[GridItems]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getGridItems() {
-        return $this->hasMany(GridItem::class, ['item_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[Grids]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getGrids() {
-        return $this->hasMany(Grid::class, ['id' => 'grid_id'])->viaTable('grid_item', ['item_id' => 'id']);
-    }
-
-    /**
      * Gets query for [[ItemCategories]].
      *
      * @return \yii\db\ActiveQuery
@@ -202,21 +176,48 @@ class Item extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Pack]].
+     * Gets query for [[Items]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getItems() {
+        return $this->hasMany(Item::class, ['id' => 'item_id'])->viaTable('pack', ['parent_item_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[MissionItems]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getMissionItems() {
+        return $this->hasMany(MissionItem::class, ['item_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Missions]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getMissions() {
+        return $this->hasMany(Mission::class, ['id' => 'mission_id'])->viaTable('mission_item', ['item_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Packs]].
      *
      * @return \yii\db\ActiveQuery
      */
     public function getPacks() {
-        return $this->hasMany(Pack::class, ['parent_item_id' => 'id']);
+        return $this->hasMany(Pack::class, ['item_id' => 'id']);
     }
 
     /**
-     * Gets query for [[PackItems]].
+     * Gets query for [[Packs0]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getPackItems() {
-        return $this->hasMany(Item::class, ['id' => 'item_id'])->viaTable('pack', ['parent_item_id' => 'id']);
+    public function getPacks0() {
+        return $this->hasMany(Pack::class, ['parent_item_id' => 'id']);
     }
 
     /**
@@ -229,24 +230,21 @@ class Item extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets the main category of the item.
-     *
-     * @return ActiveQuery
-     */
-    public function getMainCategory() {
-        return $this->hasOne(Category::class, ['id' => 'category_id'])
-                        ->viaTable('item_category', ['item_id' => 'id'], function ($query) {
-                            $query->andWhere(['item_category.is_main' => 1]);
-                        });
-    }
-
-    /**
-     * Gets query for [[PassageStatusItems]].
+     * Gets query for [[PassageItems]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getPassageStatusItems() {
-        return $this->hasMany(PassageStatusItem::class, ['item_id' => 'id']);
+    public function getPassageItems() {
+        return $this->hasMany(PassageItem::class, ['item_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Passages]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPassages() {
+        return $this->hasMany(Passage::class, ['id' => 'passage_id'])->viaTable('passage_item', ['item_id' => 'id']);
     }
 
     /**
@@ -295,15 +293,6 @@ class Item extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Statuses]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getStatuses() {
-        return $this->hasMany(PassageStatus::class, ['id' => 'status_id'])->viaTable('passage_status_item', ['item_id' => 'id']);
-    }
-
-    /**
      * Gets query for [[Weapon]].
      *
      * @return \yii\db\ActiveQuery
@@ -348,7 +337,7 @@ class Item extends \yii\db\ActiveRecord
      * @return string The formatted weight string in the format "X lb. (Y kg)" or
      *                an empty string if the weight is zero.
      */
-    public function getPounds() {
+    public function getPounds(): string {
         // Initialize the weight variable to zero.
         $weight = 0;
 
@@ -383,7 +372,7 @@ class Item extends \yii\db\ActiveRecord
      *
      * @return string The formatted price string or "free" if the item is free of charge.
      */
-    public function getPrice() {
+    public function getPrice(): string {
         // Check if the model has a non-zero cost value.
         if ($this->cost && $this->cost > 0) {
             // Format the cost to two decimal places and append the coin type.
@@ -400,7 +389,7 @@ class Item extends \yii\db\ActiveRecord
      * @return int The equivalent value in copper coins based on the provided
      *             item's cost and coin type.
      */
-    public function getCopperValue() {
+    public function getCopperValue(): int {
         // Create a new instance of the Shopping class.
         $shopping = new Shopping();
 
@@ -415,7 +404,7 @@ class Item extends \yii\db\ActiveRecord
      * @return string The formatted armor class string indicating base armor class,
      *                DEX modifier, max modifier, and armor bonus.
      */
-    public function getArmorClass() {
+    public function getArmorClass(): string {
         return $this->armor->armorClass;
     }
 
@@ -424,7 +413,7 @@ class Item extends \yii\db\ActiveRecord
      *
      * @return int The required strength for wearing the armor.
      */
-    public function getArmorStrength() {
+    public function getArmorStrength(): int {
         return $this->armor->strength;
     }
 
@@ -435,7 +424,7 @@ class Item extends \yii\db\ActiveRecord
      * @return string The CSS class 'bi-check-lg' if disadvantage is imposed,
      *                otherwise an empty string.
      */
-    public function getArmorDisadvantage() {
+    public function getArmorDisadvantage(): string {
         return $this->armor->is_disadvantage ? 'bi-check-lg' : "";
     }
 
@@ -457,7 +446,7 @@ class Item extends \yii\db\ActiveRecord
      *
      * @return string The damage dice string of the weapon.
      */
-    public function getDamageDice() {
+    public function getDamageDice(): string {
         return $this->weapon->damage_dice;
     }
 
@@ -466,7 +455,7 @@ class Item extends \yii\db\ActiveRecord
      *
      * @return string The poison type of the specified poison.
      */
-    public function getPoisonType() {
+    public function getPoisonType(): string {
         return $this->poison->poison_type;
     }
 }

@@ -8,19 +8,23 @@ use Yii;
  * This is the model class for table "passage".
  *
  * @property int $id Primary key
- * @property int $tile_from_id Foreign key to "tile" table to get the origine tile
- * @property int $tile_to_id Foreign key to "tile" table to get the destination tile
- * @property int $status_id Foreign key to "passage_status" table
+ * @property int $mission_id Foreign key to "mission" table
  * @property string $name Passage
  * @property string|null $description Short description
+ * @property string $passage_type Passage type
+ * @property int $status Status code. "0" for Opened, "1" for Half-opened, "2" for Closed and "3" for Locked
+ * @property string|null $image Image
  * @property int $found Give the probability of finding the passage (%)
- * @property string $passage_type Passage type. "D" for "Door", "C" for Corridor, "G" for Gate, "T" for tunnel, "P" for Portcullis, "B" for drawbridge
  *
- * @property PassageStatus $status
- * @property Tile $tileFrom
- * @property Tile $tileTo
+ * @property Item[] $items
+ * @property Mission $mission
+ * @property PassageItem[] $passageItems
+ * @property PassageSkill[] $passageSkills
+ * @property Skill[] $skills
  */
-class Passage extends \yii\db\ActiveRecord {
+class Passage extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -34,13 +38,15 @@ class Passage extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['tile_from_id', 'tile_to_id', 'status_id', 'name'], 'required'],
-            [['tile_from_id', 'tile_to_id', 'status_id', 'found'], 'integer'],
-            [['description', 'passage_type'], 'string'],
-            [['name'], 'string', 'max' => 32],
-            [['tile_to_id'], 'exist', 'skipOnError' => true, 'targetClass' => Tile::class, 'targetAttribute' => ['tile_to_id' => 'id']],
-            [['tile_from_id'], 'exist', 'skipOnError' => true, 'targetClass' => Tile::class, 'targetAttribute' => ['tile_from_id' => 'id']],
-            [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => PassageStatus::class, 'targetAttribute' => ['status_id' => 'id']],
+            [['description', 'image'], 'default', 'value' => null],
+            [['passage_type'], 'default', 'value' => 'D'],
+            [['status'], 'default', 'value' => 0],
+            [['found'], 'default', 'value' => 25],
+            [['mission_id', 'name'], 'required'],
+            [['mission_id', 'status', 'found'], 'integer'],
+            [['description'], 'string'],
+            [['name', 'passage_type', 'image'], 'string', 'max' => 32],
+            [['mission_id'], 'exist', 'skipOnError' => true, 'targetClass' => Mission::class, 'targetAttribute' => ['mission_id' => 'id']],
         ];
     }
 
@@ -50,40 +56,59 @@ class Passage extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'tile_from_id' => 'Foreign key to \"tile\" table to get the origine tile',
-            'tile_to_id' => 'Foreign key to \"tile\" table to get the destination tile',
-            'status_id' => 'Foreign key to \"passage_status\" table',
+            'mission_id' => 'Foreign key to \"mission\" table',
             'name' => 'Passage',
             'description' => 'Short description',
+            'passage_type' => 'Passage type',
+            'status' => 'Status code. \"0\" for Opened, \"1\" for Half-opened, \"2\" for Closed and \"3\" for Locked',
+            'image' => 'Image',
             'found' => 'Give the probability of finding the passage (%)',
-            'passage_type' => 'Passage type. \"D\" for \"Door\", \"C\" for Corridor, \"G\" for Gate, \"T\" for tunnel, \"P\" for Portcullis, \"B\" for drawbridge',
         ];
     }
 
     /**
-     * Gets query for [[Status]].
+     * Gets query for [[Items]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getStatus() {
-        return $this->hasOne(PassageStatus::class, ['id' => 'status_id']);
+    public function getItems() {
+        return $this->hasMany(Item::class, ['id' => 'item_id'])->viaTable('passage_item', ['passage_id' => 'id']);
     }
 
     /**
-     * Gets query for [[TileFrom]].
+     * Gets query for [[Mission]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getTileFrom() {
-        return $this->hasOne(Tile::class, ['id' => 'tile_from_id']);
+    public function getMission() {
+        return $this->hasOne(Mission::class, ['id' => 'mission_id']);
     }
 
     /**
-     * Gets query for [[TileTo]].
+     * Gets query for [[PassageItems]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getTileTo() {
-        return $this->hasOne(Tile::class, ['id' => 'tile_to_id']);
+    public function getPassageItems() {
+        return $this->hasMany(PassageItem::class, ['passage_id' => 'id']);
     }
+
+    /**
+     * Gets query for [[PassageSkills]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPassageSkills() {
+        return $this->hasMany(PassageSkill::class, ['passage_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Skills]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSkills() {
+        return $this->hasMany(Skill::class, ['id' => 'skill_id'])->viaTable('passage_skill', ['passage_id' => 'id']);
+    }
+
 }

@@ -16,8 +16,8 @@ use Yii;
  * @property int $bonus Proficiency bonus determined by the creature’s challenge rating
  * @property int $xp Experience Points awarded to the party for defeating the creature
  *
- * @property PlotNpc[] $plotNpcs
- * @property StoryPlot[] $plots
+ * @property MissionNpc[] $missionNpcs
+ * @property Mission[] $missions
  */
 class Npc extends \yii\db\ActiveRecord
 {
@@ -65,21 +65,21 @@ class Npc extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[PlotNpcs]].
+     * Gets query for [[MissionNpcs]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getPlotNpcs() {
-        return $this->hasMany(PlotNpc::class, ['npc_id' => 'id']);
+    public function getMissionNpcs() {
+        return $this->hasMany(MissionNpc::class, ['npc_id' => 'id']);
     }
 
     /**
-     * Gets query for [[Plots]].
+     * Gets query for [[Missions]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getPlots() {
-        return $this->hasMany(StoryPlot::class, ['id' => 'plot_id'])->viaTable('plot_npc', ['npc_id' => 'id']);
+    public function getMissions() {
+        return $this->hasMany(Mission::class, ['id' => 'mission_id'])->viaTable('mission_npc', ['npc_id' => 'id']);
     }
 
 }

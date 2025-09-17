@@ -8,18 +8,18 @@ use Yii;
  * This is the model class for table "trap".
  *
  * @property int $id Primary key
- * @property int $tile_id Foreign key to "tile" table
  * @property int $damage_type_id Foreign key to "damage_type" table
  * @property string $name Trap
- * @property int $present Indicates the probability that the part is present in the room
- * @property int $falling Indicates the probability of the player falling into the trap
  * @property string $damage Damage dice
  * @property int $is_team_trap Indicates that the whole team is trapped
  *
  * @property DamageType $damageType
- * @property Tile $tile
+ * @property MissionTrap[] $missionTraps
+ * @property Mission[] $missions
  */
-class Trap extends \yii\db\ActiveRecord {
+class Trap extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -33,11 +33,11 @@ class Trap extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['tile_id', 'damage_type_id', 'name', 'damage'], 'required'],
-            [['tile_id', 'damage_type_id', 'present', 'falling', 'is_team_trap'], 'integer'],
+            [['is_team_trap'], 'default', 'value' => 0],
+            [['damage_type_id', 'name', 'damage'], 'required'],
+            [['damage_type_id', 'is_team_trap'], 'integer'],
             [['name'], 'string', 'max' => 32],
             [['damage'], 'string', 'max' => 8],
-            [['tile_id'], 'exist', 'skipOnError' => true, 'targetClass' => Tile::class, 'targetAttribute' => ['tile_id' => 'id']],
             [['damage_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => DamageType::class, 'targetAttribute' => ['damage_type_id' => 'id']],
         ];
     }
@@ -48,11 +48,8 @@ class Trap extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'tile_id' => 'Foreign key to \"tile\" table',
             'damage_type_id' => 'Foreign key to \"damage_type\" table',
             'name' => 'Trap',
-            'present' => 'Indicates the probability that the part is present in the room',
-            'falling' => 'Indicates the probability of the player falling into the trap',
             'damage' => 'Damage dice',
             'is_team_trap' => 'Indicates that the whole team is trapped',
         ];
@@ -68,11 +65,21 @@ class Trap extends \yii\db\ActiveRecord {
     }
 
     /**
-     * Gets query for [[Tile]].
+     * Gets query for [[MissionTraps]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getTile() {
-        return $this->hasOne(Tile::class, ['id' => 'tile_id']);
+    public function getMissionTraps() {
+        return $this->hasMany(MissionTrap::class, ['trap_id' => 'id']);
     }
+
+    /**
+     * Gets query for [[Missions]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getMissions() {
+        return $this->hasMany(Mission::class, ['id' => 'mission_id'])->viaTable('mission_trap', ['trap_id' => 'id']);
+    }
+
 }
