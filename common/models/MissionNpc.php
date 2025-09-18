@@ -13,6 +13,8 @@ use Yii;
  * @property string|null $description Short description
  * @property string|null $image Image
  *
+ * @property Dialog[] $dialogs
+ * @property Interaction[] $interactions
  * @property Mission $mission
  * @property Npc $npc
  */
@@ -54,6 +56,24 @@ class MissionNpc extends \yii\db\ActiveRecord
             'description' => 'Short description',
             'image' => 'Image',
         ];
+    }
+
+    /**
+     * Gets query for [[Dialogs]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDialogs() {
+        return $this->hasMany(Dialog::class, ['npc_id' => 'npc_id', 'mission_id' => 'mission_id']);
+    }
+
+    /**
+     * Gets query for [[Interactions]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getInteractions() {
+        return $this->hasMany(Interaction::class, ['npc_id' => 'npc_id', 'mission_id' => 'mission_id']);
     }
 
     /**

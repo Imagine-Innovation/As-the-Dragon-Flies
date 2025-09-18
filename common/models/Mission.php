@@ -8,13 +8,14 @@ use Yii;
  * This is the model class for table "mission".
  *
  * @property int $id Primary key
- * @property int $sequence_id Foreign key to "sequence" table
+ * @property int $chapter_id Foreign key to "chapter" table
  * @property string $name Mission name
  * @property string|null $description Short description
  * @property int $low_bound Low bound of probability that history will go in this direction
  * @property int $high_bound High bound of probability that history will go in this direction
  *
- * @property Sequence $sequence
+ * @property Chapter $chapter
+ * @property Interaction[] $interactions
  * @property Item[] $items
  * @property MissionItem[] $missionItems
  * @property MissionNpc[] $missionNpcs
@@ -23,10 +24,12 @@ use Yii;
  * @property Npc[] $npcs
  * @property Passage[] $passages
  * @property Shape[] $shapes
+ * @property Success[] $successes
  * @property Trap[] $traps
  */
 class Mission extends \yii\db\ActiveRecord
 {
+
 
     /**
      * {@inheritdoc}
@@ -43,11 +46,11 @@ class Mission extends \yii\db\ActiveRecord
             [['description'], 'default', 'value' => null],
             [['low_bound'], 'default', 'value' => 0],
             [['high_bound'], 'default', 'value' => 100],
-            [['sequence_id', 'name'], 'required'],
-            [['sequence_id', 'low_bound', 'high_bound'], 'integer'],
+            [['chapter_id', 'name'], 'required'],
+            [['chapter_id', 'low_bound', 'high_bound'], 'integer'],
             [['description'], 'string'],
             [['name'], 'string', 'max' => 32],
-            [['sequence_id'], 'exist', 'skipOnError' => true, 'targetClass' => Sequence::class, 'targetAttribute' => ['sequence_id' => 'id']],
+            [['chapter_id'], 'exist', 'skipOnError' => true, 'targetClass' => Chapter::class, 'targetAttribute' => ['chapter_id' => 'id']],
         ];
     }
 
@@ -57,7 +60,7 @@ class Mission extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'sequence_id' => 'Foreign key to \"sequence\" table',
+            'chapter_id' => 'Foreign key to \"chapter\" table',
             'name' => 'Mission name',
             'description' => 'Short description',
             'low_bound' => 'Low bound of probability that history will go in this direction',
@@ -66,12 +69,21 @@ class Mission extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Sequence]].
+     * Gets query for [[Chapter]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getSequence() {
-        return $this->hasOne(Sequence::class, ['id' => 'sequence_id']);
+    public function getChapter() {
+        return $this->hasOne(Chapter::class, ['id' => 'chapter_id']);
+    }
+
+    /**
+     * Gets query for [[Interactions]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getInteractions() {
+        return $this->hasMany(Interaction::class, ['mission_id' => 'id']);
     }
 
     /**
@@ -147,6 +159,15 @@ class Mission extends \yii\db\ActiveRecord
     }
 
     /**
+     * Gets query for [[Successes]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSuccesses() {
+        return $this->hasMany(Success::class, ['next_mission_id' => 'id']);
+    }
+
+    /**
      * Gets query for [[Traps]].
      *
      * @return \yii\db\ActiveQuery
@@ -154,4 +175,5 @@ class Mission extends \yii\db\ActiveRecord
     public function getTraps() {
         return $this->hasMany(Trap::class, ['id' => 'trap_id'])->viaTable('mission_trap', ['mission_id' => 'id']);
     }
+
 }

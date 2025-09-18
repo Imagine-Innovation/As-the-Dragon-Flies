@@ -14,11 +14,12 @@ use Yii;
  * @property string|null $description Short description
  * @property string|null $image Image
  *
- * @property Sequence[] $sequences
+ * @property Mission[] $missions
  * @property Story $story
  */
 class Chapter extends \yii\db\ActiveRecord
 {
+
 
     /**
      * {@inheritdoc}
@@ -57,12 +58,12 @@ class Chapter extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Sequences]].
+     * Gets query for [[Missions]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getSequences() {
-        return $this->hasMany(Sequence::class, ['chapter_id' => 'id']);
+    public function getMissions() {
+        return $this->hasMany(Mission::class, ['chapter_id' => 'id']);
     }
 
     /**
@@ -73,4 +74,5 @@ class Chapter extends \yii\db\ActiveRecord
     public function getStory() {
         return $this->hasOne(Story::class, ['id' => 'story_id']);
     }
+
 }

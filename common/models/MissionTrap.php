@@ -18,6 +18,7 @@ use Yii;
 class MissionTrap extends \yii\db\ActiveRecord
 {
 
+
     /**
      * {@inheritdoc}
      */
@@ -69,4 +70,5 @@ class MissionTrap extends \yii\db\ActiveRecord
     public function getTrap() {
         return $this->hasOne(Trap::class, ['id' => 'trap_id']);
     }
+
 }
