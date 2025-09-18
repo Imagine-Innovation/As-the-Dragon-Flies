@@ -16,7 +16,7 @@ use Yii;
  * @property BackgroundSkill[] $backgroundSkills
  * @property Background[] $backgrounds
  * @property ClassSkill[] $classSkills
- * @property Class[] $classes
+ * @property CharacterClass[] $classes
  * @property CreatureSkill[] $creatureSkills
  * @property Creature[] $creatures
  * @property PassageSkill[] $passageSkills
@@ -26,7 +26,6 @@ use Yii;
  */
 class Skill extends \yii\db\ActiveRecord
 {
-
 
     /**
      * {@inheritdoc}
@@ -104,7 +103,7 @@ class Skill extends \yii\db\ActiveRecord
      * @return \yii\db\ActiveQuery
      */
     public function getClasses() {
-        return $this->hasMany(Class::class, ['id' => 'class_id'])->viaTable('class_skill', ['skill_id' => 'id']);
+        return $this->hasMany(CharacterClass::class, ['id' => 'class_id'])->viaTable('class_skill', ['skill_id' => 'id']);
     }
 
     /**
@@ -160,5 +159,4 @@ class Skill extends \yii\db\ActiveRecord
     public function getPlayers() {
         return $this->hasMany(Player::class, ['id' => 'player_id'])->viaTable('player_skill', ['skill_id' => 'id']);
     }
-
 }

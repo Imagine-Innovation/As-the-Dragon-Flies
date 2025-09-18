@@ -36,9 +36,9 @@ use yii\web\IdentityInterface;
  * @property Player[] $players
  * @property UserLogin[] $userLogins
  * @property UserLog[] $userLogs
- * @property WebsocketConnection[] $websocketConnections
  */
-class User extends ActiveRecord implements IdentityInterface {
+class User extends ActiveRecord implements IdentityInterface
+{
 
     /**
      * {@inheritdoc}
@@ -292,14 +292,5 @@ class User extends ActiveRecord implements IdentityInterface {
      */
     public function hasPlayers() {
         return $this->getPlayers()->count() > 0;
-    }
-
-    /**
-     * Gets query for [[WebsocketConnections]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getWebsocketConnections() {
-        return $this->hasMany(WebsocketConnection::class, ['user_id' => 'id']);
     }
 }

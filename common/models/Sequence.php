@@ -5,25 +5,24 @@ namespace common\models;
 use Yii;
 
 /**
- * This is the model class for table "challenge".
+ * This is the model class for table "sequence".
  *
  * @property int $id Primary key
  * @property int $chapter_id Foreign key to "chapter" table
- * @property string $name Challenge
+ * @property string $name Sequence
  * @property string|null $description Short description
  *
  * @property Chapter $chapter
  * @property Mission[] $missions
  */
-class Challenge extends \yii\db\ActiveRecord
+class Sequence extends \yii\db\ActiveRecord
 {
-
 
     /**
      * {@inheritdoc}
      */
     public static function tableName() {
-        return 'challenge';
+        return 'sequence';
     }
 
     /**
@@ -47,7 +46,7 @@ class Challenge extends \yii\db\ActiveRecord
         return [
             'id' => 'Primary key',
             'chapter_id' => 'Foreign key to \"chapter\" table',
-            'name' => 'Challenge',
+            'name' => 'Sequence',
             'description' => 'Short description',
         ];
     }
@@ -67,7 +66,6 @@ class Challenge extends \yii\db\ActiveRecord
      * @return \yii\db\ActiveQuery
      */
     public function getMissions() {
-        return $this->hasMany(Mission::class, ['challenge_id' => 'id']);
+        return $this->hasMany(Mission::class, ['sequence_id' => 'id']);
     }
-
 }

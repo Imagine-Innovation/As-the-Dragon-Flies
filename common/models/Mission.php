@@ -8,13 +8,13 @@ use Yii;
  * This is the model class for table "mission".
  *
  * @property int $id Primary key
- * @property int $challenge_id Foreign key to "challenge" table
+ * @property int $sequence_id Foreign key to "sequence" table
  * @property string $name Mission name
  * @property string|null $description Short description
  * @property int $low_bound Low bound of probability that history will go in this direction
  * @property int $high_bound High bound of probability that history will go in this direction
  *
- * @property Challenge $challenge
+ * @property Sequence $sequence
  * @property Item[] $items
  * @property MissionItem[] $missionItems
  * @property MissionNpc[] $missionNpcs
@@ -27,7 +27,6 @@ use Yii;
  */
 class Mission extends \yii\db\ActiveRecord
 {
-
 
     /**
      * {@inheritdoc}
@@ -44,11 +43,11 @@ class Mission extends \yii\db\ActiveRecord
             [['description'], 'default', 'value' => null],
             [['low_bound'], 'default', 'value' => 0],
             [['high_bound'], 'default', 'value' => 100],
-            [['challenge_id', 'name'], 'required'],
-            [['challenge_id', 'low_bound', 'high_bound'], 'integer'],
+            [['sequence_id', 'name'], 'required'],
+            [['sequence_id', 'low_bound', 'high_bound'], 'integer'],
             [['description'], 'string'],
             [['name'], 'string', 'max' => 32],
-            [['challenge_id'], 'exist', 'skipOnError' => true, 'targetClass' => Challenge::class, 'targetAttribute' => ['challenge_id' => 'id']],
+            [['sequence_id'], 'exist', 'skipOnError' => true, 'targetClass' => Sequence::class, 'targetAttribute' => ['sequence_id' => 'id']],
         ];
     }
 
@@ -58,7 +57,7 @@ class Mission extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'challenge_id' => 'Foreign key to \"challenge\" table',
+            'sequence_id' => 'Foreign key to \"sequence\" table',
             'name' => 'Mission name',
             'description' => 'Short description',
             'low_bound' => 'Low bound of probability that history will go in this direction',
@@ -67,12 +66,12 @@ class Mission extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Challenge]].
+     * Gets query for [[Sequence]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getChallenge() {
-        return $this->hasOne(Challenge::class, ['id' => 'challenge_id']);
+    public function getSequence() {
+        return $this->hasOne(Sequence::class, ['id' => 'sequence_id']);
     }
 
     /**
@@ -155,5 +154,4 @@ class Mission extends \yii\db\ActiveRecord
     public function getTraps() {
         return $this->hasMany(Trap::class, ['id' => 'trap_id'])->viaTable('mission_trap', ['mission_id' => 'id']);
     }
-
 }

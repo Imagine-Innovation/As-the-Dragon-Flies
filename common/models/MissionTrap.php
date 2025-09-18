@@ -9,7 +9,7 @@ use Yii;
  *
  * @property int $trap_id Foreign key to "trap" table
  * @property int $mission_id Foreign key to "mission" table
- * @property int $present Indicates the probability that the part is present at this challenge
+ * @property int $present Indicates the probability that the part is present in this sequence
  * @property int $fall Indicates the probability of the player falling into the trap
  *
  * @property Mission $mission
@@ -17,7 +17,6 @@ use Yii;
  */
 class MissionTrap extends \yii\db\ActiveRecord
 {
-
 
     /**
      * {@inheritdoc}
@@ -48,7 +47,7 @@ class MissionTrap extends \yii\db\ActiveRecord
         return [
             'trap_id' => 'Foreign key to \"trap\" table',
             'mission_id' => 'Foreign key to \"mission\" table',
-            'present' => 'Indicates the probability that the part is present at this challenge',
+            'present' => 'Indicates the probability that the part is present in this sequence',
             'fall' => 'Indicates the probability of the player falling into the trap',
         ];
     }
@@ -70,5 +69,4 @@ class MissionTrap extends \yii\db\ActiveRecord
     public function getTrap() {
         return $this->hasOne(Trap::class, ['id' => 'trap_id']);
     }
-
 }

@@ -419,7 +419,8 @@ class PlayerBuilder {
         $('#useSliderAgeLabel').css('visibility', 'hidden');
         $('#displayAgeLabel').css('visibility', 'visible');
         $('#playerAgeNum').html(age);
-        $('#playerAgeLabel').html(label);
+        //$('#playerAgeLabel').html(label);
+        $('#playerAgeLabel').text(label);
     }
 
     /***********************************************/
@@ -712,12 +713,16 @@ class PlayerBuilder {
      */
     static setCategoryItem(choice, itemIds) {
         Logger.log(1, 'setCategoryItem', `choice=${choice}, itemIds=${itemIds}`);
-        const target = `#ajaxItemChoice-${choice}`;
+//        const target = `#ajaxItemChoice-${choice}`;
+        let safeChoice = (typeof $.escapeSelector === "function") ? $.escapeSelector(choice) : choice.replace(/([ !"#$%&'()*+,./:;<=>?@[\\\]^`{|}~])/g,"\\$1");
+        const target = `#ajaxItemChoice-${safeChoice}`;
+
 
         if (!DOMUtils.exists(target))
             return;
 
-        $(target).html(itemIds.join(','));
+        //$(target).html(itemIds.join(','));
+        $(target).text(itemIds.join(','));
         this._loadItemImages();
         this._saveEquipment();
     }
