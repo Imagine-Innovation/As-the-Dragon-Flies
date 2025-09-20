@@ -13,7 +13,9 @@ use Yii;
  * @property string $name Chapter
  * @property string|null $description Short description
  * @property string|null $image Image
+ * @property int|null $first_mission_id Optional foreign key to "mission" table to identify the first mission to complete
  *
+ * @property Mission $firstMission
  * @property Mission[] $missions
  * @property Story $story
  */
@@ -33,13 +35,14 @@ class Chapter extends \yii\db\ActiveRecord
      */
     public function rules() {
         return [
-            [['description', 'image'], 'default', 'value' => null],
+            [['description', 'image', 'first_mission_id'], 'default', 'value' => null],
             [['chapter_number'], 'default', 'value' => 1],
             [['story_id', 'name'], 'required'],
-            [['story_id', 'chapter_number'], 'integer'],
+            [['story_id', 'chapter_number', 'first_mission_id'], 'integer'],
             [['description'], 'string'],
             [['name', 'image'], 'string', 'max' => 32],
             [['story_id'], 'exist', 'skipOnError' => true, 'targetClass' => Story::class, 'targetAttribute' => ['story_id' => 'id']],
+            [['first_mission_id'], 'exist', 'skipOnError' => true, 'targetClass' => Mission::class, 'targetAttribute' => ['first_mission_id' => 'id']],
         ];
     }
 
@@ -54,7 +57,17 @@ class Chapter extends \yii\db\ActiveRecord
             'name' => 'Chapter',
             'description' => 'Short description',
             'image' => 'Image',
+            'first_mission_id' => 'Optional foreign key to \"mission\" table to identify the first mission to complete',
         ];
+    }
+
+    /**
+     * Gets query for [[FirstMission]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFirstMission() {
+        return $this->hasOne(Mission::class, ['id' => 'first_mission_id']);
     }
 
     /**

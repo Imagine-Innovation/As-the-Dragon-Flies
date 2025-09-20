@@ -151,40 +151,48 @@ class Inventory
     public function addToPack(PlayerItem $playerItem, Item $containerItem): array {
         $weight = $playerItem->item->weight;
         if ($weight === null) {
-            return ['error' => true, 'msg' => 'It is not possible to add this item to a pack. It weighs nothing.'];
+            return ['error' => true, 'msg' => "It is not possible to add this item to a pack. It weighs nothing."];
         }
 
         if ($playerItem->is_carrying) {
-            return ['error' => true, 'msg' => 'Your have already packed this item'];
+            return ['error' => true, 'msg' => "Your have already packed this item"];
+        }
+
+        if ($playerItem->item_type === 'Weapon' || $playerItem->item_type === 'Armor') {
+            return ['error' => true, 'msg' => "{$playerItem->item_type} items don't have to be packed"];
         }
 
         $maxLoad = $containerItem->max_load;
         $playerItems = PlayerItem::findAll(['player_id' => $playerItem->player_id]);
         $actualLoad = $this->packWeight($playerItems);
         if ($actualLoad + $weight > $maxLoad) {
-            return ['error' => true, 'msg' => 'You\'ve reached the maximum weight your ' . $containerItem->name . ' can carry. You must first remove one item before adding this one.'];
+            return ['error' => true, 'msg' => "You've reached the maximum weight your {$containerItem->name} can carry. You must first remove one item before adding this one."];
         }
 
         $playerItem->is_carrying = 1;
         $save = $playerItem->save();
 
         if ($save) {
-            return ['error' => false, 'msg' => 'The item "' . $playerItem->item_name . '" has been successfully added to your ' . $containerItem->name];
+            return ['error' => false, 'msg' => "Your {$playerItem->item_name} has been successfully added to your {$containerItem->name}"];
         }
-        return ['error' => true, 'msg' => 'Internal Error. Could not add the item "' . $playerItem->item_name . '" to the ' . $containerItem->name];
+        return ['error' => true, 'msg' => "Internal Error. Could not add the item {$playerItem->item_name} to the {$containerItem->name}"];
     }
 
     public function removeFromPack($playerItem, $containerItem) {
         if (!$playerItem->is_carrying) {
-            return ['error' => true, 'msg' => 'Your haven\'t packed this item yet'];
+            return ['error' => true, 'msg' => "Your haven't packed this item yet"];
+        }
+
+        if ($playerItem->item_type === 'Weapon' || $playerItem->item_type === 'Armor') {
+            return ['error' => true, 'msg' => "{$playerItem->item_type} items cannot be unpacked"];
         }
 
         $playerItem->is_carrying = 0;
         $save = $playerItem->save();
 
         if ($save) {
-            return ['error' => false, 'msg' => 'The item "' . $playerItem->item_name . '" has been successfully removed from your ' . $containerItem->name];
+            return ['error' => false, 'msg' => "Your {$playerItem->item_name} has been successfully removed from your {$containerItem->name}"];
         }
-        return ['error' => true, 'msg' => 'Internal Error. Could not remove the item "' . $playerItem->item_name . '" from the ' . $containerItem->name];
+        return ['error' => true, 'msg' => "Internal Error. Could not remove the item {$playerItem->item_name} from the {$containerItem->name}"];
     }
 }

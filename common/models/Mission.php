@@ -13,6 +13,7 @@ use Yii;
  * @property string|null $description Short description
  * @property int $low_bound Low bound of probability that history will go in this direction
  * @property int $high_bound High bound of probability that history will go in this direction
+ * @property string|null $image Image
  *
  * @property Chapter $chapter
  * @property Interaction[] $interactions
@@ -30,7 +31,6 @@ use Yii;
 class Mission extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -43,13 +43,13 @@ class Mission extends \yii\db\ActiveRecord
      */
     public function rules() {
         return [
-            [['description'], 'default', 'value' => null],
+            [['description', 'image'], 'default', 'value' => null],
             [['low_bound'], 'default', 'value' => 0],
             [['high_bound'], 'default', 'value' => 100],
             [['chapter_id', 'name'], 'required'],
             [['chapter_id', 'low_bound', 'high_bound'], 'integer'],
             [['description'], 'string'],
-            [['name'], 'string', 'max' => 32],
+            [['name', 'image'], 'string', 'max' => 32],
             [['chapter_id'], 'exist', 'skipOnError' => true, 'targetClass' => Chapter::class, 'targetAttribute' => ['chapter_id' => 'id']],
         ];
     }
@@ -65,6 +65,7 @@ class Mission extends \yii\db\ActiveRecord
             'description' => 'Short description',
             'low_bound' => 'Low bound of probability that history will go in this direction',
             'high_bound' => 'High bound of probability that history will go in this direction',
+            'image' => 'Image',
         ];
     }
 
@@ -175,5 +176,4 @@ class Mission extends \yii\db\ActiveRecord
     public function getTraps() {
         return $this->hasMany(Trap::class, ['id' => 'trap_id'])->viaTable('mission_trap', ['mission_id' => 'id']);
     }
-
 }

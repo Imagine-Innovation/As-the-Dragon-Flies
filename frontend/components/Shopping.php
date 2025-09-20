@@ -603,6 +603,11 @@ class Shopping
         $isProficient = PlayerComponent::isProficient($classId, $playerCart->item_id) ? 1 : 0;
 
         $item = $playerCart->item;
+
+        // By default, weapons and armors are carried.
+        $itemType = $item->itemType;
+        $isCarrying = ($itemType->name === 'Weapon' || $itemType->name === 'Armor');
+
         // Create a new PlayerItem if it does not exist
         $playerItem = new PlayerItem([
             'player_id' => $playerCart->player_id,
@@ -611,6 +616,7 @@ class Shopping
             'item_type' => $item->itemType->name,
             'image' => $item->image,
             'quantity' => $playerCart->quantity * $item->quantity,
+            'is_carrying' => $isCarrying,
             'is_proficient' => $isProficient,
             'is_two_handed' => ($item->weapon ? $item->weapon->is_two_handed : 0),
         ]);

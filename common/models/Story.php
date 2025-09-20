@@ -18,6 +18,7 @@ use Yii;
  * @property int $max_level Maximum level required to enter the story
  * @property int $min_players Minimum number of players
  * @property int $max_players Maximum number of players
+ * @property string $language Lanuguage
  *
  * @property Chapter[] $chapters
  * @property CharacterClass[] $classes
@@ -51,11 +52,13 @@ class Story extends \yii\db\ActiveRecord
             [['status'], 'default', 'value' => AppStatus::DRAFT->value],
             [['min_players'], 'default', 'value' => 1],
             [['max_players'], 'default', 'value' => 4],
+            [['language'], 'default', 'value' => 'en'],
             [['name'], 'required'],
             [['description'], 'string'],
             [['status', 'min_level', 'max_level', 'min_players', 'max_players'], 'integer'],
             [['status'], 'in', 'range' => AppStatus::getValuesForStory()],
             [['name', 'image'], 'string', 'max' => 32],
+            [['language'], 'string', 'max' => 8],
             [['name'], 'unique'],
         ];
     }
@@ -74,6 +77,7 @@ class Story extends \yii\db\ActiveRecord
             'max_level' => 'Maximum level required to enter the story',
             'min_players' => 'Minimum number of players',
             'max_players' => 'Maximum number of players',
+            'language' => 'Lanuguage',
         ];
     }
 
@@ -83,7 +87,8 @@ class Story extends \yii\db\ActiveRecord
      * @return \yii\db\ActiveQuery
      */
     public function getChapters() {
-        return $this->hasMany(Chapter::class, ['story_id' => 'id']);
+        return $this->hasMany(Chapter::class, ['story_id' => 'id'])
+                        ->orderBy(['chapter_number' => SORT_ASC]);
     }
 
     /**

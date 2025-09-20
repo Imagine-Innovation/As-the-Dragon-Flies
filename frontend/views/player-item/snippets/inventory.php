@@ -20,7 +20,7 @@ use frontend\widgets\ModalDesc;
                                 <div class="toggle-switch">
                                     <span data-bs-toggle="tooltip" title="Add or remove from pack" data-placement="bottom">
                                         <input type="checkbox" class="toggle-switch__checkbox" id="pack-<?= $item['id'] ?>" <?= $item['is_carrying'] ? 'checked' : '' ?>
-                                               onchange="ItemManager.toggle_pack(<?= $item['id'] ?>);">
+                                               onchange="ItemManager.togglePack(<?= $item['id'] ?>);">
                                         <i class="toggle-switch__helper"></i>
                                     </span>
                                 </div>

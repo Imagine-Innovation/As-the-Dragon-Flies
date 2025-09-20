@@ -23,10 +23,10 @@ if ($devIcons) {
         'd20', 'apothecary', 'badge', 'banner', 'castle', 'castle2', 'castle3', 'chest',
         'coins', 'coins2', 'danger', 'dungeon', 'equipment', 'fire', 'horse',
         'pirate', 'power-off', 'spell', 'spell-book', 'tent', 'tower', 'treble-clef',
-        'trophy', 'scroll', 'ghost', 'logo', 'skull',
+        'trophy', 'scroll', 'gate', 'ghost', 'logo', 'skull', 'trap',
         // items
         'candle', 'cauldron', 'crown', 'crown2', 'diamond', 'key', 'key2',
-        'pouch', 'ring', 'ring-diamond', 'rope', 'magic-wand', 'magic-wand2',
+        'potion', 'pouch', 'ring', 'ring-diamond', 'rope', 'magic-wand', 'magic-wand2',
         // actions
         'action-attack', 'action-climb', 'action-fight', 'action-hide',
         'action-inventory', 'action-move', 'action-prepare-spell', 'action-pull-lever',

@@ -301,6 +301,20 @@
     vertical-align: -0.125em;
 }
 
+.dnd-gate::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/gate.svg') no-repeat center center;
+    mask: url('dnd-icons/gate.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
 .dnd-ghost::before {
     content: "";
     font-size: inherit;
@@ -408,6 +422,20 @@
     background: currentColor;
     -webkit-mask: url('dnd-icons/pirate.svg') no-repeat center center;
     mask: url('dnd-icons/pirate.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-potion::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/potion.svg') no-repeat center center;
+    mask: url('dnd-icons/potion.svg') no-repeat center center;
     -webkit-mask-size: 100% 100%;
     mask-size: 100% 100%;
     vertical-align: -0.125em;
@@ -548,6 +576,20 @@
     background: currentColor;
     -webkit-mask: url('dnd-icons/tent.svg') no-repeat center center;
     mask: url('dnd-icons/tent.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-trap::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('dnd-icons/trap.svg') no-repeat center center;
+    mask: url('dnd-icons/trap.svg') no-repeat center center;
     -webkit-mask-size: 100% 100%;
     mask-size: 100% 100%;
     vertical-align: -0.125em;

@@ -2,9 +2,8 @@
 
 namespace frontend\controllers;
 
-use common\components\AppStatus;
 use common\components\ManageAccessRights;
-use common\helpers\Status;
+use common\models\Chapter;
 use common\models\Story;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -16,9 +15,9 @@ use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 /**
- * StoryController implements the CRUD actions for Story model.
+ * ChapterController implements the CRUD actions for Chapter model.
  */
-class StoryController extends Controller
+class ChapterController extends Controller
 {
 
     /**
@@ -38,8 +37,7 @@ class StoryController extends Controller
                             ],
                             [
                                 'actions' => [
-                                    'index', 'create', 'view', 'update', 'delete',
-                                    'validate', 'restore',
+                                    'create', 'view', 'update',
                                 ],
                                 'allow' => ManageAccessRights::isRouteAllowed($this),
                                 'roles' => ['@'],
@@ -57,27 +55,7 @@ class StoryController extends Controller
     }
 
     /**
-     * Lists all Story models.
-     *
-     * @return string
-     */
-    public function actionIndex() {
-        $user = Yii::$app->user->identity;
-
-        $query = Story::find();
-        if (!$user->is_designer) {
-            $query->where(['status' => AppStatus::PUBLISHED->value]);
-        }
-
-        $dataProvider = new ActiveDataProvider(['query' => $query]);
-
-        return $this->render('index', [
-                    'dataProvider' => $dataProvider,
-        ]);
-    }
-
-    /**
-     * Displays a single Story model.
+     * Displays a single Chapter model.
      * @param int $id Primary key
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
@@ -89,12 +67,15 @@ class StoryController extends Controller
     }
 
     /**
-     * Creates a new Story model.
+     * Creates a new Chapter model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate() {
-        $model = new Story();
+    public function actionCreate($storyId) {
+        // Check if $id is a valid Story ID
+        $story = $this->findStory($storyId);
+        $model = new Chapter();
+        $model->story_id = $story->id;
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
@@ -110,7 +91,7 @@ class StoryController extends Controller
     }
 
     /**
-     * Updates an existing Story model.
+     * Updates an existing Chapter model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id Primary key
      * @return string|\yii\web\Response
@@ -129,48 +110,25 @@ class StoryController extends Controller
     }
 
     /**
-     * Deletes an existing Story model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id Primary key
-     * @return \yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionDelete($id) {
-        $model = $this->findModel($id);
-        if (Status::changeStatus($model, AppStatus::ARCHIVED->value)) {
-            return $this->redirect(['index']);
-        }
-        throw new NotFoundHttpException('Could not delete this story');
-    }
-
-    public function actionValidate($id) {
-        $model = $this->findModel($id);
-        if (Status::changeStatus($model, AppStatus::PUBLISHED->value)) {
-            return $this->redirect(['index']);
-        }
-        throw new NotFoundHttpException('Could not validate this story');
-    }
-
-    public function actionRestore($id) {
-        $model = $this->findModel($id);
-        if (Status::changeStatus($model, AppStatus::DRAFT->value)) {
-            return $this->redirect(['index']);
-        }
-        throw new NotFoundHttpException('Could not restore this story');
-    }
-
-    /**
-     * Finds the Story model based on its primary key value.
+     * Finds the Chapter model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id Primary key
-     * @return Story the loaded model
+     * @return Chapter the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id) {
+        if (($model = Chapter::findOne(['id' => $id])) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The requested chapter does not exist.');
+    }
+
+    protected function findStory($id) {
         if (($model = Story::findOne(['id' => $id])) !== null) {
             return $model;
         }
 
-        throw new NotFoundHttpException('The story your are looking for does not exist.');
+        throw new NotFoundHttpException('The requested story does not exist.');
     }
 }
