@@ -45,8 +45,8 @@ class PlayerAbility extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'player_id' => 'Foreign key to \"player\" table',
-            'ability_id' => 'Foreign key to \"ability\" table',
+            'player_id' => 'Foreign key to "player" table',
+            'ability_id' => 'Foreign key to "ability" table',
             'score' => 'Ability score',
             'bonus' => 'Ability bonus',
             'modifier' => 'Modifier',

@@ -44,8 +44,8 @@ class ItemCategory extends \yii\db\ActiveRecord
      */
     public function attributeLabels() {
         return [
-            'item_id' => 'Foreign key to \"item\" table',
-            'category_id' => 'Foreign key to \"category\" table',
+            'item_id' => 'Foreign key to "item" table',
+            'category_id' => 'Foreign key to "category" table',
             'is_main' => 'Is main category',
         ];
     }

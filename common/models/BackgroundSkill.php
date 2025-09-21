@@ -40,8 +40,8 @@ class BackgroundSkill extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'background_id' => 'Foreign key to \"background\" table',
-            'skill_id' => 'Foreign key to \"skill\" table',
+            'background_id' => 'Foreign key to "background" table',
+            'skill_id' => 'Foreign key to "skill" table',
         ];
     }
 

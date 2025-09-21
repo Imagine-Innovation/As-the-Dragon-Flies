@@ -42,8 +42,8 @@ class PlayerTrait extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'player_id' => 'Foreign key to \"player\" table',
-            'trait_id' => 'Foreign key to \"trait\" table',
+            'player_id' => 'Foreign key to "player" table',
+            'trait_id' => 'Foreign key to "trait" table',
             'description' => 'Description of the trait',
         ];
     }

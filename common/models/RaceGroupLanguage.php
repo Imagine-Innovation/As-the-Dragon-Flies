@@ -40,8 +40,8 @@ class RaceGroupLanguage extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'race_group_id' => 'Foreign key to \"race_group\" table',
-            'language_id' => 'Foreign key to \"language\" table',
+            'race_group_id' => 'Foreign key to "race_group" table',
+            'language_id' => 'Foreign key to "language" table',
         ];
     }
 

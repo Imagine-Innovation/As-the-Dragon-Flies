@@ -43,7 +43,7 @@ class SpellDoc extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'spell_id' => 'Foreign key to \"spell\" table',
+            'spell_id' => 'Foreign key to "spell" table',
             'name' => 'Chapter',
             'sort_order' => 'Sort order',
             'description' => 'Short description',

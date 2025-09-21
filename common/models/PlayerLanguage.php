@@ -40,8 +40,8 @@ class PlayerLanguage extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'player_id' => 'Foreign key to \"player\" table',
-            'language_id' => 'Foreign key to \"language\" table',
+            'player_id' => 'Foreign key to "player" table',
+            'language_id' => 'Foreign key to "language" table',
         ];
     }
 

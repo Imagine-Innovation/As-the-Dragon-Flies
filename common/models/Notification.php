@@ -59,8 +59,8 @@ class Notification extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'initiator_id' => 'Foreign key to \"player\" table. Identifies the initiator of the notification',
-            'quest_id' => 'Foreign key to \"quest\" table',
+            'initiator_id' => 'Foreign key to "player\" table. Identifies the initiator of the notification',
+            'quest_id' => 'Foreign key to "quest" table',
             'notification_type' => 'Notifcation type',
             'title' => 'Notification title',
             'message' => 'Notification content',

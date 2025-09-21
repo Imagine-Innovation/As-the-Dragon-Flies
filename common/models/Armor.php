@@ -50,7 +50,7 @@ class Armor extends Item {
      */
     public function attributeLabels() {
         return array_merge(parent::attributeLabels(), [
-            'item_id' => 'Primary key synchronized 1:1 with the \"item\" table',
+            'item_id' => 'Primary key synchronized 1:1 with the \"item" table',
             'armor_class' => 'Armor protects its wearer from attacks. The armor (and shield) you wear determines your base Armor Class.',
             'armor_bonus' => 'Only the shield provides a bonus to the armor class',
             'dex_modifier' => 'Dex modifier',

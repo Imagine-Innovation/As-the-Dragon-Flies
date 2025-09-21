@@ -41,8 +41,8 @@ class RaceAbility extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'race_id' => 'Foreign key to \"race\" table',
-            'ability_id' => 'Foreign key to \"ability\" table',
+            'race_id' => 'Foreign key to "race" table',
+            'ability_id' => 'Foreign key to "ability" table',
             'bonus' => 'Ability bonus granted for a race. 0 means, that no bonus is granted.',
         ];
     }

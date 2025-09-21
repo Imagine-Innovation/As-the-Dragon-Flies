@@ -60,7 +60,7 @@ class Race extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'race_group_id' => 'Foreign key to \"race_group\" table',
+            'race_group_id' => 'Foreign key to "race_group" table',
             'name' => 'Race (e.g., \"Human,\" \"Elf,\" \"Dwarf\").',
             'description' => 'Short description of the main traits of the race',
             'adult_age' => 'The age threshold to separate childhood age and adult age',

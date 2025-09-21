@@ -47,8 +47,8 @@ class Dialog extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'mission_id' => 'Foreign key to \"mission_npc\" table',
-            'npc_id' => 'Foreign key to \"mission_npc\" table',
+            'mission_id' => 'Foreign key to "mission_npc" table',
+            'npc_id' => 'Foreign key to "mission_npc" table',
             'caption' => 'What the NPC looks like',
             'text' => 'What the NPC says',
         ];

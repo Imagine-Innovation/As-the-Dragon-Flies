@@ -39,8 +39,8 @@ class ClassImage extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'class_id' => 'Foreign key to \"class\" table',
-            'image_id' => 'Foreign key to \"image\" table',
+            'class_id' => 'Foreign key to "class" table',
+            'image_id' => 'Foreign key to "image" table',
         ];
     }
 

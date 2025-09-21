@@ -42,8 +42,8 @@ class SpellComponent extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'spell_id' => 'Foreign key to \"spell\" table',
-            'component_id' => 'Foreign key to \"component\" table',
+            'spell_id' => 'Foreign key to "spell" table',
+            'component_id' => 'Foreign key to "component" table',
             'material' => 'Short description',
         ];
     }

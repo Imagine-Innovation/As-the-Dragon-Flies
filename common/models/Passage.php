@@ -49,7 +49,7 @@ class Passage extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'mission_id' => 'Foreign key to \"mission\" table',
+            'mission_id' => 'Foreign key to "mission" table',
             'name' => 'Passage',
             'description' => 'Short description',
             'image' => 'Image',

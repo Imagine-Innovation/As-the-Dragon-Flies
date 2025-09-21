@@ -43,8 +43,8 @@ class BackgroundTrait extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'background_id' => 'Foreign key to \"background\" table',
-            'trait_id' => 'Foreign key to \"trait\" table',
+            'background_id' => 'Foreign key to "background" table',
+            'trait_id' => 'Foreign key to "trait" table',
             'score' => 'Value of the die roll used to determine the trait',
             'description' => 'Short description',
         ];

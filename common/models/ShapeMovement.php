@@ -42,8 +42,8 @@ class ShapeMovement extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'shape_id' => 'Foreign key to \"shape\" table',
-            'movement_id' => 'Foreign key to \"movement\" table',
+            'shape_id' => 'Foreign key to "shape" table',
+            'movement_id' => 'Foreign key to "movement" table',
             'speed' => 'A creature’s speed tells you how far it can move on its turn',
             'can_hover' => 'Indicates that the creature can hover in this shape',
         ];

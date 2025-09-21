@@ -90,7 +90,7 @@ class User extends ActiveRecord implements IdentityInterface
             'is_admin' => 'This flag indicates that the user can access the admin part of the application',
             'is_designer' => 'This flag indicates that the user can access configuration functions of the application',
             'is_player' => 'This flag indicates that the user can play the game',
-            'current_player_id' => 'Optional foreign key to \"player\" table',
+            'current_player_id' => 'Optional foreign key to "player" table',
             'created_at' => 'Created at',
             'updated_at' => 'Updated at',
             'backend_last_login_at' => 'Last login to the backend at',

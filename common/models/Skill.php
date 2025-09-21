@@ -55,7 +55,7 @@ class Skill extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'ability_id' => 'Foreign key to \"ability\" table',
+            'ability_id' => 'Foreign key to "ability" table',
             'name' => 'Skill',
             'description' => 'Short description',
         ];

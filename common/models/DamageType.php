@@ -50,7 +50,7 @@ class DamageType extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'group_id' => 'Foreign key to \"damage_group\" table',
+            'group_id' => 'Foreign key to "damage_group" table',
             'name' => 'Damage type',
             'description' => 'Short description',
         ];

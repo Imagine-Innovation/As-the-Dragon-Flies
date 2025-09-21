@@ -40,8 +40,8 @@ class ShapeArmor extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'shape_id' => 'Foreign key to \"shape\" table',
-            'armor_id' => 'Foreign key to \"armor\" table',
+            'shape_id' => 'Foreign key to "shape" table',
+            'armor_id' => 'Foreign key to "armor" table',
         ];
     }
 

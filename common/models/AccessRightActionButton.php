@@ -41,8 +41,8 @@ class AccessRightActionButton extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'access_right_id' => 'Foreign key to \"access_right\" table',
-            'action_button_id' => 'Foreign key to \"action_button\" table',
+            'access_right_id' => 'Foreign key to "access_right" table',
+            'action_button_id' => 'Foreign key to "action_button" table',
             'status' => 'Status',
         ];
     }

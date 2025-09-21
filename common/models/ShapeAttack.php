@@ -57,9 +57,9 @@ class ShapeAttack extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'weapon_id' => 'Foreign key to \"weapon\" table',
-            'shape_id' => 'Foreign key to \"shape\" table',
-            'damage_type_id' => 'Foreign key to \"damage_type\" table',
+            'weapon_id' => 'Foreign key to "weapon" table',
+            'shape_id' => 'Foreign key to "shape" table',
+            'damage_type_id' => 'Foreign key to "damage_type" table',
             'name' => 'Attack',
             'description' => 'Short description',
             'bonus' => 'Attack bonus',

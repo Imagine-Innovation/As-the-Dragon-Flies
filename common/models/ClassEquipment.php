@@ -44,9 +44,9 @@ class ClassEquipment extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'endowment_id' => 'Foreign key to \"class_endowment\" table',
-            'item_id' => 'Optional foreign key to \"item\" table',
-            'category_id' => 'Optional foreign key to \"category\" table',
+            'endowment_id' => 'Foreign key to "class_endowment" table',
+            'item_id' => 'Optional foreign key to "item" table',
+            'category_id' => 'Optional foreign key to "category" table',
             'if_proficient' => 'Can be chosen only if proficient',
             'quantity' => 'Quantity',
         ];

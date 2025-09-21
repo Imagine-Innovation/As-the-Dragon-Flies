@@ -66,8 +66,8 @@ class Shape extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'size_id' => 'Foreign key to \"creature_size\" table',
-            'creature_id' => 'Foreign key to \"creature\" table',
+            'size_id' => 'Foreign key to "creature_size" table',
+            'creature_id' => 'Foreign key to "creature" table',
             'name' => 'Creature shape',
             'ac' => 'Armor class',
             'languages' => 'Number of languages the creature can understand and speak if the \"can_speak\" flag is set to TRUE',

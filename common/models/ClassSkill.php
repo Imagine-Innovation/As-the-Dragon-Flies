@@ -39,8 +39,8 @@ class ClassSkill extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'class_id' => 'Foreign key to \"class\" table',
-            'skill_id' => 'Foreign key to \"skill\" table',
+            'class_id' => 'Foreign key to "class" table',
+            'skill_id' => 'Foreign key to "skill" table',
         ];
     }
 

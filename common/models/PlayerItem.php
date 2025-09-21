@@ -115,8 +115,8 @@ class PlayerItem extends \yii\db\ActiveRecord
      */
     public function attributeLabels() {
         return [
-            'player_id' => 'Foreign key to \"player\" table',
-            'item_id' => 'Foreign key to \"item\" table',
+            'player_id' => 'Foreign key to "player" table',
+            'item_id' => 'Foreign key to "item" table',
             'item_name' => 'Item name',
             'item_type' => 'Item type',
             'image' => 'Image',

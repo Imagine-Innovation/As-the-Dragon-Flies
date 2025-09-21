@@ -43,8 +43,8 @@ class CreatureDamageType extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'creature_id' => 'Foreign key to \"creature\" table',
-            'damage_type_id' => 'Foreign key to \"damage_type\" table',
+            'creature_id' => 'Foreign key to "creature" table',
+            'damage_type_id' => 'Foreign key to "damage_type" table',
             'is_immune' => 'Indicates that the monster is immune to this damage type',
             'is_resistant' => 'Indicates that the monster is resistant to this damage type',
             'is_vulnerable' => 'Indicates that the monster is vulnerable to this damage type',

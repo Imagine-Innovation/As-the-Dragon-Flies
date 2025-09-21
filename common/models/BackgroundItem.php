@@ -46,9 +46,9 @@ class BackgroundItem extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'background_id' => 'Foreign key to \"background\" table',
-            'item_id' => 'Optional foreign key to \"item\" table',
-            'category_id' => 'Optional foreign key to \"category\" table',
+            'background_id' => 'Foreign key to "background" table',
+            'item_id' => 'Optional foreign key to "item" table',
+            'category_id' => 'Optional foreign key to "category" table',
             'quantity' => 'Quantity',
             'funding' => 'Initial funding',
             'coin' => 'Coin',

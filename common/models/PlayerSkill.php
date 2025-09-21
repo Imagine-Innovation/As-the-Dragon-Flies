@@ -45,8 +45,8 @@ class PlayerSkill extends \yii\db\ActiveRecord
      */
     public function attributeLabels() {
         return [
-            'player_id' => 'Foreign key to \"player\" table',
-            'skill_id' => 'Foreign key to \"skill\" table',
+            'player_id' => 'Foreign key to "player" table',
+            'skill_id' => 'Foreign key to "skill" table',
             'is_proficient' => 'The player is proficient in the skill',
             'bonus' => 'Skill bonus',
         ];

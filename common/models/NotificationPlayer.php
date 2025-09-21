@@ -44,8 +44,8 @@ class NotificationPlayer extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'notification_id' => 'Foreign key to \"notification\" table',
-            'player_id' => 'Foreign key to \"player\" table',
+            'notification_id' => 'Foreign key to "notification" table',
+            'player_id' => 'Foreign key to "player" table',
             'is_read' => 'Whether the player has read this notification',
             'read_at' => 'When the player read this notification',
             'is_dismissed' => 'Whether the player has dismissed this notification',

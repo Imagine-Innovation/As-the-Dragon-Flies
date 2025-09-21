@@ -64,7 +64,7 @@ class Creature extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'type_id' => 'Foreign key to \"creature_type\" table',
+            'type_id' => 'Foreign key to "creature_type" table',
             'name' => 'Creature',
             'description' => 'Short description',
             'is_shapechanger' => 'Indicates that the creature can change shape',

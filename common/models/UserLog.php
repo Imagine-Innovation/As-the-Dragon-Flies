@@ -55,10 +55,10 @@ class UserLog extends \yii\db\ActiveRecord
      */
     public function attributeLabels() {
         return [
-            'user_id' => 'Foreign key to \"user\" table',
-            'access_right_id' => 'Foreign key to \"access_right\" table',
-            'player_id' => 'Optional foreign key to \"player\" table',
-            'quest_id' => 'Optional foreign key to \"quest\" table',
+            'user_id' => 'Foreign key to "user" table',
+            'access_right_id' => 'Foreign key to "access_right" table',
+            'player_id' => 'Optional foreign key to "player" table',
+            'quest_id' => 'Optional foreign key to "quest" table',
             'action_at' => 'Action was triggerd at',
             'ip_address' => 'IP Address',
             'denied' => 'Is action denied',

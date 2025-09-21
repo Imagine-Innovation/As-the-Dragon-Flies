@@ -41,8 +41,8 @@ class CreatureSkill extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'creature_id' => 'Foreign key to \"creature\" table',
-            'skill_id' => 'Foreign key to \"skill\" table',
+            'creature_id' => 'Foreign key to "creature" table',
+            'skill_id' => 'Foreign key to "skill" table',
             'score' => 'Score',
         ];
     }

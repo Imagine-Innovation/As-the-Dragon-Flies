@@ -42,8 +42,8 @@ class RaceGroupImage extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'race_group_id' => 'Foreign key to the \"race\" table',
-            'image_id' => 'Foreign key to the \"image\" table',
+            'race_group_id' => 'Foreign key to the \"race" table',
+            'image_id' => 'Foreign key to the \"image" table',
             'gender' => 'Gender. Can be \"M\" for male or \"F\" for female',
         ];
     }

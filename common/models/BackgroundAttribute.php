@@ -43,7 +43,7 @@ class BackgroundAttribute extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'background_id' => 'Foreign key to \"background\" table',
+            'background_id' => 'Foreign key to "background" table',
             'attribute_type' => 'Attribute type',
             'name' => 'Attribute',
             'description' => 'Short description',

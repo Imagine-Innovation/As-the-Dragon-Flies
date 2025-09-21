@@ -44,8 +44,8 @@ class InteractionItem extends \yii\db\ActiveRecord
      */
     public function attributeLabels() {
         return [
-            'item_id' => 'Foreign key to \"item\" table',
-            'interaction_id' => 'Foreign key to \"interaction\" table',
+            'item_id' => 'Foreign key to "item" table',
+            'interaction_id' => 'Foreign key to "interaction" table',
             'is_mandatory' => 'Indicates that the object is mandatory to do the interaction',
         ];
     }

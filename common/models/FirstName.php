@@ -42,7 +42,7 @@ class FirstName extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'ethnicity_id' => 'Foreign key to \"ethnicity\" table',
+            'ethnicity_id' => 'Foreign key to "ethnicity" table',
             'name' => 'First name',
             'gender' => 'Gender',
         ];

@@ -47,8 +47,8 @@ class Reply extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'dialog_id' => 'Foreign key to \"dialog\" table',
-            'next_dialog_id' => 'Optional foreign key to \"dialog\" table',
+            'dialog_id' => 'Foreign key to "dialog" table',
+            'next_dialog_id' => 'Optional foreign key to "dialog" table',
             'text' => 'Question',
         ];
     }

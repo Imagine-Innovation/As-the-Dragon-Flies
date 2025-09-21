@@ -42,8 +42,8 @@ class CreatureAbility extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'creature_id' => 'Foreign key to \"creature\" table',
-            'ability_id' => 'Foreign key to \"ability\" table',
+            'creature_id' => 'Foreign key to "creature" table',
+            'ability_id' => 'Foreign key to "ability" table',
             'score' => 'Ability score',
             'bonus' => 'Proficiency bonus',
         ];

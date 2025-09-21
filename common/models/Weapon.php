@@ -71,9 +71,9 @@ class Weapon extends Item {
     public function attributeLabels() {
         // Define or override validation rules specific to Weapon
         return array_merge(parent::attributeLabels(), [
-            'item_id' => 'Primary key synchronized 1:1 with the \"item\" table',
+            'item_id' => 'Primary key synchronized 1:1 with the \"item" table',
             'amunition_id' => 'Optional foreign key to weapon ammunition item. Used only when the \"need_amunition\" flag is set to TRUE.',
-            'damage_type_id' => 'Optional foreign key to the \"damage_type\" table',
+            'damage_type_id' => 'Optional foreign key to the \"damage_type" table',
             'damage_dice' => 'Roll dice to determine damage',
             'is_melee' => 'Indicates a melee weapon. A melee weapon is used to attack a target within 5 feet of you',
             'is_ranged' => 'Indicates a ranged weapon. A ranged weapon is used to attack a target at a distance',

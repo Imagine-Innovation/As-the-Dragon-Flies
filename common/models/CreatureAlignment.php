@@ -41,8 +41,8 @@ class CreatureAlignment extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'creature_id' => 'Foreign key to \"creature\" table',
-            'alignment_id' => 'Foreign key to \"alignment\" table',
+            'creature_id' => 'Foreign key to "creature" table',
+            'alignment_id' => 'Foreign key to "alignment" table',
             'random' => 'Sets the max threshold (between 1 and 100) to determine the monster\'s alignment.',
         ];
     }

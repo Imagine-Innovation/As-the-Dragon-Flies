@@ -52,9 +52,9 @@ class ClassFeature extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'class_id' => 'Foreign key to \"class\" table',
-            'feature_id' => 'Foreign key to \"feature\" table',
-            'level_id' => 'Foreign key to \"level\" table',
+            'class_id' => 'Foreign key to "class" table',
+            'feature_id' => 'Foreign key to "feature" table',
+            'level_id' => 'Foreign key to "level" table',
             'cr' => 'Challenge Rating is a numerical value assigned to a creature or non-player character (NPC) to indicate the level of challenge it presents to player characters (PCs) in terms of combat and other encounters.',
             'dice' => 'Special modifier for bardic features',
             'weapon_dice' => 'Number of additionnal weapon dice to be thrown',

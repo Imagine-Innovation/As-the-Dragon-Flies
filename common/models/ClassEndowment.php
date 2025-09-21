@@ -43,7 +43,7 @@ class ClassEndowment extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'class_id' => 'Foreign key to \"class\" table',
+            'class_id' => 'Foreign key to "class" table',
             'choice' => 'Choice number',
             'sort_order' => 'Sort order',
             'name' => 'Name',

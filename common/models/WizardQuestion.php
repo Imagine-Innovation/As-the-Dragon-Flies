@@ -43,7 +43,7 @@ class WizardQuestion extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'wizard_id' => 'Foreign key to \"wizard\" table',
+            'wizard_id' => 'Foreign key to "wizard" table',
             'question' => 'Question to be asked',
             'is_first_question' => 'Indicates that this question is the entry point for a wizard',
         ];

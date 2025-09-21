@@ -40,8 +40,8 @@ class SpellDamageType extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'spell_id' => 'Foreign key to \"spell\" table',
-            'damage_type_id' => 'Foreign key to \"damage_type\" table',
+            'spell_id' => 'Foreign key to "spell" table',
+            'damage_type_id' => 'Foreign key to "damage_type" table',
         ];
     }
 

@@ -52,12 +52,12 @@ class WizardAnswer extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'question_id' => 'Foreign key to \"wizard_question\" table',
+            'question_id' => 'Foreign key to "wizard_question" table',
             'answer' => 'Possible answer',
-            'next_question_id' => 'Optional foreign key to \"wizard_question\" table. Used only id non terminal question.',
-            'class_id' => 'Optional foreign key to \"class\" table. Used only when the wizard helps defining a class',
-            'race_id' => 'Optional foreign key to \"race\" table. Used only when the wizard helps defining a race',
-            'alignment_id' => 'Optional foreign key to \"alignment\" table. Used only when the wizard helps defining an alignment',
+            'next_question_id' => 'Optional foreign key to "wizard_question\" table. Used only id non terminal question.',
+            'class_id' => 'Optional foreign key to "class\" table. Used only when the wizard helps defining a class',
+            'race_id' => 'Optional foreign key to "race\" table. Used only when the wizard helps defining a race',
+            'alignment_id' => 'Optional foreign key to "alignment\" table. Used only when the wizard helps defining an alignment',
         ];
     }
 

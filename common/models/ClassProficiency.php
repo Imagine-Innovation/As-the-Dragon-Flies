@@ -49,9 +49,9 @@ class ClassProficiency extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'class_id' => 'Foreign key to \"class\" table',
-            'proficiency_id' => 'Foreign key to \"proficiency\" table',
-            'level_id' => 'Foreign key to \"level\" table',
+            'class_id' => 'Foreign key to "class" table',
+            'proficiency_id' => 'Foreign key to "proficiency" table',
+            'level_id' => 'Foreign key to "level" table',
             'sort_order' => 'Sort order',
             'bonus' => 'Proficiency bonus',
             'dice' => 'Dice to roll to determine the proficiency bonus for Martial Arts ans Sneak Attack',

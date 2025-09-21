@@ -58,7 +58,7 @@ $this->params['breadcrumbs'] = $breadcrumbs;
                     <?=
                     Button::widget([
                         'url' => Url::toRoute(['mission/create', 'chapterId' => $model->id]),
-                        'icon' => 'dnd-tower',
+                        'icon' => 'dnd-badge',
                         'title' => "Add a mission to this chapter",
                         'isCta' => true,
                     ])

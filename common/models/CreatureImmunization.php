@@ -40,8 +40,8 @@ class CreatureImmunization extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'creature_id' => 'Foreign key to \"creature\" table',
-            'condition_id' => 'Foreign key to \"creature_condition\" table',
+            'creature_id' => 'Foreign key to "creature" table',
+            'condition_id' => 'Foreign key to "creature_condition" table',
         ];
     }
 

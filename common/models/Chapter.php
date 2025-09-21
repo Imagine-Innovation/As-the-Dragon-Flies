@@ -52,12 +52,12 @@ class Chapter extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'story_id' => 'Foreign key to \"story\" table',
+            'story_id' => 'Foreign key to "story" table',
             'chapter_number' => 'Chapter number',
             'name' => 'Chapter',
             'description' => 'Short description',
             'image' => 'Image',
-            'first_mission_id' => 'Optional foreign key to \"mission\" table to identify the first mission to complete',
+            'first_mission_id' => 'Optional foreign key to "mission\" table to identify the first mission to complete',
         ];
     }
 

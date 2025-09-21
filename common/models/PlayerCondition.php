@@ -41,8 +41,8 @@ class PlayerCondition extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'player_id' => 'Foreign key to \"player\" table',
-            'condition_id' => 'Foreign key to \"creature_condition\" table',
+            'player_id' => 'Foreign key to "player" table',
+            'condition_id' => 'Foreign key to "creature_condition" table',
             'rounds_left' => 'Number of round left before the condition ends',
         ];
     }

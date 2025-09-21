@@ -45,7 +45,7 @@ class RuleExpression extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => 'Primary key.',
-            'rule_id' => 'Foreign key to \"rule\" table',
+            'rule_id' => 'Foreign key to "rule" table',
             'parent_id' => 'Self-jointure to make a tree with different combination of the final conditions',
             'op' => 'Boolean operator. Can be AND or OR',
         ];

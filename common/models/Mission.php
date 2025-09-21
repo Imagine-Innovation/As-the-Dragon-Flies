@@ -11,8 +11,6 @@ use Yii;
  * @property int $chapter_id Foreign key to "chapter" table
  * @property string $name Mission name
  * @property string|null $description Short description
- * @property int $low_bound Low bound of probability that history will go in this direction
- * @property int $high_bound High bound of probability that history will go in this direction
  * @property string|null $image Image
  *
  * @property Chapter $chapter
@@ -21,7 +19,6 @@ use Yii;
  * @property MissionItem[] $missionItems
  * @property MissionNpc[] $missionNpcs
  * @property MissionShape[] $missionShapes
- * @property MissionTrap[] $missionTraps
  * @property Npc[] $npcs
  * @property Passage[] $passages
  * @property Shape[] $shapes
@@ -44,10 +41,8 @@ class Mission extends \yii\db\ActiveRecord
     public function rules() {
         return [
             [['description', 'image'], 'default', 'value' => null],
-            [['low_bound'], 'default', 'value' => 0],
-            [['high_bound'], 'default', 'value' => 100],
             [['chapter_id', 'name'], 'required'],
-            [['chapter_id', 'low_bound', 'high_bound'], 'integer'],
+            [['chapter_id'], 'integer'],
             [['description'], 'string'],
             [['name', 'image'], 'string', 'max' => 32],
             [['chapter_id'], 'exist', 'skipOnError' => true, 'targetClass' => Chapter::class, 'targetAttribute' => ['chapter_id' => 'id']],
@@ -60,11 +55,9 @@ class Mission extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'chapter_id' => 'Foreign key to \"chapter\" table',
+            'chapter_id' => 'Foreign key to "chapter" table',
             'name' => 'Mission name',
             'description' => 'Short description',
-            'low_bound' => 'Low bound of probability that history will go in this direction',
-            'high_bound' => 'High bound of probability that history will go in this direction',
             'image' => 'Image',
         ];
     }
@@ -124,15 +117,6 @@ class Mission extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[MissionTraps]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getMissionTraps() {
-        return $this->hasMany(MissionTrap::class, ['mission_id' => 'id']);
-    }
-
-    /**
      * Gets query for [[Npcs]].
      *
      * @return \yii\db\ActiveQuery
@@ -174,6 +158,6 @@ class Mission extends \yii\db\ActiveRecord
      * @return \yii\db\ActiveQuery
      */
     public function getTraps() {
-        return $this->hasMany(Trap::class, ['id' => 'trap_id'])->viaTable('mission_trap', ['mission_id' => 'id']);
+        return $this->hasMany(Trap::class, ['mission_id' => 'id']);
     }
 }

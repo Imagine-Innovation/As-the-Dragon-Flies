@@ -31,7 +31,7 @@ $components = [
             <?=
             Button::widget([
                 'mode' => 'icon',
-                'url' => Url::toRoute(['session/update', 'id' => $model->id]),
+                'url' => Url::toRoute(['mission/update', 'id' => $model->id]),
                 'icon' => 'dnd-spell',
                 'tooltip' => "Edit mission"
             ])
@@ -48,6 +48,12 @@ $components = [
                 <div class="card-body flex-grow-1"> <!-- Add flex-grow-1 -->
                     <p class="card-text"><?= nl2br($model->description) ?></p>
                     <br>
+                    <div class="row g-4">
+                        <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->missionNpcs, 'type' => 'NPC']) ?>
+                        <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->missionItems, 'type' => 'Item']) ?>
+                        <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->missionShapes, 'type' => 'Monster']) ?>
+                        <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->missionTraps, 'type' => 'Trap']) ?>
+                    </div>
                 </div>
             </div>
         </div>

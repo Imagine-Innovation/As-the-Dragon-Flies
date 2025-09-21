@@ -40,8 +40,8 @@ class ShapeLanguage extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'shape_id' => 'Foreign key to \"shape\" table',
-            'language_id' => 'Foreign key to \"language\" table',
+            'shape_id' => 'Foreign key to "shape" table',
+            'language_id' => 'Foreign key to "language" table',
         ];
     }
 

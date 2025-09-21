@@ -41,8 +41,8 @@ class ClassAbility extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'class_id' => 'Foreign key to \"class\" table',
-            'ability_id' => 'Foreign key to \"ability\" table',
+            'class_id' => 'Foreign key to "class" table',
+            'ability_id' => 'Foreign key to "ability" table',
             'is_primary_ability' => 'Is Primary Ability',
             'is_saving_throw' => 'Is Saving Throw',
         ];

@@ -41,8 +41,8 @@ class PlayerCart extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'player_id' => 'Foreign key to \"player\" table',
-            'item_id' => 'Foreign key to \"item\" table',
+            'player_id' => 'Foreign key to "player" table',
+            'item_id' => 'Foreign key to "item" table',
             'quantity' => 'Quantity puchased',
         ];
     }

@@ -51,8 +51,8 @@ class MissionShape extends \yii\db\ActiveRecord
      */
     public function attributeLabels() {
         return [
-            'shape_id' => 'Foreign key to \"shape\" table',
-            'mission_id' => 'Foreign key to \"mission\" table',
+            'shape_id' => 'Foreign key to "shape" table',
+            'mission_id' => 'Foreign key to "mission" table',
             'name' => 'Monster name',
             'description' => 'Short description',
             'found' => 'Percentage chance that the item will be found',

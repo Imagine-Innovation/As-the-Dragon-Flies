@@ -64,8 +64,8 @@ class Quest extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'story_id' => 'Foreign key to \"story\" table',
-            'initiator_id' => 'Foreign key to \"player\" table',
+            'story_id' => 'Foreign key to "story" table',
+            'initiator_id' => 'Foreign key to "player" table',
             'name' => 'Quest name',
             'description' => 'Description',
             'image' => 'Image',

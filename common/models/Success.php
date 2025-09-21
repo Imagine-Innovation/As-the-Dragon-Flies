@@ -46,8 +46,8 @@ class Success extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'next_mission_id' => 'Foreign key to \"mission\" table',
-            'interaction_id' => 'Foreign key to \"interaction\" table',
+            'next_mission_id' => 'Foreign key to "mission" table',
+            'interaction_id' => 'Foreign key to "interaction" table',
             'xp' => 'Gained Experience Points (XP)',
             'gp' => 'Gained Gold Pieces (GP)',
         ];

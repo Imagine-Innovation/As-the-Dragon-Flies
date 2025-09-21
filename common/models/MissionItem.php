@@ -51,8 +51,8 @@ class MissionItem extends \yii\db\ActiveRecord
      */
     public function attributeLabels() {
         return [
-            'item_id' => 'Foreign key to \"item\" table',
-            'mission_id' => 'Foreign key to \"mission\" table',
+            'item_id' => 'Foreign key to "item" table',
+            'mission_id' => 'Foreign key to "mission" table',
             'name' => 'Item name in the mission',
             'description' => 'Short description',
             'found' => 'The percentage chance that the item will be found',

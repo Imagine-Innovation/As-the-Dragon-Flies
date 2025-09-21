@@ -43,7 +43,7 @@ class Ethnicity extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'race_group_id' => 'Foreign key to \"race_group\" table',
+            'race_group_id' => 'Foreign key to "race_group" table',
             'name' => 'Ethnicity',
         ];
     }

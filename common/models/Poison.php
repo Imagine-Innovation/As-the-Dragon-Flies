@@ -45,9 +45,9 @@ class Poison extends Item {
      */
     public function attributeLabels() {
         return array_merge(parent::attributeLabels(), [
-            'item_id' => 'Foreign key to \"item\" table',
-            'damage_type_id' => 'Foreign key to \"damage_type\" table',
-            'ability_id' => 'Foreign key to \"ability\" table',
+            'item_id' => 'Foreign key to "item" table',
+            'damage_type_id' => 'Foreign key to "damage_type" table',
+            'ability_id' => 'Foreign key to "ability" table',
             'poison_type' => 'Poison type',
             'dc' => 'Difficulty Class (DC)',
         ]);

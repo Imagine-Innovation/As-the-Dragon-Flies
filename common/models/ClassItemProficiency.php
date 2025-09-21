@@ -43,9 +43,9 @@ class ClassItemProficiency extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'class_id' => 'Foreign key to \"class\" table',
-            'category_id' => 'Optional foreign key to \"category\" table',
-            'item_id' => 'Optional foreign key to \"item\" table',
+            'class_id' => 'Foreign key to "class" table',
+            'category_id' => 'Optional foreign key to "category" table',
+            'item_id' => 'Optional foreign key to "item" table',
         ];
     }
 

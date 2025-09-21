@@ -39,8 +39,8 @@ class ClassSpell extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'class_id' => 'Foreign key to \"class\" table',
-            'spell_id' => 'Foreign key to \"spell\" table',
+            'class_id' => 'Foreign key to "class" table',
+            'spell_id' => 'Foreign key to "spell" table',
         ];
     }
 

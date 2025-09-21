@@ -50,7 +50,7 @@ class Menu extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'access_right_id' => 'Foreign key to\"access_right\" table',
+            'access_right_id' => 'Foreign key to\"access_right" table',
             'label' => 'Label',
             'icon' => 'icon',
             'tooltip' => 'Tooltip',

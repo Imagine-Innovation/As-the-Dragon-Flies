@@ -95,7 +95,7 @@ class Item extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'item_type_id' => 'Foreign key to \"item_type\" table',
+            'item_type_id' => 'Foreign key to "item_type" table',
             'name' => 'Item',
             'description' => 'A textual description of the equipment, providing additional details about its appearance, properties, or usage.',
             'image' => 'Image',

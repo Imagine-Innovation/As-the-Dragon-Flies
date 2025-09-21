@@ -40,8 +40,8 @@ class RaceGroupAlignment extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'race_group_id' => 'Foreign key to \"race_group\" table',
-            'alignment_id' => 'Foreign key to \"alignment\" table',
+            'race_group_id' => 'Foreign key to "race_group" table',
+            'alignment_id' => 'Foreign key to "alignment" table',
         ];
     }
 

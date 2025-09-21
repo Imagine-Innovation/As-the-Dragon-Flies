@@ -76,12 +76,12 @@ class PlayerBody extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'player_id' => 'Foreign key to \"player\" table',
-            'head_item_id' => 'Optional foreign key to \"player_item\" table. Item that protect the head',
-            'chest_item_id' => 'Optional foreign key to \"player_item\" table. Item that protect the chest',
-            'right_hand_item_id' => 'Optional foreign key to \"player_item\" table. Item handled in the right hand',
-            'left_hand_item_id' => 'Optional foreign key to \"player_item\" table. Item handled in the left hand',
-            'left_hand_item_id' => 'Optional foreign key to \"player_item\" table. Item carried on the back',
+            'player_id' => 'Foreign key to "player" table',
+            'head_item_id' => 'Optional foreign key to "player_item\" table. Item that protect the head',
+            'chest_item_id' => 'Optional foreign key to "player_item\" table. Item that protect the chest',
+            'right_hand_item_id' => 'Optional foreign key to "player_item\" table. Item handled in the right hand',
+            'left_hand_item_id' => 'Optional foreign key to "player_item\" table. Item handled in the left hand',
+            'left_hand_item_id' => 'Optional foreign key to "player_item\" table. Item carried on the back',
         ];
     }
 

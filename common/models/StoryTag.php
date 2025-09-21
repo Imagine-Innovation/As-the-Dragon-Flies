@@ -40,8 +40,8 @@ class StoryTag extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'story_id' => 'Foreign key to \"story\" table',
-            'tag_id' => 'Foreign key to \"tag\" table',
+            'story_id' => 'Foreign key to "story" table',
+            'tag_id' => 'Foreign key to "tag" table',
         ];
     }
 

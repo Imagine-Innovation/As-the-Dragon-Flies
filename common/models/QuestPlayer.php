@@ -50,8 +50,8 @@ class QuestPlayer extends \yii\db\ActiveRecord
      */
     public function attributeLabels() {
         return [
-            'quest_id' => 'Foreign key to \"quest\" table',
-            'player_id' => 'Foreign key to \"player\" table',
+            'quest_id' => 'Foreign key to "quest" table',
+            'player_id' => 'Foreign key to "player" table',
             'onboarded_at' => 'Onboarded at',
             'status' => 'Player status in the quest',
             'left_at' => 'The player left at',

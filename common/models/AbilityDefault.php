@@ -44,9 +44,9 @@ class AbilityDefault extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'race_group_id' => 'Foreign key to \"race_group\" table',
-            'class_id' => 'Foreign key to \"class\" table',
-            'ability_id' => 'Foreign key to \"ability\" table',
+            'race_group_id' => 'Foreign key to "race_group" table',
+            'class_id' => 'Foreign key to "class" table',
+            'ability_id' => 'Foreign key to "ability" table',
             'score' => 'Default score',
         ];
     }

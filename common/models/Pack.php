@@ -40,8 +40,8 @@ class Pack extends Item {
      */
     public function attributeLabels() {
         return array_merge(parent::attributeLabels(), [
-            'parent_item_id' => 'Foreign key to \"item\" table. The table\'s record will be the container.',
-            'item_id' => 'Foreign key to \"item\" table. The table\'s record will be the content.',
+            'parent_item_id' => 'Foreign key to "item\" table. The table\'s record will be the container.',
+            'item_id' => 'Foreign key to "item\" table. The table\'s record will be the content.',
             'quantity' => 'Quantity contained',
         ]);
     }

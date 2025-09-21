@@ -41,7 +41,7 @@ class QuestLog extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'quest_id' => 'Foreign key to \"quest\" table',
+            'quest_id' => 'Foreign key to "quest" table',
             'status_from' => 'Initial quest status',
             'status_to' => 'current status',
             'changed_at' => 'Change timestamp',

@@ -50,9 +50,9 @@ class RuleCondition extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => 'Primary key.',
-            'rule_id' => 'Foreign key to the \"rule\" table',
-            'expression_id' => 'Foreign key to the \"rule_expression\" table',
-            'model_id' => 'Foreign key to the \"rule_component\" table',
+            'rule_id' => 'Foreign key to the \"rule" table',
+            'expression_id' => 'Foreign key to the \"rule_expression" table',
+            'model_id' => 'Foreign key to the \"rule_component" table',
             'method_param' => 'If the component is a method, store the parameter value. For instance: method_param=\"2D8\" for the component containing the method \"RollDice\"',
             'comparator' => 'Comparator to be used: \"<\", \"<=\", \"==\", \">=\", or \">\"',
             'val' => 'Value to be compared at',

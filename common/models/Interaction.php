@@ -9,11 +9,12 @@ use Yii;
  *
  * @property int $id Primary key
  * @property int $mission_id Foreign key to "mission" table
- * @property int $skill_id Foreign key to "skill" table
- * @property int|null $passage_id Foreign key to "passage" table
- * @property int|null $npc_id Foreign key to "mission_npc" table
- * @property int|null $reply_id Foreign key to "reply" table
+ * @property int|null $skill_id Optional foreign key to "skill" table
+ * @property int|null $passage_id Optional foreign key to "passage" table
+ * @property int|null $npc_id Optional foreign key to "mission_npc" table
+ * @property int|null $reply_id Optional foreign key to "reply" table
  * @property string $name Action to do
+ * @property string|null $icon Icon
  * @property string $action_type Action type (search, speak, use...)
  * @property int $dc Difficulty Class (DC)
  *
@@ -42,10 +43,10 @@ class Interaction extends \yii\db\ActiveRecord
      */
     public function rules() {
         return [
-            [['passage_id', 'npc_id', 'reply_id'], 'default', 'value' => null],
-            [['mission_id', 'skill_id', 'name', 'action_type', 'dc'], 'required'],
+            [['skill_id', 'passage_id', 'npc_id', 'reply_id', 'icon'], 'default', 'value' => null],
+            [['mission_id', 'name', 'action_type', 'dc'], 'required'],
             [['mission_id', 'skill_id', 'passage_id', 'npc_id', 'reply_id', 'dc'], 'integer'],
-            [['name', 'action_type'], 'string', 'max' => 32],
+            [['name', 'icon', 'action_type'], 'string', 'max' => 32],
             [['mission_id'], 'exist', 'skipOnError' => true, 'targetClass' => Mission::class, 'targetAttribute' => ['mission_id' => 'id']],
             [['skill_id'], 'exist', 'skipOnError' => true, 'targetClass' => Skill::class, 'targetAttribute' => ['skill_id' => 'id']],
             [['passage_id'], 'exist', 'skipOnError' => true, 'targetClass' => Passage::class, 'targetAttribute' => ['passage_id' => 'id']],
@@ -61,11 +62,12 @@ class Interaction extends \yii\db\ActiveRecord
         return [
             'id' => 'Primary key',
             'mission_id' => 'Foreign key to \"mission\" table',
-            'skill_id' => 'Foreign key to \"skill\" table',
-            'passage_id' => 'Foreign key to \"passage\" table',
-            'npc_id' => 'Foreign key to \"mission_npc\" table',
-            'reply_id' => 'Foreign key to \"reply\" table',
+            'skill_id' => 'Optional foreign key to \"skill\" table',
+            'passage_id' => 'Optional foreign key to \"passage\" table',
+            'npc_id' => 'Optional foreign key to \"mission_npc\" table',
+            'reply_id' => 'Optional foreign key to \"reply\" table',
             'name' => 'Action to do',
+            'icon' => 'Icon',
             'action_type' => 'Action type (search, speak, use...)',
             'dc' => 'Difficulty Class (DC)',
         ];

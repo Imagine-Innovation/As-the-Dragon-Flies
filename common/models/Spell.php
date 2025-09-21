@@ -66,10 +66,10 @@ class Spell extends \yii\db\ActiveRecord {
             'name' => 'Spell',
             'description' => 'Detailed description of the spell\'s effects, including any damage, conditions, or other consequences.',
             'spell_level' => 'Spell level (between 0 and 9)',
-            'school_id' => 'Foreign key to \"spell_school\" table',
-            'range_id' => 'Foreign key to \"spell_range\" table',
-            'casting_time_id' => 'Foreign key to \"spell_casting_time\" table',
-            'duration_id' => 'Foreign key to \"spell_duration\" table',
+            'school_id' => 'Foreign key to "spell_school" table',
+            'range_id' => 'Foreign key to "spell_range" table',
+            'casting_time_id' => 'Foreign key to "spell_casting_time" table',
+            'duration_id' => 'Foreign key to "spell_duration" table',
             'is_ritual' => 'Is Ritual',
         ];
     }

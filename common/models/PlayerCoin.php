@@ -40,7 +40,7 @@ class PlayerCoin extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'player_id' => 'Foreign key to \"player\" table',
+            'player_id' => 'Foreign key to "player" table',
             'coin' => 'Currency',
             'quantity' => 'Quantity',
         ];

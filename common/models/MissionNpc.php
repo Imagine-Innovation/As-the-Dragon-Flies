@@ -50,8 +50,8 @@ class MissionNpc extends \yii\db\ActiveRecord
      */
     public function attributeLabels() {
         return [
-            'npc_id' => 'Foreign key to \"npc\" table',
-            'mission_id' => 'Foreign key to \"mission\" table',
+            'npc_id' => 'Foreign key to "npc" table',
+            'mission_id' => 'Foreign key to "mission" table',
             'name' => 'NPC name',
             'description' => 'Short description',
             'image' => 'Image',

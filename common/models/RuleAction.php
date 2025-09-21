@@ -45,8 +45,8 @@ class RuleAction extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => 'Primary key.',
-            'model_id' => 'Foreign key to \"rule_component\" table.',
-            'rule_id' => 'Foreign key to \"rule\" table.',
+            'model_id' => 'Foreign key to "rule_component\" table.',
+            'rule_id' => 'Foreign key to "rule\" table.',
             'name' => 'Action',
             'description' => 'Short description of the expected action',
         ];
