@@ -29,6 +29,7 @@ use Yii;
  * @property Category[] $categories
  * @property ClassEquipment[] $classEquipments
  * @property ClassItemProficiency[] $classItemProficiencies
+ * @property Interaction[] $interactions
  * @property ItemCategory[] $itemCategories
  * @property ItemType $itemType
  * @property Item[] $items
@@ -37,8 +38,6 @@ use Yii;
  * @property Pack[] $packs
  * @property Pack[] $packs0
  * @property Item[] $parentItems
- * @property PassageItem[] $passageItems
- * @property Passage[] $passages
  * @property PlayerCart[] $playerCarts
  * @property PlayerItem[] $playerItems
  * @property Player[] $players
@@ -158,6 +157,15 @@ class Item extends \yii\db\ActiveRecord
     }
 
     /**
+     * Gets query for [[Interactions]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getInteractions() {
+        return $this->hasMany(Interaction::class, ['item_id' => 'id']);
+    }
+
+    /**
      * Gets query for [[ItemCategories]].
      *
      * @return \yii\db\ActiveQuery
@@ -227,24 +235,6 @@ class Item extends \yii\db\ActiveRecord
      */
     public function getParentItems() {
         return $this->hasMany(Item::class, ['id' => 'parent_item_id'])->viaTable('pack', ['item_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[PassageItems]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getPassageItems() {
-        return $this->hasMany(PassageItem::class, ['item_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[Passages]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getPassages() {
-        return $this->hasMany(Passage::class, ['id' => 'passage_id'])->viaTable('passage_item', ['item_id' => 'id']);
     }
 
     /**

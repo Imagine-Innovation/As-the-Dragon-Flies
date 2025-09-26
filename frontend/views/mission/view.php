@@ -19,10 +19,6 @@ $breadcrumbs = [
 // Set breadcrumbs for the view
 $this->params['breadcrumbs'] = $breadcrumbs;
 
-$components = [
-    'npcs'
-];
-
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="container">
@@ -38,22 +34,39 @@ $components = [
             ?>
         </div>
         <div class="row g-0 d-flex"> <!-- Add d-flex to the row -->
-            <div class="col-md-4 d-flex align-items-stretch"> <!-- Add d-flex and align-items-stretch -->
+            <div class="col-0 col-md-4 d-flex align-items-stretch"> <!-- Add d-flex and align-items-stretch -->
                 <img src="img/story/<?= $story->id ?>/<?= $model->image ?>" class="img-fluid object-fit-cover rounded-start w-100" alt="<?= $model->name ?>">
             </div>
-            <div class="col-md-8 text-decoration d-flex flex-column"> <!-- Add d-flex and flex-column -->
+            <div class="col-12 col-md-8 d-flex flex-column"> <!-- Add d-flex and flex-column -->
                 <div class="card-header">
-                    <h3 class="card-title"><?= $model->name ?></h3>
+                    <h3 class="card-title">Mission: <?= $model->name ?></h3>
                 </div>
                 <div class="card-body flex-grow-1"> <!-- Add flex-grow-1 -->
                     <p class="card-text"><?= nl2br($model->description) ?></p>
                     <br>
-                    <div class="row g-4">
-                        <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->missionNpcs, 'type' => 'NPC']) ?>
-                        <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->missionItems, 'type' => 'Item']) ?>
-                        <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->missionShapes, 'type' => 'Monster']) ?>
-                        <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->missionTraps, 'type' => 'Trap']) ?>
-                    </div>
+                    <section id="MissionEnvironment">
+                        <div class="row g-4">
+                            <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->npcs, 'missionId' => $model->id, 'type' => 'NPC']) ?>
+                            <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->missionItems, 'missionId' => $model->id, 'type' => 'Item']) ?>
+                            <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->missionShapes, 'missionId' => $model->id, 'type' => 'Monster']) ?>
+                            <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->traps, 'missionId' => $model->id, 'type' => 'Trap']) ?>
+                        </div>
+                    </section>
+                    <br>
+                    <?php if (1 == 2): ?>
+                        <?php foreach ($model->npcs as $Npc): ?>
+                            <section id="NPCDialog" class="card g-4">
+                                <div class="card-header">
+                                    <h3 class="card-title">Dialog with "<?= $Npc->name ?>"</h3>
+                                </div>
+                                <div class="card-body">
+                                    <?php if ($Npc->first_dialog_id): ?>
+                                        <?= $this->renderFile('@app/views/mission/snippets/dialog.php', ['dialog' => $Npc->firstDialog]) ?>
+                                    <?php endif; ?>
+                                </div>
+                            </section>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

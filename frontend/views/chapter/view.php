@@ -37,7 +37,7 @@ $this->params['breadcrumbs'] = $breadcrumbs;
             </div>
             <div class="col-md-8 text-decoration d-flex flex-column"> <!-- Add d-flex and flex-column -->
                 <div class="card-header">
-                    <h3 class="card-title"><?= $model->name ?></h3>
+                    <h3 class="card-title">Chapter <?= $model->chapter_number ?>: <?= $model->name ?></h3>
                 </div>
                 <div class="card-body flex-grow-1"> <!-- Add flex-grow-1 -->
                     <p class="card-text"><?= nl2br($model->description) ?></p>

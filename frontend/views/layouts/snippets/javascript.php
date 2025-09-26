@@ -8,6 +8,7 @@ $controllerCustomJavascriptLib = [
     'item' => ['atdf-item-manager'],
     'player-item' => ['atdf-item-manager'],
     'image' => ['atdf-image-manager'],
+    'mission' => ['atdf-search-select'],
 ];
 
 $controllerId = Yii::$app->controller->id;

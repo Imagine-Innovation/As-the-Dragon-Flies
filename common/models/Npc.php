@@ -8,20 +8,21 @@ use Yii;
  * This is the model class for table "npc".
  *
  * @property int $id Primary key
- * @property string $name Non playing character
+ * @property int $mission_id Foreign key to "mission" table
+ * @property int $npc_type_id Foreign key to "npc_type" table
+ * @property string $name NPC name
  * @property string|null $description Short description
- * @property int|null $hp Hit Points: The average amount of damage a NPC can withstand before being defeated
- * @property string|null $hit_dice The dice roll that determines the damage inflicted by a NPC
- * @property float $cr Challenge Rating. This is a measure of how difficult the NPC is to defeat for a party of adventurers
- * @property int $bonus Proficiency bonus determined by the creature’s challenge rating
- * @property int $xp Experience Points awarded to the party for defeating the creature
+ * @property string|null $image Image
+ * @property int|null $first_dialog_id Optional foreign key to "dialog" table
  *
- * @property MissionNpc[] $missionNpcs
- * @property Mission[] $missions
+ * @property Dialog[] $dialogs
+ * @property Dialog $firstDialog
+ * @property Interaction[] $interactions
+ * @property Mission $mission
+ * @property NpcType $npcType
  */
 class Npc extends \yii\db\ActiveRecord
 {
-
 
     /**
      * {@inheritdoc}
@@ -35,16 +36,14 @@ class Npc extends \yii\db\ActiveRecord
      */
     public function rules() {
         return [
-            [['description', 'hp', 'hit_dice'], 'default', 'value' => null],
-            [['cr'], 'default', 'value' => 0.000],
-            [['xp'], 'default', 'value' => 0],
-            [['name'], 'required'],
+            [['description', 'image', 'first_dialog_id'], 'default', 'value' => null],
+            [['mission_id', 'npc_type_id', 'name'], 'required'],
+            [['mission_id', 'npc_type_id', 'first_dialog_id'], 'integer'],
             [['description'], 'string'],
-            [['hp', 'bonus', 'xp'], 'integer'],
-            [['cr'], 'number'],
-            [['name'], 'string', 'max' => 32],
-            [['hit_dice'], 'string', 'max' => 16],
-            [['name'], 'unique'],
+            [['name', 'image'], 'string', 'max' => 32],
+            [['npc_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => NpcType::class, 'targetAttribute' => ['npc_type_id' => 'id']],
+            [['mission_id'], 'exist', 'skipOnError' => true, 'targetClass' => Mission::class, 'targetAttribute' => ['mission_id' => 'id']],
+            [['first_dialog_id'], 'exist', 'skipOnError' => true, 'targetClass' => Dialog::class, 'targetAttribute' => ['first_dialog_id' => 'id']],
         ];
     }
 
@@ -54,32 +53,57 @@ class Npc extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'name' => 'Non playing character',
+            'mission_id' => 'Foreign key to "mission" table',
+            'npc_type_id' => 'Foreign key to "npc_type" table',
+            'name' => 'NPC name',
             'description' => 'Short description',
-            'hp' => 'Hit Points: The average amount of damage a NPC can withstand before being defeated',
-            'hit_dice' => 'The dice roll that determines the damage inflicted by a NPC',
-            'cr' => 'Challenge Rating. This is a measure of how difficult the NPC is to defeat for a party of adventurers',
-            'bonus' => 'Proficiency bonus determined by the creature’s challenge rating',
-            'xp' => 'Experience Points awarded to the party for defeating the creature',
+            'image' => 'Image',
+            'first_dialog_id' => 'Optional foreign key to "dialog" table',
         ];
     }
 
     /**
-     * Gets query for [[MissionNpcs]].
+     * Gets query for [[Dialogs]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getMissionNpcs() {
-        return $this->hasMany(MissionNpc::class, ['npc_id' => 'id']);
+    public function getDialogs() {
+        return $this->hasMany(Dialog::class, ['npc_id' => 'id']);
     }
 
     /**
-     * Gets query for [[Missions]].
+     * Gets query for [[FirstDialog]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getMissions() {
-        return $this->hasMany(Mission::class, ['id' => 'mission_id'])->viaTable('mission_npc', ['npc_id' => 'id']);
+    public function getFirstDialog() {
+        return $this->hasOne(Dialog::class, ['id' => 'first_dialog_id']);
     }
 
+    /**
+     * Gets query for [[Interactions]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getInteractions() {
+        return $this->hasMany(Interaction::class, ['npc_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Mission]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getMission() {
+        return $this->hasOne(Mission::class, ['id' => 'mission_id']);
+    }
+
+    /**
+     * Gets query for [[NpcType]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getNpcType() {
+        return $this->hasOne(NpcType::class, ['id' => 'npc_type_id']);
+    }
 }

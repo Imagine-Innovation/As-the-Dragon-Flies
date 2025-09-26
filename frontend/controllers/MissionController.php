@@ -3,8 +3,8 @@
 namespace frontend\controllers;
 
 use common\components\ManageAccessRights;
+use common\models\Dialog;
 use common\models\Mission;
-use common\models\Chapter;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
@@ -38,6 +38,8 @@ class MissionController extends Controller
                             [
                                 'actions' => [
                                     'create', 'view', 'update',
+                                    'add-detail', 'edit-detail',
+                                    'ajax-search-dialog', 'ajax-search-npc-type',
                                 ],
                                 'allow' => ManageAccessRights::isRouteAllowed($this),
                                 'roles' => ['@'],
@@ -62,7 +64,7 @@ class MissionController extends Controller
      */
     public function actionView($id) {
         return $this->render('view', [
-                    'model' => $this->findModel($id),
+                    'model' => $this->findModel('Mission', ['id' => $id]),
         ]);
     }
 
@@ -73,7 +75,7 @@ class MissionController extends Controller
      */
     public function actionCreate($chapterId) {
         // Check if $id is a valid Chapter ID
-        $chapter = $this->findChapter($chapterId);
+        $chapter = $this->findModel('Mission', ['Chapter' => $chapterId]);
         $model = new Mission();
         $model->chapter_id = $chapter->id;
 
@@ -97,8 +99,8 @@ class MissionController extends Controller
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id) {
-        $model = $this->findModel($id);
+    public function actionUpdate(int $id) {
+        $model = $this->findModel('Mission', ['id' => $id]);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -110,25 +112,157 @@ class MissionController extends Controller
     }
 
     /**
-     * Finds the Mission model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id Primary key
-     * @return Mission the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
+     *
+     * @param string $type
+     * @return array
      */
-    protected function findModel($id) {
-        if (($model = Mission::findOne(['id' => $id])) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The requested mission does not exist.');
+    protected function getDetailFromType(string $type): array {
+        return match ($type) {
+            'NPC' => ['className' => 'Npc', 'snippet' => 'npc-form'],
+            'Item' => ['className' => 'MissionItem', 'snippet' => 'item-form'],
+            'Monster' => ['className' => 'MissionShape', 'snippet' => 'monster-form'],
+            'Trap' => ['className' => 'Trap', 'snippet' => 'trap-form'],
+            default => throw new \Exception("Unsupported type {$type}"),
+        };
     }
 
-    protected function findChapter($id) {
-        if (($model = Chapter::findOne(['id' => $id])) !== null) {
+    /**
+     * Creates a new Mission model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return string|\yii\web\Response
+     */
+    public function actionAddDetail(int $missionId, string $type) {
+        $detail = $this->getDetailFromType($type);
+        $className = $detail['className'];
+        $mission = $this->findModel('Mission', ['id' => $missionId]);
+
+        $modelName = "\\common\\models\\{$className}";
+        $model = new $modelName();
+        $model->mission_id = $mission->id;
+
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post()) && $model->save()) {
+                return $this->redirect(['view', 'id' => $mission->id]);
+            }
+            throw new \Exception(implode("<br/>", ArrayHelper::getColumn($model->errors, 0, false)));
+        } else {
+            $model->loadDefaultValues();
+        }
+
+        return $this->render('add-detail', [
+                    'model' => $model,
+                    'mission' => $mission,
+                    'type' => $type,
+                    'snippet' => $detail['snippet'],
+        ]);
+    }
+
+    public function actionEditDetail(string $jsonParams, string $type) {
+        $detail = $this->getDetailFromType($type);
+        $className = $detail['className'];
+        $searchParams = json_decode($jsonParams, true);
+        Yii::debug($jsonParams);
+        Yii::debug($searchParams);
+        $mission = $this->findModel('Mission', ['id' => $searchParams['mission_id']]);
+
+        $model = $this->findModel($className, $searchParams);
+
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post()) && $model->save()) {
+                return $this->redirect(['view', 'id' => $mission->id]);
+            }
+            throw new \Exception(implode("<br/>", ArrayHelper::getColumn($model->errors, 0, false)));
+        }
+
+        return $this->render('edit-detail', [
+                    'model' => $model,
+                    'mission' => $mission,
+                    'type' => $type,
+                    'snippet' => $detail['snippet'],
+        ]);
+    }
+
+    private function normalizeSearchString(string $inputString): string {
+        Yii::debug("*** debug *** normalizeSearchString - inputStrind={$inputString}");
+        $normalizedString = str_replace(
+                [
+                    "'", // Single quote
+                    '’', // Right single quotation mark
+                    '‘', // Left single quotation mark
+                    '´', // Acute accent
+                    '`', // Grave accent
+                ],
+                "_", // single character SQL wildcard
+                $inputString
+        );
+        Yii::debug("*** debug *** normalizeSearchString - normalizedString={$normalizedString}");
+        return $normalizedString;
+    }
+
+    public function actionAjaxSearchDialog() {
+        // Set the response format to JSON
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        // Check if the request is a GET request and if it is an AJAX request
+        if (!$this->request->isGet || !$this->request->isAjax) {
+            // If not, return an error response
+            return ['error' => true, 'msg' => 'Not an Ajax GET request'];
+        }
+
+        $request = Yii::$app->request;
+        $userEntry = $request->get('q');
+        $searchString = $this->normalizeSearchString($userEntry);
+
+        $dialogs = Dialog::find()
+                ->select(['id', 'text as name', 'text'])
+                ->where(['like', 'text', "%{$searchString}%", false]) // The 'false' parameter prevents Yii from adding extra escaping
+                ->asArray()
+                ->all();
+
+        $searchResult = $dialogs;
+        Yii::debug($searchResult);
+        return ['error' => false, 'msg' => '', 'results' => $searchResult];
+    }
+
+    public function actionAjaxSearchNpcType() {
+        // Set the response format to JSON
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        // Check if the request is a GET request and if it is an AJAX request
+        if (!$this->request->isGet || !$this->request->isAjax) {
+            // If not, return an error response
+            return ['error' => true, 'msg' => 'Not an Ajax GET request'];
+        }
+
+        $request = Yii::$app->request;
+        $userEntry = $request->get('q');
+        $searchString = $this->normalizeSearchString($userEntry);
+
+        $dialogs = \common\models\NpcType::find()
+                ->select(['id', 'name', 'description as text'])
+                ->where(['like', 'description', "%{$searchString}%", false]) // The 'false' parameter prevents Yii from adding extra escaping
+                ->asArray()
+                ->all();
+
+        $searchResult = $dialogs;
+        Yii::debug($searchResult);
+        return ['error' => false, 'msg' => '', 'results' => $searchResult];
+    }
+
+    /**
+     * Finds the model model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param string $modelName model type to load
+     * @param array $param
+     * @return common\models\modelName the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel(string $modelName, array $param) {
+        $activeRecord = "\\common\\models\\{$modelName}";
+        if (($model = $activeRecord::findOne($param)) !== null) {
             return $model;
         }
 
-        throw new NotFoundHttpException('The requested chapter does not exist.');
+        throw new NotFoundHttpException('The requested {$modelName} does not exist.');
     }
 }

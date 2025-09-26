@@ -11,17 +11,17 @@ use Yii;
  * @property int $mission_id Foreign key to "mission" table
  * @property int|null $skill_id Optional foreign key to "skill" table
  * @property int|null $passage_id Optional foreign key to "passage" table
- * @property int|null $npc_id Optional foreign key to "mission_npc" table
+ * @property int|null $npc_id Optional foreign key to "npc" table
+ * @property int|null $item_id Optional foreign key to "Item" table
  * @property int|null $reply_id Optional foreign key to "reply" table
  * @property string $name Action to do
  * @property string|null $icon Icon
  * @property string $action_type Action type (search, speak, use...)
  * @property int $dc Difficulty Class (DC)
  *
- * @property InteractionItem[] $interactionItems
- * @property Item[] $items
+ * @property Item $item
  * @property Mission $mission
- * @property MissionNpc $npc
+ * @property Npc $npc
  * @property Passage $passage
  * @property Reply $reply
  * @property Skill $skill
@@ -29,7 +29,6 @@ use Yii;
  */
 class Interaction extends \yii\db\ActiveRecord
 {
-
 
     /**
      * {@inheritdoc}
@@ -43,15 +42,17 @@ class Interaction extends \yii\db\ActiveRecord
      */
     public function rules() {
         return [
-            [['skill_id', 'passage_id', 'npc_id', 'reply_id', 'icon'], 'default', 'value' => null],
-            [['mission_id', 'name', 'action_type', 'dc'], 'required'],
-            [['mission_id', 'skill_id', 'passage_id', 'npc_id', 'reply_id', 'dc'], 'integer'],
+            [['skill_id', 'passage_id', 'npc_id', 'item_id', 'reply_id', 'icon'], 'default', 'value' => null],
+            [['dc'], 'default', 'value' => 0],
+            [['mission_id', 'name', 'action_type'], 'required'],
+            [['mission_id', 'skill_id', 'passage_id', 'npc_id', 'item_id', 'reply_id', 'dc'], 'integer'],
             [['name', 'icon', 'action_type'], 'string', 'max' => 32],
             [['mission_id'], 'exist', 'skipOnError' => true, 'targetClass' => Mission::class, 'targetAttribute' => ['mission_id' => 'id']],
             [['skill_id'], 'exist', 'skipOnError' => true, 'targetClass' => Skill::class, 'targetAttribute' => ['skill_id' => 'id']],
             [['passage_id'], 'exist', 'skipOnError' => true, 'targetClass' => Passage::class, 'targetAttribute' => ['passage_id' => 'id']],
             [['reply_id'], 'exist', 'skipOnError' => true, 'targetClass' => Reply::class, 'targetAttribute' => ['reply_id' => 'id']],
-            [['npc_id', 'mission_id'], 'exist', 'skipOnError' => true, 'targetClass' => MissionNpc::class, 'targetAttribute' => ['npc_id' => 'npc_id', 'mission_id' => 'mission_id']],
+            [['npc_id'], 'exist', 'skipOnError' => true, 'targetClass' => Npc::class, 'targetAttribute' => ['npc_id' => 'id']],
+            [['item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['item_id' => 'id']],
         ];
     }
 
@@ -61,11 +62,12 @@ class Interaction extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'mission_id' => 'Foreign key to \"mission\" table',
-            'skill_id' => 'Optional foreign key to \"skill\" table',
-            'passage_id' => 'Optional foreign key to \"passage\" table',
-            'npc_id' => 'Optional foreign key to \"mission_npc\" table',
-            'reply_id' => 'Optional foreign key to \"reply\" table',
+            'mission_id' => 'Foreign key to "mission" table',
+            'skill_id' => 'Optional foreign key to "skill" table',
+            'passage_id' => 'Optional foreign key to "passage" table',
+            'npc_id' => 'Optional foreign key to "npc" table',
+            'item_id' => 'Optional foreign key to "Item" table',
+            'reply_id' => 'Optional foreign key to "reply" table',
             'name' => 'Action to do',
             'icon' => 'Icon',
             'action_type' => 'Action type (search, speak, use...)',
@@ -74,21 +76,12 @@ class Interaction extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[InteractionItems]].
+     * Gets query for [[Item]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getInteractionItems() {
-        return $this->hasMany(InteractionItem::class, ['interaction_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[Items]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getItems() {
-        return $this->hasMany(Item::class, ['id' => 'item_id'])->viaTable('interaction_item', ['interaction_id' => 'id']);
+    public function getItem() {
+        return $this->hasOne(Item::class, ['id' => 'item_id']);
     }
 
     /**
@@ -106,7 +99,7 @@ class Interaction extends \yii\db\ActiveRecord
      * @return \yii\db\ActiveQuery
      */
     public function getNpc() {
-        return $this->hasOne(MissionNpc::class, ['npc_id' => 'npc_id', 'mission_id' => 'mission_id']);
+        return $this->hasOne(Npc::class, ['id' => 'npc_id']);
     }
 
     /**
@@ -144,5 +137,4 @@ class Interaction extends \yii\db\ActiveRecord
     public function getSuccesses() {
         return $this->hasMany(Success::class, ['interaction_id' => 'id']);
     }
-
 }

@@ -3,15 +3,19 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var common\models\Mission $model */
-$this->title = 'Create Mission';
-$chapter = $model->chapter;
+/** @var yii\db\ActiveRecord $model */
+/** @var common\models\Mission $mission */
+/** @var string $type */
+/** @var string $snippet */
+$this->title = "Add a {$type}";
+$chapter = $mission->chapter;
 $story = $chapter->story;
 
 $breadcrumbs = [
     ['label' => 'Stories', 'url' => ['story/index']],
     ['label' => $story->name, 'url' => ['story/view', 'id' => $story->id]],
     ['label' => $chapter->name, 'url' => ['chapter/view', 'id' => $chapter->id]],
+    ['label' => $mission->name, 'url' => ['mission/view', 'id' => $mission->id]],
     ['label' => $this->title],
 ];
 
@@ -23,7 +27,7 @@ $this->params['breadcrumbs'] = $breadcrumbs;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?=
-    $this->render('snippets/mission-form', [
+    $this->render("snippets/{$snippet}", [
         'model' => $model,
     ])
     ?>

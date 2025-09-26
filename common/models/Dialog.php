@@ -8,18 +8,18 @@ use Yii;
  * This is the model class for table "dialog".
  *
  * @property int $id Primary key
- * @property int|null $mission_id Foreign key to "mission_npc" table
- * @property int|null $npc_id Foreign key to "mission_npc" table
+ * @property int $npc_id Foreign key to "npc" table
  * @property string $caption What the NPC looks like
  * @property string $text What the NPC says
+ * @property int|null $success_id Optional foreign key to "success" table
  *
- * @property MissionNpc $npc
+ * @property Npc $npc
  * @property Reply[] $replies
  * @property Reply[] $replies0
+ * @property Success $success
  */
 class Dialog extends \yii\db\ActiveRecord
 {
-
 
     /**
      * {@inheritdoc}
@@ -33,11 +33,12 @@ class Dialog extends \yii\db\ActiveRecord
      */
     public function rules() {
         return [
-            [['mission_id', 'npc_id'], 'default', 'value' => null],
-            [['mission_id', 'npc_id'], 'integer'],
-            [['caption', 'text'], 'required'],
+            [['success_id'], 'default', 'value' => null],
+            [['npc_id', 'caption', 'text'], 'required'],
+            [['npc_id', 'success_id'], 'integer'],
             [['caption', 'text'], 'string'],
-            [['npc_id', 'mission_id'], 'exist', 'skipOnError' => true, 'targetClass' => MissionNpc::class, 'targetAttribute' => ['npc_id' => 'npc_id', 'mission_id' => 'mission_id']],
+            [['npc_id'], 'exist', 'skipOnError' => true, 'targetClass' => Npc::class, 'targetAttribute' => ['npc_id' => 'id']],
+            [['success_id'], 'exist', 'skipOnError' => true, 'targetClass' => Success::class, 'targetAttribute' => ['success_id' => 'id']],
         ];
     }
 
@@ -47,10 +48,10 @@ class Dialog extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'mission_id' => 'Foreign key to "mission_npc" table',
-            'npc_id' => 'Foreign key to "mission_npc" table',
+            'npc_id' => 'Foreign key to "npc\" table',
             'caption' => 'What the NPC looks like',
             'text' => 'What the NPC says',
+            'success_id' => 'Optional foreign key to \"success\" table',
         ];
     }
 
@@ -60,7 +61,7 @@ class Dialog extends \yii\db\ActiveRecord
      * @return \yii\db\ActiveQuery
      */
     public function getNpc() {
-        return $this->hasOne(MissionNpc::class, ['npc_id' => 'npc_id', 'mission_id' => 'mission_id']);
+        return $this->hasOne(Npc::class, ['id' => 'npc_id']);
     }
 
     /**
@@ -81,4 +82,12 @@ class Dialog extends \yii\db\ActiveRecord
         return $this->hasMany(Reply::class, ['next_dialog_id' => 'id']);
     }
 
+    /**
+     * Gets query for [[Success]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSuccess() {
+        return $this->hasOne(Success::class, ['id' => 'success_id']);
+    }
 }

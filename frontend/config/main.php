@@ -6,7 +6,7 @@ $params = array_merge(
         require __DIR__ . '/params.php',
         require __DIR__ . '/params-local.php'
 );
-$offline = true;
+$offline = false;
 if ($offline) {
     $assetManager = [
         'bundles' => [
@@ -34,13 +34,13 @@ if ($offline) {
             'yii\\bootstrap5\\BootstrapAsset' => [
                 'sourcePath' => null, // do not publish the bundle from default path
                 'css' => [
-                    'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.7/css/bootstrap.min.css',
+                    'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.8/css/bootstrap.min.css',
                     'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.1/font/bootstrap-icons.min.css',
-                //'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css',
+                    'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css',
                 ],
                 'js' => [
-                    'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.7/js/bootstrap.bundle.min.js',
-                //'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/js/all.min.js'
+                    'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.8/js/bootstrap.bundle.min.js',
+                    'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js',
                 ],
             // Optional: Add integrity and crossorigin attributes if needed
             // 'cssOptions' => [

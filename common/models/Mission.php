@@ -17,7 +17,6 @@ use Yii;
  * @property Interaction[] $interactions
  * @property Item[] $items
  * @property MissionItem[] $missionItems
- * @property MissionNpc[] $missionNpcs
  * @property MissionShape[] $missionShapes
  * @property Npc[] $npcs
  * @property Passage[] $passages
@@ -99,15 +98,6 @@ class Mission extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[MissionNpcs]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getMissionNpcs() {
-        return $this->hasMany(MissionNpc::class, ['mission_id' => 'id']);
-    }
-
-    /**
      * Gets query for [[MissionShapes]].
      *
      * @return \yii\db\ActiveQuery
@@ -122,7 +112,7 @@ class Mission extends \yii\db\ActiveRecord
      * @return \yii\db\ActiveQuery
      */
     public function getNpcs() {
-        return $this->hasMany(Npc::class, ['id' => 'npc_id'])->viaTable('mission_npc', ['mission_id' => 'id']);
+        return $this->hasMany(Npc::class, ['mission_id' => 'id']);
     }
 
     /**
