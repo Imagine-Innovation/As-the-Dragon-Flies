@@ -25,6 +25,8 @@ $this->params['breadcrumbs'] = $breadcrumbs;
     <?=
     $this->render('snippets/mission-form', [
         'model' => $model,
+        'storyId' => $story->id,
+        'chapterId' => $chapter->id,
     ])
     ?>
 

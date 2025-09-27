@@ -1,4 +1,94 @@
-function searchSelect(searchField, ajaxFunction) {
+const formName = $('#hiddenFormName').html();
+const imagePath = $('#hiddenImagePath').html();
+const config = [
+    {
+        form: 'mission',
+        params: [
+            {
+                field: 'mission-image',
+                ajax: 'image',
+                minChar: 1,
+                imagePath: imagePath
+            }
+        ]
+    },
+    {
+        form: 'npc',
+        params: [
+            {
+                field: 'npc-first_dialog_id',
+                ajax: 'dialog',
+                minChar: 3,
+                imagePath: null
+            },
+            {
+                field: 'npc-image',
+                ajax: 'image',
+                minChar: 1,
+                imagePath: imagePath
+            },
+            {
+                field: 'npc-npc_type_id',
+                ajax: 'npc-type',
+                minChar: 3,
+                imagePath: null
+            }
+        ]
+    },
+    {
+        form: 'trap',
+        params: [
+            {
+                field: 'trap-damage_type_id',
+                ajax: 'damage-type',
+                minChar: 3,
+                imagePath: null
+            },
+            {
+                field: 'trap-image',
+                ajax: 'image',
+                minChar: 1,
+                imagePath: imagePath
+            }
+        ]
+    },
+    {
+        form: 'missionitem',
+        params: [
+            {
+                field: 'missionitem-item_id',
+                ajax: 'item',
+                minChar: 3,
+                imagePath: null
+            },
+            {
+                field: 'missionitem-image',
+                ajax: 'image',
+                minChar: 1,
+                imagePath: imagePath
+            }
+        ]
+    },
+    {
+        form: 'monster',
+        params: [
+            {
+                field: 'monster-creature_id',
+                ajax: 'creature',
+                minChar: 3,
+                imagePath: null
+            },
+            {
+                field: 'monster-image',
+                ajax: 'image',
+                minChar: 1,
+                imagePath: imagePath
+            }
+        ]
+    }
+];
+
+function searchSelect(searchField, ajaxFunction, minChar = 3, imagePath = null) {
     Logger.log(1, 'searchSelect', `searchField=${searchField}, ajaxFunction=${ajaxFunction}`);
     $(`#${searchField}`).select2({
         ajax: {
@@ -7,7 +97,8 @@ function searchSelect(searchField, ajaxFunction) {
             delay: 250,
             data: function (params) {
                 return {
-                    q: params.term // search term
+                    search: params.term, // search term
+                    folder: imagePath
                 };
             },
             dropdownCssClass: 'form-select',
@@ -19,10 +110,10 @@ function searchSelect(searchField, ajaxFunction) {
             cache: true
         },
         placeholder: 'Search for a dialog',
-        minimumInputLength: 3,
+        minimumInputLength: minChar,
         templateResult: formatSearchResult,
         templateSelection: function (data) {
-            return data.name ?? data.text;
+            return imagePath ? data.id : data.name ?? data.text;
         }
     });
 
@@ -31,37 +122,50 @@ function searchSelect(searchField, ajaxFunction) {
             return result.text;
         }
 
-        if (result.name) {
+        if (imagePath) {
             return $(
-                    `<div class='select2-result-${searchField} clearfix'>` +
-                    `<span class='fw-medium'>${result.name}:</span> ${result.text}` +
+                    `<div class='select2-result-repository clearfix'>` +
+                    `    <span><img src="${result.img}" style="max-height: 50px;"/></span> ${result.text}` +
                     `</div>`
                     );
         } else {
-            return $(`<div class='select2-result-${searchField} clearfix'>${result.text}</div>`);
+            if (result.name) {
+                return $(
+                        `<div class='select2-result-${searchField} clearfix'>` +
+                        `<span class='fw-medium'>${result.name}:</span> ${result.text}` +
+                        `</div>`
+                        );
+            } else {
+                return $(`<div class='select2-result-${searchField} clearfix'>${result.text}</div>`);
+            }
         }
+}
+}
+
+function initSearchSelect(formName) {
+    // Find the form configuration that matches the formName
+    const formConfig = config.find(form => form.form === formName);
+
+    if (!formConfig) {
+        console.error(`Form '${formName}' not found in config.`);
+        return;
     }
+
+    // Iterate over each parameter in the form configuration
+    formConfig.params.forEach(param => {
+        const searchField = param.field;
+        const ajaxType = param.ajax;
+        const minChar = param.minChar;
+        const imagePathValue = param.imagePath;
+
+        // Check if the DOM element exists
+        if (DOMUtils.exists(`#${searchField}`)) {
+            searchSelect(searchField, ajaxType, minChar, imagePathValue);
+        }
+    });
 }
 
 $(document).ready(function () {
-
-    let searchField = 'npc-first_dialog_id';
-    if (DOMUtils.exists(`#${searchField}`))
-        searchSelect(searchField, 'dialog');
-
-    searchField = 'npc-npc_type_id';
-    if (DOMUtils.exists(`#${searchField}`))
-        searchSelect(searchField, 'npc-type');
-
-    searchField = 'trap-damage_type_id';
-    if (DOMUtils.exists(`#${searchField}`))
-        searchSelect(searchField, 'damage-type');
-
-    searchField = 'missionitem-item_id';
-    if (DOMUtils.exists(`#${searchField}`))
-        searchSelect(searchField, 'item');
-
-    searchField = 'monster-creature_id';
-    if (DOMUtils.exists(`#${searchField}`))
-        searchSelect(searchField, 'creature');
+    if (formName)
+        initSearchSelect(formName);
 });

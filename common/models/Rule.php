@@ -8,7 +8,7 @@ use common\components\RuleParser;
 use common\components\RuleValidator;
 use common\models\RuleExpression;
 use common\models\RuleCondition;
-use common\helpers\ClassName;
+use common\helpers\ModelHelper;
 
 /**
  * This is the model class for table "rule".
@@ -26,7 +26,8 @@ use common\helpers\ClassName;
  * @property RuleExpression[] $ruleExpressions
  * @property RuleExpression $rootExpression
  */
-class Rule extends \yii\db\ActiveRecord {
+class Rule extends \yii\db\ActiveRecord
+{
 
     private $parsingTree;
     public $errorMessage;
@@ -419,7 +420,7 @@ class Rule extends \yii\db\ActiveRecord {
 
         // If no matching RuleModel instance is found, create a new one
         if (!$model) {
-            $path = ClassName::path($modelName);
+            $path = ModelHelper::path($modelName);
             $model = new RuleModel([
                 'path' => $path,
                 'name' => $modelName,

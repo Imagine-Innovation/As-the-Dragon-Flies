@@ -24,9 +24,11 @@ if ($properties) {
                 foreach ($properties as $property) {
                     $id1 = $propertyNames[0];
                     $id2 = $propertyNames[1];
+                    $id3 = $propertyNames[2];
                     $params = [
                         $id1 => $property->$id1,
                         $id2 => $property->$id2,
+                        $id3 => $property->$id3,
                     ];
                     $hrefEdit = Url::toRoute(['mission/edit-detail', 'jsonParams' => json_encode($params), 'type' => $type]);
                     echo "<li>{$property->name} ";

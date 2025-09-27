@@ -3,6 +3,4 @@
 /** @var string $controllerId */
 /** @var string $actionId */
 ?>
-$(document).ready(function () {
-ShopManager.initCartPage();
-});
+$(document).ready(function () {ShopManager.initCartPage();});

@@ -2,7 +2,7 @@
 
 namespace common\components;
 
-use common\helpers\ClassName;
+use common\helpers\ModelHelper;
 use Yii;
 use yii\base\Component;
 use yii\base\InvalidParamException;
@@ -14,8 +14,8 @@ use yii\base\InvalidParamException;
  * descent parser, and generates a parsing tree representing the structure of the rule.
  * It supports various operations such as parsing expressions, atomicConditions, components,
  * comparators, values, and more.
- * 
- * 
+ *
+ *
  * Grammar for the RuleParser component:
  *
  *    <rule>
@@ -27,46 +27,47 @@ use yii\base\InvalidParamException;
  *        │   └── <expression>
  *        ├── <basic-condition>
  *        └── '(' <expression> ')'
- *    
+ *
  *    <boolean-expression>
  *    └── <expression> <bool-operator> <expression>
- *    
+ *
  *    <basic-condition>
  *    └── <object> <comparator> <value>
- *    
+ *
  *    <object>
  *    ├── <property>
  *    │   └── <class-name> | <class-name> '->' <property>
  *    └── <method>
- *    
+ *
  *    <method>
  *    └── <string> '(' <parameter-list> ')'
- *    
+ *
  *    <parameter-list>
  *    └── <parameter> | <parameter> ',' <parameter-list>
- *    
+ *
  *    <parameter>
  *    └── <string> | <number> | <quoted>
- *    
+ *
  *    <comparator>
  *    └── '==' | '!=' | '<' | '>' | '<=' | '>=' | '<>' | '='
- *    
+ *
  *    <bool-operator>
  *    └── 'AND' | 'OR'
- *    
+ *
  *    <class-name>
  *    └── [A-Z][a-zA-Z0-9]*
- *    
+ *
  *    <string>
  *    └── [a-zA-Z_][a-zA-Z0-9_]*
- *    
+ *
  *    <number>
  *    └── \d+
- *    
+ *
  *    <quoted>
  *    └── '([^']*)' | "([^"]*)"
  *     */
-class RuleParser extends Component {
+class RuleParser extends Component
+{
 
     public $errorMessage = "";
     public $parsingTree = [];
@@ -379,8 +380,8 @@ class RuleParser extends Component {
     /**
      * Parses a nested property and updates the provided properties array.
      *
-     * This function attempts to parse a nested property chain. It handles nested properties by recursively 
-     * consuming '->' tokens and matching methods or strings. The loop terminates when a method is encountered 
+     * This function attempts to parse a nested property chain. It handles nested properties by recursively
+     * consuming '->' tokens and matching methods or strings. The loop terminates when a method is encountered
      * or when a comparator token type is reached.
      *
      * @param array &$properties A reference to the properties array that will be updated.
@@ -594,7 +595,7 @@ class RuleParser extends Component {
           $context['caller'] = $caller[0];
           $context['pos'] = $this->pos;
           $context['parsingTree'] = $this->parsingTree;
-         * 
+         *
          */
 
         return [
@@ -693,7 +694,7 @@ class RuleParser extends Component {
      * This function displays a traceback containing information about the function calls leading
      * up to the current function. It includes file names, function names, and line numbers of
      * the function calls in the traceback. Only traces from the current file are considered.
-     * 
+     *
      * @return void
      */
     private function _traceBack() {
@@ -897,7 +898,7 @@ class RuleParser extends Component {
                 }
             }
             // Adjust token type for class names and comparators
-            if ($type === 'className' && !ClassName::exists($token)) {
+            if ($type === 'className' && !ModelHelper::exists($token)) {
                 $type = 'string';
             } elseif ($type === 'comparator2') {
                 $type = 'comparator';

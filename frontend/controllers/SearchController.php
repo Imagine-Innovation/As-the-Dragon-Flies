@@ -2,7 +2,7 @@
 
 namespace frontend\controllers;
 
-use common\components\ManageAccessRights;
+use common\helpers\FileHelper;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -29,7 +29,7 @@ class SearchController extends Controller
                             ],
                             [
                                 'actions' => [
-                                    'dialog', 'npc-type', 'damage-type', 'item', 'creature',
+                                    'dialog', 'npc-type', 'damage-type', 'item', 'creature', 'image',
                                 ],
                                 'allow' => true,
                                 'roles' => ['@'],
@@ -41,7 +41,6 @@ class SearchController extends Controller
     }
 
     private function normalizeSearchString(string $inputString): string {
-        Yii::debug("*** debug *** normalizeSearchString - inputStrind={$inputString}");
         $normalizedString = str_replace(
                 [
                     "'", // Single quote
@@ -53,11 +52,10 @@ class SearchController extends Controller
                 "_", // single character SQL wildcard
                 $inputString
         );
-        Yii::debug("*** debug *** normalizeSearchString - normalizedString={$normalizedString}");
         return $normalizedString;
     }
 
-    public function actionDialog() {
+    public function actionDialog(string $search): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -67,9 +65,7 @@ class SearchController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
         }
 
-        $request = Yii::$app->request;
-        $userEntry = $request->get('q');
-        $searchString = $this->normalizeSearchString($userEntry);
+        $searchString = $this->normalizeSearchString($search);
 
         $searchResult = \common\models\Dialog::find()
                 ->select(['id', 'text'])
@@ -77,11 +73,50 @@ class SearchController extends Controller
                 ->asArray()
                 ->all();
 
-        Yii::debug($searchResult);
         return ['error' => false, 'msg' => '', 'results' => $searchResult];
     }
 
-    private function standardSearch(string $modelName): array {
+    private function setFileSearchFilter(string $search): array {
+        $extensions = ['.png', '.jpg', '.jpeg', '.gif'];
+        $filter = [];
+        foreach ($extensions as $extension) {
+            $filter[] = "*{$search}*{$extension}";
+        }
+        return $filter;
+    }
+
+    public function actionImage(string $search, string $folder): array {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        if (!$this->request->isGet || !$this->request->isAjax) {
+            return ['error' => true, 'msg' => 'Not an Ajax GET request'];
+        }
+
+        $path = Yii::getAlias('@frontend/web/img/') . $folder;
+        $results = [];
+
+        if (is_dir($path)) {
+            $files = \yii\helpers\FileHelper::findFiles($path, [
+                'only' => $this->setFileSearchFilter($search),
+                'recursive' => false,
+                'caseSensitive' => false,
+            ]);
+
+            foreach ($files as $file) {
+                $fileName = basename($file);
+                $results[] = [
+                    'id' => $fileName,
+                    'img' => "/frontend/web/img/{$folder}/{$fileName}",
+                    'text' => FileHelper::removeExtension($fileName),
+                ];
+            }
+            return ['error' => false, 'msg' => '', 'results' => $results];
+        }
+        Yii::debug("*** debug *** - actionimage - '{$path}' is not a valid directory");
+        return ['error' => true, 'msg' => "'{$path}' is not a valid directory"];
+    }
+
+    private function genericSearch(string $modelName, string $userEntry): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -91,8 +126,6 @@ class SearchController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
         }
 
-        $request = Yii::$app->request;
-        $userEntry = $request->get('q');
         $searchString = $this->normalizeSearchString($userEntry);
 
         $fullModelName = "\\common\\models\\{$modelName}";
@@ -102,23 +135,22 @@ class SearchController extends Controller
                 ->asArray()
                 ->all();
 
-        Yii::debug($searchResult);
         return ['error' => false, 'msg' => '', 'results' => $searchResult];
     }
 
-    public function actionNpcType() {
-        return $this->standardSearch('NpcType');
+    public function actionNpcType(string $search): array {
+        return $this->genericSearch('NpcType', $search);
     }
 
-    public function actionDamageType() {
-        return $this->standardSearch('DamageType');
+    public function actionDamageType(string $search): array {
+        return $this->genericSearch('DamageType', $search);
     }
 
-    public function actionItem() {
-        return $this->standardSearch('Item');
+    public function actionItem(string $search): array {
+        return $this->genericSearch('Item', $search);
     }
 
-    public function actionCreature() {
-        return $this->standardSearch('Creature');
+    public function actionCreature(string $search): array {
+        return $this->genericSearch('Creature', $search);
     }
 }

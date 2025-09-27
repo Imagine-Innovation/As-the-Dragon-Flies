@@ -2,7 +2,8 @@
 
 namespace common\helpers;
 
-class ClassName {
+class ModelHelper
+{
 
     private static $paths = [
         "common\\models",

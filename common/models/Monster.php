@@ -22,7 +22,6 @@ use Yii;
 class Monster extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -58,8 +57,8 @@ class Monster extends \yii\db\ActiveRecord
             'name' => 'Monster name',
             'description' => 'Short description',
             'image' => 'Image',
-            'found' => 'Percentage chance that the item will be found',
-            'identified' => 'Percentage chance that the item will be identified',
+            'found' => 'Percentage chance that the monster will be found',
+            'identified' => 'Percentage chance that the monster will be identified',
         ];
     }
 
@@ -80,5 +79,4 @@ class Monster extends \yii\db\ActiveRecord
     public function getMission() {
         return $this->hasOne(Mission::class, ['id' => 'mission_id']);
     }
-
 }

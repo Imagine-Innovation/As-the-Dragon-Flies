@@ -74,7 +74,7 @@ class MissionController extends Controller
      */
     public function actionCreate($chapterId) {
         // Check if $id is a valid Chapter ID
-        $chapter = $this->findModel('Mission', ['Chapter' => $chapterId]);
+        $chapter = $this->findModel('Chapter', ['id' => $chapterId]);
         $model = new Mission();
         $model->chapter_id = $chapter->id;
 
@@ -191,7 +191,9 @@ class MissionController extends Controller
      */
     protected function findModel(string $modelName, array $param) {
         $activeRecord = "\\common\\models\\{$modelName}";
-        if (($model = $activeRecord::findOne($param)) !== null) {
+        $pk = $param['id'] ?? null;
+        $model = $activeRecord::findOne($pk ? ['id' => $pk] : $param);
+        if ($model !== null) {
             return $model;
         }
 

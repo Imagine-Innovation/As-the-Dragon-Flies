@@ -2,12 +2,11 @@
 /** @var \yii\web\View $this */
 /** @var string $controllerId */
 /** @var string $actionId */
-$route = "{$controllerId}/{$actionId}";
 ?>
 
-<?php if ($route === "player-builder/create"): ?>
+<?php if ($actionId === "create"): ?>
     PlayerBuilder.initCreatePage();
-<?php elseif ($route === "player-builder/update"): ?>
+<?php elseif ($actionId === "update"): ?>
     PlayerBuilder.initUpdatePage();
 
     const gender = $('#playerbuilder-gender').val();

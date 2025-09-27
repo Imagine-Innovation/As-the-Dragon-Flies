@@ -29,6 +29,8 @@ $this->params['breadcrumbs'] = $breadcrumbs;
     <?=
     $this->render("snippets/{$snippet}", [
         'model' => $model,
+        'storyId' => $story->id,
+        'chapterId' => $chapter->id,
     ])
     ?>
 
