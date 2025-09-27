@@ -15,12 +15,10 @@ use Yii;
  *
  * @property Chapter $chapter
  * @property Interaction[] $interactions
- * @property Item[] $items
  * @property MissionItem[] $missionItems
- * @property MissionShape[] $missionShapes
+ * @property Monster[] $monsters
  * @property Npc[] $npcs
  * @property Passage[] $passages
- * @property Shape[] $shapes
  * @property Success[] $successes
  * @property Trap[] $traps
  */
@@ -54,7 +52,7 @@ class Mission extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'chapter_id' => 'Foreign key to "chapter" table',
+            'chapter_id' => 'Foreign key to \"chapter\" table',
             'name' => 'Mission name',
             'description' => 'Short description',
             'image' => 'Image',
@@ -80,15 +78,6 @@ class Mission extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Items]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getItems() {
-        return $this->hasMany(Item::class, ['id' => 'item_id'])->viaTable('mission_item', ['mission_id' => 'id']);
-    }
-
-    /**
      * Gets query for [[MissionItems]].
      *
      * @return \yii\db\ActiveQuery
@@ -98,12 +87,12 @@ class Mission extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[MissionShapes]].
+     * Gets query for [[Monsters]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getMissionShapes() {
-        return $this->hasMany(MissionShape::class, ['mission_id' => 'id']);
+    public function getMonsters() {
+        return $this->hasMany(Monster::class, ['mission_id' => 'id']);
     }
 
     /**
@@ -122,15 +111,6 @@ class Mission extends \yii\db\ActiveRecord
      */
     public function getPassages() {
         return $this->hasMany(Passage::class, ['mission_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[Shapes]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getShapes() {
-        return $this->hasMany(Shape::class, ['id' => 'shape_id'])->viaTable('mission_shape', ['mission_id' => 'id']);
     }
 
     /**

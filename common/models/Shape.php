@@ -24,8 +24,6 @@ use Yii;
  * @property Armor[] $armors
  * @property Creature $creature
  * @property Language[] $languages0
- * @property MissionShape[] $missionShapes
- * @property Mission[] $missions
  * @property Movement[] $movements
  * @property ShapeArmor[] $shapeArmors
  * @property ShapeAttack[] $shapeAttacks
@@ -66,8 +64,8 @@ class Shape extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'size_id' => 'Foreign key to "creature_size" table',
-            'creature_id' => 'Foreign key to "creature" table',
+            'size_id' => 'Foreign key to \"creature_size\" table',
+            'creature_id' => 'Foreign key to \"creature\" table',
             'name' => 'Creature shape',
             'ac' => 'Armor class',
             'languages' => 'Number of languages the creature can understand and speak if the \"can_speak\" flag is set to TRUE',
@@ -106,24 +104,6 @@ class Shape extends \yii\db\ActiveRecord
      */
     public function getLanguages0() {
         return $this->hasMany(Language::class, ['id' => 'language_id'])->viaTable('shape_language', ['shape_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[MissionShapes]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getMissionShapes() {
-        return $this->hasMany(MissionShape::class, ['shape_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[Missions]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getMissions() {
-        return $this->hasMany(Mission::class, ['id' => 'mission_id'])->viaTable('mission_shape', ['shape_id' => 'id']);
     }
 
     /**

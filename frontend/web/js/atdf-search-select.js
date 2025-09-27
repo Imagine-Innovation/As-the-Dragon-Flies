@@ -1,9 +1,8 @@
-function searchSelect(selectId, ajaxFunction) {
-    Logger.log(1, 'searchSelect', `selectId=${selectId}, ajaxFunction=${ajaxFunction}`);
-//$(".js-example-data-ajax").select2({
-    $(`#${selectId}`).select2({
+function searchSelect(searchField, ajaxFunction) {
+    Logger.log(1, 'searchSelect', `searchField=${searchField}, ajaxFunction=${ajaxFunction}`);
+    $(`#${searchField}`).select2({
         ajax: {
-            url: `/frontend/web/index.php?r=mission/${ajaxFunction}`,
+            url: `/frontend/web/index.php?r=search/${ajaxFunction}`,
             dataType: 'json',
             delay: 250,
             data: function (params) {
@@ -32,23 +31,37 @@ function searchSelect(selectId, ajaxFunction) {
             return result.text;
         }
 
-        var $container = $(
-                `<div class='select2-result-${selectId} clearfix'>` +
-                `    <span class='select2-result-${selectId}__text'></span>` +
-                `</div>`
-                );
-
-        $container.find(`.select2-result-${selectId}__text`).text(result.text);
-
-        return $container;
+        if (result.name) {
+            return $(
+                    `<div class='select2-result-${searchField} clearfix'>` +
+                    `<span class='fw-medium'>${result.name}:</span> ${result.text}` +
+                    `</div>`
+                    );
+        } else {
+            return $(`<div class='select2-result-${searchField} clearfix'>${result.text}</div>`);
+        }
     }
 }
 
 $(document).ready(function () {
 
-    if (DOMUtils.exists('#npc-first_dialog_id'))
-        searchSelect('npc-first_dialog_id', 'ajax-search-dialog');
+    let searchField = 'npc-first_dialog_id';
+    if (DOMUtils.exists(`#${searchField}`))
+        searchSelect(searchField, 'dialog');
 
-    if (DOMUtils.exists('#npc-npc_type_id'))
-        searchSelect('npc-npc_type_id', 'ajax-search-npc-type');
+    searchField = 'npc-npc_type_id';
+    if (DOMUtils.exists(`#${searchField}`))
+        searchSelect(searchField, 'npc-type');
+
+    searchField = 'trap-damage_type_id';
+    if (DOMUtils.exists(`#${searchField}`))
+        searchSelect(searchField, 'damage-type');
+
+    searchField = 'missionitem-item_id';
+    if (DOMUtils.exists(`#${searchField}`))
+        searchSelect(searchField, 'item');
+
+    searchField = 'monster-creature_id';
+    if (DOMUtils.exists(`#${searchField}`))
+        searchSelect(searchField, 'creature');
 });

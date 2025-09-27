@@ -39,7 +39,6 @@ class MissionController extends Controller
                                 'actions' => [
                                     'create', 'view', 'update',
                                     'add-detail', 'edit-detail',
-                                    'ajax-search-dialog', 'ajax-search-npc-type',
                                 ],
                                 'allow' => ManageAccessRights::isRouteAllowed($this),
                                 'roles' => ['@'],
@@ -120,7 +119,7 @@ class MissionController extends Controller
         return match ($type) {
             'NPC' => ['className' => 'Npc', 'snippet' => 'npc-form'],
             'Item' => ['className' => 'MissionItem', 'snippet' => 'item-form'],
-            'Monster' => ['className' => 'MissionShape', 'snippet' => 'monster-form'],
+            'Monster' => ['className' => 'Monster', 'snippet' => 'monster-form'],
             'Trap' => ['className' => 'Trap', 'snippet' => 'trap-form'],
             default => throw new \Exception("Unsupported type {$type}"),
         };
@@ -180,73 +179,6 @@ class MissionController extends Controller
                     'type' => $type,
                     'snippet' => $detail['snippet'],
         ]);
-    }
-
-    private function normalizeSearchString(string $inputString): string {
-        Yii::debug("*** debug *** normalizeSearchString - inputStrind={$inputString}");
-        $normalizedString = str_replace(
-                [
-                    "'", // Single quote
-                    '’', // Right single quotation mark
-                    '‘', // Left single quotation mark
-                    '´', // Acute accent
-                    '`', // Grave accent
-                ],
-                "_", // single character SQL wildcard
-                $inputString
-        );
-        Yii::debug("*** debug *** normalizeSearchString - normalizedString={$normalizedString}");
-        return $normalizedString;
-    }
-
-    public function actionAjaxSearchDialog() {
-        // Set the response format to JSON
-        Yii::$app->response->format = Response::FORMAT_JSON;
-
-        // Check if the request is a GET request and if it is an AJAX request
-        if (!$this->request->isGet || !$this->request->isAjax) {
-            // If not, return an error response
-            return ['error' => true, 'msg' => 'Not an Ajax GET request'];
-        }
-
-        $request = Yii::$app->request;
-        $userEntry = $request->get('q');
-        $searchString = $this->normalizeSearchString($userEntry);
-
-        $dialogs = Dialog::find()
-                ->select(['id', 'text as name', 'text'])
-                ->where(['like', 'text', "%{$searchString}%", false]) // The 'false' parameter prevents Yii from adding extra escaping
-                ->asArray()
-                ->all();
-
-        $searchResult = $dialogs;
-        Yii::debug($searchResult);
-        return ['error' => false, 'msg' => '', 'results' => $searchResult];
-    }
-
-    public function actionAjaxSearchNpcType() {
-        // Set the response format to JSON
-        Yii::$app->response->format = Response::FORMAT_JSON;
-
-        // Check if the request is a GET request and if it is an AJAX request
-        if (!$this->request->isGet || !$this->request->isAjax) {
-            // If not, return an error response
-            return ['error' => true, 'msg' => 'Not an Ajax GET request'];
-        }
-
-        $request = Yii::$app->request;
-        $userEntry = $request->get('q');
-        $searchString = $this->normalizeSearchString($userEntry);
-
-        $dialogs = \common\models\NpcType::find()
-                ->select(['id', 'name', 'description as text'])
-                ->where(['like', 'description', "%{$searchString}%", false]) // The 'false' parameter prevents Yii from adding extra escaping
-                ->asArray()
-                ->all();
-
-        $searchResult = $dialogs;
-        Yii::debug($searchResult);
-        return ['error' => false, 'msg' => '', 'results' => $searchResult];
     }
 
     /**

@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
-/** @var common\models\Trap $model */
+/** @var common\models\Monster $model */
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
@@ -14,34 +14,27 @@ use yii\widgets\ActiveForm;
 
 <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
 
-<?= $form->field($model, 'image')->textInput(['maxlength' => true]) ?>
-
 <?=
-        $form->field($model, 'damage_type_id')
+        $form->field($model, 'creature_id')
         ->dropdownList(
-                $model->damage_type_id ? [$model->damage_type_id => $model->damageType->name] : [],
+                $model->creature_id ? [$model->creature_id => $model->creature->name] : [],
                 [
                     'class' => 'select2-container w-100',
                     'data-minimum-results-for-search' => -1,
-                    'data-placeholder' => "Select the type of NPC",
+                    'data-placeholder' => "Select a shape to appear",
                 ]
         )
-        ->label('Damage type')
+        ->label('Creature')
 ?>
 
-<?= $form->field($model, 'damage')->textInput(['maxlength' => true]) ?>
+<?= $form->field($model, 'image')->textInput(['maxlength' => true]) ?>
 
-<?php // $form->field($model, 'is_team_trap')->textInput()  ?>
-<?=
-$form->field($model, 'is_team_trap')->radioList([
-    0 => 'Only the player is trapped',
-    1 => 'The whole team is trapped'
-])
-?>
+<?= $form->field($model, 'found')->textInput() ?>
+
+<?= $form->field($model, 'identified')->textInput() ?>
 
 <div class="form-group">
     <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
 </div>
 
 <?php ActiveForm::end(); ?>
-

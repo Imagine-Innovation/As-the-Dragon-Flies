@@ -5,19 +5,21 @@ namespace common\models;
 use Yii;
 
 /**
- * This is the model class for table "mission_shape".
+ * This is the model class for table "monster".
  *
- * @property int $shape_id Foreign key to "shape" table
+ * @property int $id Primary key
  * @property int $mission_id Foreign key to "mission" table
- * @property string|null $name Monster name
+ * @property int $creature_id Foreign key to "creature" table
+ * @property string $name Monster name
  * @property string|null $description Short description
+ * @property string|null $image Image
  * @property int $found Percentage chance that the item will be found
  * @property int $identified Percentage chance that the item will be identified
  *
+ * @property Creature $creature
  * @property Mission $mission
- * @property Shape $shape
  */
-class MissionShape extends \yii\db\ActiveRecord
+class Monster extends \yii\db\ActiveRecord
 {
 
 
@@ -25,7 +27,7 @@ class MissionShape extends \yii\db\ActiveRecord
      * {@inheritdoc}
      */
     public static function tableName() {
-        return 'mission_shape';
+        return 'monster';
     }
 
     /**
@@ -33,15 +35,14 @@ class MissionShape extends \yii\db\ActiveRecord
      */
     public function rules() {
         return [
-            [['name', 'description'], 'default', 'value' => null],
+            [['description', 'image'], 'default', 'value' => null],
             [['found'], 'default', 'value' => 25],
             [['identified'], 'default', 'value' => 50],
-            [['shape_id', 'mission_id'], 'required'],
-            [['shape_id', 'mission_id', 'found', 'identified'], 'integer'],
+            [['mission_id', 'creature_id', 'name'], 'required'],
+            [['mission_id', 'creature_id', 'found', 'identified'], 'integer'],
             [['description'], 'string'],
-            [['name'], 'string', 'max' => 32],
-            [['shape_id', 'mission_id'], 'unique', 'targetAttribute' => ['shape_id', 'mission_id']],
-            [['shape_id'], 'exist', 'skipOnError' => true, 'targetClass' => Shape::class, 'targetAttribute' => ['shape_id' => 'id']],
+            [['name', 'image'], 'string', 'max' => 32],
+            [['creature_id'], 'exist', 'skipOnError' => true, 'targetClass' => Creature::class, 'targetAttribute' => ['creature_id' => 'id']],
             [['mission_id'], 'exist', 'skipOnError' => true, 'targetClass' => Mission::class, 'targetAttribute' => ['mission_id' => 'id']],
         ];
     }
@@ -51,13 +52,24 @@ class MissionShape extends \yii\db\ActiveRecord
      */
     public function attributeLabels() {
         return [
-            'shape_id' => 'Foreign key to "shape" table',
-            'mission_id' => 'Foreign key to "mission" table',
+            'id' => 'Primary key',
+            'mission_id' => 'Foreign key to \"mission\" table',
+            'creature_id' => 'Foreign key to \"creature\" table',
             'name' => 'Monster name',
             'description' => 'Short description',
+            'image' => 'Image',
             'found' => 'Percentage chance that the item will be found',
             'identified' => 'Percentage chance that the item will be identified',
         ];
+    }
+
+    /**
+     * Gets query for [[Creature]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCreature() {
+        return $this->hasOne(Creature::class, ['id' => 'creature_id']);
     }
 
     /**
@@ -67,15 +79,6 @@ class MissionShape extends \yii\db\ActiveRecord
      */
     public function getMission() {
         return $this->hasOne(Mission::class, ['id' => 'mission_id']);
-    }
-
-    /**
-     * Gets query for [[Shape]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getShape() {
-        return $this->hasOne(Shape::class, ['id' => 'shape_id']);
     }
 
 }

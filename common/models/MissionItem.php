@@ -7,10 +7,12 @@ use Yii;
 /**
  * This is the model class for table "mission_item".
  *
+ * @property int $id Primary key
  * @property int $item_id Foreign key to "item" table
  * @property int $mission_id Foreign key to "mission" table
  * @property string $name Item name in the mission
  * @property string|null $description Short description
+ * @property string|null $image Image
  * @property int $found The percentage chance that the item will be found
  * @property int $identified The percentage chance that the item will be recognized
  *
@@ -33,14 +35,13 @@ class MissionItem extends \yii\db\ActiveRecord
      */
     public function rules() {
         return [
-            [['description'], 'default', 'value' => null],
+            [['description', 'image'], 'default', 'value' => null],
             [['found'], 'default', 'value' => 25],
             [['identified'], 'default', 'value' => 50],
             [['item_id', 'mission_id', 'name'], 'required'],
             [['item_id', 'mission_id', 'found', 'identified'], 'integer'],
             [['description'], 'string'],
-            [['name'], 'string', 'max' => 32],
-            [['item_id', 'mission_id'], 'unique', 'targetAttribute' => ['item_id', 'mission_id']],
+            [['name', 'image'], 'string', 'max' => 32],
             [['item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['item_id' => 'id']],
             [['mission_id'], 'exist', 'skipOnError' => true, 'targetClass' => Mission::class, 'targetAttribute' => ['mission_id' => 'id']],
         ];
@@ -51,10 +52,12 @@ class MissionItem extends \yii\db\ActiveRecord
      */
     public function attributeLabels() {
         return [
-            'item_id' => 'Foreign key to "item" table',
-            'mission_id' => 'Foreign key to "mission" table',
+            'id' => 'Primary key',
+            'item_id' => 'Foreign key to \"item\" table',
+            'mission_id' => 'Foreign key to \"mission\" table',
             'name' => 'Item name in the mission',
             'description' => 'Short description',
+            'image' => 'Image',
             'found' => 'The percentage chance that the item will be found',
             'identified' => 'The percentage chance that the item will be recognized',
         ];

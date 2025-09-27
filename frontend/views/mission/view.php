@@ -48,7 +48,7 @@ $this->params['breadcrumbs'] = $breadcrumbs;
                         <div class="row g-4">
                             <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->npcs, 'missionId' => $model->id, 'type' => 'NPC']) ?>
                             <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->missionItems, 'missionId' => $model->id, 'type' => 'Item']) ?>
-                            <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->missionShapes, 'missionId' => $model->id, 'type' => 'Monster']) ?>
+                            <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->monsters, 'missionId' => $model->id, 'type' => 'Monster']) ?>
                             <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->traps, 'missionId' => $model->id, 'type' => 'Trap']) ?>
                         </div>
                     </section>
