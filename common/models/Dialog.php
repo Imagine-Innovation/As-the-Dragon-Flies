@@ -9,13 +9,11 @@ use Yii;
  *
  * @property int $id Primary key
  * @property int $npc_id Foreign key to "npc" table
- * @property string $caption What the NPC looks like
  * @property string $text What the NPC says
  * @property int|null $success_id Optional foreign key to "success" table
  *
  * @property Npc $npc
  * @property Reply[] $replies
- * @property Reply[] $replies0
  * @property Success $success
  */
 class Dialog extends \yii\db\ActiveRecord
@@ -34,9 +32,9 @@ class Dialog extends \yii\db\ActiveRecord
     public function rules() {
         return [
             [['success_id'], 'default', 'value' => null],
-            [['npc_id', 'caption', 'text'], 'required'],
+            [['npc_id', 'text'], 'required'],
             [['npc_id', 'success_id'], 'integer'],
-            [['caption', 'text'], 'string'],
+            [['text'], 'string'],
             [['npc_id'], 'exist', 'skipOnError' => true, 'targetClass' => Npc::class, 'targetAttribute' => ['npc_id' => 'id']],
             [['success_id'], 'exist', 'skipOnError' => true, 'targetClass' => Success::class, 'targetAttribute' => ['success_id' => 'id']],
         ];
@@ -48,10 +46,9 @@ class Dialog extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'npc_id' => 'Foreign key to "npc\" table',
-            'caption' => 'What the NPC looks like',
+            'npc_id' => 'Foreign key to "npc" table',
             'text' => 'What the NPC says',
-            'success_id' => 'Optional foreign key to \"success\" table',
+            'success_id' => 'Optional foreign key to "success" table',
         ];
     }
 
@@ -71,15 +68,6 @@ class Dialog extends \yii\db\ActiveRecord
      */
     public function getReplies() {
         return $this->hasMany(Reply::class, ['dialog_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[Replies0]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getReplies0() {
-        return $this->hasMany(Reply::class, ['next_dialog_id' => 'id']);
     }
 
     /**

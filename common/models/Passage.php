@@ -14,12 +14,11 @@ use Yii;
  * @property string|null $image Image
  * @property int $found Give the probability of finding the passage (%)
  *
- * @property Interaction[] $interactions
+ * @property Action[] $actions
  * @property Mission $mission
  */
 class Passage extends \yii\db\ActiveRecord
 {
-
 
     /**
      * {@inheritdoc}
@@ -58,12 +57,12 @@ class Passage extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Interactions]].
+     * Gets query for [[Actions]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getInteractions() {
-        return $this->hasMany(Interaction::class, ['passage_id' => 'id']);
+    public function getActions() {
+        return $this->hasMany(Action::class, ['passage_id' => 'id']);
     }
 
     /**
@@ -74,5 +73,4 @@ class Passage extends \yii\db\ActiveRecord
     public function getMission() {
         return $this->hasOne(Mission::class, ['id' => 'mission_id']);
     }
-
 }

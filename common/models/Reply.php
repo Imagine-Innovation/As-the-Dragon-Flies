@@ -13,12 +13,11 @@ use Yii;
  * @property string|null $text Question
  *
  * @property Dialog $dialog
- * @property Interaction[] $interactions
+ * @property Action[] $actions
  * @property Dialog $nextDialog
  */
 class Reply extends \yii\db\ActiveRecord
 {
-
 
     /**
      * {@inheritdoc}
@@ -63,12 +62,12 @@ class Reply extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Interactions]].
+     * Gets query for [[Actions]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getInteractions() {
-        return $this->hasMany(Interaction::class, ['reply_id' => 'id']);
+    public function getActions() {
+        return $this->hasMany(Action::class, ['reply_id' => 'id']);
     }
 
     /**
@@ -79,5 +78,4 @@ class Reply extends \yii\db\ActiveRecord
     public function getNextDialog() {
         return $this->hasOne(Dialog::class, ['id' => 'next_dialog_id']);
     }
-
 }

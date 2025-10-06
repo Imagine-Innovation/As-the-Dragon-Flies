@@ -8,12 +8,14 @@ use yii\widgets\ActiveForm;
 /** @var yii\widgets\ActiveForm $form */
 /** @var string $storyId */
 /** @var string $chapterId */
+/** @var string $missionId */
 ?>
 
 <div class="d-none">
     Hidden div to embeb utility tags for PHP/JS communication
     <span id="hiddenImagePath">story/<?= $storyId ?></span>
     <span id="hiddenFormName">npc</span>
+    <span id="hiddenMissionId"><?= $missionId ?></span>
 </div>
 
 <?php $form = ActiveForm::begin(); ?>
@@ -58,7 +60,7 @@ use yii\widgets\ActiveForm;
         ?>
 
         <?php
-        if ($model->firstDialog) {
+        if ($model->id) {
             echo $form->field($model, 'first_dialog_id')
                     ->dropdownList(
                             $model->first_dialog_id ? [$model->first_dialog_id => $model->firstDialog->text] : [],
@@ -83,3 +85,14 @@ use yii\widgets\ActiveForm;
 </div>
 
 <?php ActiveForm::end(); ?>
+
+<?php if ($model->first_dialog_id): ?>
+    <section id="NPCDialog" class="card g-4">
+        <div class="card-header">
+            <h3 class="card-title">Dialog with "<?= $model->name ?>"</h3>
+        </div>
+        <div class="card-body">
+            <?= $this->renderFile('@app/views/mission/snippets/dialog.php', ['dialog' => $model->firstDialog]) ?>
+        </div>
+    </section>
+<?php endif; ?>

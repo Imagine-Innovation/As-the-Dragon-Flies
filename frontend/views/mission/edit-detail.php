@@ -7,7 +7,7 @@ use yii\helpers\Html;
 /** @var common\models\Mission $mission */
 /** @var string $type */
 /** @var string $snippet */
-$this->title = "Update {$model->name} {$type}";
+$this->title = "Update {$type}: \"{$model->name}\"";
 $chapter = $mission->chapter;
 $story = $chapter->story;
 
@@ -31,6 +31,7 @@ $this->params['breadcrumbs'] = $breadcrumbs;
         'model' => $model,
         'storyId' => $story->id,
         'chapterId' => $chapter->id,
+        'missionId' => $mission->id,
     ])
     ?>
 

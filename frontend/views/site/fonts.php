@@ -16,21 +16,34 @@ $fonts = [
     'fetteclassicunzfraktur', 'hildasonnenschein', 'insula', 'lancaster', 'marigoldwild',
     'mediaevalcaps', 'oldeenglishregular', 'primitive', 'rotundapommerania', 'sidhenoble',
     /* special */
-    'aelfa', 'cirnajacalligraphy', 'elficcaslin', 'glagolitsa', 'greifswaldertengwar',
-    'saratieldamarltr', 'stormning', 'tengwareldamar', 'tengwarparmaite', 'valmariceldamar',
+    'cirnajacalligraphy', 'elficcaslin', 'glagolitsa', 'greifswaldertengwar',
+    'saratieldamarltr', 'tengwareldamar', 'tengwarparmaite', 'valmariceldamar',
 ];
+
+$sampleText = "As the Dragon Flies";
 ?>
+<link href="/frontend/web/css/dev-fonts.css" rel="stylesheet">
 <div class="container-fluid">
     <div class="row g-4">
         <div class="col-6 col-xxl-3">
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title">Normal</h4>
-                    <h1 class="display-1">As the Dragon Flies</h1>
-                    <p class="h1">As the Dragon Flies</p>
-                    <p class="h2">As the Dragon Flies</p>
-                    <p class="h3">As the Dragon Flies</p>
-                    <p class="h4">As the Dragon Flies</p>
+                    <h1 class="display-1"><?= $sampleText ?></h1>
+                    <p class="h1"><?= $sampleText ?></p>
+                    <p class="h2"><?= $sampleText ?></p>
+                    <p class="h3"><?= $sampleText ?></p>
+                    <p class="h4"><?= $sampleText ?></p>
+                    <p class="h4"><?= $sampleText ?></p>
+                    <p class="fw-bold"><?= $sampleText ?></p>
+                    <p class="fw-bolder"><?= $sampleText ?></p>
+                    <p class="fw-semibold"><?= $sampleText ?>.</p>
+                    <p class="fw-medium"><?= $sampleText ?></p>
+                    <p class="fw-normal"><?= $sampleText ?></p>
+                    <p class="fw-light"><?= $sampleText ?></p>
+                    <p class="fw-lighter"><?= $sampleText ?></p>
+                    <p class="fst-italic"><?= $sampleText ?></p>
+                    <p class="fst-normal"><?= $sampleText ?></p>
                     <p class="lead">
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                         Vivamus massa sapien, maximus eget bibendum id, dignissim cursus quam.
@@ -64,11 +77,20 @@ $fonts = [
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title"><?= $font ?></h4>
-                        <h1 class="display-1 text-<?= $font ?>">As the Dragon Flies</h1>
-                        <p class="h1 text-<?= $font ?>">As the Dragon Flies</p>
-                        <p class="h2 text-<?= $font ?>">As the Dragon Flies</p>
-                        <p class="h3 text-<?= $font ?>">As the Dragon Flies</p>
-                        <p class="h4 text-<?= $font ?>">As the Dragon Flies</p>
+                        <h1 class="display-1 text-<?= $font ?>"><?= $sampleText ?></h1>
+                        <p class="h1 text-<?= $font ?>"><?= $sampleText ?></p>
+                        <p class="h2 text-<?= $font ?>"><?= $sampleText ?></p>
+                        <p class="h3 text-<?= $font ?>"><?= $sampleText ?></p>
+                        <p class="h4 text-<?= $font ?>"><?= $sampleText ?></p>
+                        <p class="text-<?= $font ?> fw-bold"><?= $sampleText ?></p>
+                        <p class="text-<?= $font ?> fw-bolder"><?= $sampleText ?></p>
+                        <p class="text-<?= $font ?> fw-semibold"><?= $sampleText ?>.</p>
+                        <p class="text-<?= $font ?> fw-medium"><?= $sampleText ?></p>
+                        <p class="text-<?= $font ?> fw-normal"><?= $sampleText ?></p>
+                        <p class="text-<?= $font ?> fw-light"><?= $sampleText ?></p>
+                        <p class="text-<?= $font ?> fw-lighter"><?= $sampleText ?></p>
+                        <p class="text-<?= $font ?> fst-italic"><?= $sampleText ?></p>
+                        <p class="text-<?= $font ?> fst-normal"><?= $sampleText ?></p>
                         <p class="lead text-<?= $font ?>">
                             Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                             Vivamus massa sapien, maximus eget bibendum id, dignissim cursus quam.

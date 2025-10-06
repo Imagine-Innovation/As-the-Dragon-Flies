@@ -8,12 +8,14 @@ use yii\widgets\ActiveForm;
 /** @var yii\widgets\ActiveForm $form */
 /** @var string $storyId */
 /** @var string $chapterId */
+/** @var string $missionId */
 ?>
 
 <div class="d-none">
     Hidden div to embeb utility tags for PHP/JS communication
     <span id="hiddenImagePath">story/<?= $storyId ?></span>
     <span id="hiddenFormName">trap</span>
+    <span id="hiddenMissionId"><?= $missionId ?></span>
 </div>
 
 <?php $form = ActiveForm::begin(); ?>

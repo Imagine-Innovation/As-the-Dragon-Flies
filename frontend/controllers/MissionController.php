@@ -121,6 +121,7 @@ class MissionController extends Controller
             'Item' => ['className' => 'MissionItem', 'snippet' => 'item-form'],
             'Monster' => ['className' => 'Monster', 'snippet' => 'monster-form'],
             'Trap' => ['className' => 'Trap', 'snippet' => 'trap-form'],
+            'Action' => ['className' => 'Action', 'snippet' => 'action-form'],
             default => throw new \Exception("Unsupported type {$type}"),
         };
     }

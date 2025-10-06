@@ -24,17 +24,17 @@ use Yii;
  * @property int $is_wearable Indicates that the item can be worn
  * @property int $is_purchasable Indicates that the item can be bought in the shop
  *
+ * @property Action[] $actions
+ * @property Action[] $actions0
  * @property Armor $armor
  * @property BackgroundItem[] $backgroundItems
  * @property Category[] $categories
  * @property ClassEquipment[] $classEquipments
  * @property ClassItemProficiency[] $classItemProficiencies
- * @property Interaction[] $interactions
  * @property ItemCategory[] $itemCategories
  * @property ItemType $itemType
  * @property Item[] $items
  * @property MissionItem[] $missionItems
- * @property Mission[] $missions
  * @property Pack[] $packs
  * @property Pack[] $packs0
  * @property Item[] $parentItems
@@ -43,6 +43,8 @@ use Yii;
  * @property Player[] $players
  * @property Player[] $players0
  * @property Poison $poison
+ * @property Scroll $scroll
+ * @property Success[] $successes
  * @property Weapon $weapon
  * @property Weapon[] $weapons
  *
@@ -112,6 +114,24 @@ class Item extends \yii\db\ActiveRecord
     }
 
     /**
+     * Gets query for [[Actions]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getActions() {
+        return $this->hasMany(Action::class, ['item_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Actions0]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getActions0() {
+        return $this->hasMany(Action::class, ['required_item_id' => 'id']);
+    }
+
+    /**
      * Gets query for [[Armor]].
      *
      * @return \yii\db\ActiveQuery
@@ -157,15 +177,6 @@ class Item extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Interactions]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getInteractions() {
-        return $this->hasMany(Interaction::class, ['item_id' => 'id']);
-    }
-
-    /**
      * Gets query for [[ItemCategories]].
      *
      * @return \yii\db\ActiveQuery
@@ -199,15 +210,6 @@ class Item extends \yii\db\ActiveRecord
      */
     public function getMissionItems() {
         return $this->hasMany(MissionItem::class, ['item_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[Missions]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getMissions() {
-        return $this->hasMany(Mission::class, ['id' => 'mission_id'])->viaTable('mission_item', ['item_id' => 'id']);
     }
 
     /**
@@ -280,6 +282,24 @@ class Item extends \yii\db\ActiveRecord
      */
     public function getPoison() {
         return $this->hasOne(Poison::class, ['item_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Scroll]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getScroll() {
+        return $this->hasOne(Scroll::class, ['item_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Successes]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSuccesses() {
+        return $this->hasMany(Success::class, ['item_id' => 'id']);
     }
 
     /**

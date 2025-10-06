@@ -14,7 +14,7 @@ use Yii;
  * @property string|null $image Image
  *
  * @property Chapter $chapter
- * @property Interaction[] $interactions
+ * @property Action[] $actions
  * @property MissionItem[] $missionItems
  * @property Monster[] $monsters
  * @property Npc[] $npcs
@@ -52,7 +52,7 @@ class Mission extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'chapter_id' => 'Foreign key to \"chapter\" table',
+            'chapter_id' => 'Foreign key to "chapter" table',
             'name' => 'Mission name',
             'description' => 'Short description',
             'image' => 'Image',
@@ -69,12 +69,12 @@ class Mission extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Interactions]].
+     * Gets query for [[Actions]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getInteractions() {
-        return $this->hasMany(Interaction::class, ['mission_id' => 'id']);
+    public function getActions() {
+        return $this->hasMany(Action::class, ['mission_id' => 'id']);
     }
 
     /**

@@ -13,14 +13,13 @@ use Yii;
  * @property string|null $description Short description
  *
  * @property Ability $ability
+ * @property Action[] $actions
  * @property BackgroundSkill[] $backgroundSkills
  * @property Background[] $backgrounds
  * @property ClassSkill[] $classSkills
  * @property CharacterClass[] $classes
  * @property CreatureSkill[] $creatureSkills
  * @property Creature[] $creatures
- * @property PassageSkill[] $passageSkills
- * @property Passage[] $passages
  * @property PlayerSkill[] $playerSkills
  * @property Player[] $players
  */
@@ -55,7 +54,7 @@ class Skill extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'ability_id' => 'Foreign key to "ability" table',
+            'ability_id' => 'Foreign key to "ability\" table',
             'name' => 'Skill',
             'description' => 'Short description',
         ];
@@ -68,6 +67,15 @@ class Skill extends \yii\db\ActiveRecord
      */
     public function getAbility() {
         return $this->hasOne(Ability::class, ['id' => 'ability_id']);
+    }
+
+    /**
+     * Gets query for [[Actions]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getActions() {
+        return $this->hasMany(Action::class, ['skill_id' => 'id']);
     }
 
     /**
@@ -122,24 +130,6 @@ class Skill extends \yii\db\ActiveRecord
      */
     public function getCreatures() {
         return $this->hasMany(Creature::class, ['id' => 'creature_id'])->viaTable('creature_skill', ['skill_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[PassageSkills]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getPassageSkills() {
-        return $this->hasMany(PassageSkill::class, ['skill_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[Passages]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getPassages() {
-        return $this->hasMany(Passage::class, ['id' => 'passage_id'])->viaTable('passage_skill', ['skill_id' => 'id']);
     }
 
     /**

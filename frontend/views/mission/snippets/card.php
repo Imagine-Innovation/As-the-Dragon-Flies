@@ -7,12 +7,13 @@ use yii\helpers\Url;
 /** @var yii\db\ActiveRecord[] $properties */
 /** @var int $missionId */
 /** @var string $type */
+/** @var string $class */
 if ($properties) {
     $firstModel = $properties[0];
     $propertyNames = $firstModel->attributes();
 }
 ?>
-<div class="col-12 col-lg-6 col-xl-4 col-xxl-3">
+<div class="<?= $class ?? 'col' ?>">
     <article class="card mb-3 h-100" id="Mission<?= $type ?>">
         <div class="card-header">
             <h6 class="card-title"><?= $type ?></h6>

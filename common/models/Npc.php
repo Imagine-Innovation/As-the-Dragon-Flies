@@ -17,7 +17,7 @@ use Yii;
  *
  * @property Dialog[] $dialogs
  * @property Dialog $firstDialog
- * @property Interaction[] $interactions
+ * @property Action[] $actions
  * @property Mission $mission
  * @property NpcType $npcType
  */
@@ -81,12 +81,12 @@ class Npc extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Interactions]].
+     * Gets query for [[Actions]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getInteractions() {
-        return $this->hasMany(Interaction::class, ['npc_id' => 'id']);
+    public function getActions() {
+        return $this->hasMany(Action::class, ['npc_id' => 'id']);
     }
 
     /**

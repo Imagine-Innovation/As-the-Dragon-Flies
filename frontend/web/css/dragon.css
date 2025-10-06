@@ -83,6 +83,20 @@
     font-family:'Berenika', sans-serif;
 }
 
+.text-elvish {
+    font-family:'TengwarEldamar', sans-serif;
+}
+
+.text-dwarvish {
+    font-family:'Glagolitsa', sans-serif;
+    font-style: oblique;
+}
+
+.text-halfling {
+    font-family: 'GreifswalderTengwar', serif;
+    font-size-adjust: 0.8;
+}
+
 .illuminate::first-letter {
     font-family:'Berenika', sans-serif;
     font-size:2em;

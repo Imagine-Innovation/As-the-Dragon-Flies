@@ -1,5 +1,6 @@
 const formName = $('#hiddenFormName').html();
 const imagePath = $('#hiddenImagePath').html();
+const missionId = $('#hiddenMissionId').html();
 const config = [
     {
         form: 'mission',
@@ -85,6 +86,53 @@ const config = [
                 imagePath: imagePath
             }
         ]
+    },
+    {
+        form: 'action',
+        params: [
+            {
+                field: 'action-passage_id',
+                ajax: 'passage',
+                minChar: 0,
+                imagePath: null
+            },
+            {
+                field: 'action-item_id',
+                ajax: 'mission-item',
+                minChar: 0,
+                imagePath: null
+            },
+            {
+                field: 'action-npc_id',
+                ajax: 'npc',
+                minChar: 0,
+                imagePath: null
+            },
+            {
+                field: 'action-reply_id',
+                ajax: 'reply',
+                minChar: 3,
+                imagePath: null
+            },
+            {
+                field: 'action-required_item_id',
+                ajax: 'item',
+                minChar: 3,
+                imagePath: null
+            },
+            {
+                field: 'action-skill_id',
+                ajax: 'skill',
+                minChar: 3,
+                imagePath: null
+            },
+            {
+                field: 'action-trap_id',
+                ajax: 'trap',
+                minChar: 0,
+                imagePath: null
+            }
+        ]
     }
 ];
 
@@ -96,10 +144,13 @@ function searchSelect(searchField, ajaxFunction, minChar = 3, imagePath = null) 
             dataType: 'json',
             delay: 250,
             data: function (params) {
-                return {
+                const ajaxParams = {
                     search: params.term, // search term
-                    folder: imagePath
+                    folder: imagePath,
+                    missionId: missionId
                 };
+                console.log(JSON.stringify(ajaxParams));
+                return ajaxParams;
             },
             dropdownCssClass: 'form-select',
             processResults: function (data, params) {

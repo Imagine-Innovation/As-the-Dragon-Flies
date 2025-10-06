@@ -9,14 +9,16 @@ use Yii;
  *
  * @property int $id Primary key
  * @property int $next_mission_id Foreign key to "mission" table
- * @property int $interaction_id Foreign key to "interaction" table
+ * @property int $action_id Foreign key to "action" table
+ * @property int|null $item_id Optional foreign key to "item" table
  * @property string $name Success
  * @property string|null $description Short description
  * @property int $gp Gained Gold Pieces (GP)
  * @property int $xp Gained Experience Points (XP)
  *
  * @property Dialog[] $dialogs
- * @property Interaction $interaction
+ * @property Action $action
+ * @property Item $item
  * @property Mission $nextMission
  */
 class Success extends \yii\db\ActiveRecord
@@ -34,14 +36,15 @@ class Success extends \yii\db\ActiveRecord
      */
     public function rules() {
         return [
-            [['description'], 'default', 'value' => null],
+            [['item_id', 'description'], 'default', 'value' => null],
             [['xp'], 'default', 'value' => 0],
-            [['next_mission_id', 'interaction_id', 'name'], 'required'],
-            [['next_mission_id', 'interaction_id', 'gp', 'xp'], 'integer'],
+            [['next_mission_id', 'action_id', 'name'], 'required'],
+            [['next_mission_id', 'action_id', 'item_id', 'gp', 'xp'], 'integer'],
             [['description'], 'string'],
             [['name'], 'string', 'max' => 32],
-            [['interaction_id'], 'exist', 'skipOnError' => true, 'targetClass' => Interaction::class, 'targetAttribute' => ['interaction_id' => 'id']],
+            [['action_id'], 'exist', 'skipOnError' => true, 'targetClass' => Action::class, 'targetAttribute' => ['action_id' => 'id']],
             [['next_mission_id'], 'exist', 'skipOnError' => true, 'targetClass' => Mission::class, 'targetAttribute' => ['next_mission_id' => 'id']],
+            [['item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['item_id' => 'id']],
         ];
     }
 
@@ -52,7 +55,8 @@ class Success extends \yii\db\ActiveRecord
         return [
             'id' => 'Primary key',
             'next_mission_id' => 'Foreign key to "mission" table',
-            'interaction_id' => 'Foreign key to "interaction" table',
+            'action_id' => 'Foreign key to "action" table',
+            'item_id' => 'Optional foreign key to "item" table',
             'name' => 'Success',
             'description' => 'Short description',
             'gp' => 'Gained Gold Pieces (GP)',
@@ -70,12 +74,21 @@ class Success extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Interaction]].
+     * Gets query for [[Action]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getInteraction() {
-        return $this->hasOne(Interaction::class, ['id' => 'interaction_id']);
+    public function getAction() {
+        return $this->hasOne(Action::class, ['id' => 'action_id']);
+    }
+
+    /**
+     * Gets query for [[Item]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getItem() {
+        return $this->hasOne(Item::class, ['id' => 'item_id']);
     }
 
     /**

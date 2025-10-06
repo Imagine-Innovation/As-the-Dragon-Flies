@@ -31,6 +31,7 @@ $this->params['breadcrumbs'] = $breadcrumbs;
         'model' => $model,
         'storyId' => $story->id,
         'chapterId' => $chapter->id,
+        'missionId' => $mission->id,
     ])
     ?>
 
