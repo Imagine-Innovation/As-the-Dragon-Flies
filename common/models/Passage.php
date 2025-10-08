@@ -8,7 +8,7 @@ use Yii;
  * This is the model class for table "passage".
  *
  * @property int $id Primary key
- * @property int $mission_id Foreign key to "mission" table
+ * @property int $mission_id Foreign key to “mission” table
  * @property string $name Passage
  * @property string|null $description Short description
  * @property string|null $image Image
@@ -19,6 +19,7 @@ use Yii;
  */
 class Passage extends \yii\db\ActiveRecord
 {
+
 
     /**
      * {@inheritdoc}
@@ -48,7 +49,7 @@ class Passage extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'mission_id' => 'Foreign key to "mission" table',
+            'mission_id' => 'Foreign key to “mission” table',
             'name' => 'Passage',
             'description' => 'Short description',
             'image' => 'Image',
@@ -73,4 +74,5 @@ class Passage extends \yii\db\ActiveRecord
     public function getMission() {
         return $this->hasOne(Mission::class, ['id' => 'mission_id']);
     }
+
 }

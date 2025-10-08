@@ -7,13 +7,15 @@ use Yii;
 /**
  * This is the model class for table "race_group_alignment".
  *
- * @property int $race_group_id Foreign key to "race_group" table
- * @property int $alignment_id Foreign key to "alignment" table
+ * @property int $race_group_id Foreign key to “race_group” table
+ * @property int $alignment_id Foreign key to “alignment” table
  *
  * @property Alignment $alignment
  * @property RaceGroup $raceGroup
  */
-class RaceGroupAlignment extends \yii\db\ActiveRecord {
+class RaceGroupAlignment extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -40,8 +42,8 @@ class RaceGroupAlignment extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'race_group_id' => 'Foreign key to "race_group" table',
-            'alignment_id' => 'Foreign key to "alignment" table',
+            'race_group_id' => 'Foreign key to “race_group” table',
+            'alignment_id' => 'Foreign key to “alignment” table',
         ];
     }
 
@@ -62,4 +64,5 @@ class RaceGroupAlignment extends \yii\db\ActiveRecord {
     public function getRaceGroup() {
         return $this->hasOne(RaceGroup::class, ['id' => 'race_group_id']);
     }
+
 }

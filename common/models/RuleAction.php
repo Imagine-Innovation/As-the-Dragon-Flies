@@ -8,15 +8,17 @@ use Yii;
  * This is the model class for table "rule_action".
  *
  * @property int $id Primary key.
- * @property int $model_id Foreign key to "rule_component" table.
- * @property int $rule_id Foreign key to "rule" table.
+ * @property int $model_id Foreign key to “rule_component” table.
+ * @property int $rule_id Foreign key to “rule” table.
  * @property string $name Action
  * @property string|null $description Short description of the expected action
  *
  * @property RuleModel $model
  * @property Rule $rule
  */
-class RuleAction extends \yii\db\ActiveRecord {
+class RuleAction extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -30,6 +32,7 @@ class RuleAction extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['description'], 'default', 'value' => null],
             [['model_id', 'rule_id', 'name'], 'required'],
             [['model_id', 'rule_id'], 'integer'],
             [['description'], 'string'],
@@ -45,8 +48,8 @@ class RuleAction extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => 'Primary key.',
-            'model_id' => 'Foreign key to "rule_component\" table.',
-            'rule_id' => 'Foreign key to "rule\" table.',
+            'model_id' => 'Foreign key to “rule_component” table.',
+            'rule_id' => 'Foreign key to “rule” table.',
             'name' => 'Action',
             'description' => 'Short description of the expected action',
         ];
@@ -69,4 +72,5 @@ class RuleAction extends \yii\db\ActiveRecord {
     public function getRule() {
         return $this->hasOne(Rule::class, ['id' => 'rule_id']);
     }
+
 }

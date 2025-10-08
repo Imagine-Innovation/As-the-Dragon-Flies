@@ -12,16 +12,16 @@ use Yii;
  * This is the model class for table "player".
  *
  * @property int $id Primary key
- * @property int $level_id Foreign key to "level" table
- * @property int $user_id Foreign key to "user" table
- * @property int $race_id Foreign key to "race" table
- * @property int $class_id Foreign key to "character_class" table
- * @property int $background_id Foreign key to "background" table
- * @property string|null $description Player description
- * @property int|null $alignment_id Foreign key to "alignment" table
- * @property int|null $image_id Foreign key to "image" table. May be empty if no avatar is chosen.
- * @property int|null $quest_id Optional foreign key to "quest" table
+ * @property int $class_id Foreign key to “character_class” table
+ * @property int $level_id Foreign key to “level” table
+ * @property int $user_id Foreign key to “user” table
+ * @property int $race_id Foreign key to “race” table
+ * @property int $background_id Foreign key to “background” table
+ * @property int|null $alignment_id Foreign key to “alignment” table
+ * @property int|null $image_id Foreign key to “image” table. May be empty if no avatar is chosen.
+ * @property int|null $quest_id Optional foreign key to “quest” table
  * @property string|null $name Character name
+ * @property string|null $description Player description
  * @property int|null $status Status of the player (Deleted=0, Inactive=9, Active=10)
  * @property string|null $gender Gender: C=Child, F=Femelle, M=Male
  * @property int|null $age Age of the player. Validated regarding the actual race
@@ -99,14 +99,14 @@ class Player extends \yii\db\ActiveRecord
      */
     public function rules() {
         return [
-            [['description', 'alignment_id', 'image_id', 'quest_id', 'name', 'gender', 'age', 'speed', 'created_at', 'updated_at'], 'default', 'value' => null],
+            [['alignment_id', 'image_id', 'quest_id', 'name', 'description', 'gender', 'age', 'speed', 'created_at', 'updated_at'], 'default', 'value' => null],
             [['level_id'], 'default', 'value' => 1],
             [['status'], 'default', 'value' => AppStatus::INACTIVE->value],
             [['status'], 'in', 'range' => AppStatus::getValuesForPlayer()],
             [['experience_points'], 'default', 'value' => 0],
             [['armor_class'], 'default', 'value' => 10],
-            [['level_id', 'user_id', 'race_id', 'class_id', 'background_id', 'alignment_id', 'image_id', 'quest_id', 'status', 'age', 'experience_points', 'hit_points', 'max_hit_points', 'armor_class', 'speed', 'created_at', 'updated_at'], 'integer'],
-            [['user_id', 'race_id', 'class_id', 'background_id'], 'required'],
+            [['class_id', 'user_id', 'race_id', 'background_id'], 'required'],
+            [['class_id', 'level_id', 'user_id', 'race_id', 'background_id', 'alignment_id', 'image_id', 'quest_id', 'status', 'age', 'experience_points', 'hit_points', 'max_hit_points', 'armor_class', 'speed', 'created_at', 'updated_at'], 'integer'],
             [['description', 'gender'], 'string'],
             [['name'], 'string', 'max' => 64],
             ['gender', 'in', 'range' => array_keys(self::optsGender())],
@@ -127,16 +127,16 @@ class Player extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'level_id' => 'Foreign key to "level" table',
-            'user_id' => 'Foreign key to "user" table',
-            'race_id' => 'Foreign key to "race" table',
-            'class_id' => 'Foreign key to "character_class" table',
-            'background_id' => 'Foreign key to "background" table',
-            'description' => 'Player description',
-            'alignment_id' => 'Foreign key to "alignment" table',
-            'image_id' => 'Foreign key to "image\" table. May be empty if no avatar is chosen.',
-            'quest_id' => 'Optional foreign key to "quest" table',
+            'class_id' => 'Foreign key to “character_class” table',
+            'level_id' => 'Foreign key to “level” table',
+            'user_id' => 'Foreign key to “user” table',
+            'race_id' => 'Foreign key to “race” table',
+            'background_id' => 'Foreign key to “background” table',
+            'alignment_id' => 'Foreign key to “alignment” table',
+            'image_id' => 'Foreign key to “image” table. May be empty if no avatar is chosen.',
+            'quest_id' => 'Optional foreign key to “quest” table',
             'name' => 'Character name',
+            'description' => 'Player description',
             'status' => 'Status of the player (Deleted=0, Inactive=9, Active=10)',
             'gender' => 'Gender: C=Child, F=Femelle, M=Male',
             'age' => 'Age of the player. Validated regarding the actual race',

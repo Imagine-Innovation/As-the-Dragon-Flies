@@ -7,8 +7,8 @@ use Yii;
 /**
  * This is the model class for table "player_skill".
  *
- * @property int $player_id Foreign key to "player" table
- * @property int $skill_id Foreign key to "skill" table
+ * @property int $player_id Foreign key to “player” table
+ * @property int $skill_id Foreign key to “skill” table
  * @property int $is_proficient The player is proficient in the skill
  * @property int $bonus Skill bonus
  *
@@ -45,8 +45,8 @@ class PlayerSkill extends \yii\db\ActiveRecord
      */
     public function attributeLabels() {
         return [
-            'player_id' => 'Foreign key to "player" table',
-            'skill_id' => 'Foreign key to "skill" table',
+            'player_id' => 'Foreign key to “player” table',
+            'skill_id' => 'Foreign key to “skill” table',
             'is_proficient' => 'The player is proficient in the skill',
             'bonus' => 'Skill bonus',
         ];

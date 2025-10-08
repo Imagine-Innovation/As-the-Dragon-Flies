@@ -14,7 +14,9 @@ use Yii;
  * @property ShapeMovement[] $shapeMovements
  * @property Shape[] $shapes
  */
-class Movement extends \yii\db\ActiveRecord {
+class Movement extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -28,6 +30,7 @@ class Movement extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['description'], 'default', 'value' => null],
             [['name'], 'required'],
             [['description'], 'string'],
             [['name'], 'string', 'max' => 32],
@@ -60,6 +63,7 @@ class Movement extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getShapes() {
-        return $this->hasMany(Shape::class, ['id' => 'shape_id'])->via('shapeMovements');
+        return $this->hasMany(Shape::class, ['id' => 'shape_id'])->viaTable('shape_movement', ['movement_id' => 'id']);
     }
+
 }

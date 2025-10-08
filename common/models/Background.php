@@ -20,7 +20,9 @@ use Yii;
  * @property Player[] $players
  * @property Skill[] $skills
  */
-class Background extends \yii\db\ActiveRecord {
+class Background extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -34,6 +36,7 @@ class Background extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['description', 'initial_equipment', 'languages'], 'default', 'value' => null],
             [['name'], 'required'],
             [['description', 'initial_equipment'], 'string'],
             [['languages'], 'integer'],
@@ -106,6 +109,7 @@ class Background extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getSkills() {
-        return $this->hasMany(Skill::class, ['id' => 'skill_id'])->via('backgroundSkills');
+        return $this->hasMany(Skill::class, ['id' => 'skill_id'])->viaTable('background_skill', ['background_id' => 'id']);
     }
+
 }

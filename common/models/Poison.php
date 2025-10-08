@@ -7,16 +7,18 @@ use Yii;
 /**
  * This is the model class for table "poison".
  *
- * @property int $item_id Foreign key to "item" table
- * @property int $damage_type_id Foreign key to "damage_type" table
- * @property int $ability_id Foreign key to "ability" table
+ * @property int $item_id Foreign key to “item” table
+ * @property int $damage_type_id Foreign key to “damage_type” table
+ * @property int $ability_id Foreign key to “ability” table
  * @property string $poison_type Poison type
  * @property int $dc Difficulty Class (DC)
  *
  * @property Ability $ability
  * @property DamageType $damageType
+ * @property Item $item
  */
-class Poison extends Item {
+class Poison extends Item
+{
 
     /**
      * {@inheritdoc}
@@ -45,9 +47,9 @@ class Poison extends Item {
      */
     public function attributeLabels() {
         return array_merge(parent::attributeLabels(), [
-            'item_id' => 'Foreign key to "item" table',
-            'damage_type_id' => 'Foreign key to "damage_type" table',
-            'ability_id' => 'Foreign key to "ability" table',
+            'item_id' => 'Foreign key to “item” table',
+            'damage_type_id' => 'Foreign key to “damage_type” table',
+            'ability_id' => 'Foreign key to “ability” table',
             'poison_type' => 'Poison type',
             'dc' => 'Difficulty Class (DC)',
         ]);
@@ -69,5 +71,14 @@ class Poison extends Item {
      */
     public function getDamageType() {
         return $this->hasOne(DamageType::class, ['id' => 'damage_type_id']);
+    }
+
+    /**
+     * Gets query for [[Item]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getItem() {
+        return $this->hasOne(Item::class, ['id' => 'item_id']);
     }
 }

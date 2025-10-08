@@ -9,8 +9,8 @@ use Yii;
  * This is the model class for table "quest".
  *
  * @property int $id Primary key
- * @property int $story_id Foreign key to "story" table
- * @property int|null $initiator_id Foreign key to "player" table
+ * @property int $story_id Foreign key to “story” table
+ * @property int|null $initiator_id Foreign key to “player” table
  * @property string $name Quest name
  * @property string|null $description Description
  * @property string|null $image Image
@@ -64,8 +64,8 @@ class Quest extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'story_id' => 'Foreign key to "story" table',
-            'initiator_id' => 'Foreign key to "player" table',
+            'story_id' => 'Foreign key to “story” table',
+            'initiator_id' => 'Foreign key to “player” table',
             'name' => 'Quest name',
             'description' => 'Description',
             'image' => 'Image',

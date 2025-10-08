@@ -8,16 +8,19 @@ use Yii;
  * This is the model class for table "dialog".
  *
  * @property int $id Primary key
- * @property int $npc_id Foreign key to "npc" table
+ * @property int $npc_id Foreign key to “npc” table
  * @property string $text What the NPC says
- * @property int|null $success_id Optional foreign key to "success" table
+ * @property int|null $success_id Optional foreign key to “success” table
  *
  * @property Npc $npc
+ * @property Npc[] $npcs
  * @property Reply[] $replies
+ * @property Reply[] $replies0
  * @property Success $success
  */
 class Dialog extends \yii\db\ActiveRecord
 {
+
 
     /**
      * {@inheritdoc}
@@ -46,9 +49,9 @@ class Dialog extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'npc_id' => 'Foreign key to "npc" table',
+            'npc_id' => 'Foreign key to “npc” table',
             'text' => 'What the NPC says',
-            'success_id' => 'Optional foreign key to "success" table',
+            'success_id' => 'Optional foreign key to “success” table',
         ];
     }
 
@@ -62,12 +65,30 @@ class Dialog extends \yii\db\ActiveRecord
     }
 
     /**
+     * Gets query for [[Npcs]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getNpcs() {
+        return $this->hasMany(Npc::class, ['first_dialog_id' => 'id']);
+    }
+
+    /**
      * Gets query for [[Replies]].
      *
      * @return \yii\db\ActiveQuery
      */
     public function getReplies() {
         return $this->hasMany(Reply::class, ['dialog_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Replies0]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getReplies0() {
+        return $this->hasMany(Reply::class, ['next_dialog_id' => 'id']);
     }
 
     /**
@@ -78,4 +99,5 @@ class Dialog extends \yii\db\ActiveRecord
     public function getSuccess() {
         return $this->hasOne(Success::class, ['id' => 'success_id']);
     }
+
 }

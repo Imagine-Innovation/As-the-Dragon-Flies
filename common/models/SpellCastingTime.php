@@ -16,7 +16,9 @@ use Yii;
  *
  * @property Spell[] $spells
  */
-class SpellCastingTime extends \yii\db\ActiveRecord {
+class SpellCastingTime extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -30,6 +32,7 @@ class SpellCastingTime extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['modifier'], 'default', 'value' => null],
             [['name', 'duration', 'unit', 'minutes'], 'required'],
             [['duration', 'minutes'], 'integer'],
             [['name'], 'string', 'max' => 256],
@@ -61,4 +64,5 @@ class SpellCastingTime extends \yii\db\ActiveRecord {
     public function getSpells() {
         return $this->hasMany(Spell::class, ['casting_time_id' => 'id']);
     }
+
 }

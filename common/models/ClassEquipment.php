@@ -7,9 +7,9 @@ use Yii;
 /**
  * This is the model class for table "class_equipment".
  *
- * @property int $endowment_id Foreign key to "class_endowment" table
- * @property int|null $item_id Optional foreign key to "item" table
- * @property int|null $category_id Optional foreign key to "category" table
+ * @property int $endowment_id Foreign key to “class_endowment” table
+ * @property int|null $item_id Optional foreign key to “item” table
+ * @property int|null $category_id Optional foreign key to “category” table
  * @property int $if_proficient Can be chosen only if proficient
  * @property int $quantity Quantity
  *
@@ -17,7 +17,9 @@ use Yii;
  * @property ClassEndowment $endowment
  * @property Item $item
  */
-class ClassEquipment extends \yii\db\ActiveRecord {
+class ClassEquipment extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -31,6 +33,9 @@ class ClassEquipment extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['item_id', 'category_id'], 'default', 'value' => null],
+            [['if_proficient'], 'default', 'value' => 0],
+            [['quantity'], 'default', 'value' => 1],
             [['endowment_id'], 'required'],
             [['endowment_id', 'item_id', 'category_id', 'if_proficient', 'quantity'], 'integer'],
             [['endowment_id'], 'exist', 'skipOnError' => true, 'targetClass' => ClassEndowment::class, 'targetAttribute' => ['endowment_id' => 'id']],
@@ -44,9 +49,9 @@ class ClassEquipment extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'endowment_id' => 'Foreign key to "class_endowment" table',
-            'item_id' => 'Optional foreign key to "item" table',
-            'category_id' => 'Optional foreign key to "category" table',
+            'endowment_id' => 'Foreign key to “class_endowment” table',
+            'item_id' => 'Optional foreign key to “item” table',
+            'category_id' => 'Optional foreign key to “category” table',
             'if_proficient' => 'Can be chosen only if proficient',
             'quantity' => 'Quantity',
         ];
@@ -78,4 +83,5 @@ class ClassEquipment extends \yii\db\ActiveRecord {
     public function getItem() {
         return $this->hasOne(Item::class, ['id' => 'item_id']);
     }
+
 }

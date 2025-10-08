@@ -8,12 +8,12 @@ use Yii;
  * This is the model class for table "chapter".
  *
  * @property int $id Primary key
- * @property int $story_id Foreign key to "story" table
+ * @property int $story_id Foreign key to “story” table
  * @property int $chapter_number Chapter number
  * @property string $name Chapter
  * @property string|null $description Short description
  * @property string|null $image Image
- * @property int|null $first_mission_id Optional foreign key to "mission" table to identify the first mission to complete
+ * @property int|null $first_mission_id Optional foreign key to “mission” table to identify the first mission to complete
  *
  * @property Mission $firstMission
  * @property Mission[] $missions
@@ -52,12 +52,12 @@ class Chapter extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'story_id' => 'Foreign key to "story" table',
+            'story_id' => 'Foreign key to “story” table',
             'chapter_number' => 'Chapter number',
             'name' => 'Chapter',
             'description' => 'Short description',
             'image' => 'Image',
-            'first_mission_id' => 'Optional foreign key to "mission\" table to identify the first mission to complete',
+            'first_mission_id' => 'Optional foreign key to “mission” table to identify the first mission to complete',
         ];
     }
 

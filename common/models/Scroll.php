@@ -8,7 +8,7 @@ use Yii;
  * This is the model class for table "scroll".
  *
  * @property int $item_id Primary key
- * @property int $language_id Foreign key to "language" table
+ * @property int $language_id Foreign key to “language” table
  * @property string|null $text Scroll text
  *
  * @property Item $item
@@ -16,6 +16,7 @@ use Yii;
  */
 class Scroll extends \yii\db\ActiveRecord
 {
+
 
     /**
      * {@inheritdoc}
@@ -44,7 +45,7 @@ class Scroll extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'item_id' => 'Primary key',
-            'language_id' => 'Foreign key to "language" table',
+            'language_id' => 'Foreign key to “language” table',
             'text' => 'Scroll text',
         ];
     }
@@ -66,4 +67,5 @@ class Scroll extends \yii\db\ActiveRecord
     public function getLanguage() {
         return $this->hasOne(Language::class, ['id' => 'language_id']);
     }
+
 }

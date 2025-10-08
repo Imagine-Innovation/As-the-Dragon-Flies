@@ -1,0 +1,43 @@
+<?php
+
+namespace frontend\widgets;
+
+use Yii;
+use yii\base\Widget;
+use yii\helpers\Url;
+
+class MissionElement extends Widget
+{
+
+    public $properties;
+    public $type;
+    public $propertyNames;
+
+    public function run() {
+        return $this->content();
+    }
+
+    private function content() {
+        $html = "";
+        if ($this->properties) {
+            $id1 = $this->propertyNames[0];
+            $id2 = $this->propertyNames[1];
+            $id3 = $this->propertyNames[2];
+
+            $html .= "<ul>";
+            foreach ($this->properties as $property) {
+                $params = [
+                    $id1 => $property->$id1,
+                    $id2 => $property->$id2,
+                    $id3 => $property->$id3,
+                ];
+                $hrefEdit = Url::toRoute(['mission/edit-detail', 'jsonParams' => json_encode($params), 'type' => $this->type]);
+                $html .= "<li>{$property->name} <a href=\"{$hrefEdit}\" role=\"button\"><i class=\"bi bi-pencil-square\"></i></a></li>";
+            }
+            $html .= "</ul>";
+        } else {
+            $html .= "<p>No {$this->type} has been defined yet</p>";
+        }
+        return $html;
+    }
+}

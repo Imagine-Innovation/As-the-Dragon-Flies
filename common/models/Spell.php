@@ -11,15 +11,15 @@ use Yii;
  * @property string $name Spell
  * @property string|null $description Detailed description of the spell's effects, including any damage, conditions, or other consequences.
  * @property int $spell_level Spell level (between 0 and 9)
- * @property int $school_id Foreign key to "spell_school" table
- * @property int $range_id Foreign key to "spell_range" table
- * @property int $casting_time_id Foreign key to "spell_casting_time" table
- * @property int $duration_id Foreign key to "spell_duration" table
+ * @property int $school_id Foreign key to “spell_school” table
+ * @property int $range_id Foreign key to “spell_range” table
+ * @property int $casting_time_id Foreign key to “spell_casting_time” table
+ * @property int $duration_id Foreign key to “spell_duration” table
  * @property int $is_ritual
  *
  * @property SpellCastingTime $castingTime
  * @property ClassSpell[] $classSpells
- * @property Class[] $classes
+ * @property CharacterClass[] $classes
  * @property Component[] $components
  * @property DamageType[] $damageTypes
  * @property SpellDuration $duration
@@ -31,7 +31,9 @@ use Yii;
  * @property SpellDamageType[] $spellDamageTypes
  * @property SpellDoc[] $spellDocs
  */
-class Spell extends \yii\db\ActiveRecord {
+class Spell extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -45,6 +47,8 @@ class Spell extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['description'], 'default', 'value' => null],
+            [['is_ritual'], 'default', 'value' => 0],
             [['name', 'school_id', 'range_id', 'casting_time_id', 'duration_id'], 'required'],
             [['description'], 'string'],
             [['spell_level', 'school_id', 'range_id', 'casting_time_id', 'duration_id', 'is_ritual'], 'integer'],
@@ -66,10 +70,10 @@ class Spell extends \yii\db\ActiveRecord {
             'name' => 'Spell',
             'description' => 'Detailed description of the spell\'s effects, including any damage, conditions, or other consequences.',
             'spell_level' => 'Spell level (between 0 and 9)',
-            'school_id' => 'Foreign key to "spell_school" table',
-            'range_id' => 'Foreign key to "spell_range" table',
-            'casting_time_id' => 'Foreign key to "spell_casting_time" table',
-            'duration_id' => 'Foreign key to "spell_duration" table',
+            'school_id' => 'Foreign key to “spell_school” table',
+            'range_id' => 'Foreign key to “spell_range” table',
+            'casting_time_id' => 'Foreign key to “spell_casting_time” table',
+            'duration_id' => 'Foreign key to “spell_duration” table',
             'is_ritual' => 'Is Ritual',
         ];
     }
@@ -98,7 +102,7 @@ class Spell extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getClasses() {
-        return $this->hasMany(CharacterClass::class, ['id' => 'class_id'])->via('classSpells');
+        return $this->hasMany(CharacterClass::class, ['id' => 'class_id'])->viaTable('class_spell', ['spell_id' => 'id']);
     }
 
     /**
@@ -107,7 +111,7 @@ class Spell extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getComponents() {
-        return $this->hasMany(Component::class, ['id' => 'component_id'])->via('spellComponents');
+        return $this->hasMany(Component::class, ['id' => 'component_id'])->viaTable('spell_component', ['spell_id' => 'id']);
     }
 
     /**
@@ -116,7 +120,7 @@ class Spell extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getDamageTypes() {
-        return $this->hasMany(DamageType::class, ['id' => 'damage_type_id'])->via('spellDamageTypes');
+        return $this->hasMany(DamageType::class, ['id' => 'damage_type_id'])->viaTable('spell_damage_type', ['spell_id' => 'id']);
     }
 
     /**
@@ -143,7 +147,7 @@ class Spell extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getPlayers() {
-        return $this->hasMany(Player::class, ['id' => 'player_id'])->via('playerSpells');
+        return $this->hasMany(Player::class, ['id' => 'player_id'])->viaTable('player_spell', ['spell_id' => 'id']);
     }
 
     /**
@@ -190,4 +194,5 @@ class Spell extends \yii\db\ActiveRecord {
     public function getSpellDocs() {
         return $this->hasMany(SpellDoc::class, ['spell_id' => 'id']);
     }
+
 }

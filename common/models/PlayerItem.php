@@ -7,8 +7,8 @@ use Yii;
 /**
  * This is the model class for table "player_item".
  *
- * @property int $player_id Foreign key to "player" table
- * @property int $item_id Foreign key to "item" table
+ * @property int $player_id Foreign key to “player” table
+ * @property int $item_id Foreign key to “item” table
  * @property string $item_name Item name
  * @property string $item_type Item type
  * @property string|null $image Image
@@ -22,6 +22,11 @@ use Yii;
  * @property Item $item
  * @property Player $player
  * @property PlayerBody $playerBody
+ * @property PlayerBody $PlayerHead
+ * @property PlayerBody $playerChest
+ * @property PlayerBody $playerRightHand
+ * @property PlayerBody $playerLeftHand
+ * @property PlayerBody $playerBack
  *
  * Custom properties for Item inherited sub-classes
  *
@@ -115,8 +120,8 @@ class PlayerItem extends \yii\db\ActiveRecord
      */
     public function attributeLabels() {
         return [
-            'player_id' => 'Foreign key to "player" table',
-            'item_id' => 'Foreign key to "item" table',
+            'player_id' => 'Foreign key to “player” table',
+            'item_id' => 'Foreign key to “item” table',
             'item_name' => 'Item name',
             'item_type' => 'Item type',
             'image' => 'Image',
@@ -154,6 +159,51 @@ class PlayerItem extends \yii\db\ActiveRecord
      */
     public function getPlayerBody() {
         return $this->hasOne(PlayerBody::class, ['player_id' => 'player_id']);
+    }
+
+    /**
+     * Gets query for [[PlayerHead]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPlayerHead() {
+        return $this->hasOne(PlayerBody::class, ['player_id' => 'player_id', 'head_item_id' => 'item_id']);
+    }
+
+    /**
+     * Gets query for [[PlayerChest]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPlayerChest() {
+        return $this->hasOne(PlayerBody::class, ['player_id' => 'player_id', 'chest_item_id' => 'item_id']);
+    }
+
+    /**
+     * Gets query for [[PlayerRightHand]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPlayerRightHand() {
+        return $this->hasOne(PlayerBody::class, ['player_id' => 'player_id', 'right_hand_item_id' => 'item_id']);
+    }
+
+    /**
+     * Gets query for [[PlayerLeftHand]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPlayerLeftHand() {
+        return $this->hasOne(PlayerBody::class, ['player_id' => 'player_id', 'left_hand_item_id' => 'item_id']);
+    }
+
+    /**
+     * Gets query for [[PlayerBack]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPlayerBack() {
+        return $this->hasOne(PlayerBody::class, ['player_id' => 'player_id', 'back_item_id' => 'item_id']);
     }
 
     /**

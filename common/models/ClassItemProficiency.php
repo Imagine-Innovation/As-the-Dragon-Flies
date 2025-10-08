@@ -7,15 +7,17 @@ use Yii;
 /**
  * This is the model class for table "class_item_proficiency".
  *
- * @property int $class_id Foreign key to "class" table
- * @property int|null $category_id Optional foreign key to "category" table
- * @property int|null $item_id Optional foreign key to "item" table
+ * @property int $class_id Foreign key to “character_class” table
+ * @property int|null $category_id Optional foreign key to “category” table
+ * @property int|null $item_id Optional foreign key to “item” table
  *
  * @property Category $category
- * @property Class $class
+ * @property CharacterClass $class
  * @property Item $item
  */
-class ClassItemProficiency extends \yii\db\ActiveRecord {
+class ClassItemProficiency extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -43,9 +45,9 @@ class ClassItemProficiency extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'class_id' => 'Foreign key to "class" table',
-            'category_id' => 'Optional foreign key to "category" table',
-            'item_id' => 'Optional foreign key to "item" table',
+            'class_id' => 'Foreign key to “character_class” table',
+            'category_id' => 'Optional foreign key to “category” table',
+            'item_id' => 'Optional foreign key to “item” table',
         ];
     }
 
@@ -75,4 +77,5 @@ class ClassItemProficiency extends \yii\db\ActiveRecord {
     public function getItem() {
         return $this->hasOne(Item::class, ['id' => 'item_id']);
     }
+
 }

@@ -7,13 +7,16 @@ use Yii;
 /**
  * This is the model class for table "class_image".
  *
- * @property int $class_id Foreign key to "class" table
- * @property int $image_id Foreign key to "image" table
+ * @property int $class_id Foreign key to “character_class” table
+ * @property int $image_id Foreign key to “image” table
  *
- * @property Class $class
+ * @property CharacterClass $class
  * @property Image $image
  */
-class ClassImage extends \yii\db\ActiveRecord {
+class ClassImage extends \yii\db\ActiveRecord
+{
+
+
     /**
      * {@inheritdoc}
      */
@@ -39,8 +42,8 @@ class ClassImage extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'class_id' => 'Foreign key to "class" table',
-            'image_id' => 'Foreign key to "image" table',
+            'class_id' => 'Foreign key to “character_class” table',
+            'image_id' => 'Foreign key to “image” table',
         ];
     }
 
@@ -61,4 +64,5 @@ class ClassImage extends \yii\db\ActiveRecord {
     public function getImage() {
         return $this->hasOne(Image::class, ['id' => 'image_id']);
     }
+
 }

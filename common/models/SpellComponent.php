@@ -7,14 +7,16 @@ use Yii;
 /**
  * This is the model class for table "spell_component".
  *
- * @property int $spell_id Foreign key to "spell" table
- * @property int $component_id Foreign key to "component" table
+ * @property int $spell_id Foreign key to “spell” table
+ * @property int $component_id Foreign key to “component” table
  * @property string|null $material Short description
  *
  * @property Component $component
  * @property Spell $spell
  */
-class SpellComponent extends \yii\db\ActiveRecord {
+class SpellComponent extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -28,6 +30,7 @@ class SpellComponent extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['material'], 'default', 'value' => null],
             [['spell_id', 'component_id'], 'required'],
             [['spell_id', 'component_id'], 'integer'],
             [['material'], 'string'],
@@ -42,8 +45,8 @@ class SpellComponent extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'spell_id' => 'Foreign key to "spell" table',
-            'component_id' => 'Foreign key to "component" table',
+            'spell_id' => 'Foreign key to “spell” table',
+            'component_id' => 'Foreign key to “component” table',
             'material' => 'Short description',
         ];
     }
@@ -65,4 +68,5 @@ class SpellComponent extends \yii\db\ActiveRecord {
     public function getSpell() {
         return $this->hasOne(Spell::class, ['id' => 'spell_id']);
     }
+
 }

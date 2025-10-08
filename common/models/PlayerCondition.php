@@ -7,14 +7,16 @@ use Yii;
 /**
  * This is the model class for table "player_condition".
  *
- * @property int $player_id Foreign key to "player" table
- * @property int $condition_id Foreign key to "creature_condition" table
+ * @property int $player_id Foreign key to “player” table
+ * @property int $condition_id Foreign key to “creature_condition” table
  * @property int $rounds_left Number of round left before the condition ends
  *
  * @property CreatureCondition $condition
  * @property Player $player
  */
-class PlayerCondition extends \yii\db\ActiveRecord {
+class PlayerCondition extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -28,6 +30,7 @@ class PlayerCondition extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['rounds_left'], 'default', 'value' => 0],
             [['player_id', 'condition_id'], 'required'],
             [['player_id', 'condition_id', 'rounds_left'], 'integer'],
             [['player_id', 'condition_id'], 'unique', 'targetAttribute' => ['player_id', 'condition_id']],
@@ -41,8 +44,8 @@ class PlayerCondition extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'player_id' => 'Foreign key to "player" table',
-            'condition_id' => 'Foreign key to "creature_condition" table',
+            'player_id' => 'Foreign key to “player” table',
+            'condition_id' => 'Foreign key to “creature_condition” table',
             'rounds_left' => 'Number of round left before the condition ends',
         ];
     }
@@ -64,4 +67,5 @@ class PlayerCondition extends \yii\db\ActiveRecord {
     public function getPlayer() {
         return $this->hasOne(Player::class, ['id' => 'player_id']);
     }
+
 }

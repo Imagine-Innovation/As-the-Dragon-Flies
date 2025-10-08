@@ -24,7 +24,7 @@ use yii\web\IdentityInterface;
  * @property int $is_admin This flag indicates that the user can access the admin part of the application
  * @property int $is_designer This flag indicates that the user can access configuration functions of the application
  * @property int $is_player This flag indicates that the user can play the game
- * @property int|null $current_player_id Optional foreign key to "player" table
+ * @property int|null $current_player_id Optional foreign key to “player” table
  * @property int|null $created_at Created at
  * @property int|null $updated_at Updated at
  * @property int|null $backend_last_login_at Last login to the backend at
@@ -61,6 +61,11 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function rules() {
         return [
+            [['fullname', 'auth_key', 'password_reset_token', 'current_player_id', 'created_at', 'updated_at', 'backend_last_login_at', 'frontend_last_login_at'], 'default', 'value' => null],
+            [['status'], 'default', 'value' => AppStatus::INACTIVE->value],
+            [['status'], 'in', 'range' => AppStatus::getValuesForUser()],
+            [['is_designer'], 'default', 'value' => 0],
+            [['is_player'], 'default', 'value' => 1],
             [['username', 'password_hash', 'verification_token', 'email'], 'required'],
             [['status', 'is_admin', 'is_designer', 'is_player', 'current_player_id', 'created_at', 'updated_at', 'backend_last_login_at', 'frontend_last_login_at'], 'integer'],
             [['username', 'password_hash', 'password_reset_token', 'verification_token', 'email'], 'string', 'max' => 255],
@@ -68,8 +73,6 @@ class User extends ActiveRecord implements IdentityInterface
             [['auth_key'], 'string', 'max' => 32],
             [['username'], 'unique'],
             [['current_player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['current_player_id' => 'id']],
-            ['status', 'default', 'value' => AppStatus::INACTIVE->value],
-            ['status', 'in', 'range' => AppStatus::getValuesForUser()],
         ];
     }
 
@@ -90,7 +93,7 @@ class User extends ActiveRecord implements IdentityInterface
             'is_admin' => 'This flag indicates that the user can access the admin part of the application',
             'is_designer' => 'This flag indicates that the user can access configuration functions of the application',
             'is_player' => 'This flag indicates that the user can play the game',
-            'current_player_id' => 'Optional foreign key to "player" table',
+            'current_player_id' => 'Optional foreign key to “player” table',
             'created_at' => 'Created at',
             'updated_at' => 'Updated at',
             'backend_last_login_at' => 'Last login to the backend at',

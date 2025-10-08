@@ -7,8 +7,8 @@ use Yii;
 /**
  * This is the model class for table "player_ability".
  *
- * @property int $player_id Foreign key to "player" table
- * @property int $ability_id Foreign key to "ability" table
+ * @property int $player_id Foreign key to “player” table
+ * @property int $ability_id Foreign key to “ability” table
  * @property int $score Ability score
  * @property int $bonus Ability bonus
  * @property int $modifier Modifier
@@ -18,7 +18,9 @@ use Yii;
  * @property Ability $ability
  * @property Player $player
  */
-class PlayerAbility extends \yii\db\ActiveRecord {
+class PlayerAbility extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -32,6 +34,8 @@ class PlayerAbility extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['score'], 'default', 'value' => 10],
+            [['is_saving_throw'], 'default', 'value' => 0],
             [['player_id', 'ability_id'], 'required'],
             [['player_id', 'ability_id', 'score', 'bonus', 'modifier', 'is_primary_ability', 'is_saving_throw'], 'integer'],
             [['player_id', 'ability_id'], 'unique', 'targetAttribute' => ['player_id', 'ability_id']],
@@ -45,8 +49,8 @@ class PlayerAbility extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'player_id' => 'Foreign key to "player" table',
-            'ability_id' => 'Foreign key to "ability" table',
+            'player_id' => 'Foreign key to “player” table',
+            'ability_id' => 'Foreign key to “ability” table',
             'score' => 'Ability score',
             'bonus' => 'Ability bonus',
             'modifier' => 'Modifier',
@@ -72,4 +76,5 @@ class PlayerAbility extends \yii\db\ActiveRecord {
     public function getPlayer() {
         return $this->hasOne(Player::class, ['id' => 'player_id']);
     }
+
 }

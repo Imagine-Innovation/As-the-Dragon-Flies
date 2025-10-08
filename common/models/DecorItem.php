@@ -5,21 +5,22 @@ namespace common\models;
 use Yii;
 
 /**
- * This is the model class for table "mission_item".
+ * This is the model class for table "decor_item".
  *
  * @property int $id Primary key
- * @property int $item_id Foreign key to "item" table
- * @property int $mission_id Foreign key to "mission" table
+ * @property int $decor_id Foreign key to “decor” table
+ * @property int $item_id Foreign key to “item” table
  * @property string $name Item name in the mission
  * @property string|null $description Short description
  * @property string|null $image Image
  * @property int $found The percentage chance that the item will be found
  * @property int $identified The percentage chance that the item will be recognized
  *
+ * @property Action[] $actions
+ * @property Decor $decor
  * @property Item $item
- * @property Mission $mission
  */
-class MissionItem extends \yii\db\ActiveRecord
+class DecorItem extends \yii\db\ActiveRecord
 {
 
 
@@ -27,7 +28,7 @@ class MissionItem extends \yii\db\ActiveRecord
      * {@inheritdoc}
      */
     public static function tableName() {
-        return 'mission_item';
+        return 'decor_item';
     }
 
     /**
@@ -38,12 +39,12 @@ class MissionItem extends \yii\db\ActiveRecord
             [['description', 'image'], 'default', 'value' => null],
             [['found'], 'default', 'value' => 25],
             [['identified'], 'default', 'value' => 50],
-            [['item_id', 'mission_id', 'name'], 'required'],
-            [['item_id', 'mission_id', 'found', 'identified'], 'integer'],
+            [['decor_id', 'item_id', 'name'], 'required'],
+            [['decor_id', 'item_id', 'found', 'identified'], 'integer'],
             [['description'], 'string'],
             [['name', 'image'], 'string', 'max' => 32],
             [['item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['item_id' => 'id']],
-            [['mission_id'], 'exist', 'skipOnError' => true, 'targetClass' => Mission::class, 'targetAttribute' => ['mission_id' => 'id']],
+            [['decor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Decor::class, 'targetAttribute' => ['decor_id' => 'id']],
         ];
     }
 
@@ -53,8 +54,8 @@ class MissionItem extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'item_id' => 'Foreign key to \"item\" table',
-            'mission_id' => 'Foreign key to \"mission\" table',
+            'decor_id' => 'Foreign key to “decor” table',
+            'item_id' => 'Foreign key to “item” table',
             'name' => 'Item name in the mission',
             'description' => 'Short description',
             'image' => 'Image',
@@ -64,21 +65,30 @@ class MissionItem extends \yii\db\ActiveRecord
     }
 
     /**
+     * Gets query for [[Actions]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getActions() {
+        return $this->hasMany(Action::class, ['item_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Decor]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDecor() {
+        return $this->hasOne(Decor::class, ['id' => 'decor_id']);
+    }
+
+    /**
      * Gets query for [[Item]].
      *
      * @return \yii\db\ActiveQuery
      */
     public function getItem() {
         return $this->hasOne(Item::class, ['id' => 'item_id']);
-    }
-
-    /**
-     * Gets query for [[Mission]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getMission() {
-        return $this->hasOne(Mission::class, ['id' => 'mission_id']);
     }
 
 }

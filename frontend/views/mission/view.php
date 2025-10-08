@@ -49,7 +49,7 @@ $this->params['breadcrumbs'] = $breadcrumbs;
                             <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->npcs, 'missionId' => $model->id, 'type' => 'NPC']) ?>
                             <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->missionItems, 'missionId' => $model->id, 'type' => 'Item']) ?>
                             <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->monsters, 'missionId' => $model->id, 'type' => 'Monster']) ?>
-                            <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->traps, 'missionId' => $model->id, 'type' => 'Trap']) ?>
+                            <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->decors, 'missionId' => $model->id, 'type' => 'Decor']) ?>
                         </div>
                     </section>
                     <p />

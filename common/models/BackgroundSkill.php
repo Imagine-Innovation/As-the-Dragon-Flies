@@ -7,13 +7,15 @@ use Yii;
 /**
  * This is the model class for table "background_skill".
  *
- * @property int $background_id Foreign key to "background" table
- * @property int $skill_id Foreign key to "skill" table
+ * @property int $background_id Foreign key to “background” table
+ * @property int $skill_id Foreign key to “skill” table
  *
  * @property Background $background
  * @property Skill $skill
  */
-class BackgroundSkill extends \yii\db\ActiveRecord {
+class BackgroundSkill extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -40,8 +42,8 @@ class BackgroundSkill extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'background_id' => 'Foreign key to "background" table',
-            'skill_id' => 'Foreign key to "skill" table',
+            'background_id' => 'Foreign key to “background” table',
+            'skill_id' => 'Foreign key to “skill” table',
         ];
     }
 
@@ -62,4 +64,5 @@ class BackgroundSkill extends \yii\db\ActiveRecord {
     public function getSkill() {
         return $this->hasOne(Skill::class, ['id' => 'skill_id']);
     }
+
 }

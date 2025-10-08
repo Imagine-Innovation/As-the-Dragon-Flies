@@ -5,7 +5,7 @@ namespace common\models;
 use Yii;
 
 /**
- * This is the model class for table "trait".
+ * This is the model class for table "character_trait".
  *
  * @property int $id Primary key
  * @property string $name Character trait
@@ -16,13 +16,15 @@ use Yii;
  * @property PlayerTrait[] $playerTraits
  * @property Player[] $players
  */
-class CharacterTrait extends \yii\db\ActiveRecord {
+class CharacterTrait extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
      */
     public static function tableName() {
-        return 'trait';
+        return 'character_trait';
     }
 
     /**
@@ -73,6 +75,7 @@ class CharacterTrait extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getPlayers() {
-        return $this->hasMany(Player::class, ['id' => 'player_id'])->via('playerTraits');
+        return $this->hasMany(Player::class, ['id' => 'player_id'])->viaTable('player_trait', ['trait_id' => 'id']);
     }
+
 }

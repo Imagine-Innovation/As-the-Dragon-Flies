@@ -8,20 +8,23 @@ use Yii;
  * This is the model class for table "class_proficiency".
  *
  * @property int $id Primary key
- * @property int $class_id Foreign key to "class" table
- * @property int $proficiency_id Foreign key to "proficiency" table
- * @property int $level_id Foreign key to "level" table
+ * @property int $class_id Foreign key to “character_class” table
+ * @property int $proficiency_id Foreign key to “proficiency” table
+ * @property int $level_id Foreign key to “level” table
  * @property int $sort_order Sort order
  * @property int|null $bonus Proficiency bonus
  * @property string|null $dice Dice to roll to determine the proficiency bonus for Martial Arts ans Sneak Attack
  * @property int|null $spell_slot Spell slot
  * @property int|null $spell_level Spell level
  *
- * @property Class $class
+ * @property CharacterClass $class
  * @property Level $level
  * @property Proficiency $proficiency
  */
-class ClassProficiency extends \yii\db\ActiveRecord {
+class ClassProficiency extends \yii\db\ActiveRecord
+{
+
+
     /**
      * {@inheritdoc}
      */
@@ -34,6 +37,7 @@ class ClassProficiency extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['bonus', 'dice', 'spell_slot', 'spell_level'], 'default', 'value' => null],
             [['class_id', 'proficiency_id', 'level_id', 'sort_order'], 'required'],
             [['class_id', 'proficiency_id', 'level_id', 'sort_order', 'bonus', 'spell_slot', 'spell_level'], 'integer'],
             [['dice'], 'string', 'max' => 8],
@@ -49,9 +53,9 @@ class ClassProficiency extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'class_id' => 'Foreign key to "class" table',
-            'proficiency_id' => 'Foreign key to "proficiency" table',
-            'level_id' => 'Foreign key to "level" table',
+            'class_id' => 'Foreign key to “character_class” table',
+            'proficiency_id' => 'Foreign key to “proficiency” table',
+            'level_id' => 'Foreign key to “level” table',
             'sort_order' => 'Sort order',
             'bonus' => 'Proficiency bonus',
             'dice' => 'Dice to roll to determine the proficiency bonus for Martial Arts ans Sneak Attack',
@@ -86,4 +90,5 @@ class ClassProficiency extends \yii\db\ActiveRecord {
     public function getProficiency() {
         return $this->hasOne(Proficiency::class, ['id' => 'proficiency_id']);
     }
+
 }

@@ -8,8 +8,8 @@ use Yii;
 /**
  * This is the model class for table "quest_player".
  *
- * @property int $quest_id Foreign key to "quest" table
- * @property int $player_id Foreign key to "player" table
+ * @property int $quest_id Foreign key to “quest” table
+ * @property int $player_id Foreign key to “player” table
  * @property int $onboarded_at Onboarded at
  * @property int $status Player status in the quest
  * @property int|null $left_at The player left at
@@ -50,8 +50,8 @@ class QuestPlayer extends \yii\db\ActiveRecord
      */
     public function attributeLabels() {
         return [
-            'quest_id' => 'Foreign key to "quest" table',
-            'player_id' => 'Foreign key to "player" table',
+            'quest_id' => 'Foreign key to “quest” table',
+            'player_id' => 'Foreign key to “player” table',
             'onboarded_at' => 'Onboarded at',
             'status' => 'Player status in the quest',
             'left_at' => 'The player left at',

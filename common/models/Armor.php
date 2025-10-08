@@ -7,7 +7,7 @@ use Yii;
 /**
  * This is the model class for table "armor".
  *
- * @property int $item_id Primary key synchronized 1:1 with the "item" table
+ * @property int $item_id Primary key synchronized 1:1 with the “item” table
  * @property int $armor_class Armor protects its wearer from attacks. The armor (and shield) you wear determines your base Armor Class.
  * @property int $armor_bonus Only the shield provides a bonus to the armor class
  * @property int $dex_modifier Dex modifier
@@ -18,12 +18,14 @@ use Yii;
  * @property int $doff_delay This is the time it takes to take off armor. If you have help, reduce this time by half.
  * @property string $delay_unit Delay unit (minute or action)
  *
+ * @property Item $item
  * @property ShapeArmor[] $shapeArmors
  * @property Shape[] $shapes
  *
  * @property string $armorClass
  */
-class Armor extends Item {
+class Armor extends Item
+{
 
     /**
      * {@inheritdoc}
@@ -37,6 +39,7 @@ class Armor extends Item {
      */
     public function rules() {
         return array_merge(parent::rules(), [
+            [['is_disadvantage'], 'default', 'value' => 0],
             [['item_id', 'armor_class', 'dex_modifier', 'max_modifier', 'strength', 'don_delay', 'doff_delay', 'delay_unit'], 'required'],
             [['item_id', 'armor_class', 'armor_bonus', 'dex_modifier', 'max_modifier', 'strength', 'is_disadvantage', 'don_delay', 'doff_delay'], 'integer'],
             [['delay_unit'], 'string', 'max' => 8],
@@ -50,7 +53,7 @@ class Armor extends Item {
      */
     public function attributeLabels() {
         return array_merge(parent::attributeLabels(), [
-            'item_id' => 'Primary key synchronized 1:1 with the \"item" table',
+            'item_id' => 'Primary key synchronized 1:1 with the “item” table',
             'armor_class' => 'Armor protects its wearer from attacks. The armor (and shield) you wear determines your base Armor Class.',
             'armor_bonus' => 'Only the shield provides a bonus to the armor class',
             'dex_modifier' => 'Dex modifier',
@@ -61,6 +64,15 @@ class Armor extends Item {
             'doff_delay' => 'This is the time it takes to take off armor. If you have help, reduce this time by half.',
             'delay_unit' => 'Delay unit (minute or action)',
         ]);
+    }
+
+    /**
+     * Gets query for [[Item]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getItem() {
+        return $this->hasOne(Item::class, ['id' => 'item_id']);
     }
 
     /**
@@ -78,7 +90,7 @@ class Armor extends Item {
      * @return \yii\db\ActiveQuery
      */
     public function getShapes() {
-        return $this->hasMany(Shape::class, ['id' => 'shape_id'])->via('shapeArmors');
+        return $this->hasMany(Shape::class, ['id' => 'shape_id'])->viaTable('shape_armor', ['armor_id' => 'item_id']);
     }
 
     /**

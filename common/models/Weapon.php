@@ -8,9 +8,9 @@ use Yii;
 /**
  * This is the model class for table "weapon".
  *
- * @property int $item_id Primary key synchronized 1:1 with the "item" table
- * @property int|null $amunition_id Optional foreign key to weapon ammunition item. Used only when the "need_amunition" flag is set to TRUE.
- * @property int|null $damage_type_id Optional foreign key to the "damage_type" table
+ * @property int $item_id Primary key synchronized 1:1 with the “item” table
+ * @property int|null $amunition_id Optional foreign key to weapon ammunition item. Used only when the “need_amunition” flag is set to TRUE.
+ * @property int|null $damage_type_id Optional foreign key to “damage_type” table
  * @property string|null $damage_dice Roll dice to determine damage
  * @property int $is_melee Indicates a melee weapon. A melee weapon is used to attack a target within 5 feet of you
  * @property int $is_ranged Indicates a ranged weapon. A ranged weapon is used to attack a target at a distance
@@ -37,7 +37,8 @@ use Yii;
  * @property ShapeAttack[] $shapeAttacks
  * @property string $properties
  */
-class Weapon extends Item {
+class Weapon extends Item
+{
 
     /**
      * {@inheritdoc}
@@ -71,9 +72,9 @@ class Weapon extends Item {
     public function attributeLabels() {
         // Define or override validation rules specific to Weapon
         return array_merge(parent::attributeLabels(), [
-            'item_id' => 'Primary key synchronized 1:1 with the \"item" table',
-            'amunition_id' => 'Optional foreign key to weapon ammunition item. Used only when the \"need_amunition\" flag is set to TRUE.',
-            'damage_type_id' => 'Optional foreign key to the \"damage_type" table',
+            'item_id' => 'Primary key synchronized 1:1 with the “item” table',
+            'amunition_id' => 'Optional foreign key to weapon ammunition item. Used only when the “need_amunition” flag is set to TRUE.',
+            'damage_type_id' => 'Optional foreign key to “damage_type” table',
             'damage_dice' => 'Roll dice to determine damage',
             'is_melee' => 'Indicates a melee weapon. A melee weapon is used to attack a target within 5 feet of you',
             'is_ranged' => 'Indicates a ranged weapon. A ranged weapon is used to attack a target at a distance',

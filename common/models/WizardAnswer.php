@@ -8,20 +8,22 @@ use Yii;
  * This is the model class for table "wizard_answer".
  *
  * @property int $id Primary key
- * @property int $question_id Foreign key to "wizard_question" table
+ * @property int $question_id Foreign key to “wizard_question” table
  * @property string $answer Possible answer
- * @property int|null $next_question_id Optional foreign key to "wizard_question" table. Used only id non terminal question.
- * @property int|null $class_id Optional foreign key to "class" table. Used only when the wizard helps defining a class
- * @property int|null $race_id Optional foreign key to "race" table. Used only when the wizard helps defining a race
- * @property int|null $alignment_id Optional foreign key to "alignment" table. Used only when the wizard helps defining a race
+ * @property int|null $next_question_id Optional foreign key to “wizard_question” table. Used only id non terminal question.
+ * @property int|null $class_id Optional foreign key to “character_class” table. Used only when the wizard helps defining a class
+ * @property int|null $race_id Optional foreign key to “race” table. Used only when the wizard helps defining a race
+ * @property int|null $alignment_id Optional foreign key to “alignment” table. Used only when the wizard helps defining an alignment
  *
  * @property Alignment $alignment
- * @property Class $class
+ * @property CharacterClass $class
  * @property WizardQuestion $nextQuestion
  * @property WizardQuestion $question
  * @property Race $race
  */
-class WizardAnswer extends \yii\db\ActiveRecord {
+class WizardAnswer extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -35,6 +37,7 @@ class WizardAnswer extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['next_question_id', 'class_id', 'race_id', 'alignment_id'], 'default', 'value' => null],
             [['question_id', 'answer'], 'required'],
             [['question_id', 'next_question_id', 'class_id', 'race_id', 'alignment_id'], 'integer'],
             [['answer'], 'string', 'max' => 255],
@@ -52,12 +55,12 @@ class WizardAnswer extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'question_id' => 'Foreign key to "wizard_question" table',
+            'question_id' => 'Foreign key to “wizard_question” table',
             'answer' => 'Possible answer',
-            'next_question_id' => 'Optional foreign key to "wizard_question\" table. Used only id non terminal question.',
-            'class_id' => 'Optional foreign key to "class\" table. Used only when the wizard helps defining a class',
-            'race_id' => 'Optional foreign key to "race\" table. Used only when the wizard helps defining a race',
-            'alignment_id' => 'Optional foreign key to "alignment\" table. Used only when the wizard helps defining an alignment',
+            'next_question_id' => 'Optional foreign key to “wizard_question” table. Used only id non terminal question.',
+            'class_id' => 'Optional foreign key to “character_class” table. Used only when the wizard helps defining a class',
+            'race_id' => 'Optional foreign key to “race” table. Used only when the wizard helps defining a race',
+            'alignment_id' => 'Optional foreign key to “alignment” table. Used only when the wizard helps defining an alignment',
         ];
     }
 
@@ -105,4 +108,5 @@ class WizardAnswer extends \yii\db\ActiveRecord {
     public function getRace() {
         return $this->hasOne(Race::class, ['id' => 'race_id']);
     }
+
 }

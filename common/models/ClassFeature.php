@@ -7,20 +7,22 @@ use Yii;
 /**
  * This is the model class for table "class_feature".
  *
- * @property int $class_id Foreign key to "class" table
- * @property int $feature_id Foreign key to "feature" table
- * @property int $level_id Foreign key to "level" table
+ * @property int $class_id Foreign key to “character_class” table
+ * @property int $feature_id Foreign key to “feature” table
+ * @property int $level_id Foreign key to “level” table
  * @property float|null $cr Challenge Rating is a numerical value assigned to a creature or non-player character (NPC) to indicate the level of challenge it presents to player characters (PCs) in terms of combat and other encounters.
  * @property string|null $dice Special modifier for bardic features
  * @property int|null $weapon_dice Number of additionnal weapon dice to be thrown
  * @property int $times_used Number of time a feature can be used
  * @property int|null $spell_level Spell level
  *
- * @property Class $class
+ * @property CharacterClass $class
  * @property Feature $feature
  * @property Level $level
  */
-class ClassFeature extends \yii\db\ActiveRecord {
+class ClassFeature extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -52,9 +54,9 @@ class ClassFeature extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'class_id' => 'Foreign key to "class" table',
-            'feature_id' => 'Foreign key to "feature" table',
-            'level_id' => 'Foreign key to "level" table',
+            'class_id' => 'Foreign key to “character_class” table',
+            'feature_id' => 'Foreign key to “feature” table',
+            'level_id' => 'Foreign key to “level” table',
             'cr' => 'Challenge Rating is a numerical value assigned to a creature or non-player character (NPC) to indicate the level of challenge it presents to player characters (PCs) in terms of combat and other encounters.',
             'dice' => 'Special modifier for bardic features',
             'weapon_dice' => 'Number of additionnal weapon dice to be thrown',
@@ -89,4 +91,5 @@ class ClassFeature extends \yii\db\ActiveRecord {
     public function getLevel() {
         return $this->hasOne(Level::class, ['id' => 'level_id']);
     }
+
 }

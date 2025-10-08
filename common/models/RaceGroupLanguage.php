@@ -7,13 +7,15 @@ use Yii;
 /**
  * This is the model class for table "race_group_language".
  *
- * @property int $race_group_id Foreign key to "race_group" table
- * @property int $language_id Foreign key to "language" table
+ * @property int $race_group_id Foreign key to “race_group” table
+ * @property int $language_id Foreign key to “language” table
  *
  * @property Language $language
  * @property RaceGroup $raceGroup
  */
-class RaceGroupLanguage extends \yii\db\ActiveRecord {
+class RaceGroupLanguage extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -40,8 +42,8 @@ class RaceGroupLanguage extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'race_group_id' => 'Foreign key to "race_group" table',
-            'language_id' => 'Foreign key to "language" table',
+            'race_group_id' => 'Foreign key to “race_group” table',
+            'language_id' => 'Foreign key to “language” table',
         ];
     }
 
@@ -62,4 +64,5 @@ class RaceGroupLanguage extends \yii\db\ActiveRecord {
     public function getRaceGroup() {
         return $this->hasOne(RaceGroup::class, ['id' => 'race_group_id']);
     }
+
 }

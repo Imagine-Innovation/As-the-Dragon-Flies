@@ -8,22 +8,23 @@ use Yii;
  * This is the model class for table "mission".
  *
  * @property int $id Primary key
- * @property int $chapter_id Foreign key to "chapter" table
+ * @property int $chapter_id Foreign key to “chapter” table
  * @property string $name Mission name
  * @property string|null $description Short description
  * @property string|null $image Image
  *
- * @property Chapter $chapter
  * @property Action[] $actions
- * @property MissionItem[] $missionItems
+ * @property Chapter $chapter
+ * @property Chapter[] $chapters
+ * @property Decor[] $decors
  * @property Monster[] $monsters
  * @property Npc[] $npcs
  * @property Passage[] $passages
  * @property Success[] $successes
- * @property Trap[] $traps
  */
 class Mission extends \yii\db\ActiveRecord
 {
+
 
     /**
      * {@inheritdoc}
@@ -52,20 +53,11 @@ class Mission extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'chapter_id' => 'Foreign key to "chapter" table',
+            'chapter_id' => 'Foreign key to “chapter” table',
             'name' => 'Mission name',
             'description' => 'Short description',
             'image' => 'Image',
         ];
-    }
-
-    /**
-     * Gets query for [[Chapter]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getChapter() {
-        return $this->hasOne(Chapter::class, ['id' => 'chapter_id']);
     }
 
     /**
@@ -78,12 +70,30 @@ class Mission extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[MissionItems]].
+     * Gets query for [[Chapter]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getMissionItems() {
-        return $this->hasMany(MissionItem::class, ['mission_id' => 'id']);
+    public function getChapter() {
+        return $this->hasOne(Chapter::class, ['id' => 'chapter_id']);
+    }
+
+    /**
+     * Gets query for [[Chapters]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getChapters() {
+        return $this->hasMany(Chapter::class, ['first_mission_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Decors]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDecors() {
+        return $this->hasMany(Decor::class, ['mission_id' => 'id']);
     }
 
     /**
@@ -122,12 +132,4 @@ class Mission extends \yii\db\ActiveRecord
         return $this->hasMany(Success::class, ['next_mission_id' => 'id']);
     }
 
-    /**
-     * Gets query for [[Traps]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getTraps() {
-        return $this->hasMany(Trap::class, ['mission_id' => 'id']);
-    }
 }

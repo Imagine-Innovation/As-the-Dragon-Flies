@@ -8,21 +8,22 @@ use Yii;
  * This is the model class for table "npc".
  *
  * @property int $id Primary key
- * @property int $mission_id Foreign key to "mission" table
- * @property int $npc_type_id Foreign key to "npc_type" table
+ * @property int $mission_id Foreign key to “mission” table
+ * @property int $npc_type_id Foreign key to “npc_type” table
  * @property string $name NPC name
  * @property string|null $description Short description
  * @property string|null $image Image
- * @property int|null $first_dialog_id Optional foreign key to "dialog" table
+ * @property int|null $first_dialog_id Optional foreign key to “dialog” table
  *
+ * @property Action[] $actions
  * @property Dialog[] $dialogs
  * @property Dialog $firstDialog
- * @property Action[] $actions
  * @property Mission $mission
  * @property NpcType $npcType
  */
 class Npc extends \yii\db\ActiveRecord
 {
+
 
     /**
      * {@inheritdoc}
@@ -53,13 +54,22 @@ class Npc extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'mission_id' => 'Foreign key to "mission" table',
-            'npc_type_id' => 'Foreign key to "npc_type" table',
+            'mission_id' => 'Foreign key to “mission” table',
+            'npc_type_id' => 'Foreign key to “npc_type” table',
             'name' => 'NPC name',
             'description' => 'Short description',
             'image' => 'Image',
-            'first_dialog_id' => 'Optional foreign key to "dialog" table',
+            'first_dialog_id' => 'Optional foreign key to “dialog” table',
         ];
+    }
+
+    /**
+     * Gets query for [[Actions]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getActions() {
+        return $this->hasMany(Action::class, ['npc_id' => 'id']);
     }
 
     /**
@@ -81,15 +91,6 @@ class Npc extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Actions]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getActions() {
-        return $this->hasMany(Action::class, ['npc_id' => 'id']);
-    }
-
-    /**
      * Gets query for [[Mission]].
      *
      * @return \yii\db\ActiveQuery
@@ -106,4 +107,5 @@ class Npc extends \yii\db\ActiveRecord
     public function getNpcType() {
         return $this->hasOne(NpcType::class, ['id' => 'npc_type_id']);
     }
+
 }

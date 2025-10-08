@@ -13,12 +13,12 @@ use Yii;
  *
  * @property CreatureImmunization[] $creatureImmunizations
  * @property Creature[] $creatures
- * @property GridCreatureCondition[] $gridCreatureConditions
- * @property GridShape[] $grids
  * @property PlayerCondition[] $playerConditions
  * @property Player[] $players
  */
-class CreatureCondition extends \yii\db\ActiveRecord {
+class CreatureCondition extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -32,6 +32,7 @@ class CreatureCondition extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['description'], 'default', 'value' => null],
             [['name'], 'required'],
             [['description'], 'string'],
             [['name'], 'string', 'max' => 32],
@@ -64,25 +65,7 @@ class CreatureCondition extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getCreatures() {
-        return $this->hasMany(Creature::class, ['id' => 'creature_id'])->via('creatureImmunizations');
-    }
-
-    /**
-     * Gets query for [[GridCreatureConditions]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getGridCreatureConditions() {
-        return $this->hasMany(GridCreatureCondition::class, ['condition_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[Grids]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getGrids() {
-        return $this->hasMany(GridShape::class, ['grid_id' => 'grid_id', 'shape_id' => 'shape_id'])->via('gridCreatureConditions');
+        return $this->hasMany(Creature::class, ['id' => 'creature_id'])->viaTable('creature_immunization', ['condition_id' => 'id']);
     }
 
     /**
@@ -100,6 +83,7 @@ class CreatureCondition extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getPlayers() {
-        return $this->hasMany(Player::class, ['id' => 'player_id'])->via('playerConditions');
+        return $this->hasMany(Player::class, ['id' => 'player_id'])->viaTable('player_condition', ['condition_id' => 'id']);
     }
+
 }

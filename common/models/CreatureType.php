@@ -13,7 +13,9 @@ use Yii;
  *
  * @property Creature[] $creatures
  */
-class CreatureType extends \yii\db\ActiveRecord {
+class CreatureType extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -27,6 +29,7 @@ class CreatureType extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['description'], 'default', 'value' => null],
             [['name'], 'required'],
             [['description'], 'string'],
             [['name'], 'string', 'max' => 32],
@@ -52,4 +55,5 @@ class CreatureType extends \yii\db\ActiveRecord {
     public function getCreatures() {
         return $this->hasMany(Creature::class, ['type_id' => 'id']);
     }
+
 }

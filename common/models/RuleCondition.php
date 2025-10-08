@@ -8,11 +8,11 @@ use Yii;
  * This is the model class for table "rule_condition".
  *
  * @property int $id Primary key.
- * @property int $rule_id Foreign key to the "rule" table
- * @property int $expression_id Foreign key to the "rule_expression" table
- * @property int $model_id Foreign key to the "rule_component" table
- * @property string|null $method_param If the component is a method, store the parameter value. For instance: method_param="2D8" for the component containing the method "RollDice"
- * @property string $comparator Comparator to be used: "<", "<=", "==", ">=", or ">"
+ * @property int $rule_id Foreign key to “rule” table
+ * @property int $expression_id Foreign key to “rule_expression” table
+ * @property int $model_id Foreign key to “rule_component” table
+ * @property string|null $method_param If the component is a method, store the parameter value. For instance: method_param="2D8” for the component containing the method “RollDice”
+ * @property string $comparator Comparator to be used: “<”, “<=”, “==”, “>=”, or “>”
  * @property string $val Value to be compared at
  * @property int $target Flag that indicates whether the condition should be fulfilled (target=true) or not (target=false)
  *
@@ -20,7 +20,9 @@ use Yii;
  * @property RuleModel $model
  * @property Rule $rule
  */
-class RuleCondition extends \yii\db\ActiveRecord {
+class RuleCondition extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -34,6 +36,8 @@ class RuleCondition extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['method_param'], 'default', 'value' => null],
+            [['target'], 'default', 'value' => 1],
             [['rule_id', 'expression_id', 'model_id', 'comparator', 'val'], 'required'],
             [['rule_id', 'expression_id', 'model_id', 'target'], 'integer'],
             [['method_param', 'val'], 'string', 'max' => 64],
@@ -50,11 +54,11 @@ class RuleCondition extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => 'Primary key.',
-            'rule_id' => 'Foreign key to the \"rule" table',
-            'expression_id' => 'Foreign key to the \"rule_expression" table',
-            'model_id' => 'Foreign key to the \"rule_component" table',
-            'method_param' => 'If the component is a method, store the parameter value. For instance: method_param=\"2D8\" for the component containing the method \"RollDice\"',
-            'comparator' => 'Comparator to be used: \"<\", \"<=\", \"==\", \">=\", or \">\"',
+            'rule_id' => 'Foreign key to “rule” table',
+            'expression_id' => 'Foreign key to “rule_expression” table',
+            'model_id' => 'Foreign key to “rule_component” table',
+            'method_param' => 'If the component is a method, store the parameter value. For instance: method_param=\"2D8” for the component containing the method “RollDice”',
+            'comparator' => 'Comparator to be used: “<”, “<=”, “==”, “>=”, or “>”',
             'val' => 'Value to be compared at',
             'target' => 'Flag that indicates whether the condition should be fulfilled (target=true) or not (target=false)',
         ];
@@ -86,4 +90,5 @@ class RuleCondition extends \yii\db\ActiveRecord {
     public function getRule() {
         return $this->hasOne(Rule::class, ['id' => 'rule_id']);
     }
+
 }

@@ -38,13 +38,14 @@ namespace common\models;
  *
  * @property string $randomImage
  */
-class CharacterClass extends \yii\db\ActiveRecord {
+class CharacterClass extends \yii\db\ActiveRecord
+{
 
     /**
      * {@inheritdoc}
      */
     public static function tableName() {
-        return 'class';
+        return 'character_class';
     }
 
     /**

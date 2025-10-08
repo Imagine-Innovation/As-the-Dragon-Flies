@@ -2,12 +2,14 @@
 
 namespace common\models;
 
+use Yii;
+
 /**
  * This is the model class for table "race".
  *
  * @property int $id Primary key
- * @property int $race_group_id Foreign key to "race_group" table
- * @property string $name Race (e.g., "Human," "Elf," "Dwarf").
+ * @property int $race_group_id Foreign key to “race_group” table
+ * @property string $name Race (e.g., “Human”, “Elf”, “Dwarf”).
  * @property string|null $description Short description of the main traits of the race
  * @property int $adult_age The age threshold to separate childhood age and adult age
  * @property int $lifespan The average lifespan for the race
@@ -24,12 +26,13 @@ namespace common\models;
  * @property RaceAbility[] $raceAbilities
  * @property RaceGroup $raceGroup
  * @property WizardAnswer[] $wizardAnswers
- * 
+ *
  * Custom Properties
- * 
+ *
  * @property string $randomImage
  */
-class Race extends \yii\db\ActiveRecord {
+class Race extends \yii\db\ActiveRecord
+{
 
     /**
      * {@inheritdoc}
@@ -43,6 +46,11 @@ class Race extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['description', 'base_height', 'height_modifier', 'base_weight', 'weight_modifier'], 'default', 'value' => null],
+            [['adult_age'], 'default', 'value' => 20],
+            [['lifespan'], 'default', 'value' => 80],
+            [['speed'], 'default', 'value' => 1],
+            [['darkvision'], 'default', 'value' => 0],
             [['race_group_id', 'name', 'size'], 'required'],
             [['race_group_id', 'adult_age', 'lifespan', 'speed', 'darkvision'], 'integer'],
             [['description'], 'string'],
@@ -60,8 +68,8 @@ class Race extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'race_group_id' => 'Foreign key to "race_group" table',
-            'name' => 'Race (e.g., \"Human,\" \"Elf,\" \"Dwarf\").',
+            'race_group_id' => 'Foreign key to “race_group” table',
+            'name' => 'Race (e.g., “Human”, “Elf”, “Dwarf”).',
             'description' => 'Short description of the main traits of the race',
             'adult_age' => 'The age threshold to separate childhood age and adult age',
             'lifespan' => 'The average lifespan for the race',
@@ -81,7 +89,7 @@ class Race extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getAbilities() {
-        return $this->hasMany(Ability::class, ['id' => 'ability_id'])->via('raceAbilities');
+        return $this->hasMany(Ability::class, ['id' => 'ability_id'])->viaTable('race_ability', ['race_id' => 'id']);
     }
 
     /**

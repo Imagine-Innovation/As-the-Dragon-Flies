@@ -36,11 +36,10 @@ class AccessRight extends \yii\db\ActiveRecord
      */
     public function rules() {
         return [
-            [['id', 'route', 'action', 'is_admin', 'is_designer', 'is_player', 'has_player', 'in_quest'], 'required'],
-            [['id', 'is_admin', 'is_designer', 'is_player', 'has_player', 'in_quest'], 'integer'],
+            [['route', 'action', 'is_admin', 'is_designer', 'is_player', 'has_player', 'in_quest'], 'required'],
+            [['is_admin', 'is_designer', 'is_player', 'has_player', 'in_quest'], 'integer'],
             [['route', 'action'], 'string', 'max' => 32],
             [['route', 'action'], 'unique', 'targetAttribute' => ['route', 'action']],
-            [['id'], 'unique'],
         ];
     }
 

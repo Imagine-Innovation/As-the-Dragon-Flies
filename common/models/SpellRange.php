@@ -16,7 +16,9 @@ use Yii;
  *
  * @property Spell[] $spells
  */
-class SpellRange extends \yii\db\ActiveRecord {
+class SpellRange extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -30,6 +32,8 @@ class SpellRange extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['range', 'area_of_effect', 'special'], 'default', 'value' => null],
+            [['is_self'], 'default', 'value' => 0],
             [['name'], 'required'],
             [['is_self', 'range'], 'integer'],
             [['name', 'area_of_effect', 'special'], 'string', 'max' => 32],
@@ -59,4 +63,5 @@ class SpellRange extends \yii\db\ActiveRecord {
     public function getSpells() {
         return $this->hasMany(Spell::class, ['range_id' => 'id']);
     }
+
 }

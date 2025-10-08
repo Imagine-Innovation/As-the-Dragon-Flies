@@ -7,13 +7,15 @@ use Yii;
 /**
  * This is the model class for table "player_coin".
  *
- * @property int $player_id Foreign key to "player" table
+ * @property int $player_id Foreign key to “player” table
  * @property string $coin Currency
  * @property int $quantity Quantity
  *
  * @property Player $player
  */
-class PlayerCoin extends \yii\db\ActiveRecord {
+class PlayerCoin extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -27,6 +29,7 @@ class PlayerCoin extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['quantity'], 'default', 'value' => 0],
             [['player_id', 'coin'], 'required'],
             [['player_id', 'quantity'], 'integer'],
             [['coin'], 'string', 'max' => 2],
@@ -40,7 +43,7 @@ class PlayerCoin extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'player_id' => 'Foreign key to "player" table',
+            'player_id' => 'Foreign key to “player” table',
             'coin' => 'Currency',
             'quantity' => 'Quantity',
         ];
@@ -54,4 +57,5 @@ class PlayerCoin extends \yii\db\ActiveRecord {
     public function getPlayer() {
         return $this->hasOne(Player::class, ['id' => 'player_id']);
     }
+
 }

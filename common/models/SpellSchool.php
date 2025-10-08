@@ -13,7 +13,9 @@ use Yii;
  *
  * @property Spell[] $spells
  */
-class SpellSchool extends \yii\db\ActiveRecord {
+class SpellSchool extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -27,6 +29,7 @@ class SpellSchool extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['description'], 'default', 'value' => null],
             [['name'], 'required'],
             [['description'], 'string'],
             [['name'], 'string', 'max' => 32],
@@ -53,4 +56,5 @@ class SpellSchool extends \yii\db\ActiveRecord {
     public function getSpells() {
         return $this->hasMany(Spell::class, ['school_id' => 'id']);
     }
+
 }

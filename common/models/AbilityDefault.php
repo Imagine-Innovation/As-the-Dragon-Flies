@@ -7,16 +7,18 @@ use Yii;
 /**
  * This is the model class for table "ability_default".
  *
- * @property int $race_group_id Foreign key to "race_group" table
- * @property int $class_id Foreign key to "class" table
- * @property int $ability_id Foreign key to "ability" table
+ * @property int $race_group_id Foreign key to “race_group” table
+ * @property int $class_id Foreign key to “character_class” table
+ * @property int $ability_id Foreign key to “ability” table
  * @property int $score Default score
  *
  * @property Ability $ability
  * @property CharacterClass $class
  * @property RaceGroup $raceGroup
  */
-class AbilityDefault extends \yii\db\ActiveRecord {
+class AbilityDefault extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -44,9 +46,9 @@ class AbilityDefault extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'race_group_id' => 'Foreign key to "race_group" table',
-            'class_id' => 'Foreign key to "class" table',
-            'ability_id' => 'Foreign key to "ability" table',
+            'race_group_id' => 'Foreign key to “race_group” table',
+            'class_id' => 'Foreign key to “character_class” table',
+            'ability_id' => 'Foreign key to “ability” table',
             'score' => 'Default score',
         ];
     }
@@ -77,4 +79,5 @@ class AbilityDefault extends \yii\db\ActiveRecord {
     public function getRaceGroup() {
         return $this->hasOne(RaceGroup::class, ['id' => 'race_group_id']);
     }
+
 }

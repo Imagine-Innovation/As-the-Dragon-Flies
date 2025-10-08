@@ -15,7 +15,9 @@ use Yii;
  *
  * @property User $user
  */
-class UserLogin extends \yii\db\ActiveRecord {
+class UserLogin extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -29,6 +31,7 @@ class UserLogin extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['logout_at', 'ip_address'], 'default', 'value' => null],
             [['user_id', 'application', 'login_at'], 'required'],
             [['user_id', 'login_at', 'logout_at'], 'integer'],
             [['application'], 'string', 'max' => 255],
@@ -59,4 +62,5 @@ class UserLogin extends \yii\db\ActiveRecord {
     public function getUser() {
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
+
 }

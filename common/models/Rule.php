@@ -44,6 +44,7 @@ class Rule extends \yii\db\ActiveRecord
      */
     public function rules() {
         return [
+            [['description', 'created_at', 'updated_at'], 'default', 'value' => null],
             [['name', 'definition'], 'required'],
             [['description'], 'string'],
             [['status', 'created_at', 'updated_at'], 'integer'],

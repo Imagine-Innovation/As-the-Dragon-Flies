@@ -8,7 +8,7 @@ use Yii;
  * This is the model class for table "wizard_question".
  *
  * @property int $id Primary key
- * @property int $wizard_id Foreign key to "wizard" table
+ * @property int $wizard_id Foreign key to “wizard” table
  * @property string $question Question to be asked
  * @property int $is_first_question Indicates that this question is the entry point for a wizard
  *
@@ -16,7 +16,9 @@ use Yii;
  * @property WizardAnswer[] $wizardAnswers
  * @property WizardAnswer[] $wizardAnswers0
  */
-class WizardQuestion extends \yii\db\ActiveRecord {
+class WizardQuestion extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -30,6 +32,7 @@ class WizardQuestion extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['is_first_question'], 'default', 'value' => 0],
             [['wizard_id', 'question'], 'required'],
             [['wizard_id', 'is_first_question'], 'integer'],
             [['question'], 'string', 'max' => 255],
@@ -43,7 +46,7 @@ class WizardQuestion extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'wizard_id' => 'Foreign key to "wizard" table',
+            'wizard_id' => 'Foreign key to “wizard” table',
             'question' => 'Question to be asked',
             'is_first_question' => 'Indicates that this question is the entry point for a wizard',
         ];
@@ -75,4 +78,5 @@ class WizardQuestion extends \yii\db\ActiveRecord {
     public function getWizardAnswers0() {
         return $this->hasMany(WizardAnswer::class, ['next_question_id' => 'id']);
     }
+
 }

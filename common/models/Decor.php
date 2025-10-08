@@ -8,15 +8,17 @@ use Yii;
  * This is the model class for table "decor".
  *
  * @property int $id Primary key
- * @property int $mission_id Foreign key to "mission" table
+ * @property int $mission_id Foreign key to “mission” table
  * @property int|null $item_id Optional foreign key to “item” table. Item that can be found in the decor element.
- * @property int|null $trap_id Optional foreign key to "Trap" table. Trap that can be found in the decor element.
  * @property string $name Decor
  * @property string $description Short description
+ * @property string|null $image Image
  *
+ * @property Action[] $actions
+ * @property DecorItem[] $decorItems
  * @property Item $item
  * @property Mission $mission
- * @property Trap $trap
+ * @property Trap[] $traps
  */
 class Decor extends \yii\db\ActiveRecord
 {
@@ -34,13 +36,12 @@ class Decor extends \yii\db\ActiveRecord
      */
     public function rules() {
         return [
-            [['item_id', 'trap_id'], 'default', 'value' => null],
+            [['item_id', 'image'], 'default', 'value' => null],
             [['mission_id', 'name', 'description'], 'required'],
-            [['mission_id', 'item_id', 'trap_id'], 'integer'],
+            [['mission_id', 'item_id'], 'integer'],
             [['description'], 'string'],
-            [['name'], 'string', 'max' => 32],
+            [['name', 'image'], 'string', 'max' => 32],
             [['mission_id'], 'exist', 'skipOnError' => true, 'targetClass' => Mission::class, 'targetAttribute' => ['mission_id' => 'id']],
-            [['trap_id'], 'exist', 'skipOnError' => true, 'targetClass' => Trap::class, 'targetAttribute' => ['trap_id' => 'id']],
             [['item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['item_id' => 'id']],
         ];
     }
@@ -51,12 +52,30 @@ class Decor extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'mission_id' => 'Foreign key to \"mission\" table',
+            'mission_id' => 'Foreign key to “mission” table',
             'item_id' => 'Optional foreign key to “item” table. Item that can be found in the decor element.',
-            'trap_id' => 'Optional foreign key to \"Trap\" table. Trap that can be found in the decor element.',
             'name' => 'Decor',
             'description' => 'Short description',
+            'image' => 'Image',
         ];
+    }
+
+    /**
+     * Gets query for [[Actions]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getActions() {
+        return $this->hasMany(Action::class, ['decor_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[DecorItems]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDecorItems() {
+        return $this->hasMany(DecorItem::class, ['decor_id' => 'id']);
     }
 
     /**
@@ -78,12 +97,12 @@ class Decor extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Trap]].
+     * Gets query for [[Traps]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getTrap() {
-        return $this->hasOne(Trap::class, ['id' => 'trap_id']);
+    public function getTraps() {
+        return $this->hasMany(Trap::class, ['decor_id' => 'id']);
     }
 
 }

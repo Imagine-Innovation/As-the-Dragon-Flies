@@ -21,6 +21,7 @@ use Yii;
 class NpcType extends \yii\db\ActiveRecord
 {
 
+
     /**
      * {@inheritdoc}
      */
@@ -70,4 +71,5 @@ class NpcType extends \yii\db\ActiveRecord
     public function getNpcs() {
         return $this->hasMany(Npc::class, ['npc_type_id' => 'id']);
     }
+
 }

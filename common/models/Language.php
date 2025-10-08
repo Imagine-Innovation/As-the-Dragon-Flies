@@ -15,10 +15,13 @@ use Yii;
  * @property Player[] $players
  * @property RaceGroupLanguage[] $raceGroupLanguages
  * @property RaceGroup[] $raceGroups
+ * @property Scroll[] $scrolls
  * @property ShapeLanguage[] $shapeLanguages
  * @property Shape[] $shapes
  */
-class Language extends \yii\db\ActiveRecord {
+class Language extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -32,6 +35,7 @@ class Language extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['description'], 'default', 'value' => null],
             [['name'], 'required'],
             [['description'], 'string'],
             [['name'], 'string', 'max' => 32],
@@ -65,7 +69,7 @@ class Language extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getPlayers() {
-        return $this->hasMany(Player::class, ['id' => 'player_id'])->via('playerLanguages');
+        return $this->hasMany(Player::class, ['id' => 'player_id'])->viaTable('player_language', ['language_id' => 'id']);
     }
 
     /**
@@ -83,7 +87,16 @@ class Language extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getRaceGroups() {
-        return $this->hasMany(RaceGroup::class, ['id' => 'race_group_id'])->via('raceGroupLanguages');
+        return $this->hasMany(RaceGroup::class, ['id' => 'race_group_id'])->viaTable('race_group_language', ['language_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Scrolls]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getScrolls() {
+        return $this->hasMany(Scroll::class, ['language_id' => 'id']);
     }
 
     /**
@@ -101,6 +114,7 @@ class Language extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getShapes() {
-        return $this->hasMany(Shape::class, ['id' => 'shape_id'])->via('shapeLanguages');
+        return $this->hasMany(Shape::class, ['id' => 'shape_id'])->viaTable('shape_language', ['language_id' => 'id']);
     }
+
 }

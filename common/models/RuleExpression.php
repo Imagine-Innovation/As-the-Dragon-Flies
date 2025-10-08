@@ -8,7 +8,7 @@ use Yii;
  * This is the model class for table "rule_expression".
  *
  * @property int $id Primary key.
- * @property int $rule_id Foreign key to "rule" table
+ * @property int $rule_id Foreign key to “rule” table
  * @property int|null $parent_id Self-jointure to make a tree with different combination of the final conditions
  * @property string|null $op Boolean operator. Can be AND or OR
  *
@@ -17,7 +17,9 @@ use Yii;
  * @property RuleCondition[] $ruleConditions
  * @property RuleExpression[] $ruleExpressions
  */
-class RuleExpression extends \yii\db\ActiveRecord {
+class RuleExpression extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -31,6 +33,7 @@ class RuleExpression extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['parent_id', 'op'], 'default', 'value' => null],
             [['rule_id'], 'required'],
             [['rule_id', 'parent_id'], 'integer'],
             [['op'], 'string', 'max' => 3],
@@ -45,7 +48,7 @@ class RuleExpression extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => 'Primary key.',
-            'rule_id' => 'Foreign key to "rule" table',
+            'rule_id' => 'Foreign key to “rule” table',
             'parent_id' => 'Self-jointure to make a tree with different combination of the final conditions',
             'op' => 'Boolean operator. Can be AND or OR',
         ];
@@ -86,4 +89,5 @@ class RuleExpression extends \yii\db\ActiveRecord {
     public function getRuleExpressions() {
         return $this->hasMany(RuleExpression::class, ['parent_id' => 'id']);
     }
+
 }

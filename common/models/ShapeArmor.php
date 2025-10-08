@@ -7,13 +7,15 @@ use Yii;
 /**
  * This is the model class for table "shape_armor".
  *
- * @property int $shape_id Foreign key to "shape" table
- * @property int $armor_id Foreign key to "armor" table
+ * @property int $shape_id Foreign key to “shape” table
+ * @property int $armor_id Foreign key to “armor” table
  *
  * @property Armor $armor
  * @property Shape $shape
  */
-class ShapeArmor extends \yii\db\ActiveRecord {
+class ShapeArmor extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -40,8 +42,8 @@ class ShapeArmor extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'shape_id' => 'Foreign key to "shape" table',
-            'armor_id' => 'Foreign key to "armor" table',
+            'shape_id' => 'Foreign key to “shape” table',
+            'armor_id' => 'Foreign key to “armor” table',
         ];
     }
 
@@ -62,4 +64,5 @@ class ShapeArmor extends \yii\db\ActiveRecord {
     public function getShape() {
         return $this->hasOne(Shape::class, ['id' => 'shape_id']);
     }
+
 }

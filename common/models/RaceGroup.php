@@ -11,6 +11,7 @@ use Yii;
  * @property string $name Race group
  * @property string|null $description Short description
  *
+ * @property AbilityDefault[] $abilityDefaults
  * @property Alignment[] $alignments
  * @property Ethnicity[] $ethnicities
  * @property Image[] $images
@@ -19,12 +20,13 @@ use Yii;
  * @property RaceGroupImage[] $raceGroupImages
  * @property RaceGroupLanguage[] $raceGroupLanguages
  * @property Race[] $races
- * 
+ *
  * Custom Properties
- * 
+ *
  * @property string $randomImage
  */
-class RaceGroup extends \yii\db\ActiveRecord {
+class RaceGroup extends \yii\db\ActiveRecord
+{
 
     /**
      * {@inheritdoc}
@@ -38,6 +40,7 @@ class RaceGroup extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['description'], 'default', 'value' => null],
             [['name'], 'required'],
             [['description'], 'string'],
             [['name'], 'string', 'max' => 32],
@@ -56,12 +59,21 @@ class RaceGroup extends \yii\db\ActiveRecord {
     }
 
     /**
+     * Gets query for [[AbilityDefaults]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getAbilityDefaults() {
+        return $this->hasMany(AbilityDefault::class, ['race_group_id' => 'id']);
+    }
+
+    /**
      * Gets query for [[Alignments]].
      *
      * @return \yii\db\ActiveQuery
      */
     public function getAlignments() {
-        return $this->hasMany(Alignment::class, ['id' => 'alignment_id'])->via('raceGroupAlignments');
+        return $this->hasMany(Alignment::class, ['id' => 'alignment_id'])->viaTable('race_group_alignment', ['race_group_id' => 'id']);
     }
 
     /**
@@ -79,7 +91,7 @@ class RaceGroup extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getImages() {
-        return $this->hasMany(Image::class, ['id' => 'image_id'])->via('raceGroupImages');
+        return $this->hasMany(Image::class, ['id' => 'image_id'])->viaTable('race_group_image', ['race_group_id' => 'id']);
     }
 
     /**
@@ -88,7 +100,7 @@ class RaceGroup extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getLanguages() {
-        return $this->hasMany(Language::class, ['id' => 'language_id'])->via('raceGroupLanguages');
+        return $this->hasMany(Language::class, ['id' => 'language_id'])->viaTable('race_group_language', ['race_group_id' => 'id']);
     }
 
     /**

@@ -7,14 +7,16 @@ use Yii;
 /**
  * This is the model class for table "race_group_image".
  *
- * @property int $race_group_id Foreign key to the "race" table
- * @property int $image_id Foreign key to the "image" table
- * @property string $gender Gender. Can be "M" for male or "F" for female
+ * @property int $race_group_id Foreign key to “race” table
+ * @property int $image_id Foreign key to “image” table
+ * @property string $gender Gender. Can be “M” for male or “F” for female
  *
  * @property Image $image
  * @property RaceGroup $raceGroup
  */
-class RaceGroupImage extends \yii\db\ActiveRecord {
+class RaceGroupImage extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -42,9 +44,9 @@ class RaceGroupImage extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'race_group_id' => 'Foreign key to the \"race" table',
-            'image_id' => 'Foreign key to the \"image" table',
-            'gender' => 'Gender. Can be \"M\" for male or \"F\" for female',
+            'race_group_id' => 'Foreign key to “race” table',
+            'image_id' => 'Foreign key to “image” table',
+            'gender' => 'Gender. Can be “M” for male or “F” for female',
         ];
     }
 
@@ -65,4 +67,5 @@ class RaceGroupImage extends \yii\db\ActiveRecord {
     public function getRaceGroup() {
         return $this->hasOne(RaceGroup::class, ['id' => 'race_group_id']);
     }
+
 }

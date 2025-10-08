@@ -7,8 +7,8 @@ use Yii;
 /**
  * This is the model class for table "item_category".
  *
- * @property int $item_id Foreign key to "item" table
- * @property int $category_id Foreign key to "category" table
+ * @property int $item_id Foreign key to “item” table
+ * @property int $category_id Foreign key to “category” table
  * @property int $is_main Is main category
  *
  * @property Category $category
@@ -44,8 +44,8 @@ class ItemCategory extends \yii\db\ActiveRecord
      */
     public function attributeLabels() {
         return [
-            'item_id' => 'Foreign key to "item" table',
-            'category_id' => 'Foreign key to "category" table',
+            'item_id' => 'Foreign key to “item” table',
+            'category_id' => 'Foreign key to “category” table',
             'is_main' => 'Is main category',
         ];
     }

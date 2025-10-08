@@ -7,15 +7,17 @@ use Yii;
 /**
  * This is the model class for table "shape_movement".
  *
- * @property int $shape_id Foreign key to "shape" table
- * @property int $movement_id Foreign key to "movement" table
+ * @property int $shape_id Foreign key to “shape” table
+ * @property int $movement_id Foreign key to “movement” table
  * @property int $speed A creature’s speed tells you how far it can move on its turn
  * @property int $can_hover Indicates that the creature can hover in this shape
  *
  * @property Movement $movement
  * @property Shape $shape
  */
-class ShapeMovement extends \yii\db\ActiveRecord {
+class ShapeMovement extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -29,6 +31,7 @@ class ShapeMovement extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['can_hover'], 'default', 'value' => 0],
             [['shape_id', 'movement_id'], 'required'],
             [['shape_id', 'movement_id', 'speed', 'can_hover'], 'integer'],
             [['shape_id', 'movement_id'], 'unique', 'targetAttribute' => ['shape_id', 'movement_id']],
@@ -42,8 +45,8 @@ class ShapeMovement extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'shape_id' => 'Foreign key to "shape" table',
-            'movement_id' => 'Foreign key to "movement" table',
+            'shape_id' => 'Foreign key to “shape” table',
+            'movement_id' => 'Foreign key to “movement” table',
             'speed' => 'A creature’s speed tells you how far it can move on its turn',
             'can_hover' => 'Indicates that the creature can hover in this shape',
         ];
@@ -66,4 +69,5 @@ class ShapeMovement extends \yii\db\ActiveRecord {
     public function getShape() {
         return $this->hasOne(Shape::class, ['id' => 'shape_id']);
     }
+
 }

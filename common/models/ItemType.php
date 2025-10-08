@@ -14,7 +14,9 @@ use Yii;
  *
  * @property Item[] $items
  */
-class ItemType extends \yii\db\ActiveRecord {
+class ItemType extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -28,6 +30,8 @@ class ItemType extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['description'], 'default', 'value' => null],
+            [['sort_order'], 'default', 'value' => 100],
             [['name'], 'required'],
             [['description'], 'string'],
             [['sort_order'], 'integer'],
@@ -55,4 +59,5 @@ class ItemType extends \yii\db\ActiveRecord {
     public function getItems() {
         return $this->hasMany(Item::class, ['item_type_id' => 'id']);
     }
+
 }

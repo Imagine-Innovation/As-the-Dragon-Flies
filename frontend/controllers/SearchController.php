@@ -29,7 +29,7 @@ class SearchController extends Controller
                             ],
                             [
                                 'actions' => [
-                                    'dialog', 'npc-type', 'damage-type', 'item', 'creature', 'image', 'npc', 'passage', 'reply', 'skill', 'mission-item', 'trap',
+                                    'dialog', 'npc-type', 'damage-type', 'item', 'creature', 'image', 'npc', 'passage', 'reply', 'skill', 'mission-item', 'trap', 'decor',
                                 ],
                                 'allow' => true,
                                 'roles' => ['@'],
@@ -160,12 +160,16 @@ class SearchController extends Controller
         return $this->genericSearch('Passage', $search, ['mission_id' => $missionId]);
     }
 
-    public function actionTrap(int $missionId, string|null $search = null): array {
-        return $this->genericTrap('Passage', $search, ['mission_id' => $missionId]);
+    public function actionTrap(string $search): array {
+        return $this->genericSearch('Trap', $search);
     }
 
     public function actionSkill(string $search): array {
         return $this->genericSearch('Skill', $search);
+    }
+
+    public function actionDecor(string $search): array {
+        return $this->genericSearch('Decor', $search);
     }
 
     private function genericTextSearch(string $modelName, string $search): array {

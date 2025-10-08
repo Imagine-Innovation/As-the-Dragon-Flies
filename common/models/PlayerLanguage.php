@@ -7,13 +7,15 @@ use Yii;
 /**
  * This is the model class for table "player_language".
  *
- * @property int $player_id Foreign key to "player" table
- * @property int $language_id Foreign key to "language" table
+ * @property int $player_id Foreign key to “player” table
+ * @property int $language_id Foreign key to “language” table
  *
  * @property Language $language
  * @property Player $player
  */
-class PlayerLanguage extends \yii\db\ActiveRecord {
+class PlayerLanguage extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -40,8 +42,8 @@ class PlayerLanguage extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'player_id' => 'Foreign key to "player" table',
-            'language_id' => 'Foreign key to "language" table',
+            'player_id' => 'Foreign key to “player” table',
+            'language_id' => 'Foreign key to “language” table',
         ];
     }
 
@@ -62,4 +64,5 @@ class PlayerLanguage extends \yii\db\ActiveRecord {
     public function getPlayer() {
         return $this->hasOne(Player::class, ['id' => 'player_id']);
     }
+
 }

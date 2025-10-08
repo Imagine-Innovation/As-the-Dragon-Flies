@@ -48,7 +48,7 @@ const config = [
             {
                 field: 'trap-image',
                 ajax: 'image',
-                minChar: 1,
+                minChar: 0,
                 imagePath: imagePath
             }
         ]
@@ -88,11 +88,40 @@ const config = [
         ]
     },
     {
+        form: 'decor',
+        params: [
+            {
+                field: 'decor-item_id',
+                ajax: 'item',
+                minChar: 3,
+                imagePath: null
+            },
+            {
+                field: 'decor-trap_id',
+                ajax: 'trap',
+                minChar: 0,
+                imagePath: null
+            },
+            {
+                field: 'decor-image',
+                ajax: 'image',
+                minChar: 1,
+                imagePath: imagePath
+            }
+        ]
+    },
+    {
         form: 'action',
         params: [
             {
                 field: 'action-passage_id',
                 ajax: 'passage',
+                minChar: 0,
+                imagePath: null
+            },
+            {
+                field: 'action-decor_id',
+                ajax: 'decor',
                 minChar: 0,
                 imagePath: null
             },
@@ -129,7 +158,7 @@ const config = [
             {
                 field: 'action-trap_id',
                 ajax: 'trap',
-                minChar: 0,
+                minChar: 3,
                 imagePath: null
             }
         ]

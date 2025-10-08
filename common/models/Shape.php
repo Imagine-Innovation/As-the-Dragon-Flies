@@ -8,11 +8,11 @@ use Yii;
  * This is the model class for table "shape".
  *
  * @property int $id Primary key
- * @property int $size_id Foreign key to "creature_size" table
- * @property int $creature_id Foreign key to "creature" table
+ * @property int $size_id Foreign key to “creature_size” table
+ * @property int $creature_id Foreign key to “creature” table
  * @property string $name Creature shape
  * @property int|null $ac Armor class
- * @property int $languages Number of languages the creature can understand and speak if the "can_speak" flag is set to TRUE
+ * @property int $languages Number of languages the creature can understand and speak if the “can_speak” flag is set to TRUE
  * @property int $can_speak Indicates whether the creature can speak or not in this shape
  * @property int $is_telepath Indicates that the creature is telepath in that shate
  * @property int|null $telepathy_range Distance at which the creature can use telepathy (ft.)
@@ -64,11 +64,11 @@ class Shape extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'size_id' => 'Foreign key to \"creature_size\" table',
-            'creature_id' => 'Foreign key to \"creature\" table',
+            'size_id' => 'Foreign key to “creature_size” table',
+            'creature_id' => 'Foreign key to “creature” table',
             'name' => 'Creature shape',
             'ac' => 'Armor class',
-            'languages' => 'Number of languages the creature can understand and speak if the \"can_speak\" flag is set to TRUE',
+            'languages' => 'Number of languages the creature can understand and speak if the “can_speak” flag is set to TRUE',
             'can_speak' => 'Indicates whether the creature can speak or not in this shape',
             'is_telepath' => 'Indicates that the creature is telepath in that shate',
             'telepathy_range' => 'Distance at which the creature can use telepathy (ft.)',

@@ -7,15 +7,17 @@ use Yii;
 /**
  * This is the model class for table "background_trait".
  *
- * @property int $background_id Foreign key to "background" table
- * @property int $trait_id Foreign key to "trait" table
+ * @property int $background_id Foreign key to “background” table
+ * @property int $trait_id Foreign key to “character_trait” table
  * @property int $score Value of the die roll used to determine the trait
  * @property string|null $description Short description
  *
  * @property Background $background
- * @property Trait $trait
+ * @property CharacterTrait $trait
  */
-class BackgroundTrait extends \yii\db\ActiveRecord {
+class BackgroundTrait extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -29,6 +31,7 @@ class BackgroundTrait extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['description'], 'default', 'value' => null],
             [['background_id', 'trait_id', 'score'], 'required'],
             [['background_id', 'trait_id', 'score'], 'integer'],
             [['description'], 'string'],
@@ -43,8 +46,8 @@ class BackgroundTrait extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'background_id' => 'Foreign key to "background" table',
-            'trait_id' => 'Foreign key to "trait" table',
+            'background_id' => 'Foreign key to “background” table',
+            'trait_id' => 'Foreign key to “character_trait” table',
             'score' => 'Value of the die roll used to determine the trait',
             'description' => 'Short description',
         ];
@@ -67,4 +70,5 @@ class BackgroundTrait extends \yii\db\ActiveRecord {
     public function getTrait() {
         return $this->hasOne(CharacterTrait::class, ['id' => 'trait_id']);
     }
+
 }

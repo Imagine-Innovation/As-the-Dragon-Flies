@@ -8,14 +8,16 @@ use Yii;
  * This is the model class for table "background_attribute".
  *
  * @property int $id Primary key
- * @property int $background_id Foreign key to "background" table
+ * @property int $background_id Foreign key to “background” table
  * @property string $attribute_type Attribute type
  * @property string|null $name Attribute
  * @property string|null $description Short description
  *
  * @property Background $background
  */
-class BackgroundAttribute extends \yii\db\ActiveRecord {
+class BackgroundAttribute extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -29,6 +31,7 @@ class BackgroundAttribute extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['name', 'description'], 'default', 'value' => null],
             [['background_id', 'attribute_type'], 'required'],
             [['background_id'], 'integer'],
             [['description'], 'string'],
@@ -43,7 +46,7 @@ class BackgroundAttribute extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'background_id' => 'Foreign key to "background" table',
+            'background_id' => 'Foreign key to “background” table',
             'attribute_type' => 'Attribute type',
             'name' => 'Attribute',
             'description' => 'Short description',
@@ -58,4 +61,5 @@ class BackgroundAttribute extends \yii\db\ActiveRecord {
     public function getBackground() {
         return $this->hasOne(Background::class, ['id' => 'background_id']);
     }
+
 }

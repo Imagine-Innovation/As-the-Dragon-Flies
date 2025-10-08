@@ -14,7 +14,9 @@ use Yii;
  *
  * @property ClassProficiency[] $classProficiencies
  */
-class Proficiency extends \yii\db\ActiveRecord {
+class Proficiency extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -28,6 +30,7 @@ class Proficiency extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['description'], 'default', 'value' => null],
             [['name', 'sort_order'], 'required'],
             [['sort_order'], 'integer'],
             [['description'], 'string'],
@@ -56,4 +59,5 @@ class Proficiency extends \yii\db\ActiveRecord {
     public function getClassProficiencies() {
         return $this->hasMany(ClassProficiency::class, ['proficiency_id' => 'id']);
     }
+
 }

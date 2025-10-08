@@ -7,14 +7,16 @@ use Yii;
 /**
  * This is the model class for table "race_ability".
  *
- * @property int $race_id Foreign key to "race" table
- * @property int $ability_id Foreign key to "ability" table
+ * @property int $race_id Foreign key to “race” table
+ * @property int $ability_id Foreign key to “ability” table
  * @property int $bonus Ability bonus granted for a race. 0 means, that no bonus is granted.
  *
  * @property Ability $ability
  * @property Race $race
  */
-class RaceAbility extends \yii\db\ActiveRecord {
+class RaceAbility extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -28,6 +30,7 @@ class RaceAbility extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['bonus'], 'default', 'value' => 0],
             [['race_id', 'ability_id'], 'required'],
             [['race_id', 'ability_id', 'bonus'], 'integer'],
             [['race_id', 'ability_id'], 'unique', 'targetAttribute' => ['race_id', 'ability_id']],
@@ -41,8 +44,8 @@ class RaceAbility extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'race_id' => 'Foreign key to "race" table',
-            'ability_id' => 'Foreign key to "ability" table',
+            'race_id' => 'Foreign key to “race” table',
+            'ability_id' => 'Foreign key to “ability” table',
             'bonus' => 'Ability bonus granted for a race. 0 means, that no bonus is granted.',
         ];
     }
@@ -64,4 +67,5 @@ class RaceAbility extends \yii\db\ActiveRecord {
     public function getRace() {
         return $this->hasOne(Race::class, ['id' => 'race_id']);
     }
+
 }

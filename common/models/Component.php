@@ -15,7 +15,9 @@ use Yii;
  * @property SpellComponent[] $spellComponents
  * @property Spell[] $spells
  */
-class Component extends \yii\db\ActiveRecord {
+class Component extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -29,6 +31,7 @@ class Component extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['code', 'description'], 'default', 'value' => null],
             [['name'], 'required'],
             [['description'], 'string'],
             [['code'], 'string', 'max' => 4],
@@ -65,6 +68,7 @@ class Component extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getSpells() {
-        return $this->hasMany(Spell::class, ['id' => 'spell_id'])->via('spellComponents');
+        return $this->hasMany(Spell::class, ['id' => 'spell_id'])->viaTable('spell_component', ['component_id' => 'id']);
     }
+
 }

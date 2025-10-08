@@ -8,9 +8,9 @@ use Yii;
  * This is the model class for table "shape_attack".
  *
  * @property int $id Primary key
- * @property int $weapon_id Foreign key to "weapon" table
- * @property int $shape_id Foreign key to "shape" table
- * @property int $damage_type_id Foreign key to "damage_type" table
+ * @property int $weapon_id Foreign key to “weapon” table
+ * @property int $shape_id Foreign key to “shape” table
+ * @property int $damage_type_id Foreign key to “damage_type” table
  * @property string $name Attack
  * @property string|null $description Short description
  * @property int $bonus Attack bonus
@@ -25,7 +25,9 @@ use Yii;
  * @property Shape $shape
  * @property Weapon $weapon
  */
-class ShapeAttack extends \yii\db\ActiveRecord {
+class ShapeAttack extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -39,6 +41,8 @@ class ShapeAttack extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['description', 'damage_dice', 'additional_damage_dice', 'reach', 'range_min', 'range_max'], 'default', 'value' => null],
+            [['damage'], 'default', 'value' => 0],
             [['id', 'weapon_id', 'shape_id', 'damage_type_id', 'name'], 'required'],
             [['id', 'weapon_id', 'shape_id', 'damage_type_id', 'bonus', 'damage', 'reach', 'range_min', 'range_max'], 'integer'],
             [['description'], 'string'],
@@ -57,9 +61,9 @@ class ShapeAttack extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'weapon_id' => 'Foreign key to "weapon" table',
-            'shape_id' => 'Foreign key to "shape" table',
-            'damage_type_id' => 'Foreign key to "damage_type" table',
+            'weapon_id' => 'Foreign key to “weapon” table',
+            'shape_id' => 'Foreign key to “shape” table',
+            'damage_type_id' => 'Foreign key to “damage_type” table',
             'name' => 'Attack',
             'description' => 'Short description',
             'bonus' => 'Attack bonus',
@@ -98,4 +102,5 @@ class ShapeAttack extends \yii\db\ActiveRecord {
     public function getWeapon() {
         return $this->hasOne(Weapon::class, ['item_id' => 'weapon_id']);
     }
+
 }

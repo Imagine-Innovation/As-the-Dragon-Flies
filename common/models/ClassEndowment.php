@@ -8,7 +8,7 @@ use Yii;
  * This is the model class for table "class_endowment".
  *
  * @property int $id Primary key
- * @property int $class_id Foreign key to "class" table
+ * @property int $class_id Foreign key to “character_class” table
  * @property int $choice Choice number
  * @property int $sort_order Sort order
  * @property string|null $name Name
@@ -16,7 +16,9 @@ use Yii;
  * @property CharacterClass $class
  * @property ClassEquipment[] $classEquipments
  */
-class ClassEndowment extends \yii\db\ActiveRecord {
+class ClassEndowment extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -30,9 +32,11 @@ class ClassEndowment extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['name'], 'default', 'value' => null],
+            [['sort_order'], 'default', 'value' => 1],
             [['class_id'], 'required'],
             [['class_id', 'choice', 'sort_order'], 'integer'],
-            [['name'], 'string', 'max' => 32],
+            [['name'], 'string', 'max' => 64],
             [['class_id'], 'exist', 'skipOnError' => true, 'targetClass' => CharacterClass::class, 'targetAttribute' => ['class_id' => 'id']],
         ];
     }
@@ -43,7 +47,7 @@ class ClassEndowment extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'class_id' => 'Foreign key to "class" table',
+            'class_id' => 'Foreign key to “character_class” table',
             'choice' => 'Choice number',
             'sort_order' => 'Sort order',
             'name' => 'Name',
@@ -67,4 +71,5 @@ class ClassEndowment extends \yii\db\ActiveRecord {
     public function getClassEquipments() {
         return $this->hasMany(ClassEquipment::class, ['endowment_id' => 'id']);
     }
+
 }

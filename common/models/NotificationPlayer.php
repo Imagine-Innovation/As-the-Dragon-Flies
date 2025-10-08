@@ -7,8 +7,8 @@ use Yii;
 /**
  * This is the model class for table "notification_player".
  *
- * @property int $notification_id Foreign key to "notification" table
- * @property int $player_id Foreign key to "player" table
+ * @property int $notification_id Foreign key to “notification” table
+ * @property int $player_id Foreign key to “player” table
  * @property int $is_read Whether the player has read this notification
  * @property int|null $read_at When the player read this notification
  * @property int $is_dismissed Whether the player has dismissed this notification
@@ -17,7 +17,9 @@ use Yii;
  * @property Notification $notification
  * @property Player $player
  */
-class NotificationPlayer extends \yii\db\ActiveRecord {
+class NotificationPlayer extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -31,6 +33,8 @@ class NotificationPlayer extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['read_at', 'dismissed_at'], 'default', 'value' => null],
+            [['is_dismissed'], 'default', 'value' => 0],
             [['notification_id', 'player_id'], 'required'],
             [['notification_id', 'player_id', 'is_read', 'read_at', 'is_dismissed', 'dismissed_at'], 'integer'],
             [['notification_id', 'player_id'], 'unique', 'targetAttribute' => ['notification_id', 'player_id']],
@@ -44,8 +48,8 @@ class NotificationPlayer extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'notification_id' => 'Foreign key to "notification" table',
-            'player_id' => 'Foreign key to "player" table',
+            'notification_id' => 'Foreign key to “notification” table',
+            'player_id' => 'Foreign key to “player” table',
             'is_read' => 'Whether the player has read this notification',
             'read_at' => 'When the player read this notification',
             'is_dismissed' => 'Whether the player has dismissed this notification',
@@ -70,4 +74,5 @@ class NotificationPlayer extends \yii\db\ActiveRecord {
     public function getPlayer() {
         return $this->hasOne(Player::class, ['id' => 'player_id']);
     }
+
 }

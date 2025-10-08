@@ -8,8 +8,8 @@ use Yii;
  * This is the model class for table "quest_session".
  *
  * @property string $id Primary key
- * @property int|null $quest_id Foreign key to 'quest' table
- * @property int|null $player_id Foreign key to 'player' table
+ * @property int|null $quest_id Foreign key to “quest” table
+ * @property int|null $player_id Foreign key to “player” table
  * @property string|null $client_id Connection ID (socket)
  * @property int $last_ts Last time the session was used
  *
@@ -49,8 +49,8 @@ class QuestSession extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'quest_id' => 'Foreign key to \'quest\' table',
-            'player_id' => 'Foreign key to \'player\' table',
+            'quest_id' => 'Foreign key to “quest” table',
+            'player_id' => 'Foreign key to “player” table',
             'client_id' => 'Connection ID (socket)',
             'last_ts' => 'Last time the session was used',
         ];

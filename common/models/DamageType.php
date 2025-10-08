@@ -8,7 +8,7 @@ use Yii;
  * This is the model class for table "damage_type".
  *
  * @property int $id Primary key
- * @property int $group_id Foreign key to "damage_group" table
+ * @property int $group_id Foreign key to “damage_group” table
  * @property string $name Damage type
  * @property string|null $description Short description
  *
@@ -22,7 +22,9 @@ use Yii;
  * @property Trap[] $traps
  * @property Weapon[] $weapons
  */
-class DamageType extends \yii\db\ActiveRecord {
+class DamageType extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -36,6 +38,7 @@ class DamageType extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['description'], 'default', 'value' => null],
             [['group_id', 'name'], 'required'],
             [['group_id'], 'integer'],
             [['description'], 'string'],
@@ -50,7 +53,7 @@ class DamageType extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'group_id' => 'Foreign key to "damage_group" table',
+            'group_id' => 'Foreign key to “damage_group” table',
             'name' => 'Damage type',
             'description' => 'Short description',
         ];
@@ -71,7 +74,7 @@ class DamageType extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getCreatures() {
-        return $this->hasMany(Creature::class, ['id' => 'creature_id'])->via('creatureDamageTypes');
+        return $this->hasMany(Creature::class, ['id' => 'creature_id'])->viaTable('creature_damage_type', ['damage_type_id' => 'id']);
     }
 
     /**
@@ -116,7 +119,7 @@ class DamageType extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getSpells() {
-        return $this->hasMany(Spell::class, ['id' => 'spell_id'])->via('spellDamageTypes');
+        return $this->hasMany(Spell::class, ['id' => 'spell_id'])->viaTable('spell_damage_type', ['damage_type_id' => 'id']);
     }
 
     /**
@@ -136,4 +139,5 @@ class DamageType extends \yii\db\ActiveRecord {
     public function getWeapons() {
         return $this->hasMany(Weapon::class, ['damage_type_id' => 'id']);
     }
+
 }

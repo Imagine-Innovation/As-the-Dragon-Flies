@@ -7,10 +7,10 @@ use Yii;
 /**
  * This is the model class for table "user_log".
  *
- * @property int $user_id Foreign key to "user" table
- * @property int|null $access_right_id Foreign key to "access_right" table
- * @property int|null $player_id Optional foreign key to "player" table
- * @property int|null $quest_id Optional foreign key to "quest" table
+ * @property int $user_id Foreign key to “user” table
+ * @property int|null $access_right_id Optional Foreign key to “access_right” table
+ * @property int|null $player_id Optional foreign key to “player” table
+ * @property int|null $quest_id Optional foreign key to “quest” table
  * @property int|null $action_at Action was triggerd at
  * @property string|null $ip_address IP Address
  * @property int $denied Is action denied
@@ -55,10 +55,10 @@ class UserLog extends \yii\db\ActiveRecord
      */
     public function attributeLabels() {
         return [
-            'user_id' => 'Foreign key to "user" table',
-            'access_right_id' => 'Foreign key to "access_right" table',
-            'player_id' => 'Optional foreign key to "player" table',
-            'quest_id' => 'Optional foreign key to "quest" table',
+            'user_id' => 'Foreign key to “user” table',
+            'access_right_id' => 'Optional Foreign key to “access_right” table',
+            'player_id' => 'Optional foreign key to “player” table',
+            'quest_id' => 'Optional foreign key to “quest” table',
             'action_at' => 'Action was triggerd at',
             'ip_address' => 'IP Address',
             'denied' => 'Is action denied',

@@ -13,7 +13,9 @@ use Yii;
  *
  * @property Shape[] $shapes
  */
-class CreatureSize extends \yii\db\ActiveRecord {
+class CreatureSize extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -27,6 +29,7 @@ class CreatureSize extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['description'], 'default', 'value' => null],
             [['name'], 'required'],
             [['description'], 'string'],
             [['name'], 'string', 'max' => 32],
@@ -52,4 +55,5 @@ class CreatureSize extends \yii\db\ActiveRecord {
     public function getShapes() {
         return $this->hasMany(Shape::class, ['size_id' => 'id']);
     }
+
 }

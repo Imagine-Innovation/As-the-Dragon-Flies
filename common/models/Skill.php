@@ -8,7 +8,7 @@ use Yii;
  * This is the model class for table "skill".
  *
  * @property int $id Primary key
- * @property int $ability_id Foreign key to "ability" table
+ * @property int $ability_id Foreign key to “ability” table
  * @property string $name Skill
  * @property string|null $description Short description
  *
@@ -25,6 +25,7 @@ use Yii;
  */
 class Skill extends \yii\db\ActiveRecord
 {
+
 
     /**
      * {@inheritdoc}
@@ -54,7 +55,7 @@ class Skill extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'ability_id' => 'Foreign key to "ability\" table',
+            'ability_id' => 'Foreign key to “ability” table',
             'name' => 'Skill',
             'description' => 'Short description',
         ];
@@ -149,4 +150,5 @@ class Skill extends \yii\db\ActiveRecord
     public function getPlayers() {
         return $this->hasMany(Player::class, ['id' => 'player_id'])->viaTable('player_skill', ['skill_id' => 'id']);
     }
+
 }

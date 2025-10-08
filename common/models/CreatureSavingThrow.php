@@ -7,14 +7,16 @@ use Yii;
 /**
  * This is the model class for table "creature_saving_throw".
  *
- * @property int $creature_id Foreign key to "creature" table
- * @property int $ability_id Foreign key to "ability" table
+ * @property int $creature_id Foreign key to “creature” table
+ * @property int $ability_id Foreign key to “ability” table
  * @property int $modifier Modifier to apply
  *
  * @property Ability $ability
  * @property Creature $creature
  */
-class CreatureSavingThrow extends \yii\db\ActiveRecord {
+class CreatureSavingThrow extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -28,6 +30,7 @@ class CreatureSavingThrow extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['modifier'], 'default', 'value' => 0],
             [['creature_id', 'ability_id'], 'required'],
             [['creature_id', 'ability_id', 'modifier'], 'integer'],
             [['creature_id', 'ability_id'], 'unique', 'targetAttribute' => ['creature_id', 'ability_id']],
@@ -41,8 +44,8 @@ class CreatureSavingThrow extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'creature_id' => 'Foreign key to "creature" table',
-            'ability_id' => 'Foreign key to "ability" table',
+            'creature_id' => 'Foreign key to “creature” table',
+            'ability_id' => 'Foreign key to “ability” table',
             'modifier' => 'Modifier to apply',
         ];
     }
@@ -64,4 +67,5 @@ class CreatureSavingThrow extends \yii\db\ActiveRecord {
     public function getCreature() {
         return $this->hasOne(Creature::class, ['id' => 'creature_id']);
     }
+
 }

@@ -9,7 +9,7 @@ use Yii;
  * This is the model class for table "item".
  *
  * @property int $id Primary key
- * @property int $item_type_id Foreign key to "item_type" table
+ * @property int $item_type_id Foreign key to “item_type” table
  * @property string $name Item
  * @property string|null $description A textual description of the equipment, providing additional details about its appearance, properties, or usage.
  * @property string|null $image Image
@@ -25,16 +25,16 @@ use Yii;
  * @property int $is_purchasable Indicates that the item can be bought in the shop
  *
  * @property Action[] $actions
- * @property Action[] $actions0
  * @property Armor $armor
  * @property BackgroundItem[] $backgroundItems
  * @property Category[] $categories
  * @property ClassEquipment[] $classEquipments
  * @property ClassItemProficiency[] $classItemProficiencies
+ * @property DecorItem[] $decorItems
+ * @property Decor[] $decors
  * @property ItemCategory[] $itemCategories
  * @property ItemType $itemType
  * @property Item[] $items
- * @property MissionItem[] $missionItems
  * @property Pack[] $packs
  * @property Pack[] $packs0
  * @property Item[] $parentItems
@@ -96,7 +96,7 @@ class Item extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'item_type_id' => 'Foreign key to "item_type" table',
+            'item_type_id' => 'Foreign key to “item_type” table',
             'name' => 'Item',
             'description' => 'A textual description of the equipment, providing additional details about its appearance, properties, or usage.',
             'image' => 'Image',
@@ -119,15 +119,6 @@ class Item extends \yii\db\ActiveRecord
      * @return \yii\db\ActiveQuery
      */
     public function getActions() {
-        return $this->hasMany(Action::class, ['item_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[Actions0]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getActions0() {
         return $this->hasMany(Action::class, ['required_item_id' => 'id']);
     }
 
@@ -177,6 +168,24 @@ class Item extends \yii\db\ActiveRecord
     }
 
     /**
+     * Gets query for [[DecorItems]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDecorItems() {
+        return $this->hasMany(DecorItem::class, ['item_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Decors]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDecors() {
+        return $this->hasMany(Decor::class, ['item_id' => 'id']);
+    }
+
+    /**
      * Gets query for [[ItemCategories]].
      *
      * @return \yii\db\ActiveQuery
@@ -201,15 +210,6 @@ class Item extends \yii\db\ActiveRecord
      */
     public function getItems() {
         return $this->hasMany(Item::class, ['id' => 'item_id'])->viaTable('pack', ['parent_item_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[MissionItems]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getMissionItems() {
-        return $this->hasMany(MissionItem::class, ['item_id' => 'id']);
     }
 
     /**

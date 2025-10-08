@@ -13,7 +13,9 @@ use Yii;
  *
  * @property WizardQuestion[] $wizardQuestions
  */
-class Wizard extends \yii\db\ActiveRecord {
+class Wizard extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -52,4 +54,5 @@ class Wizard extends \yii\db\ActiveRecord {
     public function getWizardQuestions() {
         return $this->hasMany(WizardQuestion::class, ['wizard_id' => 'id']);
     }
+
 }

@@ -7,15 +7,17 @@ use Yii;
 /**
  * This is the model class for table "creature_ability".
  *
- * @property int $creature_id Foreign key to "creature" table
- * @property int $ability_id Foreign key to "ability" table
+ * @property int $creature_id Foreign key to “creature” table
+ * @property int $ability_id Foreign key to “ability” table
  * @property int $score Ability score
  * @property int $bonus Proficiency bonus
  *
  * @property Ability $ability
  * @property Creature $creature
  */
-class CreatureAbility extends \yii\db\ActiveRecord {
+class CreatureAbility extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -29,6 +31,7 @@ class CreatureAbility extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['bonus'], 'default', 'value' => 0],
             [['creature_id', 'ability_id'], 'required'],
             [['creature_id', 'ability_id', 'score', 'bonus'], 'integer'],
             [['creature_id', 'ability_id'], 'unique', 'targetAttribute' => ['creature_id', 'ability_id']],
@@ -42,8 +45,8 @@ class CreatureAbility extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'creature_id' => 'Foreign key to "creature" table',
-            'ability_id' => 'Foreign key to "ability" table',
+            'creature_id' => 'Foreign key to “creature” table',
+            'ability_id' => 'Foreign key to “ability” table',
             'score' => 'Ability score',
             'bonus' => 'Proficiency bonus',
         ];
@@ -66,4 +69,5 @@ class CreatureAbility extends \yii\db\ActiveRecord {
     public function getCreature() {
         return $this->hasOne(Creature::class, ['id' => 'creature_id']);
     }
+
 }

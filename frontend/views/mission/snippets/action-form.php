@@ -64,6 +64,18 @@ use yii\widgets\ActiveForm;
         ->label('Object affected by the action')
 ?>
 <?=
+        $form->field($model, 'decor_id')
+        ->dropdownList(
+                $model->decor_id ? [$model->decor_id => $model->decor->name] : [],
+                [
+                    'class' => 'select2-container w-100',
+                    'data-minimum-results-for-search' => -1,
+                    'data-placeholder' => "Select a decor",
+                ]
+        )
+        ->label('Decor affected by the action')
+?>
+<?=
         $form->field($model, 'npc_id')
         ->dropdownList(
                 $model->npc_id ? [$model->npc_id => $model->npc->name] : [],

@@ -18,7 +18,9 @@ use Yii;
  *
  * @property AccessRightActionButton[] $accessRightActionButtons
  */
-class ActionButton extends \yii\db\ActiveRecord {
+class ActionButton extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -32,6 +34,9 @@ class ActionButton extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['route', 'tooltip'], 'default', 'value' => null],
+            [['in_view'], 'default', 'value' => 1],
+            [['sort_order'], 'default', 'value' => 1000],
             [['action', 'icon'], 'required'],
             [['in_table', 'in_view', 'sort_order'], 'integer'],
             [['route', 'action', 'icon'], 'string', 'max' => 32],
@@ -63,4 +68,5 @@ class ActionButton extends \yii\db\ActiveRecord {
     public function getAccessRightActionButtons() {
         return $this->hasMany(AccessRightActionButton::class, ['action_button_id' => 'id']);
     }
+
 }

@@ -8,8 +8,8 @@ use Yii;
  * This is the model class for table "notification".
  *
  * @property int $id Primary key
- * @property int $initiator_id Foreign key to "player" table. Identifies the initiator of the notification
- * @property int|null $quest_id Foreign key to "quest" table
+ * @property int $initiator_id Foreign key to “player” table. Identifies the initiator of the notification
+ * @property int|null $quest_id Foreign key to “quest” table
  * @property string $notification_type Notifcation type
  * @property string $title Notification title
  * @property string $message Notification content
@@ -59,8 +59,8 @@ class Notification extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'initiator_id' => 'Foreign key to "player\" table. Identifies the initiator of the notification',
-            'quest_id' => 'Foreign key to "quest" table',
+            'initiator_id' => 'Foreign key to “player” table. Identifies the initiator of the notification',
+            'quest_id' => 'Foreign key to “quest” table',
             'notification_type' => 'Notifcation type',
             'title' => 'Notification title',
             'message' => 'Notification content',

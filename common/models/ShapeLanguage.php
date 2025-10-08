@@ -7,13 +7,15 @@ use Yii;
 /**
  * This is the model class for table "shape_language".
  *
- * @property int $shape_id Foreign key to "shape" table
- * @property int $language_id Foreign key to "language" table
+ * @property int $shape_id Foreign key to “shape” table
+ * @property int $language_id Foreign key to “language” table
  *
  * @property Language $language
  * @property Shape $shape
  */
-class ShapeLanguage extends \yii\db\ActiveRecord {
+class ShapeLanguage extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -40,8 +42,8 @@ class ShapeLanguage extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'shape_id' => 'Foreign key to "shape" table',
-            'language_id' => 'Foreign key to "language" table',
+            'shape_id' => 'Foreign key to “shape” table',
+            'language_id' => 'Foreign key to “language” table',
         ];
     }
 
@@ -62,4 +64,5 @@ class ShapeLanguage extends \yii\db\ActiveRecord {
     public function getShape() {
         return $this->hasOne(Shape::class, ['id' => 'shape_id']);
     }
+
 }

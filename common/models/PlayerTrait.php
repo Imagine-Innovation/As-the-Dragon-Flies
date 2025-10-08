@@ -7,14 +7,16 @@ use Yii;
 /**
  * This is the model class for table "player_trait".
  *
- * @property int $player_id Foreign key to "player" table
- * @property int $trait_id Foreign key to "trait" table
+ * @property int $player_id Foreign key to “player” table
+ * @property int $trait_id Foreign key to “character_trait” table
  * @property string $description Description of the trait
  *
  * @property Player $player
  * @property CharacterTrait $trait
  */
-class PlayerTrait extends \yii\db\ActiveRecord {
+class PlayerTrait extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -42,8 +44,8 @@ class PlayerTrait extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'player_id' => 'Foreign key to "player" table',
-            'trait_id' => 'Foreign key to "trait" table',
+            'player_id' => 'Foreign key to “player” table',
+            'trait_id' => 'Foreign key to “character_trait” table',
             'description' => 'Description of the trait',
         ];
     }
@@ -65,4 +67,5 @@ class PlayerTrait extends \yii\db\ActiveRecord {
     public function getTrait() {
         return $this->hasOne(CharacterTrait::class, ['id' => 'trait_id']);
     }
+
 }

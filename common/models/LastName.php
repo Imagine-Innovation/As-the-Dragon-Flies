@@ -8,12 +8,14 @@ use Yii;
  * This is the model class for table "last_name".
  *
  * @property int $id Primary key
- * @property int $ethnicity_id Foreign key to "ethnicity" table
+ * @property int $ethnicity_id Foreign key to “ethnicity” table
  * @property string $name Last name
  *
  * @property Ethnicity $ethnicity
  */
-class LastName extends \yii\db\ActiveRecord {
+class LastName extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -40,7 +42,7 @@ class LastName extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'ethnicity_id' => 'Foreign key to "ethnicity" table',
+            'ethnicity_id' => 'Foreign key to “ethnicity” table',
             'name' => 'Last name',
         ];
     }
@@ -53,4 +55,5 @@ class LastName extends \yii\db\ActiveRecord {
     public function getEthnicity() {
         return $this->hasOne(Ethnicity::class, ['id' => 'ethnicity_id']);
     }
+
 }

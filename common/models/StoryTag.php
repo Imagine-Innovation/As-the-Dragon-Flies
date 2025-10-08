@@ -7,13 +7,15 @@ use Yii;
 /**
  * This is the model class for table "story_tag".
  *
- * @property int $story_id Foreign key to "story" table
- * @property int $tag_id Foreign key to "tag" table
+ * @property int $story_id Foreign key to “story” table
+ * @property int $tag_id Foreign key to “tag” table
  *
  * @property Story $story
  * @property Tag $tag
  */
-class StoryTag extends \yii\db\ActiveRecord {
+class StoryTag extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -40,8 +42,8 @@ class StoryTag extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'story_id' => 'Foreign key to "story" table',
-            'tag_id' => 'Foreign key to "tag" table',
+            'story_id' => 'Foreign key to “story” table',
+            'tag_id' => 'Foreign key to “tag” table',
         ];
     }
 
@@ -62,4 +64,5 @@ class StoryTag extends \yii\db\ActiveRecord {
     public function getTag() {
         return $this->hasOne(Tag::class, ['id' => 'tag_id']);
     }
+
 }

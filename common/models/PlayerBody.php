@@ -7,11 +7,12 @@ use Yii;
 /**
  * This is the model class for table "player_body".
  *
- * @property int $player_id Foreign key to "player" table
- * @property int|null $head_item_id Optional foreign key to "player_item" table. Item that protect the head
- * @property int|null $chest_item_id Optional foreign key to "player_item" table. Item that protect the chest
- * @property int|null $right_hand_item_id Optional foreign key to "player_item" table. Item handled in the right hand
- * @property int|null $left_hand_item_id Optional foreign key to "player_item" table. Item handled in the left hand
+ * @property int $player_id Foreign key to “player” table
+ * @property int|null $head_item_id Optional foreign key to “player_item” table. Item that protect the head
+ * @property int|null $chest_item_id Optional foreign key to “player_item” table. Item that protect the chest
+ * @property int|null $right_hand_item_id Optional foreign key to “player_item” table. Item handled in the right hand
+ * @property int|null $left_hand_item_id Optional foreign key to “player_item” table. Item handled in the left hand
+ * @property int|null $back_item_id Optional foreign key to “player_item” table. Item carried on the back
  *
  * @property Player $player
  * @property PlayerItem $head
@@ -20,7 +21,8 @@ use Yii;
  * @property PlayerItem $leftHand
  * @property PlayerItem $back
  */
-class PlayerBody extends \yii\db\ActiveRecord {
+class PlayerBody extends \yii\db\ActiveRecord
+{
 
     /**
      * {@inheritdoc}
@@ -76,12 +78,12 @@ class PlayerBody extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'player_id' => 'Foreign key to "player" table',
-            'head_item_id' => 'Optional foreign key to "player_item\" table. Item that protect the head',
-            'chest_item_id' => 'Optional foreign key to "player_item\" table. Item that protect the chest',
-            'right_hand_item_id' => 'Optional foreign key to "player_item\" table. Item handled in the right hand',
-            'left_hand_item_id' => 'Optional foreign key to "player_item\" table. Item handled in the left hand',
-            'left_hand_item_id' => 'Optional foreign key to "player_item\" table. Item carried on the back',
+            'player_id' => 'Foreign key to “player” table',
+            'head_item_id' => 'Optional foreign key to “player_item” table. Item that protect the head',
+            'chest_item_id' => 'Optional foreign key to “player_item” table. Item that protect the chest',
+            'right_hand_item_id' => 'Optional foreign key to “player_item” table. Item handled in the right hand',
+            'left_hand_item_id' => 'Optional foreign key to “player_item” table. Item handled in the left hand',
+            'left_hand_item_id' => 'Optional foreign key to “player_item” table. Item carried on the back',
         ];
     }
 

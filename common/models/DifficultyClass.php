@@ -9,10 +9,12 @@ use Yii;
  *
  * @property int $id Primary key
  * @property string $name Difficulty Class
- * @property int $dc_min Minimum score to succeed, from 5 for "Very easy" to 30 for "Nearly impossible"
+ * @property int $dc_min Minimum score to succeed, from 5 for “Very easy” to 30 for “Nearly impossible”
  * @property int $dc_max Maximum score for the level of difficulty before accessing the next level
  */
-class DifficultyClass extends \yii\db\ActiveRecord {
+class DifficultyClass extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -26,6 +28,8 @@ class DifficultyClass extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['dc_min'], 'default', 'value' => 5],
+            [['dc_max'], 'default', 'value' => 9],
             [['name'], 'required'],
             [['dc_min', 'dc_max'], 'integer'],
             [['name'], 'string', 'max' => 32],
@@ -39,8 +43,9 @@ class DifficultyClass extends \yii\db\ActiveRecord {
         return [
             'id' => 'Primary key',
             'name' => 'Difficulty Class',
-            'dc_min' => 'Minimum score to succeed, from 5 for \"Very easy\" to 30 for \"Nearly impossible\"',
+            'dc_min' => 'Minimum score to succeed, from 5 for “Very easy” to 30 for “Nearly impossible”',
             'dc_max' => 'Maximum score for the level of difficulty before accessing the next level',
         ];
     }
+
 }

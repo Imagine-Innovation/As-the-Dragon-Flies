@@ -7,13 +7,15 @@ use Yii;
 /**
  * This is the model class for table "creature_immunization".
  *
- * @property int $creature_id Foreign key to "creature" table
- * @property int $condition_id Foreign key to "creature_condition" table
+ * @property int $creature_id Foreign key to “creature” table
+ * @property int $condition_id Foreign key to “creature_condition” table
  *
  * @property CreatureCondition $condition
  * @property Creature $creature
  */
-class CreatureImmunization extends \yii\db\ActiveRecord {
+class CreatureImmunization extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -40,8 +42,8 @@ class CreatureImmunization extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'creature_id' => 'Foreign key to "creature" table',
-            'condition_id' => 'Foreign key to "creature_condition" table',
+            'creature_id' => 'Foreign key to “creature” table',
+            'condition_id' => 'Foreign key to “creature_condition” table',
         ];
     }
 
@@ -62,4 +64,5 @@ class CreatureImmunization extends \yii\db\ActiveRecord {
     public function getCreature() {
         return $this->hasOne(Creature::class, ['id' => 'creature_id']);
     }
+
 }

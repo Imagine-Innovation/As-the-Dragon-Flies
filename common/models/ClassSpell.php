@@ -7,13 +7,16 @@ use Yii;
 /**
  * This is the model class for table "class_spell".
  *
- * @property int $class_id Foreign key to "class" table
- * @property int $spell_id Foreign key to "spell" table
+ * @property int $class_id Foreign key to “character_class” table
+ * @property int $spell_id Foreign key to “spell” table
  *
- * @property Class $class
+ * @property CharacterClass $class
  * @property Spell $spell
  */
-class ClassSpell extends \yii\db\ActiveRecord {
+class ClassSpell extends \yii\db\ActiveRecord
+{
+
+
     /**
      * {@inheritdoc}
      */
@@ -39,8 +42,8 @@ class ClassSpell extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'class_id' => 'Foreign key to "class" table',
-            'spell_id' => 'Foreign key to "spell" table',
+            'class_id' => 'Foreign key to “character_class” table',
+            'spell_id' => 'Foreign key to “spell” table',
         ];
     }
 
@@ -61,4 +64,5 @@ class ClassSpell extends \yii\db\ActiveRecord {
     public function getSpell() {
         return $this->hasOne(Spell::class, ['id' => 'spell_id']);
     }
+
 }

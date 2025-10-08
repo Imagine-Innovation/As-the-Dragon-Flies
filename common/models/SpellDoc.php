@@ -8,14 +8,16 @@ use Yii;
  * This is the model class for table "spell_doc".
  *
  * @property int $id Primary key
- * @property int $spell_id Foreign key to "spell" table
+ * @property int $spell_id Foreign key to “spell” table
  * @property string $name Chapter
  * @property int $sort_order Sort order
  * @property string|null $description Short description
  *
  * @property Spell $spell
  */
-class SpellDoc extends \yii\db\ActiveRecord {
+class SpellDoc extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -29,6 +31,7 @@ class SpellDoc extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['description'], 'default', 'value' => null],
             [['spell_id', 'name', 'sort_order'], 'required'],
             [['spell_id', 'sort_order'], 'integer'],
             [['description'], 'string'],
@@ -43,7 +46,7 @@ class SpellDoc extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'spell_id' => 'Foreign key to "spell" table',
+            'spell_id' => 'Foreign key to “spell” table',
             'name' => 'Chapter',
             'sort_order' => 'Sort order',
             'description' => 'Short description',
@@ -58,4 +61,5 @@ class SpellDoc extends \yii\db\ActiveRecord {
     public function getSpell() {
         return $this->hasOne(Spell::class, ['id' => 'spell_id']);
     }
+
 }

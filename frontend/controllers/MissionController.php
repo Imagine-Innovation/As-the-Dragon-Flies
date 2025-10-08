@@ -38,7 +38,7 @@ class MissionController extends Controller
                             [
                                 'actions' => [
                                     'create', 'view', 'update',
-                                    'add-detail', 'edit-detail',
+                                    'add-detail', 'edit-detail', 'add-trap',
                                 ],
                                 'allow' => ManageAccessRights::isRouteAllowed($this),
                                 'roles' => ['@'],
@@ -122,6 +122,7 @@ class MissionController extends Controller
             'Monster' => ['className' => 'Monster', 'snippet' => 'monster-form'],
             'Trap' => ['className' => 'Trap', 'snippet' => 'trap-form'],
             'Action' => ['className' => 'Action', 'snippet' => 'action-form'],
+            'Decor' => ['className' => 'Decor', 'snippet' => 'decor-form'],
             default => throw new \Exception("Unsupported type {$type}"),
         };
     }
@@ -154,6 +155,28 @@ class MissionController extends Controller
                     'mission' => $mission,
                     'type' => $type,
                     'snippet' => $detail['snippet'],
+        ]);
+    }
+
+    public function actionAddTrap(int $missionId) {
+
+        $model = new \common\models\Trap();
+        $mission = $this->findModel('Mission', ['id' => $missionId]);
+
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post()) && $model->save()) {
+                return $this->redirect(['view', 'id' => $mission->id]);
+            }
+            throw new \Exception(implode("<br/>", ArrayHelper::getColumn($model->errors, 0, false)));
+        } else {
+            $model->loadDefaultValues();
+        }
+
+        return $this->render('add-detail', [
+                    'model' => $model,
+                    'mission' => $mission,
+                    'type' => 'Trap',
+                    'snippet' => 'trap-form',
         ]);
     }
 

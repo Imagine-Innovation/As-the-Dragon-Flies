@@ -18,7 +18,7 @@ use Yii;
  * @property int $max_level Maximum level required to enter the story
  * @property int $min_players Minimum number of players
  * @property int $max_players Maximum number of players
- * @property string $language Lanuguage
+ * @property string $language Language
  *
  * @property Chapter[] $chapters
  * @property CharacterClass[] $classes
@@ -77,7 +77,7 @@ class Story extends \yii\db\ActiveRecord
             'max_level' => 'Maximum level required to enter the story',
             'min_players' => 'Minimum number of players',
             'max_players' => 'Maximum number of players',
-            'language' => 'Lanuguage',
+            'language' => 'Language',
         ];
     }
 

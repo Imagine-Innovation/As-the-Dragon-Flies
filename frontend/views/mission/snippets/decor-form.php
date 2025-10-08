@@ -1,10 +1,11 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
-/** @var common\models\Trap $model */
+/** @var common\models\Decor $model */
 /** @var yii\widgets\ActiveForm $form */
 /** @var string $storyId */
 /** @var string $chapterId */
@@ -14,7 +15,7 @@ use yii\widgets\ActiveForm;
 <div class="d-none">
     Hidden div to embeb utility tags for PHP/JS communication
     <span id="hiddenImagePath">story/<?= $storyId ?></span>
-    <span id="hiddenFormName">trap</span>
+    <span id="hiddenFormName">decor</span>
     <span id="hiddenMissionId"><?= $missionId ?></span>
 </div>
 
@@ -40,32 +41,36 @@ use yii\widgets\ActiveForm;
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => "Select an image",
-                        //'maxlength' => true,
+                            'maxlength' => true,
                         ]
                 )
-                ->label('Trap image')
+                ->label('Decor image')
         ?>
 
         <?=
-                $form->field($model, 'damage_type_id')
+                $form->field($model, 'item_id')
                 ->dropdownList(
-                        $model->damage_type_id ? [$model->damage_type_id => $model->damageType->name] : [],
+                        $model->item_id ? [$model->item_id => $model->item->name] : [],
                         [
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
-                            'data-placeholder' => "Select a damage type",
+                            'data-placeholder' => "Select an item",
                         ]
                 )
-                ->label('Damage type')
+                ->label('Item hidden in the decor')
         ?>
 
-        <?= $form->field($model, 'damage')->textInput(['maxlength' => true]) ?>
-
         <?=
-        $form->field($model, 'is_team_trap')->radioList([
-            0 => 'Only the player is trapped',
-            1 => 'The whole team is trapped'
-        ])
+                $form->field($model, 'trap_id')
+                ->dropdownList(
+                        $model->trap_id ? [$model->trap_id => $model->trap->name] : [],
+                        [
+                            'class' => 'select2-container w-100',
+                            'data-minimum-results-for-search' => -1,
+                            'data-placeholder' => "Select a trap",
+                        ]
+                )
+                ->label('Trap hidden in the decor <a href="' . Url::toRoute(['mission/add-trap', 'missionId' => $missionId]) . '"><i class="bi bi-plus-square"></i></a>')
         ?>
 
         <?php if ($model->image): ?>
@@ -78,4 +83,3 @@ use yii\widgets\ActiveForm;
 </div>
 
 <?php ActiveForm::end(); ?>
-

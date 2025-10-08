@@ -13,7 +13,9 @@ use Yii;
  *
  * @property DamageType[] $damageTypes
  */
-class DamageGroup extends \yii\db\ActiveRecord {
+class DamageGroup extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -27,6 +29,7 @@ class DamageGroup extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['description'], 'default', 'value' => null],
             [['name'], 'required'],
             [['description'], 'string'],
             [['name'], 'string', 'max' => 32],
@@ -52,4 +55,5 @@ class DamageGroup extends \yii\db\ActiveRecord {
     public function getDamageTypes() {
         return $this->hasMany(DamageType::class, ['group_id' => 'id']);
     }
+
 }

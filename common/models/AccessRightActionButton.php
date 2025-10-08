@@ -7,14 +7,16 @@ use Yii;
 /**
  * This is the model class for table "access_right_action_button".
  *
- * @property int $access_right_id Foreign key to "access_right" table
- * @property int $action_button_id Foreign key to "action_button" table
+ * @property int $access_right_id Foreign key to “access_right” table
+ * @property int $action_button_id Foreign key to “action_button” table
  * @property int $status Status
  *
  * @property AccessRight $accessRight
  * @property ActionButton $actionButton
  */
-class AccessRightActionButton extends \yii\db\ActiveRecord {
+class AccessRightActionButton extends \yii\db\ActiveRecord
+{
+
 
     /**
      * {@inheritdoc}
@@ -41,8 +43,8 @@ class AccessRightActionButton extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'access_right_id' => 'Foreign key to "access_right" table',
-            'action_button_id' => 'Foreign key to "action_button" table',
+            'access_right_id' => 'Foreign key to “access_right” table',
+            'action_button_id' => 'Foreign key to “action_button” table',
             'status' => 'Status',
         ];
     }
@@ -64,4 +66,5 @@ class AccessRightActionButton extends \yii\db\ActiveRecord {
     public function getActionButton() {
         return $this->hasOne(ActionButton::class, ['id' => 'action_button_id']);
     }
+
 }

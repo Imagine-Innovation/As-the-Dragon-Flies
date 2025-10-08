@@ -7,15 +7,18 @@ use Yii;
 /**
  * This is the model class for table "class_ability".
  *
- * @property int $class_id Foreign key to "class" table
- * @property int $ability_id Foreign key to "ability" table
+ * @property int $class_id Foreign key to “character_class” table
+ * @property int $ability_id Foreign key to “ability” table
  * @property int $is_primary_ability
  * @property int $is_saving_throw
  *
  * @property Ability $ability
- * @property Class $class
+ * @property CharacterClass $class
  */
-class ClassAbility extends \yii\db\ActiveRecord {
+class ClassAbility extends \yii\db\ActiveRecord
+{
+
+
     /**
      * {@inheritdoc}
      */
@@ -28,6 +31,7 @@ class ClassAbility extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
+            [['is_saving_throw'], 'default', 'value' => 0],
             [['class_id', 'ability_id'], 'required'],
             [['class_id', 'ability_id', 'is_primary_ability', 'is_saving_throw'], 'integer'],
             [['class_id', 'ability_id'], 'unique', 'targetAttribute' => ['class_id', 'ability_id']],
@@ -41,8 +45,8 @@ class ClassAbility extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'class_id' => 'Foreign key to "class" table',
-            'ability_id' => 'Foreign key to "ability" table',
+            'class_id' => 'Foreign key to “character_class” table',
+            'ability_id' => 'Foreign key to “ability” table',
             'is_primary_ability' => 'Is Primary Ability',
             'is_saving_throw' => 'Is Saving Throw',
         ];
@@ -65,4 +69,5 @@ class ClassAbility extends \yii\db\ActiveRecord {
     public function getClass() {
         return $this->hasOne(CharacterClass::class, ['id' => 'class_id']);
     }
+
 }
