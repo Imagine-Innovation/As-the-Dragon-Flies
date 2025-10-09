@@ -9,14 +9,12 @@ use Yii;
  *
  * @property int $id Primary key
  * @property int $mission_id Foreign key to “mission” table
- * @property int|null $item_id Optional foreign key to “item” table. Item that can be found in the decor element.
  * @property string $name Decor
- * @property string $description Short description
+ * @property string|null $description Short description
  * @property string|null $image Image
  *
  * @property Action[] $actions
  * @property DecorItem[] $decorItems
- * @property Item $item
  * @property Mission $mission
  * @property Trap[] $traps
  */
@@ -36,13 +34,12 @@ class Decor extends \yii\db\ActiveRecord
      */
     public function rules() {
         return [
-            [['item_id', 'image'], 'default', 'value' => null],
-            [['mission_id', 'name', 'description'], 'required'],
-            [['mission_id', 'item_id'], 'integer'],
+            [['description', 'image'], 'default', 'value' => null],
+            [['mission_id', 'name'], 'required'],
+            [['mission_id'], 'integer'],
             [['description'], 'string'],
             [['name', 'image'], 'string', 'max' => 32],
             [['mission_id'], 'exist', 'skipOnError' => true, 'targetClass' => Mission::class, 'targetAttribute' => ['mission_id' => 'id']],
-            [['item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['item_id' => 'id']],
         ];
     }
 
@@ -53,7 +50,6 @@ class Decor extends \yii\db\ActiveRecord
         return [
             'id' => 'Primary key',
             'mission_id' => 'Foreign key to “mission” table',
-            'item_id' => 'Optional foreign key to “item” table. Item that can be found in the decor element.',
             'name' => 'Decor',
             'description' => 'Short description',
             'image' => 'Image',
@@ -76,15 +72,6 @@ class Decor extends \yii\db\ActiveRecord
      */
     public function getDecorItems() {
         return $this->hasMany(DecorItem::class, ['decor_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[Item]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getItem() {
-        return $this->hasOne(Item::class, ['id' => 'item_id']);
     }
 
     /**

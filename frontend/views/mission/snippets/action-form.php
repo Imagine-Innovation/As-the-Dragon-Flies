@@ -14,14 +14,12 @@ use yii\widgets\ActiveForm;
     Hidden div to embeb utility tags for PHP/JS communication
     <span id="hiddenImagePath">item</span>
     <span id="hiddenFormName">action</span>
-    <span id="hiddenMissionId"><?= $missionId ?></span>
+    <span id="hiddenParentId"><?= $missionId ?></span>
 </div>
 
 <?php $form = ActiveForm::begin(); ?>
 
 <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
-
-<?= $form->field($model, 'icon')->textInput(['maxlength' => true])->label($model->icon ? 'Icon (<i class="bi ' . $model->icon . '"></i>)' : 'Icon') ?>
 
 <?= $form->field($model, 'action_type')->textInput(['maxlength' => true]) ?>
 

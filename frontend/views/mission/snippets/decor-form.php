@@ -16,7 +16,7 @@ use yii\widgets\ActiveForm;
     Hidden div to embeb utility tags for PHP/JS communication
     <span id="hiddenImagePath">story/<?= $storyId ?></span>
     <span id="hiddenFormName">decor</span>
-    <span id="hiddenMissionId"><?= $missionId ?></span>
+    <span id="hiddenParentId"><?= $missionId ?></span>
 </div>
 
 <?php $form = ActiveForm::begin(); ?>
@@ -47,32 +47,6 @@ use yii\widgets\ActiveForm;
                 ->label('Decor image')
         ?>
 
-        <?=
-                $form->field($model, 'item_id')
-                ->dropdownList(
-                        $model->item_id ? [$model->item_id => $model->item->name] : [],
-                        [
-                            'class' => 'select2-container w-100',
-                            'data-minimum-results-for-search' => -1,
-                            'data-placeholder' => "Select an item",
-                        ]
-                )
-                ->label('Item hidden in the decor')
-        ?>
-
-        <?=
-                $form->field($model, 'trap_id')
-                ->dropdownList(
-                        $model->trap_id ? [$model->trap_id => $model->trap->name] : [],
-                        [
-                            'class' => 'select2-container w-100',
-                            'data-minimum-results-for-search' => -1,
-                            'data-placeholder' => "Select a trap",
-                        ]
-                )
-                ->label('Trap hidden in the decor <a href="' . Url::toRoute(['mission/add-trap', 'missionId' => $missionId]) . '"><i class="bi bi-plus-square"></i></a>')
-        ?>
-
         <?php if ($model->image): ?>
         </div>
     </div>
@@ -83,3 +57,10 @@ use yii\widgets\ActiveForm;
 </div>
 
 <?php ActiveForm::end(); ?>
+
+<?php if ($model->id): ?>
+    <div class="row row-cols-1 row-cols-lg-2 g-4">
+        <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->decorItems, 'parentId' => $model->id, 'type' => 'Item']) ?>
+        <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->traps, 'parentId' => $model->id, 'type' => 'Trap']) ?>
+    </div>
+<?php endif; ?>

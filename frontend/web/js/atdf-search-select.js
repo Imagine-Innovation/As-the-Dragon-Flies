@@ -1,12 +1,23 @@
 const formName = $('#hiddenFormName').html();
 const imagePath = $('#hiddenImagePath').html();
-const missionId = $('#hiddenMissionId').html();
+const parentId = $('#hiddenParentId').html();
 const config = [
     {
         form: 'mission',
         params: [
             {
                 field: 'mission-image',
+                ajax: 'image',
+                minChar: 1,
+                imagePath: imagePath
+            }
+        ]
+    },
+    {
+        form: 'passage',
+        params: [
+            {
+                field: 'passage-image',
                 ajax: 'image',
                 minChar: 1,
                 imagePath: imagePath
@@ -42,7 +53,7 @@ const config = [
             {
                 field: 'trap-damage_type_id',
                 ajax: 'damage-type',
-                minChar: 3,
+                minChar: 0,
                 imagePath: null
             },
             {
@@ -54,16 +65,16 @@ const config = [
         ]
     },
     {
-        form: 'missionitem',
+        form: 'decoritem',
         params: [
             {
-                field: 'missionitem-item_id',
+                field: 'decoritem-item_id',
                 ajax: 'item',
                 minChar: 3,
                 imagePath: null
             },
             {
-                field: 'missionitem-image',
+                field: 'decoritem-image',
                 ajax: 'image',
                 minChar: 1,
                 imagePath: imagePath
@@ -127,7 +138,7 @@ const config = [
             },
             {
                 field: 'action-item_id',
-                ajax: 'mission-item',
+                ajax: 'nested-item',
                 minChar: 0,
                 imagePath: null
             },
@@ -152,13 +163,13 @@ const config = [
             {
                 field: 'action-skill_id',
                 ajax: 'skill',
-                minChar: 3,
+                minChar: 0,
                 imagePath: null
             },
             {
                 field: 'action-trap_id',
-                ajax: 'trap',
-                minChar: 3,
+                ajax: 'nested-trap',
+                minChar: 0,
                 imagePath: null
             }
         ]
@@ -176,7 +187,7 @@ function searchSelect(searchField, ajaxFunction, minChar = 3, imagePath = null) 
                 const ajaxParams = {
                     search: params.term, // search term
                     folder: imagePath,
-                    missionId: missionId
+                    parentId: parentId
                 };
                 console.log(JSON.stringify(ajaxParams));
                 return ajaxParams;
@@ -190,6 +201,9 @@ function searchSelect(searchField, ajaxFunction, minChar = 3, imagePath = null) 
             cache: true
         },
         placeholder: 'Search for a dialog',
+        allowClear: true,
+        dropdownAutoWidth: true,
+        width: '100%',
         minimumInputLength: minChar,
         templateResult: formatSearchResult,
         templateSelection: function (data) {
@@ -208,18 +222,19 @@ function searchSelect(searchField, ajaxFunction, minChar = 3, imagePath = null) 
                     `    <span><img src="${result.img}" style="max-height: 50px;"/></span> ${result.text}` +
                     `</div>`
                     );
-        } else {
-            if (result.name) {
+        }
+        if (result.name) {
+            if (result.text) {
                 return $(
                         `<div class='select2-result-${searchField} clearfix'>` +
                         `<span class='fw-medium'>${result.name}:</span> ${result.text}` +
                         `</div>`
                         );
-            } else {
-                return $(`<div class='select2-result-${searchField} clearfix'>${result.text}</div>`);
             }
+            return $(`<div class='select2-result-${searchField} clearfix'>${result.name}</div>`);
         }
-}
+        return $(`<div class='select2-result-${searchField} clearfix'>${result.text}</div>`);
+    }
 }
 
 function initSearchSelect(formName) {

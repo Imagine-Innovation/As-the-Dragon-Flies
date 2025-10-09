@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
-/** @var common\models\MissionItem $model */
+/** @var common\models\DecorItem $model */
 /** @var yii\widgets\ActiveForm $form */
 /** @var string $storyId */
 /** @var string $chapterId */
@@ -12,9 +12,9 @@ use yii\widgets\ActiveForm;
 ?>
 <div class="d-none">
     Hidden div to embeb utility tags for PHP/JS communication
-    <span id="hiddenImagePath">item</span>
-    <span id="hiddenFormName">missionitem</span>
-    <span id="hiddenMissionId"><?= $missionId ?></span>
+    <span id="hiddenImagePath">story/<?= $storyId ?></span>
+    <span id="hiddenFormName">decoritem</span>
+    <span id="hiddenParentId"><?= $missionId ?></span>
 </div>
 
 <?php $form = ActiveForm::begin(); ?>
@@ -23,10 +23,10 @@ use yii\widgets\ActiveForm;
 
 <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
 
-<?php if ($model->image): ?>
+<?php if ($model->item_id): ?>
     <div class="row">
         <div class="col-2">
-            <img src="img/item/<?= $model->image ?>" alt="<?= $model->name ?>" class="w-100 h-100" style="object-fit: cover;" />
+            <img src="<?= $model->image ? "img/story/{$storyId}/{$model->image}" : "img/item/{$model->item->image}" ?>" alt="<?= $model->name ?>" class="w-100 h-100" style="object-fit: cover;" />
         </div>
         <div class="col-10">
         <?php endif; ?>
@@ -38,10 +38,10 @@ use yii\widgets\ActiveForm;
                         [
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
-                            'data-placeholder' => "Select an item present during the mission",
+                            'data-placeholder' => "Select an item",
                         ]
                 )
-                ->label('Item present during the mission')
+                ->label('Item present in the decor')
         ?>
         <?=
                 $form->field($model, 'image')

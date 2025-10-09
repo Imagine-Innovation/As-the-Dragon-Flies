@@ -46,16 +46,16 @@ $this->params['breadcrumbs'] = $breadcrumbs;
                     <br>
                     <section id="MissionEnvironment">
                         <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3 row-cols-xxl-4 g-4">
-                            <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->npcs, 'missionId' => $model->id, 'type' => 'NPC']) ?>
-                            <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->missionItems, 'missionId' => $model->id, 'type' => 'Item']) ?>
-                            <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->monsters, 'missionId' => $model->id, 'type' => 'Monster']) ?>
-                            <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->decors, 'missionId' => $model->id, 'type' => 'Decor']) ?>
+                            <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->npcs, 'parentId' => $model->id, 'type' => 'NPC']) ?>
+                            <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->passages, 'parentId' => $model->id, 'type' => 'Passage']) ?>
+                            <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->monsters, 'parentId' => $model->id, 'type' => 'Monster']) ?>
+                            <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->decors, 'parentId' => $model->id, 'type' => 'Decor']) ?>
                         </div>
                     </section>
                     <p />
                     <section id="MissionActions">
                         <div class="row row-cols-1">
-                            <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->actions, 'missionId' => $model->id, 'type' => 'Action']) ?>
+                            <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->actions, 'parentId' => $model->id, 'type' => 'Action']) ?>
                         </div>
                     </section>
                     <br>

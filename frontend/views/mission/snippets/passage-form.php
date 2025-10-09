@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
-/** @var common\models\Mission $model */
+/** @var common\models\Passage $model */
 /** @var yii\widgets\ActiveForm $form */
 /** @var string $storyId */
 /** @var string $chapterId */
@@ -14,7 +14,7 @@ use yii\widgets\ActiveForm;
 <div class="d-none">
     Hidden div to embeb utility tags for PHP/JS communication
     <span id="hiddenImagePath">story/<?= $storyId ?></span>
-    <span id="hiddenFormName">mission</span>
+    <span id="hiddenFormName">passage</span>
     <span id="hiddenParentId"><?= $missionId ?></span>
 </div>
 
@@ -43,13 +43,16 @@ use yii\widgets\ActiveForm;
                             'maxlength' => true,
                         ]
                 )
-                ->label('Mission image')
+                ->label('Passage image')
         ?>
+
+        <?= $form->field($model, 'found')->textInput() ?>
 
         <?php if ($model->image): ?>
         </div>
     </div>
 <?php endif; ?>
+
 
 <div class="form-group">
     <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

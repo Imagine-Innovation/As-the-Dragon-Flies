@@ -3,7 +3,6 @@
 namespace frontend\controllers;
 
 use common\components\ManageAccessRights;
-use common\models\Dialog;
 use common\models\Mission;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -115,32 +114,20 @@ class MissionController extends Controller
      * @param string $type
      * @return array
      */
-    protected function getDetailFromType(string $type): array {
+    protected function getDetailInfoFromType(string $type): array {
         return match ($type) {
-            'NPC' => ['className' => 'Npc', 'snippet' => 'npc-form'],
-            'Item' => ['className' => 'MissionItem', 'snippet' => 'item-form'],
-            'Monster' => ['className' => 'Monster', 'snippet' => 'monster-form'],
-            'Trap' => ['className' => 'Trap', 'snippet' => 'trap-form'],
-            'Action' => ['className' => 'Action', 'snippet' => 'action-form'],
-            'Decor' => ['className' => 'Decor', 'snippet' => 'decor-form'],
+            'NPC' => ['className' => 'Npc', 'snippet' => 'npc-form', 'childOf' => 'mission'],
+            'Monster' => ['className' => 'Monster', 'snippet' => 'monster-form', 'childOf' => 'mission'],
+            'Passage' => ['className' => 'Passage', 'snippet' => 'passage-form', 'childOf' => 'mission'],
+            'Action' => ['className' => 'Action', 'snippet' => 'action-form', 'childOf' => 'mission'],
+            'Decor' => ['className' => 'Decor', 'snippet' => 'decor-form', 'childOf' => 'mission'],
+            'Item' => ['className' => 'DecorItem', 'snippet' => 'item-form', 'childOf' => 'decor'],
+            'Trap' => ['className' => 'Trap', 'snippet' => 'trap-form', 'childOf' => 'decor'],
             default => throw new \Exception("Unsupported type {$type}"),
         };
     }
 
-    /**
-     * Creates a new Mission model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
-     */
-    public function actionAddDetail(int $missionId, string $type) {
-        $detail = $this->getDetailFromType($type);
-        $className = $detail['className'];
-        $mission = $this->findModel('Mission', ['id' => $missionId]);
-
-        $modelName = "\\common\\models\\{$className}";
-        $model = new $modelName();
-        $model->mission_id = $mission->id;
-
+    private function createModel(\yii\db\ActiveRecord &$model, Mission $mission, string $type, string $snippet) {
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
                 return $this->redirect(['view', 'id' => $mission->id]);
@@ -154,42 +141,48 @@ class MissionController extends Controller
                     'model' => $model,
                     'mission' => $mission,
                     'type' => $type,
-                    'snippet' => $detail['snippet'],
+                    'snippet' => $snippet,
         ]);
     }
 
-    public function actionAddTrap(int $missionId) {
-
-        $model = new \common\models\Trap();
+    private function addMissionChild(int $missionId, string $type, string $className, string $snippet) {
         $mission = $this->findModel('Mission', ['id' => $missionId]);
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $mission->id]);
-            }
-            throw new \Exception(implode("<br/>", ArrayHelper::getColumn($model->errors, 0, false)));
-        } else {
-            $model->loadDefaultValues();
-        }
+        $modelName = "\\common\\models\\{$className}";
+        $model = new $modelName();
+        $model->mission_id = $mission->id;
 
-        return $this->render('add-detail', [
-                    'model' => $model,
-                    'mission' => $mission,
-                    'type' => 'Trap',
-                    'snippet' => 'trap-form',
-        ]);
+        return $this->createModel($model, $mission, $type, $snippet);
     }
 
-    public function actionEditDetail(string $jsonParams, string $type) {
-        $detail = $this->getDetailFromType($type);
-        $className = $detail['className'];
-        $searchParams = json_decode($jsonParams, true);
-        Yii::debug($jsonParams);
-        Yii::debug($searchParams);
-        $mission = $this->findModel('Mission', ['id' => $searchParams['mission_id']]);
+    private function addDecorChild(int $decorId, string $type, string $className, string $snippet) {
+        $decor = $this->findModel('Decor', ['id' => $decorId]);
+        $mission = $decor->mission;
 
-        $model = $this->findModel($className, $searchParams);
+        $modelName = "\\common\\models\\{$className}";
+        $model = new $modelName();
+        $model->decor_id = $decor->id;
 
+        return $this->createModel($model, $mission, $type, $snippet);
+    }
+
+    /**
+     * Creates a new Mission model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return string|\yii\web\Response
+     */
+    public function actionAddDetail(int $parentId, string $type) {
+        $detailInfo = $this->getDetailInfoFromType($type);
+        $className = $detailInfo['className'];
+        $snippet = $detailInfo['snippet'];
+
+        if ($detailInfo['childOf'] === 'decor') {
+            return $this->addDecorChild($parentId, $type, $className, $snippet);
+        }
+        return $this->addMissionChild($parentId, $type, $className, $snippet);
+    }
+
+    private function updateModel(\yii\db\ActiveRecord &$model, Mission $mission, string $type, string $snippet) {
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
                 return $this->redirect(['view', 'id' => $mission->id]);
@@ -201,8 +194,38 @@ class MissionController extends Controller
                     'model' => $model,
                     'mission' => $mission,
                     'type' => $type,
-                    'snippet' => $detail['snippet'],
+                    'snippet' => $snippet,
         ]);
+    }
+
+    private function editMissionChild(string $jsonParams, string $type, string $className, string $snippet) {
+        $searchParams = json_decode($jsonParams, true);
+
+        $mission = $this->findModel('Mission', ['id' => $searchParams['mission_id']]);
+        $model = $this->findModel($className, $searchParams);
+
+        return $this->updateModel($model, $mission, $type, $snippet);
+    }
+
+    private function editDecorChild(string $jsonParams, string $type, string $className, string $snippet) {
+        $searchParams = json_decode($jsonParams, true);
+
+        $decor = $this->findModel('Decor', ['id' => $searchParams['decor_id']]);
+        $mission = $decor->mission;
+        $model = $this->findModel($className, $searchParams);
+
+        return $this->updateModel($model, $mission, $type, $snippet);
+    }
+
+    public function actionEditDetail(string $jsonParams, string $type) {
+        $detailInfo = $this->getDetailInfoFromType($type);
+        $className = $detailInfo['className'];
+        $snippet = $detailInfo['snippet'];
+
+        if ($detailInfo['childOf'] === 'decor') {
+            return $this->editDecorChild($jsonParams, $type, $className, $snippet);
+        }
+        return $this->editMissionChild($jsonParams, $type, $className, $snippet);
     }
 
     /**

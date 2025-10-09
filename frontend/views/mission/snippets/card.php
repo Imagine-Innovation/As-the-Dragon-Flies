@@ -6,7 +6,7 @@ use yii\helpers\Url;
 
 /** @var yii\web\View $this */
 /** @var yii\db\ActiveRecord[] $properties */
-/** @var int $missionId */
+/** @var int $parentId */
 /** @var string $type */
 /** @var string $class */
 if ($properties) {
@@ -16,7 +16,7 @@ if ($properties) {
     $propertyNames = [];
 }
 
-$url = Url::toRoute(['mission/add-detail', 'missionId' => $missionId, 'type' => $type]);
+$url = Url::toRoute(['mission/add-detail', 'parentId' => $parentId, 'type' => $type]);
 ?>
 <div class="<?= $class ?? 'col' ?>">
     <article class="card mb-3 h-100" id="Mission<?= $type ?>">
