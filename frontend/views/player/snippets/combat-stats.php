@@ -2,8 +2,7 @@
 /** @var yii\web\View $this */
 /** @var common\models\Player $model */
 /** @var string $cardHeaderClass */
-$proficiencyBonus = $model->level->proficiency_bonus;
-
+/** @var int $proficiencyBonus */
 $combatStat = [
     ['label' => 'AC', 'value' => $model->armor_class],
     ['label' => 'Speed', 'value' => ($model->speed ?? $model->race->speed) . " ft"],

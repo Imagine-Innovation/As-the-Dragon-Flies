@@ -5,7 +5,8 @@ $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Players', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
-$cards = ['abilities', 'skills'];
+$cards = ['abilities', 'skills', 'combat-stats', 'attacks'];
+$proficiencyBonus = $model->level->proficiency_bonus;
 ?>
 <div class="container">
     <!-- Character Header -->
@@ -31,7 +32,8 @@ $cards = ['abilities', 'skills'];
         foreach ($cards as $card) {
             $cardContent = $this->renderFile("@app/views/player/snippets/{$card}.php", [
                 'model' => $model,
-                'cardHeaderClass' => $cardHeaderClass
+                'cardHeaderClass' => $cardHeaderClass,
+                'proficiencyBonus' => $proficiencyBonus,
             ]);
             echo($div . PHP_EOL);
             echo($cardContent . PHP_EOL);

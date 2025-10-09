@@ -955,26 +955,26 @@ textarea.form-control {
 }
 
 .invalid-feedback {
-	display:none;
-	width:100%;
-	margin-top:.25rem;
-	font-size:.9rem;
-	color:#dc3545
+    display:none;
+    width:100%;
+    margin-top:.25rem;
+    font-size:.9rem;
+    color:#dc3545
 }
 
 .invalid-tooltip {
-	position:absolute;
-	top:100%;
-	z-index:5;
-	display:none;
-	max-width:100%;
-	padding:.7rem 1.1rem;
-	margin-top:.1rem;
-	font-size:.875rem;
-	line-height:1.5;
-	color:#fff;
-	background-color:#dc3545;
-	border-radius:2px
+    position:absolute;
+    top:100%;
+    z-index:5;
+    display:none;
+    max-width:100%;
+    padding:.7rem 1.1rem;
+    margin-top:.1rem;
+    font-size:.875rem;
+    line-height:1.5;
+    color:#fff;
+    background-color:#dc3545;
+    border-radius:2px
 }
 
 .custom-select.is-invalid~.invalid-feedback,.custom-select.is-invalid~.invalid-tooltip,.was-validated .custom-select:invalid~.invalid-feedback,.was-validated .custom-select:invalid~.invalid-tooltip {
@@ -5828,4 +5828,31 @@ pre {
 .select2-container .select2-search--inline .select2-search__field {
     margin: 8px 0 2px;
     padding: 0 5px
+}
+
+
+/* Base: 1 column, vertical flow */
+.vertical-columns {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-rows: repeat(18, auto);
+    gap: 1rem;
+    height: auto; /* Let the container grow with content */
+    max-width: 100%;
+}
+
+/* lg breakpoint (≥992px): 2 columns */
+@media (min-width: 992px) {
+    .vertical-columns {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(9, auto);
+    }
+}
+
+/* xxl breakpoint (≥1400px): 3 columns */
+@media (min-width: 1400px) {
+    .vertical-columns {
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(6, auto);
+    }
 }
