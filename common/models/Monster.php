@@ -41,7 +41,7 @@ class Monster extends \yii\db\ActiveRecord
             [['mission_id', 'creature_id', 'name'], 'required'],
             [['mission_id', 'creature_id', 'found', 'identified'], 'integer'],
             [['description'], 'string'],
-            [['name', 'image'], 'string', 'max' => 32],
+            [['name', 'image'], 'string', 'max' => 64],
             [['creature_id'], 'exist', 'skipOnError' => true, 'targetClass' => Creature::class, 'targetAttribute' => ['creature_id' => 'id']],
             [['mission_id'], 'exist', 'skipOnError' => true, 'targetClass' => Mission::class, 'targetAttribute' => ['mission_id' => 'id']],
         ];

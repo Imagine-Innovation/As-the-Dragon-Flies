@@ -43,7 +43,7 @@ class Menu extends \yii\db\ActiveRecord
             [['access_right_id', 'label', 'icon', 'tooltip'], 'required'],
             [['access_right_id', 'is_context', 'sort_order'], 'integer'],
             [['description'], 'string'],
-            [['label', 'icon', 'image'], 'string', 'max' => 32],
+            [['label', 'icon', 'image'], 'string', 'max' => 64],
             [['tooltip', 'card_title', 'subtitle', 'button_label'], 'string', 'max' => 255],
             [['access_right_id'], 'unique'],
             [['access_right_id'], 'exist', 'skipOnError' => true, 'targetClass' => AccessRight::class, 'targetAttribute' => ['access_right_id' => 'id']],

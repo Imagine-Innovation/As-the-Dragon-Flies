@@ -54,7 +54,7 @@ class Race extends \yii\db\ActiveRecord
             [['race_group_id', 'name', 'size'], 'required'],
             [['race_group_id', 'adult_age', 'lifespan', 'speed', 'darkvision'], 'integer'],
             [['description'], 'string'],
-            [['name'], 'string', 'max' => 32],
+            [['name'], 'string', 'max' => 64],
             [['size'], 'string', 'max' => 1],
             [['base_height', 'height_modifier', 'base_weight', 'weight_modifier'], 'string', 'max' => 8],
             [['name'], 'unique'],

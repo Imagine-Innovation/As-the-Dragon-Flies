@@ -13,7 +13,8 @@ use Yii;
  * @property string|null $description Short description
  *
  * @property Ability $ability
- * @property Action[] $actions
+ * @property ActionTypeSkill[] $actionTypeSkills
+ * @property ActionType[] $actionTypes
  * @property BackgroundSkill[] $backgroundSkills
  * @property Background[] $backgrounds
  * @property ClassSkill[] $classSkills
@@ -43,7 +44,7 @@ class Skill extends \yii\db\ActiveRecord
             [['ability_id', 'name'], 'required'],
             [['ability_id'], 'integer'],
             [['description'], 'string'],
-            [['name'], 'string', 'max' => 32],
+            [['name'], 'string', 'max' => 64],
             [['name'], 'unique'],
             [['ability_id'], 'exist', 'skipOnError' => true, 'targetClass' => Ability::class, 'targetAttribute' => ['ability_id' => 'id']],
         ];
@@ -71,12 +72,21 @@ class Skill extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Actions]].
+     * Gets query for [[ActionTypeSkills]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getActions() {
-        return $this->hasMany(Action::class, ['skill_id' => 'id']);
+    public function getActionTypeSkills() {
+        return $this->hasMany(ActionTypeSkill::class, ['skill_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[ActionTypes]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getActionTypes() {
+        return $this->hasMany(ActionType::class, ['id' => 'action_type_id'])->viaTable('action_type_skill', ['skill_id' => 'id']);
     }
 
     /**

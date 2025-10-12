@@ -36,7 +36,7 @@ class RuleAction extends \yii\db\ActiveRecord
             [['model_id', 'rule_id', 'name'], 'required'],
             [['model_id', 'rule_id'], 'integer'],
             [['description'], 'string'],
-            [['name'], 'string', 'max' => 32],
+            [['name'], 'string', 'max' => 64],
             [['rule_id'], 'exist', 'skipOnError' => true, 'targetClass' => Rule::class, 'targetAttribute' => ['rule_id' => 'id']],
             [['model_id'], 'exist', 'skipOnError' => true, 'targetClass' => RuleModel::class, 'targetAttribute' => ['model_id' => 'id']],
         ];

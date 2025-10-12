@@ -108,7 +108,7 @@ class PlayerItem extends \yii\db\ActiveRecord
             [['is_proficient', 'is_two_handed'], 'default', 'value' => 0],
             [['player_id', 'item_id', 'item_name', 'item_type'], 'required'],
             [['player_id', 'item_id', 'quantity', 'is_carrying', 'is_proficient', 'is_two_handed', 'attack_modifier'], 'integer'],
-            [['item_name', 'item_type', 'image', 'damage'], 'string', 'max' => 32],
+            [['item_name', 'item_type', 'image', 'damage'], 'string', 'max' => 64],
             [['player_id', 'item_id'], 'unique', 'targetAttribute' => ['player_id', 'item_id']],
             [['player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['player_id' => 'id']],
             [['item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['item_id' => 'id']],

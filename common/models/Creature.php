@@ -57,7 +57,7 @@ class Creature extends \yii\db\ActiveRecord
             [['type_id', 'is_shapechanger', 'hp', 'bonus', 'xp'], 'integer'],
             [['description'], 'string'],
             [['cr'], 'number'],
-            [['name'], 'string', 'max' => 32],
+            [['name'], 'string', 'max' => 64],
             [['hit_dice'], 'string', 'max' => 16],
             [['type_id'], 'exist', 'skipOnError' => true, 'targetClass' => CreatureType::class, 'targetAttribute' => ['type_id' => 'id']],
         ];

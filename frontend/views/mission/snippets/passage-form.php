@@ -9,13 +9,14 @@ use yii\widgets\ActiveForm;
 /** @var string $storyId */
 /** @var string $chapterId */
 /** @var string $missionId */
+/** @var string $parentId */
 ?>
 
 <div class="d-none">
     Hidden div to embeb utility tags for PHP/JS communication
     <span id="hiddenImagePath">story/<?= $storyId ?></span>
     <span id="hiddenFormName">passage</span>
-    <span id="hiddenParentId"><?= $missionId ?></span>
+    <span id="hiddenParentId"><?= $parentId ?></span>
 </div>
 
 <?php $form = ActiveForm::begin(); ?>

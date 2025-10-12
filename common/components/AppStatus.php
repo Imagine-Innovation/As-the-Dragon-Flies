@@ -25,6 +25,14 @@ enum AppStatus: int
     case ONLINE = 300;
     case OFFLINE = 301;
     case LEFT = 302;
+    // Mission/Progress status
+    case PENDING = 400;
+    case IN_PROGRESS = 401;
+    case TERMINATED = 402;
+    // Action status
+    case SUCCESS = 500;
+    case PARTIAL = 501;
+    case FAILURE = 502;
 
     public function getLabel(): string {
         return match ($this) {
@@ -45,6 +53,14 @@ enum AppStatus: int
             self::ONLINE => 'Online',
             self::OFFLINE => 'Offline',
             self::LEFT => 'No longer in the game',
+            // Mission/Progress status
+            self::PENDING => 'Pending',
+            self::IN_PROGRESS => 'In progress',
+            self::TERMINATED => 'Terminated',
+            // Action status
+            self::SUCCESS => 'Sucess',
+            self::PARTIAL => 'Partial success',
+            self::FAILURE => 'Failure',
             default => 'Unknown Status',
         };
     }
@@ -68,6 +84,14 @@ enum AppStatus: int
             self::ONLINE => ['icon' => 'bi-play-circle', 'tooltip' => 'Online'],
             self::OFFLINE => ['icon' => 'bi-pause-circle', 'tooltip' => 'Offline'],
             self::LEFT => ['icon' => 'bi-x-circle', 'tooltip' => 'No longer in the game'],
+            // Mission/Progress status
+            self::PENDING => ['icon' => 'bi-hourglass-split', 'tooltip' => 'Waiting to start'],
+            self::IN_PROGRESS => ['icon' => 'dnd-d20', 'tooltip' => 'In progress'],
+            self::TERMINATED => ['icon' => 'dnd-diamond', 'tooltip' => 'Terminated'],
+            // Action status
+            self::SUCCESS => ['icon' => 'dnd-badge', 'tooltip' => 'Success'],
+            self::PARTIAL => ['icon' => 'bi-star-half', 'tooltip' => 'Partial success'],
+            self::FAILURE => ['icon' => 'dnd-danger', 'tooltip' => 'Failure'],
             default => ['icon' => 'bi-exclamation-square', 'tooltip' => 'Undefined'],
         };
     }
@@ -107,6 +131,30 @@ enum AppStatus: int
         ];
     }
 
+    public static function getValuesForQuestProgress(): array {
+        return [
+            self::PENDING->value,
+            self::IN_PROGRESS->value,
+            self::TERMINATED->value,
+        ];
+    }
+
+    public static function getValuesForAction(): array {
+        return [
+            self::SUCCESS->value,
+            self::PARTIAL->value,
+            self::FAILURE->value,
+        ];
+    }
+
+    public static function getActionStatus(): array {
+        return [
+            self::SUCCESS->value => self::SUCCESS->getLabel(),
+            self::PARTIAL->value => self::PARTIAL->getLabel(),
+            self::FAILURE->value => self::FAILURE->getLabel(),
+        ];
+    }
+
     public static function isValidForEntity(string $entityName, int $statusValue): bool {
         Yii::debug("*** Debug *** - isValidForEntity entityName={$entityName}, statusValue={$statusValue}");
         $folders = explode("\\", $entityName);
@@ -116,8 +164,13 @@ enum AppStatus: int
             'User' => self::getValuesForUser(),
             'Player' => self::getValuesForPlayer(),
             'Quest' => self::getValuesForQuest(),
+            'QuestLog' => self::getValuesForQuest(),
             'Story' => self::getValuesForStory(),
             'QuestPlayer' => self::getValuesForQuestPlayer(),
+            'QuestProgress' => self::getValuesForQuestProgress(),
+            'QuestTurn' => self::getValuesForProgress(),
+            'QuestAction' => self::getValuesForAction(),
+            'ActionInteraction' => self::getValuesForAction(),
             default => [],
         };
         Yii::debug($validStatusesForEntity);

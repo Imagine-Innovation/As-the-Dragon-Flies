@@ -36,7 +36,7 @@ class SpellDuration extends \yii\db\ActiveRecord
             [['is_concentration'], 'default', 'value' => 0],
             [['name', 'duration', 'unit', 'minutes'], 'required'],
             [['duration', 'minutes', 'is_exact', 'is_concentration'], 'integer'],
-            [['name'], 'string', 'max' => 32],
+            [['name'], 'string', 'max' => 64],
             [['unit'], 'string', 'max' => 16],
             [['name'], 'unique'],
         ];

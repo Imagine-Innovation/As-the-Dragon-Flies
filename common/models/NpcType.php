@@ -41,7 +41,7 @@ class NpcType extends \yii\db\ActiveRecord
             [['description'], 'string'],
             [['hp', 'bonus', 'xp'], 'integer'],
             [['cr'], 'number'],
-            [['name'], 'string', 'max' => 32],
+            [['name'], 'string', 'max' => 64],
             [['hit_dice'], 'string', 'max' => 16],
             [['name'], 'unique'],
         ];

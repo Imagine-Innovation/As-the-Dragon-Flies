@@ -36,7 +36,7 @@ class RuleModel extends \yii\db\ActiveRecord
             [['is_method'], 'default', 'value' => 0],
             [['name', 'attribute'], 'required'],
             [['is_method'], 'integer'],
-            [['path', 'name'], 'string', 'max' => 32],
+            [['path', 'name'], 'string', 'max' => 64],
             [['attribute'], 'string', 'max' => 64],
             [['name', 'attribute'], 'unique', 'targetAttribute' => ['name', 'attribute']],
         ];

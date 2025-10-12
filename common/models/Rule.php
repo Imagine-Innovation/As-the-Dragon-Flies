@@ -48,7 +48,7 @@ class Rule extends \yii\db\ActiveRecord
             [['name', 'definition'], 'required'],
             [['description'], 'string'],
             [['status', 'created_at', 'updated_at'], 'integer'],
-            [['name'], 'string', 'max' => 32],
+            [['name'], 'string', 'max' => 64],
             [['definition'], 'string', 'max' => 256],
             [['definition'], RuleValidator::class],
             ['status', 'default', 'value' => AppStatus::INACTIVE->value],

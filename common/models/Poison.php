@@ -34,7 +34,7 @@ class Poison extends Item
         return array_merge(parent::rules(), [
             [['item_id', 'damage_type_id', 'ability_id', 'poison_type'], 'required'],
             [['item_id', 'damage_type_id', 'ability_id', 'dc'], 'integer'],
-            [['poison_type'], 'string', 'max' => 32],
+            [['poison_type'], 'string', 'max' => 64],
             [['item_id'], 'unique'],
             [['item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['item_id' => 'id']],
             [['ability_id'], 'exist', 'skipOnError' => true, 'targetClass' => Ability::class, 'targetAttribute' => ['ability_id' => 'id']],

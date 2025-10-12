@@ -50,14 +50,14 @@ class Story extends \yii\db\ActiveRecord
         return [
             [['description', 'image'], 'default', 'value' => null],
             [['status'], 'default', 'value' => AppStatus::DRAFT->value],
+            [['status'], 'in', 'range' => AppStatus::getValuesForStory()],
             [['min_players'], 'default', 'value' => 1],
             [['max_players'], 'default', 'value' => 4],
             [['language'], 'default', 'value' => 'en'],
             [['name'], 'required'],
             [['description'], 'string'],
             [['status', 'min_level', 'max_level', 'min_players', 'max_players'], 'integer'],
-            [['status'], 'in', 'range' => AppStatus::getValuesForStory()],
-            [['name', 'image'], 'string', 'max' => 32],
+            [['name', 'image'], 'string', 'max' => 64],
             [['language'], 'string', 'max' => 8],
             [['name'], 'unique'],
         ];

@@ -36,7 +36,7 @@ class SpellRange extends \yii\db\ActiveRecord
             [['is_self'], 'default', 'value' => 0],
             [['name'], 'required'],
             [['is_self', 'range'], 'integer'],
-            [['name', 'area_of_effect', 'special'], 'string', 'max' => 32],
+            [['name', 'area_of_effect', 'special'], 'string', 'max' => 64],
             [['name'], 'unique'],
         ];
     }

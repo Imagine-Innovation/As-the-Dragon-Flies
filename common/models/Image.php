@@ -33,7 +33,7 @@ class Image extends \yii\db\ActiveRecord
     public function rules() {
         return [
             [['file_name', 'category'], 'required'],
-            [['file_name', 'category'], 'string', 'max' => 32],
+            [['file_name', 'category'], 'string', 'max' => 64],
             [['image'], 'file', 'skipOnEmpty' => false, 'extensions' => 'png, jpg'],];
     }
 

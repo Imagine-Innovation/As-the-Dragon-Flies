@@ -5,23 +5,25 @@ namespace common\models;
 use Yii;
 
 /**
- * This is the model class for table "success".
+ * This is the model class for table "outcome".
  *
  * @property int $id Primary key
  * @property int $action_id Foreign key to “action” table
  * @property int $next_mission_id Foreign key to “mission” table
  * @property int|null $item_id Optional foreign key to “item” table
- * @property string $name Success
+ * @property int $status Outcome status: 0=failure, 1=success, 2=partial
+ * @property string $name Outcome title
  * @property string|null $description Short description
- * @property int $gp Gained Gold Pieces (GP)
- * @property int $xp Gained Experience Points (XP)
+ * @property int $gained_gp Gained Gold Pieces (GP) when succeeded
+ * @property int $gained_xp Gained Experience Points (XP) when succeeded
+ * @property int $hp_loss Lost HP when failed
  *
  * @property Action $action
  * @property Dialog[] $dialogs
  * @property Item $item
  * @property Mission $nextMission
  */
-class Success extends \yii\db\ActiveRecord
+class Outcome extends \yii\db\ActiveRecord
 {
 
 
@@ -29,7 +31,7 @@ class Success extends \yii\db\ActiveRecord
      * {@inheritdoc}
      */
     public static function tableName() {
-        return 'success';
+        return 'outcome';
     }
 
     /**
@@ -38,9 +40,9 @@ class Success extends \yii\db\ActiveRecord
     public function rules() {
         return [
             [['item_id', 'description'], 'default', 'value' => null],
-            [['xp'], 'default', 'value' => 0],
-            [['action_id', 'next_mission_id', 'name'], 'required'],
-            [['action_id', 'next_mission_id', 'item_id', 'gp', 'xp'], 'integer'],
+            [['hp_loss'], 'default', 'value' => 0],
+            [['action_id', 'next_mission_id', 'status', 'name'], 'required'],
+            [['action_id', 'next_mission_id', 'item_id', 'status', 'gained_gp', 'gained_xp', 'hp_loss'], 'integer'],
             [['description'], 'string'],
             [['name'], 'string', 'max' => 64],
             [['action_id'], 'exist', 'skipOnError' => true, 'targetClass' => Action::class, 'targetAttribute' => ['action_id' => 'id']],
@@ -58,10 +60,12 @@ class Success extends \yii\db\ActiveRecord
             'action_id' => 'Foreign key to “action” table',
             'next_mission_id' => 'Foreign key to “mission” table',
             'item_id' => 'Optional foreign key to “item” table',
-            'name' => 'Success',
+            'status' => 'Outcome status: 0=failure, 1=success, 2=partial',
+            'name' => 'Outcome title',
             'description' => 'Short description',
-            'gp' => 'Gained Gold Pieces (GP)',
-            'xp' => 'Gained Experience Points (XP)',
+            'gained_gp' => 'Gained Gold Pieces (GP) when succeeded',
+            'gained_xp' => 'Gained Experience Points (XP) when succeeded',
+            'hp_loss' => 'Lost HP when failed',
         ];
     }
 
@@ -80,7 +84,7 @@ class Success extends \yii\db\ActiveRecord
      * @return \yii\db\ActiveQuery
      */
     public function getDialogs() {
-        return $this->hasMany(Dialog::class, ['success_id' => 'id']);
+        return $this->hasMany(Dialog::class, ['outcome_id' => 'id']);
     }
 
     /**

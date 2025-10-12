@@ -9,32 +9,38 @@ use Yii;
  *
  * @property int $id Primary key
  * @property int $mission_id Foreign key to “mission” table
+ * @property int|null $action_type_id Optional foreign key to “action_type” table
  * @property int|null $passage_id Optional foreign key to “passage” table. Passage targeted by the action
  * @property int|null $decor_id Optional foreign key to “decor” table. Decor element involved in the action
+ * @property int|null $decor_item_id Optional foreign key to “decor_item” table. Hidden item in the decor involved in the action
  * @property int|null $npc_id Optional foreign key to “npc” table. NPC involved in the action
  * @property int|null $reply_id Optional foreign key to “reply” table. First reply the player says
- * @property int|null $item_id Optional foreign key to “decor_item” table. Hidden item in the decor involved in the action
  * @property int|null $trap_id Optional foreign key to “trap” table. Trap involved in the action
  * @property int|null $required_item_id Optional foreign key to “Item” table. Required item to carry out the action
- * @property int|null $skill_id Optional foreign key to “skill” table. Required skill to assess
  * @property string $name Action to do
- * @property string $action_type Action type (search, speak, use...)
+ * @property string|null $description Short description
  * @property int $dc Difficulty Class (DC)
+ * @property int $disable_on_success When the action is successful, it should not be played again
  *
+ * @property ActionInteraction[] $actionTriggers
+ * @property ActionInteraction[] $actionPrerequisites
+ * @property ActionType $actionType
  * @property Decor $decor
- * @property DecorItem $item
+ * @property DecorItem $decorItem
  * @property Mission $mission
+ * @property Action[] $nextActions
  * @property Npc $npc
+ * @property Outcome[] $outcomes
  * @property Passage $passage
+ * @property Action[] $previousActions
+ * @property QuestAction[] $questActions
+ * @property QuestProgress[] $questProgresses
  * @property Reply $reply
  * @property Item $requiredItem
- * @property Skill $skill
- * @property Success[] $successes
  * @property Trap $trap
  */
 class Action extends \yii\db\ActiveRecord
 {
-
 
     /**
      * {@inheritdoc}
@@ -48,20 +54,22 @@ class Action extends \yii\db\ActiveRecord
      */
     public function rules() {
         return [
-            [['passage_id', 'decor_id', 'npc_id', 'reply_id', 'item_id', 'trap_id', 'required_item_id', 'skill_id'], 'default', 'value' => null],
-            [['dc'], 'default', 'value' => 0],
-            [['mission_id', 'name', 'action_type'], 'required'],
-            [['mission_id', 'passage_id', 'decor_id', 'npc_id', 'reply_id', 'item_id', 'trap_id', 'required_item_id', 'skill_id', 'dc'], 'integer'],
-            [['name', 'action_type'], 'string', 'max' => 32],
+            [['action_type_id', 'passage_id', 'decor_id', 'decor_item_id', 'npc_id', 'reply_id', 'trap_id', 'required_item_id', 'description'], 'default', 'value' => null],
+            [['dc'], 'default', 'value' => 10],
+            [['disable_on_success'], 'default', 'value' => 1],
+            [['mission_id', 'name'], 'required'],
+            [['mission_id', 'action_type_id', 'passage_id', 'decor_id', 'decor_item_id', 'npc_id', 'reply_id', 'trap_id', 'required_item_id', 'dc', 'disable_on_success'], 'integer'],
+            [['description'], 'string'],
+            [['name'], 'string', 'max' => 64],
             [['mission_id'], 'exist', 'skipOnError' => true, 'targetClass' => Mission::class, 'targetAttribute' => ['mission_id' => 'id']],
-            [['skill_id'], 'exist', 'skipOnError' => true, 'targetClass' => Skill::class, 'targetAttribute' => ['skill_id' => 'id']],
             [['passage_id'], 'exist', 'skipOnError' => true, 'targetClass' => Passage::class, 'targetAttribute' => ['passage_id' => 'id']],
             [['reply_id'], 'exist', 'skipOnError' => true, 'targetClass' => Reply::class, 'targetAttribute' => ['reply_id' => 'id']],
             [['npc_id'], 'exist', 'skipOnError' => true, 'targetClass' => Npc::class, 'targetAttribute' => ['npc_id' => 'id']],
             [['required_item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['required_item_id' => 'id']],
             [['trap_id'], 'exist', 'skipOnError' => true, 'targetClass' => Trap::class, 'targetAttribute' => ['trap_id' => 'id']],
             [['decor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Decor::class, 'targetAttribute' => ['decor_id' => 'id']],
-            [['item_id'], 'exist', 'skipOnError' => true, 'targetClass' => DecorItem::class, 'targetAttribute' => ['item_id' => 'id']],
+            [['decor_item_id'], 'exist', 'skipOnError' => true, 'targetClass' => DecorItem::class, 'targetAttribute' => ['decor_item_id' => 'id']],
+            [['action_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => ActionType::class, 'targetAttribute' => ['action_type_id' => 'id']],
         ];
     }
 
@@ -72,18 +80,46 @@ class Action extends \yii\db\ActiveRecord
         return [
             'id' => 'Primary key',
             'mission_id' => 'Foreign key to “mission” table',
+            'action_type_id' => 'Optional foreign key to “action_type” table',
             'passage_id' => 'Optional foreign key to “passage” table. Passage targeted by the action',
             'decor_id' => 'Optional foreign key to “decor” table. Decor element involved in the action',
+            'decor_item_id' => 'Optional foreign key to “decor_item” table. Hidden item in the decor involved in the action',
             'npc_id' => 'Optional foreign key to “npc” table. NPC involved in the action',
             'reply_id' => 'Optional foreign key to “reply” table. First reply the player says',
-            'item_id' => 'Optional foreign key to “decor_item” table. Hidden item in the decor involved in the action',
             'trap_id' => 'Optional foreign key to “trap” table. Trap involved in the action',
             'required_item_id' => 'Optional foreign key to “Item” table. Required item to carry out the action',
-            'skill_id' => 'Optional foreign key to “skill” table. Required skill to assess',
             'name' => 'Action to do',
-            'action_type' => 'Action type (search, speak, use...)',
+            'description' => 'Short description',
             'dc' => 'Difficulty Class (DC)',
+            'disable_on_success' => 'When the action is successful, it should not be played again',
         ];
+    }
+
+    /**
+     * Gets query for [[ActionTriggers]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getActionTriggers() {
+        return $this->hasMany(ActionInteraction::class, ['previous_action_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[ActionPrerequisites]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getActionPrerequisites() {
+        return $this->hasMany(ActionInteraction::class, ['next_action_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[ActionType]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getActionType() {
+        return $this->hasOne(ActionType::class, ['id' => 'action_type_id']);
     }
 
     /**
@@ -96,12 +132,12 @@ class Action extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Item]].
+     * Gets query for [[DecorItem]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getItem() {
-        return $this->hasOne(DecorItem::class, ['id' => 'item_id']);
+    public function getDecorItem() {
+        return $this->hasOne(DecorItem::class, ['id' => 'decor_item_id']);
     }
 
     /**
@@ -114,6 +150,15 @@ class Action extends \yii\db\ActiveRecord
     }
 
     /**
+     * Gets query for [[NextActions]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getNextActions() {
+        return $this->hasMany(Action::class, ['id' => 'next_action_id'])->viaTable('action_interaction', ['previous_action_id' => 'id']);
+    }
+
+    /**
      * Gets query for [[Npc]].
      *
      * @return \yii\db\ActiveQuery
@@ -123,12 +168,48 @@ class Action extends \yii\db\ActiveRecord
     }
 
     /**
+     * Gets query for [[Outcomes]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getOutcomes() {
+        return $this->hasMany(Outcome::class, ['action_id' => 'id']);
+    }
+
+    /**
      * Gets query for [[Passage]].
      *
      * @return \yii\db\ActiveQuery
      */
     public function getPassage() {
         return $this->hasOne(Passage::class, ['id' => 'passage_id']);
+    }
+
+    /**
+     * Gets query for [[PreviousActions]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPreviousActions() {
+        return $this->hasMany(Action::class, ['id' => 'previous_action_id'])->viaTable('action_interaction', ['next_action_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[QuestActions]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getQuestActions() {
+        return $this->hasMany(QuestAction::class, ['action_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[QuestProgresses]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getQuestProgresses() {
+        return $this->hasMany(QuestProgress::class, ['id' => 'quest_progress_id'])->viaTable('quest_action', ['action_id' => 'id']);
     }
 
     /**
@@ -150,24 +231,6 @@ class Action extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Skill]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getSkill() {
-        return $this->hasOne(Skill::class, ['id' => 'skill_id']);
-    }
-
-    /**
-     * Gets query for [[Successes]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getSuccesses() {
-        return $this->hasMany(Success::class, ['action_id' => 'id']);
-    }
-
-    /**
      * Gets query for [[Trap]].
      *
      * @return \yii\db\ActiveQuery
@@ -175,5 +238,4 @@ class Action extends \yii\db\ActiveRecord
     public function getTrap() {
         return $this->hasOne(Trap::class, ['id' => 'trap_id']);
     }
-
 }

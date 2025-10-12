@@ -35,7 +35,7 @@ class SpellDoc extends \yii\db\ActiveRecord
             [['spell_id', 'name', 'sort_order'], 'required'],
             [['spell_id', 'sort_order'], 'integer'],
             [['description'], 'string'],
-            [['name'], 'string', 'max' => 32],
+            [['name'], 'string', 'max' => 64],
             [['spell_id'], 'exist', 'skipOnError' => true, 'targetClass' => Spell::class, 'targetAttribute' => ['spell_id' => 'id']],
         ];
     }

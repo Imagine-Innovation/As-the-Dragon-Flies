@@ -33,7 +33,7 @@ class Ethnicity extends \yii\db\ActiveRecord
         return [
             [['race_group_id', 'name'], 'required'],
             [['race_group_id'], 'integer'],
-            [['name'], 'string', 'max' => 32],
+            [['name'], 'string', 'max' => 64],
             [['name'], 'unique'],
             [['race_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => RaceGroup::class, 'targetAttribute' => ['race_group_id' => 'id']],
         ];

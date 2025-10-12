@@ -32,7 +32,7 @@ class FirstName extends \yii\db\ActiveRecord
         return [
             [['ethnicity_id', 'name', 'gender'], 'required'],
             [['ethnicity_id'], 'integer'],
-            [['name'], 'string', 'max' => 32],
+            [['name'], 'string', 'max' => 64],
             [['gender'], 'string', 'max' => 1],
             [['ethnicity_id'], 'exist', 'skipOnError' => true, 'targetClass' => Ethnicity::class, 'targetAttribute' => ['ethnicity_id' => 'id']],
         ];

@@ -46,7 +46,7 @@ class ShapeAttack extends \yii\db\ActiveRecord
             [['id', 'weapon_id', 'shape_id', 'damage_type_id', 'name'], 'required'],
             [['id', 'weapon_id', 'shape_id', 'damage_type_id', 'bonus', 'damage', 'reach', 'range_min', 'range_max'], 'integer'],
             [['description'], 'string'],
-            [['name'], 'string', 'max' => 32],
+            [['name'], 'string', 'max' => 64],
             [['damage_dice', 'additional_damage_dice'], 'string', 'max' => 8],
             [['id'], 'unique'],
             [['shape_id'], 'exist', 'skipOnError' => true, 'targetClass' => Shape::class, 'targetAttribute' => ['shape_id' => 'id']],

@@ -70,7 +70,7 @@ class User extends ActiveRecord implements IdentityInterface
             [['status', 'is_admin', 'is_designer', 'is_player', 'current_player_id', 'created_at', 'updated_at', 'backend_last_login_at', 'frontend_last_login_at'], 'integer'],
             [['username', 'password_hash', 'password_reset_token', 'verification_token', 'email'], 'string', 'max' => 255],
             [['fullname'], 'string', 'max' => 64],
-            [['auth_key'], 'string', 'max' => 32],
+            [['auth_key'], 'string', 'max' => 64],
             [['username'], 'unique'],
             [['current_player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['current_player_id' => 'id']],
         ];

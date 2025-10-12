@@ -42,7 +42,7 @@ class Mission extends \yii\db\ActiveRecord
             [['chapter_id', 'name'], 'required'],
             [['chapter_id'], 'integer'],
             [['description'], 'string'],
-            [['name', 'image'], 'string', 'max' => 32],
+            [['name', 'image'], 'string', 'max' => 64],
             [['chapter_id'], 'exist', 'skipOnError' => true, 'targetClass' => Chapter::class, 'targetAttribute' => ['chapter_id' => 'id']],
         ];
     }

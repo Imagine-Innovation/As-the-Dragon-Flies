@@ -7,9 +7,23 @@ use yii\helpers\Html;
 /** @var common\models\Mission $mission */
 /** @var string $type */
 /** @var string $snippet */
-$this->title = "Update {$type}: \"{$model->name}\"";
+$displayName = match ($type) {
+    'Prerequisite' => $model->previousAction->name,
+    'Trigger' => $model->nextAction->name,
+    default => $model->name,
+};
+
+$this->title = "Update “{$type}”: “{$displayName}”";
 $chapter = $mission->chapter;
 $story = $chapter->story;
+
+$parentId = match ($type) {
+    'Item' => $model->decor_id,
+    'Trap' => $model->decor_id,
+    'Prerequisite' => $model->next_action_id,
+    'Trigger' => $model->previous_action_id,
+    default => $model->mission_id,
+};
 
 $breadcrumbs = [
     ['label' => 'Stories', 'url' => ['story/index']],
@@ -32,6 +46,7 @@ $this->params['breadcrumbs'] = $breadcrumbs;
         'storyId' => $story->id,
         'chapterId' => $chapter->id,
         'missionId' => $mission->id,
+        'parentId' => $parentId,
     ])
     ?>
 

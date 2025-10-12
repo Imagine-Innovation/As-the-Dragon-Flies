@@ -39,7 +39,7 @@ class ActionButton extends \yii\db\ActiveRecord
             [['sort_order'], 'default', 'value' => 1000],
             [['action', 'icon'], 'required'],
             [['in_table', 'in_view', 'sort_order'], 'integer'],
-            [['route', 'action', 'icon'], 'string', 'max' => 32],
+            [['route', 'action', 'icon'], 'string', 'max' => 64],
             [['tooltip'], 'string', 'max' => 255],
         ];
     }

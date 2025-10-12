@@ -40,7 +40,7 @@ class Background extends \yii\db\ActiveRecord
             [['name'], 'required'],
             [['description', 'initial_equipment'], 'string'],
             [['languages'], 'integer'],
-            [['name'], 'string', 'max' => 32],
+            [['name'], 'string', 'max' => 64],
             [['name'], 'unique'],
         ];
     }

@@ -35,7 +35,7 @@ class ItemType extends \yii\db\ActiveRecord
             [['name'], 'required'],
             [['description'], 'string'],
             [['sort_order'], 'integer'],
-            [['name'], 'string', 'max' => 32],
+            [['name'], 'string', 'max' => 64],
         ];
     }
 

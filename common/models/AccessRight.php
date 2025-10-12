@@ -38,7 +38,7 @@ class AccessRight extends \yii\db\ActiveRecord
         return [
             [['route', 'action', 'is_admin', 'is_designer', 'is_player', 'has_player', 'in_quest'], 'required'],
             [['is_admin', 'is_designer', 'is_player', 'has_player', 'in_quest'], 'integer'],
-            [['route', 'action'], 'string', 'max' => 32],
+            [['route', 'action'], 'string', 'max' => 64],
             [['route', 'action'], 'unique', 'targetAttribute' => ['route', 'action']],
         ];
     }

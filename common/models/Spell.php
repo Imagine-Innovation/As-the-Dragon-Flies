@@ -52,7 +52,7 @@ class Spell extends \yii\db\ActiveRecord
             [['name', 'school_id', 'range_id', 'casting_time_id', 'duration_id'], 'required'],
             [['description'], 'string'],
             [['spell_level', 'school_id', 'range_id', 'casting_time_id', 'duration_id', 'is_ritual'], 'integer'],
-            [['name'], 'string', 'max' => 32],
+            [['name'], 'string', 'max' => 64],
             [['name'], 'unique'],
             [['school_id'], 'exist', 'skipOnError' => true, 'targetClass' => SpellSchool::class, 'targetAttribute' => ['school_id' => 'id']],
             [['range_id'], 'exist', 'skipOnError' => true, 'targetClass' => SpellRange::class, 'targetAttribute' => ['range_id' => 'id']],

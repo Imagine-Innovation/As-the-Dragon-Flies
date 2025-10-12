@@ -46,7 +46,7 @@ class Notification extends \yii\db\ActiveRecord
             [['initiator_id', 'quest_id', 'created_at', 'expires_at', 'is_private'], 'integer'],
             [['message'], 'string'],
             [['payload'], 'safe'],
-            [['notification_type'], 'string', 'max' => 32],
+            [['notification_type'], 'string', 'max' => 64],
             [['title'], 'string', 'max' => 4096],
             [['initiator_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['initiator_id' => 'id']],
             [['quest_id'], 'exist', 'skipOnError' => true, 'targetClass' => Quest::class, 'targetAttribute' => ['quest_id' => 'id']],

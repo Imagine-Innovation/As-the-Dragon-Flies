@@ -36,8 +36,7 @@ class MissionController extends Controller
                             ],
                             [
                                 'actions' => [
-                                    'create', 'view', 'update',
-                                    'add-detail', 'edit-detail', 'add-trap',
+                                    'create', 'view', 'update', 'add-detail', 'edit-detail',
                                 ],
                                 'allow' => ManageAccessRights::isRouteAllowed($this),
                                 'roles' => ['@'],
@@ -123,11 +122,13 @@ class MissionController extends Controller
             'Decor' => ['className' => 'Decor', 'snippet' => 'decor-form', 'childOf' => 'mission'],
             'Item' => ['className' => 'DecorItem', 'snippet' => 'item-form', 'childOf' => 'decor'],
             'Trap' => ['className' => 'Trap', 'snippet' => 'trap-form', 'childOf' => 'decor'],
+            'Prerequisite' => ['className' => 'ActionInteraction', 'snippet' => 'interaction-form', 'childOf' => 'action'],
+            'Trigger' => ['className' => 'ActionInteraction', 'snippet' => 'interaction-form', 'childOf' => 'action'],
             default => throw new \Exception("Unsupported type {$type}"),
         };
     }
 
-    private function createModel(\yii\db\ActiveRecord &$model, Mission $mission, string $type, string $snippet) {
+    private function createDetailModel(\yii\db\ActiveRecord &$model, Mission $mission, string $type, string $snippet) {
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
                 return $this->redirect(['view', 'id' => $mission->id]);
@@ -152,7 +153,7 @@ class MissionController extends Controller
         $model = new $modelName();
         $model->mission_id = $mission->id;
 
-        return $this->createModel($model, $mission, $type, $snippet);
+        return $this->createDetailModel($model, $mission, $type, $snippet);
     }
 
     private function addDecorChild(int $decorId, string $type, string $className, string $snippet) {
@@ -163,7 +164,21 @@ class MissionController extends Controller
         $model = new $modelName();
         $model->decor_id = $decor->id;
 
-        return $this->createModel($model, $mission, $type, $snippet);
+        return $this->createDetailModel($model, $mission, $type, $snippet);
+    }
+
+    private function addActionChild(int $actionId, string $type, string $snippet) {
+        $action = $this->findModel('Action', ['id' => $actionId]);
+        $mission = $action->mission;
+
+        $model = new \common\models\ActionInteraction();
+        if ($type === 'Prerequisite') {
+            $model->next_action_id = $action->id;
+        } else {
+            $model->previous_action_id = $action->id;
+        }
+
+        return $this->createDetailModel($model, $mission, $type, $snippet);
     }
 
     /**
@@ -176,13 +191,15 @@ class MissionController extends Controller
         $className = $detailInfo['className'];
         $snippet = $detailInfo['snippet'];
 
-        if ($detailInfo['childOf'] === 'decor') {
-            return $this->addDecorChild($parentId, $type, $className, $snippet);
-        }
-        return $this->addMissionChild($parentId, $type, $className, $snippet);
+        return match ($detailInfo['childOf']) {
+            'mission' => $this->addMissionChild($parentId, $type, $className, $snippet),
+            'decor' => $this->addDecorChild($parentId, $type, $className, $snippet),
+            'action' => $this->addActionChild($parentId, $type, $snippet),
+            default => throw new \Exception("Unsupported type {$detailInfo['childOf']}"),
+        };
     }
 
-    private function updateModel(\yii\db\ActiveRecord &$model, Mission $mission, string $type, string $snippet) {
+    private function updateDetailModel(\yii\db\ActiveRecord &$model, Mission $mission, string $type, string $snippet) {
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
                 return $this->redirect(['view', 'id' => $mission->id]);
@@ -201,20 +218,34 @@ class MissionController extends Controller
     private function editMissionChild(string $jsonParams, string $type, string $className, string $snippet) {
         $searchParams = json_decode($jsonParams, true);
 
-        $mission = $this->findModel('Mission', ['id' => $searchParams['mission_id']]);
         $model = $this->findModel($className, $searchParams);
+        $mission = $model->mission;
 
-        return $this->updateModel($model, $mission, $type, $snippet);
+        return $this->updateDetailModel($model, $mission, $type, $snippet);
     }
 
     private function editDecorChild(string $jsonParams, string $type, string $className, string $snippet) {
         $searchParams = json_decode($jsonParams, true);
 
-        $decor = $this->findModel('Decor', ['id' => $searchParams['decor_id']]);
-        $mission = $decor->mission;
         $model = $this->findModel($className, $searchParams);
+        $decor = $model->decor;
+        $mission = $decor->mission;
 
-        return $this->updateModel($model, $mission, $type, $snippet);
+        return $this->updateDetailModel($model, $mission, $type, $snippet);
+    }
+
+    private function editActionChild(string $jsonParams, string $type, string $snippet) {
+        $searchParams = json_decode($jsonParams, true);
+
+        $model = $this->findModel('ActionInteraction', $searchParams);
+        if ($type === 'Prerequisite') {
+            $action = $model->nextAction;
+        } else {
+            $action = $model->previousAction;
+        }
+        $mission = $action->mission;
+
+        return $this->updateDetailModel($model, $mission, $type, $snippet);
     }
 
     public function actionEditDetail(string $jsonParams, string $type) {
@@ -222,10 +253,12 @@ class MissionController extends Controller
         $className = $detailInfo['className'];
         $snippet = $detailInfo['snippet'];
 
-        if ($detailInfo['childOf'] === 'decor') {
-            return $this->editDecorChild($jsonParams, $type, $className, $snippet);
-        }
-        return $this->editMissionChild($jsonParams, $type, $className, $snippet);
+        return match ($detailInfo['childOf']) {
+            'mission' => $this->editMissionChild($jsonParams, $type, $className, $snippet),
+            'decor' => $this->editDecorChild($jsonParams, $type, $className, $snippet),
+            'action' => $this->editActionChild($jsonParams, $type, $snippet),
+            default => throw new \Exception("Unsupported type {$detailInfo['childOf']}"),
+        };
     }
 
     /**

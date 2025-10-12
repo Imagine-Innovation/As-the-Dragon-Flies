@@ -10,7 +10,8 @@ use Yii;
  *
  * @property int $id Primary key
  * @property int $story_id Foreign key to “story” table
- * @property int|null $initiator_id Foreign key to “player” table
+ * @property int|null $current_chapter_id Optionnal foreign key to “chapter” table
+ * @property int|null $initiator_id Optionnal foreign key to “player” table
  * @property string $name Quest name
  * @property string|null $description Description
  * @property string|null $image Image
@@ -21,12 +22,14 @@ use Yii;
  * @property int $local_time Local time
  * @property int $elapsed_time Elapsed time (minute)
  *
+ * @property Chapter $currentChapter
  * @property Player $initiator
  * @property Notification[] $notifications
  * @property Player[] $currentPlayers
  * @property Player[] $allPlayers
  * @property QuestLog[] $questLogs
  * @property QuestPlayer[] $questPlayers
+ * @property QuestProgress[] $questProgresses
  * @property QuestSession[] $questSessions
  * @property Story $story
  * @property UserLog[] $userLogs
@@ -46,14 +49,15 @@ class Quest extends \yii\db\ActiveRecord
      */
     public function rules() {
         return [
-            [['initiator_id', 'description', 'image', 'started_at', 'completed_at'], 'default', 'value' => null],
+            [['current_chapter_id', 'initiator_id', 'description', 'image', 'started_at', 'completed_at'], 'default', 'value' => null],
             [['status'], 'default', 'value' => AppStatus::WAITING->value],
             [['elapsed_time'], 'default', 'value' => 0],
             [['story_id', 'name'], 'required'],
-            [['story_id', 'initiator_id', 'status', 'created_at', 'started_at', 'completed_at', 'local_time', 'elapsed_time'], 'integer'],
+            [['story_id', 'current_chapter_id', 'initiator_id', 'status', 'created_at', 'started_at', 'completed_at', 'local_time', 'elapsed_time'], 'integer'],
             [['description'], 'string'],
-            [['name', 'image'], 'string', 'max' => 32],
+            [['name', 'image'], 'string', 'max' => 64],
             [['story_id'], 'exist', 'skipOnError' => true, 'targetClass' => Story::class, 'targetAttribute' => ['story_id' => 'id']],
+            [['current_chapter_id'], 'exist', 'skipOnError' => true, 'targetClass' => Chapter::class, 'targetAttribute' => ['current_chapter_id' => 'id']],
             [['initiator_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['initiator_id' => 'id']],
         ];
     }
@@ -65,7 +69,8 @@ class Quest extends \yii\db\ActiveRecord
         return [
             'id' => 'Primary key',
             'story_id' => 'Foreign key to “story” table',
-            'initiator_id' => 'Foreign key to “player” table',
+            'current_chapter_id' => 'Optionnal foreign key to “chapter” table',
+            'initiator_id' => 'Optionnal foreign key to “player” table',
             'name' => 'Quest name',
             'description' => 'Description',
             'image' => 'Image',
@@ -76,6 +81,15 @@ class Quest extends \yii\db\ActiveRecord
             'local_time' => 'Local time',
             'elapsed_time' => 'Elapsed time (minute)',
         ];
+    }
+
+    /**
+     * Gets query for [[CurrentChapter]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCurrentChapter() {
+        return $this->hasOne(Chapter::class, ['id' => 'current_chapter_id']);
     }
 
     /**
@@ -130,6 +144,15 @@ class Quest extends \yii\db\ActiveRecord
      */
     public function getQuestPlayers() {
         return $this->hasMany(QuestPlayer::class, ['quest_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[QuestProgresses]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getQuestProgresses() {
+        return $this->hasMany(QuestProgress::class, ['quest_id' => 'id']);
     }
 
     /**

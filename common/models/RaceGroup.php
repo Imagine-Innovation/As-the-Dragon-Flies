@@ -43,7 +43,7 @@ class RaceGroup extends \yii\db\ActiveRecord
             [['description'], 'default', 'value' => null],
             [['name'], 'required'],
             [['description'], 'string'],
-            [['name'], 'string', 'max' => 32],
+            [['name'], 'string', 'max' => 64],
         ];
     }
 

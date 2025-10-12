@@ -10,13 +10,13 @@ use Yii;
  * @property int $id Primary key
  * @property int $npc_id Foreign key to “npc” table
  * @property string $text What the NPC says
- * @property int|null $success_id Optional foreign key to “success” table
+ * @property int|null $outcome_id Optional foreign key to “success” table
  *
  * @property Npc $npc
  * @property Npc[] $npcs
+ * @property Outcome $outcome
  * @property Reply[] $replies
  * @property Reply[] $replies0
- * @property Success $success
  */
 class Dialog extends \yii\db\ActiveRecord
 {
@@ -34,12 +34,12 @@ class Dialog extends \yii\db\ActiveRecord
      */
     public function rules() {
         return [
-            [['success_id'], 'default', 'value' => null],
+            [['outcome_id'], 'default', 'value' => null],
             [['npc_id', 'text'], 'required'],
-            [['npc_id', 'success_id'], 'integer'],
+            [['npc_id', 'outcome_id'], 'integer'],
             [['text'], 'string'],
             [['npc_id'], 'exist', 'skipOnError' => true, 'targetClass' => Npc::class, 'targetAttribute' => ['npc_id' => 'id']],
-            [['success_id'], 'exist', 'skipOnError' => true, 'targetClass' => Success::class, 'targetAttribute' => ['success_id' => 'id']],
+            [['outcome_id'], 'exist', 'skipOnError' => true, 'targetClass' => Outcome::class, 'targetAttribute' => ['outcome_id' => 'id']],
         ];
     }
 
@@ -51,7 +51,7 @@ class Dialog extends \yii\db\ActiveRecord
             'id' => 'Primary key',
             'npc_id' => 'Foreign key to “npc” table',
             'text' => 'What the NPC says',
-            'success_id' => 'Optional foreign key to “success” table',
+            'outcome_id' => 'Optional foreign key to “success” table',
         ];
     }
 
@@ -74,6 +74,15 @@ class Dialog extends \yii\db\ActiveRecord
     }
 
     /**
+     * Gets query for [[Outcome]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getOutcome() {
+        return $this->hasOne(Outcome::class, ['id' => 'outcome_id']);
+    }
+
+    /**
      * Gets query for [[Replies]].
      *
      * @return \yii\db\ActiveQuery
@@ -89,15 +98,6 @@ class Dialog extends \yii\db\ActiveRecord
      */
     public function getReplies0() {
         return $this->hasMany(Reply::class, ['next_dialog_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[Success]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getSuccess() {
-        return $this->hasOne(Success::class, ['id' => 'success_id']);
     }
 
 }

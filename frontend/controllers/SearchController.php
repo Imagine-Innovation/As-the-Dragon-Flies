@@ -29,7 +29,10 @@ class SearchController extends Controller
                             ],
                             [
                                 'actions' => [
-                                    'dialog', 'npc-type', 'damage-type', 'item', 'creature', 'image', 'npc', 'passage', 'reply', 'skill', 'decor-item', 'trap', 'decor', 'nested-trap', 'nested-item'
+                                    'npc-type', 'damage-type', 'action-type', 'item', 'creature', 'image', 'skill',
+                                    'npc', 'passage', 'decor', 'action', 'monter',
+                                    'nested-trap', 'nested-item',
+                                    'dialog', 'reply',
                                 ],
                                 'allow' => true,
                                 'roles' => ['@'],
@@ -155,12 +158,19 @@ class SearchController extends Controller
         return ['error' => false, 'msg' => '', 'results' => $searchResult];
     }
 
+    /**
+     * Search in a global repository
+     */
     public function actionNpcType(string|null $search = null): array {
         return $this->genericSearch('NpcType', $search);
     }
 
     public function actionDamageType(string|null $search = null): array {
         return $this->genericSearch('DamageType', $search);
+    }
+
+    public function actionActionType(string|null $search = null): array {
+        return $this->genericSearch('ActionType', $search);
     }
 
     public function actionItem(string|null $search = null): array {
@@ -175,6 +185,9 @@ class SearchController extends Controller
         return $this->genericSearch('Creature', $search);
     }
 
+    /**
+     * Search in mission related data
+     */
     public function actionNpc(int $parentId, string|null $search = null): array {
         return $this->genericSearch('Npc', $search, ['mission_id' => $parentId]);
     }
@@ -187,14 +200,17 @@ class SearchController extends Controller
         return $this->genericSearch('Decor', $search, $search, ['mission_id' => $parentId]);
     }
 
-    public function actionDecorItem(int $parentId, string|null $search = null): array {
-        return $this->genericSearch('DecorItem', $search, ['decor_id' => $parentId]);
+    public function actionMonster(int $parentId, string|null $search = null): array {
+        return $this->genericSearch('Monster', $search, $search, ['mission_id' => $parentId]);
     }
 
-    public function actionTrap(int $parentId, string|null $search = null): array {
-        return $this->genericSearch('Trap', $search, ['decor_id' => $parentId]);
+    public function actionAction(int $parentId, string|null $search = null): array {
+        return $this->genericSearch('Action', $search, ['mission_id' => $parentId]);
     }
 
+    /**
+     * Search in decor related data
+     */
     public function actionNestedTrap(int $parentId, string|null $search = null): array {
         return $this->decorSearch('Trap', $parentId, $search);
     }
@@ -203,6 +219,9 @@ class SearchController extends Controller
         return $this->decorSearch('DecorItem', $parentId, $search);
     }
 
+    /**
+     * Search in text
+     */
     private function genericTextSearch(string $modelName, string $search): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;

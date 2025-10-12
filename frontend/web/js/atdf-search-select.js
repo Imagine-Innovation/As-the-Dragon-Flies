@@ -48,6 +48,23 @@ const config = [
         ]
     },
     {
+        form: 'actioninteraction',
+        params: [
+            {
+                field: 'actioninteraction-previous_action_id',
+                ajax: 'action',
+                minChar: 0,
+                imagePath: null
+            },
+            {
+                field: 'actioninteraction-next_action_id',
+                ajax: 'action',
+                minChar: 0,
+                imagePath: null
+            }
+        ]
+    },
+    {
         form: 'trap',
         params: [
             {
@@ -131,13 +148,19 @@ const config = [
                 imagePath: null
             },
             {
+                field: 'action-action_type_id',
+                ajax: 'action-type',
+                minChar: 1,
+                imagePath: null
+            },
+            {
                 field: 'action-decor_id',
                 ajax: 'decor',
                 minChar: 0,
                 imagePath: null
             },
             {
-                field: 'action-item_id',
+                field: 'action-decor_item_id',
                 ajax: 'nested-item',
                 minChar: 0,
                 imagePath: null

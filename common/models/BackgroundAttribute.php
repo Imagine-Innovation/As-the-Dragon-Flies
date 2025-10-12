@@ -35,7 +35,7 @@ class BackgroundAttribute extends \yii\db\ActiveRecord
             [['background_id', 'attribute_type'], 'required'],
             [['background_id'], 'integer'],
             [['description'], 'string'],
-            [['attribute_type', 'name'], 'string', 'max' => 32],
+            [['attribute_type', 'name'], 'string', 'max' => 64],
             [['background_id'], 'exist', 'skipOnError' => true, 'targetClass' => Background::class, 'targetAttribute' => ['background_id' => 'id']],
         ];
     }

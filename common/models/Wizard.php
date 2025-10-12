@@ -30,7 +30,7 @@ class Wizard extends \yii\db\ActiveRecord
     public function rules() {
         return [
             [['name', 'topic'], 'required'],
-            [['name', 'topic'], 'string', 'max' => 32],
+            [['name', 'topic'], 'string', 'max' => 64],
             [['topic'], 'unique'],
         ];
     }

@@ -38,7 +38,7 @@ class Passage extends \yii\db\ActiveRecord
             [['mission_id', 'name'], 'required'],
             [['mission_id', 'found'], 'integer'],
             [['description'], 'string'],
-            [['name', 'image'], 'string', 'max' => 32],
+            [['name', 'image'], 'string', 'max' => 64],
             [['mission_id'], 'exist', 'skipOnError' => true, 'targetClass' => Mission::class, 'targetAttribute' => ['mission_id' => 'id']],
         ];
     }

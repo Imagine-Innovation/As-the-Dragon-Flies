@@ -39,7 +39,7 @@ class Alignment extends \yii\db\ActiveRecord
             [['code', 'name'], 'required'],
             [['description'], 'string'],
             [['code'], 'string', 'max' => 4],
-            [['name'], 'string', 'max' => 32],
+            [['name'], 'string', 'max' => 64],
             [['code'], 'unique'],
         ];
     }

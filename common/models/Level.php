@@ -36,7 +36,7 @@ class Level extends \yii\db\ActiveRecord
             [['proficiency_bonus'], 'default', 'value' => 0],
             [['name', 'xp_min', 'xp_max'], 'required'],
             [['xp_min', 'xp_max', 'proficiency_bonus'], 'integer'],
-            [['name'], 'string', 'max' => 32],
+            [['name'], 'string', 'max' => 64],
             [['name'], 'unique'],
         ];
     }

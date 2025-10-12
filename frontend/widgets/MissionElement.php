@@ -31,8 +31,14 @@ class MissionElement extends Widget
                     $id2 => $property->$id2,
                     $id3 => $property->$id3,
                 ];
+                $displayName = match ($this->type) {
+                    'Prerequisite' => $property->previousAction->name,
+                    'Trigger' => $property->nextAction->name,
+                    default => $property->name,
+                };
+
                 $hrefEdit = Url::toRoute(['mission/edit-detail', 'jsonParams' => json_encode($params), 'type' => $this->type]);
-                $html .= "<li>{$property->name} <a href=\"{$hrefEdit}\" role=\"button\"><i class=\"bi bi-pencil-square\"></i></a></li>";
+                $html .= "<li><a href=\"{$hrefEdit}\" role=\"button\"><i class=\"bi bi-pencil-square\"></i> {$displayName}</a></li>";
             }
             $html .= "</ul>";
         } else {

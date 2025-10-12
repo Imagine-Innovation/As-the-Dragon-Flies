@@ -52,7 +52,7 @@ class Shape extends \yii\db\ActiveRecord
             [['can_speak'], 'default', 'value' => 1],
             [['size_id', 'creature_id', 'name'], 'required'],
             [['size_id', 'creature_id', 'ac', 'languages', 'can_speak', 'is_telepath', 'telepathy_range', 'passive_perception', 'blindsight', 'darkvision', 'tremorsense'], 'integer'],
-            [['name'], 'string', 'max' => 32],
+            [['name'], 'string', 'max' => 64],
             [['creature_id'], 'exist', 'skipOnError' => true, 'targetClass' => Creature::class, 'targetAttribute' => ['creature_id' => 'id']],
             [['size_id'], 'exist', 'skipOnError' => true, 'targetClass' => CreatureSize::class, 'targetAttribute' => ['size_id' => 'id']],
         ];

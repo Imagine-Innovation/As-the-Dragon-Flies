@@ -40,7 +40,7 @@ class Chapter extends \yii\db\ActiveRecord
             [['story_id', 'name'], 'required'],
             [['story_id', 'chapter_number', 'first_mission_id'], 'integer'],
             [['description'], 'string'],
-            [['name', 'image'], 'string', 'max' => 32],
+            [['name', 'image'], 'string', 'max' => 64],
             [['story_id'], 'exist', 'skipOnError' => true, 'targetClass' => Story::class, 'targetAttribute' => ['story_id' => 'id']],
             [['first_mission_id'], 'exist', 'skipOnError' => true, 'targetClass' => Mission::class, 'targetAttribute' => ['first_mission_id' => 'id']],
         ];

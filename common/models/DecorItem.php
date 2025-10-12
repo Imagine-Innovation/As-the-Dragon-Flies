@@ -42,7 +42,7 @@ class DecorItem extends \yii\db\ActiveRecord
             [['decor_id', 'item_id', 'name'], 'required'],
             [['decor_id', 'item_id', 'found', 'identified'], 'integer'],
             [['description'], 'string'],
-            [['name', 'image'], 'string', 'max' => 32],
+            [['name', 'image'], 'string', 'max' => 64],
             [['item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['item_id' => 'id']],
             [['decor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Decor::class, 'targetAttribute' => ['decor_id' => 'id']],
         ];

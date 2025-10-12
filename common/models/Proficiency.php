@@ -34,7 +34,7 @@ class Proficiency extends \yii\db\ActiveRecord
             [['name', 'sort_order'], 'required'],
             [['sort_order'], 'integer'],
             [['description'], 'string'],
-            [['name'], 'string', 'max' => 32],
+            [['name'], 'string', 'max' => 64],
             [['name'], 'unique'],
         ];
     }

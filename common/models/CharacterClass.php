@@ -59,7 +59,7 @@ class CharacterClass extends \yii\db\ActiveRecord
             [['name', 'hit_die', 'initial_funding_dice', 'initial_funding_coin'], 'required'],
             [['description'], 'string'],
             [['abilities', 'max_skills', 'tools', 'initial_funding_multiplier'], 'integer'],
-            [['name'], 'string', 'max' => 32],
+            [['name'], 'string', 'max' => 64],
             [['hit_die', 'initial_funding_dice'], 'string', 'max' => 8],
             [['initial_funding_coin'], 'string', 'max' => 2],
             [['name'], 'unique'],

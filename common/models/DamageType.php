@@ -42,7 +42,7 @@ class DamageType extends \yii\db\ActiveRecord
             [['group_id', 'name'], 'required'],
             [['group_id'], 'integer'],
             [['description'], 'string'],
-            [['name'], 'string', 'max' => 32],
+            [['name'], 'string', 'max' => 64],
             [['group_id'], 'exist', 'skipOnError' => true, 'targetClass' => DamageGroup::class, 'targetAttribute' => ['group_id' => 'id']],
         ];
     }

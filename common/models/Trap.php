@@ -43,7 +43,7 @@ class Trap extends \yii\db\ActiveRecord
             [['decor_id', 'damage_type_id', 'name', 'damage'], 'required'],
             [['decor_id', 'damage_type_id', 'is_team_trap', 'found'], 'integer'],
             [['description'], 'string'],
-            [['name', 'image'], 'string', 'max' => 32],
+            [['name', 'image'], 'string', 'max' => 64],
             [['damage'], 'string', 'max' => 8],
             [['damage_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => DamageType::class, 'targetAttribute' => ['damage_type_id' => 'id']],
             [['decor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Decor::class, 'targetAttribute' => ['decor_id' => 'id']],

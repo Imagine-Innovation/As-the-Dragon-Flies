@@ -34,6 +34,7 @@ use Yii;
  * @property ItemCategory[] $itemCategories
  * @property ItemType $itemType
  * @property Item[] $items
+ * @property Outcome[] $outcomes
  * @property Pack[] $packs
  * @property Pack[] $packs0
  * @property Item[] $parentItems
@@ -43,7 +44,6 @@ use Yii;
  * @property Player[] $players0
  * @property Poison $poison
  * @property Scroll $scroll
- * @property Success[] $successes
  * @property Weapon $weapon
  * @property Weapon[] $weapons
  *
@@ -82,7 +82,7 @@ class Item extends \yii\db\ActiveRecord
             [['item_type_id', 'sort_order', 'cost', 'quantity', 'is_packable', 'is_wearable', 'is_purchasable'], 'integer'],
             [['description'], 'string'],
             [['weight', 'max_load', 'max_volume'], 'number'],
-            [['name', 'image'], 'string', 'max' => 32],
+            [['name', 'image'], 'string', 'max' => 64],
             [['coin'], 'string', 'max' => 2],
             [['name'], 'unique'],
             [['item_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => ItemType::class, 'targetAttribute' => ['item_type_id' => 'id']],
@@ -203,6 +203,15 @@ class Item extends \yii\db\ActiveRecord
     }
 
     /**
+     * Gets query for [[Outcomes]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getOutcomes() {
+        return $this->hasMany(Outcome::class, ['item_id' => 'id']);
+    }
+
+    /**
      * Gets query for [[Packs]].
      *
      * @return \yii\db\ActiveQuery
@@ -281,15 +290,6 @@ class Item extends \yii\db\ActiveRecord
      */
     public function getScroll() {
         return $this->hasOne(Scroll::class, ['item_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[Successes]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getSuccesses() {
-        return $this->hasMany(Success::class, ['item_id' => 'id']);
     }
 
     /**

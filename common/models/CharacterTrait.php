@@ -34,7 +34,7 @@ class CharacterTrait extends \yii\db\ActiveRecord
         return [
             [['name', 'description', 'dice'], 'required'],
             [['description'], 'string'],
-            [['name'], 'string', 'max' => 32],
+            [['name'], 'string', 'max' => 64],
             [['dice'], 'string', 'max' => 8],
         ];
     }

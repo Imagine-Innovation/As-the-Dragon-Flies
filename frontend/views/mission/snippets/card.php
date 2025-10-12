@@ -17,6 +17,7 @@ if ($properties) {
 }
 
 $url = Url::toRoute(['mission/add-detail', 'parentId' => $parentId, 'type' => $type]);
+$aOrAn = strtoupper(substr($type, 0, 1)) === 'A' ? "an" : "a";
 ?>
 <div class="<?= $class ?? 'col' ?>">
     <article class="card mb-3 h-100" id="Mission<?= $type ?>">
@@ -34,8 +35,8 @@ $url = Url::toRoute(['mission/add-detail', 'parentId' => $parentId, 'type' => $t
             <?=
             Button::widget([
                 'url' => $url,
-                'icon' => 'dnd-badge',
-                'title' => "Add a {$type}",
+                'icon' => 'bi-plus-square',
+                'title' => "Add {$aOrAn} “{$type}”",
                 'isCta' => true,
             ])
             ?>
