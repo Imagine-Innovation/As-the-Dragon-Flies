@@ -7,7 +7,7 @@ const config = [
         params: [
             {
                 field: 'mission-image',
-                ajax: 'image',
+                valueType: 'image',
                 minChar: 1,
                 imagePath: imagePath
             }
@@ -18,7 +18,7 @@ const config = [
         params: [
             {
                 field: 'passage-image',
-                ajax: 'image',
+                valueType: 'image',
                 minChar: 1,
                 imagePath: imagePath
             }
@@ -29,19 +29,19 @@ const config = [
         params: [
             {
                 field: 'npc-first_dialog_id',
-                ajax: 'dialog',
+                valueType: 'dialog',
                 minChar: 3,
                 imagePath: null
             },
             {
                 field: 'npc-image',
-                ajax: 'image',
+                valueType: 'image',
                 minChar: 1,
                 imagePath: imagePath
             },
             {
                 field: 'npc-npc_type_id',
-                ajax: 'npc-type',
+                valueType: 'npc-type',
                 minChar: 3,
                 imagePath: null
             }
@@ -52,13 +52,13 @@ const config = [
         params: [
             {
                 field: 'actioninteraction-previous_action_id',
-                ajax: 'action',
+                valueType: 'action',
                 minChar: 0,
                 imagePath: null
             },
             {
                 field: 'actioninteraction-next_action_id',
-                ajax: 'action',
+                valueType: 'action',
                 minChar: 0,
                 imagePath: null
             }
@@ -69,13 +69,13 @@ const config = [
         params: [
             {
                 field: 'trap-damage_type_id',
-                ajax: 'damage-type',
+                valueType: 'damage-type',
                 minChar: 0,
                 imagePath: null
             },
             {
                 field: 'trap-image',
-                ajax: 'image',
+                valueType: 'image',
                 minChar: 0,
                 imagePath: imagePath
             }
@@ -86,13 +86,13 @@ const config = [
         params: [
             {
                 field: 'decoritem-item_id',
-                ajax: 'item',
+                valueType: 'item',
                 minChar: 3,
                 imagePath: null
             },
             {
                 field: 'decoritem-image',
-                ajax: 'image',
+                valueType: 'image',
                 minChar: 1,
                 imagePath: imagePath
             }
@@ -103,13 +103,13 @@ const config = [
         params: [
             {
                 field: 'monster-creature_id',
-                ajax: 'creature',
+                valueType: 'creature',
                 minChar: 3,
                 imagePath: null
             },
             {
                 field: 'monster-image',
-                ajax: 'image',
+                valueType: 'image',
                 minChar: 1,
                 imagePath: imagePath
             }
@@ -120,19 +120,19 @@ const config = [
         params: [
             {
                 field: 'decor-item_id',
-                ajax: 'item',
+                valueType: 'item',
                 minChar: 3,
                 imagePath: null
             },
             {
                 field: 'decor-trap_id',
-                ajax: 'trap',
+                valueType: 'trap',
                 minChar: 0,
                 imagePath: null
             },
             {
                 field: 'decor-image',
-                ajax: 'image',
+                valueType: 'image',
                 minChar: 1,
                 imagePath: imagePath
             }
@@ -143,55 +143,55 @@ const config = [
         params: [
             {
                 field: 'action-passage_id',
-                ajax: 'passage',
+                valueType: 'passage',
                 minChar: 0,
                 imagePath: null
             },
             {
                 field: 'action-action_type_id',
-                ajax: 'action-type',
+                valueType: 'action-type',
                 minChar: 1,
                 imagePath: null
             },
             {
                 field: 'action-decor_id',
-                ajax: 'decor',
+                valueType: 'decor',
                 minChar: 0,
                 imagePath: null
             },
             {
                 field: 'action-decor_item_id',
-                ajax: 'nested-item',
+                valueType: 'nested-item',
                 minChar: 0,
                 imagePath: null
             },
             {
                 field: 'action-npc_id',
-                ajax: 'npc',
+                valueType: 'npc',
                 minChar: 0,
                 imagePath: null
             },
             {
                 field: 'action-reply_id',
-                ajax: 'reply',
+                valueType: 'reply',
                 minChar: 3,
                 imagePath: null
             },
             {
                 field: 'action-required_item_id',
-                ajax: 'item',
+                valueType: 'item',
                 minChar: 3,
                 imagePath: null
             },
             {
                 field: 'action-skill_id',
-                ajax: 'skill',
+                valueType: 'skill',
                 minChar: 0,
                 imagePath: null
             },
             {
                 field: 'action-trap_id',
-                ajax: 'nested-trap',
+                valueType: 'nested-trap',
                 minChar: 0,
                 imagePath: null
             }
@@ -199,17 +199,16 @@ const config = [
     }
 ];
 
-function searchSelect(searchField, ajaxFunction, minChar = 3, imagePath = null) {
-    Logger.log(1, 'searchSelect', `searchField=${searchField}, ajaxFunction=${ajaxFunction}, minChar=${minChar}, imagePath=${imagePath}`);
+function searchSelect(searchField, valueType, minChar = 3, imagePath = null) {
+    Logger.log(1, 'searchSelect', `searchField=${searchField}, valueType=${valueType}, minChar=${minChar}, imagePath=${imagePath}`);
     $(`#${searchField}`).select2({
         ajax: {
-            //url: `/frontend/web/index.php?r=search/${ajaxFunction}`,
             url: `/frontend/web/index.php?r=search/values`,
             dataType: 'json',
             delay: 250,
             data: function (params) {
                 const ajaxParams = {
-                    valueType: ajaxFunction,
+                    valueType: valueType,
                     search: params.term, // search term
                     folder: imagePath,
                     parentId: parentId
@@ -274,13 +273,13 @@ function initSearchSelect(formName) {
     // Iterate over each parameter in the form configuration
     formConfig.params.forEach(param => {
         const searchField = param.field;
-        const ajaxType = param.ajax;
+        const valueType = param.valueType;
         const minChar = param.minChar;
         const imagePathValue = param.imagePath;
 
         // Check if the DOM element exists
         if (DOMUtils.exists(`#${searchField}`)) {
-            searchSelect(searchField, ajaxType, minChar, imagePathValue);
+            searchSelect(searchField, valueType, minChar, imagePathValue);
         }
     });
 }

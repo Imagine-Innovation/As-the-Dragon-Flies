@@ -1,5 +1,6 @@
 <?php
 
+use frontend\components\NarrativeComponent;
 use frontend\widgets\Button;
 use yii\helpers\Url;
 
@@ -19,6 +20,8 @@ $breadcrumbs = [
 // Set breadcrumbs for the view
 $this->params['breadcrumbs'] = $breadcrumbs;
 
+$narrative = new NarrativeComponent();
+$missionDescription = $narrative->missionDecription($model);
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="container">
@@ -42,7 +45,9 @@ $this->params['breadcrumbs'] = $breadcrumbs;
                     <h3 class="card-title">Mission: <?= $model->name ?></h3>
                 </div>
                 <div class="card-body flex-grow-1"> <!-- Add flex-grow-1 -->
-                    <p class="card-text text-decoration"><?= nl2br($model->description) ?></p>
+                    <?php foreach ($missionDescription as $description): ?>
+                        <p class="card-text text-decoration"><?= $description ?></p>
+                    <?php endforeach; ?>
                     <br>
                     <section id="MissionEnvironment">
                         <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3 row-cols-xxl-4 g-4">
