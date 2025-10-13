@@ -24,19 +24,8 @@ class SearchController extends Controller
                     'access' => [
                         'class' => AccessControl::class,
                         'rules' => [
-                            [
-                                'actions' => ['*'], 'allow' => false, 'roles' => ['?'],
-                            ],
-                            [
-                                'actions' => [
-                                    'npc-type', 'damage-type', 'action-type', 'item', 'creature', 'image', 'skill',
-                                    'npc', 'passage', 'decor', 'action', 'monter',
-                                    'nested-trap', 'nested-item',
-                                    'dialog', 'reply',
-                                ],
-                                'allow' => true,
-                                'roles' => ['@'],
-                            ],
+                            ['actions' => ['*'], 'allow' => false, 'roles' => ['?']],
+                            ['actions' => ['values'], 'allow' => true, 'roles' => ['@']],
                         ],
                     ],
                 ]
@@ -52,7 +41,7 @@ class SearchController extends Controller
         return $filter;
     }
 
-    public function actionImage(string $search, string $folder): array {
+    private function imageSearch(string $search, string $folder): array {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isGet || !$this->request->isAjax) {
@@ -62,25 +51,25 @@ class SearchController extends Controller
         $path = Yii::getAlias('@frontend/web/img/') . $folder;
         $results = [];
 
-        if (is_dir($path)) {
-            $files = \yii\helpers\FileHelper::findFiles($path, [
-                'only' => $this->setFileSearchFilter($search),
-                'recursive' => false,
-                'caseSensitive' => false,
-            ]);
-
-            foreach ($files as $file) {
-                $fileName = basename($file);
-                $results[] = [
-                    'id' => $fileName,
-                    'img' => "/frontend/web/img/{$folder}/{$fileName}",
-                    'text' => FileHelper::removeExtension($fileName),
-                ];
-            }
-            return ['error' => false, 'msg' => '', 'results' => $results];
+        if (!is_dir($path)) {
+            Yii::debug("*** debug *** - actionimage - '{$path}' is not a valid directory");
+            return ['error' => true, 'msg' => "'{$path}' is not a valid directory"];
         }
-        Yii::debug("*** debug *** - actionimage - '{$path}' is not a valid directory");
-        return ['error' => true, 'msg' => "'{$path}' is not a valid directory"];
+        $files = \yii\helpers\FileHelper::findFiles($path, [
+            'only' => $this->setFileSearchFilter($search),
+            'recursive' => false,
+            'caseSensitive' => false,
+        ]);
+
+        foreach ($files as $file) {
+            $fileName = basename($file);
+            $results[] = [
+                'id' => $fileName,
+                'img' => "/frontend/web/img/{$folder}/{$fileName}",
+                'text' => FileHelper::removeExtension($fileName),
+            ];
+        }
+        return ['error' => false, 'msg' => '', 'results' => $results];
     }
 
     private function normalizeSearchString(string|null $inputString): string|null {
@@ -102,7 +91,7 @@ class SearchController extends Controller
         return $normalizedString;
     }
 
-    private function decorSearch(string $modelName, int $missionId, string|null $userEntry): array {
+    private function searchInDecor(string $modelName, int $missionId, string|null $userEntry): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -158,71 +147,7 @@ class SearchController extends Controller
         return ['error' => false, 'msg' => '', 'results' => $searchResult];
     }
 
-    /**
-     * Search in a global repository
-     */
-    public function actionNpcType(string|null $search = null): array {
-        return $this->genericSearch('NpcType', $search);
-    }
-
-    public function actionDamageType(string|null $search = null): array {
-        return $this->genericSearch('DamageType', $search);
-    }
-
-    public function actionActionType(string|null $search = null): array {
-        return $this->genericSearch('ActionType', $search);
-    }
-
-    public function actionItem(string|null $search = null): array {
-        return $this->genericSearch('Item', $search);
-    }
-
-    public function actionSkill(string|null $search = null): array {
-        return $this->genericSearch('Skill', $search);
-    }
-
-    public function actionCreature(string|null $search = null): array {
-        return $this->genericSearch('Creature', $search);
-    }
-
-    /**
-     * Search in mission related data
-     */
-    public function actionNpc(int $parentId, string|null $search = null): array {
-        return $this->genericSearch('Npc', $search, ['mission_id' => $parentId]);
-    }
-
-    public function actionPassage(int $parentId, string|null $search = null): array {
-        return $this->genericSearch('Passage', $search, ['mission_id' => $parentId]);
-    }
-
-    public function actionDecor(int $parentId, string|null $search = null): array {
-        return $this->genericSearch('Decor', $search, $search, ['mission_id' => $parentId]);
-    }
-
-    public function actionMonster(int $parentId, string|null $search = null): array {
-        return $this->genericSearch('Monster', $search, $search, ['mission_id' => $parentId]);
-    }
-
-    public function actionAction(int $parentId, string|null $search = null): array {
-        return $this->genericSearch('Action', $search, ['mission_id' => $parentId]);
-    }
-
-    /**
-     * Search in decor related data
-     */
-    public function actionNestedTrap(int $parentId, string|null $search = null): array {
-        return $this->decorSearch('Trap', $parentId, $search);
-    }
-
-    public function actionNestedItem(int $parentId, string|null $search = null): array {
-        return $this->decorSearch('DecorItem', $parentId, $search);
-    }
-
-    /**
-     * Search in text
-     */
-    private function genericTextSearch(string $modelName, string $search): array {
+    private function searchInTextColumn(string $modelName, string $search): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -244,11 +169,49 @@ class SearchController extends Controller
         return ['error' => false, 'msg' => '', 'results' => $searchResult];
     }
 
-    public function actionDialog(string $search): array {
-        return $this->genericTextSearch('Dialog', $search);
+    private function searchBrocker(string|null $valueType, string|null $search, int|null $parentId, string|null $folder): array {
+        Yii::debug("*** Debug *** searchBrocker(valueType={$valueType}, search={$search}, parentId={$parentId}, folder={$folder})");
+        return match ($valueType) {
+            'image' => $this->imageSearch($search, $folder),
+            // Search in a global repository
+            'npc-type' => $this->genericSearch('NpcType', $search),
+            'damage-type' => $this->genericSearch('DamageType', $search),
+            'action-type' => $this->genericSearch('ActionType', $search),
+            'item' => $this->genericSearch('Item', $search),
+            'skill' => $this->genericSearch('Skill', $search),
+            'creature' => $this->genericSearch('Creature', $search),
+            // Search in mission related data
+            'npc' => $this->genericSearch('Npc', $search, ['mission_id' => $parentId]),
+            'passage' => $this->genericSearch('Passage', $search, ['mission_id' => $parentId]),
+            'decor' => $this->genericSearch('Decor', $search, $search, ['mission_id' => $parentId]),
+            'monster' => $this->genericSearch('Monster', $search, $search, ['mission_id' => $parentId]),
+            'action' => $this->genericSearch('Action', $search, ['mission_id' => $parentId]),
+            // Search in decor related data
+            'nested-trap' => $this->searchInDecor('Trap', $parentId, $search),
+            'nested-item' => $this->searchInDecor('DecorItem', $parentId, $search),
+            // Search in text
+            'dialog' => $this->searchInTextColumn('Dialog', $search),
+            'reply' => $this->searchInTextColumn('Reply', $search),
+            default => throw new \Exception("Unsupported type {$valueType}"),
+        };
     }
 
-    public function actionReply(string $search): array {
-        return $this->genericTextSearch('Reply', $search);
+    public function actionValues(): array {
+        // Set the response format to JSON
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        // Check if the request is a GET request and if it is an AJAX request
+        if (!$this->request->isGet || !$this->request->isAjax) {
+            // If not, return an error response
+            return ['error' => true, 'msg' => 'Not an Ajax GET request'];
+        }
+
+        $request = Yii::$app->request;
+        $valueType = $request->get('valueType');
+        $search = $request->get('search');
+        $parentId = $request->get('parentId');
+        $folder = $request->get('folder');
+
+        return $this->searchBrocker($valueType, $search, $parentId, $folder);
     }
 }

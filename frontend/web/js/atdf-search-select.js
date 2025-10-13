@@ -200,14 +200,16 @@ const config = [
 ];
 
 function searchSelect(searchField, ajaxFunction, minChar = 3, imagePath = null) {
-    Logger.log(1, 'searchSelect', `searchField=${searchField}, ajaxFunction=${ajaxFunction}`);
+    Logger.log(1, 'searchSelect', `searchField=${searchField}, ajaxFunction=${ajaxFunction}, minChar=${minChar}, imagePath=${imagePath}`);
     $(`#${searchField}`).select2({
         ajax: {
-            url: `/frontend/web/index.php?r=search/${ajaxFunction}`,
+            //url: `/frontend/web/index.php?r=search/${ajaxFunction}`,
+            url: `/frontend/web/index.php?r=search/values`,
             dataType: 'json',
             delay: 250,
             data: function (params) {
                 const ajaxParams = {
+                    valueType: ajaxFunction,
                     search: params.term, // search term
                     folder: imagePath,
                     parentId: parentId
