@@ -25,9 +25,6 @@ class NarrativeComponent extends Component
             $narrative = [...$narrative, ...$this->describeDetail($mission, $details)];
         }
 
-        Yii::debug($narrative);
-
-        //return implode('<br /><br />' . PHP_EOL, $narrative);
         return $narrative;
     }
 
@@ -38,7 +35,6 @@ class NarrativeComponent extends Component
                 $narrative[] = $detail->description ? nl2br($detail->description) : $detail->name;
             }
         }
-        //return implode('<br />' . PHP_EOL, $narrative);
         return $narrative;
     }
 }

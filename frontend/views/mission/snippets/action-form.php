@@ -21,7 +21,7 @@ use yii\widgets\ActiveForm;
 <?php if ($model->id): ?>
     <article>
         <p>Action:
-            <?= $model->actionType->name ?> <?= $model->actionType->description ? "({$model->actionType->description})" : "" ?>
+            <?= $model?->actionType?->name ?> <?= $model?->actionType?->description ? "({$model?->actionType?->description})" : "" ?>
             <?= $model?->passage?->name ?>
             <?= $model?->trap?->name ?>
             <?= $model?->decorItem?->name ?>

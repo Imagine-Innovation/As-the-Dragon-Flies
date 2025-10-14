@@ -14,8 +14,8 @@ $story = $chapter->story;
 $parentId = match ($type) {
     'Item' => $model->decor_id,
     'Trap' => $model->decor_id,
-    'Prerequisite' => $model->next_action_id,
-    'Trigger' => $model->previous_action_id,
+    'Prerequisite' => $model->next_action_id ? $model->nextAction->mission_id : $model->previousAction->mission_id,
+    'Trigger' => $model->previous_action_id ? $model->previousAction->mission_id : $model->nextAction->mission_id,
     default => $model->mission_id,
 };
 
