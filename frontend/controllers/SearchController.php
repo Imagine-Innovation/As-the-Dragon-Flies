@@ -180,6 +180,9 @@ class SearchController extends Controller
             'item' => $this->genericSearch('Item', $search),
             'skill' => $this->genericSearch('Skill', $search),
             'creature' => $this->genericSearch('Creature', $search),
+            'language' => $this->genericSearch('Language', $search),
+            // Search in story related data
+            'mission' => $this->genericSearch('Mission', $search, ['chapter_id' => $parentId]),
             // Search in mission related data
             'npc' => $this->genericSearch('Npc', $search, ['mission_id' => $parentId]),
             'passage' => $this->genericSearch('Passage', $search, ['mission_id' => $parentId]),

@@ -9,7 +9,7 @@ use Yii;
  *
  * @property int $id Primary key
  * @property int $action_id Foreign key to “action” table
- * @property int $next_mission_id Foreign key to “mission” table
+ * @property int|null $next_mission_id Optional foreign key to “mission” table
  * @property int|null $item_id Optional foreign key to “item” table
  * @property int $status Outcome status: 0=failure, 1=success, 2=partial
  * @property string $name Outcome title
@@ -39,9 +39,9 @@ class Outcome extends \yii\db\ActiveRecord
      */
     public function rules() {
         return [
-            [['item_id', 'description'], 'default', 'value' => null],
+            [['next_mission_id', 'item_id', 'description'], 'default', 'value' => null],
             [['hp_loss'], 'default', 'value' => 0],
-            [['action_id', 'next_mission_id', 'status', 'name'], 'required'],
+            [['action_id', 'status', 'name'], 'required'],
             [['action_id', 'next_mission_id', 'item_id', 'status', 'gained_gp', 'gained_xp', 'hp_loss'], 'integer'],
             [['description'], 'string'],
             [['name'], 'string', 'max' => 64],
@@ -58,7 +58,7 @@ class Outcome extends \yii\db\ActiveRecord
         return [
             'id' => 'Primary key',
             'action_id' => 'Foreign key to “action” table',
-            'next_mission_id' => 'Foreign key to “mission” table',
+            'next_mission_id' => 'Optional foreign key to “mission” table',
             'item_id' => 'Optional foreign key to “item” table',
             'status' => 'Outcome status: 0=failure, 1=success, 2=partial',
             'name' => 'Outcome title',

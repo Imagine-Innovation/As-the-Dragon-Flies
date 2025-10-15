@@ -25,6 +25,23 @@ const config = [
         ]
     },
     {
+        form: 'outcome',
+        params: [
+            {
+                field: 'outcome-item_id',
+                valueType: 'item',
+                minChar: 3,
+                imagePath: null
+            },
+            {
+                field: 'outcome-next_mission_id',
+                valueType: 'mission',
+                minChar: 3,
+                imagePath: null
+            }
+        ]
+    },
+    {
         form: 'npc',
         params: [
             {
@@ -42,7 +59,13 @@ const config = [
             {
                 field: 'npc-npc_type_id',
                 valueType: 'npc-type',
-                minChar: 3,
+                minChar: 1,
+                imagePath: null
+            },
+            {
+                field: 'npc-language_id',
+                valueType: 'language',
+                minChar: 1,
                 imagePath: null
             }
         ]
@@ -210,10 +233,10 @@ function searchSelect(searchField, valueType, minChar = 3, imagePath = null) {
                 const ajaxParams = {
                     valueType: valueType,
                     search: params.term, // search term
-                    folder: imagePath,
-                    parentId: parentId
+                    parentId: parentId,
+                    folder: imagePath
                 };
-                console.log(JSON.stringify(ajaxParams));
+                console.log(`====> ajaxParams=${JSON.stringify(ajaxParams)}`);
                 return ajaxParams;
             },
             dropdownCssClass: 'form-select',
@@ -285,6 +308,7 @@ function initSearchSelect(formName) {
 }
 
 $(document).ready(function () {
+    console.log(`formName=${formName}, imagePath=${imagePath}, parentId=${parentId}`);
     if (formName)
         initSearchSelect(formName);
 });

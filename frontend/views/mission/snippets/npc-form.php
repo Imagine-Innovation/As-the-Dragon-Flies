@@ -75,6 +75,21 @@ use yii\widgets\ActiveForm;
         }
         ?>
 
+        <?php
+        if ($model->id) {
+            echo $form->field($model, 'language_id')
+                    ->dropdownList(
+                            $model->language_id ? [$model->language_id => $model->language->name] : [],
+                            [
+                                'class' => 'select2-container w-100',
+                                'data-minimum-results-for-search' => -1,
+                                'data-placeholder' => "Select a language",
+                            ]
+                    )
+                    ->label('Language spoken');
+        }
+        ?>
+
         <?php if ($model->image): ?>
         </div>
     </div>

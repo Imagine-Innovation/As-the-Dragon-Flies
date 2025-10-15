@@ -124,6 +124,7 @@ class MissionController extends Controller
             'Trap' => ['className' => 'Trap', 'snippet' => 'trap-form', 'childOf' => 'decor'],
             'Prerequisite' => ['className' => 'ActionInteraction', 'snippet' => 'interaction-form', 'childOf' => 'action'],
             'Trigger' => ['className' => 'ActionInteraction', 'snippet' => 'interaction-form', 'childOf' => 'action'],
+            'Outcome' => ['className' => 'Outcome', 'snippet' => 'outcome-form', 'childOf' => 'action'],
             default => throw new \Exception("Unsupported type {$type}"),
         };
     }
@@ -167,15 +168,18 @@ class MissionController extends Controller
         return $this->createDetailModel($model, $mission, $type, $snippet);
     }
 
-    private function addActionChild(int $actionId, string $type, string $snippet) {
+    private function addActionChild(int $actionId, string $type, string $className, string $snippet) {
         $action = $this->findModel('Action', ['id' => $actionId]);
         $mission = $action->mission;
 
-        $model = new \common\models\ActionInteraction();
+        $modelName = "\\common\\models\\{$className}";
+        $model = new $modelName();
         if ($type === 'Prerequisite') {
             $model->next_action_id = $action->id;
-        } else {
+        } elseif ($type === 'Trigger') {
             $model->previous_action_id = $action->id;
+        } else {
+            $model->action_id = $action->id;
         }
 
         return $this->createDetailModel($model, $mission, $type, $snippet);
@@ -194,7 +198,7 @@ class MissionController extends Controller
         return match ($detailInfo['childOf']) {
             'mission' => $this->addMissionChild($parentId, $type, $className, $snippet),
             'decor' => $this->addDecorChild($parentId, $type, $className, $snippet),
-            'action' => $this->addActionChild($parentId, $type, $snippet),
+            'action' => $this->addActionChild($parentId, $type, $className, $snippet),
             default => throw new \Exception("Unsupported type {$detailInfo['childOf']}"),
         };
     }
@@ -234,14 +238,16 @@ class MissionController extends Controller
         return $this->updateDetailModel($model, $mission, $type, $snippet);
     }
 
-    private function editActionChild(string $jsonParams, string $type, string $snippet) {
+    private function editActionChild(string $jsonParams, string $type, string $className, string $snippet) {
         $searchParams = json_decode($jsonParams, true);
 
-        $model = $this->findModel('ActionInteraction', $searchParams);
+        $model = $this->findModel($className, $searchParams);
         if ($type === 'Prerequisite') {
             $action = $model->nextAction;
-        } else {
+        } elseif ($type === "Tigger") {
             $action = $model->previousAction;
+        } else {
+            $action = $model->action;
         }
         $mission = $action->mission;
 
@@ -256,7 +262,7 @@ class MissionController extends Controller
         return match ($detailInfo['childOf']) {
             'mission' => $this->editMissionChild($jsonParams, $type, $className, $snippet),
             'decor' => $this->editDecorChild($jsonParams, $type, $className, $snippet),
-            'action' => $this->editActionChild($jsonParams, $type, $snippet),
+            'action' => $this->editActionChild($jsonParams, $type, $className, $snippet),
             default => throw new \Exception("Unsupported type {$detailInfo['childOf']}"),
         };
     }

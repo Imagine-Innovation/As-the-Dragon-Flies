@@ -33,6 +33,9 @@ enum AppStatus: int
     case SUCCESS = 500;
     case PARTIAL = 501;
     case FAILURE = 502;
+    case NOT_FAILURE = 503;
+    case NOT_SUCCESS = 504;
+    case ANY = 505;
 
     public function getLabel(): string {
         return match ($this) {
@@ -61,6 +64,9 @@ enum AppStatus: int
             self::SUCCESS => 'Sucess',
             self::PARTIAL => 'Partial success',
             self::FAILURE => 'Failure',
+            self::NOT_FAILURE => 'Total or partial success',
+            self::NOT_SUCCESS => 'Partial success or failure',
+            self::ANY => 'Any outcome',
             default => 'Unknown Status',
         };
     }
@@ -92,6 +98,9 @@ enum AppStatus: int
             self::SUCCESS => ['icon' => 'dnd-badge', 'tooltip' => 'Success'],
             self::PARTIAL => ['icon' => 'bi-star-half', 'tooltip' => 'Partial success'],
             self::FAILURE => ['icon' => 'dnd-danger', 'tooltip' => 'Failure'],
+            self::NOT_FAILURE => ['icon' => 'bi-star-fill', 'tooltip' => 'Total or partial success'],
+            self::NOT_SUCESS => ['icon' => 'bi-star', 'tooltip' => 'Partial success or failure'],
+            self::ANY => ['icon' => 'bi-stars', 'tooltip' => 'Any outcome'],
             default => ['icon' => 'bi-exclamation-square', 'tooltip' => 'Undefined'],
         };
     }
@@ -152,6 +161,9 @@ enum AppStatus: int
             self::SUCCESS->value => self::SUCCESS->getLabel(),
             self::PARTIAL->value => self::PARTIAL->getLabel(),
             self::FAILURE->value => self::FAILURE->getLabel(),
+            self::NOT_FAILURE->value => self::NOT_FAILURE->getLabel(),
+            self::NOT_SUCCESS->value => self::NOT_SUCCESS->getLabel(),
+            self::ANY->value => self::ANY->getLabel(),
         ];
     }
 

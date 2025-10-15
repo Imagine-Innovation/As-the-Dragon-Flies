@@ -5,7 +5,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
-/** @var common\models\ActionInteraction $model */
+/** @var common\models\Outcome $model */
 /** @var yii\widgets\ActiveForm $form */
 /** @var string $storyId */
 /** @var string $chapterId */
@@ -16,42 +16,47 @@ use yii\widgets\ActiveForm;
 <div class="d-none">
     Hidden div to embeb utility tags for PHP/JS communication
     <span id="hiddenImagePath">story/<?= $storyId ?></span>
-    <span id="hiddenFormName">actioninteraction</span>
-    <span id="hiddenParentId"><?= $parentId ?></span>
+    <span id="hiddenFormName">outcome</span>
+    <span id="hiddenParentId"><?= $chapterId ?></span>
 </div>
 
 <?php $form = ActiveForm::begin(); ?>
 
 <?=
-        $form->field($model, 'previous_action_id')
-        ->dropdownList(
-                $model->previous_action_id ? [$model->previous_action_id => $model->previousAction->name] : [],
-                [
-                    'class' => 'select2-container w-100',
-                    'data-minimum-results-for-search' => -1,
-                    'data-placeholder' => "Select an action",
-                ]
-        )
-        ->label('Previous action')
-?>
-
-<?=
-        $form->field($model, 'next_action_id')
-        ->dropdownList(
-                $model->next_action_id ? [$model->next_action_id => $model->nextAction->name] : [],
-                [
-                    'class' => 'select2-container w-100',
-                    'data-minimum-results-for-search' => -1,
-                    'data-placeholder' => "Select an action",
-                ]
-        )
-        ->label('Next action')
-?>
-
-<?=
         $form->field($model, 'status')
         ->radioList(AppStatus::getActionStatus())
         ->label('Select a status')
+?>
+<?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+<?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
+<?= $form->field($model, 'hp_loss') ?>
+<?= $form->field($model, 'gained_gp') ?>
+<?= $form->field($model, 'gained_xp') ?>
+
+<?=
+        $form->field($model, 'item_id')
+        ->dropdownList(
+                $model->item_id ? [$model->item_id => $model->item->name] : [],
+                [
+                    'class' => 'select2-container w-100',
+                    'data-minimum-results-for-search' => -1,
+                    'data-placeholder' => "Select an item",
+                ]
+        )
+        ->label('Item gained')
+?>
+
+<?=
+        $form->field($model, 'next_mission_id')
+        ->dropdownList(
+                $model->next_mission_id ? [$model->next_mission_id => $model->nextMission->name] : [],
+                [
+                    'class' => 'select2-container w-100',
+                    'data-minimum-results-for-search' => -1,
+                    'data-placeholder' => "Select a mission",
+                ]
+        )
+        ->label('Next mission')
 ?>
 
 <div class="form-group">

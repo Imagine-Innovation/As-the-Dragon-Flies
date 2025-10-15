@@ -19,8 +19,9 @@ use Yii;
  * @property Decor[] $decors
  * @property Monster[] $monsters
  * @property Npc[] $npcs
+ * @property Outcome[] $outcomes
  * @property Passage[] $passages
- * @property Success[] $successes
+ * @property QuestProgress[] $questProgresses
  */
 class Mission extends \yii\db\ActiveRecord
 {
@@ -115,6 +116,15 @@ class Mission extends \yii\db\ActiveRecord
     }
 
     /**
+     * Gets query for [[Outcomes]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getOutcomes() {
+        return $this->hasMany(Outcome::class, ['next_mission_id' => 'id']);
+    }
+
+    /**
      * Gets query for [[Passages]].
      *
      * @return \yii\db\ActiveQuery
@@ -124,12 +134,12 @@ class Mission extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Successes]].
+     * Gets query for [[QuestProgresses]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getSuccesses() {
-        return $this->hasMany(Success::class, ['next_mission_id' => 'id']);
+    public function getQuestProgresses() {
+        return $this->hasMany(QuestProgress::class, ['mission_id' => 'id']);
     }
 
 }

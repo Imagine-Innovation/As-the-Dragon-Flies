@@ -31,9 +31,10 @@ use yii\widgets\ActiveForm;
             <?= $model->requiredItem ? "with {$model->npc->name}" : "" ?>
         </p>
     </article>
-    <div class="row row-cols-1 row-cols-lg-2 g-4">
+    <div class="row row-cols-1 row-cols-lg-3 g-4">
         <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->actionPrerequisites, 'parentId' => $model->id, 'type' => 'Prerequisite']) ?>
         <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->actionTriggers, 'parentId' => $model->id, 'type' => 'Trigger']) ?>
+        <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->outcomes, 'parentId' => $model->id, 'type' => 'Outcome']) ?>
     </div>
 <?php endif; ?>
 

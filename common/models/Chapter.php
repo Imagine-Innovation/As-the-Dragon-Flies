@@ -17,6 +17,7 @@ use Yii;
  *
  * @property Mission $firstMission
  * @property Mission[] $missions
+ * @property Quest[] $quests
  * @property Story $story
  */
 class Chapter extends \yii\db\ActiveRecord
@@ -77,6 +78,15 @@ class Chapter extends \yii\db\ActiveRecord
      */
     public function getMissions() {
         return $this->hasMany(Mission::class, ['chapter_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Quests]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getQuests() {
+        return $this->hasMany(Quest::class, ['current_chapter_id' => 'id']);
     }
 
     /**

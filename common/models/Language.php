@@ -11,6 +11,7 @@ use Yii;
  * @property string $name Language
  * @property string|null $description Short description
  *
+ * @property Npc[] $npcs
  * @property PlayerLanguage[] $playerLanguages
  * @property Player[] $players
  * @property RaceGroupLanguage[] $raceGroupLanguages
@@ -52,6 +53,15 @@ class Language extends \yii\db\ActiveRecord
             'name' => 'Language',
             'description' => 'Short description',
         ];
+    }
+
+    /**
+     * Gets query for [[Npcs]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getNpcs() {
+        return $this->hasMany(Npc::class, ['language_id' => 'id']);
     }
 
     /**

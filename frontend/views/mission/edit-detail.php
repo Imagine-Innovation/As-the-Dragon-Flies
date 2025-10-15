@@ -22,6 +22,7 @@ $parentId = match ($type) {
     'Trap' => $model->decor_id,
     'Prerequisite' => $model->next_action_id,
     'Trigger' => $model->previous_action_id,
+    'Outcome' => $model->action_id,
     default => $model->mission_id,
 };
 
