@@ -14,14 +14,13 @@ use Yii;
  * @property int $status Status
  * @property int $started_at Started at
  * @property int|null $ended_at Ended at
- * @property string|null $description Short description
+ * @property string|null $description Short description of what happened during the turn
  *
  * @property Player $player
  * @property QuestProgress $questProgress
  */
 class QuestTurn extends \yii\db\ActiveRecord
 {
-
 
     /**
      * {@inheritdoc}
@@ -56,7 +55,7 @@ class QuestTurn extends \yii\db\ActiveRecord
             'status' => 'Status',
             'started_at' => 'Started at',
             'ended_at' => 'Ended at',
-            'description' => 'Short description',
+            'description' => 'Short description of what happened during the turn',
         ];
     }
 
@@ -77,5 +76,4 @@ class QuestTurn extends \yii\db\ActiveRecord
     public function getQuestProgress() {
         return $this->hasOne(QuestProgress::class, ['id' => 'quest_progress_id']);
     }
-
 }

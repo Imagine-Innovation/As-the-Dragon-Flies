@@ -11,7 +11,7 @@ use Yii;
  * @property int $action_id Foreign key to “action” table
  * @property int|null $next_mission_id Optional foreign key to “mission” table
  * @property int|null $item_id Optional foreign key to “item” table
- * @property int $status Outcome status: 0=failure, 1=success, 2=partial
+ * @property int $status Outcome status: 2=success, 1=partial, 4=failure, 3=not failed, 5=not succeeded, 7=any status
  * @property string $name Outcome title
  * @property string|null $description Short description
  * @property int $gained_gp Gained Gold Pieces (GP) when succeeded
@@ -60,7 +60,7 @@ class Outcome extends \yii\db\ActiveRecord
             'action_id' => 'Foreign key to “action” table',
             'next_mission_id' => 'Optional foreign key to “mission” table',
             'item_id' => 'Optional foreign key to “item” table',
-            'status' => 'Outcome status: 0=failure, 1=success, 2=partial',
+            'status' => 'Outcome status: 2=success, 1=partial, 4=failure, 3=not failed, 5=not succeeded, 7=any status',
             'name' => 'Outcome title',
             'description' => 'Short description',
             'gained_gp' => 'Gained Gold Pieces (GP) when succeeded',

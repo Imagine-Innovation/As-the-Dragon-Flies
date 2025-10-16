@@ -22,8 +22,8 @@ use Yii;
  * @property int $dc Difficulty Class (DC)
  * @property int $disable_on_success When the action is successful, it should not be played again
  *
- * @property ActionInteraction[] $actionTriggers
- * @property ActionInteraction[] $actionPrerequisites
+ * @property ActionFlow[] $actionTriggers
+ * @property ActionFlow[] $actionPrerequisites
  * @property ActionType $actionType
  * @property Decor $decor
  * @property DecorItem $decorItem
@@ -101,7 +101,7 @@ class Action extends \yii\db\ActiveRecord
      * @return \yii\db\ActiveQuery
      */
     public function getActionTriggers() {
-        return $this->hasMany(ActionInteraction::class, ['previous_action_id' => 'id']);
+        return $this->hasMany(ActionFlow::class, ['previous_action_id' => 'id']);
     }
 
     /**
@@ -110,7 +110,7 @@ class Action extends \yii\db\ActiveRecord
      * @return \yii\db\ActiveQuery
      */
     public function getActionPrerequisites() {
-        return $this->hasMany(ActionInteraction::class, ['next_action_id' => 'id']);
+        return $this->hasMany(ActionFlow::class, ['next_action_id' => 'id']);
     }
 
     /**
@@ -155,7 +155,7 @@ class Action extends \yii\db\ActiveRecord
      * @return \yii\db\ActiveQuery
      */
     public function getNextActions() {
-        return $this->hasMany(Action::class, ['id' => 'next_action_id'])->viaTable('action_interaction', ['previous_action_id' => 'id']);
+        return $this->hasMany(Action::class, ['id' => 'next_action_id'])->viaTable('action_flow', ['previous_action_id' => 'id']);
     }
 
     /**
@@ -191,7 +191,7 @@ class Action extends \yii\db\ActiveRecord
      * @return \yii\db\ActiveQuery
      */
     public function getPreviousActions() {
-        return $this->hasMany(Action::class, ['id' => 'previous_action_id'])->viaTable('action_interaction', ['next_action_id' => 'id']);
+        return $this->hasMany(Action::class, ['id' => 'previous_action_id'])->viaTable('action_flow', ['next_action_id' => 'id']);
     }
 
     /**

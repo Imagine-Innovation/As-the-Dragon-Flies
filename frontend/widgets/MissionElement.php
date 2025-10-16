@@ -24,13 +24,19 @@ class MissionElement extends Widget
             $id2 = $this->propertyNames[1];
             $id3 = $this->propertyNames[2];
 
+            Yii::debug("*** Debug **** MissionElement - id1={$id1}, id2={$id2}, id3={$id3}");
+
             $html .= "<ul>";
             foreach ($this->properties as $property) {
+                Yii::debug($property);
                 $params = [
                     $id1 => $property->$id1,
                     $id2 => $property->$id2,
                     $id3 => $property->$id3,
                 ];
+
+                Yii::debug($params);
+
                 $displayName = match ($this->type) {
                     'Prerequisite' => $property->previousAction->name,
                     'Trigger' => $property->nextAction->name,

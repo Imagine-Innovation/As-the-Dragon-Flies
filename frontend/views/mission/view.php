@@ -63,21 +63,6 @@ $missionDescription = $narrative->missionDecription($model);
                             <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->actions, 'parentId' => $model->id, 'type' => 'Action']) ?>
                         </div>
                     </section>
-                    <br>
-                    <?php if (1 == 2): ?>
-                        <?php foreach ($model->npcs as $Npc): ?>
-                            <section id="NPCDialog" class="card g-4">
-                                <div class="card-header">
-                                    <h3 class="card-title">Dialog with "<?= $Npc->name ?>"</h3>
-                                </div>
-                                <div class="card-body">
-                                    <?php if ($Npc->first_dialog_id): ?>
-                                        <?= $this->renderFile('@app/views/mission/snippets/dialog.php', ['dialog' => $Npc->firstDialog]) ?>
-                                    <?php endif; ?>
-                                </div>
-                            </section>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
                 </div>
             </div>
         </div>

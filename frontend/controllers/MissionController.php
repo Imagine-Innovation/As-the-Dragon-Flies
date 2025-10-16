@@ -122,8 +122,8 @@ class MissionController extends Controller
             'Decor' => ['className' => 'Decor', 'snippet' => 'decor-form', 'childOf' => 'mission'],
             'Item' => ['className' => 'DecorItem', 'snippet' => 'item-form', 'childOf' => 'decor'],
             'Trap' => ['className' => 'Trap', 'snippet' => 'trap-form', 'childOf' => 'decor'],
-            'Prerequisite' => ['className' => 'ActionInteraction', 'snippet' => 'interaction-form', 'childOf' => 'action'],
-            'Trigger' => ['className' => 'ActionInteraction', 'snippet' => 'interaction-form', 'childOf' => 'action'],
+            'Prerequisite' => ['className' => 'ActionFlow', 'snippet' => 'flow-form', 'childOf' => 'action'],
+            'Trigger' => ['className' => 'ActionFlow', 'snippet' => 'flow-form', 'childOf' => 'action'],
             'Outcome' => ['className' => 'Outcome', 'snippet' => 'outcome-form', 'childOf' => 'action'],
             default => throw new \Exception("Unsupported type {$type}"),
         };
@@ -244,7 +244,7 @@ class MissionController extends Controller
         $model = $this->findModel($className, $searchParams);
         if ($type === 'Prerequisite') {
             $action = $model->nextAction;
-        } elseif ($type === "Tigger") {
+        } elseif ($type === "Trigger") {
             $action = $model->previousAction;
         } else {
             $action = $model->action;

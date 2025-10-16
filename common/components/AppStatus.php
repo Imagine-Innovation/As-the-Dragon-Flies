@@ -29,13 +29,13 @@ enum AppStatus: int
     case PENDING = 400;
     case IN_PROGRESS = 401;
     case TERMINATED = 402;
-    // Action status
-    case SUCCESS = 500;
-    case PARTIAL = 501;
-    case FAILURE = 502;
-    case NOT_FAILURE = 503;
-    case NOT_SUCCESS = 504;
-    case ANY = 505;
+    // Action status used for bitwise comparison as a status bit mask
+    case SUCCESS = 2;       // Binary: 010=2
+    case PARTIAL = 1;       // Binary: 001=1
+    case FAILURE = 4;       // Binary: 100=4
+    case NOT_FAILED = 3;    // Binary: 011=3 (2 | 1)
+    case NOT_SUCCEEDED = 5; // Binary: 101=5 (1 | 4)
+    case ANY = 7;           // Binary: 111=7 (2 | 1 | 4)
 
     public function getLabel(): string {
         return match ($this) {
@@ -64,8 +64,8 @@ enum AppStatus: int
             self::SUCCESS => 'Sucess',
             self::PARTIAL => 'Partial success',
             self::FAILURE => 'Failure',
-            self::NOT_FAILURE => 'Total or partial success',
-            self::NOT_SUCCESS => 'Partial success or failure',
+            self::NOT_FAILED => 'Total or partial success',
+            self::NOT_SUCCEEDED => 'Partial success or failure',
             self::ANY => 'Any outcome',
             default => 'Unknown Status',
         };
@@ -98,8 +98,8 @@ enum AppStatus: int
             self::SUCCESS => ['icon' => 'dnd-badge', 'tooltip' => 'Success'],
             self::PARTIAL => ['icon' => 'bi-star-half', 'tooltip' => 'Partial success'],
             self::FAILURE => ['icon' => 'dnd-danger', 'tooltip' => 'Failure'],
-            self::NOT_FAILURE => ['icon' => 'bi-star-fill', 'tooltip' => 'Total or partial success'],
-            self::NOT_SUCESS => ['icon' => 'bi-star', 'tooltip' => 'Partial success or failure'],
+            self::NOT_FAILED => ['icon' => 'bi-star-fill', 'tooltip' => 'Total or partial success'],
+            self::NOT_SUCCEEDED => ['icon' => 'bi-star', 'tooltip' => 'Partial success or failure'],
             self::ANY => ['icon' => 'bi-stars', 'tooltip' => 'Any outcome'],
             default => ['icon' => 'bi-exclamation-square', 'tooltip' => 'Undefined'],
         };
@@ -153,6 +153,9 @@ enum AppStatus: int
             self::SUCCESS->value,
             self::PARTIAL->value,
             self::FAILURE->value,
+            self::NOT_FAILED->value,
+            self::NOT_SUCCEEDED->value,
+            self::ANY->value,
         ];
     }
 
@@ -161,8 +164,8 @@ enum AppStatus: int
             self::SUCCESS->value => self::SUCCESS->getLabel(),
             self::PARTIAL->value => self::PARTIAL->getLabel(),
             self::FAILURE->value => self::FAILURE->getLabel(),
-            self::NOT_FAILURE->value => self::NOT_FAILURE->getLabel(),
-            self::NOT_SUCCESS->value => self::NOT_SUCCESS->getLabel(),
+            self::NOT_FAILED->value => self::NOT_FAILED->getLabel(),
+            self::NOT_SUCCEEDED->value => self::NOT_SUCCEEDED->getLabel(),
             self::ANY->value => self::ANY->getLabel(),
         ];
     }
@@ -182,7 +185,7 @@ enum AppStatus: int
             'QuestProgress' => self::getValuesForQuestProgress(),
             'QuestTurn' => self::getValuesForProgress(),
             'QuestAction' => self::getValuesForAction(),
-            'ActionInteraction' => self::getValuesForAction(),
+            'ActionFlow' => self::getValuesForAction(),
             default => [],
         };
         Yii::debug($validStatusesForEntity);

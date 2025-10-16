@@ -71,16 +71,16 @@ const config = [
         ]
     },
     {
-        form: 'actioninteraction',
+        form: 'actionflow',
         params: [
             {
-                field: 'actioninteraction-previous_action_id',
+                field: 'actionflow-previous_action_id',
                 valueType: 'action',
                 minChar: 0,
                 imagePath: null
             },
             {
-                field: 'actioninteraction-next_action_id',
+                field: 'actionflow-next_action_id',
                 valueType: 'action',
                 minChar: 0,
                 imagePath: null

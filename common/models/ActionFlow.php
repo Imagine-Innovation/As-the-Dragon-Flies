@@ -6,23 +6,23 @@ use common\components\AppStatus;
 use Yii;
 
 /**
- * This is the model class for table "action_interaction".
+ * This is the model class for table "action_flow".
  *
  * @property int $previous_action_id Foreign key to “action”  table for the previous action
  * @property int $next_action_id Foreign key to “action”  table for the next action
- * @property int $status Status of the previous action to allow the next one. 500=success, 501=partial, 502=failure
+ * @property int $status Status of the previous action to allow the next one. 2=success, 1=partial, 4=failure, 3=not failed, 5=not succeeded, 7=any status
  *
  * @property Action $nextAction
  * @property Action $previousAction
  */
-class ActionInteraction extends \yii\db\ActiveRecord
+class ActionFlow extends \yii\db\ActiveRecord
 {
 
     /**
      * {@inheritdoc}
      */
     public static function tableName() {
-        return 'action_interaction';
+        return 'action_flow';
     }
 
     /**
@@ -47,7 +47,7 @@ class ActionInteraction extends \yii\db\ActiveRecord
         return [
             'previous_action_id' => 'Foreign key to “action”  table for the previous action',
             'next_action_id' => 'Foreign key to “action”  table for the next action',
-            'status' => 'Status of the previous action to allow the next one. 500=success, 501=partial, 502=failure',
+            'status' => 'Status of the previous action to allow the next one. 2=success, 1=partial, 4=failure, 3=not failed, 5=not succeeded, 7=any status',
         ];
     }
 
