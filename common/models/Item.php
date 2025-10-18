@@ -33,8 +33,7 @@ use Yii;
  * @property DecorItem[] $decorItems
  * @property ItemCategory[] $itemCategories
  * @property ItemType $itemType
- * @property Item[] $items
- * @property Outcome[] $outcomes
+ * @property Item[] $packItems
  * @property Pack[] $packs
  * @property Pack[] $packs0
  * @property Item[] $parentItems
@@ -227,6 +226,15 @@ class Item extends \yii\db\ActiveRecord
      */
     public function getPacks0() {
         return $this->hasMany(Pack::class, ['parent_item_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[PackItems]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPackItems() {
+        return $this->hasMany(Item::class, ['id' => 'item_id'])->viaTable('pack', ['item_id' => 'id']);
     }
 
     /**

@@ -21,6 +21,8 @@ namespace frontend\controllers;
 use common\components\AppStatus;
 use common\components\ContextManager;
 use common\components\ManageAccessRights;
+use common\components\QuestComponent;
+use common\models\Chapter;
 use common\models\Player;
 use common\models\Quest;
 use common\models\Story;
@@ -335,14 +337,18 @@ class QuestController extends Controller
         $quest = $this->findModel($id);
 
         $player = $quest->initiator;
+        $chapter = $this->findChapterNumber($quest->story_id, 1);
 
         $quest->status = AppStatus::PLAYING->value;
+        $quest->current_chapter_id = $chapter->id;
         $quest->started_at = time();
 
         if (!$quest->save()) {
             throw new \Exception(implode("<br />", \yii\helpers\ArrayHelper::getColumn($quest->errors, 0, false)));
         }
 
+        $questComponent = new QuestComponent(['quest' => $quest]);
+        $questComponent->initQuestProgress();
         $success = $this->createEvent('quest-starting', $player, $quest);
         if ($success) {
             return $this->redirect(['game/view', 'id' => $id]);
@@ -566,6 +572,18 @@ class QuestController extends Controller
     protected function findValidStory($storyId): ?Story {
         if ($storyId) {
             return Story::findOne(['id' => $storyId, 'status' => AppStatus::PUBLISHED->value]);
+        }
+        return null;
+    }
+
+    protected function findChapterNumber(int $storyId, int|null $chapterNumber = 1): ?Chapter {
+        if ($storyId) {
+            $chapter = Chapter::findOne(['id' => $storyId, 'chapter_number' => $chapterNumber]);
+            if ($chapter) {
+                return $chapter;
+            }
+
+            throw new NotFoundHttpException("The chapter #{$chapterNumber} in story #{$storyId} you are looking for does not exist.");
         }
         return null;
     }

@@ -22,8 +22,8 @@ use Yii;
  * @property int $dc Difficulty Class (DC)
  * @property int $disable_on_success When the action is successful, it should not be played again
  *
- * @property ActionFlow[] $actionTriggers
- * @property ActionFlow[] $actionPrerequisites
+ * @property ActionFlow[] $triggers
+ * @property ActionFlow[] $prerequisites
  * @property ActionType $actionType
  * @property Decor $decor
  * @property DecorItem $decorItem
@@ -96,20 +96,20 @@ class Action extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[ActionTriggers]].
+     * Gets query for [[Triggers]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getActionTriggers() {
+    public function getTriggers() {
         return $this->hasMany(ActionFlow::class, ['previous_action_id' => 'id']);
     }
 
     /**
-     * Gets query for [[ActionPrerequisites]].
+     * Gets query for [[Prerequisites]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getActionPrerequisites() {
+    public function getPrerequisites() {
         return $this->hasMany(ActionFlow::class, ['next_action_id' => 'id']);
     }
 
