@@ -349,6 +349,7 @@ class QuestController extends Controller
 
         $questComponent = new QuestComponent(['quest' => $quest]);
         $questComponent->initQuestProgress();
+
         $success = $this->createEvent('quest-starting', $player, $quest);
         if ($success) {
             return $this->redirect(['game/view', 'id' => $id]);
@@ -578,7 +579,7 @@ class QuestController extends Controller
 
     protected function findChapterNumber(int $storyId, int|null $chapterNumber = 1): ?Chapter {
         if ($storyId) {
-            $chapter = Chapter::findOne(['id' => $storyId, 'chapter_number' => $chapterNumber]);
+            $chapter = Chapter::findOne(['story_id' => $storyId, 'chapter_number' => $chapterNumber]);
             if ($chapter) {
                 return $chapter;
             }
@@ -603,6 +604,7 @@ class QuestController extends Controller
             $tavern = new Quest([
                 'story_id' => $story->id,
                 'initiator_id' => Yii::$app->session->get('playerId'),
+                'current_chapter_id' => QuestOnboarding::getChapterId($story->id, 1),
                 'name' => $story->name,
                 'description' => $story->description,
                 'image' => $story->image,

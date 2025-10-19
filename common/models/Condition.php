@@ -5,7 +5,7 @@ namespace common\models;
 use Yii;
 
 /**
- * This is the model class for table "creature_condition".
+ * This is the model class for table "condition".
  *
  * @property int $id Primary key
  * @property string $name Condition name
@@ -13,10 +13,10 @@ use Yii;
  *
  * @property CreatureImmunization[] $creatureImmunizations
  * @property Creature[] $creatures
- * @property PlayerCondition[] $playerConditions
- * @property Player[] $players
+ * @property QuestPlayerCondition[] $questPlayerConditions
+ * @property QuestPlayer[] $quests
  */
-class CreatureCondition extends \yii\db\ActiveRecord
+class Condition extends \yii\db\ActiveRecord
 {
 
 
@@ -24,7 +24,7 @@ class CreatureCondition extends \yii\db\ActiveRecord
      * {@inheritdoc}
      */
     public static function tableName() {
-        return 'creature_condition';
+        return 'condition';
     }
 
     /**
@@ -69,21 +69,21 @@ class CreatureCondition extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[PlayerConditions]].
+     * Gets query for [[QuestPlayerConditions]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getPlayerConditions() {
-        return $this->hasMany(PlayerCondition::class, ['condition_id' => 'id']);
+    public function getQuestPlayerConditions() {
+        return $this->hasMany(QuestPlayerCondition::class, ['condition_id' => 'id']);
     }
 
     /**
-     * Gets query for [[Players]].
+     * Gets query for [[Quests]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getPlayers() {
-        return $this->hasMany(Player::class, ['id' => 'player_id'])->viaTable('player_condition', ['condition_id' => 'id']);
+    public function getQuests() {
+        return $this->hasMany(QuestPlayer::class, ['quest_id' => 'quest_id', 'player_id' => 'player_id'])->viaTable('quest_player_condition', ['condition_id' => 'id']);
     }
 
 }

@@ -13,7 +13,7 @@ use yii\widgets\ActiveForm;
 ?>
 <div class="d-none">
     Hidden div to embeb utility tags for PHP/JS communication
-    <span id="hiddenImagePath">item</span>
+    <span id="hiddenImagePath">story/<?= $storyId ?></span>
     <span id="hiddenFormName">action</span>
     <span id="hiddenParentId"><?= $parentId ?></span>
 </div>
@@ -32,8 +32,8 @@ use yii\widgets\ActiveForm;
         </p>
     </article>
     <div class="row row-cols-1 row-cols-lg-3 g-4">
-        <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->actionPrerequisites, 'parentId' => $model->id, 'type' => 'Prerequisite']) ?>
-        <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->actionTriggers, 'parentId' => $model->id, 'type' => 'Trigger']) ?>
+        <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->prerequisites, 'parentId' => $model->id, 'type' => 'Prerequisite']) ?>
+        <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->triggers, 'parentId' => $model->id, 'type' => 'Trigger']) ?>
         <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->outcomes, 'parentId' => $model->id, 'type' => 'Outcome']) ?>
     </div>
 <?php endif; ?>

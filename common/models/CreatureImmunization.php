@@ -8,9 +8,9 @@ use Yii;
  * This is the model class for table "creature_immunization".
  *
  * @property int $creature_id Foreign key to “creature” table
- * @property int $condition_id Foreign key to “creature_condition” table
+ * @property int $condition_id Foreign key to “condition” table
  *
- * @property CreatureCondition $condition
+ * @property Condition $condition
  * @property Creature $creature
  */
 class CreatureImmunization extends \yii\db\ActiveRecord
@@ -33,7 +33,7 @@ class CreatureImmunization extends \yii\db\ActiveRecord
             [['creature_id', 'condition_id'], 'integer'],
             [['creature_id', 'condition_id'], 'unique', 'targetAttribute' => ['creature_id', 'condition_id']],
             [['creature_id'], 'exist', 'skipOnError' => true, 'targetClass' => Creature::class, 'targetAttribute' => ['creature_id' => 'id']],
-            [['condition_id'], 'exist', 'skipOnError' => true, 'targetClass' => CreatureCondition::class, 'targetAttribute' => ['condition_id' => 'id']],
+            [['condition_id'], 'exist', 'skipOnError' => true, 'targetClass' => Condition::class, 'targetAttribute' => ['condition_id' => 'id']],
         ];
     }
 
@@ -43,7 +43,7 @@ class CreatureImmunization extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'creature_id' => 'Foreign key to “creature” table',
-            'condition_id' => 'Foreign key to “creature_condition” table',
+            'condition_id' => 'Foreign key to “condition” table',
         ];
     }
 
@@ -53,7 +53,7 @@ class CreatureImmunization extends \yii\db\ActiveRecord
      * @return \yii\db\ActiveQuery
      */
     public function getCondition() {
-        return $this->hasOne(CreatureCondition::class, ['id' => 'condition_id']);
+        return $this->hasOne(Condition::class, ['id' => 'condition_id']);
     }
 
     /**

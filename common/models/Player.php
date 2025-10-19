@@ -37,7 +37,6 @@ use Yii;
  * @property Alignment $alignment
  * @property Background $background
  * @property CharacterClass $class
- * @property CreatureCondition[] $conditions
  * @property Image $image
  * @property Item[] $cartItems
  * @property Item[] $items
@@ -52,7 +51,6 @@ use Yii;
  * @property PlayerBody $playerBody
  * @property PlayerCart[] $playerCarts
  * @property PlayerCoin[] $playerCoins
- * @property PlayerCondition[] $playerConditions
  * @property PlayerItem[] $playerItems
  * @property PlayerLanguage[] $playerLanguages
  * @property PlayerSkill[] $playerSkills
@@ -189,15 +187,6 @@ class Player extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Conditions]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getConditions() {
-        return $this->hasMany(CreatureCondition::class, ['id' => 'condition_id'])->viaTable('player_condition', ['player_id' => 'id']);
-    }
-
-    /**
      * Gets query for [[Image]].
      *
      * @return \yii\db\ActiveQuery
@@ -315,15 +304,6 @@ class Player extends \yii\db\ActiveRecord
      */
     public function getPlayerCoins() {
         return $this->hasMany(PlayerCoin::class, ['player_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[PlayerConditions]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getPlayerConditions() {
-        return $this->hasMany(PlayerCondition::class, ['player_id' => 'id']);
     }
 
     /**

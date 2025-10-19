@@ -855,7 +855,7 @@ textarea.form-control {
 .custom-select.is-valid,.was-validated .custom-select:valid {
     border-color: var(--green);
     padding-right: calc((1em + 1.2rem) * 3 / 4 + 2rem);
-    background: transparent url(../img/select-caret.svg) no-repeat bottom 5px right 5pxurl(../img/form-validation-valid.svg) transparent no-repeat center right 2rem/calc(.75em + .6rem) calc(.75em + .6rem);
+    background: transparent url(../img/select-caret.svg) no-repeat bottom 5px right 5px, url(../img/form-validation-valid.svg) transparent no-repeat center right 2rem/calc(.75em + .6rem) calc(.75em + .6rem);
 }
 
 .custom-select.is-valid:focus,.was-validated .custom-select:valid:focus {
@@ -1126,7 +1126,7 @@ textarea.form-control {
 }
 
 .custom-checkbox .custom-control-input:indeterminate~.custom-control-label::after {
-    background-image: url("data: image/svg+xml,%3csvg xmlns='http: //www.w3.org/2000/svg' viewBox='0 0 4 4'%3e%3cpath stroke='%23ffffff' d='M0 2h4'/%3e%3c/svg%3e");
+    background-image: url("data: image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 4'%3e%3cpath stroke='%23ffffff' d='M0 2h4'/%3e%3c/svg%3e");
 }
 
 .custom-checkbox .custom-control-input:disabled:checked~.custom-control-label::before {
@@ -1150,7 +1150,7 @@ textarea.form-control {
 }
 
 .custom-radio .custom-control-input:checked~.custom-control-label::after {
-    background-image: url("data: image/svg+xml,%3csvg xmlns='http: //www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23ffffff'/%3e%3c/svg%3e");
+    background-image: url("data: image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23ffffff'/%3e%3c/svg%3e");
 }
 
 .custom-radio .custom-control-input:disabled:checked~.custom-control-label::before {

@@ -2,9 +2,11 @@
 
 namespace frontend\controllers;
 
+use common\components\AppStatus;
 use common\components\ContextManager;
 use common\components\ManageAccessRights;
 use common\models\Quest;
+use frontend\components\AjaxRequest;
 use frontend\components\QuestOnboarding;
 use Yii;
 use yii\web\Controller;
@@ -16,7 +18,8 @@ use yii\web\Response;
 /**
  * QuestController implements the CRUD actions for Quest model.
  */
-class GameController extends Controller {
+class GameController extends Controller
+{
 
     const DEFAULT_REDIRECT = 'quest/resume';
 
@@ -39,7 +42,7 @@ class GameController extends Controller {
                                 'actions' => [
                                     'index', 'update', 'delete', 'create', 'view',
                                     'resume', 'get-messages', 'quit',
-                                    'ajax-get-messages', 'ajax-send-message', 'ajax-quit'
+                                    'ajax-get-messages', 'ajax-send-message', 'ajax-quit', 'ajax-mission'
                                 ],
                                 'allow' => ManageAccessRights::isRouteAllowed($this),
                                 'roles' => ['@'],
@@ -68,7 +71,7 @@ class GameController extends Controller {
     public function actionView($id) {
         $this->layout = 'game';
         return $this->render('view', [
-                    'model' => $this->findModel($id),
+                    'quest' => $this->findQuest($id),
         ]);
     }
 
@@ -103,6 +106,36 @@ class GameController extends Controller {
         return ['success' => true, 'message' => "Player {$player->name} successfully withdrown from quest {$quest->name}"];
     }
 
+    public function actionAjaxMission() {
+        // Configure JSON response format
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        // Validate request type
+        if (!$this->request->isGet || !$this->request->isAjax) {
+            return ['error' => true, 'msg' => 'Not an Ajax GET request'];
+        }
+
+        $questId = Yii::$app->request->get('questId');
+        if (!$questId) {
+            return ['error' => true, 'msg' => 'Missing Quest ID'];
+        }
+
+        // Prepare Ajax request parameters
+        $param = [
+            'modelName' => 'QuestProgress',
+            'render' => 'mission',
+            'filter' => ['quest_id' => $questId, 'status' => AppStatus::IN_PROGRESS->value],
+        ];
+
+        // Process request and return response
+        $ajaxRequest = new AjaxRequest($param);
+        if ($ajaxRequest->makeResponse(Yii::$app->request)) {
+            return $ajaxRequest->response;
+        }
+
+        return ['error' => true, 'msg' => 'Error encountered'];
+    }
+
     /**
      * Utility method to find Quest model
      *
@@ -113,7 +146,7 @@ class GameController extends Controller {
      * @return Quest Found quest model
      * @throws NotFoundHttpException if quest not found
      */
-    protected function findModel($id) {
+    protected function findQuest($id) {
         if (($model = Quest::findOne(['id' => $id])) !== null) {
             return $model;
         }

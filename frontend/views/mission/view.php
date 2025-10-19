@@ -1,6 +1,6 @@
 <?php
 
-use frontend\components\NarrativeComponent;
+use common\components\NarrativeComponent;
 use frontend\widgets\Button;
 use yii\helpers\Url;
 
@@ -20,8 +20,8 @@ $breadcrumbs = [
 // Set breadcrumbs for the view
 $this->params['breadcrumbs'] = $breadcrumbs;
 
-$narrative = new NarrativeComponent();
-$missionDescription = $narrative->missionDecription($model);
+$narrative = new NarrativeComponent(['mission' => $model]);
+$missionDescription = $narrative->missionDecription();
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="container">

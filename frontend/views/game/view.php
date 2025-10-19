@@ -6,11 +6,13 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */
-/** @var common\models\Quest $player */
+/** @var common\models\Quest $quest */
 $player = Yii::$app->session->get('currentPlayer');
-$quest = Yii::$app->session->get('currentQuest');
+//$quest = Yii::$app->session->get('currentQuest');
 $this->title = Yii::$app->session->get('questName');
 
+$story = $quest->story;
+$maxPlayers = $story->max_players;
 $playerSnippet = $this->renderFile('@app/views/game/snippets/player.php', [
     'player' => $player
         ]);
@@ -87,7 +89,7 @@ $playerSnippet = $this->renderFile('@app/views/game/snippets/player.php', [
     <!-- Center Panel - Game World -->
     <section class="col-12 col-xl-9 col-xxl-10">
         <div class="row">
-            <div class="col-12 col-lg-6 col-xxl-8">
+            <div class="<?= $maxPlayers == 1 ? "col-12" : "col-12 col-lg-6 col-xxl-8" ?>">
                 <!-- Game Scene -->
                 <div class="card p-3 h-100 d-flex flex-column">
                     <div class="actions">
@@ -107,43 +109,29 @@ $playerSnippet = $this->renderFile('@app/views/game/snippets/player.php', [
                     </div>
 
                     <div class="card-header">
-                        <h2 class="text-warning text-decoration mb-3 h5">The Ancient Throne Room</h2>
+                        <h2 class="text-warning text-decoration mb-3 h5"><?= $quest->name ?></h2>
                     </div>
 
                     <div class="card-body">
-                        <article class="flex-grow-1 h-auto mb-3">
-                            <p id="scene-description" class="text-decoration">
-                                You stand before a massive obsidian throne, its surface carved with writhing shadows that seem to move in the flickering torchlight. Ancient runes glow with a malevolent purple light along the armrests. The air is thick with dark magic, and you can hear whispers in a language long forgotten echoing from the walls.
-                            </p>
-                            <aside class="text-info">
-                                <strong>Thorin:</strong> Your darkvision allows you to see clearly in this dim chamber. You notice something glinting behind the throne that the others cannot see.
-                            </aside>
-                            <nav>
-                                <button class="btn btn-action btn-sm me-2" onclick="performAction('examine-throne')" aria-label="Examine throne">
-                                    <i class="bi bi-search" aria-hidden="true"></i>
-                                </button>
-                                <button class="btn btn-action btn-sm me-2" onclick="performAction('approach-throne')" aria-label="Approach throne">
-                                    <i class="bi bi-person-walking" aria-hidden="true"></i>
-                                </button>
-                                <button class="btn btn-action btn-sm" onclick="performAction('cast-detect-magic')" aria-label="Cast detect magic">
-                                    <i class="bi bi-magic" aria-hidden="true"></i>
-                                </button>
-                            </nav>
+                        <article id="missionDescription" class="flex-grow-1 h-auto mb-3 text-decoration">
+                            There's not much to do here!
                         </article>
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-lg-6 col-xxl-4">
-                <div class="h-100 d-flex flex-column">
-                    <!-- Chat System -->
-                    <?=
-                    $this->renderFile('@app/views/quest/snippets/chat.php', [
-                        'questId' => $quest->id,
-                        'playerId' => $player->id
-                    ])
-                    ?>
+            <?php if ($maxPlayers > 1): ?>
+                <div class="col-12 col-lg-6 col-xxl-4">
+                    <div class="h-100 d-flex flex-column">
+                        <!-- Chat System -->
+                        <?=
+                        $this->renderFile('@app/views/quest/snippets/chat.php', [
+                            'questId' => $quest->id,
+                            'playerId' => $player->id
+                        ])
+                        ?>
+                    </div>
                 </div>
-            </div>
+            <?php endif; ?>
         </div>
     </section>
 </main>

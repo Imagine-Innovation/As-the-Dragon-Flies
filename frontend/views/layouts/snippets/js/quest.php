@@ -33,4 +33,6 @@ if ($controllerId === "game"):
     const svg = document.getElementById('equipmentSvg');
     equipmentHandler.init(playerId, svg);
 
+    const vtt = new VirtualTableTop();
+    vtt.init(questId);
 <?php endif; ?>

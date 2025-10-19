@@ -40,6 +40,12 @@ class QuestOnboarding
         return $message;
     }
 
+    public static function getChapterId(int $storyId, int|null $chapterNumber = 1): int|null {
+        $chapter = \common\models\Chapter::findOne(['story_id' => $storyId, 'chapter_number' => $chapterNumber]);
+
+        return $chapter?->id;
+    }
+
     /**
      * Returns a message given the missing number of players before the quest can start
      *
@@ -328,6 +334,13 @@ class QuestOnboarding
         return ['error' => false, 'message' => "Player's quest_id updated to {$questId}"];
     }
 
+    private static function getPlayerTurnNumber(int $questId): int {
+        $nextTurn = QuestPlayer::find()
+                        ->where(['quest_id' => $questId])
+                        ->max('player_turn') + 1;
+        return $nextTurn;
+    }
+
     /**
      * Update or Insert a new QuestPlayer entry
      *
@@ -346,6 +359,7 @@ class QuestOnboarding
                 'quest_id' => $questId,
                 'player_id' => $playerId,
                 'onboarded_at' => time(),
+                'player_turn' => self::getPlayerTurnNumber($questId),
                 'status' => $status,
             ]);
         }
