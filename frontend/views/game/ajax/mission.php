@@ -6,10 +6,19 @@
 /** @var int $pageCount: nomber of pages regarding the limit of the query */
 /** @var int $limit: nomber of records to be fetched */
 $model = $models[0];
+$quest = $model->quest;
+$mission = $model->mission;
 ?>
 
 <article class="flex-grow-1 h-auto mb-3 text-decoration">
-    <?= $model->description ?>
+    <?php if ($mission->image): ?>
+        <div class="clearfix">
+            <img class="float-md-end mb-3 ms-md-4" src="img/story/<?= $quest->story_id ?>/<?= $mission->image ?>" alt="<?= $mission->name ?>" style="max-width: 50%;">
+            <?= $model->description ?>
+        </div>
+    <?php else: ?>
+        <?= $model->description ?>
+    <?php endif; ?>
     <div class="card">
         <div class="card-header">
             What do want to do?

@@ -22,6 +22,7 @@ use Yii;
 class QuestTurn extends \yii\db\ActiveRecord
 {
 
+
     /**
      * {@inheritdoc}
      */
@@ -76,4 +77,5 @@ class QuestTurn extends \yii\db\ActiveRecord
     public function getQuestProgress() {
         return $this->hasOne(QuestProgress::class, ['id' => 'quest_progress_id']);
     }
+
 }

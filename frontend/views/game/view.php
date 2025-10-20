@@ -7,21 +7,19 @@ use yii\helpers\Url;
 
 /** @var yii\web\View $this */
 /** @var common\models\Quest $quest */
+/** @var int $nbPlayers */
 $player = Yii::$app->session->get('currentPlayer');
 //$quest = Yii::$app->session->get('currentQuest');
-$this->title = Yii::$app->session->get('questName');
-
+//$this->title = Yii::$app->session->get('questName');
+$this->title = $quest->name;
 $story = $quest->story;
-$maxPlayers = $story->max_players;
-$playerSnippet = $this->renderFile('@app/views/game/snippets/player.php', [
-    'player' => $player
-        ]);
+$playerSnippet = $this->renderFile('@app/views/game/snippets/player.php', ['player' => $player]);
 ?>
 <main class="row" style="height: calc(100dvh - 120px);">
     <!-- Left Panel - Character Data -->
 
     <!-- Offcanvas Aside -->
-    <aside class="offcanvas offcanvas-start d-xl-none" tabindex="-1" id="offcanvasPlayer" aria-labelledby="offcanvasPlayerLabel">
+    <aside class="offcanvas offcanvas-start d-xxl-none" tabindex="-1" id="offcanvasPlayer" aria-labelledby="offcanvasPlayerLabel">
         <div class="offcanvas-header">
             <h5 class="offcanvas-title" id="offcanvasPlayerLabel">Offcanvas Aside</h5>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -56,8 +54,8 @@ $playerSnippet = $this->renderFile('@app/views/game/snippets/player.php', [
         </div>
     </aside>
 
-    <!-- Visible Aside for xl and larger screens -->
-    <aside class="col-xl-3 col-xxl-2 d-none d-xl-block">
+    <!-- Visible Aside for xxl and larger screens -->
+    <aside class="col-xxl-3 col-3xl-2 d-none d-xxl-block">
         <section class="h-100">
             <article id="game-player" class="card">
                 <?= $playerSnippet ?>
@@ -87,9 +85,9 @@ $playerSnippet = $this->renderFile('@app/views/game/snippets/player.php', [
     </aside>
 
     <!-- Center Panel - Game World -->
-    <section class="col-12 col-xl-9 col-xxl-10">
+    <section class="col-12 col-xxl-9 col-3xl-10">
         <div class="row">
-            <div class="<?= $maxPlayers == 1 ? "col-12" : "col-12 col-lg-6 col-xxl-8" ?>">
+            <div class="<?= $nbPlayers == 1 ? "col-12" : "col-12 col-xl-7 col-3xl-9" ?>">
                 <!-- Game Scene -->
                 <div class="card p-3 h-100 d-flex flex-column">
                     <div class="actions">
@@ -109,7 +107,7 @@ $playerSnippet = $this->renderFile('@app/views/game/snippets/player.php', [
                     </div>
 
                     <div class="card-header">
-                        <h2 class="text-warning text-decoration mb-3 h5"><?= $quest->name ?></h2>
+                        <h2 class="text-warning text-decoration mb-3 h5"><?= $quest->currentChapter->name ?></h2>
                     </div>
 
                     <div class="card-body">
@@ -119,8 +117,8 @@ $playerSnippet = $this->renderFile('@app/views/game/snippets/player.php', [
                     </div>
                 </div>
             </div>
-            <?php if ($maxPlayers > 1): ?>
-                <div class="col-12 col-lg-6 col-xxl-4">
+            <?php if ($nbPlayers > 1): ?>
+                <div class="col-12 col-xl-5 col-3xl-3">
                     <div class="h-100 d-flex flex-column">
                         <!-- Chat System -->
                         <?=

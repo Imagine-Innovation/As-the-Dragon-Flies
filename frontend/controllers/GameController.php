@@ -6,6 +6,7 @@ use common\components\AppStatus;
 use common\components\ContextManager;
 use common\components\ManageAccessRights;
 use common\models\Quest;
+use common\models\QuestPlayer;
 use frontend\components\AjaxRequest;
 use frontend\components\QuestOnboarding;
 use Yii;
@@ -70,8 +71,16 @@ class GameController extends Controller
      */
     public function actionView($id) {
         $this->layout = 'game';
+
+        $quest = $this->findQuest($id);
+        $nbPlayers = QuestPlayer::find()
+                ->where(['quest_id' => $quest->id])
+                ->andWhere(['<>', 'status', AppStatus::LEFT->value])
+                ->count();
+
         return $this->render('view', [
-                    'quest' => $this->findQuest($id),
+                    'quest' => $quest,
+                    'nbPlayers' => $nbPlayers,
         ]);
     }
 

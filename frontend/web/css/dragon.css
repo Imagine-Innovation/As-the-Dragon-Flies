@@ -5130,6 +5130,150 @@ pre {
         max-width: 8.3333333%;
     }
 }
+@media (min-width: 1981px) {
+    .col-xxl {
+        -ms-flex-preferred-size: 0;
+        flex-basis: 0;
+        -ms-flex-positive: 1;
+        flex-grow: 1;
+        max-width: 100%;
+    }
+    .col-3xl-auto {
+        -ms-flex: 0 0 auto;
+        flex: 0 0 auto;
+        width: auto;
+        max-width: 100%;
+    }
+    .col-3xl-1 {
+        -ms-flex: 0 0 8.333333%;
+        flex: 0 0 8.333333%;
+        max-width: 8.333333%;
+    }
+    .col-3xl-2 {
+        -ms-flex: 0 0 16.666667%;
+        flex: 0 0 16.666667%;
+        max-width: 16.666667%;
+    }
+    .col-3xl-3 {
+        -ms-flex: 0 0 25%;
+        flex: 0 0 25%;
+        max-width: 25%;
+    }
+    .col-3xl-4 {
+        -ms-flex: 0 0 33.333333%;
+        flex: 0 0 33.333333%;
+        max-width: 33.333333%;
+    }
+    .col-3xl-5 {
+        -ms-flex: 0 0 41.666667%;
+        flex: 0 0 41.666667%;
+        max-width: 41.666667%;
+    }
+    .col-3xl-6 {
+        -ms-flex: 0 0 50%;
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+    .col-3xl-7 {
+        -ms-flex: 0 0 58.333333%;
+        flex: 0 0 58.333333%;
+        max-width: 58.333333%;
+    }
+    .col-3xl-8 {
+        -ms-flex: 0 0 66.666667%;
+        flex: 0 0 66.666667%;
+        max-width: 66.666667%;
+    }
+    .col-3xl-9 {
+        -ms-flex: 0 0 75%;
+        flex: 0 0 75%;
+        max-width: 75%;
+    }
+    .col-3xl-10 {
+        -ms-flex: 0 0 83.333333%;
+        flex: 0 0 83.333333%;
+        max-width: 83.333333%;
+    }
+    .col-3xl-11 {
+        -ms-flex: 0 0 91.666667%;
+        flex: 0 0 91.666667%;
+        max-width: 91.666667%;
+    }
+    .col-3xl-12 {
+        -ms-flex: 0 0 100%;
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    .d-3xl-none {
+        display: none !important;
+    }
+    .d-3xl-inline {
+        display: inline !important;
+    }
+}
+
+@media (min-width: 1981px) {
+    .row-cols-3xl-1 > * {
+        -ms-flex: 0 0 100%;
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    .row-cols-3xl-2 > * {
+        -ms-flex: 0 0 50%;
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+    .row-cols-3xl-3 > * {
+        -ms-flex: 0 0 33.333333%;
+        flex: 0 0 33.333333%;
+        max-width: 33.333333%;
+    }
+    .row-cols-3xl-4 > * {
+        -ms-flex: 0 0 25%;
+        flex: 0 0 25%;
+        max-width: 25%;
+    }
+    .row-cols-3xl-5 > * {
+        -ms-flex: 0 0 20%;
+        flex: 0 0 20%;
+        max-width: 20%;
+    }
+    .row-cols-3xl-6 > * {
+        -ms-flex: 0 0 16.666667%;
+        flex: 0 0 16.666667%;
+        max-width: 16.666667%;
+    }
+    .row-cols-3xl-7 > * {
+        -ms-flex: 0 0 14.285714%;
+        flex: 0 0 14.285714%;
+        max-width: 14.285714%;
+    }
+    .row-cols-3xl-8 > * {
+        -ms-flex: 0 0 12.5%;
+        flex: 0 0 12.5%;
+        max-width: 12.5%;
+    }
+    .row-cols-3xl-9 > * {
+        -ms-flex: 0 0 11.11111%;
+        flex: 0 0 11.11111%;
+        max-width: 11.11111%;
+    }
+    .row-cols-3xl-10 > * {
+        -ms-flex: 0 0 10%;
+        flex: 0 0 10%;
+        max-width: 10%;
+    }
+    .row-cols-3xl-11 > * {
+        -ms-flex: 0 0 9.09090909%;
+        flex: 0 0 9.09090909%;
+        max-width: 9.09090909%;
+    }
+    .row-cols-3xl-12 > * {
+        -ms-flex: 0 0 8.3333333%;
+        flex: 0 0 8.3333333%;
+        max-width: 8.3333333%;
+    }
+}
 
 .messages {
     height: calc(100% - 180px);

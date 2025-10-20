@@ -9,6 +9,7 @@ use common\models\ActionFlow;
 use common\models\Mission;
 use common\models\Quest;
 use common\models\QuestAction;
+use common\models\QuestPlayer;
 use common\models\QuestProgress;
 use common\models\QuestTurn;
 use Yii;
@@ -21,7 +22,6 @@ class QuestComponent extends Component
     public Quest $quest;
 
     public function __construct($config = []) {
-        //$this->quest = null;
         // Call the parent's constructor
         parent::__construct($config);
 
@@ -34,7 +34,7 @@ class QuestComponent extends Component
 
         $chapter = $this->quest->currentChapter;
 
-        $questProgress = $this->addQuestProgress($chapter->first_mission_id, $this->quest->initiator_id);
+        $questProgress = $this->addQuestProgress($chapter->first_mission_id);
         $this->addQuestActions($questProgress->id, $chapter->first_mission_id);
         $this->endCurrentTurn($questProgress->id);
         $newQuestTurn = $this->addNewTurn($questProgress);
@@ -42,41 +42,59 @@ class QuestComponent extends Component
         return ($newQuestTurn !== null);
     }
 
-    private function getNextPlayerId(QuestPlayer &$currentQuestPlayer): int|null {
-        $currentTurn = $currentQuestPlayer->player_turn;
+    private function getNextPlayerId(QuestPlayer|null $currentQuestPlayer = null): int|null {
+        $nextPlayer = null;
+        // If the current player is defined, search for the next active player
+        if ($currentQuestPlayer) {
+            $currentTurn = $currentQuestPlayer->player_turn;
 
-        // Find the next player
-        $nextPlayer = QuestPlayer::find()
-                ->where(['quest_id' => $this->quest->id, 'left_at' => null])
-                ->andWhere(['>', 'player_turn', $currentTurn])
-                ->orderBy(['player_turn' => SORT_ASC])
-                ->one();
-
-        // If no next player, loop back to the first active player
-        if (!$nextPlayer) {
+            // Find the next player
             $nextPlayer = QuestPlayer::find()
-                    ->where(['quest_id' => $this->quest->id, 'left_at' => null])
+                    ->where(['quest_id' => $this->quest->id])
+                    ->andWhere(['<>', 'status', AppStatus::LEFT->value])
+                    ->andWhere(['>', 'player_turn', $currentTurn])
                     ->orderBy(['player_turn' => SORT_ASC])
                     ->one();
         }
-        return $nextPlayer?->player_id;
+        // If no current player or no next player found,
+        // loop back to the first active player
+        if (!$nextPlayer) {
+            $nextPlayer = QuestPlayer::find()
+                    ->where(['quest_id' => $this->quest->id])
+                    ->andWhere(['<>', 'status', AppStatus::LEFT->value])
+                    ->orderBy(['player_turn' => SORT_ASC])
+                    ->one();
+        }
+        $nextPlayerId = $nextPlayer?->player_id;
+        Yii::debug("*** debug *** getNextPlayerId returns {$nextPlayerId}");
+        return $nextPlayerId;
+    }
+
+    private static function getNextSequence(int $questProgressId): int {
+        $nextSequence = QuestTurn::find()
+                        ->where(['quest_progress_id' => $questProgressId])
+                        ->max('sequence') + 1;
+        return $nextSequence;
     }
 
     public function addNewTurn(QuestProgress &$questProgress): QuestTurn|null {
         $currentQuestPlayer = $questProgress->questPlayer;
-        $nextPlayerId = $this->getNextPlayerId($currentQuestPlayer);
 
         // The quest has no more active players, no new turns can be added.
-        if (!$nextPlayerId) {
+        if (!$currentQuestPlayer) {
             return null;
         }
+
+        $nextSequence = $this->getNextSequence($questProgress->id);
+
         $questTurn = new QuestTurn([
-            'player_id' => $nextPlayerId,
+            'player_id' => $currentQuestPlayer->player_id,
             'quest_progress_id' => $questProgress->id,
-            'sequence' => 1,
+            'sequence' => $nextSequence,
             'status' => AppStatus::IN_PROGRESS->value,
             'started_at' => time()
         ]);
+
         if (!$questTurn->save()) {
             throw new \Exception(implode("<br />", ArrayHelper::getColumn($questTurn->errors, 0, false)));
         }
@@ -84,19 +102,20 @@ class QuestComponent extends Component
     }
 
     public function endCurrentTurn(int $questProgressId) {
-        QuestTurn::updateAll([
-            ['status' => AppStatus::TERMINATED->value],
-            ['quest_progress_id' => $questProgressId, 'status' => AppStatus::IN_PROGRESS->value]
-        ]);
+        QuestTurn::updateAll(
+                ['status' => AppStatus::TERMINATED->value],
+                ['status' => AppStatus::IN_PROGRESS->value, 'quest_progress_id' => $questProgressId]
+        );
     }
 
-    public function addQuestProgress(int $missionId, int $initiatorId): QuestProgress {
+    public function addQuestProgress(int $missionId): QuestProgress {
         $mission = Mission::findOne($missionId);
+        $firstPlayerId = $this->getNextPlayerId();
         $narrative = new NarrativeComponent(['mission' => $mission]);
         $questProgress = new QuestProgress([
             'quest_id' => $this->quest->id,
             'mission_id' => $missionId,
-            'current_player_id' => $initiatorId,
+            'current_player_id' => $firstPlayerId,
             'description' => $narrative->renderDescription(),
             'status' => AppStatus::IN_PROGRESS->value,
             'started_at' => time(),
