@@ -20,14 +20,11 @@ class QuestComponent extends Component
 {
 
     public Quest $quest;
+    public QuestProgress $questProgress;
 
     public function __construct($config = []) {
         // Call the parent's constructor
         parent::__construct($config);
-
-        if (!$this->quest) {
-            throw new \yii\web\NotFoundHttpException("The quest you are looking for does not exist.");
-        }
     }
 
     public function initQuestProgress(): bool {
@@ -175,5 +172,13 @@ class QuestComponent extends Component
                 $this->addQuestAction($action->id, $questProgressId);
             }
         }
+    }
+
+    public function getEligibleActions(int $playerId): QuestAction|null {
+        if (!$this->questProgress) {
+            return null;
+        }
+
+        return $this->questProgress->questActions;
     }
 }

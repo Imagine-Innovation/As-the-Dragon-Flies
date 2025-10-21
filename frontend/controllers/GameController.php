@@ -5,8 +5,10 @@ namespace frontend\controllers;
 use common\components\AppStatus;
 use common\components\ContextManager;
 use common\components\ManageAccessRights;
+use common\components\QuestComponent;
 use common\models\Quest;
 use common\models\QuestPlayer;
+use common\models\QuestProgress;
 use frontend\components\AjaxRequest;
 use frontend\components\QuestOnboarding;
 use Yii;
@@ -43,7 +45,7 @@ class GameController extends Controller
                                 'actions' => [
                                     'index', 'update', 'delete', 'create', 'view',
                                     'resume', 'get-messages', 'quit',
-                                    'ajax-get-messages', 'ajax-send-message', 'ajax-quit', 'ajax-mission'
+                                    'ajax-get-messages', 'ajax-send-message', 'ajax-quit', 'ajax-mission', 'ajax-actions'
                                 ],
                                 'allow' => ManageAccessRights::isRouteAllowed($this),
                                 'roles' => ['@'],
@@ -145,6 +147,38 @@ class GameController extends Controller
         return ['error' => true, 'msg' => 'Error encountered'];
     }
 
+    public function actionAjaxActios() {
+        // Configure JSON response format
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        // Validate request type
+        if (!$this->request->isGet || !$this->request->isAjax) {
+            return ['error' => true, 'msg' => 'Not an Ajax GET request'];
+        }
+
+        $questProgressId = Yii::$app->request->get('questProgressId');
+        if (!$questProgressId) {
+            return ['error' => true, 'msg' => 'Missing Quest Progress ID'];
+        }
+
+        $questProgress = $this->findQuestProgress($questProgressId);
+        $playerId = Yii::$app->session->get('playerId');
+
+        if ($questProgress->current_player_id !== $playerId) {
+            return ['error' => true, 'msg' => 'Not your turn'];
+        }
+
+        $questComponent = new QuestComponent(['questProgressId' => $questProgressId]);
+        $actions = $questComponent->getEligibleActions($playerId);
+
+        if ($actions) {
+            $render = $this->render('ajax/actions', ['questActions' => $actions]);
+            return ['error' => false, 'msg' => 'List of eligible actions', 'content' => $render];
+        }
+
+        return ['error' => true, 'msg' => 'Error encountered'];
+    }
+
     /**
      * Utility method to find Quest model
      *
@@ -160,5 +194,12 @@ class GameController extends Controller
             return $model;
         }
         throw new NotFoundHttpException('The quest you are looking for does not exist.');
+    }
+
+    protected function findQuestProgress($id) {
+        if (($model = QuestProgress::findOne(['id' => $id])) !== null) {
+            return $model;
+        }
+        throw new NotFoundHttpException('The quest progress you are looking for does not exist.');
     }
 }
