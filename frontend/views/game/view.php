@@ -14,7 +14,21 @@ $player = Yii::$app->session->get('currentPlayer');
 $this->title = $quest->name;
 $story = $quest->story;
 $playerSnippet = $this->renderFile('@app/views/game/snippets/player.php', ['player' => $player]);
+$currentQuestProgress = $quest->currentQuestProgress;
+$mission = $currentQuestProgress->mission;
+
+$actionList = ($currentQuestProgress->current_player_id === $player->id) ?
+        $this->renderFile('@app/views/game/ajax/actions.php', ['questActions' => $currentQuestProgress->questActions]) :
+        "";
 ?>
+<div class="d-none">
+    Hidden div to embeb utility tags for PHP/JS communication
+    <span id="hiddenQuestId"><?= $currentQuestProgress->quest_id ?></span>
+    <span id="hiddenQuestProgressId"><?= $currentQuestProgress->id ?></span>
+    <span id="hiddenQuestMissionId"><?= $currentQuestProgress->mission_id ?></span>
+    <span id="hiddenCurrentPlayerId"><?= $currentQuestProgress->current_player_id ?></span>
+</div>
+
 <main class="row" style="height: calc(100dvh - 120px);">
     <!-- Left Panel - Character Data -->
 
@@ -87,8 +101,8 @@ $playerSnippet = $this->renderFile('@app/views/game/snippets/player.php', ['play
     <!-- Center Panel - Game World -->
     <section class="col-12 col-xxl-9 col-3xl-10">
         <div class="row">
+            <!-- Game Scene -->
             <div class="<?= $nbPlayers == 1 ? "col-12" : "col-12 col-xl-7 col-3xl-9" ?>">
-                <!-- Game Scene -->
                 <div class="card p-3 h-100 d-flex flex-column">
                     <div class="actions">
                         <!-- Button to trigger the offcanvas on smaller screens -->
@@ -111,16 +125,23 @@ $playerSnippet = $this->renderFile('@app/views/game/snippets/player.php', ['play
                     </div>
 
                     <div class="card-body">
-                        <article id="missionDescription" class="flex-grow-1 h-auto mb-3 text-decoration">
-                            There's not much to do here!
+                        <article class="flex-grow-1 h-auto mb-3">
+                            <div id="missionDescription" class="text-decoration">
+                                <?= $this->renderFile('@app/views/game/ajax/mission.php', ['questProgress' => $currentQuestProgress]) ?>
+                            </div>
+                            <br />
+                            <div id="actionList">
+                                <?= $actionList ?>
+                            </div>
+                            <div id="actionFeedback"></div>
                         </article>
                     </div>
                 </div>
             </div>
             <?php if ($nbPlayers > 1): ?>
+                <!-- Chat System -->
                 <div class="col-12 col-xl-5 col-3xl-3">
                     <div class="h-100 d-flex flex-column">
-                        <!-- Chat System -->
                         <?=
                         $this->renderFile('@app/views/quest/snippets/chat.php', [
                             'questId' => $quest->id,
@@ -133,9 +154,5 @@ $playerSnippet = $this->renderFile('@app/views/game/snippets/player.php', ['play
         </div>
     </section>
 </main>
-
-<?=
-$this->renderFile('@app/views/game/snippets/equipment-modal.php', [
-    'player' => $player
-])
-?>
+<?= $this->renderFile('@app/views/game/snippets/equipment-modal.php', ['player' => $player]) ?>
+<?= $this->renderFile('@app/views/game/snippets/npc-dialog-modal.php') ?>

@@ -8,13 +8,10 @@ use common\components\ManageAccessRights;
 use common\components\QuestComponent;
 use common\models\Quest;
 use common\models\QuestPlayer;
-use common\models\QuestProgress;
-use frontend\components\AjaxRequest;
 use frontend\components\QuestOnboarding;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\web\Response;
 
@@ -23,8 +20,6 @@ use yii\web\Response;
  */
 class GameController extends Controller
 {
-
-    const DEFAULT_REDIRECT = 'quest/resume';
 
     /**
      * @inheritDoc
@@ -36,26 +31,15 @@ class GameController extends Controller
                     'access' => [
                         'class' => AccessControl::class,
                         'rules' => [
-                            [
-                                'actions' => ['*'],
-                                'allow' => false,
-                                'roles' => ['?'],
-                            ],
+                            ['actions' => ['*'], 'allow' => false, 'roles' => ['?']],
                             [
                                 'actions' => [
-                                    'index', 'update', 'delete', 'create', 'view',
-                                    'resume', 'get-messages', 'quit',
-                                    'ajax-get-messages', 'ajax-send-message', 'ajax-quit', 'ajax-mission', 'ajax-actions'
+                                    'view',
+                                    'ajax-actions', 'ajax-mission', 'ajax-next-dialog', 'ajax-quit',
                                 ],
                                 'allow' => ManageAccessRights::isRouteAllowed($this),
                                 'roles' => ['@'],
                             ],
-                        ],
-                    ],
-                    'verbs' => [
-                        'class' => VerbFilter::className(),
-                        'actions' => [
-                            'delete' => ['POST'],
                         ],
                     ],
                 ]
@@ -131,23 +115,18 @@ class GameController extends Controller
             return ['error' => true, 'msg' => 'Missing Quest ID'];
         }
 
-        // Prepare Ajax request parameters
-        $param = [
-            'modelName' => 'QuestProgress',
-            'render' => 'mission',
-            'filter' => ['quest_id' => $questId, 'status' => AppStatus::IN_PROGRESS->value],
-        ];
+        $quest = $this->findQuest($questId);
+        $questProgress = $quest->currentQuestProgress;
 
-        // Process request and return response
-        $ajaxRequest = new AjaxRequest($param);
-        if ($ajaxRequest->makeResponse(Yii::$app->request)) {
-            return $ajaxRequest->response;
+        if ($questProgress) {
+            $render = $this->renderPartial('ajax/mission', ['questProgress' => $questProgress]);
+            return ['error' => false, 'msg' => '', 'content' => $render];
         }
 
         return ['error' => true, 'msg' => 'Error encountered'];
     }
 
-    public function actionAjaxActios() {
+    public function actionAjaxActions() {
         // Configure JSON response format
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -156,27 +135,47 @@ class GameController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
         }
 
-        $questProgressId = Yii::$app->request->get('questProgressId');
-        if (!$questProgressId) {
-            return ['error' => true, 'msg' => 'Missing Quest Progress ID'];
+        if (!($questId = Yii::$app->request->get('questId'))) {
+            return ['error' => true, 'msg' => 'Missing Quest ID'];
         }
-
-        $questProgress = $this->findQuestProgress($questProgressId);
+        $quest = $this->findQuest($questId);
+        $questProgress = $quest->currentQuestProgress;
         $playerId = Yii::$app->session->get('playerId');
 
         if ($questProgress->current_player_id !== $playerId) {
             return ['error' => true, 'msg' => 'Not your turn'];
         }
 
-        $questComponent = new QuestComponent(['questProgressId' => $questProgressId]);
+        $questComponent = new QuestComponent(['questProgress' => $questProgress]);
         $actions = $questComponent->getEligibleActions($playerId);
 
         if ($actions) {
-            $render = $this->render('ajax/actions', ['questActions' => $actions]);
+            $render = $this->renderPartial('ajax/actions', ['questActions' => $actions]);
             return ['error' => false, 'msg' => 'List of eligible actions', 'content' => $render];
         }
 
         return ['error' => true, 'msg' => 'Error encountered'];
+    }
+
+    public function actionAjaxNextDialog() {
+        // Set the response format to JSON
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        // Check if the request is a POST request and if it is an AJAX request
+        if (!$this->request->isGet || !$this->request->isAjax) {
+            // If not, return an error response
+            return ['error' => true, 'msg' => 'Not an Ajax GET request'];
+        }
+
+        $nextDialogId = Yii::$app->request->get('nextDialogId', 1);
+
+        $dialog = \common\models\Dialog::findOne(['id' => $nextDialogId]);
+
+        $content = $this->renderPartial('ajax/dialog', [
+            'dialog' => $dialog,
+        ]);
+
+        return ['error' => false, 'msg' => '', 'content' => $content];
     }
 
     /**
@@ -194,12 +193,5 @@ class GameController extends Controller
             return $model;
         }
         throw new NotFoundHttpException('The quest you are looking for does not exist.');
-    }
-
-    protected function findQuestProgress($id) {
-        if (($model = QuestProgress::findOne(['id' => $id])) !== null) {
-            return $model;
-        }
-        throw new NotFoundHttpException('The quest progress you are looking for does not exist.');
     }
 }

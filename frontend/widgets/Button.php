@@ -9,18 +9,19 @@ use yii\helpers\Html;
 class Button extends Widget
 {
 
-    public bool $isPost = false;    // 'true' if the button triggers a POST request, default='false'
-    public $postParams = [];        // Associative array ['param' => value, ...] for hidden POST params
-    public $url;                    // URL to call when the button is clicked, default='#'
-    public $id;                     // Button ID (for javascript purpose)
-    public $style;                  // Additional CSS class
-    public $tooltip;                // Button tooltip
-    public $icon;                   // Icon to display before the button name
-    public $modal;                  // Name of the modal to display when clicking on the button
-    public $title;                  // Button name
-    public $mode;                   // “icon” to use it as an icon button, otherwise Bootstrap button behavior
-    public $onclick;                // javascript hook to trigger onclick
-    public $isCta;                  // 'true' is call to action (CTA)
+    public bool $isPost = false;        // 'true' if the button triggers a POST request, default='false'
+    public $postParams = [];            // Associative array ['param' => value, ...] for hidden POST params
+    public $url;                        // URL to call when the button is clicked, default='#'
+    public $id;                         // Button ID (for javascript purpose)
+    public $style;                      // Additional CSS class
+    public $tooltip;                    // Button tooltip
+    public $icon;                       // Icon to display before the button name
+    public $modal;                      // Name of the modal to display when clicking on the button
+    public $title;                      // Button name
+    public $mode;                       // “icon” to use it as an icon button, otherwise Bootstrap button behavior
+    public $onclick;                    // javascript hook to trigger onclick
+    public bool $isCta = false;         // when 'true' is call to action (CTA) button
+    public bool $isCloseModal = false;  // when 'true' is adding data-bs-dismiss="modal"
 
     public function run() {
         if ($this->isPost) {
@@ -30,17 +31,17 @@ class Button extends Widget
     }
 
     private function button() {
-        $cta = $this->isCta ?? false;
         // Caution: The spaces at the beginning of the line are intentional; do not delete them.
         //
         // If the btn style is not defined by the user, default it to 'btn-seconday'
         $paramStyle = $this->style ?? '';
         $defaultBtn = (strpos($paramStyle, "btn-") !== false) ? '' : ' btn-secondary';
-        $style = ($cta ? ' btn-warning' : $defaultBtn) . ' ' . $paramStyle;
+        $style = ($this->isCta ? ' btn-warning' : $defaultBtn) . ' ' . $paramStyle;
+        $closeModal = $this->isCloseModal ? ' data-bs-dismiss="modal"' : '';
 
         $icon = $this->icon ? $this->iconElement() : "";
 
-        $html = '<a href="' . ($this->url ?? '#') . '"' . $this->idElement() . ' role="button" class="btn' . $style . '"' . $this->tooltipElement() . '>';
+        $html = '<a href="' . ($this->url ?? '#') . '"' . $this->idElement() . ' role="button" class="btn' . $style . '"' . $closeModal . $this->tooltipElement() . '>';
         $html .= "{$icon} " . Html::encode($this->title);
         $html .= "</a>";
 
@@ -52,10 +53,11 @@ class Button extends Widget
         $icon = $this->iconElement();
         $onclick = $this->onclick ?? '';
         $url = $this->url ?? '#';
+        $closeModal = $this->isCloseModal ? ' data-bs-dismiss="modal"' : '';
 
         // Caution: The spaces at the beginning of the line are intentional; do not delete them.
 
-        $html = '<a href="' . $url . '"' . $this->idElement() . ' role="button" class="actions__item ' . $style . '"' . $this->tooltipElement() . $onclick . '>';
+        $html = '<a href="' . $url . '"' . $this->idElement() . ' role="button" class="actions__item ' . $style . '"' . $closeModal . $this->tooltipElement() . $onclick . '>';
 
         if ($this->modal) {
             $html .= '<span data-bs-toggle="modal" data-bs-target="#' . $this->modal . '">' . $icon . '</span>';
@@ -95,9 +97,8 @@ class Button extends Widget
     }
 
     private function postButton() {
-        $cta = $this->isCta ?? false;
         // Caution: The spaces at the beginning of the line are intentional; do not delete them.
-        $style = ($cta ? ' btn-warning' : ' btn-secondary') . ' ' . ($this->style ?? '');
+        $style = ($this->isCta ? ' btn-warning' : ' btn-secondary') . ' ' . ($this->style ?? '');
 
         $icon = $this->icon ? $this->iconElement() : "";
 

@@ -8,8 +8,15 @@
         What do want to do?
     </div>
     <div class="card-body">
-        <?php foreach ($questActions as $questAction): ?>
-            <p><?= $questAction->action->name ?></p>
-        <?php endforeach; ?>
+        <ol>
+            <?php
+            foreach ($questActions as $questAction):
+                $onclick = $questAction->action->reply_id ?
+                        "vtt.talk({$questAction->action->reply_id}); return false;" :
+                        "vtt.makeAction({$questAction->action_id}); return false;";
+                ?>
+                <li><a href="" onclick="<?= $onclick ?>"><?= $questAction->action->name ?></a></li>
+            <?php endforeach; ?>
+        </ol>
     </div>
 </div>

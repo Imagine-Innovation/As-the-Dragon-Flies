@@ -174,7 +174,7 @@ class QuestComponent extends Component
         }
     }
 
-    public function getEligibleActions(int $playerId): QuestAction|null {
+    public function getEligibleActions(int $playerId): array|null {
         if (!$this->questProgress) {
             return null;
         }

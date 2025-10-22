@@ -33,6 +33,11 @@ use Yii;
  * @property QuestSession[] $questSessions
  * @property Story $story
  * @property UserLog[] $userLogs
+ *
+ * Custom properties
+ *
+ * @property QuestProgress $currentQuestProgress
+ *
  */
 class Quest extends \yii\db\ActiveRecord
 {
@@ -180,5 +185,20 @@ class Quest extends \yii\db\ActiveRecord
      */
     public function getUserLogs() {
         return $this->hasMany(UserLog::class, ['quest_id' => 'id']);
+    }
+
+    /**
+     * Custom porperties
+     */
+
+    /**
+     * Gets query for [[CurrentQuestProgress]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCurrentQuestProgress() {
+        //return $this->hasOne(QuestProgress::class, ['quest_id' => 'id', 'status' => AppStatus::IN_PROGRESS->value]);
+        return $this->hasOne(QuestProgress::class, ['quest_id' => 'id'])
+                        ->andWhere(['status' => AppStatus::IN_PROGRESS->value]);
     }
 }
