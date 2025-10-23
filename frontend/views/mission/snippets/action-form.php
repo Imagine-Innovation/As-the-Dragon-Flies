@@ -10,6 +10,15 @@ use yii\widgets\ActiveForm;
 /** @var string $chapterId */
 /** @var string $missionId */
 /** @var string $parentId */
+$difficultyClass = [
+    0 => 'Trivial',
+    5 => 'Very Easy',
+    10 => 'Easy',
+    15 => 'Medium',
+    20 => 'Hard',
+    25 => 'Very Hard',
+    30 => 'Nearly Impossible'
+];
 ?>
 <div class="d-none">
     Hidden div to embeb utility tags for PHP/JS communication
@@ -56,93 +65,145 @@ use yii\widgets\ActiveForm;
         )
         ->label('Action type')
 ?>
+<div class="row">
+    <div class="col-12 col-sm-6">
+        <?=
+                $form->field($model, 'dc')
+                ->radioList($difficultyClass)
+                ->label('Select a Difficulty Class (DC)')
+        ?>
+    </div>
+    <div class="col-12 col-sm-6">
+        <?=
+                $form->field($model, 'partial_dc')
+                ->radioList($difficultyClass)
+                ->label('Select a Difficulty Class (DC) for partial success')
+        ?>
+    </div>
+</div>
 
-<?= $form->field($model, 'dc')->textInput() ?>
+<div class="row">
+    <div class="col-12 col-sm-6">
+        <?=
+                $form->field($model, 'is_single_action')
+                ->radioList([1 => 'Single action', 0 => 'Multiple time'])
+                ->label('How many time this action can be triggered')
+        ?>
+    </div>
+    <div class="col-12 col-sm-6">
+        <?=
+                $form->field($model, 'is_free')
+                ->radioList([0 => 'Consume an action', 1 => 'Free action'])
+                ->label('Turn economy')
+        ?>
+    </div>
+</div>
 
-<?=
-        $form->field($model, 'passage_id')
-        ->dropdownList(
-                $model->passage_id ? [$model->passage_id => $model->passage->name] : [],
-                [
-                    'class' => 'select2-container w-100',
-                    'data-minimum-results-for-search' => -1,
-                    'data-placeholder' => "Select a passage",
-                ]
-        )
-        ->label('Passage affected by the action')
-?>
-<?=
-        $form->field($model, 'trap_id')
-        ->dropdownList(
-                $model->trap_id ? [$model->trap_id => $model->trap->name] : [],
-                [
-                    'class' => 'select2-container w-100',
-                    'data-minimum-results-for-search' => -1,
-                    'data-placeholder' => "Select a trap",
-                ]
-        )
-        ->label('Trap affected by the action')
-?>
-<?=
-        $form->field($model, 'decor_item_id')
-        ->dropdownList(
-                $model->decor_item_id ? [$model->decor_item_id => $model->decorItem->name] : [],
-                [
-                    'class' => 'select2-container w-100',
-                    'data-minimum-results-for-search' => -1,
-                    'data-placeholder' => "Select an item",
-                ]
-        )
-        ->label('Object affected by the action')
-?>
-<?=
-        $form->field($model, 'decor_id')
-        ->dropdownList(
-                $model->decor_id ? [$model->decor_id => $model->decor->name] : [],
-                [
-                    'class' => 'select2-container w-100',
-                    'data-minimum-results-for-search' => -1,
-                    'data-placeholder' => "Select a decor",
-                ]
-        )
-        ->label('Decor affected by the action')
-?>
-<?=
-        $form->field($model, 'npc_id')
-        ->dropdownList(
-                $model->npc_id ? [$model->npc_id => $model->npc->name] : [],
-                [
-                    'class' => 'select2-container w-100',
-                    'data-minimum-results-for-search' => -1,
-                    'data-placeholder' => "Select a NPC",
-                ]
-        )
-        ->label('NPC involved in the action')
-?>
-<?=
-        $form->field($model, 'reply_id')
-        ->dropdownList(
-                $model->reply_id ? [$model->reply_id => $model->reply->text] : [],
-                [
-                    'class' => 'select2-container w-100',
-                    'data-minimum-results-for-search' => -1,
-                    'data-placeholder' => "Select a reply",
-                ]
-        )
-        ->label('First reply of the player')
-?>
-<?=
-        $form->field($model, 'required_item_id')
-        ->dropdownList(
-                $model->required_item_id ? [$model->required_item_id => $model->requiredItem->name] : [],
-                [
-                    'class' => 'select2-container w-100',
-                    'data-minimum-results-for-search' => -1,
-                    'data-placeholder' => "Select an item",
-                ]
-        )
-        ->label('Object required to carry out the action')
-?>
+
+<div class="row">
+    <div class="col-12 col-sm-6">
+        <?=
+                $form->field($model, 'required_item_id')
+                ->dropdownList(
+                        $model->required_item_id ? [$model->required_item_id => $model->requiredItem->name] : [],
+                        [
+                            'class' => 'select2-container w-100',
+                            'data-minimum-results-for-search' => -1,
+                            'data-placeholder' => "Select an item",
+                        ]
+                )
+                ->label('Object required to carry out the action')
+        ?>
+    </div>
+    <div class="col-12 col-sm-6">
+        <?=
+                $form->field($model, 'passage_id')
+                ->dropdownList(
+                        $model->passage_id ? [$model->passage_id => $model->passage->name] : [],
+                        [
+                            'class' => 'select2-container w-100',
+                            'data-minimum-results-for-search' => -1,
+                            'data-placeholder' => "Select a passage",
+                        ]
+                )
+                ->label('Passage affected by the action')
+        ?>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 col-sm-6 col-xl-4">
+        <?=
+                $form->field($model, 'decor_id')
+                ->dropdownList(
+                        $model->decor_id ? [$model->decor_id => $model->decor->name] : [],
+                        [
+                            'class' => 'select2-container w-100',
+                            'data-minimum-results-for-search' => -1,
+                            'data-placeholder' => "Select a decor",
+                        ]
+                )
+                ->label('Decor affected by the action')
+        ?>
+    </div>
+    <div class="col-12 col-sm-6 col-xl-4">
+        <?=
+                $form->field($model, 'trap_id')
+                ->dropdownList(
+                        $model->trap_id ? [$model->trap_id => $model->trap->name] : [],
+                        [
+                            'class' => 'select2-container w-100',
+                            'data-minimum-results-for-search' => -1,
+                            'data-placeholder' => "Select a trap",
+                        ]
+                )
+                ->label('Trap affected by the action')
+        ?>
+    </div>
+    <div class="col-12 col-sm-6 col-xl-4">
+        <?=
+                $form->field($model, 'decor_item_id')
+                ->dropdownList(
+                        $model->decor_item_id ? [$model->decor_item_id => $model->decorItem->name] : [],
+                        [
+                            'class' => 'select2-container w-100',
+                            'data-minimum-results-for-search' => -1,
+                            'data-placeholder' => "Select an item",
+                        ]
+                )
+                ->label('Object affected by the action')
+        ?>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 col-sm-6">
+        <?=
+                $form->field($model, 'npc_id')
+                ->dropdownList(
+                        $model->npc_id ? [$model->npc_id => $model->npc->name] : [],
+                        [
+                            'class' => 'select2-container w-100',
+                            'data-minimum-results-for-search' => -1,
+                            'data-placeholder' => "Select a NPC",
+                        ]
+                )
+                ->label('NPC involved in the action')
+        ?>
+    </div>
+    <div class="col-12 col-sm-6">
+        <?=
+                $form->field($model, 'reply_id')
+                ->dropdownList(
+                        $model->reply_id ? [$model->reply_id => $model->reply->text] : [],
+                        [
+                            'class' => 'select2-container w-100',
+                            'data-minimum-results-for-search' => -1,
+                            'data-placeholder' => "Select a reply",
+                        ]
+                )
+                ->label('First reply of the player')
+        ?>
+    </div>
+</div>
 
 <div class="form-group">
     <?= Html::submitButton('Save', ['class' => 'btn btn-success bi-floppy']) ?>

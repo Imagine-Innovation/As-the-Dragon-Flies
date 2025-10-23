@@ -954,6 +954,15 @@ textarea.form-control {
     display: block; /* Show when there's an error */
 }
 
+/* Add a red asterisk to required fields */
+.form-group.required > label {
+    color: var(--danger);
+}
+
+.form-group.required > label::after {
+    content: " *";
+}
+
 .invalid-feedback {
     display:none;
     width:100%;
@@ -5838,7 +5847,7 @@ pre {
 .select2-container--default .select2-selection--single .select2-selection__rendered {
     line-height: 1.5;
     padding: .6rem 1rem;
-    color: var(--light-85);
+    color: var(--yellow);
 }
 
 .select2-container--default.select2-container--focus .select2-selection--multiple {

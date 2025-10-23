@@ -12,7 +12,7 @@
             <?php
             foreach ($questActions as $questAction):
                 $onclick = $questAction->action->reply_id ?
-                        "vtt.talk({$questAction->action->reply_id}); return false;" :
+                        "vtt.talk({$questAction->action_id}, {$questAction->action->reply_id}); return false;" :
                         "vtt.makeAction({$questAction->action_id}); return false;";
                 ?>
                 <li><a href="" onclick="<?= $onclick ?>"><?= $questAction->action->name ?></a></li>

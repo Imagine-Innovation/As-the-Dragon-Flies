@@ -22,6 +22,10 @@ use Yii;
  * @property QuestPlayer $questPlayer
  * @property QuestAction[] $questActions
  * @property QuestTurn[] $questTurns
+ *
+ * Custom properties
+ *
+ * @property Player $currentPlayer
  */
 class QuestProgress extends \yii\db\ActiveRecord
 {
@@ -116,5 +120,18 @@ class QuestProgress extends \yii\db\ActiveRecord
      */
     public function getQuestTurns() {
         return $this->hasMany(QuestTurn::class, ['quest_progress_id' => 'id']);
+    }
+
+    /**
+     * Custom properties
+     */
+
+    /**
+     * Gets query for [[CurrentPlayer]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCurrentPlayer() {
+        return $this->hasOne(Player::class, ['id' => 'current_player_id']);
     }
 }

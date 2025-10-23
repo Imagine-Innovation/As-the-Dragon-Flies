@@ -20,7 +20,9 @@ use Yii;
  * @property string $name Action to do
  * @property string|null $description Short description
  * @property int $dc Difficulty Class (DC)
- * @property int $disable_on_success When the action is successful, it should not be played again
+ * @property int|null $partial_dc Optional Difficulty Class (DC) for partial success
+ * @property int $is_single_action The action should not be played again
+ * @property int $is_free Is a free action
  *
  * @property ActionFlow[] $triggers
  * @property ActionFlow[] $prerequisites
@@ -54,11 +56,12 @@ class Action extends \yii\db\ActiveRecord
      */
     public function rules() {
         return [
-            [['action_type_id', 'passage_id', 'decor_id', 'decor_item_id', 'npc_id', 'reply_id', 'trap_id', 'required_item_id', 'description'], 'default', 'value' => null],
+            [['action_type_id', 'passage_id', 'decor_id', 'decor_item_id', 'npc_id', 'reply_id', 'trap_id', 'required_item_id', 'description', 'partial_dc'], 'default', 'value' => null],
             [['dc'], 'default', 'value' => 10],
-            [['disable_on_success'], 'default', 'value' => 1],
+            [['is_single_action'], 'default', 'value' => 1],
+            [['is_free'], 'default', 'value' => 0],
             [['mission_id', 'name'], 'required'],
-            [['mission_id', 'action_type_id', 'passage_id', 'decor_id', 'decor_item_id', 'npc_id', 'reply_id', 'trap_id', 'required_item_id', 'dc', 'disable_on_success'], 'integer'],
+            [['mission_id', 'action_type_id', 'passage_id', 'decor_id', 'decor_item_id', 'npc_id', 'reply_id', 'trap_id', 'required_item_id', 'dc', 'partial_dc', 'is_single_action', 'is_free'], 'integer'],
             [['description'], 'string'],
             [['name'], 'string', 'max' => 64],
             [['mission_id'], 'exist', 'skipOnError' => true, 'targetClass' => Mission::class, 'targetAttribute' => ['mission_id' => 'id']],
@@ -91,7 +94,9 @@ class Action extends \yii\db\ActiveRecord
             'name' => 'Action to do',
             'description' => 'Short description',
             'dc' => 'Difficulty Class (DC)',
-            'disable_on_success' => 'When the action is successful, it should not be played again',
+            'partial_dc' => 'Optional Difficulty Class (DC) for partial success',
+            'is_single_action' => 'The action should not be played again',
+            'is_free' => 'Is a free action',
         ];
     }
 

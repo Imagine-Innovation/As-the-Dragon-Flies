@@ -8,6 +8,8 @@ use common\components\ManageAccessRights;
 use common\components\QuestComponent;
 use common\models\Quest;
 use common\models\QuestPlayer;
+use common\models\Reply;
+use common\models\QuestProgress;
 use frontend\components\QuestOnboarding;
 use Yii;
 use yii\web\Controller;
@@ -35,7 +37,7 @@ class GameController extends Controller
                             [
                                 'actions' => [
                                     'view',
-                                    'ajax-actions', 'ajax-mission', 'ajax-next-dialog', 'ajax-quit',
+                                    'ajax-actions', 'ajax-dialog', 'ajax-mission', 'ajax-next-dialog', 'ajax-quit',
                                 ],
                                 'allow' => ManageAccessRights::isRouteAllowed($this),
                                 'roles' => ['@'],
@@ -155,6 +157,33 @@ class GameController extends Controller
         }
 
         return ['error' => true, 'msg' => 'Error encountered'];
+    }
+
+    public function actionAjaxDialog() {
+        // Set the response format to JSON
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        // Check if the request is a POST request and if it is an AJAX request
+        if (!$this->request->isGet || !$this->request->isAjax) {
+            // If not, return an error response
+            return ['error' => true, 'msg' => 'Not an Ajax GET request'];
+        }
+
+        $request = Yii::$app->request;
+
+        $reply = Reply::findOne($request->get('replyId'));
+        $questProgress = QuestProgress::findOne($request->get('questProgressId'));
+        $dialog = $reply->nextDialog;
+
+        $player = $questProgress->currentPlayer;
+        $previsouContent = "{$player->name} &mdash; " . nl2br($reply->text) . "<br>" .
+                "{$dialog->npc->name} &mdash; " . nl2br($dialog->text);
+
+        $content = $this->renderPartial('ajax/dialog', [
+            'dialog' => $dialog,
+        ]);
+
+        return ['error' => false, 'msg' => '', 'previousContent' => $previsouContent, 'nextContent' => $content];
     }
 
     public function actionAjaxNextDialog() {

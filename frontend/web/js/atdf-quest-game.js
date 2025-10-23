@@ -1,24 +1,19 @@
 class VirtualTableTop {
     constructor(options = {}) {
-        this.questId = null;
-        this.playerId = null;
-        this.missionId = null;
-        this.questProgressId = null;
+        this.context = {};
         this.options = {
             ...options
         };
     }
 
     init() {
-        this.questId = $('#hiddenQuestId').html();
-        this.playerId = $('#hiddenCurrentPlayerId').html();
-        this.missionId = $('#hiddenQuestMissionId').html();
-        this.questProgressId = $('#hiddenQuestProgressId').html();
-        console.log("");
-        console.log("");
-        console.log(`VirtualTableTop.init() => questId=${this.questId}, playerId=${this.playerId}, missionId=${this.missionId}, questProgressId=${this.questProgressId}`);
-        console.log("");
-        console.log("");
+        this.context = {
+            questId: $('#hiddenQuestId').html(),
+            playerId: $('#hiddenCurrentPlayerId').html(),
+            missionId: $('#hiddenQuestMissionId').html(),
+            questProgressId: $('#hiddenQuestProgressId').html(),
+            actionId: $('#hiddenQuestActionId').html()
+        };
     }
 
     static refresh(questId, sessionId, message = null) {
@@ -66,7 +61,7 @@ class VirtualTableTop {
         AjaxUtils.request({
             url: 'game/ajax-mission',
             method: 'GET',
-            data: {questId: questId},
+            data: this.context,
             successCallback: (response) => {
                 if (!response.error) {
                     const content = response.content;
@@ -100,10 +95,44 @@ class VirtualTableTop {
         });
     }
 
-    talk(replyId) {
-        Logger.log(1, 'talk', `replyId=${replyId}`);
+    talk(actionId, replyId) {
+        Logger.log(1, 'talk', `actionId=${actionId}, replyId=${replyId}`);
         const target = `#actionFeedback`;
-        $(target).html(`Talk: replyId=${replyId}`);
+        $(target).html(`Talk: actionId=${actionId}, replyId=${replyId}`);
+
+        // Show the modal
+        const modalElement = `#npcDialogModal`;
+        const modal = new bootstrap.Modal(modalElement);
+        modal.show();
+        
+        this._dialog(actionId, replyId);
+    }
+
+    _dialog(actionId, replyId) {
+        Logger.log(2, '_dialog', `actionId=${actionId}, replyId=${replyId}`);
+
+        const previousTarget = `#previousDialogs`;
+        if (!DOMUtils.exists(previousTarget))
+            return;
+
+        const currentTarget = `#currentDialog`;
+        if (!DOMUtils.exists(currentTarget))
+            return;
+
+        AjaxUtils.request({
+            url: 'game/ajax-dialog',
+            method: 'GET',
+            data: {
+                actionId: actionId,
+                replyId: replyId,
+                ...this.context},
+            successCallback: (response) => {
+                if (!response.error) {
+                    $(previousTarget).html(response.previousContent);
+                    $(currentTarget).html(response.nextContent);
+                }
+            }
+        });
     }
 
     makeAction(actionId) {

@@ -10,7 +10,7 @@ use yii\helpers\Html;
 <?php if ($dialog->replies): ?>
     <ul>
         <?php foreach ($dialog->replies as $reply): ?>
-            <li><a href="" onclick="VirtualTableTop.nextDialog(<?= $reply->next_dialog_id ?>)"><?= Html::encode($reply->text) ?></a></li>
+            <li><a href="" onclick="vtt.nextDialog(<?= $reply->next_dialog_id ?>); return false;"><?= Html::encode($reply->text) ?></a></li>
         <?php endforeach; ?>
     </ul>
 <?php elseif ($dialog->outcome_id): ?>
@@ -19,7 +19,7 @@ use yii\helpers\Html;
         'title' => "Next step",
         'icon' => 'dnd-d20',
         'tooltip' => "Evaluate your success",
-        'onclick' => "VirtualTableTop.evaluateAction()",
+        'onclick' => "vtt.evaluateAction()",
         'isCta' => true,
     ])
     ?>
