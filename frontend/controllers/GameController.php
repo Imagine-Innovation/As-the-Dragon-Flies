@@ -171,19 +171,22 @@ class GameController extends Controller
 
         $request = Yii::$app->request;
 
-        $reply = Reply::findOne($request->get('replyId'));
-        $questProgress = QuestProgress::findOne($request->get('questProgressId'));
+        $reply = $this->findModel('Reply', ['id' => $request->get('replyId')]);
+        $questProgress = $this->findModel('QuestProgress', ['id' => $request->get('questProgressId')]);
         $dialog = $reply->nextDialog;
 
         $player = $questProgress->currentPlayer;
-        $previsouContent = "{$player->name} &mdash; " . nl2br($reply->text) . "<br>" .
-                "{$dialog->npc->name} &mdash; " . nl2br($dialog->text);
+        //$previsouContent = "<span class=\"text-warning\">{$player->name}</span> &mdash; " . nl2br($reply->text);
 
         $content = $this->renderPartial('ajax/dialog', [
+            'storyId' => $request->get('storyId'),
+            'playerName' => $player->name,
+            'reply' => $reply,
             'dialog' => $dialog,
         ]);
 
-        return ['error' => false, 'msg' => '', 'previousContent' => $previsouContent, 'nextContent' => $content];
+        //return ['error' => false, 'msg' => '', 'previousContent' => $previsouContent, 'nextContent' => $content];
+        return ['error' => false, 'msg' => '', 'content' => $content];
     }
 
     public function actionAjaxNextDialog() {
@@ -222,5 +225,24 @@ class GameController extends Controller
             return $model;
         }
         throw new NotFoundHttpException('The quest you are looking for does not exist.');
+    }
+
+    /**
+     * Finds the model model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param string $modelName model type to load
+     * @param array $param
+     * @return common\models\modelName the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel(string $modelName, array $param) {
+        $activeRecord = "\\common\\models\\{$modelName}";
+        $pk = $param['id'] ?? null;
+        $model = $activeRecord::findOne($pk ? ['id' => $pk] : $param);
+        if ($model !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The requested {$modelName} does not exist.');
     }
 }

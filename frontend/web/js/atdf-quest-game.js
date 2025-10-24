@@ -8,6 +8,7 @@ class VirtualTableTop {
 
     init() {
         this.context = {
+            storyId: $('#hiddenStoryId').html(),
             questId: $('#hiddenQuestId').html(),
             playerId: $('#hiddenCurrentPlayerId').html(),
             missionId: $('#hiddenQuestMissionId').html(),
@@ -104,12 +105,43 @@ class VirtualTableTop {
         const modalElement = `#npcDialogModal`;
         const modal = new bootstrap.Modal(modalElement);
         modal.show();
-        
-        this._dialog(actionId, replyId);
+
+        this.context.actionId = actionId;
+        this._dialog(replyId);
     }
 
-    _dialog(actionId, replyId) {
-        Logger.log(2, '_dialog', `actionId=${actionId}, replyId=${replyId}`);
+    reply(replyId) {
+        Logger.log(1, 'reply', `replyId=${replyId}`);
+        const target = `#actionFeedback`;
+        $(target).html(`Reply: replyId=${replyId}`);
+
+        this._dialog(replyId);
+    }
+
+    _dialog(replyId) {
+        Logger.log(2, '_dialog', `replyId=${replyId}`);
+
+        const target = `#currentDialog`;
+        if (!DOMUtils.exists(target))
+            return;
+
+        AjaxUtils.request({
+            url: 'game/ajax-dialog',
+            method: 'GET',
+            data: {
+                ...this.context,
+                replyId: replyId
+            },
+            successCallback: (response) => {
+                if (!response.error) {
+                    $(target).html(response.content);
+                }
+            }
+        });
+    }
+
+    xxx_dialog(replyId) {
+        Logger.log(2, '_dialog', `replyId=${replyId}`);
 
         const previousTarget = `#previousDialogs`;
         if (!DOMUtils.exists(previousTarget))
@@ -123,9 +155,9 @@ class VirtualTableTop {
             url: 'game/ajax-dialog',
             method: 'GET',
             data: {
-                actionId: actionId,
-                replyId: replyId,
-                ...this.context},
+                ...this.context,
+                replyId: replyId
+            },
             successCallback: (response) => {
                 if (!response.error) {
                     $(previousTarget).html(response.previousContent);

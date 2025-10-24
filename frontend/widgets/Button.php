@@ -37,13 +37,10 @@ class Button extends Widget
         $paramStyle = $this->style ?? '';
         $defaultBtn = (strpos($paramStyle, "btn-") !== false) ? '' : ' btn-secondary';
         $style = ($this->isCta ? ' btn-warning' : $defaultBtn) . ' ' . $paramStyle;
-        $closeModal = $this->isCloseModal ? ' data-bs-dismiss="modal"' : '';
-
         $icon = $this->icon ? $this->iconElement() : "";
+        $title = Html::encode($this->title);
 
-        $html = '<a href="' . ($this->url ?? '#') . '"' . $this->idElement() . ' role="button" class="btn' . $style . '"' . $closeModal . $this->tooltipElement() . '>';
-        $html .= "{$icon} " . Html::encode($this->title);
-        $html .= "</a>";
+        $html = $this->anchorTag('btn', $style) . "{$icon} {$title}</a>";
 
         return $html;
     }
@@ -51,22 +48,25 @@ class Button extends Widget
     private function iconButton() {
         $style = $this->style ?? '';
         $icon = $this->iconElement();
-        $onclick = $this->onclick ?? '';
-        $url = $this->url ?? '#';
-        $closeModal = $this->isCloseModal ? ' data-bs-dismiss="modal"' : '';
 
-        // Caution: The spaces at the beginning of the line are intentional; do not delete them.
-
-        $html = '<a href="' . $url . '"' . $this->idElement() . ' role="button" class="actions__item ' . $style . '"' . $closeModal . $this->tooltipElement() . $onclick . '>';
+        $html = $this->anchorTag('btn', $style);
 
         if ($this->modal) {
-            $html .= '<span data-bs-toggle="modal" data-bs-target="#' . $this->modal . '">' . $icon . '</span>';
+            $html .= "<span data-bs-toggle=\"modal\" data-bs-target=\"#{$this->modal}\">{$icon}</span></a>";
         } else {
-            $html .= $icon;
+            $html .= "{$icon}</a>";
         }
 
-        $html .= "</a>";
+        return $html;
+    }
 
+    private function anchorTag(string $baseCss, string $AdditionalCss): string {
+        $url = $this->url ?? '#';
+        $closeModal = $this->isCloseModal ? ' data-bs-dismiss="modal"' : '';
+        $onclick = $this->onclick ? " onclick=\"{$this->onclick}\"" : '';
+        $id = $this->idElement();
+
+        $html = "<a href=\"{$url}\" {$id} role=\"button\" class=\"{$baseCss} {$AdditionalCss}\"{$closeModal}{$this->tooltipElement()}{$onclick}>";
         return $html;
     }
 
@@ -81,7 +81,7 @@ class Button extends Widget
 
     private function idElement(): string {
         // Caution: The spaces at the beginning of the line are intentional; do not delete them.
-        return $this->id ? ' id="' . $this->id . '"' : '';
+        return $this->id ? " id=\"{$this->id}\"" : '';
     }
 
     private function postForm(): string {

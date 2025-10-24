@@ -23,6 +23,7 @@ $actionList = ($currentQuestProgress->current_player_id === $player->id) ?
 ?>
 <div class="d-none">
     Hidden div to embeb utility tags for PHP/JS communication
+    <span id="hiddenStoryId"><?= $story->id ?></span>
     <span id="hiddenQuestId"><?= $currentQuestProgress->quest_id ?></span>
     <span id="hiddenQuestProgressId"><?= $currentQuestProgress->id ?></span>
     <span id="hiddenQuestMissionId"><?= $currentQuestProgress->mission_id ?></span>
