@@ -16,7 +16,7 @@ use Yii;
  * @property string|null $description Short description
  * @property int $gained_gp Gained Gold Pieces (GP) when succeeded
  * @property int $gained_xp Gained Experience Points (XP) when succeeded
- * @property int $hp_loss Lost HP when failed
+ * @property string $hp_loss_dice Dice to throw to determine the HP loss when failed
  *
  * @property Action $action
  * @property Dialog[] $dialogs
@@ -25,7 +25,6 @@ use Yii;
  */
 class Outcome extends \yii\db\ActiveRecord
 {
-
 
     /**
      * {@inheritdoc}
@@ -40,11 +39,13 @@ class Outcome extends \yii\db\ActiveRecord
     public function rules() {
         return [
             [['next_mission_id', 'item_id', 'description'], 'default', 'value' => null],
-            [['hp_loss'], 'default', 'value' => 0],
+            [['gained_xp'], 'default', 'value' => 0],
+            [['hp_loss_dice'], 'default', 'value' => '0'],
             [['action_id', 'status', 'name'], 'required'],
-            [['action_id', 'next_mission_id', 'item_id', 'status', 'gained_gp', 'gained_xp', 'hp_loss'], 'integer'],
+            [['action_id', 'next_mission_id', 'item_id', 'status', 'gained_gp', 'gained_xp'], 'integer'],
             [['description'], 'string'],
             [['name'], 'string', 'max' => 64],
+            [['hp_loss_dice'], 'string', 'max' => 8],
             [['action_id'], 'exist', 'skipOnError' => true, 'targetClass' => Action::class, 'targetAttribute' => ['action_id' => 'id']],
             [['next_mission_id'], 'exist', 'skipOnError' => true, 'targetClass' => Mission::class, 'targetAttribute' => ['next_mission_id' => 'id']],
             [['item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['item_id' => 'id']],
@@ -65,7 +66,7 @@ class Outcome extends \yii\db\ActiveRecord
             'description' => 'Short description',
             'gained_gp' => 'Gained Gold Pieces (GP) when succeeded',
             'gained_xp' => 'Gained Experience Points (XP) when succeeded',
-            'hp_loss' => 'Lost HP when failed',
+            'hp_loss_dice' => 'Dice to throw to determine the HP loss when failed',
         ];
     }
 
@@ -104,5 +105,4 @@ class Outcome extends \yii\db\ActiveRecord
     public function getNextMission() {
         return $this->hasOne(Mission::class, ['id' => 'next_mission_id']);
     }
-
 }

@@ -8,8 +8,6 @@ use common\components\ManageAccessRights;
 use common\components\QuestComponent;
 use common\models\Quest;
 use common\models\QuestPlayer;
-use common\models\Reply;
-use common\models\QuestProgress;
 use frontend\components\QuestOnboarding;
 use Yii;
 use yii\web\Controller;
@@ -37,7 +35,7 @@ class GameController extends Controller
                             [
                                 'actions' => [
                                     'view',
-                                    'ajax-actions', 'ajax-dialog', 'ajax-mission', 'ajax-next-dialog', 'ajax-quit',
+                                    'ajax-actions', 'ajax-dialog', 'ajax-evaluate', 'ajax-mission', 'ajax-quit',
                                 ],
                                 'allow' => ManageAccessRights::isRouteAllowed($this),
                                 'roles' => ['@'],
@@ -57,10 +55,10 @@ class GameController extends Controller
      * @return string Rendered view page
      * @throws NotFoundHttpException if quest not found
      */
-    public function actionView($id) {
+    public function actionView(int $id) {
         $this->layout = 'game';
 
-        $quest = $this->findQuest($id);
+        $quest = $this->findModel('Quest', ['id' => $id]);
         $nbPlayers = QuestPlayer::find()
                 ->where(['quest_id' => $quest->id])
                 ->andWhere(['<>', 'status', AppStatus::LEFT->value])
@@ -72,7 +70,7 @@ class GameController extends Controller
         ]);
     }
 
-    public function actionAjaxQuit() {
+    public function actionAjaxQuit(string $reason): array {
         // Configure response format
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -91,7 +89,6 @@ class GameController extends Controller
             return ['success' => false, 'message' => 'Quest not found'];
         }
 
-        $reason = Yii::$app->request->post('reason');
         // Process player offboarding
         $withdraw = QuestOnboarding::withdrawPlayerFromQuest($player, $quest, $reason);
         if ($withdraw['error']) {
@@ -103,7 +100,7 @@ class GameController extends Controller
         return ['success' => true, 'message' => "Player {$player->name} successfully withdrown from quest {$quest->name}"];
     }
 
-    public function actionAjaxMission() {
+    public function actionAjaxMission(int $questProgressId) {
         // Configure JSON response format
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -112,13 +109,7 @@ class GameController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
         }
 
-        $questId = Yii::$app->request->get('questId');
-        if (!$questId) {
-            return ['error' => true, 'msg' => 'Missing Quest ID'];
-        }
-
-        $quest = $this->findQuest($questId);
-        $questProgress = $quest->currentQuestProgress;
+        $questProgress = $this->findModel('QuestProgress', ['id' => $questProgressId]);
 
         if ($questProgress) {
             $render = $this->renderPartial('ajax/mission', ['questProgress' => $questProgress]);
@@ -128,7 +119,7 @@ class GameController extends Controller
         return ['error' => true, 'msg' => 'Error encountered'];
     }
 
-    public function actionAjaxActions() {
+    public function actionAjaxActions(int $questProgressId, int $playerId): array {
         // Configure JSON response format
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -137,12 +128,7 @@ class GameController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
         }
 
-        if (!($questId = Yii::$app->request->get('questId'))) {
-            return ['error' => true, 'msg' => 'Missing Quest ID'];
-        }
-        $quest = $this->findQuest($questId);
-        $questProgress = $quest->currentQuestProgress;
-        $playerId = Yii::$app->session->get('playerId');
+        $questProgress = $this->findModel('QuestProgress', ['id' => $questProgressId]);
 
         if ($questProgress->current_player_id !== $playerId) {
             return ['error' => true, 'msg' => 'Not your turn'];
@@ -159,7 +145,7 @@ class GameController extends Controller
         return ['error' => true, 'msg' => 'Error encountered'];
     }
 
-    public function actionAjaxDialog() {
+    public function actionAjaxDialog(int $replyId, int $playerId, int $storyId): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -169,62 +155,41 @@ class GameController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
         }
 
-        $request = Yii::$app->request;
-
-        $reply = $this->findModel('Reply', ['id' => $request->get('replyId')]);
-        $questProgress = $this->findModel('QuestProgress', ['id' => $request->get('questProgressId')]);
+        $reply = $this->findModel('Reply', ['id' => $replyId]);
         $dialog = $reply->nextDialog;
 
-        $player = $questProgress->currentPlayer;
-        //$previsouContent = "<span class=\"text-warning\">{$player->name}</span> &mdash; " . nl2br($reply->text);
+        $player = $this->findModel('Player', ['id' => $playerId]);
 
         $content = $this->renderPartial('ajax/dialog', [
-            'storyId' => $request->get('storyId'),
+            'storyId' => $storyId,
             'playerName' => $player->name,
             'reply' => $reply,
             'dialog' => $dialog,
         ]);
 
         //return ['error' => false, 'msg' => '', 'previousContent' => $previsouContent, 'nextContent' => $content];
-        return ['error' => false, 'msg' => '', 'content' => $content];
+        return ['error' => false, 'msg' => '', 'content' => $content, 'text' => $dialog->text];
     }
 
-    public function actionAjaxNextDialog() {
+    public function actionAjaxEvaluate(): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         // Check if the request is a POST request and if it is an AJAX request
-        if (!$this->request->isGet || !$this->request->isAjax) {
+        if (!$this->request->isPost || !$this->request->isAjax) {
             // If not, return an error response
-            return ['error' => true, 'msg' => 'Not an Ajax GET request'];
+            return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
-        $nextDialogId = Yii::$app->request->get('nextDialogId', 1);
+        $request = Yii::$app->request;
+        $actionId = $request->post('actionId', 1);
+        $action = $this->findModel('Action', ['id' => $actionId]);
 
-        $dialog = \common\models\Dialog::findOne(['id' => $nextDialogId]);
-
-        $content = $this->renderPartial('ajax/dialog', [
-            'dialog' => $dialog,
-        ]);
-
-        return ['error' => false, 'msg' => '', 'content' => $content];
-    }
-
-    /**
-     * Utility method to find Quest model
-     *
-     * Central method for quest lookup to maintain consistency
-     * and proper error handling.
-     *
-     * @param int $id Quest ID to find
-     * @return Quest Found quest model
-     * @throws NotFoundHttpException if quest not found
-     */
-    protected function findQuest($id) {
-        if (($model = Quest::findOne(['id' => $id])) !== null) {
-            return $model;
+        if ($action->is_free) {
+            return ['error' => false, 'msg' => 'Free action', 'next' => ''];
         }
-        throw new NotFoundHttpException('The quest you are looking for does not exist.');
+
+        return ['error' => false, 'msg' => 'Something else', 'next' => ''];
     }
 
     /**
@@ -243,6 +208,6 @@ class GameController extends Controller
             return $model;
         }
 
-        throw new NotFoundHttpException('The requested {$modelName} does not exist.');
+        throw new NotFoundHttpException("The requested {$modelName} does not exist.");
     }
 }

@@ -28,6 +28,7 @@ $actionList = ($currentQuestProgress->current_player_id === $player->id) ?
     <span id="hiddenQuestProgressId"><?= $currentQuestProgress->id ?></span>
     <span id="hiddenQuestMissionId"><?= $currentQuestProgress->mission_id ?></span>
     <span id="hiddenCurrentPlayerId"><?= $currentQuestProgress->current_player_id ?></span>
+    <span id="hiddenPlayerId"><?= $player->id ?></span>
 </div>
 
 <main class="row" style="height: calc(100dvh - 120px);">

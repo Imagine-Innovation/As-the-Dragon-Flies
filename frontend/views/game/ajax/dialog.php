@@ -16,12 +16,12 @@ $npc = $dialog->npc;
         <img class="float-md-end mb-3 ms-md-4" src="img/story/<?= $storyId ?>/<?= $npc->image ?>" alt="<?= $npc->name ?>" style="max-width: 50%;">
     <?php endif; ?>
 
-    <p class="text-decoration"><span class="text-warning"><?= Html::encode($playerName) ?></span> &mdash; <?= Html::encode($reply->text) ?></p>
-    <p class="text-decoration"><span class="text-warning"><?= Html::encode($npc->name) ?></span> &mdash; <?= Html::encode($dialog->text) ?></p>
+    <p class="text-decoration"><span class="text-warning"><?= Html::encode($playerName) ?></span> &mdash; <?= nl2br(Html::encode($reply->text)) ?></p>
+    <p class="text-decoration"><span class="text-warning"><?= Html::encode($npc->name) ?></span> &mdash; <?= nl2br(Html::encode($dialog->text)) ?></p>
     <?php if ($dialog->replies): ?>
         <ul>
             <?php foreach ($dialog->replies as $reply): ?>
-                <li><a href="" onclick="vtt.reply(<?= $reply->id ?>); return false;"><?= Html::encode($reply->text) ?></a></li>
+                <li><a href="#" onclick="vtt.reply(<?= $reply->id ?>); return false;"><?= nl2br(Html::encode($reply->text)) ?></a></li>
             <?php endforeach; ?>
         </ul>
     <?php else: ?>
