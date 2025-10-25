@@ -1,5 +1,3 @@
-import OpenAI from 'openai';
-import { playAudio } from 'openai/helpers/audio';
 class VirtualTableTop {
     constructor(options = {}) {
         this.context = {};
@@ -137,61 +135,38 @@ class VirtualTableTop {
                 if (!response.error) {
                     $(target).html(response.content);
                     if (response.text) {
-                        //this.__speakText(response.text);
-                        this.__TTS(response.text);
+                        this.__speakText(response.text);
                     }
                 }
             }
         });
     }
 
-    __TTS(input) {
-        const openai = new OpenAI();
-        const instructions = "Voice Affect: Calm, composed, and reassuring. Competent and in control, instilling trust.\n\nTone: Sincere, empathetic, with genuine concern for the customer and understanding of the situation.\n\nPacing: Slower during the apology to allow for clarity and processing. Faster when offering solutions to signal action and resolution.\n\nEmotions: Calm reassurance, empathy, and gratitude.\n\nPronunciation: Clear, precise: Ensures clarity, especially with key details. Focus on key words like \"refund\" and \"patience.\" \n\nPauses: Before and after the apology to give space for processing the apology.";
-        const response = await openai.audio.speech.create({
-            model: 'gpt-4o-mini-tts',
-            voice: 'verse',
-            input,
-            instructions
-        });
-        await playAudio(response);
-    }
-
-// Fonction principale pour déclencher la synthèse vocale
     __speakText(textToRead) {
         Logger.log(3, '__speakText', `textToRead=${textToRead}`);
-        // 1. Vérifier la compatibilité du navigateur
+        // 1. Check browser compatibility
         if ('speechSynthesis' in window) {
-// 2. Créer une nouvelle instance de SpeechSynthesisUtterance
+            // 2. Create a new instance of SpeechSynthesisUtterance
             const utterance = new SpeechSynthesisUtterance(textToRead);
-            // --- Paramètres optionnels (personnalisation de la voix) ---
-
-            // Langue (par exemple, 'fr-FR' pour le français)
-            // Les voix disponibles dépendent du système d'exploitation et du navigateur de l'utilisateur.
             utterance.lang = 'fr-FR';
-            // Vitesse de lecture (1 est la vitesse normale)
-            // utterance.rate = 1.0;
+            utterance.rate = 1.1;   // Playback speed (1 is normal speed)
+            utterance.pitch = 0.8;  // Pitch/tone (1 is normal pitch)
 
-            // Tonalité/hauteur (1 est la hauteur normale)
-            // utterance.pitch = 1.0;
 
-            // Sélectionner une voix spécifique (optionnel et plus complexe)
-            /*
-             const voices = speechSynthesis.getVoices();
-             // Exemple : sélectionner la première voix française trouvée
-             const frenchVoice = voices.find(voice => voice.lang === 'fr-FR');
-             if (frenchVoice) {
-             utterance.voice = frenchVoice;
-             }
-             */
 
-            // 3. Lire le texte
-            window.speechSynthesis.speak(utterance);
+            speechSynthesis.addEventListener("voiceschanged", () => {
+                const voices = speechSynthesis.getVoices();
+                for (const voice of voices) {
+                    if (voice.lang === 'fr-FR')
+                        console.log(`Voice=${voice.name}`);
+                    if (voice.name === 'Microsoft Paul - French (France)')
+                        utterance.voice = voice;
+                }
+                // 3. Read the text
+                window.speechSynthesis.speak(utterance);
+            });
         } else {
-// Afficher un message si l'API n'est pas supportée
-            document.getElementById('support-message').textContent =
-                    "Désolé, votre navigateur ne supporte pas l'API Web Speech Synthèse Vocale.";
-            console.error("API Web Speech non supportée.");
+            console.error("API Web Speech not supported!");
         }
     }
 
@@ -208,6 +183,7 @@ class VirtualTableTop {
             method: 'POST',
             data: this.context,
             successCallback: (response) => {
+                console.log(`evaluateAction callback=${JSON.stringify(response)}`);
                 if (!response.error) {
                     this._hideModal();
                 }

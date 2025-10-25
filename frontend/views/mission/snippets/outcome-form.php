@@ -29,7 +29,7 @@ use yii\widgets\ActiveForm;
 ?>
 <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
-<?= $form->field($model, 'hp_loss-dice')->textInput(['maxlength' => true]) ?>
+<?= $form->field($model, 'hp_loss_dice')->textInput(['maxlength' => true]) ?>
 <?= $form->field($model, 'gained_gp') ?>
 <?= $form->field($model, 'gained_xp') ?>
 
