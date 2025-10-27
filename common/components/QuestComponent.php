@@ -19,12 +19,16 @@ use Yii\helpers\ArrayHelper;
 class QuestComponent extends Component
 {
 
-    public Quest $quest;
-    public QuestProgress $questProgress;
+    public ?Quest $quest = null;
+    public ?QuestProgress $questProgress = null;
 
     public function __construct($config = []) {
         // Call the parent's constructor
         parent::__construct($config);
+
+        if ($this->questProgress) {
+            $this->quest = $this->questProgress->quest;
+        }
     }
 
     public function initQuestProgress(): bool {
@@ -105,14 +109,22 @@ class QuestComponent extends Component
         );
     }
 
-    public function addQuestProgress(int $missionId): QuestProgress {
+    public function gameOver(int $status) {
+
+    }
+
+    public function addQuestProgress(int $missionId): ?QuestProgress {
         $mission = Mission::findOne($missionId);
-        $firstPlayerId = $this->getNextPlayerId();
+        $nextPlayerId = $this->getNextPlayerId();
+        if (!$nextPlayerId) {
+            $this->gameOver(AppStatus::FAILURE->value);
+            return null;
+        }
         $narrative = new NarrativeComponent(['mission' => $mission]);
         $questProgress = new QuestProgress([
             'quest_id' => $this->quest->id,
             'mission_id' => $missionId,
-            'current_player_id' => $firstPlayerId,
+            'current_player_id' => $nextPlayerId,
             'description' => $narrative->renderDescription(),
             'status' => AppStatus::IN_PROGRESS->value,
             'started_at' => time(),
@@ -124,52 +136,13 @@ class QuestComponent extends Component
         return $questProgress;
     }
 
-    private function isActionPrequisiteFulfilled(ActionFlow &$prerequisite, int $questProgressId): bool {
-        $questAction = QuestAction::findOne([
-            'quest_progress_id' => $questProgressId,
-            'action_id' => $prerequisite->previous_action_id
-        ]);
-
-        if ($questAction) {
-            $outcome = $questAction->status;
-            $criterionMask = $prerequisite->status;
-
-            // Bitwise comparison
-            return ($outcome & $criterionMask) === $outcome;
-        }
-        // No prerequisite action found, prerequisite not met
-        return false;
-    }
-
-    private function isActionEligible(Action &$action, int $questProgressId): bool {
-        foreach ($action->prerequisites as $prerequisite) {
-            $eligible = $this->isActionPrequisiteFulfilled($prerequisite, $action->id, $questProgressId);
-
-            if (!$eligible) {
-                // If at least one prerequisite is not met, do not continue.
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private function addQuestAction(int $actionId, int $questProgressId) {
-        $questAction = new QuestAction([
-            'quest_progress_id' => $questProgressId,
-            'action_id' => $actionId
-        ]);
-
-        if (!$questAction->save()) {
-            throw new \Exception(implode("<br />", ArrayHelper::getColumn($questAction->errors, 0, false)));
-        }
-    }
-
     public function addQuestActions(int $questProgressId, int $missionId) {
         $actions = Action::findAll(['mission_id' => $missionId]);
 
+        $actionComponent = new ActionComponent();
         foreach ($actions as $action) {
-            if ($this->isActionEligible($action, $questProgressId)) {
-                $this->addQuestAction($action->id, $questProgressId);
+            if ($actionComponent->isActionEligible($action, $questProgressId)) {
+                $actionComponent->addQuestAction($action->id, $questProgressId);
             }
         }
     }
@@ -178,7 +151,13 @@ class QuestComponent extends Component
         if (!$this->questProgress) {
             return null;
         }
+        $eligibleQuestActions = [];
+        foreach ($this->questProgress->questActions as $questAction) {
+            if ($questAction->eligible) {
+                $eligibleQuestActions[] = $questAction;
+            }
+        }
 
-        return $this->questProgress->questActions;
+        return $eligibleQuestActions;
     }
 }

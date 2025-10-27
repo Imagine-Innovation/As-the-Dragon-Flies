@@ -105,6 +105,18 @@ enum AppStatus: int
         };
     }
 
+    public function getActionStatusFilter(): array {
+        return match ($this) {
+            self::SUCCESS => [self::SUCCESS->value],
+            self::PARTIAL => [self::PARTIAL->value],
+            self::FAILURE => [self::FAILURE->value],
+            self::NOT_FAILED => [self::SUCCESS->value, self::PARTIAL->value],
+            self::NOT_SUCCEEDED => [self::PARTIAL->value, self::FAILURE->value],
+            self::ANY => [self::SUCCESS->value, self::PARTIAL->value, self::FAILURE->value],
+            default => [self::SUCCESS->value, self::PARTIAL->value, self::FAILURE->value, null],
+        };
+    }
+
     // Helper to get an array of values for a specific entity type for validation rules
     public static function getValuesForUser(): array {
         return [self::ACTIVE->value, self::INACTIVE->value, self::DELETED->value];
@@ -121,6 +133,8 @@ enum AppStatus: int
             self::PAUSED->value,
             self::COMPLETED->value,
             self::ABORTED->value,
+            self::SUCCESS->value,
+            self::FAILURE->value,
         ];
     }
 
