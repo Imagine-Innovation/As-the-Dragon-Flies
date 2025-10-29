@@ -18,10 +18,14 @@ use common\models\Race;
 use common\models\RaceGroupLanguage;
 use common\models\Skill;
 use common\models\Wizard;
+use common\helpers\DiceRoller;
+;
+
 use Yii;
 use yii\helpers\ArrayHelper;
 
-class BuilderComponent {
+class BuilderComponent
+{
 
     const RETRY = 5;
     const CREATE_TABS = [

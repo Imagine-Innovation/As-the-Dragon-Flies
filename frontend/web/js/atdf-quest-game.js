@@ -176,8 +176,13 @@ class VirtualTableTop {
         $(target).html(`Action: actionId=${actionId}`);
     }
 
-    evaluateAction() {
-        Logger.log(1, 'evaluateAction', ``);
+    evaluateAction(actionId) {
+        Logger.log(1, 'evaluateAction', `actionId=${actionId ?? 'null'}`);
+
+        // Store the current action in the context
+        if (actionId)
+            this.context.actionId = actionId;
+
         AjaxUtils.request({
             url: 'game/ajax-evaluate',
             method: 'POST',

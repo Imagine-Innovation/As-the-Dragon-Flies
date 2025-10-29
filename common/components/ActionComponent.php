@@ -11,6 +11,7 @@ use common\models\PlayerSkill;
 use common\models\QuestAction;
 use common\models\QuestProgress;
 use common\models\Outcome;
+use common\helpers\DiceRoller;
 use Yii;
 use yii\base\Component;
 use Yii\helpers\ArrayHelper;
@@ -28,13 +29,14 @@ class ActionComponent extends Component
         // Call the parent's constructor
         parent::__construct($config);
 
+        Yii::debug("*** debug *** ActionComponent.__construct ");
         // Align the context data from QuestAction
         if ($this->questAction) {
             $this->questProgress = $this->questAction->questProgress;
         }
 
-        if (!$this->questAction || !$this->questProgress) {
-            //throw new \Exception("Missing QuestAction ot QuestProgress!!!");
+        if (!$this->questProgress) {
+            throw new \Exception("Missing QuestProgress!!!");
         }
 
         $this->action ??= $this->questAction?->action;
@@ -76,9 +78,12 @@ class ActionComponent extends Component
         return !$bonuses ? max($bonuses) : 0;
     }
 
-    protected function determineStatus(int $dc, ?int $partialDc): AppStatus {
-        $d20 = random_int(1, 20);
-        $diceRoll = $d20 + $this->getModifier();
+    protected function determineActionStatus(): AppStatus {
+        $dc = $this->action->dc;
+        $partialDc = $this->action->partial_dc;
+
+        $diceToRoll = "1d20+{$this->getModifier()}";
+        $diceRoll = DiceRoller::roll($diceToRoll);
 
         if ($diceRoll >= $dc) {
             return AppStatus::SUCCESS;
@@ -97,43 +102,79 @@ class ActionComponent extends Component
             $this->questAction->eligible = false;
         }
 
-        if (!$this->questAction->save()) {
-            throw new \Exception(implode("<br />", ArrayHelper::getColumn($this->questAction->errors, 0, false)));
-        }
+        $this->save($this->questAction);
     }
 
     protected function unlockNextActions(AppStatus $status): array {
         $triggeredActions = $this->action->triggers;
 
         $unlockedQuestActions = [];
+        $questProgressId = $this->questProgress->id;
         foreach ($triggeredActions as $actionFlow) {
-            if (($actionFlow->status & $status->value) && $this->isActionEligible($actionFlow->nextAction, $$this->questProgress->id)) {
-                $unlockedQuestActions[] = $this->addQuestAction($actionFlow->next_action_id, $this->questProgress->id);
+            // Bitwise comparison between actual status and expected status to unlock next action
+            if (
+                    ($actionFlow->status & $status->value) &&
+                    $this->isActionEligible($actionFlow->nextAction, $questProgressId)
+            ) {
+                $actionId = $actionFlow->next_action_id;
+                $unlockedQuestActions[] = $this->addQuestAction($actionId, $questProgressId);
             }
         }
         return $unlockedQuestActions;
     }
 
-    public function evaluateAction(): array {
+    protected function updatePlayerStats(?int $gainedXp, ?string $hpLossDice) {
+        If (!$this->player) {
+            return;
+        }
+
+        $this->player->experience_points += $gainedXp ?? 0;
+
+        $hpLoss = DiceRoller::roll($hpLossDice);
+        if ($this->player->hit_points >= ($hpLoss ?? 0)) {
+            $this->player->hit_points -= $gainedXp ?? 0;
+        } else {
+            $this->player->hit_points = 0;
+        }
+        $this->save($this->player);
+    }
+
+    protected function registerGainsAndLosses(AppStatus $status): ?int {
+        $outcomes = Outcome::findAll(['action_id' => $this->action->id]);
+
+        if (!$outcomes) {
+            // nothing to register
+            return null;
+        }
+
+        $nextMissionId = null;
+        foreach ($outcomes as $outcome) {
+            if ($outcome->status & $status->value) {
+                $nextMissionId = $outcome->next_mission_id;
+                $this->updatePlayerStats($outcome->gained_xp, $outcome->hp_loss_dice);
+
+                $this->player->addCoins($outcome->gained_gp, 'gp');
+                $this->player->addItems($outcome->item_id);
+            }
+        }
+        return $nextMissionId;
+    }
+
+    public function evaluateActionOutcome(): array {
         if (!$this->action) {
             throw new \Exception("Action not found.");
         }
 
-        // Determine outcome status
-        $status = $this->determineStatus($this->action->dc, $this->action->partial_dc);
-
+        $status = $this->determineActionStatus();
         $this->endCurrentAction($status);
-
-        // Get follow-up actions
         $nextActions = $this->unlockNextActions($status);
 
         // Get outcome details
-        $outcome = $this->getOutcome($status);
+        $nextMissionId = $this->registerGainsAndLosses($status);
 
         return [
             'status' => $status,
-            'nextActions' => $nextActions,
-            'outcome' => $outcome,
+            'nextMissionId' => $nextMissionId,
         ];
     }
 
@@ -182,9 +223,14 @@ class ActionComponent extends Component
             ]);
         }
 
-        if (!$questAction->save()) {
-            throw new \Exception(implode("<br />", ArrayHelper::getColumn($questAction->errors, 0, false)));
-        }
+        $this->save($questAction);
         return $questAction;
+    }
+
+    protected function save(\yii\db\ActiveRecord $model) {
+
+        if (!$model->save()) {
+            throw new \Exception(implode("<br />", ArrayHelper::getColumn($model->errors, 0, false)));
+        }
     }
 }

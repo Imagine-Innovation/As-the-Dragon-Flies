@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\components\ActionComponent;
 use common\components\AppStatus;
 use common\components\ContextManager;
 use common\components\ManageAccessRights;
@@ -182,14 +183,25 @@ class GameController extends Controller
         }
 
         $request = Yii::$app->request;
-        $actionId = $request->post('actionId', 1);
-        $action = $this->findModel('Action', ['id' => $actionId]);
+        Yii::debug("*** debug *** actionAjaxEvaluate post=" . print_r($request->post(), true));
+        $questProgressId = $request->post('questProgressId');
+        $actionId = $request->post('actionId');
 
+        $questAction = $this->findModel('QuestAction', ['quest_progress_id' => $questProgressId, 'action_id' => $actionId]);
+        $actionComponent = new ActionComponent(['questAction' => $questAction]);
+        $outcome = $actionComponent->evaluateActionOutcome();
+
+        if ($outcome['nextMissionId']) {
+            return ['error' => false, 'msg' => 'Move to next mission', 'next' => ''];
+        }
+
+        $action = $this->findModel('Action', ['id' => $actionId]);
         if ($action->is_free) {
             return ['error' => false, 'msg' => 'Free action', 'next' => ''];
         }
 
-        return ['error' => false, 'msg' => 'Something else', 'next' => ''];
+        $status = $outcome['status'];
+        return ['error' => false, 'msg' => "Action {$status->value}", 'next' => ''];
     }
 
     /**
@@ -201,6 +213,7 @@ class GameController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel(string $modelName, array $param) {
+        Yii::debug("*** debug *** findModel modelName={$modelName}, param=" . print_r($param, true));
         $activeRecord = "\\common\\models\\{$modelName}";
         $pk = $param['id'] ?? null;
         $model = $activeRecord::findOne($pk ? ['id' => $pk] : $param);

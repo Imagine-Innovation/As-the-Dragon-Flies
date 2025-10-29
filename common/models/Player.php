@@ -597,4 +597,37 @@ class Player extends \yii\db\ActiveRecord
                             $query->andWhere(['is_read' => 0]);
                         });
     }
+
+    public function addCoins(int $quantity = 1, string $coin = 'gp') {
+
+        $playerCoinGp = PlayerCoin::findOne(['player_id' => $this->id, 'coin' => $coin]);
+
+        if ($playerCoinGp) {
+            $playerCoinGp->quantity += $quantity;
+        } else {
+            $playerCoinGp = new PlayerCoin([
+                'player_id' => $this->id,
+                'coin' => $coin,
+                'quantity' => $quantity
+            ]);
+        }
+
+        $playerCoinGp->save();
+    }
+
+    protected function addItems(int $itemId, int $quantity = 1) {
+        $playerItem = PlayerItem::findOne(['player_id' => $this->id, 'item_id' => $itemId]);
+
+        if ($playerItem) {
+            $playerItem->quantity += 1;
+        } else {
+            $playerItem = new PlayerItem([
+                'player_id' => $this->id,
+                'item_id' => $itemId,
+                'quantity' => $quantity
+            ]);
+        }
+
+        $playerItem->save();
+    }
 }
