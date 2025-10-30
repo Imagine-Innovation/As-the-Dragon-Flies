@@ -21,7 +21,6 @@ use Yii;
  * @property string|null $description Short description
  * @property int $dc Difficulty Class (DC)
  * @property int|null $partial_dc Optional Difficulty Class (DC) for partial success
- * @property int $is_single_action The action should not be played again
  * @property int $is_free Is a free action
  *
  * @property ActionFlow[] $triggers
@@ -58,10 +57,9 @@ class Action extends \yii\db\ActiveRecord
         return [
             [['action_type_id', 'passage_id', 'decor_id', 'decor_item_id', 'npc_id', 'reply_id', 'trap_id', 'required_item_id', 'description', 'partial_dc'], 'default', 'value' => null],
             [['dc'], 'default', 'value' => 10],
-            [['is_single_action'], 'default', 'value' => 1],
             [['is_free'], 'default', 'value' => 0],
             [['mission_id', 'name'], 'required'],
-            [['mission_id', 'action_type_id', 'passage_id', 'decor_id', 'decor_item_id', 'npc_id', 'reply_id', 'trap_id', 'required_item_id', 'dc', 'partial_dc', 'is_single_action', 'is_free'], 'integer'],
+            [['mission_id', 'action_type_id', 'passage_id', 'decor_id', 'decor_item_id', 'npc_id', 'reply_id', 'trap_id', 'required_item_id', 'dc', 'partial_dc', 'is_free'], 'integer'],
             [['description'], 'string'],
             [['name'], 'string', 'max' => 64],
             [['mission_id'], 'exist', 'skipOnError' => true, 'targetClass' => Mission::class, 'targetAttribute' => ['mission_id' => 'id']],
@@ -95,7 +93,6 @@ class Action extends \yii\db\ActiveRecord
             'description' => 'Short description',
             'dc' => 'Difficulty Class (DC)',
             'partial_dc' => 'Optional Difficulty Class (DC) for partial success',
-            'is_single_action' => 'The action should not be played again',
             'is_free' => 'Is a free action',
         ];
     }

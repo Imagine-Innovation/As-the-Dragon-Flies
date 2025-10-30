@@ -17,6 +17,7 @@ use Yii;
  * @property int $gained_gp Gained Gold Pieces (GP) when succeeded
  * @property int $gained_xp Gained Experience Points (XP) when succeeded
  * @property string $hp_loss_dice Dice to throw to determine the HP loss when failed
+ * @property int $can_replay Can be played again
  *
  * @property Action $action
  * @property Dialog[] $dialogs
@@ -25,6 +26,7 @@ use Yii;
  */
 class Outcome extends \yii\db\ActiveRecord
 {
+
 
     /**
      * {@inheritdoc}
@@ -39,10 +41,9 @@ class Outcome extends \yii\db\ActiveRecord
     public function rules() {
         return [
             [['next_mission_id', 'item_id', 'description'], 'default', 'value' => null],
-            [['gained_xp'], 'default', 'value' => 0],
-            [['hp_loss_dice'], 'default', 'value' => '0'],
+            [['can_replay'], 'default', 'value' => 0],
             [['action_id', 'status', 'name'], 'required'],
-            [['action_id', 'next_mission_id', 'item_id', 'status', 'gained_gp', 'gained_xp'], 'integer'],
+            [['action_id', 'next_mission_id', 'item_id', 'status', 'gained_gp', 'gained_xp', 'can_replay'], 'integer'],
             [['description'], 'string'],
             [['name'], 'string', 'max' => 64],
             [['hp_loss_dice'], 'string', 'max' => 8],
@@ -67,6 +68,7 @@ class Outcome extends \yii\db\ActiveRecord
             'gained_gp' => 'Gained Gold Pieces (GP) when succeeded',
             'gained_xp' => 'Gained Experience Points (XP) when succeeded',
             'hp_loss_dice' => 'Dice to throw to determine the HP loss when failed',
+            'can_replay' => 'Can be played again',
         ];
     }
 
@@ -105,4 +107,5 @@ class Outcome extends \yii\db\ActiveRecord
     public function getNextMission() {
         return $this->hasOne(Mission::class, ['id' => 'next_mission_id']);
     }
+
 }

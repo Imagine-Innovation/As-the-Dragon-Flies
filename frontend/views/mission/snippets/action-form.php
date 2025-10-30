@@ -85,13 +85,6 @@ $difficultyClass = [
 <div class="row">
     <div class="col-12 col-sm-6">
         <?=
-                $form->field($model, 'is_single_action')
-                ->radioList([1 => 'Single action', 0 => 'Multiple time'])
-                ->label('How many time this action can be triggered')
-        ?>
-    </div>
-    <div class="col-12 col-sm-6">
-        <?=
                 $form->field($model, 'is_free')
                 ->radioList([0 => 'Consume an action', 1 => 'Free action'])
                 ->label('Turn economy')

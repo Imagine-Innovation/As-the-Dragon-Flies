@@ -7,6 +7,7 @@ use common\components\AppStatus;
 use common\components\ContextManager;
 use common\components\ManageAccessRights;
 use common\components\QuestComponent;
+use common\models\events\EventFactory;
 use common\models\Quest;
 use common\models\QuestPlayer;
 use frontend\components\QuestOnboarding;
@@ -183,25 +184,24 @@ class GameController extends Controller
         }
 
         $request = Yii::$app->request;
-        Yii::debug("*** debug *** actionAjaxEvaluate post=" . print_r($request->post(), true));
-        $questProgressId = $request->post('questProgressId');
-        $actionId = $request->post('actionId');
-
-        $questAction = $this->findModel('QuestAction', ['quest_progress_id' => $questProgressId, 'action_id' => $actionId]);
+        $questAction = $this->findModel('QuestAction', ['quest_progress_id' => $request->post('questProgressId'), 'action_id' => $request->post('actionId')]);
         $actionComponent = new ActionComponent(['questAction' => $questAction]);
-        $outcome = $actionComponent->evaluateActionOutcome();
+        $outcomes = $actionComponent->evaluateActionOutcome();
 
-        if ($outcome['nextMissionId']) {
-            return ['error' => false, 'msg' => 'Move to next mission', 'next' => ''];
+        $success = $this->createEvent('game-action', $request, $questAction->action->name, $outcomes);
+        if (!$success) {
+            return UserErrorMessage::throw($this, 'error', "Could not trigger event", self::DEFAULT_REDIRECT);
         }
 
-        $action = $this->findModel('Action', ['id' => $actionId]);
-        if ($action->is_free) {
-            return ['error' => false, 'msg' => 'Free action', 'next' => ''];
-        }
+        $content = $this->renderPartial('ajax/outcomes', [
+            'diceRoll' => $outcomes['diceRoll'],
+            'status' => $outcomes['status'],
+            'outcomes' => $outcomes['outcomes'],
+            'hpLoss' => $outcomes['hpLoss'],
+        ]);
 
-        $status = $outcome['status'];
-        return ['error' => false, 'msg' => "Action {$status->value}", 'next' => ''];
+        $status = $outcomes['status'];
+        return ['error' => false, 'msg' => "{$outcomes['diceRoll']}, action status={$status->getLabel()}", 'next' => "Move to next mission #{$outcomes['nextMissionId']}", 'content' => $content];
     }
 
     /**
@@ -222,5 +222,21 @@ class GameController extends Controller
         }
 
         throw new NotFoundHttpException("The requested {$modelName} does not exist.");
+    }
+
+    protected function createEvent(string $eventType, yii\web\Request $request, string $actionName, array $outcomes = []): bool {
+        $sessionId = Yii::$app->session->get('sessionId');
+        try {
+            $player = $this->findModel('Player', ['id' => $request->post('playerId')]);
+            $quest = $this->findModel('Quest', ['id' => $request->post('questId')]);
+            $data['action'] = $actionName;
+            $data['outcomes'] = $outcomes;
+            $event = EventFactory::createEvent($eventType, $sessionId, $player, $quest, $data);
+            $event->process();
+            return true;
+        } catch (\Exception $e) {
+            Yii::error("Failed to broadcast '{$eventType}' event: " . $e->getMessage());
+            return false;
+        }
     }
 }

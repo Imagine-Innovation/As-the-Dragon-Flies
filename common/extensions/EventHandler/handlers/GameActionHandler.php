@@ -8,7 +8,8 @@ use common\extensions\EventHandler\factories\BroadcastMessageFactory;
 use common\extensions\EventHandler\LoggerService;
 use Ratchet\ConnectionInterface;
 
-class GameActionHandler implements SpecificMessageHandlerInterface {
+class GameActionHandler implements SpecificMessageHandlerInterface
+{
 
     private LoggerService $logger;
     private BroadcastServiceInterface $broadcastService;
@@ -30,29 +31,26 @@ class GameActionHandler implements SpecificMessageHandlerInterface {
     public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
         $this->logger->logStart("GameActionHandler: handle from clientId={$clientId}, sessionId={$sessionId}", $data);
 
-        if (!isset($data['action_type'], $data['details'], $data['quest_id'])) {
-            $this->logger->log("GameActionHandler: Missing required data (action_type, details, quest_id).", $data, 'warning');
+        $payload = $data['payload'];
+        $questId = array_key_exists('questId', $payload) ? (int) $payload['questId'] : ($data['quest_id'] ? (int) $data['quest_id'] : null);
+        $playerName = array_key_exists('playerName', $payload) ? $payload['playerName'] : 'Unknown';
+        $action = array_key_exists('action', $payload) ? $payload['questName'] : 'Unknown';
+        $outcomes = array_key_exists('outcomes', $payload) ? $payload['outcomes'] : [];
+
+        if ($questId === null || $playerName === 'Unknown' || $action === 'Unknown') {
+            $this->logger->log("GameActionHandler: Missing required data (questId, playerName, action).", $data, 'warning');
             $errorDto = $this->messageFactory->createErrorMessage("Invalid game action data provided.");
             $this->broadcastService->sendToClient($clientId, $errorDto, false, $sessionId);
             $this->logger->logEnd("GameActionHandler: handle");
             return;
         }
 
-        $gameActionDto = $this->messageFactory->createGameActionMessage(
-                (string) $data['action_type'],
-                (array) $data['details']
-        );
+        $gameActionDto = $this->messageFactory->createGameActionMessage($playerName, $action, $outcomes);
 
-        $this->broadcastService->broadcastToQuest(
-                (int) $data['quest_id'],
-                $gameActionDto,
-                $sessionId // Exclude the sender from this broadcast
-        );
+        $this->broadcastService->broadcastToQuest($questId, $gameActionDto, $sessionId);
 
-        $this->logger->log("GameActionHandler: GameActionDto broadcasted", ['quest_id' => $data['quest_id'], 'action_type' => $data['action_type']]);
-
-        // Send an acknowledgement back to the sender client
-        $this->broadcastService->sendBack($from, 'action_ack', ['status' => 'success', 'action_type' => $data['action_type']]);
+        $this->logger->log("GameActionHandler: GameActionDto broadcasted", ['quest_id' => $questId, 'payload' => $payload]);
+        $this->broadcastService->sendBack($from, 'ack', ['type' => 'game-action_processed', 'playerName' => $playerName, 'action' => $action, 'outcomes' => $outcomes]);
 
         $this->logger->logEnd("GameActionHandler: handle");
     }

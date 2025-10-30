@@ -157,4 +157,4 @@ $actionList = ($currentQuestProgress->current_player_id === $player->id) ?
     </section>
 </main>
 <?= $this->renderFile('@app/views/game/snippets/equipment-modal.php', ['player' => $player]) ?>
-<?= $this->renderFile('@app/views/game/snippets/npc-dialog-modal.php') ?>
+<?= $this->renderFile('@app/views/game/snippets/game-modal.php') ?>

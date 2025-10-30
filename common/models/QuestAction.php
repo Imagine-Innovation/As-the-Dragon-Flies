@@ -10,14 +10,13 @@ use Yii;
  * @property int $quest_progress_id Foreign key to “quest_progress” table
  * @property int $action_id Foreign key to “action” table
  * @property int|null $status Status of the action
- * @property int|null $eligible Can be used in the following turns
+ * @property int $eligible Can be used in the following turns
  *
  * @property Action $action
  * @property QuestProgress $questProgress
  */
 class QuestAction extends \yii\db\ActiveRecord
 {
-
 
     /**
      * {@inheritdoc}
@@ -33,7 +32,7 @@ class QuestAction extends \yii\db\ActiveRecord
         return [
             [['status'], 'default', 'value' => null],
             [['eligible'], 'default', 'value' => 1],
-            [['quest_progress_id', 'action_id'], 'required'],
+            [['quest_progress_id', 'action_id', 'eligible'], 'required'],
             [['quest_progress_id', 'action_id', 'status', 'eligible'], 'integer'],
             [['quest_progress_id', 'action_id'], 'unique', 'targetAttribute' => ['quest_progress_id', 'action_id']],
             [['quest_progress_id'], 'exist', 'skipOnError' => true, 'targetClass' => QuestProgress::class, 'targetAttribute' => ['quest_progress_id' => 'id']],
@@ -70,5 +69,4 @@ class QuestAction extends \yii\db\ActiveRecord
     public function getQuestProgress() {
         return $this->hasOne(QuestProgress::class, ['id' => 'quest_progress_id']);
     }
-
 }

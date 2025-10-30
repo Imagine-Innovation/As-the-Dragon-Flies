@@ -124,6 +124,10 @@ class NotificationClient {
             }
         });
 
+        this.on('game-action', (data) => {
+            Logger.log(2, 'setupDefaultHandlers', 'Received game-action message:', data);
+        });
+
         this.on('player-joined', (data) => {
             Logger.log(2, 'setupDefaultHandlers', 'Received player-joined event:', data);
             if (data.payload && data.payload.playerName && data.payload.questName) {

@@ -36,6 +36,7 @@ class QuestComponent extends Component
         $chapter = $this->quest->currentChapter;
 
         $questProgress = $this->addQuestProgress($chapter->first_mission_id);
+        $this->questProgress = $questProgress;
         $this->addQuestActions($questProgress->id, $chapter->first_mission_id);
         $this->endCurrentTurn($questProgress->id);
         $newQuestTurn = $this->addNewTurn($questProgress);
@@ -139,7 +140,7 @@ class QuestComponent extends Component
     public function addQuestActions(int $questProgressId, int $missionId) {
         $actions = Action::findAll(['mission_id' => $missionId]);
 
-        $actionComponent = new ActionComponent();
+        $actionComponent = new ActionComponent(['questProgress' => $this->questProgress]);
         foreach ($actions as $action) {
             if ($actionComponent->isActionEligible($action, $questProgressId)) {
                 $actionComponent->addQuestAction($action->id, $questProgressId);

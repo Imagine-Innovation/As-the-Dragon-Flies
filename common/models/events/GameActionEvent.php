@@ -20,7 +20,7 @@ class GameActionEvent extends Event
     /**
      * @var array Additional action data
      */
-    public $actionData;
+    public $outcomes;
 
     /**
      * Constructor
@@ -28,12 +28,12 @@ class GameActionEvent extends Event
      * @param Player $player The player who performed the action
      * @param Quest $quest The quest context
      * @param string $action The action type
-     * @param array $actionData Additional action data
+     * @param array $outcomes Additional action data
      */
-    public function __construct(string $sessionId, Player $player, Quest $quest, $action, $actionData = []) {
+    public function __construct(string $sessionId, Player $player, Quest $quest, $action, $outcomes = []) {
         parent::__construct($sessionId, $player, $quest);
         $this->action = $action;
-        $this->actionData = $actionData;
+        $this->outcomes = $outcomes;
     }
 
     /**
@@ -59,7 +59,7 @@ class GameActionEvent extends Event
             'playerId' => $this->player->id,
             'playerName' => $this->player->name,
             'action' => $this->action,
-            'actionData' => $this->actionData,
+            'outcomes' => $this->outcomes,
             'questId' => $this->quest->id,
             'questName' => $this->quest->name,
             //'timestamp' => date('Y-m-d H:i:s', $this->timestamp)
@@ -71,6 +71,23 @@ class GameActionEvent extends Event
      * {@inheritdoc}
      */
     public function process(): void {
+        Yii::debug("*** Debug *** GameActionEvent - process");
+        $notification = $this->createNotification();
+
+        $this->savePlayerNotification($notification->id);
+
+        $this->broadcast();
+
+        // Dungeon master says hello
+        $dungeonMaster = Player::findOne(1);
+        if ($dungeonMaster) {
+            $message = "Player {$this->playerName} made the action \"{$this->action}\"";
+            $sendingMessageEvent = new SendingMessageEvent($this->sessionId, $dungeonMaster, $this->quest, $message);
+            $sendingMessageEvent->process();
+        }
+    }
+
+    public function xxxprocess(): void {
         // Process specific game actions using match expression
         match ($this->action) {
             'start-quest' => $this->processStartQuest(),

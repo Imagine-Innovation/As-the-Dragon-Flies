@@ -71,10 +71,17 @@ class VirtualTableTop {
         const target = `#actionList`;
         if (!DOMUtils.exists(target))
             return;
+
+        // Update context
+        this.questId = questId;
+
         AjaxUtils.request({
             url: 'game/ajax-actions',
             method: 'GET',
-            data: {questId: questId},
+            data: {
+                questProgressId: this.context.questProgressId,
+                playerId: this.context.playerId
+            },
             successCallback: (response) => {
                 let content = `???`;
                 if (!response.error) {
@@ -89,8 +96,10 @@ class VirtualTableTop {
 
     _showModal(modalId) {
         Logger.log(2, '_showModal', `modalId=${modalId}`);
-        const modalElement = document.querySelector(modalId);
-        this.modal = new bootstrap.Modal(modalElement);
+        if (!this.modal) {
+            const modalElement = document.querySelector(modalId);
+            this.modal = new bootstrap.Modal(modalElement);
+        }
         this.modal.show();
     }
 
@@ -106,7 +115,7 @@ class VirtualTableTop {
         Logger.log(1, 'talk', `actionId=${actionId}, replyId=${replyId}`);
         const target = `#actionFeedback`;
         $(target).html(`Talk: actionId=${actionId}, replyId=${replyId}`);
-        this._showModal('#npcDialogModal');
+        this._showModal('#gameModal');
         // Store the current action in the context
         this.context.actionId = actionId;
         this._dialog(replyId);
@@ -121,7 +130,7 @@ class VirtualTableTop {
 
     _dialog(replyId) {
         Logger.log(2, '_dialog', `replyId=${replyId}`);
-        const target = `#currentDialog`;
+        const target = `#currentAction`;
         if (!DOMUtils.exists(target))
             return;
         AjaxUtils.request({
@@ -183,6 +192,10 @@ class VirtualTableTop {
         if (actionId)
             this.context.actionId = actionId;
 
+        const target = `#currentAction`;
+        if (!DOMUtils.exists(target))
+            return;
+
         AjaxUtils.request({
             url: 'game/ajax-evaluate',
             method: 'POST',
@@ -190,8 +203,10 @@ class VirtualTableTop {
             successCallback: (response) => {
                 console.log(`evaluateAction callback=${JSON.stringify(response)}`);
                 if (!response.error) {
-                    this._hideModal();
+                    this._showModal('#gameModal');
+                    $(target).html(response.content);
                 }
+                this.actions(this.questId);
             }
         });
     }

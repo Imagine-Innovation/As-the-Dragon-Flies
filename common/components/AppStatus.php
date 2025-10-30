@@ -61,7 +61,7 @@ enum AppStatus: int
             self::IN_PROGRESS => 'In progress',
             self::TERMINATED => 'Terminated',
             // Action status
-            self::SUCCESS => 'Sucess',
+            self::SUCCESS => 'Success',
             self::PARTIAL => 'Partial success',
             self::FAILURE => 'Failure',
             self::NOT_FAILED => 'Total or partial success',

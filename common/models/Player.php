@@ -598,13 +598,17 @@ class Player extends \yii\db\ActiveRecord
                         });
     }
 
-    public function addCoins(int $quantity = 1, string $coin = 'gp') {
+    public function addCoins(?int $quantity, string $coin = 'gp') {
+        if (!$quantity || $quantity === 0) {
+            return;
+        }
 
-        $playerCoinGp = PlayerCoin::findOne(['player_id' => $this->id, 'coin' => $coin]);
+        $updatedRows = PlayerCoin::updateAll(
+                ['quantity' => new \yii\db\Expression("quantity+{$quantity}")],
+                ['player_id' => $this->id, 'coin' => $coin]
+        );
 
-        if ($playerCoinGp) {
-            $playerCoinGp->quantity += $quantity;
-        } else {
+        if ($updatedRows === 0) {
             $playerCoinGp = new PlayerCoin([
                 'player_id' => $this->id,
                 'coin' => $coin,
@@ -615,12 +619,17 @@ class Player extends \yii\db\ActiveRecord
         $playerCoinGp->save();
     }
 
-    protected function addItems(int $itemId, int $quantity = 1) {
-        $playerItem = PlayerItem::findOne(['player_id' => $this->id, 'item_id' => $itemId]);
+    public function addItems(?int $itemId, int $quantity = 1) {
+        if (!$itemId || $quantity === 0) {
+            return;
+        }
 
-        if ($playerItem) {
-            $playerItem->quantity += 1;
-        } else {
+        $updatedRows = PlayerItem::updateAll(
+                ['quantity' => new \yii\db\Expression("quantity+{$quantity}")],
+                ['player_id' => $this->id, 'item_id' => $itemId]
+        );
+
+        if ($updatedRows === 0) {
             $playerItem = new PlayerItem([
                 'player_id' => $this->id,
                 'item_id' => $itemId,
