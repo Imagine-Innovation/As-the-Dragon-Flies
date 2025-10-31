@@ -100,15 +100,6 @@ class NotificationClient {
         this.on('new-message', (data) => {
             Logger.log(2, 'setupDefaultHandlers', 'Received new-message message:', data);
             this.updateChatMessages();
-            /*
-             let config = {
-             route: 'quest/ajax-get-messages',
-             method: 'GET',
-             placeholder: 'questChatContent',
-             badge: false
-             };
-             this.executeRequest(config, data);
-             */
         });
 
         // Handle other player registration
@@ -126,6 +117,11 @@ class NotificationClient {
 
         this.on('game-action', (data) => {
             Logger.log(2, 'setupDefaultHandlers', 'Received game-action message:', data);
+            Logger.log(10, 'setupDefaultHandlers', `Payload: ${JSON.stringify(data.payload)}`);
+            //const message = data.message ?? null;
+            //VirtualTableTop.refresh(this.questId, this.sessionId, message);
+            VirtualTableTop.refresh(this.questId, this.sessionId);
+            this.updateChatMessages();
         });
 
         this.on('player-joined', (data) => {

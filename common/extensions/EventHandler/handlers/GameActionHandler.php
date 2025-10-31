@@ -33,11 +33,11 @@ class GameActionHandler implements SpecificMessageHandlerInterface
 
         $payload = $data['payload'];
         $questId = array_key_exists('questId', $payload) ? (int) $payload['questId'] : ($data['quest_id'] ? (int) $data['quest_id'] : null);
-        $playerName = array_key_exists('playerName', $payload) ? $payload['playerName'] : 'Unknown';
-        $action = array_key_exists('action', $payload) ? $payload['questName'] : 'Unknown';
-        $outcomes = array_key_exists('outcomes', $payload) ? $payload['outcomes'] : [];
+        $playerName = array_key_exists('playerName', $payload) ? $payload['playerName'] : null;
+        $action = array_key_exists('action', $payload) ? $payload['questName'] : null;
+        $detail = array_key_exists('detail', $payload) ? $payload['detail'] : [];
 
-        if ($questId === null || $playerName === 'Unknown' || $action === 'Unknown') {
+        if ($questId === null || $playerName === null || $action === null) {
             $this->logger->log("GameActionHandler: Missing required data (questId, playerName, action).", $data, 'warning');
             $errorDto = $this->messageFactory->createErrorMessage("Invalid game action data provided.");
             $this->broadcastService->sendToClient($clientId, $errorDto, false, $sessionId);
@@ -45,12 +45,12 @@ class GameActionHandler implements SpecificMessageHandlerInterface
             return;
         }
 
-        $gameActionDto = $this->messageFactory->createGameActionMessage($playerName, $action, $outcomes);
+        $gameActionDto = $this->messageFactory->createGameActionMessage($playerName, $action, $detail);
 
         $this->broadcastService->broadcastToQuest($questId, $gameActionDto, $sessionId);
 
         $this->logger->log("GameActionHandler: GameActionDto broadcasted", ['quest_id' => $questId, 'payload' => $payload]);
-        $this->broadcastService->sendBack($from, 'ack', ['type' => 'game-action_processed', 'playerName' => $playerName, 'action' => $action, 'outcomes' => $outcomes]);
+        $this->broadcastService->sendBack($from, 'ack', ['type' => 'game-action_processed', 'playerName' => $playerName, 'action' => $action, 'detail' => $detail]);
 
         $this->logger->logEnd("GameActionHandler: handle");
     }

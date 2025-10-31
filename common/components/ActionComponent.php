@@ -31,7 +31,6 @@ class ActionComponent extends Component
         // Call the parent's constructor
         parent::__construct($config);
 
-        Yii::debug("*** debug *** ActionComponent.__construct " . print_r($config, true));
         // Align the context data from QuestAction
         if ($this->questAction) {
             $this->questProgress = $this->questAction->questProgress;

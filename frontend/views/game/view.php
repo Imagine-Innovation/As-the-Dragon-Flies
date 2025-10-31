@@ -8,16 +8,18 @@ use yii\helpers\Url;
 /** @var yii\web\View $this */
 /** @var common\models\Quest $quest */
 /** @var int $nbPlayers */
-$player = Yii::$app->session->get('currentPlayer');
-//$quest = Yii::$app->session->get('currentQuest');
-//$this->title = Yii::$app->session->get('questName');
+$playerId = Yii::$app->session->get('playerId');
+$player = \common\models\Player::findOne($playerId);
 $this->title = $quest->name;
 $story = $quest->story;
-$playerSnippet = $this->renderFile('@app/views/game/snippets/player.php', ['player' => $player]);
+
+// $player is passed as an array of one element because the ajax snippet
+// is expecting a collection of players and not a single one
+$playerSnippet = $this->renderFile('@app/views/game/ajax/player.php', ['models' => [$player]]);
 $currentQuestProgress = $quest->currentQuestProgress;
 $mission = $currentQuestProgress->mission;
 
-$actionList = ($currentQuestProgress->current_player_id === $player->id) ?
+$actionList = ($currentQuestProgress->current_player_id === $playerId) ?
         $this->renderFile('@app/views/game/ajax/actions.php', ['questActions' => $currentQuestProgress->questActions]) :
         "";
 ?>
@@ -28,7 +30,7 @@ $actionList = ($currentQuestProgress->current_player_id === $player->id) ?
     <span id="hiddenQuestProgressId"><?= $currentQuestProgress->id ?></span>
     <span id="hiddenQuestMissionId"><?= $currentQuestProgress->mission_id ?></span>
     <span id="hiddenCurrentPlayerId"><?= $currentQuestProgress->current_player_id ?></span>
-    <span id="hiddenPlayerId"><?= $player->id ?></span>
+    <span id="hiddenPlayerId"><?= $playerId ?></span>
 </div>
 
 <main class="row" style="height: calc(100dvh - 120px);">
@@ -42,7 +44,7 @@ $actionList = ($currentQuestProgress->current_player_id === $player->id) ?
         </div>
         <div class="offcanvas-body">
             <section class="">
-                <article id="game-player" class="card">
+                <article id="player-offcanvas" class="card">
                     <?= $playerSnippet ?>
                 </article>
                 <article id="game-equipement" class="card">
@@ -73,7 +75,7 @@ $actionList = ($currentQuestProgress->current_player_id === $player->id) ?
     <!-- Visible Aside for xxl and larger screens -->
     <aside class="col-xxl-3 col-3xl-2 d-none d-xxl-block">
         <section class="h-100">
-            <article id="game-player" class="card">
+            <article id="player-aside" class="card">
                 <?= $playerSnippet ?>
             </article>
             <article id="game-equipement" class="card">
@@ -132,6 +134,8 @@ $actionList = ($currentQuestProgress->current_player_id === $player->id) ?
                                 <?= $this->renderFile('@app/views/game/ajax/mission.php', ['questProgress' => $currentQuestProgress]) ?>
                             </div>
                             <br />
+                            <p class="text-warning text-decoration">It is <?= ($currentQuestProgress->current_player_id === $playerId) ? "your" : "{$currentQuestProgress->currentPlayer->name}'s" ?> turn to play</p>
+                            <br />
                             <div id="actionList">
                                 <?= $actionList ?>
                             </div>
@@ -147,7 +151,7 @@ $actionList = ($currentQuestProgress->current_player_id === $player->id) ?
                         <?=
                         $this->renderFile('@app/views/quest/snippets/chat.php', [
                             'questId' => $quest->id,
-                            'playerId' => $player->id
+                            'playerId' => $playerId
                         ])
                         ?>
                     </div>

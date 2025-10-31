@@ -17,12 +17,16 @@ class VirtualTableTop {
             questProgressId: $('#hiddenQuestProgressId').html(),
             actionId: $('#hiddenQuestActionId').html()
         };
+        Logger.log(1, 'init', `context=${JSON.stringify(this.context)}`);
     }
 
     static refresh(questId, sessionId, message = null) {
         Logger.log(1, 'refresh', `questId=${questId}, sessionId=${sessionId}, message=${message}`);
         if (message)
             ToastManager.show('Tavern message', message, 'info');
+        // Cannot use the context within a static method
+        const playerId = $('#hiddenPlayerId').html();
+        VirtualTableTop._updatePlayer(playerId);
         VirtualTableTop._updateQuestMembers(questId);
     }
 
@@ -38,6 +42,28 @@ class VirtualTableTop {
             url: 'quest/ajax-quest-members',
             method: 'GET',
             data: {questId: questId, render: 'game-members'},
+            successCallback: (response) => {
+                if (!response.error) {
+                    const content = response.content;
+                    $(asideTarget).html(content);
+                    $(offcanvasTarget).html(content);
+                }
+            }
+        });
+    }
+
+    static _updatePlayer(playerId) {
+        Logger.log(2, '_updatePlayer', `playerId=${playerId}`);
+        const asideTarget = `#player-aside`;
+        if (!DOMUtils.exists(asideTarget))
+            return;
+        const offcanvasTarget = `#player-offcanvas`;
+        if (!DOMUtils.exists(offcanvasTarget))
+            return;
+        AjaxUtils.request({
+            url: 'game/ajax-player',
+            method: 'GET',
+            data: {id: playerId},
             successCallback: (response) => {
                 if (!response.error) {
                     const content = response.content;
@@ -206,6 +232,7 @@ class VirtualTableTop {
                     this._showModal('#gameModal');
                     $(target).html(response.content);
                 }
+                VirtualTableTop._updatePlayer(this.context.playerId);
                 this.actions(this.questId);
             }
         });

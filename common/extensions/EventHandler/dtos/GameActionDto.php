@@ -10,11 +10,11 @@ class GameActionDto implements BroadcastMessageInterface
     private string $type = 'game-action';
     private array $payload;
 
-    public function __construct(string $playerName, string $action, array $outcomes) {
+    public function __construct(string $playerName, string $action, array $detail) {
         $this->payload = [
             'playerName' => $playerName,
             'action' => $action,
-            'outcomes' => $outcomes,
+            'detail' => $detail,
             'timestamp' => time()
         ];
     }

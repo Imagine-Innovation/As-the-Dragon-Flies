@@ -599,6 +599,7 @@ class Player extends \yii\db\ActiveRecord
     }
 
     public function addCoins(?int $quantity, string $coin = 'gp') {
+        Yii::debug("*** debug *** - Player - addCoins(quantity=" . ($quantity ?? 'null') . ", coin={$coin})");
         if (!$quantity || $quantity === 0) {
             return;
         }
@@ -614,12 +615,12 @@ class Player extends \yii\db\ActiveRecord
                 'coin' => $coin,
                 'quantity' => $quantity
             ]);
+            $playerCoinGp->save();
         }
-
-        $playerCoinGp->save();
     }
 
     public function addItems(?int $itemId, int $quantity = 1) {
+        Yii::debug("*** debug *** - Player - addItems(itemId=" . ($itemId ?? 'null') . ", quantity={$quantity})");
         if (!$itemId || $quantity === 0) {
             return;
         }
@@ -630,13 +631,17 @@ class Player extends \yii\db\ActiveRecord
         );
 
         if ($updatedRows === 0) {
+            $item = Item::findOne($itemId);
             $playerItem = new PlayerItem([
                 'player_id' => $this->id,
                 'item_id' => $itemId,
-                'quantity' => $quantity
+                'quantity' => $quantity,
+                'item_type' => $item->itemType->name,
+                'item_name' => $item->name,
+                'image' => $item->image,
+                'is_carrying' => 1,
             ]);
+            $playerItem->save();
         }
-
-        $playerItem->save();
     }
 }

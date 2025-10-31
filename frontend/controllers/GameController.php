@@ -7,14 +7,17 @@ use common\components\AppStatus;
 use common\components\ContextManager;
 use common\components\ManageAccessRights;
 use common\components\QuestComponent;
+use common\helpers\UserErrorMessage;
 use common\models\events\EventFactory;
 use common\models\Quest;
 use common\models\QuestPlayer;
+use frontend\components\AjaxRequest;
 use frontend\components\QuestOnboarding;
 use Yii;
+use yii\filters\AccessControl;
+use Yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\AccessControl;
 use yii\web\Response;
 
 /**
@@ -37,7 +40,7 @@ class GameController extends Controller
                             [
                                 'actions' => [
                                     'view',
-                                    'ajax-actions', 'ajax-dialog', 'ajax-evaluate', 'ajax-mission', 'ajax-quit',
+                                    'ajax-actions', 'ajax-dialog', 'ajax-evaluate', 'ajax-mission', 'ajax-quit', 'ajax-player',
                                 ],
                                 'allow' => ManageAccessRights::isRouteAllowed($this),
                                 'roles' => ['@'],
@@ -70,6 +73,41 @@ class GameController extends Controller
                     'quest' => $quest,
                     'nbPlayers' => $nbPlayers,
         ]);
+    }
+
+    /**
+     * Handles AJAX request to retreive the player's current health
+     *
+     * @return array JSON response containing tavern state
+     *   - error: boolean indicating request status
+     *   - msg: string message for client
+     *   - content: HTML content for tavern update
+     */
+    public function actionAjaxPlayer(?int $id) {
+        // Configure JSON response format
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        // Validate request type
+        if (!$this->request->isGet || !$this->request->isAjax) {
+            return ['error' => true, 'msg' => 'Not an Ajax GET request'];
+        }
+
+        $playerId = $id ?? Yii::$app->session->get('playerId');
+
+        // Prepare Ajax request parameters
+        $param = [
+            'modelName' => 'Player',
+            'render' => 'player',
+            'filter' => ['id' => $playerId],
+        ];
+
+        // Process request and return response
+        $ajaxRequest = new AjaxRequest($param);
+        if ($ajaxRequest->makeResponse(Yii::$app->request)) {
+            return $ajaxRequest->response;
+        }
+
+        return ['error' => true, 'msg' => 'Error encountered'];
     }
 
     public function actionAjaxQuit(string $reason): array {
@@ -186,22 +224,22 @@ class GameController extends Controller
         $request = Yii::$app->request;
         $questAction = $this->findModel('QuestAction', ['quest_progress_id' => $request->post('questProgressId'), 'action_id' => $request->post('actionId')]);
         $actionComponent = new ActionComponent(['questAction' => $questAction]);
-        $outcomes = $actionComponent->evaluateActionOutcome();
+        $outcome = $actionComponent->evaluateActionOutcome();
 
-        $success = $this->createEvent('game-action', $request, $questAction->action->name, $outcomes);
+        $success = $this->createEvent('game-action', $request, $questAction->action->name, $outcome);
         if (!$success) {
-            return UserErrorMessage::throw($this, 'error', "Could not trigger event", self::DEFAULT_REDIRECT);
+            return UserErrorMessage::throw($this, 'error', "Could not trigger event");
         }
 
         $content = $this->renderPartial('ajax/outcomes', [
-            'diceRoll' => $outcomes['diceRoll'],
-            'status' => $outcomes['status'],
-            'outcomes' => $outcomes['outcomes'],
-            'hpLoss' => $outcomes['hpLoss'],
+            'diceRoll' => $outcome['diceRoll'],
+            'status' => $outcome['status'],
+            'outcomes' => $outcome['outcomes'],
+            'hpLoss' => $outcome['hpLoss'],
         ]);
 
-        $status = $outcomes['status'];
-        return ['error' => false, 'msg' => "{$outcomes['diceRoll']}, action status={$status->getLabel()}", 'next' => "Move to next mission #{$outcomes['nextMissionId']}", 'content' => $content];
+        $status = $outcome['status'];
+        return ['error' => false, 'msg' => "{$outcome['diceRoll']}, action status={$status->getLabel()}", 'next' => "Move to next mission #{$outcome['nextMissionId']}", 'content' => $content];
     }
 
     /**
@@ -224,18 +262,24 @@ class GameController extends Controller
         throw new NotFoundHttpException("The requested {$modelName} does not exist.");
     }
 
-    protected function createEvent(string $eventType, yii\web\Request $request, string $actionName, array $outcomes = []): bool {
+    protected function createEvent(string $eventType, yii\web\Request $request, string $actionName, array $outcome = []): bool {
         $sessionId = Yii::$app->session->get('sessionId');
         try {
             $player = $this->findModel('Player', ['id' => $request->post('playerId')]);
             $quest = $this->findModel('Quest', ['id' => $request->post('questId')]);
             $data['action'] = $actionName;
-            $data['outcomes'] = $outcomes;
+            $data['detail'] = [
+                'diceRoll' => $outcome['diceRoll'],
+                'status' => $outcome['status'],
+                'outcomes' => $outcome['outcomes'],
+                'hpLoss' => $outcome['hpLoss'],
+            ];
             $event = EventFactory::createEvent($eventType, $sessionId, $player, $quest, $data);
             $event->process();
             return true;
         } catch (\Exception $e) {
             Yii::error("Failed to broadcast '{$eventType}' event: " . $e->getMessage());
+            throw new \Exception(implode("<br />", ArrayHelper::getColumn($e, 0, false)));
             return false;
         }
     }

@@ -2,6 +2,7 @@
 
 namespace common\models\events;
 
+use common\components\AppStatus;
 use common\models\Player;
 use common\models\Quest;
 use Yii;
@@ -20,7 +21,7 @@ class GameActionEvent extends Event
     /**
      * @var array Additional action data
      */
-    public $outcomes;
+    public $detail;
 
     /**
      * Constructor
@@ -28,12 +29,12 @@ class GameActionEvent extends Event
      * @param Player $player The player who performed the action
      * @param Quest $quest The quest context
      * @param string $action The action type
-     * @param array $outcomes Additional action data
+     * @param array $detail Additional action data
      */
-    public function __construct(string $sessionId, Player $player, Quest $quest, $action, $outcomes = []) {
+    public function __construct(string $sessionId, Player $player, Quest $quest, string $action, array $detail = []) {
         parent::__construct($sessionId, $player, $quest);
         $this->action = $action;
-        $this->outcomes = $outcomes;
+        $this->detail = $detail;
     }
 
     /**
@@ -48,7 +49,14 @@ class GameActionEvent extends Event
     }
 
     public function getMessage(): string {
-        return "{$this->player->name} did the action {$this->action}";
+        $status = $this->detail['status'];
+        Yii::debug("*** debug *** GameActionEvent->getMessage status={$status->getLabel()}");
+        return match ($status->value) {
+            AppStatus::SUCCESS->value => "{$this->player->name} successfully completed the “{$this->action}” action",
+            AppStatus::PARTIAL->value => "{$this->player->name} partially completed the “{$this->action}” action",
+            AppStatus::FAILURE->value => "{$this->player->name} failed to complete the “{$this->action}” action",
+            default => "{$this->player->name} completed the “{$this->action}” action with an unknown status",
+        };
     }
 
     /**
@@ -59,7 +67,7 @@ class GameActionEvent extends Event
             'playerId' => $this->player->id,
             'playerName' => $this->player->name,
             'action' => $this->action,
-            'outcomes' => $this->outcomes,
+            'detail' => $this->detail,
             'questId' => $this->quest->id,
             'questName' => $this->quest->name,
             //'timestamp' => date('Y-m-d H:i:s', $this->timestamp)
@@ -81,74 +89,10 @@ class GameActionEvent extends Event
         // Dungeon master says hello
         $dungeonMaster = Player::findOne(1);
         if ($dungeonMaster) {
-            $message = "Player {$this->playerName} made the action \"{$this->action}\"";
+            //$message = "Player {$this->player->name} made the action \"{$this->action}\"";
+            $message = $this->getMessage();
             $sendingMessageEvent = new SendingMessageEvent($this->sessionId, $dungeonMaster, $this->quest, $message);
             $sendingMessageEvent->process();
         }
-    }
-
-    public function xxxprocess(): void {
-        // Process specific game actions using match expression
-        match ($this->action) {
-            'start-quest' => $this->processStartQuest(),
-            'complete-quest' => $this->processCompleteQuest(),
-            'move' => $this->processPlayerMovement(),
-            'attack' => $this->processPlayerAttack(),
-            'search' => $this->processPlayerSearch(),
-            'rest' => $this->processPlayerRest(),
-            default => null, // No action for unrecognized actions
-        };
-
-        // The broadcasting is handled by the EventHandler
-    }
-
-    /**
-     * Process start quest action
-     */
-    private function processStartQuest() {
-        $this->quest->status = 'playing';
-        $this->quest->started_at = time();
-        $this->quest->save();
-    }
-
-    /**
-     * Process complete quest action
-     */
-    private function processCompleteQuest() {
-        $this->quest->status = 'completed';
-        $this->quest->completed_at = time();
-        $this->quest->save();
-    }
-
-    /**
-     * Process player movement action
-     */
-    private function processPlayerMovement() {
-        // Handle player movement
-        // This would update player position in a real implementation
-    }
-
-    /**
-     * Process player attack action
-     */
-    private function processPlayerAttack() {
-        // Handle player attack
-        // This would calculate damage, etc. in a real implementation
-    }
-
-    /**
-     * Process player search action
-     */
-    private function processPlayerSearch() {
-        // Handle player search
-        // This would determine what the player finds in a real implementation
-    }
-
-    /**
-     * Process player rest action
-     */
-    private function processPlayerRest() {
-        // Handle player rest
-        // This would restore health, etc. in a real implementation
     }
 }

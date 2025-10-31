@@ -34,8 +34,8 @@ class BroadcastMessageFactory
         return new QuestStartedDto($sessionId, $questId, $questName);
     }
 
-    public function createGameActionMessage(string $playerName, string $action, array $outcomes): GameActionDto {
-        return new GameActionDto($playerName, $action, $outcomes);
+    public function createGameActionMessage(string $playerName, string $action, array $detail): GameActionDto {
+        return new GameActionDto($playerName, $action, $detail);
     }
 
     public function createNotificationMessage(string $message, string $level = 'info', ?array $details = null): NotificationDto {
@@ -85,10 +85,10 @@ class BroadcastMessageFactory
                 }
                 break;
             case 'game-action':
-                if (isset($payload['action'], $payload['outcomes'])) {
-                    $dto = new GameActionDto($payload['playerName'], $payload['action'], $payload['outcomes']);
+                if (isset($payload['action'], $payload['detail'])) {
+                    $dto = new GameActionDto($payload['playerName'], $payload['action'], $payload['detail']);
                 } else {
-                    $this->loggerService->log("BroadcastMessageFactory - createMessage - type={$type}, invalid payload, expected payload attributes: playerName, action, outcomes");
+                    $this->loggerService->log("BroadcastMessageFactory - createMessage - type={$type}, invalid payload, expected payload attributes: playerName, action, detail");
                 }
                 break;
             case 'notification':

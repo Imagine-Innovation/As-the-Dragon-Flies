@@ -3,7 +3,8 @@
 use frontend\components\PlayerComponent;
 
 /** @var yii\web\View $this */
-/** @var common\models\Player $player */
+/** @var common\models\Player[] $models */
+$player = $models[0];
 $avatar = Yii::$app->session->get('avatar');
 $proficiencyBonus = $player->level->proficiency_bonus;
 
@@ -18,8 +19,14 @@ $playerAbilities = PlayerComponent::getAbilitiesAndSavingThrow($player->playerAb
     </header>
 
     <!-- Health -->
-    <div id="game-player-health">
-        <?= $this->renderFile('@app/views/game/ajax/player-health.php', ['player' => $player]) ?>
+    <!-- Health -->
+    <p>Health</p>
+    <div class="progress" role="progressbar" aria-label="Hit points"
+         aria-valuenow="<?= $player->hit_points ?>" aria-valuemin="0" aria-valuemax="<?= $player->max_hit_points ?>">
+        <div class="progress-bar text-bg-warning"
+             style="width: <?= intval(($player->hit_points ?? 0) / ($player->max_hit_points ?? 1) * 100) ?>%">
+            <?= $player->hit_points ?>/<?= $player->max_hit_points ?>
+        </div>
     </div>
 
     <!-- Stats -->
