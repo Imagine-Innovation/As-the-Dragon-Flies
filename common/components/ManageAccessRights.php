@@ -179,31 +179,57 @@ class ManageAccessRights extends Component
     }
 
     /**
-     * Log the access to the database
+     * Log the access to the database.
      *
-     * @param number $accessRightId
-     * @param boolean $denied
-     * @param string $severity
-     * @param string $reason
+     * The initial code was:
+     *
+     *   $userLog = new UserLog([
+     *       'user_id' => $user->id,
+     *       'access_right_id' => $accessRightId,
+     *       'player_id' => $playerId,
+     *       'quest_id' => $questId,
+     *       'ip_address' => Yii::$app->getRequest()->getUserIP(),
+     *       'action_at' => time(),
+     *       'denied' => $denied ? 1 : 0,
+     *       'reason' => $reason,
+     *   ]);
+     *   // "false" parameter to skip validation and save directly
+     *   // and avoid 7 query at each acces right evaluation
+     *   if (!$userLog->save(false)) {
+     *       throw new \Exception(implode("<br />", ArrayHelper::getColumn($userLog->errors, 0, false)));
+     *   }
+     * This previously generated three SQL SELECT queries before the INSERT statement.
+     * For optimization purposes, given that this logging function is called for each HTTP query,
+     * we switched to a more optimized low-level query to perform only the INSERT.
+     *
+     * @param type $accessRightId
+     * @param type $denied
+     * @param type $severity
+     * @param type $reason
      * @return array
+     * @throws \Exception
      */
     private static function logAccess($accessRightId, $denied, $severity, $reason) {
         $user = Yii::$app->session->get('user') ?? Yii::$app->user->identity;
         $playerId = Yii::$app->session->get('playerId');
         $questId = Yii::$app->session->get('questId');
 
-        $userLog = new UserLog([
-            'user_id' => $user->id,
-            'access_right_id' => $accessRightId,
-            'player_id' => $playerId,
-            'quest_id' => $questId,
-            'ip_address' => Yii::$app->getRequest()->getUserIP(),
-            'action_at' => time(),
-            'denied' => $denied ? 1 : 0,
-            'reason' => $reason,
-        ]);
-        if (!$userLog->save()) {
-            throw new \Exception(implode("<br />", ArrayHelper::getColumn($userLog->errors, 0, false)));
+        $sql = "INSERT INTO `user_log` (`user_id`, `access_right_id`, `player_id`, `quest_id`, `ip_address`, `action_at`, `denied`, `reason`)"
+                . " VALUES (:user_id, :access_right_id, :player_id, :quest_id, :ip_address, :action_at, :denied, :reason)";
+
+        try {
+            Yii::$app->db->createCommand($sql, [
+                ':user_id' => $user->id,
+                ':access_right_id' => $accessRightId,
+                ':player_id' => $playerId,
+                ':quest_id' => $questId,
+                ':ip_address' => Yii::$app->getRequest()->getUserIP(),
+                ':action_at' => time(),
+                ':denied' => $denied ? 1 : 0,
+                ':reason' => $reason,
+            ])->execute();
+        } catch (\Exception $e) {
+            throw new \Exception(implode("<br />", ArrayHelper::getColumn($e, 0, false)));
         }
 
         return ['denied' => $denied, 'severity' => $severity, 'reason' => $reason];
