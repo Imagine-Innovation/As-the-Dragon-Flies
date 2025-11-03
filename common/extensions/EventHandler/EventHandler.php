@@ -36,6 +36,15 @@ class EventHandler extends Component
 
     public function init(): void {
         parent::init();
+
+        echo "Init starting\n";
+        echo "             host: {$this->host}\n";
+        echo "             port: {$this->port}\n";
+        echo "    internal port: {$this->internalPort}\n";
+        echo "    log file path: {$this->logFilePath}\n";
+        echo "       debug mode: " . ($this->debug ? 'true' : 'false') . "\n";
+        echo "\n";
+
         $this->loop = Loop::get();
         $this->initializeServices();
         $this->initializeMessageHandlers();

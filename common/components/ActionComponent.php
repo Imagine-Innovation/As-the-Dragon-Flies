@@ -197,7 +197,7 @@ class ActionComponent extends Component
         $canReplay = true;
         foreach ($outcomes as $outcome) {
             $canReplay = $canReplay && ($outcome->can_replay === 1);
-            $nextMissionId = $outcome->next_mission_id;
+            $nextMissionId = ($outcome->next_mission_id === $this->questProgress->mission_id) ? null : $outcome->next_mission_id;
             $this->updatePlayerStats($outcome->gained_xp, $outcome->hp_loss_dice);
 
             $this->player->addCoins($outcome->gained_gp, 'gp');
@@ -232,6 +232,9 @@ class ActionComponent extends Component
             'outcomes' => $outcomes,
             'diceRoll' => "Rolling {$diceToRoll} gave {$diceRoll}",
             'hpLoss' => $this->hpLoss,
+            'isFree' => $this->action->is_free,
+            'canReplay' => $canReplay,
+            'questProgressId' => $this->questProgress->id,
             'nextMissionId' => $this->nextMissionId,
         ];
     }

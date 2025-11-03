@@ -470,7 +470,7 @@ class Shopping
      * @param int|null $quantity The quantity of the item to be removed.
      * @return array An associative array containing the result of the operation.
      */
-    public function removeFromCart(Player &$player, Item &$item, int|null $quantity = null): array {
+    public function removeFromCart(Player &$player, Item &$item, ?int $quantity = null): array {
         // Find the cart entry for the specified item
         $cartItem = PlayerCart::findOne(['player_id' => $player->id, 'item_id' => $item->id]);
 
@@ -532,7 +532,7 @@ class Shopping
      * @param int|null $quantity The quantity to be added to the cart.
      * @return array An associative array containing the result of the operation.
      */
-    public function addToCart(Player &$player, Item &$item, int|null $quantity = null): array {
+    public function addToCart(Player &$player, Item &$item, ?int $quantity = null): array {
         // Find if the item already exists in the player's cart
         $cartItem = PlayerCart::findOne(['player_id' => $player->id, 'item_id' => $item->id]);
 

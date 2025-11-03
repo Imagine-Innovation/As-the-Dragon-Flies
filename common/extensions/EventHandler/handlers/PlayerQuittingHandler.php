@@ -8,7 +8,8 @@ use common\extensions\EventHandler\factories\BroadcastMessageFactory;
 use common\extensions\EventHandler\LoggerService;
 use Ratchet\ConnectionInterface;
 
-class PlayerQuittingHandler implements SpecificMessageHandlerInterface {
+class PlayerQuittingHandler implements SpecificMessageHandlerInterface
+{
 
     private LoggerService $logger;
     private BroadcastServiceInterface $broadcastService;

@@ -9,7 +9,8 @@ use common\models\Weapon;
 use Yii;
 use yii\helpers\ArrayHelper;
 
-class PlayerComponent {
+class PlayerComponent
+{
 
     const EMPTY_ABILITIES = ['STR' => [], 'DEX' => [], 'CON' => [], 'INT' => [], 'WIS' => [], 'CHA' => []];
 
@@ -28,8 +29,8 @@ class PlayerComponent {
      *
      * @param int $classId The ID of the player class.
      * @param int $itemId The ID of the item to check proficiency for.
-     * @return bool|null Returns true if the player is proficient with the item, false if not,
-     *                   or null if the player parameter is null.
+     * @return bool Returns true if the player is proficient with the item, false if not,
+     *              or null if the player parameter is null.
      */
     public static function isProficient(int $classId, int $itemId): bool {
         // Check whether the player's class gives a direct proficiency for the item.

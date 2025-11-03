@@ -372,7 +372,7 @@ class PlayerCartController extends Controller
      * @return Item|null The loaded Item model if found, or null if not found.
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findItem($id) {
+    protected function findItem($id): ?Item {
         // Find the Item model based on the provided primary key.
         $item = Item::findOne(['id' => $id]);
 

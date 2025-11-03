@@ -10,16 +10,17 @@ class Button extends Widget
 {
 
     public bool $isPost = false;        // 'true' if the button triggers a POST request, default='false'
-    public $postParams = [];            // Associative array ['param' => value, ...] for hidden POST params
-    public $url;                        // URL to call when the button is clicked, default='#'
-    public $id;                         // Button ID (for javascript purpose)
-    public $style;                      // Additional CSS class
-    public $tooltip;                    // Button tooltip
-    public $icon;                       // Icon to display before the button name
-    public $modal;                      // Name of the modal to display when clicking on the button
-    public $title;                      // Button name
-    public $mode;                       // “icon” to use it as an icon button, otherwise Bootstrap button behavior
-    public $onclick;                    // javascript hook to trigger onclick
+    public array $postParams = [];      // Associative array ['param' => value, ...] for hidden POST params
+    public array $ariaParams = [];      // Associative array ['param' => value, ...] for aria attributes
+    public string $url = null;          // URL to call when the button is clicked, default='#'
+    public string $id = null;           // Button ID (for javascript purpose)
+    public string $style = null;        // Additional CSS class
+    public string $tooltip = null;      // Button tooltip
+    public string $icon = null;         // Icon to display before the button name
+    public string $modal = null;        // Name of the modal to display when clicking on the button
+    public string $title = null;        // Button name
+    public string $mode = null;         // “icon” to use it as an icon button, otherwise Bootstrap button behavior
+    public string $onclick = null;      // javascript hook to trigger onclick
     public bool $isCta = false;         // when 'true' is call to action (CTA) button
     public bool $isCloseModal = false;  // when 'true' is adding data-bs-dismiss="modal"
 

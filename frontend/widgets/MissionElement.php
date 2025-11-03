@@ -2,54 +2,79 @@
 
 namespace frontend\widgets;
 
+use common\components\AppStatus;
 use Yii;
 use yii\base\Widget;
+use yii\db\ActiveRecord;
 use yii\helpers\Url;
 
 class MissionElement extends Widget
 {
 
-    public $properties;
-    public $type;
-    public $propertyNames;
+    /**
+     * @var ActiveRecord[] $properties: list of properties associated to a mission
+     * @var string $type: property type
+     * @var string[]: $propertyNames: array of every attributes defines within the property
+     */
+    public array $properties = [];
+    public string $type = 'unkown';
+    public array $propertyNames = [];
 
     public function run() {
-        return $this->content();
+        if ($this->properties) {
+            return $this->listContent($this->properties);
+        }
+        return "<p>No {$this->type} has been defined yet</p>";
     }
 
-    private function content() {
-        $html = "";
-        if ($this->properties) {
-            $id1 = $this->propertyNames[0];
-            $id2 = $this->propertyNames[1];
-            $id3 = $this->propertyNames[2];
-
-            Yii::debug("*** Debug **** MissionElement - id1={$id1}, id2={$id2}, id3={$id3}");
-
-            $html .= "<ul>";
-            foreach ($this->properties as $property) {
-                Yii::debug($property);
-                $params = [
-                    $id1 => $property->$id1,
-                    $id2 => $property->$id2,
-                    $id3 => $property->$id3,
-                ];
-
-                Yii::debug($params);
-
-                $displayName = match ($this->type) {
-                    'Prerequisite' => $property->previousAction->name,
-                    'Trigger' => $property->nextAction->name,
-                    default => $property->name,
-                };
-
-                $hrefEdit = Url::toRoute(['mission/edit-detail', 'jsonParams' => json_encode($params), 'type' => $this->type]);
-                $html .= "<li><a href=\"{$hrefEdit}\" role=\"button\"><i class=\"bi bi-pencil-square\"></i> {$displayName}</a></li>";
-            }
-            $html .= "</ul>";
-        } else {
-            $html .= "<p>No {$this->type} has been defined yet</p>";
+    private function listContent(array $properties): string {
+        $liElements = '';
+        foreach ($properties as $property) {
+            $liElements .= $this->liElement($property, $this->propertyNames);
         }
-        return $html;
+        $listContent = "<ul>{$liElements}</ul>";
+        return $listContent;
+    }
+
+    private function getPropertyStatusLabel(ActiveRecord $property): string {
+        if (!$property->hasAttribute('status') || $property->status === null) {
+            return '';
+        }
+
+        try {
+            $appStatus = AppStatus::from($property->status);
+            $label = $appStatus->getLabel();
+        } catch (\ValueError $e) {
+            $label = 'Unknown Status';
+        }
+        return $label;
+    }
+
+    private function displayName(ActiveRecord $property): string {
+        $status = strtolower($this->getPropertyStatusLabel($property));
+        return match ($this->type) {
+            'Prerequisite' => "\"{$property->previousAction->name}\" if {$status}",
+            'Trigger' => "\"{$property->nextAction->name}\" when {$status}",
+            'Outcome' => "\"{$property->name}\" when {$status}",
+            default => $property->name,
+        };
+    }
+
+    private function liElement(ActiveRecord $property, array $propertyNames): string {
+        $attribute1 = $propertyNames[0];
+        $attribute2 = $propertyNames[1];
+        $attribute3 = $propertyNames[2];
+
+        $params = [
+            $attribute1 => $property->$attribute1,
+            $attribute2 => $property->$attribute2,
+            $attribute3 => $property->$attribute3,
+        ];
+
+        $displayName = $this->displayName($property);
+
+        $hrefEdit = Url::toRoute(['mission/edit-detail', 'jsonParams' => json_encode($params), 'type' => $this->type]);
+
+        return "<li><a href=\"{$hrefEdit}\" role=\"button\"><i class=\"bi bi-pencil-square\"></i> {$displayName}</a></li>";
     }
 }

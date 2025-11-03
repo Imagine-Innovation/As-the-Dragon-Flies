@@ -187,8 +187,6 @@ class VirtualTableTop {
             utterance.rate = 1.1;   // Playback speed (1 is normal speed)
             utterance.pitch = 0.8;  // Pitch/tone (1 is normal pitch)
 
-
-
             speechSynthesis.addEventListener("voiceschanged", () => {
                 const voices = speechSynthesis.getVoices();
                 for (const voice of voices) {
@@ -211,6 +209,22 @@ class VirtualTableTop {
         $(target).html(`Action: actionId=${actionId}`);
     }
 
+    moveToNextPlayer(questProgressId, nextMissionId) {
+        Logger.log(1, 'moveToNextPlayer', `questProgressId=${questProgressId}, nextMissionId=${nextMissionId}`);
+        
+        AjaxUtils.request({
+            url: 'game/ajax-next-turn',
+            method: 'POST',
+            data: {
+                ...this.context,
+                questProgressId: questProgressId,
+                nextMissionId: nextMissionId
+            },
+            successCallback: (response) => {
+                console.log(`moveToNextPlayer callback=${JSON.stringify(response)}`);
+            }
+        });
+    }
     evaluateAction(actionId) {
         Logger.log(1, 'evaluateAction', `actionId=${actionId ?? 'null'}`);
 

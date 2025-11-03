@@ -5,7 +5,8 @@ namespace frontend\helpers;
 use common\models\PlayerItem;
 use common\models\Weapon;
 
-class ItemHelper {
+class ItemHelper
+{
 
     // Define the available weapon properties as an associative array.
     // /!\ Don't forget to update this array when the data model changes
@@ -59,7 +60,7 @@ class ItemHelper {
         return self::getWeaponProperties($weapon, self::LITE_WEAPON_PROPERTIES);
     }
 
-    public static function getRemainingAmunitions(PlayerItem &$playerItem): string|null {
+    public static function getRemainingAmunitions(PlayerItem &$playerItem): ?string {
         $weapon = $playerItem->weapon;
 
         if (!$weapon->need_ammunition || !$weapon->amunition_id) {

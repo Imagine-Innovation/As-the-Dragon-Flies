@@ -97,6 +97,11 @@
     font-size-adjust: 0.8;
 }
 
+.text-scroll {
+    font-family: 'Bastarda', serif;
+    font-size-adjust: 0.8;
+}
+
 .illuminate::first-letter {
     font-family: 'Berenika', sans-serif;
     font-size: 2em;
@@ -5892,3 +5897,14 @@ pre {
         grid-template-rows: repeat(6, auto);
     }
 }
+
+.scroll {
+    padding: 8%;
+    background-image: url(../img/sm/scroll.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: var(--dark-75);
+    line-height: 1.6;
+}
+

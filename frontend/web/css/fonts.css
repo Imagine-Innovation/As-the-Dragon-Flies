@@ -1,3 +1,16 @@
+/******** Font parchment/Bastarda.ttf ********/
+@font-face {
+    font-family: 'Bastarda';
+    src: url('fonts/parchment/Bastarda.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+.text-bastarda {
+    font-family: 'Bastarda', serif;
+    font-size-adjust: 0.5;
+}
+
 /******** Font layout/Berenika.ttf ********/
 @font-face {
     font-family: 'Berenika';

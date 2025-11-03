@@ -2,7 +2,8 @@
 
 namespace common\extensions\EventHandler;
 
-class LoggerService {
+class LoggerService
+{
 
     private string $logFilePath;
     private bool $debug;

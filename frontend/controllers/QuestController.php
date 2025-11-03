@@ -151,7 +151,7 @@ class QuestController extends Controller
      * @param int $storyId The ID of the story to join
      * @return string|Response Rendered tavern view or error redirect
      */
-    public function actionJoin(int $storyId, int|null $playerId = null) {
+    public function actionJoin(int $storyId, ?int $playerId = null) {
         // Validate story existence and accessibility
         $story = $this->findValidStory($storyId);
         if (!$story) {
@@ -333,7 +333,7 @@ class QuestController extends Controller
         ];
     }
 
-    public function actionStart(int|null $id) {
+    public function actionStart(?int $id) {
         $quest = $this->findModel($id);
 
         $player = $quest->initiator;
@@ -439,7 +439,7 @@ class QuestController extends Controller
         ]);
     }
 
-    public function actionQuit(int|null $playerId, int|null $id) {
+    public function actionQuit(?int $playerId, ?int $id) {
 
         $player = $this->findPlayer($playerId);
         $quest = $this->findModel($id);
@@ -467,7 +467,7 @@ class QuestController extends Controller
      *
      * @return string|Response Rendered tavern view or error redirect
      */
-    public function actionResume(int|null $id = null) {
+    public function actionResume(?int $id = null) {
         $quest = $this->findModel($id);
 
         if ($quest->status == AppStatus::PLAYING->value) {
@@ -550,7 +550,7 @@ class QuestController extends Controller
      * @return Quest Found quest model
      * @throws NotFoundHttpException if quest not found
      */
-    protected function findModel(int|null $id = null): Quest {
+    protected function findModel(?int $id = null): Quest {
         $model = Quest::findOne(['id' => ($id ?? Yii::$app->session->get('questId'))]);
 
         if ($model) {
@@ -560,7 +560,7 @@ class QuestController extends Controller
         throw new NotFoundHttpException("The quest (id={$id}) you are looking for does not exist.");
     }
 
-    protected function findPlayer(int|null $playerId = null): Player {
+    protected function findPlayer(?int $playerId = null): Player {
         $player = Player::findOne(['id' => ($playerId ?? Yii::$app->session->get('playerId'))]);
 
         if ($player) {
@@ -577,7 +577,7 @@ class QuestController extends Controller
         return null;
     }
 
-    protected function findChapterNumber(int $storyId, int|null $chapterNumber = 1): ?Chapter {
+    protected function findChapterNumber(int $storyId, ?int $chapterNumber = 1): ?Chapter {
         if ($storyId) {
             $chapter = Chapter::findOne(['story_id' => $storyId, 'chapter_number' => $chapterNumber]);
             if ($chapter) {

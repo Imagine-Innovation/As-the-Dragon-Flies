@@ -121,7 +121,7 @@ class Inventory
         return $weight;
     }
 
-    public function getContainer(Player $player): Item|null {
+    public function getContainer(Player $player): ?Item {
         $items = $player->items;
         if (!$items) {
             return null;

@@ -15,7 +15,7 @@ $story = $quest->story;
 
 // $player is passed as an array of one element because the ajax snippet
 // is expecting a collection of players and not a single one
-$playerSnippet = $this->renderFile('@app/views/game/ajax/player.php', ['models' => [$player]]);
+$playerSnippet = $this->renderFile('@app/views/game/ajax/player.php', ['player' => $player]);
 $currentQuestProgress = $quest->currentQuestProgress;
 $mission = $currentQuestProgress->mission;
 

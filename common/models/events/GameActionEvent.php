@@ -89,7 +89,6 @@ class GameActionEvent extends Event
         // Dungeon master says hello
         $dungeonMaster = Player::findOne(1);
         if ($dungeonMaster) {
-            //$message = "Player {$this->player->name} made the action \"{$this->action}\"";
             $message = $this->getMessage();
             $sendingMessageEvent = new SendingMessageEvent($this->sessionId, $dungeonMaster, $this->quest, $message);
             $sendingMessageEvent->process();

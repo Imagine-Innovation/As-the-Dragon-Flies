@@ -40,7 +40,7 @@ class QuestOnboarding
         return $message;
     }
 
-    public static function getChapterId(int $storyId, int|null $chapterNumber = 1): int|null {
+    public static function getChapterId(int $storyId, ?int $chapterNumber = 1): ?int {
         $chapter = \common\models\Chapter::findOne(['story_id' => $storyId, 'chapter_number' => $chapterNumber]);
 
         return $chapter?->id;
@@ -50,10 +50,10 @@ class QuestOnboarding
      * Returns a message given the missing number of players before the quest can start
      *
      * @param Quest $quest reference to a Quest object
-     * @param int|null $playerCount Number of already on boarded players, null when quest is beeing created
+     * @param ?int $playerCount Number of already on boarded players, null when quest is beeing created
      * @return string Missing player message
      */
-    public static function missingPlayers(Quest &$quest, int|null $playerCount = null): string {
+    public static function missingPlayers(Quest &$quest, ?int $playerCount = null): string {
         $actualPlayerCount = $playerCount ?? 0;
         $storyMinPlayers = $quest->story->min_players;
         $missingCount = $storyMinPlayers - $actualPlayerCount;
@@ -101,7 +101,7 @@ class QuestOnboarding
      * @param Quest $quest reference to a Quest object
      * @return array|null Missing class IDs, null if bo class is required
      */
-    private static function getMissingClassIds(Quest &$quest): array|null {
+    private static function getMissingClassIds(Quest &$quest): ?array {
         // Get the required classes
         $requiredClassIds = self::getRequiredClassIds($quest->story_id);
 
@@ -123,7 +123,7 @@ class QuestOnboarding
      * @param Quest|null $quest a Quest object, null if the player is not in a quest
      * @return array Associative array with a deny status and the reason why
      */
-    public static function canPlayerJoinQuest(Player|null $player, Quest|null $quest = null): array {
+    public static function canPlayerJoinQuest(?Player $player, ?Quest $quest = null): array {
         // Check if the player is eliible to join a quest
         $playerStatus = self::isPlayerValid($player, $quest);
         if ($playerStatus['error']) {
@@ -160,7 +160,7 @@ class QuestOnboarding
      * @param Quest|null $quest a Quest object, null if the quest does not exist
      * @return array Associative array with an error status, a deny status and the reason why
      */
-    private static function isQuestValid(Quest|null $quest = null): array {
+    private static function isQuestValid(?Quest $quest = null): array {
         // Check if quest exists
         if (!$quest) {
             return ['error' => true, 'denied' => false, 'reason' => "canPlayerJoinQuest->You can create a new quest"];
@@ -180,7 +180,7 @@ class QuestOnboarding
      * @param Quest|null $quest a Quest object, null if the player is not in a quest
      * @return array Associative array with an error status, a deny status and the reason why
      */
-    private static function isPlayerValid(Player|null $player, Quest|null $quest = null): array {
+    private static function isPlayerValid(?Player $player, ?Quest $quest = null): array {
         // Check if player is selected
         if (!$player) {
             return ['error' => true, 'denied' => true, 'reason' => "canPlayerJoinQuest->No player is selected"];
@@ -266,7 +266,7 @@ class QuestOnboarding
      * @param int $storyId
      * @return array|null
      */
-    private static function getRequiredClassIds(int $storyId): array|null {
+    private static function getRequiredClassIds(int $storyId): ?array {
         // Get the required classes
         $classes = StoryClass::find()
                 ->select('class_id')
@@ -288,7 +288,7 @@ class QuestOnboarding
      * @param int $questId
      * @return array|null
      */
-    private static function getActualPlayerClassIds(int $questId): array|null {
+    private static function getActualPlayerClassIds(int $questId): ?array {
         // Fetch the actual player classes
         $classes = Player::find()
                 ->select('class_id')
@@ -325,7 +325,7 @@ class QuestOnboarding
      * @param int|null $questId ID of the quest in which the player is engaged. Null if he leaves the quest
      * @return array
      */
-    private static function updatePlayerQuestId(Player &$player, int|null $questId = null): array {
+    private static function updatePlayerQuestId(Player &$player, ?int $questId = null): array {
         $player->quest_id = $questId;
         if (!$player->save()) {
             return ['error' => true, 'message' => "Could not save Player : " . implode("\n", \yii\helpers\ArrayHelper::getColumn($player->errors, 0, false))];
@@ -350,7 +350,7 @@ class QuestOnboarding
      * @param string|null $reasonWhyPlayerQuit Reason why the player left the quest, null when inserting a new entry
      * @return array
      */
-    private static function upsertQuestPlayer(int $questId, int $playerId, int $status, string|null $reasonWhyPlayerQuit = null): array {
+    private static function upsertQuestPlayer(int $questId, int $playerId, int $status, ?string $reasonWhyPlayerQuit = null): array {
         $questPlayer = QuestPlayer::findOne(['quest_id' => $questId, 'player_id' => $playerId]);
 
         if (!$questPlayer) {

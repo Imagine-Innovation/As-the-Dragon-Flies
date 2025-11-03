@@ -117,6 +117,15 @@ enum AppStatus: int
         };
     }
 
+    public function getActionAdjective(): string {
+        return match ($this) {
+            self::SUCCESS => 'succeeded',
+            self::PARTIAL => 'partialy succeeded',
+            self::FAILURE => 'failed',
+            default => 'did something, but I don\'t know what'
+        };
+    }
+
     // Helper to get an array of values for a specific entity type for validation rules
     public static function getValuesForUser(): array {
         return [self::ACTIVE->value, self::INACTIVE->value, self::DELETED->value];

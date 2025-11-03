@@ -83,7 +83,7 @@ class SiteController extends Controller
         return null;
     }
 
-    private function getOtherPlayers(array &$players, int $state, int|null $currentPlayerId): ?array {
+    private function getOtherPlayers(array &$players, int $state, ?int $currentPlayerId): ?array {
         switch ($state) {
             case 1:
                 return array_slice($players, 1, 2);
@@ -116,7 +116,7 @@ class SiteController extends Controller
      * @param bool $inQuest
      * @return int
      */
-    private function getCurrentState(array &$players, Player|null &$player, bool $inQuest): int {
+    private function getCurrentState(array &$players, ?Player &$player, bool $inQuest): int {
 
         if (count($players) === 0) {
             $state = 0;

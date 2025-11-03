@@ -19,6 +19,7 @@ use common\models\RaceGroupLanguage;
 use common\models\Skill;
 use common\models\Wizard;
 use common\helpers\DiceRoller;
+
 ;
 
 use Yii;
@@ -209,7 +210,7 @@ class BuilderComponent
      * @param string|null $gender
      * @return array
      */
-    private static function getEthnicNames(int $ethnicityId, string $className, string|null $gender = null): array {
+    private static function getEthnicNames(int $ethnicityId, string $className, ?string $gender = null): array {
         $nameClass = "common\\models\\$className";
         $query = $nameClass::find()
                 ->select('name')
@@ -226,7 +227,7 @@ class BuilderComponent
      * @param string[] $names
      * @return string|null
      */
-    private static function randomize(array $names): string|null {
+    private static function randomize(array $names): ?string {
         return $names ? $names[array_rand($names)]['name'] : null;
     }
 
@@ -284,7 +285,7 @@ class BuilderComponent
      * @param string $topic The topic of the wizard.
      * @return int|null The ID of the first question, or null if no first question is found.
      */
-    public static function getFirstQuestion(string $topic): int|null {
+    public static function getFirstQuestion(string $topic): ?int {
         // Direct query to get first question IDs using a single database call
         $firstQuestions = Wizard::find()
                 ->select('wq.id')
@@ -314,7 +315,7 @@ class BuilderComponent
      * @param int|null $choice
      * @return array
      */
-    public static function setEquipmentResponse(array $equipments, int|null $choice = null): array {
+    public static function setEquipmentResponse(array $equipments, ?int $choice = null): array {
         $items = [];
         $categories = [];
         foreach ($equipments as $equipment) {

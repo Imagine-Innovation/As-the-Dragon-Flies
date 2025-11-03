@@ -566,7 +566,7 @@ class PlayerItemController extends Controller
         throw new NotFoundHttpException("The player's item you are looking for does not exist. playerId={$playerId}, itemId={$itemId}");
     }
 
-    protected function findPlayer(int|null $playerId = null): Player {
+    protected function findPlayer(?int $playerId = null): Player {
         $player = Player::findOne(['id' => ($playerId ?? Yii::$app->session->get('playerId'))]);
 
         if ($player) {
@@ -576,7 +576,7 @@ class PlayerItemController extends Controller
         throw new NotFoundHttpException("The player (playerId={$playerId}) you are looking for does not exist.");
     }
 
-    protected function findPlayerBody(int|null $playerId = null) {
+    protected function findPlayerBody(?int $playerId = null) {
         $player = $this->findPlayer($playerId);
 
         $playerBody = $player->playerBody;

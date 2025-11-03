@@ -72,7 +72,7 @@ class SearchController extends Controller
         return ['error' => false, 'msg' => '', 'results' => $results];
     }
 
-    private function normalizeSearchString(string|null $inputString): string|null {
+    private function normalizeSearchString(?string $inputString): ?string {
         if (!$inputString) {
             return null;
         }
@@ -91,7 +91,7 @@ class SearchController extends Controller
         return $normalizedString;
     }
 
-    private function searchInDecor(string $modelName, int $missionId, string|null $userEntry): array {
+    private function searchInDecor(string $modelName, int $missionId, ?string $userEntry): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -119,7 +119,7 @@ class SearchController extends Controller
         return ['error' => false, 'msg' => '', 'results' => $searchResult];
     }
 
-    private function genericSearch(string $modelName, string|null $userEntry, array|null $filter = null): array {
+    private function genericSearch(string $modelName, ?string $userEntry, ?array $filter = null): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -169,7 +169,7 @@ class SearchController extends Controller
         return ['error' => false, 'msg' => '', 'results' => $searchResult];
     }
 
-    private function searchBrocker(string|null $valueType, string|null $search, int|null $parentId, string|null $folder): array {
+    private function searchBrocker(?string $valueType, ?string $search, ?int $parentId, ?string $folder): array {
         Yii::debug("*** Debug *** searchBrocker(valueType={$valueType}, search={$search}, parentId={$parentId}, folder={$folder})");
         return match ($valueType) {
             'image' => $this->imageSearch($search, $folder),

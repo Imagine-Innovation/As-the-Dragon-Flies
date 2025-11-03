@@ -7,7 +7,8 @@ use common\models\User;
 use yii\base\InvalidArgumentException;
 use yii\base\Model;
 
-class VerifyEmailForm extends Model {
+class VerifyEmailForm extends Model
+{
 
     /**
      * @var string
@@ -42,7 +43,7 @@ class VerifyEmailForm extends Model {
      *
      * @return User|null the saved model or null if saving fails
      */
-    public function verifyEmail() {
+    public function verifyEmail(): ?User {
         $user = $this->_user;
         $user->status = AppStatus::ACTIVE->value;
         return $user->save(false) ? $user : null;

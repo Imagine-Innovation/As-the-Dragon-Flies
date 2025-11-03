@@ -40,50 +40,67 @@ $difficultyClass = [
             <?= $model->requiredItem ? "with {$model->npc->name}" : "" ?>
         </p>
     </article>
-    <div class="row row-cols-1 row-cols-lg-3 g-4">
-        <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->prerequisites, 'parentId' => $model->id, 'type' => 'Prerequisite']) ?>
-        <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->triggers, 'parentId' => $model->id, 'type' => 'Trigger']) ?>
-        <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->outcomes, 'parentId' => $model->id, 'type' => 'Outcome']) ?>
-    </div>
 <?php endif; ?>
 
 <?php $form = ActiveForm::begin(); ?>
 
-<?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+<div class="row row-cols-1 row-cols-sm-2 g-3">
+    <div class="col">
+        <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+    </div>
+    <div class="col">
+        <?=
+                $form->field($model, 'action_type_id')
+                ->dropdownList(
+                        $model->action_type_id ? [$model->action_type_id => $model->actionType->name] : [],
+                        [
+                            'class' => 'select2-container w-100',
+                            'data-minimum-results-for-search' => -1,
+                            'data-placeholder' => "Select an action type",
+                        ]
+                )
+                ->label('Action type')
+        ?>
+    </div>
+</div>
 
-<?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
+<div class="row row-cols-1 row-cols-lg-4 g-3">
+    <div class="col">
+        <article class="card mb-3 h-100"">
+            <div class="card-header">
+                <h6 class="card-title">Short description</h6>
+            </div>
+            <div class="card-body">
+                <?=
+                $form->field($model, 'description', [
+                    'labelOptions' => ['style' => 'display: none;'],
+                ])->textarea(['rows' => 6])
+                ?>
+            </div>
+        </article>
+    </div>
 
-<?=
-        $form->field($model, 'action_type_id')
-        ->dropdownList(
-                $model->action_type_id ? [$model->action_type_id => $model->actionType->name] : [],
-                [
-                    'class' => 'select2-container w-100',
-                    'data-minimum-results-for-search' => -1,
-                    'data-placeholder' => "Select an action type",
-                ]
-        )
-        ->label('Action type')
-?>
-<div class="row">
-    <div class="col-12 col-sm-6">
+    <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->prerequisites, 'parentId' => $model->id, 'type' => 'Prerequisite']) ?>
+    <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->triggers, 'parentId' => $model->id, 'type' => 'Trigger']) ?>
+    <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->outcomes, 'parentId' => $model->id, 'type' => 'Outcome']) ?>
+</div>
+
+<div class="row row-cols-1 row-cols-sm-2 row-cols-xxl-3 py-3 g-3">
+    <div class="col">
         <?=
                 $form->field($model, 'dc')
                 ->radioList($difficultyClass)
                 ->label('Select a Difficulty Class (DC)')
         ?>
     </div>
-    <div class="col-12 col-sm-6">
+    <div class="col">
         <?=
                 $form->field($model, 'partial_dc')
                 ->radioList($difficultyClass)
                 ->label('Select a Difficulty Class (DC) for partial success')
         ?>
     </div>
-</div>
-
-<div class="row">
-    <div class="col-12 col-sm-6">
+    <div class="col">
         <?=
                 $form->field($model, 'is_free')
                 ->radioList([0 => 'Consume an action', 1 => 'Free action'])

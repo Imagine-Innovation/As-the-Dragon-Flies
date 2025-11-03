@@ -18,6 +18,7 @@ use yii\filters\AccessControl;
 use Yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\Request;
 use yii\web\Response;
 
 /**
@@ -94,17 +95,10 @@ class GameController extends Controller
 
         $playerId = $id ?? Yii::$app->session->get('playerId');
 
-        // Prepare Ajax request parameters
-        $param = [
-            'modelName' => 'Player',
-            'render' => 'player',
-            'filter' => ['id' => $playerId],
-        ];
-
-        // Process request and return response
-        $ajaxRequest = new AjaxRequest($param);
-        if ($ajaxRequest->makeResponse(Yii::$app->request)) {
-            return $ajaxRequest->response;
+        $player = $this->findModel('Player', ['id' => $playerId]);
+        if ($player) {
+            $render = $this->renderPartial('ajax/player', ['player' => $player]);
+            return ['error' => false, 'msg' => '', 'content' => $render];
         }
 
         return ['error' => true, 'msg' => 'Error encountered'];
@@ -211,6 +205,19 @@ class GameController extends Controller
         return ['error' => false, 'msg' => '', 'content' => $content, 'text' => $dialog->text];
     }
 
+    protected function getOutcome(Request $request): array {
+        $questAction = $this->findModel('QuestAction', [
+            'quest_progress_id' => $request->post('questProgressId'),
+            'action_id' => $request->post('actionId')
+        ]);
+        $actionComponent = new ActionComponent(['questAction' => $questAction]);
+        $outcome = $actionComponent->evaluateActionOutcome();
+
+        $this->createEvent('game-action', $request, $questAction->action->name, $outcome);
+
+        return $outcome;
+    }
+
     public function actionAjaxEvaluate(): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -221,25 +228,10 @@ class GameController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
-        $request = Yii::$app->request;
-        $questAction = $this->findModel('QuestAction', ['quest_progress_id' => $request->post('questProgressId'), 'action_id' => $request->post('actionId')]);
-        $actionComponent = new ActionComponent(['questAction' => $questAction]);
-        $outcome = $actionComponent->evaluateActionOutcome();
+        $outcome = $this->getOutcome(Yii::$app->request);
 
-        $success = $this->createEvent('game-action', $request, $questAction->action->name, $outcome);
-        if (!$success) {
-            return UserErrorMessage::throw($this, 'error', "Could not trigger event");
-        }
-
-        $content = $this->renderPartial('ajax/outcomes', [
-            'diceRoll' => $outcome['diceRoll'],
-            'status' => $outcome['status'],
-            'outcomes' => $outcome['outcomes'],
-            'hpLoss' => $outcome['hpLoss'],
-        ]);
-
-        $status = $outcome['status'];
-        return ['error' => false, 'msg' => "{$outcome['diceRoll']}, action status={$status->getLabel()}", 'next' => "Move to next mission #{$outcome['nextMissionId']}", 'content' => $content];
+        $content = $this->renderPartial('ajax/outcomes', $outcome);
+        return ['error' => false, 'msg' => '', 'content' => $content];
     }
 
     /**
@@ -280,7 +272,6 @@ class GameController extends Controller
         } catch (\Exception $e) {
             Yii::error("Failed to broadcast '{$eventType}' event: " . $e->getMessage());
             throw new \Exception(implode("<br />", ArrayHelper::getColumn($e, 0, false)));
-            return false;
         }
     }
 }
