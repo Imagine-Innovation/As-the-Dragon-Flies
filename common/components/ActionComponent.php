@@ -99,7 +99,7 @@ class ActionComponent extends Component
             // Bitwise comparison between actual status and expected status to unlock next action
             $bitwiseComparison = ($actionFlow->status & $status->value);
             $isEligible = $this->isActionEligible($actionFlow->nextAction, $questProgressId);
-            Yii::debug("*** debug *** unlockNextActions - isEligible=" . ($isEligible ? 'true' : 'false') . ", bitwis comparison={$bitwiseComparison}");
+            Yii::debug("*** debug *** unlockNextActions - isEligible=" . ($isEligible ? 'true' : 'false') . ", bitwise comparison={$bitwiseComparison}");
             if ($bitwiseComparison && $isEligible) {
                 $actionId = $actionFlow->next_action_id;
                 $unlockedQuestActions[] = $this->addOneQuestAction($actionId, $questProgressId);

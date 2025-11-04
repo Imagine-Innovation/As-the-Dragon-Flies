@@ -93,13 +93,22 @@ class ManageAccessRights extends Component
         $publicSiteActions = ['error', 'login', 'captcha', 'index', 'signup', 'error',
             'colors', 'icons', 'fonts', 'game',
             'request-password-reset', 'reset-password', 'verify-email', 'resend-verification-email'];
+
         // Allow access to site/error, site/login, site/captcha, site/index,...
         // or to any ajax call (side effect, every ajax call actions should be prefixed with 'ajax'
         return (
                 ($route === 'site' && in_array($action, $publicSiteActions)) ||
-                //substr($action, 0, 4) === 'ajax' ||
                 strncmp($action, 'ajax', 4) === 0
         );
+    }
+
+    private static function getAccessRight(string $route, string $action): ?AccessRight {
+        $accessRightData = Yii::$app->db->createCommand(
+                        "SELECT * FROM `access_right` WHERE `route` = :route AND `action` = :action",
+                        [':route' => $route, ':action' => $action]
+                )->queryOne();
+
+        return $accessRightData ? new AccessRight($accessRightData) : null;
     }
 
     /**
@@ -117,7 +126,8 @@ class ManageAccessRights extends Component
             return self::logAccess(null, false, 'success', "[{$route}/{$action}] Access granted by default to public route");
         }
         // Get access rights for the route
-        $accessRight = AccessRight::findOne(['route' => $route, 'action' => $action]);
+        //$accessRight = AccessRight::findOne(['route' => $route, 'action' => $action]);
+        $accessRight = self::getAccessRight($route, $action);
 
         // If no access rights defined, grant access to public "route/action"
         if (!$accessRight) {

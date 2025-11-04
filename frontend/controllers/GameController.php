@@ -168,12 +168,11 @@ class GameController extends Controller
             return ['error' => true, 'msg' => 'Not your turn'];
         }
 
-        $questComponent = new QuestComponent(['questProgress' => $questProgress]);
-        $actions = $questComponent->getEligibleActions($playerId);
+        $remainingActions = $questProgress->remainingActions;
 
-        if ($actions) {
-            $render = $this->renderPartial('ajax/actions', ['questActions' => $actions]);
-            return ['error' => false, 'msg' => 'List of eligible actions', 'content' => $render];
+        if ($remainingActions) {
+            $render = $this->renderPartial('ajax/actions', ['questActions' => $remainingActions]);
+            return ['error' => false, 'msg' => '', 'content' => $render];
         }
 
         return ['error' => true, 'msg' => 'Error encountered'];

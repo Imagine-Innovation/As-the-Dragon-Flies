@@ -168,18 +168,4 @@ class QuestComponent extends Component
             }
         }
     }
-
-    public function getEligibleActions(int $playerId): array|null {
-        if (!$this->questProgress) {
-            return null;
-        }
-        $eligibleQuestActions = [];
-        foreach ($this->questProgress->questActions as $questAction) {
-            if ($questAction->eligible) {
-                $eligibleQuestActions[] = $questAction;
-            }
-        }
-
-        return $eligibleQuestActions;
-    }
 }
