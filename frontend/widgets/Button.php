@@ -12,15 +12,15 @@ class Button extends Widget
     public bool $isPost = false;        // 'true' if the button triggers a POST request, default='false'
     public array $postParams = [];      // Associative array ['param' => value, ...] for hidden POST params
     public array $ariaParams = [];      // Associative array ['param' => value, ...] for aria attributes
-    public string $url = null;          // URL to call when the button is clicked, default='#'
-    public string $id = null;           // Button ID (for javascript purpose)
-    public string $style = null;        // Additional CSS class
-    public string $tooltip = null;      // Button tooltip
-    public string $icon = null;         // Icon to display before the button name
-    public string $modal = null;        // Name of the modal to display when clicking on the button
-    public string $title = null;        // Button name
-    public string $mode = null;         // “icon” to use it as an icon button, otherwise Bootstrap button behavior
-    public string $onclick = null;      // javascript hook to trigger onclick
+    public ?string $url = null;          // URL to call when the button is clicked, default='#'
+    public ?string $id = null;           // Button ID (for javascript purpose)
+    public ?string $style = null;        // Additional CSS class
+    public ?string $tooltip = null;      // Button tooltip
+    public ?string $icon = null;         // Icon to display before the button name
+    public ?string $modal = null;        // Name of the modal to display when clicking on the button
+    public ?string $title = null;        // Button name
+    public ?string $mode = null;         // “icon” to use it as an icon button, otherwise Bootstrap button behavior
+    public ?string $onclick = null;      // javascript hook to trigger onclick
     public bool $isCta = false;         // when 'true' is call to action (CTA) button
     public bool $isCloseModal = false;  // when 'true' is adding data-bs-dismiss="modal"
 
@@ -46,6 +46,21 @@ class Button extends Widget
         return $html;
     }
 
+    private function array2HTMLAttributes(?array $paramArray): string {
+        if (!$paramArray) {
+            return '';
+        }
+
+        $html = '';
+        foreach ($paramArray as $attribute => $value) {
+            // Caution: The spaces at the beginning of the line
+            // are intentional; do not delete them.
+            $html .= " {$attribute}=\"{$value}\"";
+        }
+
+        return $html;
+    }
+
     private function iconButton() {
         $style = $this->style ?? '';
         $icon = $this->iconElement();
@@ -66,8 +81,9 @@ class Button extends Widget
         $closeModal = $this->isCloseModal ? ' data-bs-dismiss="modal"' : '';
         $onclick = $this->onclick ? " onclick=\"{$this->onclick}\"" : '';
         $id = $this->idElement();
+        $aria = $this->array2HTMLAttributes($this->ariaParams);
 
-        $html = "<a href=\"{$url}\" {$id} role=\"button\" class=\"{$baseCss} {$AdditionalCss}\"{$closeModal}{$this->tooltipElement()}{$onclick}>";
+        $html = "<a href=\"{$url}\" {$id} role=\"button\" class=\"{$baseCss} {$AdditionalCss}\"{$closeModal}{$this->tooltipElement()}{$aria}{$onclick}>";
         return $html;
     }
 

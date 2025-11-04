@@ -102,7 +102,7 @@ class ActionComponent extends Component
             Yii::debug("*** debug *** unlockNextActions - isEligible=" . ($isEligible ? 'true' : 'false') . ", bitwis comparison={$bitwiseComparison}");
             if ($bitwiseComparison && $isEligible) {
                 $actionId = $actionFlow->next_action_id;
-                $unlockedQuestActions[] = $this->addQuestAction($actionId, $questProgressId);
+                $unlockedQuestActions[] = $this->addOneQuestAction($actionId, $questProgressId);
             }
         }
         Yii::debug("*** debug *** unlockNextActions - isEligible: " . count($unlockedQuestActions) . " triggered action(s)");
@@ -207,6 +207,20 @@ class ActionComponent extends Component
         return $canReplay;
     }
 
+    protected function returnOutcomeEvaluation(AppStatus &$status, array $outcomes, string $diceRollLabel, bool $canReplay): array {
+        return [
+            'action' => $this->action,
+            'status' => $status,
+            'outcomes' => $outcomes,
+            'diceRoll' => $diceRollLabel,
+            'hpLoss' => $this->hpLoss,
+            'isFree' => $this->action->is_free,
+            'canReplay' => $canReplay,
+            'questProgressId' => $this->questProgress->id,
+            'nextMissionId' => $this->nextMissionId,
+        ];
+    }
+
     public function evaluateActionOutcome(): array {
         Yii::debug("*** debug *** evaluateActionOutcome");
         if (!$this->action) {
@@ -226,17 +240,7 @@ class ActionComponent extends Component
         $this->endCurrentAction($status, $canReplay);
         $this->unlockNextActions($status);
 
-        return [
-            'action' => $this->action,
-            'status' => $status,
-            'outcomes' => $outcomes,
-            'diceRoll' => "Rolling {$diceToRoll} gave {$diceRoll}",
-            'hpLoss' => $this->hpLoss,
-            'isFree' => $this->action->is_free,
-            'canReplay' => $canReplay,
-            'questProgressId' => $this->questProgress->id,
-            'nextMissionId' => $this->nextMissionId,
-        ];
+        return $this->returnOutcomeEvaluation($status, $outcomes, "Rolling {$diceToRoll} gave {$diceRoll}", ($canReplay ?? true));
     }
 
     protected function isActionPrerequisiteMet(ActionFlow &$prerequisite, int $questProgressId): bool {
@@ -260,7 +264,7 @@ class ActionComponent extends Component
         return false;
     }
 
-    public function isActionEligible(Action &$action, int $questProgressId): bool {
+    protected function isActionEligible(Action &$action, int $questProgressId): bool {
         Yii::debug("*** debug *** isActionEligible - action={$action->name}, questProgressId={$questProgressId}");
         foreach ($action->prerequisites as $prerequisite) {
             $eligible = $this->isActionPrerequisiteMet($prerequisite, $questProgressId);
@@ -273,7 +277,7 @@ class ActionComponent extends Component
         return true;
     }
 
-    public function addQuestAction(int $actionId, int $questProgressId): QuestAction {
+    protected function addOneQuestAction(int $actionId, int $questProgressId): QuestAction {
         Yii::debug("*** debug *** addQuestAction - actionId={$actionId}, questProgressId={$questProgressId}");
 
         $questAction = QuestAction::findOne([
@@ -295,6 +299,16 @@ class ActionComponent extends Component
 
         $this->save($questAction);
         return $questAction;
+    }
+
+    public function addQuestActions(int $missionId) {
+        $actions = Action::findAll(['mission_id' => $missionId]);
+
+        foreach ($actions as $action) {
+            if ($this->isActionEligible($action, $this->questProgress->id)) {
+                $this->addOneQuestAction($action->id, $this->questProgress->id);
+            }
+        }
     }
 
     protected function save(\yii\db\ActiveRecord $model) {

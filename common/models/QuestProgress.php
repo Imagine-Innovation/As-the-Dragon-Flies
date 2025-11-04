@@ -26,6 +26,8 @@ use Yii;
  * Custom properties
  *
  * @property Player $currentPlayer
+ * @property QuestTurn $currentQuestTurn
+ * @property QuestAction[] $remainingActions
  */
 class QuestProgress extends \yii\db\ActiveRecord
 {
@@ -133,5 +135,28 @@ class QuestProgress extends \yii\db\ActiveRecord
      */
     public function getCurrentPlayer() {
         return $this->hasOne(Player::class, ['id' => 'current_player_id']);
+    }
+
+    /**
+     * Gets query for [[CurrentQuestTurn]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCurrentQuestTurn() {
+        $questTurn = QuestTurn::find()
+                ->where(['quest_progress_id' => $this->id, 'player_id' => $this->current_player_id])
+                ->orderBy('sequence DESC')
+                ->one();
+        return $questTurn;
+    }
+
+    /**
+     * Gets query for [[RemainingActions]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRemainingActions() {
+        return $this->hasMany(QuestAction::class, ['quest_progress_id' => 'id'])
+                        ->andWhere(['eligible' => 1]);
     }
 }

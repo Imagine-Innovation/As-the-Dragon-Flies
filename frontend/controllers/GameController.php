@@ -41,7 +41,7 @@ class GameController extends Controller
                             [
                                 'actions' => [
                                     'view',
-                                    'ajax-actions', 'ajax-dialog', 'ajax-evaluate', 'ajax-mission', 'ajax-quit', 'ajax-player',
+                                    'ajax-actions', 'ajax-dialog', 'ajax-evaluate', 'ajax-mission', 'ajax-next-turn', 'ajax-quit', 'ajax-player',
                                 ],
                                 'allow' => ManageAccessRights::isRouteAllowed($this),
                                 'roles' => ['@'],
@@ -231,6 +231,24 @@ class GameController extends Controller
         $outcome = $this->getOutcome(Yii::$app->request);
 
         $content = $this->renderPartial('ajax/outcomes', $outcome);
+        return ['error' => false, 'msg' => '', 'content' => $content];
+    }
+
+    public function actionNextTurn(): array {
+        // Set the response format to JSON
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        // Check if the request is a POST request and if it is an AJAX request
+        if (!$this->request->isPost || !$this->request->isAjax) {
+            // If not, return an error response
+            return ['error' => true, 'msg' => 'Not an Ajax POST request'];
+        }
+
+        $questProgressId = Yii::$app->request->post('questProgressId');
+        $nextMissionId = Yii::$app->request->post('nextMissionId');
+        $questProgress = $this->findModel('QuestProgress', ['id' => $questProgressId]);
+        $currentQuestTurn = $questProgress->currentQuestTurn;
+        $content = "";
         return ['error' => false, 'msg' => '', 'content' => $content];
     }
 

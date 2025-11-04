@@ -29,19 +29,6 @@ class QuestComponent extends Component
         }
     }
 
-    public function initQuestProgress(): bool {
-
-        $chapter = $this->quest->currentChapter;
-
-        $questProgress = $this->addQuestProgress($chapter->first_mission_id);
-        $this->questProgress = $questProgress;
-        $this->addQuestActions($questProgress->id, $chapter->first_mission_id);
-        $this->endCurrentTurn($questProgress->id);
-        $newQuestTurn = $this->addNewTurn($questProgress);
-
-        return ($newQuestTurn !== null);
-    }
-
     private function getNextPlayerId(QuestPlayer|null $currentQuestPlayer = null): int|null {
         $nextPlayer = null;
         // If the current player is defined, search for the next active player
@@ -70,11 +57,11 @@ class QuestComponent extends Component
         return $nextPlayerId;
     }
 
-    private static function getNextSequence(int $questProgressId): int {
+    private static function getLastTurnSequence(int $questProgressId): int {
         $nextSequence = QuestTurn::find()
-                        ->where(['quest_progress_id' => $questProgressId])
-                        ->max('sequence') + 1;
-        return $nextSequence;
+                ->where(['quest_progress_id' => $questProgressId])
+                ->max('sequence');
+        return $nextSequence ?? 0;
     }
 
     public function addNewTurn(QuestProgress &$questProgress): QuestTurn|null {
@@ -85,7 +72,7 @@ class QuestComponent extends Component
             return null;
         }
 
-        $nextSequence = $this->getNextSequence($questProgress->id);
+        $nextSequence = $this->getLastTurnSequence($questProgress->id) + 1;
 
         $questTurn = new QuestTurn([
             'player_id' => $currentQuestPlayer->player_id,
@@ -112,10 +99,46 @@ class QuestComponent extends Component
 
     }
 
+    /**
+     * Initialize the first QuestProgress when creating a new Quest
+     *
+     * @return bool
+     */
+    public function initQuestProgress(): bool {
+
+        $chapter = $this->quest->currentChapter;
+
+        $questProgress = $this->addQuestProgress($chapter->first_mission_id);
+
+        // Update component context
+        $this->questProgress = $questProgress;
+
+        //$this->addQuestActions($questProgress->id, $chapter->first_mission_id);
+        $actionComponent = new ActionComponent(['questProgress' => $questProgress]);
+        $actionComponent->addQuestActions($chapter->first_mission_id);
+        $this->endCurrentTurn($questProgress->id);
+
+        $newQuestTurn = $this->addNewTurn($questProgress);
+
+        return ($newQuestTurn !== null);
+    }
+
+    /**
+     * Add a QuestProgress model as an instance of a Mission model for a specific Quest
+     *
+     * @param int $missionId
+     * @return QuestProgress|null
+     * @throws \Exception
+     */
     public function addQuestProgress(int $missionId): ?QuestProgress {
         $mission = Mission::findOne($missionId);
+        if (!$mission) {
+            throw new \Exception("Mission #{$missionId} not found");
+        }
+
         $nextPlayerId = $this->getNextPlayerId();
         if (!$nextPlayerId) {
+            // No more active player: game over
             $this->gameOver(AppStatus::FAILURE->value);
             return null;
         }
@@ -135,7 +158,7 @@ class QuestComponent extends Component
         return $questProgress;
     }
 
-    public function addQuestActions(int $questProgressId, int $missionId) {
+    public function xxxaddQuestActions(int $questProgressId, int $missionId) {
         $actions = Action::findAll(['mission_id' => $missionId]);
 
         $actionComponent = new ActionComponent(['questProgress' => $this->questProgress]);

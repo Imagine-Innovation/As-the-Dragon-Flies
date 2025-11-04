@@ -211,7 +211,7 @@ class VirtualTableTop {
 
     moveToNextPlayer(questProgressId, nextMissionId) {
         Logger.log(1, 'moveToNextPlayer', `questProgressId=${questProgressId}, nextMissionId=${nextMissionId}`);
-        
+        return;
         AjaxUtils.request({
             url: 'game/ajax-next-turn',
             method: 'POST',
@@ -241,13 +241,14 @@ class VirtualTableTop {
             method: 'POST',
             data: this.context,
             successCallback: (response) => {
-                console.log(`evaluateAction callback=${JSON.stringify(response)}`);
+                // console.log(`evaluateAction callback=${JSON.stringify(response)}`);
                 if (!response.error) {
                     this._showModal('#gameModal');
                     $(target).html(response.content);
                 }
                 VirtualTableTop._updatePlayer(this.context.playerId);
                 this.actions(this.questId);
+                notificationClient.updateChatMessages();
             }
         });
     }
