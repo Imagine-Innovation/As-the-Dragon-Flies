@@ -7,15 +7,16 @@ use common\helpers\Utilities;
 use Yii;
 use yii\helpers\Url;
 
-class Status {
+class Status
+{
 
     /**
      * Returns the string representation of a status code.
      *
-     * @param int|null $statusCode The status code to be converted.
+     * @param ?int $statusCode The status code to be converted.
      * @return string The string representation of the status code.
      */
-    public static function label(int|null $statusCode = null): string {
+    public static function label(?int $statusCode = null): string {
         if (!$statusCode) {
             return 'Undefined';
         }
@@ -26,10 +27,10 @@ class Status {
     /**
      * Generates an HTML string for displaying a status icon with a tooltip.
      *
-     * @param int|null $statusValue The status code for which the icon and tooltip need to be generated.
+     * @param ?int $statusValue The status code for which the icon and tooltip need to be generated.
      * @return string The HTML string representing the status icon with a tooltip.
      */
-    public static function icon(int|null $statusCode = null): string {
+    public static function icon(?int $statusCode = null): string {
         $defaultIcon = ['icon' => 'bi-exclamation-square', 'tooltip' => 'Undefined'];
 
         $icon = $statusCode ?

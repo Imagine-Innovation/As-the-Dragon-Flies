@@ -44,7 +44,7 @@ class ActionComponent extends Component
         $this->player ??= $this->questProgress?->currentPlayer;
     }
 
-    protected function getModifier(): int {
+    private function getModifier(): int {
         Yii::debug("*** debug *** getModifier - action={$this->action->name}, player={$this->player->name}");
         $skillIds = ActionTypeSkill::find()
                 ->select('skill_id')
@@ -64,7 +64,7 @@ class ActionComponent extends Component
         return !$bonuses ? max($bonuses) : 0;
     }
 
-    protected function determineActionStatus(int $diceRoll): AppStatus {
+    private function determineActionStatus(int $diceRoll): AppStatus {
         Yii::debug("*** debug *** determineActionStatus - action={$this->action->name}, diceRoll={$diceRoll}");
         $dc = $this->action->dc;
         $partialDc = $this->action->partial_dc;
@@ -80,7 +80,7 @@ class ActionComponent extends Component
         return AppStatus::FAILURE;
     }
 
-    protected function endCurrentAction(AppStatus $status, ?bool $canReplay = true): void {
+    private function endCurrentAction(AppStatus $status, ?bool $canReplay = true): void {
         Yii::debug("*** debug *** endCurrentAction - action={$this->action->name}, status={$status->getLabel()}");
 
         QuestAction::updateAll(
@@ -89,7 +89,7 @@ class ActionComponent extends Component
         );
     }
 
-    protected function unlockNextActions(AppStatus $status): array {
+    private function unlockNextActions(AppStatus $status): array {
         Yii::debug("*** debug *** unlockNextActions - action={$this->action->name}, status={$status->getLabel()}");
         $triggeredActions = $this->action->triggers;
 
@@ -109,7 +109,7 @@ class ActionComponent extends Component
         return $unlockedQuestActions;
     }
 
-    protected function getLevelId(int $xp): int {
+    private function getLevelId(int $xp): int {
         Yii::debug("*** debug *** getLevelId - xp={$xp}");
         $level = \common\models\Level::find()
                 ->where(['<=', 'xp_min', $xp])
@@ -118,7 +118,7 @@ class ActionComponent extends Component
         return $level?->id ?? 1;
     }
 
-    protected function updateXp(int $gainedXp): array {
+    private function updateXp(int $gainedXp): array {
         Yii::debug("*** debug *** updateXp - gainedXp=" . ($gainedXp ?? 'null'));
         $setUpdate = [];
 
@@ -134,7 +134,7 @@ class ActionComponent extends Component
         return $setUpdate;
     }
 
-    protected function updateHp(string $hpLossDice): array {
+    private function updateHp(string $hpLossDice): array {
         Yii::debug("*** debug *** updateHp - hpLossDice=" . ($hpLossDice ?? 'null'));
         $hpLoss = DiceRoller::roll($hpLossDice);
 
@@ -146,7 +146,7 @@ class ActionComponent extends Component
         return ['hit_points' => $newHP];
     }
 
-    protected function updatePlayerStats(?int $gainedXp, ?string $hpLossDice) {
+    private function updatePlayerStats(?int $gainedXp, ?string $hpLossDice) {
         Yii::debug("*** debug *** updatePlayerStats - player={$this?->player?->name}, gainedXp=" . ($gainedXp ?? 'null') . ", hpLossDice=" . ($hpLossDice ?? 'null'));
         If (!$this->player) {
             return;
@@ -167,7 +167,7 @@ class ActionComponent extends Component
         }
     }
 
-    protected function getOutcomes(AppStatus $status): array {
+    private function getOutcomes(AppStatus $status): array {
         Yii::debug("*** debug *** getOutcomes - status={$status->getLabel()}");
         $outcomes = Outcome::findAll(['action_id' => $this->action->id]);
 
@@ -185,7 +185,7 @@ class ActionComponent extends Component
         return $selectedOutcomes;
     }
 
-    protected function registerGainsAndLosses(array $outcomes): ?bool {
+    private function registerGainsAndLosses(array $outcomes): ?bool {
         Yii::debug("*** debug *** registerGainsAndLosses - outcomes=" . count($outcomes));
 
         if (empty($outcomes)) {
@@ -207,7 +207,7 @@ class ActionComponent extends Component
         return $canReplay;
     }
 
-    protected function returnOutcomeEvaluation(AppStatus &$status, array $outcomes, string $diceRollLabel, bool $canReplay): array {
+    private function returnOutcomeEvaluation(AppStatus &$status, array $outcomes, string $diceRollLabel, bool $canReplay): array {
         return [
             'action' => $this->action,
             'status' => $status,
@@ -243,7 +243,7 @@ class ActionComponent extends Component
         return $this->returnOutcomeEvaluation($status, $outcomes, "Rolling {$diceToRoll} gave {$diceRoll}", ($canReplay ?? true));
     }
 
-    protected function isActionPrerequisiteMet(ActionFlow &$prerequisite, int $questProgressId): bool {
+    private function isActionPrerequisiteMet(ActionFlow &$prerequisite, int $questProgressId): bool {
         Yii::debug("*** debug *** isActionPrerequisiteMet - prequisite={$prerequisite->previousAction->name}, questProgressId={$questProgressId}");
         $questAction = QuestAction::findOne([
             'quest_progress_id' => $questProgressId,
@@ -264,7 +264,7 @@ class ActionComponent extends Component
         return false;
     }
 
-    protected function isActionEligible(Action &$action, int $questProgressId): bool {
+    private function isActionEligible(Action &$action, int $questProgressId): bool {
         Yii::debug("*** debug *** isActionEligible - action={$action->name}, questProgressId={$questProgressId}");
         foreach ($action->prerequisites as $prerequisite) {
             $eligible = $this->isActionPrerequisiteMet($prerequisite, $questProgressId);
@@ -277,7 +277,7 @@ class ActionComponent extends Component
         return true;
     }
 
-    protected function addOneQuestAction(int $actionId, int $questProgressId): QuestAction {
+    private function addOneQuestAction(int $actionId, int $questProgressId): QuestAction {
         Yii::debug("*** debug *** addQuestAction - actionId={$actionId}, questProgressId={$questProgressId}");
 
         $questAction = QuestAction::findOne([
@@ -311,7 +311,7 @@ class ActionComponent extends Component
         }
     }
 
-    protected function save(\yii\db\ActiveRecord $model) {
+    private function save(\yii\db\ActiveRecord $model) {
         if (!$model->save()) {
             throw new \Exception(implode("<br />", ArrayHelper::getColumn($model->errors, 0, false)));
         }

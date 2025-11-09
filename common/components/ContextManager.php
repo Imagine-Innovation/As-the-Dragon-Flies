@@ -30,7 +30,7 @@ class ContextManager extends Component
         }
     }
 
-    public static function updatePlayerContext(int|null $playerId = null): void {
+    public static function updatePlayerContext(?int $playerId = null): void {
         if (Yii::$app->user->isGuest) {
             return;
         }
@@ -57,7 +57,7 @@ class ContextManager extends Component
         }
     }
 
-    public static function updateQuestContext(int|null $questId = null): void {
+    public static function updateQuestContext(?int $questId = null): void {
         if (Yii::$app->user->isGuest) {
             return;
         }

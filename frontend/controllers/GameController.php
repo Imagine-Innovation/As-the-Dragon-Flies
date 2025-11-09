@@ -233,7 +233,7 @@ class GameController extends Controller
         return ['error' => false, 'msg' => '', 'content' => $content];
     }
 
-    public function actionNextTurn(): array {
+    public function actionAjaxNextTurn(): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -243,12 +243,18 @@ class GameController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
-        $questProgressId = Yii::$app->request->post('questProgressId');
-        $nextMissionId = Yii::$app->request->post('nextMissionId');
-        $questProgress = $this->findModel('QuestProgress', ['id' => $questProgressId]);
-        $currentQuestTurn = $questProgress->currentQuestTurn;
-        $content = "";
-        return ['error' => false, 'msg' => '', 'content' => $content];
+        $post = Yii::$app->request->post;
+        Yii::debug("*** debug *** actionNextTurn POST=" . print_r($post, true));
+        $questProgress = $this->findModel('QuestProgress', ['id' => $post['questProgressId']]);
+        $questComponent = new QuestComponent(['questProgress' => $questProgress]);
+
+        if ($questProgress->remainingActions) {
+            if ($post['nextMissionId'] !== $post['missionId']) {
+                return $questComponent->moveToNextMission($post, $post['nextMissionId']);
+            }
+            return $questComponent->nextPlayer();
+        }
+        return $questComponent->moveToNextMission($post);
     }
 
     /**

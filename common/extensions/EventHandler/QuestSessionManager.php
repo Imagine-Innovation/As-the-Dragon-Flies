@@ -191,7 +191,7 @@ class QuestSessionManager
      * @param string|null $message A contextual message.
      * @param array|null $sessions An array of QuestSession models. If null, fetches all.
      */
-    public function logQuestSession(string|null $message = null, array|null $sessions = null): void {
+    public function logQuestSession(?string $message = null, ?array $sessions = null): void {
         // This method now uses $this->logger
         if (!$this->logger->isDebugEnabled()) { // Assuming LoggerService has a method to check debug status
             return;

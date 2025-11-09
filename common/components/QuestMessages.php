@@ -19,11 +19,11 @@ class QuestMessages
      *
      * @param int $questId ID of quest
      * @param string $type notification type ("chat", "action"...)
-     * @param int|null $since optional parameter to get the notifications since a specific date
-     * @param int|null $limit optional parameter to limit the number of returned values
+     * @param ?int $since optional parameter to get the notifications since a specific date
+     * @param ?int $limit optional parameter to limit the number of returned values
      * @return common\models\Notification
      */
-    private static function getQuestNotifications(int $questId, string $type, int|null $since = null, int|null $limit = null): ?array {
+    private static function getQuestNotifications(int $questId, string $type, ?int $since = null, ?int $limit = null): ?array {
 
         Yii::debug("*** Debug *** getQuestNotifications - questId={$questId}, type={$type}, since=" . ($since ? Utilities::formatDate($since) : "null") . ", limit=" . ($limit ?? "null"));
         $query = Notification::find()
@@ -46,10 +46,10 @@ class QuestMessages
     /**
      *
      * @param int $questId
-     * @param int|null $limit
+     * @param ?int $limit
      * @return array|null
      */
-    public static function getRecentChatMessages(int $questId, int|null $limit = null): ?array {
+    public static function getRecentChatMessages(int $questId, ?int $limit = null): ?array {
 
         $chatNotifications = self::getQuestNotifications($questId, self::CHAT_NOTIFICATION_TYPE, null, $limit);
 
@@ -67,10 +67,10 @@ class QuestMessages
 
     /**
      *
-     * @param int|null $time
+     * @param ?int $time
      * @return int
      */
-    public static function roundedTime(int|null $time = null): int {
+    public static function roundedTime(?int $time = null): int {
         $timestamp = $time ?? time();
         return floor($timestamp / self::ROUNDED_SECONDS) * self::ROUNDED_SECONDS;
     }
@@ -127,11 +127,11 @@ class QuestMessages
      *
      * @param int $questId
      * @param int $playerId
-     * @param int|null $since
-     * @param int|null $limit
+     * @param ?int $since
+     * @param ?int $limit
      * @return array|null
      */
-    public static function getLastMessages(int $questId, int $playerId, int|null $since = null, int|null $limit = null): array {
+    public static function getLastMessages(int $questId, int $playerId, ?int $since = null, ?int $limit = null): array {
         $chatNotifications = self::getQuestNotifications($questId, self::CHAT_NOTIFICATION_TYPE, $since, $limit);
 
         if (!$chatNotifications) {

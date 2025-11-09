@@ -348,7 +348,7 @@ class QuestController extends Controller
         }
 
         $questComponent = new QuestComponent(['quest' => $quest]);
-        $questComponent->initQuestProgress();
+        $questComponent->addFirstQuestProgress();
 
         $success = $this->createEvent('quest-starting', $player, $quest);
         if ($success) {
@@ -512,7 +512,7 @@ class QuestController extends Controller
      * @return string|Response Rendered update form or redirect to view
      * @throws NotFoundHttpException if quest not found
      */
-    public function actionUpdate($id) {
+    public function actionUpdate(int $id) {
         $model = $this->findModel($id);
 
         // Process form submission
@@ -535,7 +535,7 @@ class QuestController extends Controller
      * @return Response Redirect to index page
      * @throws NotFoundHttpException if quest not found
      */
-    public function actionDelete($id) {
+    public function actionDelete(int $id) {
         $this->findModel($id)->delete();
         return $this->redirect(['index']);
     }
@@ -570,7 +570,7 @@ class QuestController extends Controller
         throw new NotFoundHttpException("The player (playerId={$playerId}) you are looking for does not exist.");
     }
 
-    protected function findValidStory($storyId): ?Story {
+    protected function findValidStory(int $storyId): ?Story {
         if ($storyId) {
             return Story::findOne(['id' => $storyId, 'status' => AppStatus::PUBLISHED->value]);
         }
@@ -589,7 +589,28 @@ class QuestController extends Controller
         return null;
     }
 
-    protected function findTavern($story) {
+    protected function newTavern(Story &$story): ?Quest {
+        Yii::debug("*** Debug *** findTavern  ===>  Create a new Tavern");
+        $newTavern = new Quest([
+            'story_id' => $story->id,
+            'initiator_id' => Yii::$app->session->get('playerId'),
+            'current_chapter_id' => QuestOnboarding::getChapterId($story->id, 1),
+            'name' => $story->name,
+            'description' => $story->description,
+            'image' => $story->image,
+            'status' => AppStatus::WAITING->value,
+            'created_at' => time(),
+            'local_time' => time(),
+        ]);
+
+        if (!$newTavern->save()) {
+            throw new \Exception(implode("<br />", \yii\helpers\ArrayHelper::getColumn($newTavern->errors, 0, false)));
+        }
+
+        return $newTavern;
+    }
+
+    protected function findTavern(Story &$story): ?Quest {
 
         $tavern = $story->tavern ?? null;
         $questId = Yii::$app->session->get('questId');
@@ -599,25 +620,7 @@ class QuestController extends Controller
             return null;
         }
 
-        if (!$tavern) {
-            Yii::debug("*** Debug *** findTavern  ===>  Create a new Tavern");
-            $tavern = new Quest([
-                'story_id' => $story->id,
-                'initiator_id' => Yii::$app->session->get('playerId'),
-                'current_chapter_id' => QuestOnboarding::getChapterId($story->id, 1),
-                'name' => $story->name,
-                'description' => $story->description,
-                'image' => $story->image,
-                'status' => AppStatus::WAITING->value,
-                'created_at' => time(),
-                'local_time' => time(),
-            ]);
-            if (!$tavern->save()) {
-                throw new \Exception(implode("<br />", \yii\helpers\ArrayHelper::getColumn($tavern->errors, 0, false)));
-            }
-        }
-
-        return $tavern;
+        return $tavern ?? $this->newTavern($story);
     }
 
     protected function createEvent(string $eventType, Player &$player, Quest &$quest, array $data = []): bool {
