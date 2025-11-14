@@ -1,6 +1,6 @@
 <?php
 
-namespace frontend\components;
+namespace common\components\gameplay;
 
 use common\components\AppStatus;
 use common\components\ContextManager;
@@ -12,18 +12,20 @@ use common\models\Story;
 use common\models\StoryClass;
 use Yii;
 
-class QuestOnboarding
+class TavernManager extends BaseManager
 {
 
-    const WELLCOME_MESSAGES = [
-        0 => "There's nobody here!",
-        1 => "For the moment, it looks like you're the first one",
-        2 => "Look, there are two of you now",
-        3 => "Ah! but there are three of you! Wait, I'll get a chair",
-        4 => "Now that there are four of you, I'm going to put you on a bigger table",
-        5 => "With five guys like you, it's going to be quite a team!"
-    ];
-    const DEFAULT_MESSAGE = "Boy, that's quite a team!";
+    public ?Story $story = null;
+    public ?Quest $quest = null;
+
+    public function __construct($config = []) {
+        // Call the parent's constructor
+        parent::__construct($config);
+
+        if ($this->quest) {
+            $this->story = $this->quest->story;
+        }
+    }
 
     /**
      * Returns a wellcone message for a new joiner
@@ -31,31 +33,27 @@ class QuestOnboarding
      * @param int $playerCount Number of already on boarded players
      * @return string Welcome message
      */
-    public static function welcomeMessage(int $playerCount): string {
-
-        $message = array_key_exists($playerCount, self::WELLCOME_MESSAGES) ?
-                self::WELLCOME_MESSAGES[$playerCount] :
-                self::DEFAULT_MESSAGE;
-
-        return $message;
-    }
-
-    public static function getChapterId(int $storyId, ?int $chapterNumber = 1): ?int {
-        $chapter = \common\models\Chapter::findOne(['story_id' => $storyId, 'chapter_number' => $chapterNumber]);
-
-        return $chapter?->id;
+    public function welcomeMessage(int $playerCount): string {
+        return match ($playerCount) {
+            0 => 'There\'s nobody here!',
+            1 => 'For the moment, it looks like you\'re the first one',
+            2 => 'Look, there are two of you now',
+            3 => 'Ah! but there are three of you! Wait, I\'ll get a chair',
+            4 => 'Now that there are four of you, I\'m going to put you on a bigger table',
+            5 => 'With five guys like you, it\'s going to be quite a team!',
+            default => 'Boy, that\'s quite a team!'
+        };
     }
 
     /**
      * Returns a message given the missing number of players before the quest can start
      *
-     * @param Quest $quest reference to a Quest object
      * @param ?int $playerCount Number of already on boarded players, null when quest is beeing created
      * @return string Missing player message
      */
-    public static function missingPlayers(Quest &$quest, ?int $playerCount = null): string {
+    public function missingPlayers(?int $playerCount = null): string {
         $actualPlayerCount = $playerCount ?? 0;
-        $storyMinPlayers = $quest->story->min_players;
+        $storyMinPlayers = $this->quest->story->min_players;
         $missingCount = $storyMinPlayers - $actualPlayerCount;
 
         if ($missingCount > 1) {
@@ -72,11 +70,10 @@ class QuestOnboarding
      * returns a message with the list of missing classes before the quest can start,
      * null if no class is required
      *
-     * @param Quest $quest reference to a Quest object
      * @return string|null Missing classes message, null if no class is required
      */
-    public static function missingClasses(Quest &$quest): ?string {
-        $missingClassIds = self::getMissingClassIds($quest);
+    public function missingClasses(): ?string {
+        $missingClassIds = $this->getMissingClassIds();
 
         if ($missingClassIds === null) {
             return null;
@@ -98,12 +95,11 @@ class QuestOnboarding
     /**
      * Get the list of missing class IDs, null if bo class is required
      *
-     * @param Quest $quest reference to a Quest object
      * @return array|null Missing class IDs, null if bo class is required
      */
-    private static function getMissingClassIds(Quest &$quest): ?array {
+    private function getMissingClassIds(): ?array {
         // Get the required classes
-        $requiredClassIds = self::getRequiredClassIds($quest->story_id);
+        $requiredClassIds = $this->getRequiredClassIds($this->quest->story_id);
 
         // If no specific class is required, consider that they are all present
         if (!$requiredClassIds) {
@@ -111,7 +107,7 @@ class QuestOnboarding
         }
 
         // Fetch the actual player classes
-        $actualPlayerClasses = self::getActualPlayerClassIds($quest->id);
+        $actualPlayerClasses = $this->getActualPlayerClassIds($this->quest->id);
 
         return array_diff($requiredClassIds, $actualPlayerClasses);
     }
@@ -120,34 +116,31 @@ class QuestOnboarding
      * Check if a player can join a quest.
      *
      * @param Player|null $player
-     * @param Quest|null $quest a Quest object, null if the player is not in a quest
      * @return array Associative array with a deny status and the reason why
      */
-    public static function canPlayerJoinQuest(?Player $player, ?Quest $quest = null): array {
+    public function canPlayerJoinQuest(?Player &$player): array {
         // Check if the player is eliible to join a quest
-        $playerStatus = self::isPlayerValid($player, $quest);
+        $playerStatus = $this->isPlayerValid($player);
         if ($playerStatus['error']) {
             return $playerStatus;
         }
 
         // Check if the quest is a valid one
-        $questStatus = self::isQuestValid($quest);
+        $questStatus = $this->isQuestValid();
         if ($questStatus['error']) {
             return $questStatus;
         }
 
-        $story = $quest->story;
-
-        if (!self::isPlayerLevelValid($player, $story)) {
-            return ['denied' => true, 'reason' => "canPlayerJoinQuest->Player {$player->name}'s level ({$player->level->name}) is not within story requirements ({$story->min_level} to {$story->max_level})"];
+        if (!$this->isPlayerLevelValid($player)) {
+            return ['denied' => true, 'reason' => "canPlayerJoinQuest->Player {$player->name}'s level ({$player->level->name}) is not within story requirements ({$this->story->min_level} to {$this->story->max_level})"];
         }
 
-        $playerCount = $quest->getCurrentPlayers()->count();
-        if ($playerCount >= $story->max_players) {
-            return ['denied' => true, 'reason' => "canPlayerJoinQuest->Quest has reached maximum players ({$story->max_players})"];
+        $playerCount = $this->quest->getCurrentPlayers()->count();
+        if ($playerCount >= $this->story->max_players) {
+            return ['denied' => true, 'reason' => "canPlayerJoinQuest->Quest has reached maximum players ({$this->story->max_players})"];
         }
 
-        if (!self::isPlayerClassValid($player, $quest)) {
+        if (!$this->isPlayerClassValid($player)) {
             return ['denied' => true, 'reason' => "canPlayerJoinQuest->Cannot welcome more players of class {$player->class->name}"];
         }
 
@@ -157,58 +150,55 @@ class QuestOnboarding
     /**
      * Check if a quest is valid
      *
-     * @param Quest|null $quest a Quest object, null if the quest does not exist
      * @return array Associative array with an error status, a deny status and the reason why
      */
-    private static function isQuestValid(?Quest $quest = null): array {
+    private function isQuestValid(): array {
         // Check if quest exists
-        if (!$quest) {
+        if (!$this->quest) {
             return ['error' => true, 'denied' => false, 'reason' => "canPlayerJoinQuest->You can create a new quest"];
         }
 
-        if ($quest->status !== AppStatus::WAITING->value) {
+        if ($this->quest->status !== AppStatus::WAITING->value) {
             return ['error' => true, 'denied' => true, 'reason' => "canPlayerJoinQuest->Quest is not waiting to start anymore"];
         }
 
-        return ['error' => false, 'denied' => false, 'reason' => "canPlayerJoinQuest->Quest #{$quest->id} is valid quest"];
+        return ['error' => false, 'denied' => false, 'reason' => "canPlayerJoinQuest->Quest #{$this->quest->id} is valid quest"];
     }
 
     /**
      * Check if a player is valid to join a new quest
      *
      * @param Player|null $player reference to a Player object
-     * @param Quest|null $quest a Quest object, null if the player is not in a quest
      * @return array Associative array with an error status, a deny status and the reason why
      */
-    private static function isPlayerValid(?Player $player, ?Quest $quest = null): array {
+    private function isPlayerValid(?Player $player): array {
         // Check if player is selected
         if (!$player) {
-            return ['error' => true, 'denied' => true, 'reason' => "canPlayerJoinQuest->No player is selected"];
+            return ['error' => true, 'denied' => true, 'reason' => "isPlayerValid->No player is selected"];
         }
 
         // Check if player is in another quest
-        if ($quest === null) {
+        if ($this->quest === null) {
             if ($player->quest_id) {
                 Yii::debug("*** Debug *** isPlayerValid - quest is null and player->quest_id is {$player->quest_id}");
-                return ['error' => true, 'denied' => true, 'reason' => "canPlayerJoinQuest->Player {$player->name} is already involved in another quest"];
+                return ['error' => true, 'denied' => true, 'reason' => "isPlayerValid->Player {$player->name} is already involved in another quest"];
             }
-        } elseif ($player->quest_id && $player->quest_id !== $quest->id) {
-            Yii::debug("*** Debug *** isPlayerValid - quest is not null but player->quest_id is {$player->quest_id} <> quest->id {$quest->id}");
-            return ['error' => true, 'denied' => true, 'reason' => "canPlayerJoinQuest->Player {$player->name} is already involved in another quest"];
+        } elseif ($player->quest_id && $player->quest_id !== $this->quest->id) {
+            Yii::debug("*** Debug *** isPlayerValid - quest is not null but player->quest_id is {$player->quest_id} <> quest->id {$this->quest->id}");
+            return ['error' => true, 'denied' => true, 'reason' => "isPlayerValid->Player {$player->name} is already involved in another quest"];
         }
 
-        return ['error' => false, 'denied' => false, 'reason' => "canPlayerJoinQuest->Player {$player->name} is eligible to join a quest"];
+        return ['error' => false, 'denied' => false, 'reason' => "isPlayerValid->Player {$player->name} is eligible to join a quest"];
     }
 
     /**
      * Check is the player's level is compatible with the story requirements
      *
      * @param Player $player reference to a Player object
-     * @param Story $story reference to a Story object
      * @return bool
      */
-    private static function isPlayerLevelValid(Player &$player, Story &$story): bool {
-        return $player->level_id >= $story->min_level && $player->level_id <= $story->max_level;
+    private function isPlayerLevelValid(Player &$player): bool {
+        return $this->story->min_level <= $player->level_id && $player->level_id <= $this->story->max_level;
     }
 
     /**
@@ -216,18 +206,17 @@ class QuestOnboarding
      * If nothing is specified, every class can join.
      *
      * @param Player $player reference to a Player object
-     * @param Quest $quest reference to a Quest object
      * @return bool
      */
-    private static function isPlayerClassValid(Player &$player, Quest &$quest): bool {
-        $requiredClassIds = self::getRequiredClassIds($quest->story_id);
+    private function isPlayerClassValid(Player &$player): bool {
+        $requiredClassIds = $this->getRequiredClassIds($this->quest->story_id);
 
         // If no specific class is required, consider that they are all present
         if (count($requiredClassIds) === 0) {
             return true;
         }
 
-        $actualPlayerClasses = self::getActualPlayerClassIds($quest->id);
+        $actualPlayerClasses = $this->getActualPlayerClassIds($this->quest->id);
 
         // If player's class is required and not yet present
         if (in_array($player->class_id, $requiredClassIds) && !in_array($player->class_id, $actualPlayerClasses)) {
@@ -235,7 +224,7 @@ class QuestOnboarding
         }
 
         // Check if we need to reserve slots for missing required classes
-        $remainingSlots = $quest->story->max_players - self::getCurrentPlayerCount($quest->id);
+        $remainingSlots = $this->quest->story->max_players - $this->getCurrentPlayerCount($this->quest->id);
         $missingClassesCount = count(array_diff($requiredClassIds, $actualPlayerClasses));
 
         return $remainingSlots > $missingClassesCount;
@@ -245,12 +234,11 @@ class QuestOnboarding
      * Check of every required classes defined in the story
      * have onboarded in the quest
      *
-     * @param Quest $quest reference to a Quest object
      * @return bool
      */
-    public static function areRequiredClassesPresent(Quest &$quest): bool {
+    public function areRequiredClassesPresent(): bool {
         // Get the missing classes
-        $missingClassIds = self::getMissingClassIds($quest);
+        $missingClassIds = $this->getMissingClassIds();
 
         // If no specific class is required, consider that they are all present
         if ($missingClassIds === null) {
@@ -266,7 +254,7 @@ class QuestOnboarding
      * @param int $storyId
      * @return array|null
      */
-    private static function getRequiredClassIds(int $storyId): ?array {
+    private function getRequiredClassIds(int $storyId): ?array {
         // Get the required classes
         $classes = StoryClass::find()
                 ->select('class_id')
@@ -288,7 +276,7 @@ class QuestOnboarding
      * @param int $questId
      * @return array|null
      */
-    private static function getActualPlayerClassIds(int $questId): ?array {
+    private function getActualPlayerClassIds(int $questId): ?array {
         // Fetch the actual player classes
         $classes = Player::find()
                 ->select('class_id')
@@ -310,9 +298,9 @@ class QuestOnboarding
      * @param int $questId
      * @return int
      */
-    private static function getCurrentPlayerCount(int $questId): int {
+    private function getCurrentPlayerCount(): int {
         $playerCount = Player::find()
-                ->where(['quest_id' => $questId])
+                ->where(['quest_id' => $this->quest->id])
                 ->count();
 
         return $playerCount;
@@ -325,7 +313,7 @@ class QuestOnboarding
      * @param int|null $questId ID of the quest in which the player is engaged. Null if he leaves the quest
      * @return array
      */
-    private static function updatePlayerQuestId(Player &$player, ?int $questId = null): array {
+    private function updatePlayerQuestId(Player &$player, ?int $questId = null): array {
         $player->quest_id = $questId;
         if (!$player->save()) {
             return ['error' => true, 'message' => "Could not save Player : " . implode("\n", \yii\helpers\ArrayHelper::getColumn($player->errors, 0, false))];
@@ -334,7 +322,7 @@ class QuestOnboarding
         return ['error' => false, 'message' => "Player's quest_id updated to {$questId}"];
     }
 
-    private static function getPlayerTurnNumber(int $questId): int {
+    private function getNextPlayerTurn(int $questId): int {
         $nextTurn = QuestPlayer::find()
                         ->where(['quest_id' => $questId])
                         ->max('player_turn') + 1;
@@ -350,7 +338,7 @@ class QuestOnboarding
      * @param string|null $reasonWhyPlayerQuit Reason why the player left the quest, null when inserting a new entry
      * @return array
      */
-    private static function upsertQuestPlayer(int $questId, int $playerId, int $status, ?string $reasonWhyPlayerQuit = null): array {
+    private function upsertQuestPlayer(int $questId, int $playerId, int $status, ?string $reasonWhyPlayerQuit = null): array {
         $questPlayer = QuestPlayer::findOne(['quest_id' => $questId, 'player_id' => $playerId]);
 
         if (!$questPlayer) {
@@ -359,7 +347,7 @@ class QuestOnboarding
                 'quest_id' => $questId,
                 'player_id' => $playerId,
                 'onboarded_at' => time(),
-                'player_turn' => self::getPlayerTurnNumber($questId),
+                'player_turn' => $this->getNextPlayerTurn($questId),
                 'status' => $status,
             ]);
         }
@@ -377,21 +365,20 @@ class QuestOnboarding
      * Add a player to a quest
      *
      * @param Player $player reference to a Player object
-     * @param Quest $quest reference to a Quest object
      * @return array
      */
-    public static function addPlayerToQuest(Player &$player, Quest &$quest): array {
+    public function addPlayerToQuest(Player &$player): array {
 
-        if ($player->quest_id === $quest->id) {
+        if ($player->quest_id === $this->quest->id) {
             return ['error' => false, 'message' => "Player is already onboarded in the quest"];
         }
 
-        $playerUpdate = self::updatePlayerQuestId($player, $quest->id);
+        $playerUpdate = $this->updatePlayerQuestId($player, $this->quest->id);
         if ($playerUpdate['error']) {
             return $playerUpdate;
         }
 
-        $result = self::upsertQuestPlayer($quest->id, $player->id, AppStatus::ONLINE->value);
+        $result = $this->upsertQuestPlayer($this->quest->id, $player->id, AppStatus::ONLINE->value);
         if ($result['error']) {
             return $result;
         }
@@ -402,21 +389,83 @@ class QuestOnboarding
     /**
      *
      * @param Player $player reference to a Player object
-     * @param Quest $quest
      * @param string $reason
      * @return array
      */
-    public static function withdrawPlayerFromQuest(Player &$player, Quest &$quest, string $reason = null): array {
+    public function withdrawPlayerFromQuest(Player &$player, string $reason = null): array {
 
         // Player is already onboarded on a different quest => error
-        if ($player->quest_id === null || $player->quest_id !== $quest->id) {
-            return ['error' => true, 'message' => "player {$player->name} (id {$player->id}) is not in quest={$quest->id}, player->quest_id=" . ($player->quest_id ?? "null")];
+        if ($player->quest_id === null || $player->quest_id !== $this->quest->id) {
+            return ['error' => true, 'message' => "player {$player->name} (id {$player->id}) is not in quest={$this->quest->id}, player->quest_id=" . ($player->quest_id ?? "null")];
         }
 
-        $playerUpdate = self::updatePlayerQuestId($player, null);
+        $playerUpdate = $this->updatePlayerQuestId($player, null);
         if ($playerUpdate['error']) {
             return $playerUpdate;
         }
-        return self::upsertQuestPlayer($quest->id, $player->id, AppStatus::LEFT->value, $reason);
+        return $this->upsertQuestPlayer($this->quest->id, $player->id, AppStatus::LEFT->value, $reason);
+    }
+
+    private function newTavern(): ?Quest {
+        Yii::debug("*** Debug *** findTavern  ===>  Create a new Tavern");
+        $newTavern = new Quest([
+            'story_id' => $this->story->id,
+            'initiator_id' => Yii::$app->session->get('playerId'),
+            'current_chapter_id' => $this->story->firstChapter->id,
+            'name' => $this->story->name,
+            'description' => $this->story->description,
+            'image' => $this->story->image,
+            'status' => AppStatus::WAITING->value,
+            'created_at' => time(),
+            'local_time' => time(),
+        ]);
+
+        if (!$newTavern->save()) {
+            throw new \Exception(implode("<br />", \yii\helpers\ArrayHelper::getColumn($newTavern->errors, 0, false)));
+        }
+
+        return $newTavern;
+    }
+
+    public function findTavern(): ?Quest {
+
+        $tavern = $this->story->tavern ?? null;
+        $questId = Yii::$app->session->get('questId');
+
+        if ($questId && (!$tavern || $tavern->id !== $questId)) {
+            throw new NotFoundHttpException("Tavern is not the current quest for story {$this->story->name}");
+        }
+
+        $foundTavern = $tavern ?? $this->newTavern();
+
+        if ($foundTavern) {
+            // Update the current context
+            $this->quest = $foundTavern;
+            return $foundTavern;
+        }
+        throw new NotFoundHttpException("Unable to find or create a tavern for the story {$this->story->name}");
+    }
+
+    public function questCanStart(int $playerId): array {
+        Yii::debug("*** debug *** - questCanStart - questId={$this->quest->id}, initiatorId={$this->quest->initiator_id}, playerId={$playerId}");
+        if ($playerId !== $this->quest->initiator_id) {
+            return ['canStart' => false, 'msg' => "Your are the quest initiator"];
+        }
+
+        if ($this->quest->status !== AppStatus::WAITING->value) {
+            return ['canStart' => false, 'msg' => "Quest {$this->quest->name} is not in wating state."];
+        }
+
+        $playersCount = $this->getCurrentPlayerCount();
+
+        if ($playersCount < $this->story->min_players) {
+            return ['canStart' => false, 'msg' => "Quest can start once {$this->story->min_players} joined. Current count is {$playersCount}"];
+        }
+
+        if (!$this->areRequiredClassesPresent()) {
+            return ['canStart' => false, 'msg' => "Missing required player classes"];
+        }
+
+        return ['canStart' => true, 'msg' => "Quest can start", 'questName' => $this->quest->name, 'questId' => $this->quest->id];
     }
 }

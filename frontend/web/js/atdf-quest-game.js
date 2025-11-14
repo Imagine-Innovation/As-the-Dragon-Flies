@@ -211,7 +211,7 @@ class VirtualTableTop {
 
     moveToNextPlayer(questProgressId, nextMissionId) {
         Logger.log(1, 'moveToNextPlayer', `questProgressId=${questProgressId}, nextMissionId=${nextMissionId}`);
-        return;
+        //return;
         AjaxUtils.request({
             url: 'game/ajax-next-turn',
             method: 'POST',

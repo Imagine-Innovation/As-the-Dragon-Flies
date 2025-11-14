@@ -40,8 +40,6 @@ use Yii;
  * @property Image $image
  * @property Item[] $cartItems
  * @property Item[] $items
- * @property Weapon[] $weapons
-
  * @property Language[] $languages
  * @property Level $level
  * @property NotificationPlayer[] $notificationPlayers
@@ -60,8 +58,9 @@ use Yii;
  * @property QuestPlayer[] $questPlayers
  * @property QuestSession[] $questSessions
  * @property QuestTurn[] $questTurns
- * @property Quest[] $quests
  * @property Quest[] $initiatedQuests
+ * @property Quest $questToPlay
+ * @property Quest[] $quests
  * @property Race $race
  * @property Skill[] $skills
  * @property Spell[] $spells
@@ -69,10 +68,20 @@ use Yii;
  * @property User $user
  * @property UserLog[] $userLogs
  *
- * *********** Custom **********
+ * *********** Custom Properties **********
  *
+ * @property Item[] $weapons
+ * @property string avatar
  * @property string $description
+ * @property int $initiative
  * @property Notification[] $unreadNotifications
+ *
+ * *********** Custom Methods **********
+ *
+ * bool|null isProficient(int $itemId)
+ * bool setStatus(int $status)
+ * bool|null addCoins(?int $quantity, string $coin = 'gp')
+ * bool|null addItems(?int $itemId, int $quantity = 1
  *
  */
 class Player extends \yii\db\ActiveRecord
@@ -192,10 +201,7 @@ class Player extends \yii\db\ActiveRecord
      * @return \yii\db\ActiveQuery
      */
     public function getImage() {
-        if ($this->image_id) {
-            return $this->hasOne(Image::class, ['id' => 'image_id']);
-        }
-        return $this->hasOne(Image::class, ['id' => 1]);
+        return $this->hasOne(Image::class, ['id' => 'image_id']);
     }
 
     /**
@@ -214,15 +220,6 @@ class Player extends \yii\db\ActiveRecord
      */
     public function getItems() {
         return $this->hasMany(Item::class, ['id' => 'item_id'])->viaTable('player_item', ['player_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[Weapons]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getWeapons() {
-        return $this->hasMany(Weapons::class, ['id' => 'item_id'])->viaTable('player_item', ['player_id' => 'id']);
     }
 
     /**
@@ -388,12 +385,21 @@ class Player extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Quests]].
+     * Gets query for [[InitiatedQuests]].
      *
      * @return \yii\db\ActiveQuery
      */
     public function getInitiatedQuests() {
         return $this->hasMany(Quest::class, ['initiator_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[QuestToPlay]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getQuestToPlay() {
+        return $this->hasOne(Quest::class, ['current_player_id' => 'id']);
     }
 
     /**
@@ -515,6 +521,16 @@ class Player extends \yii\db\ActiveRecord
      * ************************
      *     Custom properties
      * ************************ */
+
+    /**
+     * Gets query for [[Weapons]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getWeapons() {
+        return $this->hasMany(Weapons::class, ['id' => 'item_id'])->viaTable('player_item', ['player_id' => 'id']);
+    }
+
     public function getAvatar() {
         if ($this->image) {
             return $this->image->file_name;
@@ -557,35 +573,6 @@ class Player extends \yii\db\ActiveRecord
         return strtolower($description);
     }
 
-    public function getInitiative() {
-        return PlayerComponent::getInitiative($this->abilities);
-    }
-
-    /**
-     * Checks if a player is proficient with a specific item.
-     *
-     * @param int $item_id The ID of the item to check proficiency for.
-     * @return bool|null Returns true if the player is proficient with the item, false if not,
-     *                   or null if the player parameter is null.
-     */
-    public function isProficient($item_id) {
-        $class = $this->class;
-
-        return PlayerComponent::isProficient($class->id, $item_id);
-    }
-
-    /**
-     * Changes the status of the given model and updates its "updated_at" timestamp.
-     *
-     * @param string $status The new status to set.
-     * @return bool Whether the status change was successful.
-     */
-    public function setStatus($status) {
-        $this->status = $status;
-        // Save the changes to the model and returns whether the save operation was successful
-        return $this->save();
-    }
-
     /**
      * Get unread notifications for this player
      *
@@ -598,10 +585,48 @@ class Player extends \yii\db\ActiveRecord
                         });
     }
 
-    public function addCoins(?int $quantity, string $coin = 'gp') {
+    /**
+     * ************************
+     *     Custom methods
+     * ************************ */
+
+    /**
+     *
+     * @return type
+     */
+    public function getInitiative() {
+        return PlayerComponent::getInitiative($this->abilities);
+    }
+
+    /**
+     * Checks if a player is proficient with a specific item.
+     *
+     * @param int $item_id The ID of the item to check proficiency for.
+     * @return bool|null Returns true if the player is proficient with the item, false if not,
+     *                   or null if the player parameter is null.
+     */
+    public function isProficient(int $item_id): ?bool {
+        $class = $this->class;
+
+        return PlayerComponent::isProficient($class->id, $item_id);
+    }
+
+    /**
+     * Changes the status of the given model and updates its "updated_at" timestamp.
+     *
+     * @param string $status The new status to set.
+     * @return bool Whether the status change was successful.
+     */
+    public function setStatus(int $status): bool {
+        $this->status = $status;
+        // Save the changes to the model and returns whether the save operation was successful
+        return $this->save();
+    }
+
+    public function addCoins(?int $quantity, string $coin = 'gp'): ?bool {
         Yii::debug("*** debug *** - Player - addCoins(quantity=" . ($quantity ?? 'null') . ", coin={$coin})");
         if (!$quantity || $quantity === 0) {
-            return;
+            return null;
         }
 
         $updatedRows = PlayerCoin::updateAll(
@@ -615,14 +640,15 @@ class Player extends \yii\db\ActiveRecord
                 'coin' => $coin,
                 'quantity' => $quantity
             ]);
-            $playerCoinGp->save();
+            return $playerCoinGp->save();
         }
+        return true;
     }
 
-    public function addItems(?int $itemId, int $quantity = 1) {
+    public function addItems(?int $itemId, int $quantity = 1): ?bool {
         Yii::debug("*** debug *** - Player - addItems(itemId=" . ($itemId ?? 'null') . ", quantity={$quantity})");
         if (!$itemId || $quantity === 0) {
-            return;
+            return null;
         }
 
         $updatedRows = PlayerItem::updateAll(
@@ -641,7 +667,8 @@ class Player extends \yii\db\ActiveRecord
                 'image' => $item->image,
                 'is_carrying' => 1,
             ]);
-            $playerItem->save();
+            return $playerItem->save();
         }
+        return true;
     }
 }

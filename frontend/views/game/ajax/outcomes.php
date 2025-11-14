@@ -18,6 +18,7 @@ if ($hpLoss > 0) {
 }
 if (empty($outcomes)) {
     echo "<p>Something happened, that's for sure, but I don't really know what</p>";
+    echo print_r($outcomes);
 } else {
     foreach ($outcomes as $outcome) {
         echo $hr;

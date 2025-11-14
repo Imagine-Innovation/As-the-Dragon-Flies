@@ -2,17 +2,14 @@
 
 namespace frontend\controllers;
 
-use common\components\ActionComponent;
 use common\components\AppStatus;
 use common\components\ContextManager;
+use common\components\gameplay\ActionManager;
+use common\components\gameplay\QuestManager;
+use common\components\gameplay\TavernManager;
 use common\components\ManageAccessRights;
-use common\components\QuestComponent;
-use common\helpers\UserErrorMessage;
 use common\models\events\EventFactory;
-use common\models\Quest;
 use common\models\QuestPlayer;
-use frontend\components\AjaxRequest;
-use frontend\components\QuestOnboarding;
 use Yii;
 use yii\filters\AccessControl;
 use Yii\helpers\ArrayHelper;
@@ -55,7 +52,8 @@ class GameController extends Controller
     /**
      * Displays quest details
      *
-     * Shows comprehensive information about a specific quest instance.
+     * Shows comprehensive information about a specific quest instance
+     * in a virtual tabletop (VTT) layout
      *
      * @param int $id Quest ID to view
      * @return string Rendered view page
@@ -104,6 +102,12 @@ class GameController extends Controller
         return ['error' => true, 'msg' => 'Error encountered'];
     }
 
+    /**
+     * Ajax POST request to handle player's quitting the game
+     *
+     * @param string $reason
+     * @return array
+     */
     public function actionAjaxQuit(string $reason): array {
         // Configure response format
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -124,7 +128,8 @@ class GameController extends Controller
         }
 
         // Process player offboarding
-        $withdraw = QuestOnboarding::withdrawPlayerFromQuest($player, $quest, $reason);
+        $tavernManager = new TavernManager(['quest' => $quest]);
+        $withdraw = $tavernManager->withdrawPlayerFromQuest($player, $reason);
         if ($withdraw['error']) {
             return ['success' => false, 'message' => $withdraw['message']];
         }
@@ -134,6 +139,12 @@ class GameController extends Controller
         return ['success' => true, 'message' => "Player {$player->name} successfully withdrown from quest {$quest->name}"];
     }
 
+    /**
+     * Ajax GET request to get the mission description layout
+     *
+     * @param int $questProgressId
+     * @return array
+     */
     public function actionAjaxMission(int $questProgressId) {
         // Configure JSON response format
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -153,6 +164,13 @@ class GameController extends Controller
         return ['error' => true, 'msg' => 'Error encountered'];
     }
 
+    /**
+     * Ajax GET request to retreive the eligible actions for a player
+     *
+     * @param int $questProgressId
+     * @param int $playerId
+     * @return array
+     */
     public function actionAjaxActions(int $questProgressId, int $playerId): array {
         // Configure JSON response format
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -178,6 +196,14 @@ class GameController extends Controller
         return ['error' => true, 'msg' => 'Error encountered'];
     }
 
+    /**
+     * Ajax GET request to manage the dialog between a player and a NPC
+     *
+     * @param int $replyId
+     * @param int $playerId
+     * @param int $storyId
+     * @return array
+     */
     public function actionAjaxDialog(int $replyId, int $playerId, int $storyId): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -204,19 +230,30 @@ class GameController extends Controller
         return ['error' => false, 'msg' => '', 'content' => $content, 'text' => $dialog->text];
     }
 
-    protected function getOutcome(Request $request): array {
+    /**
+     * Retrieves the POST parameters, evaluates the results of the completed action, and triggers a "game-action" event.
+     *
+     * @param Request $postRequest
+     * @return array An associative array that contains what should be displayed
+     */
+    protected function getOutcome(Request $postRequest): array {
         $questAction = $this->findModel('QuestAction', [
-            'quest_progress_id' => $request->post('questProgressId'),
-            'action_id' => $request->post('actionId')
+            'quest_progress_id' => $postRequest->post('questProgressId'),
+            'action_id' => $postRequest->post('actionId')
         ]);
-        $actionComponent = new ActionComponent(['questAction' => $questAction]);
-        $outcome = $actionComponent->evaluateActionOutcome();
+        $actionManager = new ActionManager(['questAction' => $questAction]);
+        $outcome = $actionManager->evaluateActionOutcome();
 
-        $this->createEvent('game-action', $request, $questAction->action->name, $outcome);
+        $this->createEvent('game-action', $postRequest, $questAction->action->name, $outcome);
 
         return $outcome;
     }
 
+    /**
+     * Ajax POST request that evaluates the outcome of the completed action
+     *
+     * @return array Json encoded associative array with error status, internal message, and content to display
+     */
     public function actionAjaxEvaluate(): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -233,6 +270,11 @@ class GameController extends Controller
         return ['error' => false, 'msg' => '', 'content' => $content];
     }
 
+    /**
+     * Ajax POST request to handle moving to the next turn
+     *
+     * @return array Json encoded associative array with error status, internal message, and content to display
+     */
     public function actionAjaxNextTurn(): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -246,20 +288,26 @@ class GameController extends Controller
         $post = Yii::$app->request->post;
         Yii::debug("*** debug *** actionNextTurn POST=" . print_r($post, true));
         $questProgress = $this->findModel('QuestProgress', ['id' => $post['questProgressId']]);
-        $questComponent = new QuestComponent(['questProgress' => $questProgress]);
+
+        // Set the context of the QuestManager to the current QuestProgress
+        $questManager = new QuestManager(['questProgress' => $questProgress]);
 
         if ($questProgress->remainingActions) {
-            if ($post['nextMissionId'] !== $post['missionId']) {
-                return $questComponent->moveToNextMission($post, $post['nextMissionId']);
+            if ($post['nextMissionId'] && $post['nextMissionId'] !== $post['missionId']) {
+                // One of the results of the previous action indicates that you should move on to another mission.
+                // This takes over the processing of the remaining actions.
+                return $questManager->moveToNextMission($post, $post['nextMissionId']);
             }
-            return $questComponent->nextPlayer();
+            return $questManager->nextPlayer();
         }
-        return $questComponent->moveToNextMission($post);
+        // Move to the default mission
+        return $questManager->moveToNextMission($post, $post['nextMissionId']);
     }
 
     /**
      * Finds the model model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
+     *
      * @param string $modelName model type to load
      * @param array $param
      * @return common\models\modelName the loaded model
@@ -277,11 +325,11 @@ class GameController extends Controller
         throw new NotFoundHttpException("The requested {$modelName} does not exist.");
     }
 
-    protected function createEvent(string $eventType, yii\web\Request $request, string $actionName, array $outcome = []): bool {
+    protected function createEvent(string $eventType, Request $postRequest, string $actionName, array $outcome = []): bool {
         $sessionId = Yii::$app->session->get('sessionId');
         try {
-            $player = $this->findModel('Player', ['id' => $request->post('playerId')]);
-            $quest = $this->findModel('Quest', ['id' => $request->post('questId')]);
+            $player = $this->findModel('Player', ['id' => $postRequest->post('playerId')]);
+            $quest = $this->findModel('Quest', ['id' => $postRequest->post('questId')]);
             $data['action'] = $actionName;
             $data['detail'] = [
                 'diceRoll' => $outcome['diceRoll'],

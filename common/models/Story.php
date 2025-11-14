@@ -29,6 +29,7 @@ use Yii;
  *
  * ************ Custom properties
  *
+ * @property Chapter $firstChapter
  * @property Quest $tavern
  * @property sting $requestedLevels
  * @property sting $companySize
@@ -139,6 +140,16 @@ class Story extends \yii\db\ActiveRecord
     /*     * *********************************
      *       Custom properties
      *       ********************************* */
+
+    /**
+     * Gets query for [[FirstChapter]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFirstChapter() {
+        return $this->hasOne(Chapter::class, ['story_id' => 'id'])
+                        ->andWhere(['chapter_number' => 1]);
+    }
 
     /**
      * Gets query for [[Tavern]].

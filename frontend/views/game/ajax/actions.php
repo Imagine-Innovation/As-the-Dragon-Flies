@@ -4,10 +4,8 @@
 ?>
 
 <div class="card">
-    <div class="card-header">
-        What do want to do?
-    </div>
-    <div class="card-body">
+    <div class="card-body text-decoration">
+        <p>What do want to do?</p>
         <ol>
             <?php
             foreach ($questActions as $questAction):

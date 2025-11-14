@@ -1,8 +1,8 @@
 <?php
 
+use common\components\gameplay\TavernManager;
 use common\helpers\StoryNeededClass;
 use common\helpers\StoryPlayers;
-use frontend\components\QuestOnboarding;
 use frontend\widgets\Button;
 use frontend\widgets\ModalDesc;
 use yii\helpers\Url;
@@ -14,7 +14,8 @@ use yii\helpers\Url;
 /** @var common\models\Quest $quest */
 /** @var integer $isDesigner */
 /** @var integer $isPlayer */
-$canJoin = QuestOnboarding::canPlayerJoinQuest($player, $quest);
+$tavernManager = new TavernManager(['quest' => $quest]);
+$canJoin = $tavernManager->canPlayerJoinQuest($player);
 
 $image = $story->image ?
         "img/story/{$story->id}/{$story->image}" :
