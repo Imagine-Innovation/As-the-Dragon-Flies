@@ -10,6 +10,7 @@ use common\components\gameplay\TavernManager;
 use common\components\ManageAccessRights;
 use common\models\events\EventFactory;
 use common\models\QuestPlayer;
+use common\models\QuestTurn;
 use Yii;
 use yii\filters\AccessControl;
 use Yii\helpers\ArrayHelper;
@@ -38,7 +39,8 @@ class GameController extends Controller
                             [
                                 'actions' => [
                                     'view',
-                                    'ajax-actions', 'ajax-dialog', 'ajax-evaluate', 'ajax-mission', 'ajax-next-turn', 'ajax-quit', 'ajax-player',
+                                    'ajax-actions', 'ajax-dialog', 'ajax-evaluate', 'ajax-mission', 'ajax-next-turn',
+                                    'ajax-player', 'ajax-quit', 'ajax-turn',
                                 ],
                                 'allow' => ManageAccessRights::isRouteAllowed($this),
                                 'roles' => ['@'],
@@ -119,33 +121,32 @@ class GameController extends Controller
 
         $player = Yii::$app->session->get('currentPlayer');
         if (!$player) {
-            return ['success' => false, 'message' => 'Player not found'];
+            return ['error' => true, 'msg' => 'Player not found'];
         }
 
         $quest = Yii::$app->session->get('currentQuest');
         if (!$quest) {
-            return ['success' => false, 'message' => 'Quest not found'];
+            return ['error' => true, 'msg' => 'Quest not found'];
         }
 
         // Process player offboarding
         $tavernManager = new TavernManager(['quest' => $quest]);
         $withdraw = $tavernManager->withdrawPlayerFromQuest($player, $reason);
         if ($withdraw['error']) {
-            return ['success' => false, 'message' => $withdraw['message']];
+            return ['error' => true, 'msg' => $withdraw['message']];
         }
 
         ContextManager::updateQuestContext(null);
 
-        return ['success' => true, 'message' => "Player {$player->name} successfully withdrown from quest {$quest->name}"];
+        return ['error' => false, 'msg' => "Player {$player->name} successfully withdrown from quest {$quest->name}"];
     }
 
     /**
      * Ajax GET request to get the mission description layout
      *
-     * @param int $questProgressId
      * @return array
      */
-    public function actionAjaxMission(int $questProgressId) {
+    public function actionAjaxMission(int $missionId): array {
         // Configure JSON response format
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -154,11 +155,35 @@ class GameController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
         }
 
-        $questProgress = $this->findModel('QuestProgress', ['id' => $questProgressId]);
+        $mission = $this->findModel('Mission', ['id' => $missionId]);
+        $render = $this->renderPartial('ajax/mission', ['mission' => $mission]);
+        return ['error' => false, 'msg' => '', 'content' => $render];
+    }
 
-        if ($questProgress) {
-            $render = $this->renderPartial('ajax/mission', ['questProgress' => $questProgress]);
-            return ['error' => false, 'msg' => '', 'content' => $render];
+    /**
+     * Ajax GET request to get the turn info
+     *
+     * @return array
+     */
+    public function actionAjaxTurn() {
+        // Configure JSON response format
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        // Validate request type
+        if (!$this->request->isGet || !$this->request->isAjax) {
+            return ['error' => true, 'msg' => 'Not an Ajax GET request'];
+        }
+
+        $questTurn = QuestTurn::find()
+                ->where(['status' => AppStatus::IN_PROGRESS->value, 'quest_progress_id' => Yii::$app->request->get('questProgressId')])
+                ->one();
+
+        if ($questTurn) {
+            $content = [
+                'playerId' => $questTurn->player_id,
+                'sequence' => $questTurn->sequence,
+            ];
+            return ['error' => false, 'msg' => '', 'content' => $content];
         }
 
         return ['error' => true, 'msg' => 'Error encountered'];
@@ -167,11 +192,9 @@ class GameController extends Controller
     /**
      * Ajax GET request to retreive the eligible actions for a player
      *
-     * @param int $questProgressId
-     * @param int $playerId
      * @return array
      */
-    public function actionAjaxActions(int $questProgressId, int $playerId): array {
+    public function actionAjaxActions(int $questProgressId): array {
         // Configure JSON response format
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -182,7 +205,7 @@ class GameController extends Controller
 
         $questProgress = $this->findModel('QuestProgress', ['id' => $questProgressId]);
 
-        if ($questProgress->current_player_id !== $playerId) {
+        if ($questProgress->current_player_id !== Yii::$app->session->get('playerId')) {
             return ['error' => true, 'msg' => 'Not your turn'];
         }
 
@@ -192,8 +215,10 @@ class GameController extends Controller
             $render = $this->renderPartial('ajax/actions', ['questActions' => $remainingActions]);
             return ['error' => false, 'msg' => '', 'content' => $render];
         }
-
-        return ['error' => true, 'msg' => 'Error encountered'];
+        // There are no more actions remaining, this mission is considered complete,
+        // we move on to the next mission.
+        $questManager = new QuestManager(['questProgress' => $questProgress]);
+        return $questManager->moveToNextMission();
     }
 
     /**
@@ -285,23 +310,28 @@ class GameController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
-        $post = Yii::$app->request->post;
-        Yii::debug("*** debug *** actionNextTurn POST=" . print_r($post, true));
-        $questProgress = $this->findModel('QuestProgress', ['id' => $post['questProgressId']]);
+        $request = Yii::$app->request;
+        $questProgress = $this->findModel('QuestProgress', ['id' => $request->post('questProgressId')]);
 
         // Set the context of the QuestManager to the current QuestProgress
         $questManager = new QuestManager(['questProgress' => $questProgress]);
+        $nextMissionId = $request->post('nextMissionId');
+        $currentMissionId = $request->post('missionId');
+        $remainingActions = $questProgress->remainingActions;
 
-        if ($questProgress->remainingActions) {
-            if ($post['nextMissionId'] && $post['nextMissionId'] !== $post['missionId']) {
-                // One of the results of the previous action indicates that you should move on to another mission.
+        Yii::debug("*** debug *** actionAjaxNextTurn - currentMissionId={$currentMissionId}, nextMissionId={$nextMissionId}, remainingAction=" . count($remainingActions));
+
+        if ($remainingActions) {
+            if ($nextMissionId && $nextMissionId !== $currentMissionId) {
+                // One of the results of the previous action indicates
+                // that you should move on to another mission.
                 // This takes over the processing of the remaining actions.
-                return $questManager->moveToNextMission($post, $post['nextMissionId']);
+                return $questManager->moveToNextMission($nextMissionId);
             }
             return $questManager->nextPlayer();
         }
         // Move to the default mission
-        return $questManager->moveToNextMission($post, $post['nextMissionId']);
+        return $questManager->moveToNextMission($nextMissionId);
     }
 
     /**

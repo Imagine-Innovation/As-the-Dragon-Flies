@@ -45,8 +45,7 @@ class SiteController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['logout', 'ajax-toast', 'websocket', 'send-message'],
-                        //'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'actions' => ['logout', 'ajax-toast', 'websocket'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -393,12 +392,12 @@ class SiteController extends Controller
     public function actionAjaxToast() {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a POST request and if it is an AJAX request
+// Check if the request is a POST request and if it is an AJAX request
         if (!$this->request->isPost || !$this->request->isAjax) {
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
-        // Retrieve the item ID from the POST data and find the item
+// Retrieve the item ID from the POST data and find the item
         $messageHeader = Yii::$app->request->post('messageHeader');
         $message = Yii::$app->request->post('message');
         $severity = Yii::$app->request->post('severity');
@@ -423,7 +422,7 @@ class SiteController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             $model->imageFile = UploadedFile::getInstance($model, 'imageFile');
             if ($model->upload()) {
-                // file is uploaded successfully
+// file is uploaded successfully
                 Yii::debug("*** Debug *** actionImageUpload ---> file is uploaded successfully !!!!", __METHOD__);
                 return;
             }
@@ -433,35 +432,5 @@ class SiteController extends Controller
         return $this->render('image-upload', [
                     'model' => $model,
         ]);
-    }
-
-    /**
-     * WebSocket test page
-     */
-    public function actionWebsocket() {
-        return $this->render('websocket');
-    }
-
-    /**
-     * Send a message to a player via WebSocket
-     */
-    public function actionSendMessage() {
-        if (Yii::$app->request->isAjax) {
-            $playerId = Yii::$app->request->post('playerId');
-            $message = Yii::$app->request->post('message');
-
-            // In a real application, you would need a way to communicate with
-            // the running WebSocket server. This could be through a shared
-            // database, Redis, or another messaging system.
-            // For now, we'll just log the request
-            Yii::info("Request to send message to player {$playerId}: {$message}", 'websocket');
-
-            return $this->asJson([
-                        'success' => true,
-                        'message' => "Message would be sent to {$playerId}"
-            ]);
-        }
-
-        return $this->asJson(['success' => false, 'message' => 'Invalid request']);
     }
 }

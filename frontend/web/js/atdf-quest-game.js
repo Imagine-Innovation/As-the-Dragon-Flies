@@ -30,12 +30,42 @@ class VirtualTableTop {
         VirtualTableTop._updateQuestMembers(questId);
     }
 
+    static refreshMission(questId, playerId, detail) {
+        Logger.log(1, 'refreshMission', `questId=${questId}, playerId=${playerId}, detail=${JSON.stringify(detail)}`);
+
+        const nextPlayer = (playerId === detail.nextPlayerId) ? 'your' : `${detail.nextPlayerName}'s`;
+        const toastMessage = `${detail.currentPlayerName} has completed mission “${detail.currentMissionName}”.
+ Now it's ${nextPlayer} turn to start mission “${detail.nextMissionName}”`;
+
+        ToastManager.show('Game message', toastMessage, 'info');
+
+        VirtualTableTop._updatePlayer(playerId);
+        VirtualTableTop._updateQuestMembers(questId);
+        VirtualTableTop._updateMission(detail.nextMissionId);
+        VirtualTableTop._updateTurn(playerId, detail);
+        VirtualTableTop._updateActions(playerId, detail.nextPlayerId, detail.nextQuestProgressId);
+    }
+
+    static refreshTurn(questId, playerId, detail) {
+        Logger.log(1, 'refreshTurn', `questId=${questId}, playerId=${playerId}, detail=${JSON.stringify(detail)}`);
+
+        const nextPlayer = (playerId === detail.nextPlayerId) ? 'your' : `${detail.nextPlayerName}'s`;
+        const toastMessage = `${detail.currentPlayerName} has finished his turn. Now it's ${nextPlayer} turn to play.`;
+
+        ToastManager.show('Game message', toastMessage, 'info');
+
+        VirtualTableTop._updatePlayer(playerId);
+        VirtualTableTop._updateQuestMembers(questId);
+        VirtualTableTop._updateTurn(playerId, detail);
+        VirtualTableTop._updateActions(playerId, detail.nextPlayerId, detail.questProgressId);
+    }
+
     static _updateQuestMembers(questId) {
         Logger.log(2, '_updateQuestMembers', `questId=${questId}`);
-        const asideTarget = `#questMembers`;
+        const asideTarget = `#questMembers-aside`;
         if (!DOMUtils.exists(asideTarget))
             return;
-        const offcanvasTarget = `#offcanvasQuestMembers`;
+        const offcanvasTarget = `#questMembers-offcanvas`;
         if (!DOMUtils.exists(offcanvasTarget))
             return;
         AjaxUtils.request({
@@ -57,9 +87,11 @@ class VirtualTableTop {
         const asideTarget = `#player-aside`;
         if (!DOMUtils.exists(asideTarget))
             return;
+
         const offcanvasTarget = `#player-offcanvas`;
         if (!DOMUtils.exists(offcanvasTarget))
             return;
+
         AjaxUtils.request({
             url: 'game/ajax-player',
             method: 'GET',
@@ -74,15 +106,16 @@ class VirtualTableTop {
         });
     }
 
-    missionDescription(questId) {
-        Logger.log(1, 'missionDescription', `questId=${questId}`);
+    static _updateMission(missionId) {
+        Logger.log(2, '_updateMission', `missionId=${missionId}`);
         const target = `#missionDescription`;
         if (!DOMUtils.exists(target))
             return;
+
         AjaxUtils.request({
             url: 'game/ajax-mission',
             method: 'GET',
-            data: this.context,
+            data: {missionId: missionId},
             successCallback: (response) => {
                 if (!response.error) {
                     const content = response.content;
@@ -92,30 +125,43 @@ class VirtualTableTop {
         });
     }
 
-    actions(questId) {
-        Logger.log(2, 'actions', `questId=${questId}`);
+    static _updateTurn(playerId, detail) {
+        Logger.log(2, '_updateTurn', `playerId=${playerId}, detail=${JSON.stringify(detail)}`);
+        const target = `#turnDescription`;
+        if (!DOMUtils.exists(target))
+            return;
+
+        const nextPlayer = (playerId === detail.nextPlayerId) ? 'your' : `${detail.nextPlayerName}'s`;
+        const message = `It's ${nextPlayer} turn to play`;
+        $(target).html(message);
+    }
+
+    static _updateActions(playerId, currentPlayerId, questProgressId) {
+        Logger.log(2, '_updateActions', `playerId=${playerId}, currentPlayerId=${currentPlayerId}, questProgressId=${questProgressId}`);
         const target = `#actionList`;
         if (!DOMUtils.exists(target))
             return;
 
-        // Update context
-        this.questId = questId;
+        if (playerId !== currentPlayerId) {
+            // The player is not the one who is playing, 
+            // the action card is hidden, and we stop there.
+            $(target).addClass('d-none');
+            return;
+        }
+        $(target).removeClass('d-none');
 
         AjaxUtils.request({
             url: 'game/ajax-actions',
             method: 'GET',
-            data: {
-                questProgressId: this.context.questProgressId,
-                playerId: this.context.playerId
-            },
+            data: {questProgressId: questProgressId},
             successCallback: (response) => {
-                let content = `???`;
                 if (!response.error) {
-                    content = response.content;
+                    const content = response.content;
+                    $(target).html(content);
                 } else {
-                    content = response.msg;
+                    const content = response.msg;
+                    $(target).html(content);
                 }
-                $(target).html(content);
             }
         });
     }
@@ -222,6 +268,9 @@ class VirtualTableTop {
             },
             successCallback: (response) => {
                 console.log(`moveToNextPlayer callback=${JSON.stringify(response)}`);
+                if (!response.error) {
+                    window.location.reload();
+                }
             }
         });
     }
@@ -243,11 +292,13 @@ class VirtualTableTop {
             successCallback: (response) => {
                 // console.log(`evaluateAction callback=${JSON.stringify(response)}`);
                 if (!response.error) {
+                    console.log(`evaluateAction callback=${JSON.stringify(response)}`);
                     this._showModal('#gameModal');
                     $(target).html(response.content);
+                    // update action list
+                    VirtualTableTop._updateActions(this.context.playerId, this.context.playerId, this.context.questProgressId);
                 }
                 VirtualTableTop._updatePlayer(this.context.playerId);
-                this.actions(this.questId);
                 notificationClient.updateChatMessages();
             }
         });

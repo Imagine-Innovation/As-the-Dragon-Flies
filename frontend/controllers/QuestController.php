@@ -21,8 +21,6 @@ namespace frontend\controllers;
 use common\components\AppStatus;
 use common\components\ContextManager;
 use common\components\ManageAccessRights;
-//use common\components\QuestComponent;
-//use common\components\QuestMessages;
 use common\components\gameplay\ChatManager;
 use common\components\gameplay\QuestManager;
 use common\components\gameplay\TavernManager;
@@ -172,9 +170,8 @@ class QuestController extends Controller
         $success = $this->createEvent('player-joining', $player, $tavern);
         if ($success) {
             return $this->redirect(['tavern', 'id' => $tavern->id]);
-        } else {
-            return UserErrorMessage::throw($this, 'error', "Could not trigger event", self::DEFAULT_REDIRECT);
         }
+        return UserErrorMessage::throw($this, 'error', "Could not trigger event", self::DEFAULT_REDIRECT);
     }
 
     /**
@@ -267,21 +264,21 @@ class QuestController extends Controller
 
         $quest = $this->findModel(Yii::$app->request->post('questId'));
         if (!$quest) {
-            return ['success' => false, 'message' => 'Quest not found'];
+            return ['error' => true, 'msg' => 'Quest not found'];
         }
         $player = $this->findPlayer(Yii::$app->request->post('playerId'));
         if (!$player) {
-            return ['success' => false, 'message' => 'Player not found'];
+            return ['error' => true, 'msg' => 'Player not found'];
         }
 
         $message = Yii::$app->request->post('message');
         Yii::debug("*** Debug *** actionAjaxSendMessage - Player: {$player->name}, Quest: {$quest->name}, Message: " . ($message ?? 'empty'));
         if (empty($message)) {
-            return ['success' => false, 'message' => 'Message cannot be empty'];
+            return ['error' => true, 'msg' => 'Message cannot be empty'];
         }
 
-        $success = $this->createEvent('sending-message', $player, $quest, ['message' => $message]);
-        return ['success' => $success, 'msg' => "Create 'sending-message' event {($success ? 'succeded' : 'failed')}"];
+        $success = $this->createEvent('sending-message', $player, $quest, ['msg' => $message]);
+        return ['error' => !$success, 'msg' => "Create 'sending-message' event " . ($success ? 'succeded' : 'failed')];
     }
 
     public function actionStart(?int $id) {
@@ -303,9 +300,8 @@ class QuestController extends Controller
         $success = $this->createEvent('quest-starting', $player, $quest);
         if ($success) {
             return $this->redirect(['game/view', 'id' => $id]);
-        } else {
-            return UserErrorMessage::throw($this, 'error', "Could not trigger event", self::DEFAULT_REDIRECT);
         }
+        return UserErrorMessage::throw($this, 'error', "Could not trigger event", self::DEFAULT_REDIRECT);
     }
 
     /**
@@ -388,9 +384,8 @@ class QuestController extends Controller
         $success = $this->createEvent('player-quitting', $player, $quest, ['reason' => $reason]);
         if ($success) {
             return $this->redirect(['story/index']);
-        } else {
-            return UserErrorMessage::throw($this, 'error', "Could not trigger event", self::DEFAULT_REDIRECT);
         }
+        return UserErrorMessage::throw($this, 'error', "Could not trigger event", self::DEFAULT_REDIRECT);
     }
 
     /**
@@ -523,6 +518,7 @@ class QuestController extends Controller
             return true;
         } catch (\Exception $e) {
             Yii::error("Failed to broadcast '{$eventType}' event: " . $e->getMessage());
+            throw new \Exception(implode("<br />", \yii\helpers\ArrayHelper::getColumn($e, 0, false)));
             return false;
         }
     }

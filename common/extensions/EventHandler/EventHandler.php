@@ -14,6 +14,9 @@ use common\extensions\EventHandler\handlers\GameActionHandler;
 use common\extensions\EventHandler\handlers\PlayerJoiningHandler;
 use common\extensions\EventHandler\handlers\PlayerQuittingHandler;
 use common\extensions\EventHandler\handlers\QuestStartingHandler;
+use common\extensions\EventHandler\handlers\NextTurnHandler;
+use common\extensions\EventHandler\handlers\NextMissionHandler;
+use common\extensions\EventHandler\handlers\GameOverHandler;
 use common\extensions\EventHandler\factories\BroadcastMessageFactory;
 use Yii;
 use yii\base\Component;
@@ -76,6 +79,9 @@ class EventHandler extends Component
             'game-action' => new GameActionHandler($this->loggerService, $this->broadcastService, new BroadcastMessageFactory()),
             'player-joining' => new PlayerJoiningHandler($this->loggerService, $this->broadcastService, new BroadcastMessageFactory()),
             'player-quitting' => new PlayerQuittingHandler($this->loggerService, $this->broadcastService, new BroadcastMessageFactory()),
+            'next-turn' => new NextTurnHandler($this->loggerService, $this->broadcastService, new BroadcastMessageFactory()),
+            'next-mission' => new NextMissionHandler($this->loggerService, $this->broadcastService, new BroadcastMessageFactory()),
+            'game-over' => new GameOverHandler($this->loggerService, $this->broadcastService, new BroadcastMessageFactory()),
             'quest-starting' => new QuestStartingHandler($this->loggerService, $this->broadcastService, new BroadcastMessageFactory()),
         ];
         $this->messageHandlerOrchestrator = new MessageHandlerOrchestrator(

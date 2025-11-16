@@ -10,6 +10,7 @@ use Yii;
  * @property int $id Primary key
  * @property int $npc_id Foreign key to “npc” table
  * @property string $text What the NPC says
+ * @property string|null $voice Optional text to speech recording
  * @property int|null $outcome_id Optional foreign key to “success” table
  *
  * @property Npc $npc
@@ -34,10 +35,11 @@ class Dialog extends \yii\db\ActiveRecord
      */
     public function rules() {
         return [
-            [['outcome_id'], 'default', 'value' => null],
+            [['voice', 'outcome_id'], 'default', 'value' => null],
             [['npc_id', 'text'], 'required'],
             [['npc_id', 'outcome_id'], 'integer'],
             [['text'], 'string'],
+            [['voice'], 'string', 'max' => 64],
             [['npc_id'], 'exist', 'skipOnError' => true, 'targetClass' => Npc::class, 'targetAttribute' => ['npc_id' => 'id']],
             [['outcome_id'], 'exist', 'skipOnError' => true, 'targetClass' => Outcome::class, 'targetAttribute' => ['outcome_id' => 'id']],
         ];
@@ -51,6 +53,7 @@ class Dialog extends \yii\db\ActiveRecord
             'id' => 'Primary key',
             'npc_id' => 'Foreign key to “npc” table',
             'text' => 'What the NPC says',
+            'voice' => 'Optional text to speech recording',
             'outcome_id' => 'Optional foreign key to “success” table',
         ];
     }

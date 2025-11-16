@@ -10,11 +10,9 @@ class NextTurnDto implements BroadcastMessageInterface
     private string $type = 'next-turn';
     private array $payload;
 
-    public function __construct(string $playerName, string $sessionId, string $questName) {
+    public function __construct(array $detail) {
         $this->payload = [
-            'playerName' => $playerName,
-            'sessionId' => $sessionId,
-            'questName' => $questName,
+            'detail' => $detail,
             'timestamp' => time()
         ];
     }

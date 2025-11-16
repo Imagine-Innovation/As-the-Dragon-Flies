@@ -10,12 +10,9 @@ class GameOverDto implements BroadcastMessageInterface
     private string $type = 'game-over';
     private array $payload;
 
-    public function __construct(string $status, string $playerName, string $sessionId, string $questName) {
+    public function __construct(array $detail) {
         $this->payload = [
-            'sessionId' => $sessionId,
-            'questName' => $questName,
-            'playerName' => $playerName,
-            'status' => $status,
+            'detail' => $detail,
             'timestamp' => time()
         ];
     }

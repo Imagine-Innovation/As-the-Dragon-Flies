@@ -8,7 +8,7 @@ use common\extensions\EventHandler\factories\BroadcastMessageFactory;
 use common\extensions\EventHandler\LoggerService;
 use Ratchet\ConnectionInterface;
 
-class GameActionHandler implements SpecificMessageHandlerInterface
+class GameOverHandler implements SpecificMessageHandlerInterface
 {
 
     private LoggerService $logger;
@@ -26,32 +26,30 @@ class GameActionHandler implements SpecificMessageHandlerInterface
     }
 
     /**
-     * Handles game action messages.
+     * Handles game over messages.
      */
     public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
-        $this->logger->logStart("GameActionHandler: handle from clientId={$clientId}, sessionId={$sessionId}", $data);
+        $this->logger->logStart("GameOverHandler: handle from clientId={$clientId}, sessionId={$sessionId}", $data);
 
         $payload = $data['payload'];
         $questId = array_key_exists('questId', $payload) ? (int) $payload['questId'] : ($data['quest_id'] ? (int) $data['quest_id'] : null);
-        $playerName = array_key_exists('playerName', $payload) ? $payload['playerName'] : null;
-        $action = array_key_exists('action', $payload) ? $payload['action'] : null;
         $detail = array_key_exists('detail', $payload) ? $payload['detail'] : [];
 
-        if ($questId === null || $playerName === null || $action === null) {
-            $this->logger->log("GameActionHandler: Missing required data (questId, playerName, action).", $data, 'warning');
-            $errorDto = $this->messageFactory->createErrorMessage("Invalid game action data provided.");
+        if ($questId === null || empty($detail)) {
+            $this->logger->log("GameOverHandler: Missing required data (questId, detail).", $data, 'warning');
+            $errorDto = $this->messageFactory->createErrorMessage("Invalid game over data provided.");
             $this->broadcastService->sendToClient($clientId, $errorDto, false, $sessionId);
-            $this->logger->logEnd("GameActionHandler: handle");
+            $this->logger->logEnd("GameOverHandler: handle");
             return;
         }
 
-        $gameActionDto = $this->messageFactory->createGameActionMessage($playerName, $action, $detail);
+        $gameOverDto = $this->messageFactory->createGameOverMessage($detail);
 
-        $this->broadcastService->broadcastToQuest($questId, $gameActionDto, $sessionId);
+        $this->broadcastService->broadcastToQuest($questId, $gameOverDto, $sessionId);
 
-        $this->logger->log("GameActionHandler: GameActionDto broadcasted", ['quest_id' => $questId, 'payload' => $payload]);
-        $this->broadcastService->sendBack($from, 'ack', ['type' => 'game-action_processed', 'playerName' => $playerName, 'action' => $action, 'detail' => $detail]);
+        $this->logger->log("GameOverHandler: GameOverDto broadcasted", ['quest_id' => $questId, 'payload' => $payload]);
+        $this->broadcastService->sendBack($from, 'ack', ['type' => 'game-over_processed', 'detail' => $detail]);
 
-        $this->logger->logEnd("GameActionHandler: handle");
+        $this->logger->logEnd("GameOverHandler: handle");
     }
 }

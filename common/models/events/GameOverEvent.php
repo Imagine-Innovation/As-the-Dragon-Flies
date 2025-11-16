@@ -2,7 +2,6 @@
 
 namespace common\models\events;
 
-use common\components\AppStatus;
 use common\models\Player;
 use common\models\Quest;
 use Yii;
@@ -10,7 +9,7 @@ use Yii;
 /**
  * Event for game actions
  */
-class GameActionEvent extends Event
+class GameOverEvent extends Event
 {
 
     /**
@@ -41,22 +40,17 @@ class GameActionEvent extends Event
      * {@inheritdoc}
      */
     public function getType(): string {
-        return 'game-action';
+        return 'game-over';
     }
 
     public function getTitle(): string {
-        return 'New action';
+        return $this->action ?? 'Game over';
     }
 
     public function getMessage(): string {
-        $status = $this->detail['status'];
-        Yii::debug("*** debug *** GameActionEvent->getMessage status={$status->getLabel()}");
-        return match ($status->value) {
-            AppStatus::SUCCESS->value => "{$this->player->name} successfully completed the “{$this->action}” action",
-            AppStatus::PARTIAL->value => "{$this->player->name} partially completed the “{$this->action}” action",
-            AppStatus::FAILURE->value => "{$this->player->name} failed to complete the “{$this->action}” action",
-            default => "{$this->player->name} completed the “{$this->action}” action with an unknown status",
-        };
+        $detail = $this->detail;
+
+        return "{$detail['playerName']} has ended quest “{$detail['questName']}” with status {$detail['status']}.";
     }
 
     /**
@@ -64,13 +58,7 @@ class GameActionEvent extends Event
      */
     public function getPayload(): array {
         return [
-            'playerId' => $this->player->id,
-            'playerName' => $this->player->name,
-            'action' => $this->action,
-            'questId' => $this->quest->id,
-            'questName' => $this->quest->name,
             'detail' => $this->detail,
-            //'timestamp' => date('Y-m-d H:i:s', $this->timestamp)
             'timestamp' => $this->timestamp
         ];
     }
@@ -79,7 +67,7 @@ class GameActionEvent extends Event
      * {@inheritdoc}
      */
     public function process(): void {
-        Yii::debug("*** Debug *** GameActionEvent - process");
+        Yii::debug("*** Debug *** GameOverEvent - process");
         $notification = $this->createNotification();
 
         $this->savePlayerNotification($notification->id);

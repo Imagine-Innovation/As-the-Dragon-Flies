@@ -118,10 +118,33 @@ class NotificationClient {
         this.on('game-action', (data) => {
             Logger.log(2, 'setupDefaultHandlers', 'Received game-action message:', data);
             Logger.log(10, 'setupDefaultHandlers', `Payload: ${JSON.stringify(data.payload)}`);
-            //const message = data.message ?? null;
-            //VirtualTableTop.refresh(this.questId, this.sessionId, message);
             VirtualTableTop.refresh(this.questId, this.sessionId);
-            this.updateChatMessages();
+        });
+
+        this.on('next-turn', (data) => {
+            Logger.log(2, 'setupDefaultHandlers', 'Received next-turn message:', data);
+            Logger.log(10, 'setupDefaultHandlers', `Payload: ${JSON.stringify(data.payload)}`);
+            
+            const detail = data.payload.detail;
+            VirtualTableTop.refreshTurn(this.questId, this.playerId, detail);
+        });
+
+        this.on('next-mission', (data) => {
+            Logger.log(2, 'setupDefaultHandlers', 'Received next-mission message:', data);
+            Logger.log(10, 'setupDefaultHandlers', `Payload: ${JSON.stringify(data.payload)}`);
+
+            const detail = data.payload.detail;
+            alert(`Payload: ${JSON.stringify(detail)}`);
+            VirtualTableTop.refreshMission(this.questId, this.playerId, detail);
+        });
+
+        this.on('game-over', (data) => {
+            Logger.log(2, 'setupDefaultHandlers', 'Received game-over message:', data);
+            Logger.log(10, 'setupDefaultHandlers', `Payload: ${JSON.stringify(data.payload)}`);
+            const detail = data.payload.detail;
+            alert(`Payload: ${JSON.stringify(detail)}`);
+            const message = `${detail.playerName} has ended quest “${detail.questName}” with status ${detail.status}.`;
+            VirtualTableTop.refresh(this.questId, this.sessionId);
         });
 
         this.on('player-joined', (data) => {

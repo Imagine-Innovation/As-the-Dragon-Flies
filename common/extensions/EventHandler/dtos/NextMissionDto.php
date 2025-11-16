@@ -10,14 +10,9 @@ class NextMissionDto implements BroadcastMessageInterface
     private string $type = 'next-mission';
     private array $payload;
 
-    public function __construct(int $playerId, string $playerName, string $sessionId, string $questName, int $missionId, string $missionName) {
+    public function __construct(array $detail) {
         $this->payload = [
-            'sessionId' => $sessionId,
-            'missionId' => $missionId,
-            'playerId' => $playerId,
-            'questName' => $questName,
-            'missionName' => $missionName,
-            'playerName' => $playerName,
+            'detail' => $detail,
             'timestamp' => time()
         ];
     }

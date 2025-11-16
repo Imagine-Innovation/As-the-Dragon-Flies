@@ -27,10 +27,11 @@ abstract class BaseManager extends Component
         $this->trigger($name, $event);
     }
 
-    protected function save(\yii\db\ActiveRecord $model): void {
-        if (!$model->save()) {
-            throw new \Exception(implode("<br />", ArrayHelper::getColumn($model->errors, 0, false)));
+    protected function save(\yii\db\ActiveRecord $model): bool {
+        if ($model->save()) {
+            return true;
         }
+        throw new \Exception(implode("<br />", ArrayHelper::getColumn($model->errors, 0, false)));
     }
 
     /**
