@@ -33,6 +33,7 @@ use yii\web\IdentityInterface;
  *
  * @property AccessRight[] $accessRights
  * @property int $hasPlayers
+ * @property Player $currentPlayer
  * @property Player[] $players
  * @property UserLogin[] $userLogins
  * @property UserLog[] $userLogs
@@ -44,7 +45,7 @@ class User extends ActiveRecord implements IdentityInterface
      * {@inheritdoc}
      */
     public static function tableName() {
-        return '{{%user}}';
+        return 'user';
     }
 
     /**
@@ -69,8 +70,7 @@ class User extends ActiveRecord implements IdentityInterface
             [['username', 'password_hash', 'verification_token', 'email'], 'required'],
             [['status', 'is_admin', 'is_designer', 'is_player', 'current_player_id', 'created_at', 'updated_at', 'backend_last_login_at', 'frontend_last_login_at'], 'integer'],
             [['username', 'password_hash', 'password_reset_token', 'verification_token', 'email'], 'string', 'max' => 255],
-            [['fullname'], 'string', 'max' => 64],
-            [['auth_key'], 'string', 'max' => 64],
+            [['fullname', 'auth_key'], 'string', 'max' => 64],
             [['username'], 'unique'],
             [['current_player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['current_player_id' => 'id']],
         ];
@@ -271,21 +271,21 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * Gets query for [[UserLogs]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getUserLogs() {
-        return $this->hasMany(UserLog::class, ['user_id' => 'id']);
-    }
-
-    /**
      * Gets query for [[UserLogins]].
      *
      * @return \yii\db\ActiveQuery
      */
     public function getUserLogins() {
         return $this->hasMany(UserLogin::class, ['user_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[UserLogs]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUserLogs() {
+        return $this->hasMany(UserLog::class, ['user_id' => 'id']);
     }
 
     /**

@@ -1,11 +1,12 @@
 <?php
 
-use common\components\QuestMessages;
+use common\components\gameplay\ChatManager;
 
 /** @var yii\web\View $this */
 /** @var int $questId */
 /** @var int $playerId */
-$messages = QuestMessages::getLastMessages($questId, $playerId);
+$chatManager = new ChatManager(['questId' => $questId, 'playerId' => $playerId]);
+$messages = $chatManager->getLastMessages();
 ?>
 <!-- Chat Panel -->
 <div class="chat-panel-container">

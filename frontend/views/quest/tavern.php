@@ -1,21 +1,26 @@
 <?php
 
-use common\components\QuestMessages;
+use common\components\gameplay\ChatManager;
 use frontend\widgets\AjaxContainer;
 
 /** @var yii\web\View $this */
 /** @var common\models\Quest $model */
-$player = Yii::$app->session->get('currentPlayer');
-$playerId = $player->id;
-$playerName = $player->name;
-$avatar = $player->image->file_name;
-
+/*
+  $player = Yii::$app->session->get('currentPlayer');
+  $playerId = $player->id;
+  $playerName = $player->name;
+  $avatar = $player->image->file_name;
+ */
+$playerId = Yii::$app->session->get('playerId');
+$playerName = Yii::$app->session->get('playerName');
+$avatar = Yii::$app->session->get('avatar');
 $questName = $model->name;
 
 $this->title = $questName;
 $this->params['breadcrumbs'][] = ['label' => 'Quests', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $questName;
-$messages = QuestMessages::getLastMessages($model->id, $playerId);
+$chatManager = new ChatManager(['questId' => $model->id, 'playerId' => $playerId]);
+$messages = $chatManager->getLastMessages();
 ?>
 <div class="row g-3">
     <!-- Quest Panel -->

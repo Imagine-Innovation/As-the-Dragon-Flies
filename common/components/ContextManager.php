@@ -79,4 +79,22 @@ class ContextManager extends Component
             Yii::$app->session->set('currentQuest', null);
         }
     }
+
+    public static function getContext(): array {
+        $user = Yii::$app->user->identity;
+        return [
+            'isGuest' => Yii::$app->user->isGuest,
+            'isAdmin' => $user->is_admin,
+            'isDesigner' => $user->is_designer,
+            'userId' => Yii::$app->session->get('userId'),
+            'sessionId' => Yii::$app->session->get('sessionId'),
+            'hasPlayerSelected' => Yii::$app->session->get('hasPlayerSelected'),
+            'playerId' => Yii::$app->session->get('playerId'),
+            'playerName' => Yii::$app->session->get('playerName'),
+            'avatar' => Yii::$app->session->get('avatar'),
+            'inQuest' => Yii::$app->session->get('inQuest'),
+            'questId' => Yii::$app->session->get('questId'),
+            'questName' => Yii::$app->session->get('questName'),
+        ];
+    }
 }

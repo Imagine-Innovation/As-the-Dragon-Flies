@@ -2,6 +2,7 @@
 
 namespace common\components\gameplay;
 
+use common\components\ContextManager;
 use common\models\Notification;
 use common\helpers\Utilities;
 use Yii;
@@ -29,6 +30,8 @@ class ChatManager extends BaseManager
             $missingParam[] = 'playerId';
         }
         if (!empty($missingParam)) {
+            Yii::debug($config);
+            Yii::debug(ContextManager::getContext());
             throw new \Exception('Missing params: ' . implode(', ', $missingParam) . '!!!');
         }
     }
