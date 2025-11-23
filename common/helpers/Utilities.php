@@ -153,7 +153,7 @@ class Utilities extends Html
             $quest = Yii::$app->session->get('currentQuest');
             // Return story-specific image if available
             if ($quest->image) {
-                return "img/story/" . $quest->story_id . "/" . $quest->image;
+                return "resources/story-{$quest->story_id}/img/{$quest->image}";
             }
         }
 

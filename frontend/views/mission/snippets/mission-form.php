@@ -26,7 +26,7 @@ use yii\widgets\ActiveForm;
 <?php if ($model->image): ?>
     <div class="row">
         <div class="col-2">
-            <img src="img/story/<?= $storyId ?>/<?= $model->image ?>" alt="<?= $model->name ?>" class="w-100 h-100" style="object-fit: cover;" />
+            <img src="resources/story-<?= $storyId ?>/img/<?= $model->image ?>" alt="<?= $model->name ?>" class="w-100 h-100" style="object-fit: cover;" />
         </div>
         <div class="col-10">
         <?php endif; ?>

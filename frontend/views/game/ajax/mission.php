@@ -5,7 +5,7 @@ $chapter = $mission->chapter;
 ?>
 <?php if ($mission->image): ?>
     <div class="clearfix">
-        <img class="float-md-end mb-3 ms-md-4" src="img/story/<?= $chapter->story_id ?>/<?= $mission->image ?>" alt="<?= $mission->name ?>" style="max-width: 50%;">
+        <img class="float-md-end mb-3 ms-md-4" src="resources/story-<?= $chapter->story_id ?>/img/<?= $mission->image ?>" alt="<?= $mission->name ?>" style="max-width: 50%;">
         <?= $mission->description ?>
     </div>
 <?php else: ?>

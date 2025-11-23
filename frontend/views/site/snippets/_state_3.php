@@ -21,7 +21,7 @@ $iconInfo = $statusEnum->getIcon();
         <?=
         $this->render('section1', [
             'title' => "Resume the quest '{$quest->name}'",
-            'img' => Url::to("@web/img/story/{$quest->story_id}/{$quest->image}"),
+            'img' => Url::to("@web/resources/story-{$quest->story_id}/img/{$quest->image}"),
             'paragraphs' => [
                 'Your player is currently on a quest.',
                 $iconInfo['tooltip'],

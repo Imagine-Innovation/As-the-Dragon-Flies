@@ -38,7 +38,7 @@ $missionDescription = $narrative->missionDecription();
         </div>
         <div class="row g-0 d-flex"> <!-- Add d-flex to the row -->
             <div class="col-0 col-md-4 d-flex align-items-stretch"> <!-- Add d-flex and align-items-stretch -->
-                <img src="img/story/<?= $story->id ?>/<?= $model->image ?>" class="img-fluid object-fit-cover rounded-start w-100" alt="<?= $model->name ?>">
+                <img src="resources/story-<?= $story->id ?>/img/<?= $model->image ?>" class="img-fluid object-fit-cover rounded-start w-100" alt="<?= $model->name ?>">
             </div>
             <div class="col-12 col-md-8 d-flex flex-column"> <!-- Add d-flex and flex-column -->
                 <div class="card-header">

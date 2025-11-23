@@ -13,7 +13,7 @@ $npc = $dialog->npc;
 <div class="text-decoration">
     <?php if ($npc->image): ?>
         <div class="clearfix">
-            <img class="float-md-end mb-3 ms-md-4" src="img/story/<?= $storyId ?>/<?= $npc->image ?>" alt="<?= $npc->name ?>" style="max-width: 50%;">
+            <img class="float-md-end mb-3 ms-md-4" src="resources/story-<?= $storyId ?>/img/<?= $npc->image ?>" alt="<?= $npc->name ?>" style="max-width: 50%;">
         <?php endif; ?>
 
         <h3><?= $npc->name ?></h3>

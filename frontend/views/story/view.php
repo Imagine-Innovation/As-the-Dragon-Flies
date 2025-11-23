@@ -26,7 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
         <div class="row g-0 d-flex"> <!-- Add d-flex to the row -->
             <div class="col-md-4 d-flex align-items-stretch"> <!-- Add d-flex and align-items-stretch -->
-                <img src="img/story/<?= $model->id ?>/<?= $model->image ?>" class="img-fluid object-fit-cover rounded-start w-100" alt="<?= $model->name ?>">
+                <img src="resources/story-<?= $model->id ?>/img/<?= $model->image ?>" class="img-fluid object-fit-cover rounded-start w-100" alt="<?= $model->name ?>">
             </div>
             <div class="col-md-8 text-decoration d-flex flex-column"> <!-- Add d-flex and flex-column -->
                 <div class="card-header">
@@ -45,7 +45,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?php endforeach; ?>
                     <?php if ($model->tags): ?>
                         <div class="listview__attrs">
-                            Tags: 
+                            Tags:
                             <?php foreach ($model->tags as $tag): ?>
                                 <span><?= $tag->name ?></span>
                             <?php endforeach; ?>

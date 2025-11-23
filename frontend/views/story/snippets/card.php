@@ -18,7 +18,7 @@ $tavernManager = new TavernManager(['quest' => $quest]);
 $canJoin = $tavernManager->canPlayerJoinQuest($player);
 
 $image = $story->image ?
-        "img/story/{$story->id}/{$story->image}" :
+        "resources/story-{$story->id}/img/{$story->image}" :
         "img/sm/" . mt_rand(1, 8) . ".jpg";
 ?>
 
