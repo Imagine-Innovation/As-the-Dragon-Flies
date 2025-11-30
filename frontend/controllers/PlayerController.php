@@ -255,7 +255,7 @@ class PlayerController extends Controller
      * @return Player the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id) {
+    protected function findModel(int $id) {
 
         $query = Player::find()
                 ->with(['race', 'class', 'background', 'playerAbilities', 'playerSkills', 'playerTraits'])

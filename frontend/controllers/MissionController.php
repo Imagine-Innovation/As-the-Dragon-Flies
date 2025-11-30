@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\components\ManageAccessRights;
+use common\helpers\FindModelHelper;
 use common\models\Mission;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -60,8 +61,9 @@ class MissionController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionView($id) {
+        $model = FindModelHelper::findMission($id);
         return $this->render('view', [
-                    'model' => $this->findModel('Mission', ['id' => $id]),
+                    'model' => $model,
         ]);
     }
 
@@ -72,7 +74,7 @@ class MissionController extends Controller
      */
     public function actionCreate($chapterId) {
         // Check if $id is a valid Chapter ID
-        $chapter = $this->findModel('Chapter', ['id' => $chapterId]);
+        $chapter = FindModelHelper::findChapter($chapterId);
         $model = new Mission();
         $model->chapter_id = $chapter->id;
 
@@ -97,7 +99,7 @@ class MissionController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionUpdate(int $id) {
-        $model = $this->findModel('Mission', ['id' => $id]);
+        $model = FindModelHelper::findMission($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -148,7 +150,7 @@ class MissionController extends Controller
     }
 
     private function addMissionChild(int $missionId, string $type, string $className, string $snippet) {
-        $mission = $this->findModel('Mission', ['id' => $missionId]);
+        $mission = FindModelHelper::findMission($missionId);
 
         $modelName = "\\common\\models\\{$className}";
         $model = new $modelName();
@@ -158,7 +160,7 @@ class MissionController extends Controller
     }
 
     private function addDecorChild(int $decorId, string $type, string $className, string $snippet) {
-        $decor = $this->findModel('Decor', ['id' => $decorId]);
+        $decor = FindModelHelper::findDecor($decorId);
         $mission = $decor->mission;
 
         $modelName = "\\common\\models\\{$className}";
@@ -169,7 +171,7 @@ class MissionController extends Controller
     }
 
     private function addActionChild(int $actionId, string $type, string $className, string $snippet) {
-        $action = $this->findModel('Action', ['id' => $actionId]);
+        $action = FindModelHelper::findAction($actionId);
         $mission = $action->mission;
 
         $modelName = "\\common\\models\\{$className}";
@@ -265,24 +267,5 @@ class MissionController extends Controller
             'action' => $this->editActionChild($jsonParams, $type, $className, $snippet),
             default => throw new \Exception("Unsupported type {$detailInfo['childOf']}"),
         };
-    }
-
-    /**
-     * Finds the model model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param string $modelName model type to load
-     * @param array $param
-     * @return common\models\modelName the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel(string $modelName, array $param) {
-        $activeRecord = "\\common\\models\\{$modelName}";
-        $pk = $param['id'] ?? null;
-        $model = $activeRecord::findOne($pk ? ['id' => $pk] : $param);
-        if ($model !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The requested {$modelName} does not exist.');
     }
 }

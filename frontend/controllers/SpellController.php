@@ -104,7 +104,7 @@ class SpellController extends Controller {
      * @return Spell the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id) {
+    protected function findModel(int $id) {
         if (($model = Spell::findOne(['id' => $id])) !== null) {
             return $model;
         }

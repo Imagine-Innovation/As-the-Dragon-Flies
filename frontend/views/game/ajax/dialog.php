@@ -10,6 +10,13 @@ use yii\helpers\Html;
 /** @var common\models\Dialog $dialog */
 $npc = $dialog->npc;
 ?>
+
+<?php if ($dialog->audio): ?>
+    <audio id="npcLines" autoplay muted>
+        <source src="<?= "story-{$storyId}/audio/{$dialog->audio}" ?>" type="audio/mpeg">
+    </audio>
+<?php endif; ?>
+
 <div class="text-decoration">
     <?php if ($npc->image): ?>
         <div class="clearfix">

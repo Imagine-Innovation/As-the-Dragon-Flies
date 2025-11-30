@@ -8,6 +8,7 @@ use common\components\gameplay\ActionManager;
 use common\components\gameplay\QuestManager;
 use common\components\gameplay\TavernManager;
 use common\components\ManageAccessRights;
+use common\helpers\FindModelHelper;
 use common\models\events\EventFactory;
 use common\models\QuestPlayer;
 use common\models\QuestTurn;
@@ -64,7 +65,7 @@ class GameController extends Controller
     public function actionView(int $id) {
         $this->layout = 'game';
 
-        $quest = $this->findModel('Quest', ['id' => $id]);
+        $quest = FindModelHelper::findQuest($id);
         $nbPlayers = QuestPlayer::find()
                 ->where(['quest_id' => $quest->id])
                 ->andWhere(['<>', 'status', AppStatus::LEFT->value])
@@ -95,7 +96,7 @@ class GameController extends Controller
 
         $playerId = $id ?? Yii::$app->session->get('playerId');
 
-        $player = $this->findModel('Player', ['id' => $playerId]);
+        $player = FindModelHelper::findPlayer($playerId);
         if ($player) {
             $render = $this->renderPartial('ajax/player', ['player' => $player]);
             return ['error' => false, 'msg' => '', 'content' => $render];
@@ -155,7 +156,7 @@ class GameController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
         }
 
-        $mission = $this->findModel('Mission', ['id' => $missionId]);
+        $mission = FindModelHelper::findMission($missionId);
         $render = $this->renderPartial('ajax/mission', ['mission' => $mission]);
         return ['error' => false, 'msg' => '', 'content' => $render];
     }
@@ -203,7 +204,7 @@ class GameController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
         }
 
-        $questProgress = $this->findModel('QuestProgress', ['id' => $questProgressId]);
+        $questProgress = FindModelHelper::findQuestProgress($questProgressId);
 
         if ($questProgress->current_player_id !== Yii::$app->session->get('playerId')) {
             return ['error' => true, 'msg' => 'Not your turn'];
@@ -239,10 +240,10 @@ class GameController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
         }
 
-        $reply = $this->findModel('Reply', ['id' => $replyId]);
+        $reply = FindModelHelper::findReply($replyId);
         $dialog = $reply->nextDialog;
 
-        $player = $this->findModel('Player', ['id' => $playerId]);
+        $player = FindModelHelper::findPlayer($playerId);
 
         $content = $this->renderPartial('ajax/dialog', [
             'storyId' => $storyId,
@@ -252,7 +253,7 @@ class GameController extends Controller
         ]);
 
         //return ['error' => false, 'msg' => '', 'previousContent' => $previsouContent, 'nextContent' => $content];
-        return ['error' => false, 'msg' => '', 'content' => $content, 'text' => $dialog->text];
+        return ['error' => false, 'msg' => '', 'content' => $content, 'text' => $dialog->text, 'audio' => $dialog->audio];
     }
 
     /**
@@ -262,10 +263,11 @@ class GameController extends Controller
      * @return array An associative array that contains what should be displayed
      */
     protected function getOutcome(Request $postRequest): array {
-        $questAction = $this->findModel('QuestAction', [
+        $param = [
             'quest_progress_id' => $postRequest->post('questProgressId'),
             'action_id' => $postRequest->post('actionId')
-        ]);
+        ];
+        $questAction = FindModelHelper::findQuestAction($param);
         $actionManager = new ActionManager(['questAction' => $questAction]);
         $outcome = $actionManager->evaluateActionOutcome();
 
@@ -311,7 +313,7 @@ class GameController extends Controller
         }
 
         $request = Yii::$app->request;
-        $questProgress = $this->findModel('QuestProgress', ['id' => $request->post('questProgressId')]);
+        $questProgress = FindModelHelper::findQuestProgress($request->post('questProgressId'));
 
         // Set the context of the QuestManager to the current QuestProgress
         $questManager = new QuestManager(['questProgress' => $questProgress]);
@@ -334,32 +336,11 @@ class GameController extends Controller
         return $questManager->moveToNextMission($nextMissionId);
     }
 
-    /**
-     * Finds the model model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     *
-     * @param string $modelName model type to load
-     * @param array $param
-     * @return common\models\modelName the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel(string $modelName, array $param) {
-        Yii::debug("*** debug *** findModel modelName={$modelName}, param=" . print_r($param, true));
-        $activeRecord = "\\common\\models\\{$modelName}";
-        $pk = $param['id'] ?? null;
-        $model = $activeRecord::findOne($pk ? ['id' => $pk] : $param);
-        if ($model !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException("The requested {$modelName} does not exist.");
-    }
-
     protected function createEvent(string $eventType, Request $postRequest, string $actionName, array $outcome = []): bool {
         $sessionId = Yii::$app->session->get('sessionId');
         try {
-            $player = $this->findModel('Player', ['id' => $postRequest->post('playerId')]);
-            $quest = $this->findModel('Quest', ['id' => $postRequest->post('questId')]);
+            $player = FindModelHelper::findPlayer($postRequest->post('playerId'));
+            $quest = FindModelHelper::findQuest($postRequest->post('questId'));
             $data['action'] = $actionName;
             $data['detail'] = [
                 'diceRoll' => $outcome['diceRoll'],

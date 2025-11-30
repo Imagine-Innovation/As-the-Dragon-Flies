@@ -202,7 +202,7 @@ class AccessRightController extends Controller {
      * @return AccessRight the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id) {
+    protected function findModel(int $id) {
         if (($model = AccessRight::findOne(['id' => $id])) !== null) {
             return $model;
         }

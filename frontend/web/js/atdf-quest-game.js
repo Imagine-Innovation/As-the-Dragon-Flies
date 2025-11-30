@@ -215,7 +215,11 @@ class VirtualTableTop {
             successCallback: (response) => {
                 if (!response.error) {
                     $(target).html(response.content);
-                    if (response.text) {
+                    Logger.log(2, '_dialog', `response.audio=${response.audio}`);
+
+                    if (!response.audio) {
+                        this.__play();
+                    } else {
                         this.__speakText(response.text);
                     }
                 }
@@ -223,8 +227,25 @@ class VirtualTableTop {
         });
     }
 
+    __play() {
+        Logger.log(3, '__play', ``);
+
+        const characterLines = document.getElementById('npcLines');
+
+        if (!characterLines)
+            return;
+
+        characterLines.play().catch((error) => {
+            console.warn("Autoplay blocked:", error);
+        });
+    }
+
     __speakText(textToRead) {
         Logger.log(3, '__speakText', `textToRead=${textToRead}`);
+
+        if (!textToRead)
+            return;
+
         // 1. Check browser compatibility
         if ('speechSynthesis' in window) {
             // 2. Create a new instance of SpeechSynthesisUtterance
