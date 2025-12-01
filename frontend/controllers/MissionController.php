@@ -224,7 +224,7 @@ class MissionController extends Controller
     private function editMissionChild(string $jsonParams, string $type, string $className, string $snippet) {
         $searchParams = json_decode($jsonParams, true);
 
-        $model = $this->findModel($className, $searchParams);
+        $model = FindModelHelper::findModel($className, $searchParams);
         $mission = $model->mission;
 
         return $this->updateDetailModel($model, $mission, $type, $snippet);
@@ -233,7 +233,7 @@ class MissionController extends Controller
     private function editDecorChild(string $jsonParams, string $type, string $className, string $snippet) {
         $searchParams = json_decode($jsonParams, true);
 
-        $model = $this->findModel($className, $searchParams);
+        $model = FindModelHelper::findModel($className, $searchParams);
         $decor = $model->decor;
         $mission = $decor->mission;
 
@@ -243,7 +243,7 @@ class MissionController extends Controller
     private function editActionChild(string $jsonParams, string $type, string $className, string $snippet) {
         $searchParams = json_decode($jsonParams, true);
 
-        $model = $this->findModel($className, $searchParams);
+        $model = FindModelHelper::findModel($className, $searchParams);
         if ($type === 'Prerequisite') {
             $action = $model->nextAction;
         } elseif ($type === "Trigger") {

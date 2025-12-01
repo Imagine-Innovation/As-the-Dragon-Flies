@@ -13,7 +13,7 @@ $npc = $dialog->npc;
 
 <?php if ($dialog->audio): ?>
     <audio id="npcLines" autoplay muted>
-        <source src="<?= "story-{$storyId}/audio/{$dialog->audio}" ?>" type="audio/mpeg">
+        <source src="<?= "resources/story-{$storyId}/audio/{$dialog->audio}" ?>" type="audio/mpeg">
     </audio>
 <?php endif; ?>
 

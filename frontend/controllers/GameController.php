@@ -252,8 +252,10 @@ class GameController extends Controller
             'dialog' => $dialog,
         ]);
 
-        //return ['error' => false, 'msg' => '', 'previousContent' => $previsouContent, 'nextContent' => $content];
-        return ['error' => false, 'msg' => '', 'content' => $content, 'text' => $dialog->text, 'audio' => $dialog->audio];
+        return [
+            'error' => false, 'msg' => '', 'content' => $content,
+            'text' => $dialog->text, 'audio' => $dialog->audio
+        ];
     }
 
     /**

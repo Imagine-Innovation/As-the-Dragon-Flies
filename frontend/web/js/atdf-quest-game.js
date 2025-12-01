@@ -217,7 +217,7 @@ class VirtualTableTop {
                     $(target).html(response.content);
                     Logger.log(2, '_dialog', `response.audio=${response.audio}`);
 
-                    if (!response.audio) {
+                    if (response.audio) {
                         this.__play();
                     } else {
                         this.__speakText(response.text);
@@ -232,8 +232,14 @@ class VirtualTableTop {
 
         const characterLines = document.getElementById('npcLines');
 
-        if (!characterLines)
+        if (!characterLines) {
+            Logger.log(10, '__play', `No audio object found`);
             return;
+        }
+
+        // Unmute the audio before playing
+        characterLines.muted = false;
+        characterLines.volume = 1.0; // Ensure volume is set to maximum
 
         characterLines.play().catch((error) => {
             console.warn("Autoplay blocked:", error);

@@ -21,7 +21,7 @@ class FindModelHelper
         return is_int($param) ? "'{$param}'" : print_r($param, true);
     }
 
-    protected static function findModel(string $modelName, int|array $param) {
+    public static function findModel(string $modelName, int|array $param) {
         $searchParams = self::searchParams($param);
         Yii::debug("*** debug *** findModel modelName={$modelName}, param={$searchParams}");
 
