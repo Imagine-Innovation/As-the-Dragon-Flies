@@ -34,7 +34,7 @@ class ManageAccessRights extends Component
      * @param bool $inQuest Whether the selected player is in a quest
      * @return ActiveQuery Query containing all authorized access right IDs
      */
-    public static function getAuthorizedIds($user, $hasPlayerSelected = false, $inQuest = false) {
+    public static function getAuthorizedIds(\common\models\User $user, bool $hasPlayerSelected = false, bool $inQuest = false): \yii\db\ActiveQuery {
 
         $accesRights = AccessRight::find()->select('id')->where(['id' => 1]);
         if ($user->is_player) {
@@ -73,7 +73,7 @@ class ManageAccessRights extends Component
      * @param string $redirect route url to redirect avec throwing an error
      * @return bool True if access is granted, false otherwise
      */
-    public static function isRouteAllowed($controller, $redirect = null) {
+    public static function isRouteAllowed(\yii\web\Controller $controller, string $redirect = null): bool {
         $access = self::checkAccess($controller);
 
         if ($access['denied']) {
@@ -117,7 +117,7 @@ class ManageAccessRights extends Component
      * @param yii\web\Controller $controller
      * @return array
      */
-    private static function checkAccess($controller) {
+    private static function checkAccess(\yii\web\Controller $controller): array {
 
         $route = $controller->id;
         $action = $controller->action->id;
@@ -162,7 +162,7 @@ class ManageAccessRights extends Component
      * @param common\models\AccessRight $accessRight
      * @return array
      */
-    private static function checkPlayerAccess($accessRight) {
+    private static function checkPlayerAccess(AccessRight $accessRight): array {
         // Deny if player selection is required but none selected
         $hasPlayerSelected = Yii::$app->session->get('hasPlayerSelected') ?? false;
 
@@ -219,7 +219,7 @@ class ManageAccessRights extends Component
      * @return array
      * @throws \Exception
      */
-    private static function logAccess($accessRightId, $denied, $severity, $reason) {
+    private static function logAccess(int|null $accessRightId, bool $denied, string $severity, string $reason): array {
         $user = Yii::$app->session->get('user') ?? Yii::$app->user->identity;
         $playerId = Yii::$app->session->get('playerId');
         $questId = Yii::$app->session->get('questId');
@@ -264,7 +264,7 @@ class ManageAccessRights extends Component
      * @param string $mode The mode in which the action is being performed: table or view.
      * @return bool True if the action is allowed, false otherwise.
      */
-    public static function isActionButtonAllowed($action, $modelName, $isOwner, $mode) {
+    public static function isActionButtonAllowed(array $action, string $modelName, bool $isOwner, string $mode): bool {
         $user = Yii::$app->session->get('user');
 
         // Check if the model name is allowed for the action
@@ -304,7 +304,7 @@ class ManageAccessRights extends Component
      * @param int $status
      * @return array type
      */
-    public static function selectActionButtons(string $route, string $action = 'index', int $status = AppStatus::ACTIVE->value) {
+    public static function selectActionButtons(string $route, string $action = 'index', int $status = AppStatus::ACTIVE->value): array {
 
         $actionButtons = ActionButton::find()
                         ->select(['action_button.icon', 'action_button.route', 'action_button.action', 'action_button.tooltip'])

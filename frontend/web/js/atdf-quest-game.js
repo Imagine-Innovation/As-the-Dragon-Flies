@@ -13,11 +13,17 @@ class VirtualTableTop {
             questId: $('#hiddenQuestId').html(),
             playerId: $('#hiddenPlayerId').html(),
             currentPlayerId: $('#hiddenCurrentPlayerId').html(),
+            currentPlayerName: $('#hiddenCurrentPlayerName').html(),
             missionId: $('#hiddenQuestMissionId').html(),
             questProgressId: $('#hiddenQuestProgressId').html(),
             actionId: $('#hiddenQuestActionId').html()
         };
         Logger.log(1, 'init', `context=${JSON.stringify(this.context)}`);
+
+        VirtualTableTop._updateMission(this.context.missionId);
+        VirtualTableTop._updateTurn(this.context.playerId, this.context.currentPlayerId, this.context.currentPlayerName);
+        VirtualTableTop._updateActions(this.context.playerId, this.context.currentPlayerId, this.context.questProgressId);
+
     }
 
     static refresh(questId, sessionId, message = null) {
@@ -42,7 +48,7 @@ class VirtualTableTop {
         VirtualTableTop._updatePlayer(playerId);
         VirtualTableTop._updateQuestMembers(questId);
         VirtualTableTop._updateMission(detail.nextMissionId);
-        VirtualTableTop._updateTurn(playerId, detail);
+        VirtualTableTop._updateTurn(playerId, detail.nextPlayerId, detail.nextPlayerName);
         VirtualTableTop._updateActions(playerId, detail.nextPlayerId, detail.nextQuestProgressId);
     }
 
@@ -56,7 +62,7 @@ class VirtualTableTop {
 
         VirtualTableTop._updatePlayer(playerId);
         VirtualTableTop._updateQuestMembers(questId);
-        VirtualTableTop._updateTurn(playerId, detail);
+        VirtualTableTop._updateTurn(playerId, detail.nextPlayerId, detail.nextPlayerName);
         VirtualTableTop._updateActions(playerId, detail.nextPlayerId, detail.questProgressId);
     }
 
@@ -108,8 +114,13 @@ class VirtualTableTop {
 
     static _updateMission(missionId) {
         Logger.log(2, '_updateMission', `missionId=${missionId}`);
-        const target = `#missionDescription`;
-        if (!DOMUtils.exists(target))
+        
+        const targetTitle = `#missionTitle`;
+        if (!DOMUtils.exists(targetTitle))
+            return;
+
+        const targetDescription = `#missionDescription`;
+        if (!DOMUtils.exists(targetDescription))
             return;
 
         AjaxUtils.request({
@@ -119,19 +130,20 @@ class VirtualTableTop {
             successCallback: (response) => {
                 if (!response.error) {
                     const content = response.content;
-                    $(target).html(content);
+                    $(targetDescription).html(content);
+                    $(targetTitle).html(response.title);
                 }
             }
         });
     }
 
-    static _updateTurn(playerId, detail) {
-        Logger.log(2, '_updateTurn', `playerId=${playerId}, detail=${JSON.stringify(detail)}`);
+    static _updateTurn(playerId, nextPlayerId, nextPlayerName) {
+        Logger.log(2, '_updateTurn', `playerId=${playerId}, nextPlayerId=${nextPlayerId}, nextPlayerName=${nextPlayerName}`);
         const target = `#turnDescription`;
         if (!DOMUtils.exists(target))
             return;
 
-        const nextPlayer = (playerId === detail.nextPlayerId) ? 'your' : `${detail.nextPlayerName}'s`;
+        const nextPlayer = (playerId === nextPlayerId) ? 'your' : `${nextPlayerName}'s`;
         const message = `It's ${nextPlayer} turn to play`;
         $(target).html(message);
     }

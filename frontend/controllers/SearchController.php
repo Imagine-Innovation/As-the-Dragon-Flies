@@ -48,7 +48,7 @@ class SearchController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
         }
 
-        $path = Yii::getAlias('@frontend/web/img/') . $folder;
+        $path = Yii::getAlias('@frontend/web/') . $folder;
         $results = [];
 
         if (!is_dir($path)) {
@@ -65,7 +65,7 @@ class SearchController extends Controller
             $fileName = basename($file);
             $results[] = [
                 'id' => $fileName,
-                'img' => "/frontend/web/img/{$folder}/{$fileName}",
+                'img' => "/frontend/web/{$folder}/{$fileName}",
                 'text' => FileHelper::removeExtension($fileName),
             ];
         }

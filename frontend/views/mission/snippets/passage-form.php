@@ -14,7 +14,7 @@ use yii\widgets\ActiveForm;
 
 <div class="d-none">
     Hidden div to embeb utility tags for PHP/JS communication
-    <span id="hiddenImagePath">story/<?= $storyId ?></span>
+    <span id="hiddenImagePath">resources\story-<?= $storyId ?>\img</span>
     <span id="hiddenFormName">passage</span>
     <span id="hiddenParentId"><?= $parentId ?></span>
 </div>

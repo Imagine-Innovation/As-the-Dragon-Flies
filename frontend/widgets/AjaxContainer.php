@@ -5,20 +5,23 @@ namespace frontend\widgets;
 use Yii;
 use yii\base\Widget;
 
-class AjaxContainer extends Widget {
+class AjaxContainer extends Widget
+{
 
-    public $name;
-    public $options;
+    public string $tag = "div";
+    public string $name = "defaultAjaxContainer";
+    public array $options = [];
 
     public function run() {
-        Yii::debug("*** AjaxContainer - run() - name=$this->name, param=" . ($this->param ?? "null"));
+        Yii::debug("*** AjaxContainer - run() - tag=$this->tag, name=$this->name, param=" . ($this->param ?? "null"));
         return $this->render('ajax-container', [
+                    'tag' => $this->tag,
                     'name' => $this->name,
                     'param' => $this->setParam($this->options),
         ]);
     }
 
-    private function setParam($options) {
+    private function setParam(array $options): string {
         $param = "";
         if ($options) {
             $keys = array_keys($options);

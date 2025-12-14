@@ -15,13 +15,9 @@ $story = $quest->story;
 
 // $player is passed as an array of one element because the ajax snippet
 // is expecting a collection of players and not a single one
-$playerSnippet = $this->renderFile('@app/views/game/ajax/player.php', ['player' => $player]);
 $currentQuestProgress = $quest->currentQuestProgress;
-$mission = $currentQuestProgress->mission;
-
-$actionList = ($currentQuestProgress->current_player_id === $playerId) ?
-        $this->renderFile('@app/views/game/ajax/actions.php', ['questActions' => $currentQuestProgress->questActions]) :
-        "";
+$currentPlayer = $currentQuestProgress->currentPlayer;
+$isCurrentPlayer = ($currentQuestProgress->current_player_id === $playerId);
 ?>
 <div class="d-none">
     Hidden div to embeb utility tags for PHP/JS communication
@@ -29,7 +25,8 @@ $actionList = ($currentQuestProgress->current_player_id === $playerId) ?
     <span id="hiddenQuestId"><?= $currentQuestProgress->quest_id ?></span>
     <span id="hiddenQuestProgressId"><?= $currentQuestProgress->id ?></span>
     <span id="hiddenQuestMissionId"><?= $currentQuestProgress->mission_id ?></span>
-    <span id="hiddenCurrentPlayerId"><?= $currentQuestProgress->current_player_id ?></span>
+    <span id="hiddenCurrentPlayerId"><?= $currentPlayer->id ?></span>
+    <span id="hiddenCurrentPlayerName"><?= $currentPlayer->name ?></span>
     <span id="hiddenPlayerId"><?= $playerId ?></span>
 </div>
 
@@ -45,7 +42,6 @@ $actionList = ($currentQuestProgress->current_player_id === $playerId) ?
         <div class="offcanvas-body">
             <section class="">
                 <article id="player-offcanvas" class="card">
-                    <?= $playerSnippet ?>
                 </article>
                 <article id="game-equipement" class="card">
                     <!-- Equipement -->
@@ -76,7 +72,6 @@ $actionList = ($currentQuestProgress->current_player_id === $playerId) ?
     <aside class="col-xxl-3 col-3xl-2 d-none d-xxl-block">
         <section class="h-100">
             <article id="player-aside" class="card">
-                <?= $playerSnippet ?>
             </article>
             <article id="game-equipement" class="card">
                 <!-- Equipement -->
@@ -110,7 +105,7 @@ $actionList = ($currentQuestProgress->current_player_id === $playerId) ?
                 <div class="card p-3 h-100 d-flex flex-column">
                     <div class="actions">
                         <!-- Button to trigger the offcanvas on smaller screens -->
-                        <a role="button"class="actions__item d-xl-none"  data-bs-toggle="offcanvas" href="#offcanvasPlayer" aria-controls="offcanvasPlayer">
+                        <a role="button"class="actions__item d-xxl-none"  data-bs-toggle="offcanvas" href="#offcanvasPlayer" aria-controls="offcanvasPlayer">
                             <i class="bi bi-person-square"></i>
                         </a>
                         <?=
@@ -130,17 +125,11 @@ $actionList = ($currentQuestProgress->current_player_id === $playerId) ?
 
                     <div class="card-body">
                         <article class="flex-grow-1 h-auto mb-3">
-                            <div id="missionDescription" class="text-decoration">
-                                <?= $this->renderFile('@app/views/game/ajax/mission.php', ['mission' => $mission]) ?>
-                            </div>
+                            <?= AjaxContainer::widget(['name' => 'missionDescription', 'options' => ['class' => 'text-decoration']]) ?>
                             <br />
-                            <p class="text-warning text-decoration" id="turnDescription">
-                                It is <?= ($currentQuestProgress->current_player_id === $playerId) ? "your" : "{$currentQuestProgress->currentPlayer->name}'s" ?> turn to play
-                            </p>
+                            <?= AjaxContainer::widget(['tag' => 'p', 'name' => 'turnDescription', 'options' => ['class' => 'text-warning text-decoration']]) ?>
                             <br />
-                            <div id="actionList" class="<?= ($currentQuestProgress->current_player_id === $playerId) ? '' : 'd-none' ?>">
-                                <?= $actionList ?>
-                            </div>
+                            <div id="actionList" class="<?= $isCurrentPlayer ? '' : 'd-none' ?>"></div>
                             <div id="actionFeedback"></div>
                         </article>
                     </div>

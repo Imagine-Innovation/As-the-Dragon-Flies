@@ -158,7 +158,7 @@ class GameController extends Controller
 
         $mission = FindModelHelper::findMission($missionId);
         $render = $this->renderPartial('ajax/mission', ['mission' => $mission]);
-        return ['error' => false, 'msg' => '', 'content' => $render];
+        return ['error' => false, 'msg' => '', 'content' => $render, 'title' => $mission->name];
     }
 
     /**
