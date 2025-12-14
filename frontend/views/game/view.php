@@ -120,14 +120,14 @@ $isCurrentPlayer = ($currentQuestProgress->current_player_id === $playerId);
                     </div>
 
                     <div class="card-header">
-                        <h2 class="text-warning text-decoration mb-3 h5"><?= $quest->currentChapter->name ?></h2>
+                        <?= AjaxContainer::widget(['tag' => 'h2', 'name' => 'missionTitle', 'options' => ['class' => 'text-warning text-decoration mb-3 h5']]) ?>
                     </div>
 
                     <div class="card-body">
                         <article class="flex-grow-1 h-auto mb-3">
                             <?= AjaxContainer::widget(['name' => 'missionDescription', 'options' => ['class' => 'text-decoration']]) ?>
                             <br />
-                            <?= AjaxContainer::widget(['tag' => 'p', 'name' => 'turnDescription', 'options' => ['class' => 'text-warning text-decoration']]) ?>
+                            <?= AjaxContainer::widget(['tag' => 'div', 'name' => 'turnDescription', 'options' => ['class' => 'text-warning text-decoration']]) ?>
                             <br />
                             <div id="actionList" class="<?= $isCurrentPlayer ? '' : 'd-none' ?>"></div>
                             <div id="actionFeedback"></div>

@@ -3,12 +3,14 @@
 namespace common\components;
 
 use common\components\AppStatus;
+use common\models\AccessCount;
 use common\models\AccessRight;
-use common\models\UserLog;
-use common\helpers\UserErrorMessage;
+use common\models\User;
 use Yii;
 use yii\base\Component;
+use yii\db\ActiveQuery;
 use yii\helpers\ArrayHelper;
+use yii\web\Controller;
 
 class ManageAccessRights extends Component
 {
@@ -34,7 +36,7 @@ class ManageAccessRights extends Component
      * @param bool $inQuest Whether the selected player is in a quest
      * @return ActiveQuery Query containing all authorized access right IDs
      */
-    public static function getAuthorizedIds(\common\models\User $user, bool $hasPlayerSelected = false, bool $inQuest = false): \yii\db\ActiveQuery {
+    public static function getAuthorizedIds(User $user, bool $hasPlayerSelected = false, bool $inQuest = false): ActiveQuery {
 
         $accesRights = AccessRight::find()->select('id')->where(['id' => 1]);
         if ($user->is_player) {
@@ -73,7 +75,7 @@ class ManageAccessRights extends Component
      * @param string $redirect route url to redirect avec throwing an error
      * @return bool True if access is granted, false otherwise
      */
-    public static function isRouteAllowed(\yii\web\Controller $controller, string $redirect = null): bool {
+    public static function isRouteAllowed(Controller $controller, string $redirect = null): bool {
         $access = self::checkAccess($controller);
 
         if ($access['denied']) {
@@ -111,16 +113,30 @@ class ManageAccessRights extends Component
         return $accessRightData ? new AccessRight($accessRightData) : null;
     }
 
+    private static function countAccess(string $route, string $action): bool {
+        $accessCount = AccessCount::findOne(['route' => $route, 'action' => $action]);
+
+        if ($accessCount) {
+            $accessCount->calls = $accessCount->calls + 1;
+        } else {
+            $accessCount = new AccessCount(['route' => $route, 'action' => $action]);
+        }
+
+        return $accessCount->save(false);
+    }
+
     /**
      * Checks that the requested action is authorised within the controller
      *
      * @param yii\web\Controller $controller
      * @return array
      */
-    private static function checkAccess(\yii\web\Controller $controller): array {
+    private static function checkAccess(Controller $controller): array {
 
         $route = $controller->id;
         $action = $controller->action->id;
+
+        self::countAccess($route, $action);
 
         if (self::isPublic($route, $action)) {
             return self::logAccess(null, false, 'success', "[{$route}/{$action}] Access granted by default to public route");
@@ -221,24 +237,38 @@ class ManageAccessRights extends Component
      */
     private static function logAccess(int|null $accessRightId, bool $denied, string $severity, string $reason): array {
         $user = Yii::$app->session->get('user') ?? Yii::$app->user->identity;
-        $playerId = Yii::$app->session->get('playerId');
-        $questId = Yii::$app->session->get('questId');
+        //$playerId = Yii::$app->session->get('playerId');
+        //$questId = Yii::$app->session->get('questId');
+
+        if ($user->current_player_id) {
+            $player = Yii::$app->db->createCommand(
+                            "SELECT * FROM `player` WHERE `id` = :playerId",
+                            [':playerId' => $user->current_player_id]
+                    )->queryOne();
+            $playerId = $player['id'];
+            $questId = $player['quest_id'];
+        } else {
+            $playerId = null;
+            $questId = null;
+        }
 
         $sql = "INSERT INTO `user_log` (`user_id`, `access_right_id`, `player_id`, `quest_id`, `ip_address`, `action_at`, `denied`, `reason`)"
                 . " VALUES (:user_id, :access_right_id, :player_id, :quest_id, :ip_address, :action_at, :denied, :reason)";
 
+        $values = [
+            ':user_id' => $user->id,
+            ':access_right_id' => $accessRightId,
+            ':player_id' => $playerId,
+            ':quest_id' => $questId,
+            ':ip_address' => Yii::$app->getRequest()->getUserIP(),
+            ':action_at' => time(),
+            ':denied' => $denied ? 1 : 0,
+            ':reason' => $reason,
+        ];
         try {
-            Yii::$app->db->createCommand($sql, [
-                ':user_id' => $user->id,
-                ':access_right_id' => $accessRightId,
-                ':player_id' => $playerId,
-                ':quest_id' => $questId,
-                ':ip_address' => Yii::$app->getRequest()->getUserIP(),
-                ':action_at' => time(),
-                ':denied' => $denied ? 1 : 0,
-                ':reason' => $reason,
-            ])->execute();
+            Yii::$app->db->createCommand($sql, $values)->execute();
         } catch (\Exception $e) {
+            Yii::debug($e);
             throw new \Exception(implode("<br />", ArrayHelper::getColumn($e, 0, false)));
         }
 

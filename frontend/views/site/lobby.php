@@ -6,7 +6,7 @@ $this->title = 'Game lobby';
 $user = Yii::$app->user->identity;
 $player = $viewParameters['player'];
 
-$snippet = "snippets/_state_$state";
+$snippet = "snippets/_state_{$state}";
 
 $row = "row d-flex justify-content-center g-3";
 $col = "col-12 col-lg-9 col-xl-8 col-xxl-7";

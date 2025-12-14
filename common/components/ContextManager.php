@@ -2,6 +2,7 @@
 
 namespace common\components;
 
+use common\components\AppStatus;
 use common\models\Player;
 use common\models\Quest;
 use common\helpers\Utilities;
@@ -68,7 +69,9 @@ class ContextManager extends Component
 
         $quest = $questId ? Quest::findOne(['id' => $questId]) : null;
 
-        if ($quest) {
+        if ($quest &&
+                ($quest->status === AppStatus::WAITING->value ||
+                $quest->status === AppStatus::PLAYING->value)) {
             Yii::$app->session->set('inQuest', true);
             Yii::$app->session->set('questId', $quest->id);
             Yii::$app->session->set('questName', $quest->name);

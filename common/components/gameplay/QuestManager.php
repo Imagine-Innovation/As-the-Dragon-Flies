@@ -116,22 +116,47 @@ class QuestManager extends BaseManager
         return $questTurn;
     }
 
-    private function endCurrentTurn(?int $questProgressId = null, ?AppStatus $status = AppStatus::TERMINATED) {
-        QuestTurn::updateAll(
-                ['status' => $status->value],
-                ['status' => AppStatus::IN_PROGRESS->value, 'quest_progress_id' => $questProgressId ?? $this->questProgress->id]
-        );
+    private function endCurrentTurn(?int $questProgressId = null, ?AppStatus $status = AppStatus::TERMINATED): int {
+        return QuestTurn::updateAll(
+                        ['status' => $status->value],
+                        [
+                            'status' => AppStatus::IN_PROGRESS->value,
+                            'quest_progress_id' => $questProgressId ?? $this->questProgress->id
+                        ]
+                );
     }
 
-    private function gameOver(AppStatus $status) {
+    private function endQuestPlayers(int $questId, string $reason): int {
+        return QuestPlayer::updateAll(
+                        [
+                            'status' => AppStatus::LEFT->value,
+                            'left_at' => time(),
+                            'reason' => $reason],
+                        [
+                            'status' => [AppStatus::ONLINE->value, AppStatus::OFFLINE->value],
+                            'quest__id' => $questId
+                        ]
+                );
+    }
+
+    private function detachPlayersFromQuest(int $questId): int {
+        return Player::updateAll(
+                        ['quest_id' => null],
+                        ['quest_id' => $questId]
+                );
+    }
+
+    private function gameOver(AppStatus $status): array {
         // End the quest
         $this->quest->status = $status->value;
         $this->quest->completed_at = time();
         $this->save($this->quest);
 
-        $this->endCurrentQuestProgress($status);
-
         $message = "The quest {$this->quest->name} is over with status {$status->getLabel()}!!!";
+
+        $this->endCurrentQuestProgress($status);
+        $this->endQuestPlayers($this->quest->id, $message);
+        $this->detachPlayersFromQuest($this->quest->id);
 
         $detail = [
             'status' => $status->getLabel(),

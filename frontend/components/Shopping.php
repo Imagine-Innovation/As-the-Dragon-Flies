@@ -7,6 +7,7 @@ use common\models\Player;
 use common\models\PlayerCart;
 use common\models\PlayerItem;
 use Yii;
+use yii\helpers\ArrayHelper;
 
 class Shopping
 {
@@ -593,6 +594,7 @@ class Shopping
         if ($playerItem->save()) {
             return ['error' => false, 'msg' => 'Cart is validated'];
         }
+        throw new \Exception(implode("<br />", ArrayHelper::getColumn($playerItem->errors, 0, false)));
 
         // Return an error response if saving failed
         return ['error' => true, 'msg' => "Could not validate the purchase of {$item->name}"];
@@ -609,17 +611,19 @@ class Shopping
         $isCarrying = ($itemType->name === 'Weapon' || $itemType->name === 'Armor');
 
         // Create a new PlayerItem if it does not exist
-        $playerItem = new PlayerItem([
+        $playerItemData = [
             'player_id' => $playerCart->player_id,
             'item_id' => $playerCart->item_id,
             'item_name' => $item->name,
-            'item_type' => $item->itemType->name,
+            'item_type' => $itemType->name,
             'image' => $item->image,
             'quantity' => $playerCart->quantity * $item->quantity,
-            'is_carrying' => $isCarrying,
+            'is_carrying' => $isCarrying ? 1 : 0,
             'is_proficient' => $isProficient,
             'is_two_handed' => ($item->weapon ? $item->weapon->is_two_handed : 0),
-        ]);
+        ];
+        Yii::debug($playerItemData);
+        $playerItem = new PlayerItem($playerItemData);
 
         return $playerItem;
     }

@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\components\AppStatus;
 use common\components\ContextManager;
 use common\components\ManageAccessRights;
 use common\helpers\Utilities;
@@ -46,7 +47,8 @@ class SiteController extends Controller
                     ],
                     [
                         'actions' => ['logout', 'ajax-toast', 'websocket'],
-                        'allow' => true,
+//                        'allow' => true,
+                        'allow' => ManageAccessRights::isRouteAllowed($this),
                         'roles' => ['@'],
                     ],
                 ],
@@ -120,7 +122,12 @@ class SiteController extends Controller
         if (count($players) === 0) {
             $state = 0;
         } elseif ($player !== null) {
-            $state = $inQuest ? 3 : 2;
+            //$state = $inQuest ? 3 : 2;
+            $state = ($inQuest &&
+                    (
+                    $player->quest->status === AppStatus::WAITING->value ||
+                    $player->quest->status === AppStatus::PLAYING->value
+                    )) ? 3 : 2;
         } else {
             $state = 1;
         }
