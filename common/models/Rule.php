@@ -7,6 +7,7 @@ use common\components\RuleParser;
 use common\components\RuleValidator;
 use common\models\RuleCondition;
 use common\models\RuleExpression;
+use common\models\RuleModel;
 use common\helpers\ModelHelper;
 use Yii;
 
@@ -123,7 +124,7 @@ class Rule extends \yii\db\ActiveRecord
      *
      * @return bool Whether the rule definition is valid.
      */
-    public function isValidDefinition() {
+    public function isValidDefinition(): bool {
         // Initialize the match variable to false.
         $match = false;
 
@@ -156,10 +157,10 @@ class Rule extends \yii\db\ActiveRecord
      * the method returns true. If the rule definition is invalid or the save
      * operation fails, the method throws an exception.
      *
-     * @throws Exception if the rule model is missing or the rule definition is invalid.
      * @return bool Whether the save operation is successful (true) or not.
+     * @throws \Exception if the rule model is missing or the rule definition is invalid.
      */
-    public function saveRuleDefinition() {
+    public function saveRuleDefinition(): bool {
         // Check if there is an error message indicating a missing rule model.
         if ($this->errorMessage !== "") {
             // Log the error message for debugging purposes.
@@ -396,9 +397,9 @@ class Rule extends \yii\db\ActiveRecord
      *
      * @param string $component the component string (model and attribute/method)
      * @return RuleModel the retrieved or created RuleModel instance
-     * @throws Exception if failed to save the RuleModel model
+     * @throws \Exception if failed to save the RuleModel model
      */
-    private function getRuleModel($component) {
+    private function getRuleModel(string $component): RuleModel {
         // Split the field name into model and attribute/method parts
         $parts = explode('->', $component, 2);
         $modelName = $parts[0];

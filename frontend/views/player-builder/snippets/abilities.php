@@ -5,7 +5,7 @@ use frontend\widgets\Button;
 use common\helpers\Utilities;
 
 /** @var yii\web\View $this */
-/** @var common\models\PlayerBuilder $model */
+/** @var frontend\models\PlayerBuilder $model */
 /** @var string[] $paragraphs */
 $playerAbilities = $model->playerAbilities;
 $abilityValues = [15, 14, 13, 12, 10, 8];

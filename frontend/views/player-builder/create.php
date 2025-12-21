@@ -7,7 +7,7 @@ use frontend\widgets\Button;
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var common\models\PlayerBuilder $model */
+/** @var frontend\models\PlayerBuilder $model */
 $this->title = 'Player builder';
 $this->params['breadcrumbs'][] = ['label' => 'Players', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;

@@ -3,8 +3,8 @@
 use common\helpers\Utilities;
 
 /** @var yii\web\View $this */
-/** @var common\models\PlayerBuilder $model */
-$endowmentTable = $model->initialEndowment;
+/** @var frontend\models\PlayerBuilder $model */
+$endowmentTable = $model->getInitialEndowment();
 $choices = max(array_keys($endowmentTable));
 
 $backgroundItems = $model->background->backgroundItems;

@@ -4,7 +4,7 @@ use frontend\widgets\Button;
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */
-/** @var Player $player  */
+/** @var common\models\Player $player  */
 /** @var Player[] $otherPlayers */
 /** @var string $row */
 /** @var string $col */

@@ -359,9 +359,9 @@ class SiteController extends Controller
      *
      * @param string $token
      * @throws BadRequestHttpException
-     * @return yii\web\Response
+     * @return \yii\web\Response
      */
-    public function actionVerifyEmail($token) {
+    public function actionVerifyEmail($token): Response {
         try {
             $model = new VerifyEmailForm($token);
         } catch (InvalidArgumentException $e) {

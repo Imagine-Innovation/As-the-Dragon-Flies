@@ -308,7 +308,7 @@ class PlayerBuilderController extends Controller
         $playerId = $request->post('playerId');
         $player = $this->findModel($playerId);
 
-        $endowmentTable = $player->initialEndowment;
+        $endowmentTable = $player->getInitialEndowment();
         $choices = max(array_keys($endowmentTable));
         Yii::debug($endowmentTable);
         return [
@@ -650,10 +650,10 @@ class PlayerBuilderController extends Controller
      * Finds the Player model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
-     * @return Player the loaded model
+     * @return \frontend\models\PlayerBuilder the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel(int $id) {
+    protected function findModel(int $id): PlayerBuilder {
 
         $query = PlayerBuilder::find()
                 ->with(['race', 'class', 'background', 'playerAbilities', 'playerSkills', 'playerTraits'])

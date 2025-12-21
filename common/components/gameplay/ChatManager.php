@@ -49,11 +49,11 @@ class ChatManager extends BaseManager
     /**
      * Prepare a new entry for the char message array based on the cha event payload
      *
-     * @param common\models\Notification $chatNotification
+     * @param \common\models\Notification $chatNotification
      * @param int $playerId
-     * @return array|null
+     * @return array
      */
-    private function newChatEntry(Notification $chatNotification, int $playerId): ?array {
+    private function newChatEntry(Notification $chatNotification, int $playerId): array {
         if ($chatNotification->notification_type !== self::CHAT_NOTIFICATION_TYPE) {
             return null;
         }

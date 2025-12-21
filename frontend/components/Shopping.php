@@ -5,6 +5,7 @@ namespace frontend\components;
 use common\models\Item;
 use common\models\Player;
 use common\models\PlayerCart;
+use common\models\PlayerCoin;
 use common\models\PlayerItem;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -55,7 +56,7 @@ class Shopping
      * This function initializes the purse array based on the given PlayerCoin objects,
      * converting quantities to copper values and establishing links between array elements.
      *
-     * @param PlayerCoins[] $playerCoins Content of the player's purse.
+     * @param \common\models\PlayerCoin[] $playerCoins Content of the player's purse.
      * @return array Associative array representing the player's purse with coin types as keys.
      */
     private function initPurse(array $playerCoins): array {
@@ -106,7 +107,7 @@ class Shopping
      * the content of the player's purse, updates the quantity from the current Purse array,
      * and attempts to save each PlayerCoin object. Returns false if saving fails for any coin type.
      *
-     * @param PlayerCoin[] $playerCoins An array of PlayerCoin objects representing the content of the player's purse.
+     * @param \common\models\PlayerCoin[] $playerCoins An array of PlayerCoin objects representing the content of the player's purse.
      *
      * @return bool True if saving is successful for all PlayerCoin objects, false otherwise.
      */
@@ -256,7 +257,7 @@ class Shopping
     /**
      * Attempts to spend coins from a player's purse for a specified cost and coin type.
      *
-     * @param array $playerCoins The player's current coin holdings represented as an associative array.
+     * @param \common\models\PlayerCoin[] $playerCoins The player's current coin holdings represented as an associative array.
      * @param float $cost The cost of the item to be purchased.
      * @param string $coin The type of coin for the item cost (e.g., 'gold', 'silver', 'copper').
      *
@@ -291,7 +292,7 @@ class Shopping
     /**
      * Restores the player's coins after a transaction.
      *
-     * @param array $playerCoins The player's current coins.
+     * @param \common\models\PlayerCoin[] $playerCoins The player's current coins.
      * @param int $cost The cost to be restored.
      * @param string $coin The type of coin to be restored.
      * @return bool Whether the restoration was successful.
@@ -316,7 +317,7 @@ class Shopping
     /**
      * Calculates the maximum funding a player can contribute towards an item purchase.
      *
-     * @param array $playerCoins The player's current coin holdings represented as an associative array.
+     * @param \common\models\PlayerCoin[] $playerCoins The player's current coin holdings represented as an associative array.
      * @param float $cost The cost of the item to be purchased.
      * @param string $coin The type of coin for the item cost (e.g., 'gold', 'silver', 'copper').
      *
@@ -370,7 +371,7 @@ class Shopping
      * for each non-zero quantity wallet in the format "{quantity}{coin}",
      * and then joins these strings with a plus sign.
      *
-     * @param array $playerCoins The player's current coin holdings represented as an associative array.
+     * @param \common\models\PlayerCoin[] $playerCoins The player's current coin holdings represented as an associative array.
      * @return string The string representation of the player's purse.
      */
     public function getPurseValueString(array $playerCoins): string {
@@ -442,7 +443,7 @@ class Shopping
     /**
      * Generates a message indicating why a purchase is not possible based on the player's coins and item cost.
      *
-     * @param PlayerCoin[] $playerCoins The amount of coins the player has.
+     * @param \common\models\PlayerCoin[] $playerCoins $playerCoins The amount of coins the player has.
      * @param Item &$item The item to be purchased.
      *
      * @return string The purchase status message.

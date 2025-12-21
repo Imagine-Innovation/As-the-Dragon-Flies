@@ -3,7 +3,7 @@
 use frontend\widgets\Button;
 
 /** @var string $countLabel */
-/** @var array() $actions action buttons associated with the context */
+/** @var array|null $actions action buttons associated with the context */
 ?>
 <p class="text-muted"><?= $countLabel ?></p>
 <?php if (isset($actions)): ?>

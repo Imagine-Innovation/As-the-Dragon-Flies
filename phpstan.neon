@@ -32,4 +32,8 @@ parameters:
         - '#has invalid type Yii\\#'
         - '#has invalid return type Yii\\#'
         - '#Constant YII_#'
-
+        - '#Access to an undefined property Ratchet\\ConnectionInterface#'
+        - '#Call to an undefined method Ratchet\\ConnectionInterface#'
+        - '#Call to an undefined method yii\\#'
+        - '#Access to an undefined property yii\\#'
+        - '#on an unknown class common\\model#'

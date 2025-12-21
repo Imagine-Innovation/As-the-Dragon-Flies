@@ -72,7 +72,7 @@ class ManageAccessRights extends Component
     /**
      * Checks if a user is authorized to access a specific route
      *
-     * @param yii\web\Controller $controller The source controller
+     * @param \yii\web\Controller $controller The source controller
      * @param string $redirect route url to redirect avec throwing an error
      * @return bool True if access is granted, false otherwise
      */
@@ -88,7 +88,7 @@ class ManageAccessRights extends Component
     /**
      * Defines if an action within a route is public, i.e. access can be granted by default
      *
-     * @param sting $route
+     * @param string $route
      * @param string $action
      * @return bool
      */
@@ -129,7 +129,7 @@ class ManageAccessRights extends Component
     /**
      * Checks that the requested action is authorised within the controller
      *
-     * @param yii\web\Controller $controller
+     * @param \yii\web\Controller $controller
      * @return array
      */
     private static function checkAccess(Controller $controller): array {
@@ -176,7 +176,7 @@ class ManageAccessRights extends Component
     /**
      * Check player-specific access conditions
      *
-     * @param common\models\AccessRight $accessRight
+     * @param \common\models\AccessRight $accessRight
      * @return array
      */
     private static function checkPlayerAccess(AccessRight $accessRight): array {
@@ -229,10 +229,10 @@ class ManageAccessRights extends Component
      * For optimization purposes, given that this logging function is called for each HTTP query,
      * we switched to a more optimized low-level query to perform only the INSERT.
      *
-     * @param type $accessRightId
-     * @param type $denied
-     * @param type $severity
-     * @param type $reason
+     * @param int|null $accessRightId
+     * @param bool $denied
+     * @param string $severity
+     * @param string $reason
      * @return array
      * @throws \Exception
      */

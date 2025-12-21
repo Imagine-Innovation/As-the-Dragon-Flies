@@ -31,8 +31,8 @@ use Yii;
  *
  * @property Chapter $firstChapter
  * @property Quest $tavern
- * @property sting $requestedLevels
- * @property sting $companySize
+ * @property string $requiredLevels
+ * @property string $companySize
  */
 class Story extends \yii\db\ActiveRecord
 {
@@ -144,9 +144,9 @@ class Story extends \yii\db\ActiveRecord
     /**
      * Gets query for [[FirstChapter]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \common\models\Chapter
      */
-    public function getFirstChapter() {
+    public function getFirstChapter(): Chapter {
         return $this->hasOne(Chapter::class, ['story_id' => 'id'])
                         ->andWhere(['chapter_number' => 1]);
     }
@@ -154,9 +154,9 @@ class Story extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Tavern]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \common\models\Quest
      */
-    public function getTavern() {
+    public function getTavern(): Quest {
         $quest = Quest::findOne([
             'story_id' => $this->id,
             'status' => AppStatus::WAITING->value

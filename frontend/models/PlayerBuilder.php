@@ -11,7 +11,8 @@ use Yii;
  *
  * @author franc
  */
-class PlayerBuilder extends Player {
+class PlayerBuilder extends Player
+{
 
     /**
      * Saves the advanced properties of the Player model.
@@ -23,7 +24,6 @@ class PlayerBuilder extends Player {
      * If player coins or abilities are not already initialized, this method
      * initializes and saves them accordingly.
      *
-     * @param common\models\Player $this
      * @param bool $runValidation
      * @param mixed $attributeNames
      * @return bool Returns true if all player's advanced properties are successfully saved, false otherwise.
@@ -59,7 +59,6 @@ class PlayerBuilder extends Player {
 
     /**
      *
-     * @param common\models\Player $this
      * @return array
      */
     public function getInitialEndowment(): array {

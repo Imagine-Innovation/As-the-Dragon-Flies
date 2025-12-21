@@ -72,7 +72,7 @@ use Yii;
  * *********** Custom Properties **********
  *
  * @property Item[] $weapons
- * @property string avatar
+ * @property string|null $avatar
  * @property string $description
  * @property Notification[] $unreadNotifications
  *
@@ -531,7 +531,7 @@ class Player extends \yii\db\ActiveRecord
         return $this->hasMany(Weapon::class, ['id' => 'item_id'])->viaTable('player_item', ['player_id' => 'id']);
     }
 
-    public function getAvatar() {
+    public function getAvatar(): ?string {
         if ($this->image) {
             return $this->image->file_name;
         }
@@ -606,7 +606,7 @@ class Player extends \yii\db\ActiveRecord
     /**
      * Changes the status of the given model and updates its "updated_at" timestamp.
      *
-     * @param string $status The new status to set.
+     * @param int $status The new status to set.
      * @return bool Whether the status change was successful.
      */
     public function setStatus(int $status): bool {

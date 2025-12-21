@@ -4,7 +4,7 @@ use common\helpers\Utilities;
 use frontend\widgets\ModalDesc;
 
 /** @var yii\web\View $this */
-/** @var common\models\PlayerBuilder $model */
+/** @var frontend\models\PlayerBuilder $model */
 /** @var string[] $paragraphs */
 $field_name = 'description';
 $histories = common\models\History::find()->all();

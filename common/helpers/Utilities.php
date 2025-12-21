@@ -127,10 +127,10 @@ class Utilities extends Html
 
     /**
      *
-     * @param srting[] $paragraphs
-     * @return type
+     * @param string[] $paragraphs
+     * @return string
      */
-    public static function formatMultiLine($paragraphs) {
+    public static function formatMultiLine(array $paragraphs): string {
         $lines = array_map(fn($p) => "<p class='text-muted'>" . Html::encode($p) . "</p>", $paragraphs);
         return implode("\n", $lines);
     }

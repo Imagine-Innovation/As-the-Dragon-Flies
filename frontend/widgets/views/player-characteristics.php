@@ -1,6 +1,6 @@
 <?php
 /** @var yii\web\View $this */
-/** @var common\models\PlayerBuilder $model */
+/** @var frontend\models\PlayerBuilder $model */
 /** @var string $embedded */
 $this->title = $model->name;
 

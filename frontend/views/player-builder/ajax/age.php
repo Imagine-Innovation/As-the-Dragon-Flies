@@ -1,6 +1,6 @@
 <?php
 /** @var yii\web\View $this */
-/** @var string[] $ageTable */
+/** @var array $ageTable */
 /** @var int $age */
 $devider = 20;
 

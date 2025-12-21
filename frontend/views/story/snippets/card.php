@@ -72,7 +72,7 @@ $image = $story->image ?
         <?php endif; ?>
 
         <p>
-            <span class="badge badge-info"><?= $story->requiredLevels ?></span>
+            <span class="badge badge-info"><?= $story->getRequiredLevels() ?></span>
             <span class="badge badge-info"><?= $story->companySize ?></span>
             <?php if ($story->tavern): ?>
                 <span class="badge badge-info"><?= $story->tavern->getQuestPlayers()->count() ?> partners waiting</span>

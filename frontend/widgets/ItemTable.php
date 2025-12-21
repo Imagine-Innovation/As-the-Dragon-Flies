@@ -180,7 +180,7 @@ class ItemTable extends Widget {
      * @param array $col An associative array representing the configuration of the column.
      *                   It includes keys such as 'iconography' (string), 'class' (string),
      *                   'is-repeated' (boolean), 'is-link' (boolean).
-     * @param common\models\Item $model The Item model containing information for the current row.
+     * @param \common\models\Item $model The Item model containing information for the current row.
      * @param int $colIndex The index of the current column.
      *
      * @return string The HTML content for the table cell, including any necessary

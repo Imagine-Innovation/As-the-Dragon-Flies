@@ -37,7 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <br>
                     <?= StoryNeededClass::classList($model); ?>
                     <p>
-                        <span class="badge badge-info"><?= $model->requiredLevels ?></span>
+                        <span class="badge badge-info"><?= $model->getRequiredLevels() ?></span>
                         <span class="badge badge-info"><?= $model->companySize ?></span>
                     </p>
                     <?php foreach ($model->chapters as $chapter): ?>

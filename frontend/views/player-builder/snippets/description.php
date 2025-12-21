@@ -5,7 +5,7 @@ use common\helpers\Utilities;
 use frontend\widgets\Button;
 
 /** @var yii\web\View $this */
-/** @var common\models\PlayerBuilder $model */
+/** @var frontend\models\PlayerBuilder $model */
 /** @var string[] $paragraphs */
 $alignments = Alignment::find()->all();
 /*

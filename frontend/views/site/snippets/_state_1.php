@@ -3,8 +3,8 @@
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */
-/** @var Player $lastPlayer  */
-/** @var Player[] $otherPlayers */
+/** @var common\models\Player $lastPlayer  */
+/** @var common\models\Player[] $otherPlayers */
 /** @var string $row */
 /** @var string $col */
 ?>

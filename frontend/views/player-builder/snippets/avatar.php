@@ -3,7 +3,7 @@
 use common\helpers\Utilities;
 
 /** @var yii\web\View $this */
-/** @var common\models\PlayerBuilder $model */
+/** @var frontend\models\PlayerBuilder $model */
 /** @var string[] $paragraphs */
 ?>
 <!-- Character Builder - Images Tab -->

@@ -4,6 +4,7 @@ namespace common\components\gameplay;
 
 use common\components\AppStatus;
 use common\components\NarrativeComponent;
+use common\models\events\Event;
 use common\models\events\EventFactory;
 use common\models\Chapter;
 use common\models\Mission;

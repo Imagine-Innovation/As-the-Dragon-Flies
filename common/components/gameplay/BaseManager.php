@@ -43,7 +43,7 @@ abstract class BaseManager extends Component
      * @param string $type notification type ("chat", "action"...)
      * @param int|null $since optional parameter to get the notifications since a specific date
      * @param int|null $limit optional parameter to limit the number of returned values
-     * @return common\models\Notification
+     * @return \common\models\Notification[]|null
      */
     protected function getNotifications(int $questId, string $type, ?int $since = null, ?int $limit = null): ?array {
 

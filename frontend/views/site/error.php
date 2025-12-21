@@ -1,11 +1,12 @@
 <?php
+
+use yii\base\Exception;
+use yii\helpers\Html;
+
 /** @var yii\web\View $this */
 /** @var string $name */
 /** @var string $message */
-
-/** @var Exception $exception */
-use yii\helpers\Html;
-
+/** @var yii\base\Exception $exception */
 //$previousException = $exception->getPrevious();
 
 $this->title = "Oups, something went wrong";

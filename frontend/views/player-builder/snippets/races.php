@@ -6,7 +6,7 @@ use frontend\widgets\ModalDesc;
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var common\models\PlayerBuilder $model */
+/** @var frontend\models\PlayerBuilder $model */
 /** @var string[] $paragraphs */
 $raceGroups = RaceGroup::find()->all();
 ?>

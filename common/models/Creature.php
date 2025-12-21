@@ -21,7 +21,6 @@ use Yii;
  * @property Ability[] $abilities
  * @property Ability[] $abilities0
  * @property Alignment[] $alignments
- * @property CreatureCondition[] $conditions
  * @property CreatureAbility[] $creatureAbilities
  * @property CreatureAlignment[] $creatureAlignments
  * @property CreatureDamageType[] $creatureDamageTypes

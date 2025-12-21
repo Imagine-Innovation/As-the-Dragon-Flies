@@ -296,7 +296,6 @@ class TavernManager extends BaseManager
     /**
      * Returns the number of players that are actually onboarded on the quest
      *
-     * @param int $questId
      * @return int
      */
     private function getCurrentPlayerCount(): int {

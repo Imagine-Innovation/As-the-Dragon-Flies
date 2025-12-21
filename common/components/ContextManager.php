@@ -5,6 +5,7 @@ namespace common\components;
 use common\components\AppStatus;
 use common\models\Player;
 use common\models\Quest;
+use common\models\User;
 use common\helpers\Utilities;
 use Yii;
 use yii\base\Component;
@@ -12,13 +13,17 @@ use yii\base\Component;
 class ContextManager extends Component
 {
 
+    private static function user(): ?User {
+        return Yii::$app->user->identity instanceof User ? Yii::$app->user->identity : null;
+    }
+
     public static function initContext() {
         if (Yii::$app->user->isGuest) {
             return;
         }
         Yii::debug("*** debug *** ContextManager - initContext");
 
-        $user = Yii::$app->user->identity;
+        $user = self::user();
         Yii::$app->session->set('user', $user);
         Yii::$app->session->set('userId', $user->id);
 
@@ -85,7 +90,7 @@ class ContextManager extends Component
     }
 
     public static function getContext(): array {
-        $user = Yii::$app->user->identity;
+        $user = self::user();
         return [
             'isGuest' => Yii::$app->user->isGuest,
             'isAdmin' => $user->is_admin,

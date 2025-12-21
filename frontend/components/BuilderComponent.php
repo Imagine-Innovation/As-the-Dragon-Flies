@@ -386,7 +386,7 @@ class BuilderComponent
      * Set the initial list of skills regarding the actual player class and backgroung
      *
      * @param Player $player
-     * @return array Array of possible skills with default proficiency
+     * @return void
      */
     public static function initSkills(Player &$player): void {
         $proficiencies = [];
@@ -514,7 +514,7 @@ class BuilderComponent
      * join table player_trait based on the traits associated with the
      * player's background.
      *
-     * @param common\models\Player $player
+     * @param \common\models\Player $player
      * @return void
      */
     public static function initTraits(Player $player): void {
@@ -592,7 +592,7 @@ class BuilderComponent
     /**
      * Set ability default value regarding both race and class
      *
-     * @param common\models\Player $player
+     * @param \common\models\Player $player
      * @param array $initAbilityArray
      * @return array
      */
@@ -616,7 +616,7 @@ class BuilderComponent
     /**
      * Adds any bonuses provided by the player's race
      *
-     * @param common\models\Player $player
+     * @param \common\models\Player $player
      * @param array $initAbilityArray
      * @return void
      */

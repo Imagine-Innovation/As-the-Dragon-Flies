@@ -5,11 +5,10 @@ use frontend\widgets\Button;
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */
-/** @var Player $player  */
-/** @var Player[] $otherPlayers */
+/** @var common\models\Player $player  */
+/** @var common\models\Player[] $otherPlayers */
 /** @var string $row */
 /** @var string $col */
-
 $quest = $player->quest;
 $statusEnum = AppStatus::from($quest->status);
 $iconInfo = $statusEnum->getIcon();

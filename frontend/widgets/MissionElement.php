@@ -12,9 +12,9 @@ class MissionElement extends Widget
 {
 
     /**
-     * @var ActiveRecord[] $properties: list of properties associated to a mission
+     * @var \yii\db\ActiveRecord[] $properties: list of properties associated to a mission
      * @var string $type: property type
-     * @var string[]: $propertyNames: array of every attributes defines within the property
+     * @var string[] $propertyNames array of every attributes defines within the property
      */
     public array $properties = [];
     public string $type = 'unkown';

@@ -16,9 +16,9 @@ class EventFactory
      * @param Player $player
      * @param Quest $quest
      * @param array $data
-     * @return type
+     * @return \common\models\events\Event
      */
-    public static function createEvent(string $eventType, string $sessionId, Player $player, Quest $quest, array $data = []) {
+    public static function createEvent(string $eventType, string $sessionId, Player $player, Quest $quest, array $data = []): Event {
 
         Yii::debug("*** debug *** EventFactory.createEvent type=$eventType, sessionId={$sessionId}, playerId={$player->id}, questId={$quest->id}, data=" . print_r($data, true));
         return match ($eventType) {

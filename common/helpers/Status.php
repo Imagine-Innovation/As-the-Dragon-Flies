@@ -21,13 +21,14 @@ class Status
             return 'Undefined';
         }
 
-        return AppStatus::tryFrom($statusCode)?->label ?? 'Unknown';
+        $status = AppStatus::tryFrom($statusCode);
+        return $status?->getLabel() ?? 'Unknown';
     }
 
     /**
      * Generates an HTML string for displaying a status icon with a tooltip.
      *
-     * @param ?int $statusValue The status code for which the icon and tooltip need to be generated.
+     * @param int|null $statusCode The status code for which the icon and tooltip need to be generated.
      * @return string The HTML string representing the status icon with a tooltip.
      */
     public static function icon(?int $statusCode = null): string {
