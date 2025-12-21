@@ -1,9 +1,10 @@
 <?php
-/** @var string $tag */
-/** @var string $name */
-/** @var string $param */
+/** @var string|null $tag */
+/** @var string|null $name */
+/** @var string|null $param */
+$tag = $tag ?? 'div';
 ?>
-<<?= $tag ?? 'div' ?> id="<?= $name ?>" <?= $param ?>>
+<<?= $tag ?> id="<?= $name ?>" <?= $param ?>>
 <div class="text-center">
     <div class="spinner-border" role="status" style="width: 3rem; height: 3rem;">
         <span>
@@ -11,4 +12,4 @@
         </span>
     </div>
 </div>
-</<?= $tag ?? 'div' ?>>
+</<?= $tag ?>>

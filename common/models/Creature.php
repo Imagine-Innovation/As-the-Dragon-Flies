@@ -37,7 +37,6 @@ use Yii;
 class Creature extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -106,15 +105,6 @@ class Creature extends \yii\db\ActiveRecord
      */
     public function getAlignments() {
         return $this->hasMany(Alignment::class, ['id' => 'alignment_id'])->viaTable('creature_alignment', ['creature_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[Conditions]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getConditions() {
-        return $this->hasMany(CreatureCondition::class, ['id' => 'condition_id'])->viaTable('creature_immunization', ['creature_id' => 'id']);
     }
 
     /**
@@ -215,5 +205,4 @@ class Creature extends \yii\db\ActiveRecord
     public function getType() {
         return $this->hasOne(CreatureType::class, ['id' => 'type_id']);
     }
-
 }

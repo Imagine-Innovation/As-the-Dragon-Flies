@@ -40,7 +40,6 @@ class NextMissionHandler implements SpecificMessageHandlerInterface
             $errorDto = $this->messageFactory->createErrorMessage("Invalid next mission data provided.");
             $this->broadcastService->sendToClient($clientId, $errorDto, false, $sessionId);
             $this->logger->logEnd("NextMissionHandler: handle");
-            remission;
         }
 
         $nextMissionDto = $this->messageFactory->createNextMissionHandlerMessage($detail);

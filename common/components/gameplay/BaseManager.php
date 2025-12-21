@@ -2,9 +2,11 @@
 
 namespace common\components\gameplay;
 
+use common\helpers\Utilities;
 use common\models\Notification;
 use Yii;
 use yii\base\Component;
+use yii\helpers\ArrayHelper;
 
 /**
  * BaseManager

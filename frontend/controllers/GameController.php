@@ -14,7 +14,7 @@ use common\models\QuestPlayer;
 use common\models\QuestTurn;
 use Yii;
 use yii\filters\AccessControl;
-use Yii\helpers\ArrayHelper;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Request;

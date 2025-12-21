@@ -4,7 +4,7 @@ namespace frontend\tests\functional;
 
 use frontend\tests\FunctionalTester;
 
-/* @var $scenario \Codeception\Scenario */
+/** @var $scenario \Codeception\Scenario */
 
 class ContactCest
 {

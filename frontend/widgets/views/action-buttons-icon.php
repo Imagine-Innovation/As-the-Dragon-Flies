@@ -2,6 +2,7 @@
 
 use common\components\ManageAccessRights;
 use frontend\widgets\Button;
+use yii\helpers\Url;
 
 /** @var yii\web\View $this */
 /** @var common\model $model */

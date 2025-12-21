@@ -3,9 +3,9 @@
 use frontend\widgets\Button;
 use yii\helpers\Url;
 
-/* @var yii\web\View $this */
-/* @var Player $player  */
-/* @var bool $current */
+/** @var yii\web\View $this */
+/** @var Player $player  */
+/** @var bool $current */
 
 $route = $current ? 'player/update' : 'player/set-current';
 ?>

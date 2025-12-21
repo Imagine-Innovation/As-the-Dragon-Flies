@@ -2,11 +2,11 @@
 
 use yii\helpers\Url;
 
-/* @var yii\web\View $this */
-/* @var Player $lastPlayer  */
-/* @var Player[] $otherPlayers */
-/* @var string $row */
-/* @var string $col */
+/** @var yii\web\View $this */
+/** @var Player $lastPlayer  */
+/** @var Player[] $otherPlayers */
+/** @var string $row */
+/** @var string $col */
 ?>
 
 <div class="<?= $row ?>">

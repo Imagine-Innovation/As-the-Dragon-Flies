@@ -5,7 +5,7 @@ use frontend\widgets\Button;
 /** @var yii\web\View $this */
 /** @var string $diceRoll */
 /** @var common\components\Apptatus $status */
-/** @var common\models\Outcome $outcomes */
+/** @var common\models\Outcome[] $outcomes */
 /** @var int $hpLoss */
 /** @var bool $isFree */
 /** @var int $questProgressId */

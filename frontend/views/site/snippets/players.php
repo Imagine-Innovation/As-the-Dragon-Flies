@@ -3,10 +3,10 @@
 use frontend\widgets\Button;
 use yii\helpers\Url;
 
-/* @var yii\web\View $this */
-/* @var Player $currentPlayer  */
-/* @var Player[] $otherPlayers */
-/* @var int $nbCards */
+/** @var yii\web\View $this */
+/** @var Player $currentPlayer  */
+/** @var Player[] $otherPlayers */
+/** @var int|null $nbCards */
 $maxCard = min($nbCards ?? 2, 6);
 
 $rowCols = [
@@ -74,4 +74,3 @@ $n = 0;
         <a href="<?= Url::toRoute('player/index') ?>">See more...</a>
     </div>
 <?php endif; ?>
-

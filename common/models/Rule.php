@@ -2,13 +2,13 @@
 
 namespace common\models;
 
-use Yii;
 use common\components\AppStatus;
 use common\components\RuleParser;
 use common\components\RuleValidator;
-use common\models\RuleExpression;
 use common\models\RuleCondition;
+use common\models\RuleExpression;
 use common\helpers\ModelHelper;
+use Yii;
 
 /**
  * This is the model class for table "rule".
@@ -166,7 +166,7 @@ class Rule extends \yii\db\ActiveRecord
             Yii::debug("*** Debug *** saveRuleDefinition => ERROR: $this->errorMessage", __METHOD__);
 
             // If there is an error message, throw an exception indicating a missing rule model.
-            throw new Exception('Missing Rule model');
+            throw new \Exception('Missing Rule model');
         }
 
         // Save the parsing tree with the rule ID.
@@ -432,7 +432,7 @@ class Rule extends \yii\db\ActiveRecord
             // Save the new RuleModel instance in the database
             if (!$model->save()) {
                 // Throw an exception if failed to save the RuleModel model
-                throw new Exception('Failed to save the RuleModel model.');
+                throw new \Exception('Failed to save the RuleModel model.');
             }
         }
 

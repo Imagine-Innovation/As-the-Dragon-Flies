@@ -2,11 +2,11 @@
 
 use frontend\widgets\Button;
 
-/* @var yii\web\View $this */
-/* @var string $title */
-/* @var string $img */
-/* @var string[] $paragraphs */
-/* @var array $button */
+/** @var yii\web\View $this */
+/** @var string $title */
+/** @var string $img */
+/** @var string[] $paragraphs */
+/** @var array $button */
 ?>
 <section id="level1">
     <div class="card overflow-hidden rounded-4">

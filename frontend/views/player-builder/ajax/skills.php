@@ -1,6 +1,6 @@
 <?php
 /** @var yii\web\View $this */
-/** @var app/models/Player $player */
+/** @var common\models\Player|null $player */
 /** @var array $backgroundSkills */
 /** @var array $classSkills */
 /** @var int $n */

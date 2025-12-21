@@ -2,6 +2,8 @@
 
 namespace common\models;
 
+use yii\helpers\Url;
+
 /**
  * This is the model class for table "image".
  *

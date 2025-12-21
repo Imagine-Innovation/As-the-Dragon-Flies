@@ -74,6 +74,7 @@ class NotificationService
             $notificationCount = count($notifications);
             $this->logger->log("NotificationService: {$notificationCount} notification(s) found.");
         } catch (\Exception $e) {
+            $notifications = null;
             $this->logger->log("NotificationService: Exception while getting notifications. Error: " . $e->getMessage(), $e->getTraceAsString(), 'error');
         }
 

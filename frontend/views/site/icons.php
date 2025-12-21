@@ -1,4 +1,5 @@
 <?php
+/** @var \yii\web\View $this */
 $this->title = 'Custom Icons';
 $this->params['breadcrumbs'][] = $this->title;
 

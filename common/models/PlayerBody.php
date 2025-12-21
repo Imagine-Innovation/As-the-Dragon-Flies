@@ -83,7 +83,7 @@ class PlayerBody extends \yii\db\ActiveRecord
             'chest_item_id' => 'Optional foreign key to “player_item” table. Item that protect the chest',
             'right_hand_item_id' => 'Optional foreign key to “player_item” table. Item handled in the right hand',
             'left_hand_item_id' => 'Optional foreign key to “player_item” table. Item handled in the left hand',
-            'left_hand_item_id' => 'Optional foreign key to “player_item” table. Item carried on the back',
+            'back_item_id' => 'Optional foreign key to “player_item” table. Item carried on the back',
         ];
     }
 

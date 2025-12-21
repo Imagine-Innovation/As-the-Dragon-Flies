@@ -6,7 +6,8 @@ use Yii;
 use yii\base\Widget;
 use common\models\RuleExpression;
 
-class RuleParsingTree extends Widget {
+class RuleParsingTree extends Widget
+{
 
     public $id;
 
@@ -21,8 +22,8 @@ class RuleParsingTree extends Widget {
     }
 
     private function digParsingTree($expression) {
+        $tree = [];
         if ($expression->op) {
-            $tree = [];
             if ($expression->ruleConditions) {
                 foreach ($expression->ruleConditions as $cond) {
                     $tree[] = $this->renderCondition($cond);
@@ -34,7 +35,7 @@ class RuleParsingTree extends Widget {
                 }
             }
             if ($expression->op === 'not') {
-                $ul= '<ul style="list-style-type: none;">' . implode('', $tree) . '</ul>';
+                $ul = '<ul style="list-style-type: none;">' . implode('', $tree) . '</ul>';
                 $html = '<ul style="list-style-type: none;"><li>not</li>' . $ul . '</ul>';
             } else {
                 $separator = '<li>' . $expression->op . '</li>';

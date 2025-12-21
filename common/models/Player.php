@@ -6,6 +6,7 @@ use common\components\AppStatus;
 use frontend\components\PlayerComponent;
 use common\models\Image;
 use common\models\PlayerCoin;
+use common\models\Weapon;
 use Yii;
 
 /**
@@ -73,7 +74,6 @@ use Yii;
  * @property Item[] $weapons
  * @property string avatar
  * @property string $description
- * @property int $initiative
  * @property Notification[] $unreadNotifications
  *
  * *********** Custom Methods **********
@@ -528,7 +528,7 @@ class Player extends \yii\db\ActiveRecord
      * @return \yii\db\ActiveQuery
      */
     public function getWeapons() {
-        return $this->hasMany(Weapons::class, ['id' => 'item_id'])->viaTable('player_item', ['player_id' => 'id']);
+        return $this->hasMany(Weapon::class, ['id' => 'item_id'])->viaTable('player_item', ['player_id' => 'id']);
     }
 
     public function getAvatar() {
@@ -589,14 +589,6 @@ class Player extends \yii\db\ActiveRecord
      * ************************
      *     Custom methods
      * ************************ */
-
-    /**
-     *
-     * @return type
-     */
-    public function getInitiative() {
-        return PlayerComponent::getInitiative($this->abilities);
-    }
 
     /**
      * Checks if a player is proficient with a specific item.

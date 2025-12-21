@@ -1,4 +1,5 @@
 <?php
+/** @var \yii\web\View $this */
 // Specific javascript libraries to load according to controller name
 $controllerCustomJavascriptLib = [
     'player-builder' => ['atdf-player-builder', 'atdf-chart-drawer'],

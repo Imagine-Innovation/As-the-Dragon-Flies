@@ -1,6 +1,6 @@
 <?php
 /** @var yii\web\View $this */
-/** @var app/models/Player $player */
+/** @var common\models\Player $player */
 ?>
 
 <h4 class="card-title text-decoration">Traits</h4>

@@ -2,7 +2,7 @@
 
 use frontend\widgets\ToolMenu;
 
-/* @var $this yii\web\View */
+/** @var yii\web\View $this */
 
 $currentUser = Yii::$app->user->identity;
 $playerName = Yii::$app->session->get('playerName');

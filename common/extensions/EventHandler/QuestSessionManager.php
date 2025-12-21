@@ -113,6 +113,7 @@ class QuestSessionManager
                 $this->logger->log("QuestSessionManager: Failed to save new QuestSession: sessionId=[{$sessionId}]. Errors: " . print_r($session->getErrors(), true), null, 'error');
             }
         } catch (\Exception $e) {
+            $saved = false;
             $this->logger->log("QuestSessionManager: Exception while saving new QuestSession: sessionId=[{$sessionId}]. Error: " . $e->getMessage(), $e->getTraceAsString(), 'error');
         }
 

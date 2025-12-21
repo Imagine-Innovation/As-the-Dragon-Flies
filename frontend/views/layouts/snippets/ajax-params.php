@@ -1,9 +1,11 @@
 <?php
+/** @var \yii\web\View $this */
 /** @var int $limit */
 /** @var string $route */
 /** @var string $initTab */
-/** @var string $initId */
-/** @var string $filter */
+/** @var string|null $initId */
+/** @var string|null $filter */
+/** @var int|null $limit */
 $initTab = $initTab ?? "";
 $filter = $filter ?? "";
 $limit = $limit ?? 10;

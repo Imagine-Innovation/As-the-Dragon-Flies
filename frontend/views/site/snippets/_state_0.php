@@ -2,9 +2,9 @@
 
 use yii\helpers\Url;
 
-/* @var yii\web\View $this */
-/* @var string $row */
-/* @var string $col */
+/** @var yii\web\View $this */
+/** @var string $row */
+/** @var string $col */
 ?>
 <div class="<?= $row ?>">
     <div class="<?= $col ?>">

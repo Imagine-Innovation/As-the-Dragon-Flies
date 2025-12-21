@@ -186,8 +186,8 @@ class SearchController extends Controller
             // Search in mission related data
             'npc' => $this->genericSearch('Npc', $search, ['mission_id' => $parentId]),
             'passage' => $this->genericSearch('Passage', $search, ['mission_id' => $parentId]),
-            'decor' => $this->genericSearch('Decor', $search, $search, ['mission_id' => $parentId]),
-            'monster' => $this->genericSearch('Monster', $search, $search, ['mission_id' => $parentId]),
+            'decor' => $this->genericSearch('Decor', $search, ['mission_id' => $parentId]),
+            'monster' => $this->genericSearch('Monster', $search, ['mission_id' => $parentId]),
             'action' => $this->genericSearch('Action', $search, ['mission_id' => $parentId]),
             // Search in decor related data
             'nested-trap' => $this->searchInDecor('Trap', $parentId, $search),

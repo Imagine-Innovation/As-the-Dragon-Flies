@@ -129,7 +129,7 @@ class MessageHandlerOrchestrator implements MessageHandlerInterface
             $this->specificHandlers[$type]->handle($conn, $clientId, $sessionId, $data);
         } else {
             $this->logger->log("Orchestrator: No specific handler for type '{$type}'. Calling handleUnknownType for client {$clientId}");
-            $this->handleUnknownType($conn, $clientId, $sessionId, $type ?? 'implicit registration', $data);
+            $this->handleUnknownType($conn, $clientId, $sessionId, $type, $data);
         }
     }
 

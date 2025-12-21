@@ -1,0 +1,35 @@
+parameters:
+    level: 5  # Start at level 0-5 for existing projects; 9 is strictest
+    paths:
+        - models
+        - controllers
+        - components
+        - views
+        - helpers
+        - widgets
+        - commands
+    scanDirectories:
+        - common/components
+        - common/fixtures
+        - common/helpers
+        - common/models
+        - common/widgets
+        - frontend/components
+        - frontend/helpers
+        - frontend/models
+        - frontend/widgets
+        - vendor
+    excludePaths:
+        - common/tests
+        - frontend/tests
+        - vendor
+    # Yii2 often uses undefined properties; this helps ignore those specific errors
+    ignoreErrors:
+        - '#Access to an undefined property yii\\base\\Component::\$[a-zA-Z0-9_]+#'
+        - '#Call to an undefined static method Yii::#'
+        - '#Call to static method debug#'
+        - '#on an unknown class Yii#'
+        - '#has invalid type Yii\\#'
+        - '#has invalid return type Yii\\#'
+        - '#Constant YII_#'
+

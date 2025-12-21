@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\models\BackgroundItem;
 use common\models\ClassEquipment;
 use common\models\Image;
 use common\models\Item;

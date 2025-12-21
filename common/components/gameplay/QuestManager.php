@@ -13,7 +13,7 @@ use common\models\QuestPlayer;
 use common\models\QuestProgress;
 use common\models\QuestTurn;
 use Yii;
-use Yii\helpers\ArrayHelper;
+use yii\helpers\ArrayHelper;
 
 class QuestManager extends BaseManager
 {
@@ -100,7 +100,7 @@ class QuestManager extends BaseManager
         // Update component context
         $this->player = $this->quest->currentPlayer;
 
-        $this->nextSequence = $this->getLastTurnSequence($this->questProgress->id) + 1;
+        $this->nextSequence = $this->getLastTurnSequence() + 1;
 
         $questTurn = new QuestTurn([
             'player_id' => $nextPlayerId,

@@ -435,8 +435,8 @@ class RuleParser extends Component
 
         // Check if the next token is an opening parenthesis '('
         $match = ($this->getToken() == $expected);
+        $parameters = [];
         if ($match) {
-            $parameters = [];
             // Parse the parameter list
             $match = $this->parameterList($parameters);
         }

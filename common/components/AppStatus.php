@@ -206,7 +206,7 @@ enum AppStatus: int
             'Story' => self::getValuesForStory(),
             'QuestPlayer' => self::getValuesForQuestPlayer(),
             'QuestProgress' => self::getValuesForQuestProgress(),
-            'QuestTurn' => self::getValuesForProgress(),
+            'QuestTurn' => self::getValuesForQuestProgress(),
             'QuestAction' => self::getValuesForAction(),
             'ActionFlow' => self::getValuesForAction(),
             default => [],

@@ -2,7 +2,7 @@
 
 namespace common\models;
 
-use frontend\helpers\ItemTool;
+use frontend\helpers\ItemHelper;
 use Yii;
 
 /**
@@ -147,6 +147,6 @@ class Weapon extends Item
      * @return string The formatted string listing weapon properties, separated by commas.
      */
     public function getProperties(): string {
-        return ItemTool::getFullWeaponProperties($this);
+        return ItemHelper::getFullWeaponProperties($this);
     }
 }

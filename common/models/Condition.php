@@ -19,7 +19,6 @@ use Yii;
 class Condition extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -85,5 +84,4 @@ class Condition extends \yii\db\ActiveRecord
     public function getQuests() {
         return $this->hasMany(QuestPlayer::class, ['quest_id' => 'quest_id', 'player_id' => 'player_id'])->viaTable('quest_player_condition', ['condition_id' => 'id']);
     }
-
 }

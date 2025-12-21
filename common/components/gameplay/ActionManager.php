@@ -3,6 +3,7 @@
 namespace common\components\gameplay;
 
 use common\components\AppStatus;
+use common\components\gameplay\BaseManager;
 use common\models\Action;
 use common\models\ActionFlow;
 use common\models\ActionTypeSkill;
@@ -187,7 +188,7 @@ class ActionManager extends BaseManager
         $playerManager = new PlayerManager(['player' => $this->player]);
         $playerManager->registerGainsAndLosses($outcomes);
 
-        return $this->returnOutcomeEvaluation($status, $outcomes, "Rolling {$diceToRoll} gave {$diceRoll}", ($canReplay ?? true));
+        return $this->returnOutcomeEvaluation($status, $outcomes, "Rolling {$diceToRoll} gave {$diceRoll}", $canReplay);
     }
 
     private function isActionPrerequisiteMet(ActionFlow &$prerequisite, int $questProgressId): bool {

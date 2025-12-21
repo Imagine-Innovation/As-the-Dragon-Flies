@@ -1,6 +1,7 @@
 <?php
-/* @var yii\web\View $this */
-/* @var array $viewParameters */
+/** @var yii\web\View $this */
+/** @var array $viewParameters */
+/** @var int $state */
 $this->title = 'Game lobby';
 
 $user = Yii::$app->user->identity;

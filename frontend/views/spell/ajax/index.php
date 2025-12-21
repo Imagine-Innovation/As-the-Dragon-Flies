@@ -12,7 +12,6 @@ use frontend\widgets\RecordCount;
 /** @var int $pageCount: nomber of pages regarding the limit of the query */
 /** @var int $limit: nomber of records to be fetched */
 $icon = '<i class="bi bi-check-lg"></i>';
-$components = array();
 ?>
 <div class="card">
     <div class="card-body">
@@ -47,7 +46,7 @@ $components = array();
                             </th>
                             <td class="text-center"><?= $model->spell_level ?></td>
                             <?php
-                            unset($components);
+                            $components = [];
                             foreach ($model->components as $c) {
                                 $components[] = $c->code;
                             }

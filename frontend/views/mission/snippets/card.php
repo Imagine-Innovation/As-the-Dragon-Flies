@@ -8,7 +8,7 @@ use yii\helpers\Url;
 /** @var yii\db\ActiveRecord[] $properties */
 /** @var int $parentId */
 /** @var string $type */
-/** @var string $class */
+/** @var string|null $class */
 if ($properties) {
     $firstModel = $properties[0];
     $propertyNames = $firstModel->attributes();

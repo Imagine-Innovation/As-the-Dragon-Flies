@@ -38,27 +38,6 @@ class ChatManager extends BaseManager
 
     /**
      *
-     * @param int|null $limit
-     * @return array|null
-     */
-    public function getRecentChatMessages(?int $limit = null): ?array {
-
-        $chatNotifications = $this->getNotifications($this->questId, self::CHAT_NOTIFICATION_TYPE, null, $limit);
-
-        if (!$chatNotifications) {
-            return null;
-        }
-
-        $chatMessages = [];
-        foreach ($chatNotifications as $chatNotification) {
-            $chatMessages[] = $this->newChatEntry($chatNotification);
-        }
-
-        return $chatMessages;
-    }
-
-    /**
-     *
      * @param int|null $time
      * @return int
      */
@@ -85,7 +64,7 @@ class ChatManager extends BaseManager
         Yii::debug($payload);
         $roundedTime = $payload['roundedTime'] ?? $this->roundedTime(time());
         return [
-            'isAuthor' => ($chatNotification->initiator_id == $playerId), // defines is the current player is the one who initiate the chat message
+            'isAuthor' => ($chatNotification->initiator_id === $playerId), // defines is the current player is the one who initiate the chat message
             'displayedDateTime' => Utilities::formatDate($roundedTime),
             'sender' => Utilities::encode($payload['playerName']),
             'messages' => [Utilities::encode($payload['message'])], // first entry of the message array

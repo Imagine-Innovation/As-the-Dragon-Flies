@@ -5,9 +5,8 @@ use frontend\widgets\Button;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
+/** @var \yii\web\View $this */
 $this->title = Html::encode(Yii::$app->name);
-
-/* @var $this yii\web\View */
 ?>
 <style>
     .hero-section {

@@ -103,7 +103,7 @@ class Armor extends Item
      * @return string The formatted armor class string indicating base armor class,
      *                DEX modifier, max modifier, and armor bonus.
      */
-    public function getArmorClass() {
+    public function getArmorClass(): string {
         $armorClass = "";
 
         // Append base armor class if greater than zero.

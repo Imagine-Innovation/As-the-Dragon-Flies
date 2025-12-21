@@ -4,6 +4,8 @@ namespace common\components\gameplay;
 
 use common\models\Outcome;
 use common\models\Player;
+use common\models\Quest;
+use common\models\QuestPlayer;
 use common\helpers\DiceRoller;
 use Yii;
 
@@ -48,11 +50,11 @@ class PlayerManager extends BaseManager
         return $level?->id ?? 1;
     }
 
-    private function updateXp(int $gainedXp): array {
-        Yii::debug("*** debug *** updateXp - gainedXp=" . ($gainedXp ?? 'null'));
+    private function updateXp(?int $gainedXp = 0): array {
+        Yii::debug("*** debug *** updateXp - gainedXp={$gainedXp}");
         $updateSetStatement = [];
 
-        $this->stats['gainedXp'] += $gainedXp ?? 0;
+        $this->stats['gainedXp'] += $gainedXp;
 
         $newXP = $this->player->experience_points + $gainedXp;
         $updateSetStatement['experience_points'] = $newXP;
@@ -67,7 +69,7 @@ class PlayerManager extends BaseManager
     }
 
     private function updateHp(string $hpLossDice): array {
-        Yii::debug("*** debug *** updateHp - hpLossDice=" . ($hpLossDice ?? 'null'));
+        Yii::debug("*** debug *** updateHp - hpLossDice={$hpLossDice}");
         $hpLoss = DiceRoller::roll($hpLossDice);
 
         $this->stats['hpLoss'] += $hpLoss;

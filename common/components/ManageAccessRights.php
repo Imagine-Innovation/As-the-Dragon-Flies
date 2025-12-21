@@ -5,6 +5,7 @@ namespace common\components;
 use common\components\AppStatus;
 use common\models\AccessCount;
 use common\models\AccessRight;
+use common\models\ActionButton;
 use common\models\User;
 use Yii;
 use yii\base\Component;
@@ -239,7 +240,9 @@ class ManageAccessRights extends Component
         $user = Yii::$app->session->get('user') ?? Yii::$app->user->identity;
         //$playerId = Yii::$app->session->get('playerId');
         //$questId = Yii::$app->session->get('questId');
-
+        if (!$user) {
+            return ['denied' => false, 'severity' => 'none', 'reason' => 'User is not logged in'];
+        }
         if ($user->current_player_id) {
             $player = Yii::$app->db->createCommand(
                             "SELECT * FROM `player` WHERE `id` = :playerId",

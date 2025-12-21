@@ -11,6 +11,7 @@ use common\models\Player;
 use common\models\Story;
 use common\models\StoryClass;
 use Yii;
+use yii\web\NotFoundHttpException;
 
 class TavernManager extends BaseManager
 {
@@ -224,7 +225,7 @@ class TavernManager extends BaseManager
         }
 
         // Check if we need to reserve slots for missing required classes
-        $remainingSlots = $this->quest->story->max_players - $this->getCurrentPlayerCount($this->quest->id);
+        $remainingSlots = $this->quest->story->max_players - $this->getCurrentPlayerCount();
         $missingClassesCount = count(array_diff($requiredClassIds, $actualPlayerClasses));
 
         return $remainingSlots > $missingClassesCount;
