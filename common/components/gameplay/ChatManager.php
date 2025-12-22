@@ -43,7 +43,7 @@ class ChatManager extends BaseManager
      */
     private function roundedTime(?int $time = null): int {
         $timestamp = $time ?? time();
-        return floor($timestamp / self::ROUNDED_SECONDS) * self::ROUNDED_SECONDS;
+        return intval(floor($timestamp / self::ROUNDED_SECONDS) * self::ROUNDED_SECONDS);
     }
 
     /**
@@ -55,7 +55,7 @@ class ChatManager extends BaseManager
      */
     private function newChatEntry(Notification $chatNotification, int $playerId): array {
         if ($chatNotification->notification_type !== self::CHAT_NOTIFICATION_TYPE) {
-            return null;
+            return [];
         }
 
         $payload = json_decode($chatNotification->payload, true);

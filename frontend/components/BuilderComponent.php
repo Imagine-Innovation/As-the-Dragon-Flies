@@ -221,7 +221,7 @@ class BuilderComponent
     /**
      * Randomly selects a name from the provided array of names.
      *
-     * @param string[] $names
+     * @param array $names
      * @return string|null
      */
     private static function randomize(array $names): ?string {

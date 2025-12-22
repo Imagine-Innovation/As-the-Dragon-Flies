@@ -23,7 +23,7 @@ use Yii;
  *
  * Custom Properties
  *
- * @property string $randomImage
+ * @property string|null $randomImage
  */
 class RaceGroup extends \yii\db\ActiveRecord
 {
@@ -146,9 +146,9 @@ class RaceGroup extends \yii\db\ActiveRecord
     /**
      * Gets query for [[$randomImage]].
      *
-     * @return string
+     * @return string|null
      */
-    public function getRandomImage() {
+    public function getRandomImage(): ?string {
         $images = $this->images;
         if ($images) {
             $count = count($images);

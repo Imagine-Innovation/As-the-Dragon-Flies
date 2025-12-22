@@ -19,7 +19,7 @@ class NarrativeComponent extends Component
 
     public function missionDecription(): array {
         if (!$this->mission) {
-            return 'The mission has not been found, even by the most learned magicians';
+            return ['The mission has not been found, even by the most learned magicians'];
         }
 
         $narrative = ["Mission: {$this->mission->name}"];

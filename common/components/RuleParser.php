@@ -5,6 +5,7 @@ namespace common\components;
 use common\helpers\ModelHelper;
 use Yii;
 use yii\base\Component;
+use yii\base\Model;
 use yii\base\InvalidParamException;
 
 /**
@@ -227,12 +228,12 @@ class RuleParser extends Component
     private function basicCondition(&$condition) {
         // Set a recovery point in case the basic condition parsing fails
         $context = $this->setRecoveryPoint('basicCondition');
-        $object = '';
+        $className = '';
         $comparator = '';
         $value = '';
 
         // Attempt to match the object component of the condition
-        $match = $this->object($object);
+        $match = $this->object($className);
         if ($match) {
             // Attempt to match the comparator component of the condition
             $match = $this->comparator($comparator);
@@ -243,7 +244,7 @@ class RuleParser extends Component
         }
 
         // Construct the condition node with the matched components
-        $node = ['component' => $object, 'comparator' => $comparator, 'value' => $value];
+        $node = ['component' => $className, 'comparator' => $comparator, 'value' => $value];
 
         // Update the parsing status and the provided condition reference
         return $this->parsingStatus($match, $condition, 'condition', $node, $context);
@@ -304,10 +305,10 @@ class RuleParser extends Component
      * type is 'className' or 'string' and parses the object accordingly using the property or method parser.
      * If the object is valid, it updates the provided object reference.
      *
-     * @param array &$object A reference to the object array that will be updated.
+     * @param string $className A reference to the object array that will be updated.
      * @return bool True if a valid object is found, false otherwise.
      */
-    private function object(&$object) {
+    private function object(string $className) {
         // Set a recovery point in case the object parsing fails
         $context = $this->setRecoveryPoint('object');
 
@@ -315,11 +316,11 @@ class RuleParser extends Component
         switch ($this->nextTokenType()) {
             case 'className':
                 // Attempt to match a property object
-                $match = $this->property($object);
+                $match = $this->property($className);
                 break;
             case 'string':
                 // Attempt to match a method object
-                $match = $this->method($object);
+                $match = $this->method($className);
                 break;
             default:
                 // No valid token type found for an object
@@ -329,7 +330,7 @@ class RuleParser extends Component
 
         // If a match is found, log the parsed object for debugging
         if ($match) {
-            $this->_debug('object=[' . $object . ']');
+            $this->_debug("object=[{$className}]");
         } else {
             // If no match is found, rewind to the recovery point
             $this->rewind($context);
@@ -367,7 +368,7 @@ class RuleParser extends Component
         // If a match is found, construct the full property string
         if ($match) {
             $property = implode('->', $properties);
-            $this->_debug('property=[' . $property . ']');
+            $this->_debug("property=[{$property}]");
         } else {
             // If no match is found, rewind to the recovery point
             $this->rewind($context);
@@ -444,7 +445,7 @@ class RuleParser extends Component
         // If a match is found, construct the full method string including parameters
         if ($match) {
             $method = $methodName . '(' . implode(', ', $parameters) . ')';
-            $this->_debug('method=[' . $method . ']');
+            $this->_debug("method=[{$method}]");
         } else {
             // If no match is found, rewind to the recovery point
             $this->rewind($context);
@@ -520,9 +521,9 @@ class RuleParser extends Component
 
         // If a match is found, log the parsed comparator for debugging
         if ($match) {
-            $this->_debug('comparator=[' . $comparator . ']');
+            $this->_debug("comparator=[{$comparator}]");
         } else {
-            $this->_debug('not a comparator');
+            $this->_debug("not a comparator");
         }
 
         // Return whether a valid comparator was found
@@ -556,9 +557,9 @@ class RuleParser extends Component
 
         // If a match is found, log the parsed value for debugging
         if ($match) {
-            $this->_debug('value=[' . $value . ']');
+            $this->_debug("value=[{$value}]");
         } else {
-            $this->_debug('not a value');
+            $this->_debug("not a value");
         }
 
         // Return whether a valid value was found
@@ -581,8 +582,8 @@ class RuleParser extends Component
      * @return array The context array containing parsing state information.
      */
     private function setRecoveryPoint($msg) {
-        $this->_debug('--------------------');
-        $this->_debug('Try ' . $msg);
+        $this->_debug("--------------------");
+        $this->_debug("'Try {$msg}");
         $this->_traceBack();
 
         // Extract the caller information from the message
@@ -627,8 +628,8 @@ class RuleParser extends Component
 
         // Log debugging information about the rewind operation
         $this->_traceBack();
-        $this->_debug('rewind pos=' . $this->pos . ', not a "' . $context['caller'] . '"' . ($expected ? ', expected "' . $expected . '" not found' : ''));
-        $this->_debug('--------------------');
+        $this->_debug("rewind pos={$this->pos}, not a '{$context['caller']}'" . ($expected ? ", expected '{$expected}' not found" : ''));
+        $this->_debug("--------------------");
     }
 
     /**
@@ -676,9 +677,10 @@ class RuleParser extends Component
 
             // Update the nesting level and log debugging information
             $this->nestingLevel = $context['nestingLevel'];
-            $this->_debug('--------------------');
-            $this->_debug('——> "' . $type . '" is matching');
-            $this->_debug('——> ParsingTree: "' . $this->_displayParsingTree($parsingTree));
+            $this->_debug("--------------------");
+            $this->_debug("——> '{$type}' is matching");
+            $displayParsingTree = $this->_displayParsingTree($parsingTree);
+            $this->_debug("——> ParsingTree: '{$displayParsingTree}'");
             $this->_traceBack();
         } else {
             // If no match is found, rewind parsing to the specified recovery point

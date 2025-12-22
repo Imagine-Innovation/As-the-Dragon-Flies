@@ -22,20 +22,15 @@ class SignupForm extends Model
      */
     public function rules() {
         return [
-            ['username', 'trim'],
-            ['username', 'required'],
+            [['username', 'fullname', 'email'], 'trim'],
+            [['username', 'email', 'password'], 'required'],
             ['username', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This username has already been taken.'],
             ['username', 'string', 'min' => 2, 'max' => 255],
-            ['fullname', 'trim'],
-            ['username', 'required'],
-            ['username', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This full name has already been taken.'],
+            ['fullname', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This full name has already been taken.'],
             ['fullname', 'string', 'max' => 64],
-            ['email', 'trim'],
-            ['email', 'required'],
             ['email', 'email'],
             ['email', 'string', 'max' => 255],
             ['email', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This email address has already been taken.'],
-            ['password', 'required'],
             ['password', 'string', 'min' => Yii::$app->params['user.passwordMinLength']],
         ];
     }
@@ -43,9 +38,9 @@ class SignupForm extends Model
     /**
      * Signs user up.
      *
-     * @return bool whether the creating new account was successful and email was sent
+     * @return bool|null whether the creating new account was successful and email was sent
      */
-    public function signup() {
+    public function signup(): ?bool {
         if (!$this->validate()) {
             return null;
         }

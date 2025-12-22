@@ -36,7 +36,7 @@ namespace common\models;
  *
  * Custom properties
  *
- * @property string $randomImage
+ * @property string|null $randomImage
  */
 class CharacterClass extends \yii\db\ActiveRecord
 {
@@ -244,9 +244,9 @@ class CharacterClass extends \yii\db\ActiveRecord
     /**
      * Gets query for [[$randomImage]].
      *
-     * @return string
+     * @return string|null
      */
-    public function getRandomImage() {
+    public function getRandomImage(): ?string {
         $images = $this->images;
         if ($images) {
             $count = count($images);

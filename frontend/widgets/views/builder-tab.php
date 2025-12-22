@@ -4,7 +4,7 @@ use common\helpers\Utilities;
 use frontend\widgets\ModalDesc;
 
 /** @var yii\web\View $this */
-/** @var common\models\xxx $models */
+/** @var array $models */
 /** @var string $field_name */
 /** @var string[] $paragraphs */
 ?>

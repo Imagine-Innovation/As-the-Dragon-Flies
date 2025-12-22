@@ -21,7 +21,7 @@ class PlayerComponent
      * @return int
      */
     public static function calcAbilityModifier(int $abilityScore): int {
-        return $abilityScore >= 10 ? floor(($abilityScore - 10) / 2) : ceil(($abilityScore - 10) / 2);
+        return $abilityScore >= 10 ? intval(floor(($abilityScore - 10) / 2)) : intval(ceil(($abilityScore - 10) / 2));
     }
 
     /**

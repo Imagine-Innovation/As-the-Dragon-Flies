@@ -65,9 +65,9 @@ class CurrentPlayer extends Widget
     /**
      * Gets query for [[Players]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \common\models\Player[]
      */
-    private function getPlayers($userId) {
+    private function getPlayers($userId): array {
         return Player::find()
                         ->with(['class', 'race'])
                         ->where([

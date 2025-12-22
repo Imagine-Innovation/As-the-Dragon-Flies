@@ -291,7 +291,7 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * Gets query for [[HasPlayers]].
      *
-     * @return int
+     * @return bool
      */
     public function hasPlayers() {
         return $this->getPlayers()->count() > 0;

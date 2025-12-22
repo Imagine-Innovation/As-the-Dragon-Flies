@@ -1,6 +1,6 @@
 <?php
 /** @var yii\web\View $this */
-/** @var string[] $endowments */
+/** @var array $endowments */
 /** @var integer $choices */
 $choiceLabels = ['', '(a)', '(b)', '(c)', '(d)', '(e)'];
 ?>

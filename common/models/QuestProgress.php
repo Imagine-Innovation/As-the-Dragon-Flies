@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\models\QuestTurn;
 use Yii;
 
 /**
@@ -133,16 +134,16 @@ class QuestProgress extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getCurrentPlayer() {
+    public function getCurrentPlayer(): \yii\db\ActiveQuery {
         return $this->hasOne(Player::class, ['id' => 'current_player_id']);
     }
 
     /**
      * Gets query for [[CurrentQuestTurn]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \common\models\QuestTurn|null
      */
-    public function getCurrentQuestTurn() {
+    public function getCurrentQuestTurn(): ?QuestTurn {
         $questTurn = QuestTurn::find()
                 ->where(['quest_progress_id' => $this->id, 'player_id' => $this->current_player_id])
                 ->orderBy('sequence DESC')
@@ -155,7 +156,7 @@ class QuestProgress extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getRemainingActions() {
+    public function getRemainingActions(): \yii\db\ActiveQuery {
         return $this->hasMany(QuestAction::class, ['quest_progress_id' => 'id'])
                         ->andWhere(['eligible' => 1]);
     }

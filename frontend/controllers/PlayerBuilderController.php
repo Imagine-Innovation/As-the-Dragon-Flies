@@ -639,10 +639,10 @@ class PlayerBuilderController extends Controller
      * Displays a single ActionButton model.
      *
      * @param int $id Primary key
-     * @return string
+     * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView(int $id) {
+    public function actionView(int $id): Response {
         return $this->redirect(['player/view', 'id' => $id]);
     }
 
