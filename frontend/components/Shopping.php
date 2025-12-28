@@ -580,7 +580,7 @@ class Shopping
         ]);
 
         $item = $playerCart->item;
-        if (!$item) {
+        if ($item->isNewRecord) {
             return ['error' => true, 'msg' => "No item found in the cart"];
         }
         // Check if a PlayerItem exists
@@ -596,9 +596,6 @@ class Shopping
             return ['error' => false, 'msg' => 'Cart is validated'];
         }
         throw new \Exception(implode("<br />", ArrayHelper::getColumn($playerItem->errors, 0, false)));
-
-        // Return an error response if saving failed
-        return ['error' => true, 'msg' => "Could not validate the purchase of {$item->name}"];
     }
 
     private function addToInventory(PlayerCart &$playerCart): PlayerItem {
@@ -621,7 +618,7 @@ class Shopping
             'quantity' => $playerCart->quantity * $item->quantity,
             'is_carrying' => $isCarrying ? 1 : 0,
             'is_proficient' => $isProficient,
-            'is_two_handed' => ($item->weapon ? $item->weapon->is_two_handed : 0),
+            'is_two_handed' => ($item->weapon->is_two_handed ? 1 : 0),
         ];
         Yii::debug($playerItemData);
         $playerItem = new PlayerItem($playerItemData);

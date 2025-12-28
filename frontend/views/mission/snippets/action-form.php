@@ -30,14 +30,14 @@ $difficultyClass = [
 <?php if ($model->id): ?>
     <article>
         <p>Action:
-            <?= $model?->actionType?->name ?> <?= $model?->actionType?->description ? "({$model?->actionType?->description})" : "" ?>
-            <?= $model?->passage?->name ?>
-            <?= $model?->trap?->name ?>
-            <?= $model?->decorItem?->name ?>
+            <?= $model->actionType->name ?> <?= $model->actionType->description ? "({$model->actionType->description})" : "" ?>
+            <?= $model->passage?->name ?>
+            <?= $model->trap?->name ?>
+            <?= $model->decorItem?->name ?>
             <?= $model->decor ? "in {$model->decor->name}" : "" ?>
             <?= $model->npc ? "with {$model->npc->name}" : "" ?>
             <?= $model->reply ? "saying “{$model->reply->text}”" : "" ?>
-            <?= $model->requiredItem ? "with {$model->npc->name}" : "" ?>
+            <?= $model->requiredItem ? "will need {$model->requiredItem->name}" : "" ?>
         </p>
     </article>
 <?php endif; ?>

@@ -28,7 +28,7 @@ use frontend\widgets\ModalDesc;
                         </div>
                         <h4 class="card-title text-center">
                             <?= $item['quantity'] ?> x <?= $item['name'] ?>
-                            <?php if (($player) && ($player->isProficient($item['id']))): ?>
+                            <?php if (!$player->isNewRecord && $player->isProficient($item['id'])): ?>
                                 <span data-bs-toggle="tooltip" title="You have proficiency with this item" data-placement="bottom">
                                     <i class="bi bi-star-fill"></i>
                                 </span>

@@ -13,7 +13,8 @@ use yii\web\Response;
 /**
  * AlignmentController implements the CRUD actions for Alignment model.
  */
-class AlignmentController extends Controller {
+class AlignmentController extends Controller
+{
 
     /**
      * @inheritDoc
@@ -65,7 +66,7 @@ class AlignmentController extends Controller {
 
         $request = Yii::$app->request;
         $id = $request->post('id');
-        Yii::debug("*** Debug *** actionAjaxWizard - id=" . $id ?? "null");
+        Yii::debug("*** Debug *** actionAjaxWizard - id={$id}");
         $model = $this->findModel($id);
 
         $content = $this->renderPartial('ajax/wizard', [

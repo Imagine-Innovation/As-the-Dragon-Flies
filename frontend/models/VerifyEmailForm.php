@@ -27,8 +27,8 @@ class VerifyEmailForm extends Model
      * @param array $config name-value pairs that will be used to initialize the object properties
      * @throws InvalidArgumentException if token is empty or not valid
      */
-    public function __construct($token, array $config = []) {
-        if (empty($token) || !is_string($token)) {
+    public function __construct(string $token, array $config = []) {
+        if (trim($token) === '') {
             throw new InvalidArgumentException('Verify email token cannot be blank.');
         }
         $this->_user = User::findByVerificationToken($token);

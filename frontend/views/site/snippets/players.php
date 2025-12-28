@@ -4,8 +4,8 @@ use frontend\widgets\Button;
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */
-/** @var Player $currentPlayer  */
-/** @var Player[] $otherPlayers */
+/** @var common\models\Player $currentPlayer  */
+/** @var common\models\Player[] $otherPlayers */
 /** @var int|null $nbCards */
 $maxCard = min($nbCards ?? 2, 6);
 
@@ -25,7 +25,7 @@ $n = 0;
 <h4 class="text-decoration text-yellow">Your players</h4>
 <div class="row <?= $rowCol ?> g-4">
     <?php
-    if ($currentPlayer) {
+    if (!$currentPlayer->isNewRecord) {
         echo $this->renderFile('@app/views/site/snippets/player-card.php', [
             'player' => $currentPlayer,
             'current' => true,

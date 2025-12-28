@@ -5,13 +5,14 @@ use frontend\widgets\Button;
 
 /** @var yii\web\View $this */
 /** @var common\models\PlayerBody $playerBody */
+/** @var array<string, list<array{name: string, image: string|null, quantity: int}>> $playerItems */
 $playerItems = [];
 $itemTypes = ['Armor', 'Helmet', 'Shield', 'Weapon', 'Tool'];
 
-if ($playerBody) {
+if (!$playerBody->isNewRecord) {
     foreach (PlayerItem::BODY_ZONE as $property => $zone) {
         $playerItem = $playerBody->$property;
-        if ($playerItem) {
+        if (!$playerItem->isNewRecord) {
             $item = $playerItem->item;
             $playerItems[$playerItem->item_type][] = [
                 'name' => $item->name,
@@ -38,9 +39,9 @@ $lastItemType = "none";
 <div class="m-3">
     <h6 class="text-warning">Equipment</h6>
 
-    <?php if ($playerBody): ?>
+    <?php if (!$playerBody->isNewRecord): ?>
         <?php foreach ($itemTypes as $itemType): ?>
-            <?php if (array_key_exists($itemType, $playerItems) && (1 === 1) && !empty($playerItems[$itemType])): ?>
+            <?php if (array_key_exists($itemType, $playerItems) && !empty($playerItems[$itemType])): ?>
                 <?php
                 if ($lastItemType !== $itemType):
                     $lastItemType = $itemType;

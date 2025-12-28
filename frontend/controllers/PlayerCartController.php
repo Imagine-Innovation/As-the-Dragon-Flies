@@ -346,12 +346,12 @@ class PlayerCartController extends Controller
         // If a player is found, return the player's carts
         if ($playerId) {
             // Find the PlayerCart model based on its primary key value
-            $model = PlayerCart::find()
+            $models = PlayerCart::find()
                     ->where(['player_id' => $playerId])
                     ->all();
 
-            if ($model !== null) {
-                return $model;
+            if (!empty($models)) {
+                return $models;
             }
 
             // If the model is not found, throw a 404 HTTP exception

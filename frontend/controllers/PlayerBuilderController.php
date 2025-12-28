@@ -428,7 +428,7 @@ class PlayerBuilderController extends Controller
      * @param int $quantity
      * @return PlayerItem
      */
-    private function newPlayerItem(Player &$player, Item &$item, int $quantity): ?PlayerItem {
+    private function newPlayerItem(Player &$player, Item &$item, int $quantity): PlayerItem {
         $isProficient = PlayerComponent::isProficient($player->class->id, $item->id) ? 1 : 0;
         $proficiencyModifier = $isProficient ? $player->level->proficiency_bonus : 0;
 
@@ -444,7 +444,7 @@ class PlayerBuilderController extends Controller
             'quantity' => ($item->quantity ?? 1) * $quantity,
             'is_carrying' => 1,
             'is_proficient' => $isProficient,
-            'is_two_handed' => ($item->weapon ? $item->weapon->is_two_handed : 0),
+            'is_two_handed' => ($item->weapon->is_two_handed ? 1 : 0),
             'attack_modifier' => $weaponProperties['attackModifier'],
             'damage' => $weaponProperties['damage'],
         ]);
@@ -571,7 +571,7 @@ class PlayerBuilderController extends Controller
 
         $request = Yii::$app->request;
         $model = $this->findModel($request->post('playerId'));
-        if ($model) {
+        if (!$model->isNewRecord) {
             $abilities = $request->post('abilities');
             foreach ($model->playerAbilities as $playerAbility) {
                 $ability_id = $playerAbility->ability_id;

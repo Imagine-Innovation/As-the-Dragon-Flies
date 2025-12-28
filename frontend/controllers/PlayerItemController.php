@@ -169,7 +169,7 @@ class PlayerItemController extends Controller
 
         foreach (PlayerItem::BODY_ZONE as $property => $zone) {
             $playerItem = $playerBody->$property;
-            if ($playerItem) {
+            if (!$playerItem->isNewRecord) {
                 $data[$zone] = [
                     'itemId' => $playerItem->item_id,
                     'itemName' => $playerItem->item_name,
@@ -445,7 +445,7 @@ class PlayerItemController extends Controller
         Yii::debug("*** debug *** disarmPreviousItem - bodyZone={$bodyZone}, property={$property}");
         $playerItem = $playerBody->$property;
 
-        if (!$playerItem) {
+        if ($playerItem->isNewRecord) {
             return;
         }
 
@@ -465,7 +465,7 @@ class PlayerItemController extends Controller
         Yii::debug("*** debug *** disarmPlayer - bodyZone={$bodyZone}, property={$property}");
         $playerItem = $playerBody->$property;
 
-        if (!$playerItem) {
+        if ($playerItem->isNewRecord) {
             return [
                 'error' => true,
                 'msg' => "Body zone {$bodyZone} has no attached item"
@@ -503,14 +503,14 @@ class PlayerItemController extends Controller
         }
 
         $player = $this->findPlayer();
-        if (!$player) {
+        if ($player->isNewRecord) {
             return ['error' => true, 'msg' => 'Player not found'];
         }
 
         $itemId = Yii::$app->request->post('item_id');
         $status = Yii::$app->request->post('status', 0);
         $item = $this->findModel($player->id, $itemId);
-        if (!$item) {
+        if ($item->isNewRecord) {
             return ['error' => true, 'msg' => 'Item not found'];
         }
         return ['error' => false, 'player' => $player, 'item' => $item, 'status' => $status];
@@ -581,7 +581,7 @@ class PlayerItemController extends Controller
 
         $playerBody = $player->playerBody;
 
-        if (!$playerBody) {
+        if ($playerBody->isNewRecord) {
             $playerBody = new PlayerBody(['player_id' => $player->id]);
             if (!$playerBody->save()) {
                 throw new \Exception(implode("<br />", ArrayHelper::getColumn($playerBody->errors, 0, false)));

@@ -263,11 +263,11 @@ class QuestController extends Controller
         }
 
         $quest = $this->findModel(Yii::$app->request->post('questId'));
-        if (!$quest) {
+        if ($quest->isNewRecord) {
             return ['error' => true, 'msg' => 'Quest not found'];
         }
         $player = $this->findPlayer(Yii::$app->request->post('playerId'));
-        if (!$player) {
+        if ($player->isNewRecord) {
             return ['error' => true, 'msg' => 'Player not found'];
         }
 
@@ -519,7 +519,6 @@ class QuestController extends Controller
         } catch (\Exception $e) {
             Yii::error("Failed to broadcast '{$eventType}' event: " . $e->getMessage());
             throw new \Exception(implode("<br />", \yii\helpers\ArrayHelper::getColumn($e, 0, false)));
-            return false;
         }
     }
 }

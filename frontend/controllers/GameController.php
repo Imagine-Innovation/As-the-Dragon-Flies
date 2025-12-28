@@ -97,7 +97,7 @@ class GameController extends Controller
         $playerId = $id ?? Yii::$app->session->get('playerId');
 
         $player = FindModelHelper::findPlayer($playerId);
-        if ($player) {
+        if (!$player->isNewRecord) {
             $render = $this->renderPartial('ajax/player', ['player' => $player]);
             return ['error' => false, 'msg' => '', 'content' => $render];
         }

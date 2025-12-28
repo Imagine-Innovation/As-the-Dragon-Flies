@@ -26,19 +26,19 @@ use Yii;
  * @property ActionFlow[] $triggers
  * @property ActionFlow[] $prerequisites
  * @property ActionType $actionType
- * @property Decor $decor
- * @property DecorItem $decorItem
+ * @property Decor|null $decor
+ * @property DecorItem|null $decorItem
  * @property Mission $mission
  * @property Action[] $nextActions
- * @property Npc $npc
+ * @property Npc|null $npc
  * @property Outcome[] $outcomes
- * @property Passage $passage
+ * @property Passage|null $passage
  * @property Action[] $previousActions
  * @property QuestAction[] $questActions
  * @property QuestProgress[] $questProgresses
- * @property Reply $reply
- * @property Item $requiredItem
- * @property Trap $trap
+ * @property Reply|null $reply
+ * @property Item|null $requiredItem
+ * @property Trap|null $trap
  */
 class Action extends \yii\db\ActiveRecord
 {

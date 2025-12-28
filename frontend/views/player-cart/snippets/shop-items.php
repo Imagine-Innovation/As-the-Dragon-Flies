@@ -32,7 +32,7 @@ use frontend\widgets\ModalDesc;
                             <?php if ($item['quantity'] > 1): ?>
                                 (x<?= $item['quantity'] ?>)
                             <?php endif; ?>
-                            <?php if (($player) && ($player->isProficient($item['id']))): ?>
+                            <?php if (!$player->isNewRecord && $player->isProficient($item['id'])): ?>
                                 <span data-bs-toggle="tooltip" title="You have proficiency with this item" data-placement="bottom">
                                     <i class="bi bi-star-fill"></i>
                                 </span>
@@ -51,7 +51,7 @@ use frontend\widgets\ModalDesc;
                             ?>
                         </h6>
                     </div>
-                    <?php if ($active === 54): ?>
+                    <?php if ($active): ?>
                         <div class="card-footer">
                             <a class="card-link" href="#" onclick="ShopManager.addToCart(<?= $item['id'] ?>);">
                                 <i class="bi bi-cart-plus"></i>

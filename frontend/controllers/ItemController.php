@@ -15,7 +15,8 @@ use yii\web\Response;
 /**
  * ItemController implements the CRUD actions for Item model.
  */
-class ItemController extends Controller {
+class ItemController extends Controller
+{
 
     /**
      * @inheritDoc
@@ -85,7 +86,7 @@ class ItemController extends Controller {
 
         $request = Yii::$app->request;
         $itemTypeId = $request->post('currentTab', 1);
-        Yii::debug("*** debug *** actionAjax - itemTypeId=" . $itemTypeId ?? 'null');
+        Yii::debug("*** debug *** actionAjax - itemTypeId={$itemTypeId}");
         $param = [
             'modelName' => 'Item',
             'param' => ['itemType' => $itemTypeId],
@@ -115,7 +116,7 @@ class ItemController extends Controller {
 
         $request = Yii::$app->request;
         $itemIds = $request->post('itemIds');
-        Yii::debug("*** debug *** actionAjaxImages - itemIds=" . $itemIds ?? 'null');
+        Yii::debug("*** debug *** actionAjaxImages - itemIds={$itemIds}");
         $param = [
             'modelName' => 'Item',
             'render' => 'images',

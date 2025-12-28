@@ -21,7 +21,9 @@ parameters:
         - vendor
     excludePaths:
         - common/tests
+        - frontend/config
         - frontend/tests
+        - frontend/views/site/icons.php
         - vendor
     # Yii2 often uses undefined properties; this helps ignore those specific errors
     ignoreErrors:

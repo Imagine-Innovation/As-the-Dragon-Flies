@@ -4,7 +4,7 @@
 ?>
 
 <h4 class="card-title text-decoration">Traits</h4>
-<?php if ($player): ?>
+<?php if (!$player->isNewRecord): ?>
     <?php foreach ($player->playerTraits as $playerTrait): ?>
         <p>
             <?= $playerTrait->trait->name ?>: <span class="text-muted"><?= $playerTrait->description ?></span>
