@@ -1,5 +1,9 @@
 parameters:
     level: 5  # Start at level 0-5 for existing projects; 9 is strictest
+    phpVersion: 80200  # PHP 8.2
+    checkExplicitMixed: false
+    reportUnmatchedIgnoredErrors: false
+    inferPrivatePropertyTypeFromConstructor: true
     paths:
         - models
         - controllers

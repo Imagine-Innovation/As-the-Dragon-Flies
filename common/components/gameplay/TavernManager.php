@@ -253,9 +253,9 @@ class TavernManager extends BaseManager
      * Returns an array of class IDs defined in the story used to create a quest
      *
      * @param int $storyId
-     * @return array|null
+     * @return array
      */
-    private function getRequiredClassIds(int $storyId): ?array {
+    private function getRequiredClassIds(int $storyId): array {
         // Get the required classes
         $classes = StoryClass::find()
                 ->select('class_id')
@@ -275,9 +275,9 @@ class TavernManager extends BaseManager
      * Returns an array of class IDs that are already present in the quest
      *
      * @param int $questId
-     * @return array|null
+     * @return array
      */
-    private function getActualPlayerClassIds(int $questId): ?array {
+    private function getActualPlayerClassIds(int $questId): array {
         // Fetch the actual player classes
         $classes = Player::find()
                 ->select('class_id')
@@ -406,7 +406,7 @@ class TavernManager extends BaseManager
         return $this->upsertQuestPlayer($this->quest->id, $player->id, AppStatus::LEFT->value, $reason);
     }
 
-    private function newTavern(): ?Quest {
+    private function newTavern(): Quest {
         Yii::debug("*** Debug *** findTavern  ===>  Create a new Tavern");
         $newTavern = new Quest([
             'story_id' => $this->story->id,
@@ -438,12 +438,9 @@ class TavernManager extends BaseManager
 
         $foundTavern = $tavern ?? $this->newTavern();
 
-        if ($foundTavern) {
-            // Update the current context
-            $this->quest = $foundTavern;
-            return $foundTavern;
-        }
-        throw new NotFoundHttpException("Unable to find or create a tavern for the story {$this->story->name}");
+        // Update the current context
+        $this->quest = $foundTavern;
+        return $foundTavern;
     }
 
     public function questCanStart(int $playerId): array {

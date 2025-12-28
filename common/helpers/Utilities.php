@@ -145,7 +145,7 @@ class Utilities extends Html
      * @param bool $isContext Whether to consider quest context
      * @return string Path to the image file
      */
-    public static function toolImage($imageFile, $isContext) {
+    public static function toolImage(?string $imageFile, bool $isContext): string {
         $questId = Yii::$app->session->get('questId');
 
         // Handle context-specific story images
@@ -169,11 +169,11 @@ class Utilities extends Html
      * and returns it in lowercase.
      * If the provided parameter is not an object, it returns null.
      *
-     * @param object $object The object from which to extract the class name.
+     * @param mixed $object The object from which to extract the class name.
      * @return string|null The lowercase class name of the object, or null
      *                     if the parameter is not an object.
      */
-    public static function modelName($object) {
+    public static function modelName(mixed $object): ?string {
         // Check if the provided model is an instance of a class
         if (is_object($object)) {
             // Extract the full class name of the model including its namespace
@@ -182,7 +182,6 @@ class Utilities extends Html
             end($path);
             // Return the class name in lowercase
             return Inflector::camel2id(current($path));
-            //return mb_strtolower(current($path));
         }
 
         // If the provided parameter is not an object, return null

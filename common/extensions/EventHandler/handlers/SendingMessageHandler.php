@@ -5,7 +5,6 @@ namespace common\extensions\EventHandler\handlers;
 use common\extensions\EventHandler\contracts\BroadcastServiceInterface;
 use common\extensions\EventHandler\contracts\SpecificMessageHandlerInterface;
 use common\extensions\EventHandler\factories\BroadcastMessageFactory;
-use common\extensions\EventHandler\NotificationService;
 use common\extensions\EventHandler\LoggerService;
 use Ratchet\ConnectionInterface;
 
@@ -13,24 +12,21 @@ class SendingMessageHandler implements SpecificMessageHandlerInterface
 {
 
     private LoggerService $logger;
-    private NotificationService $notificationService;
     private BroadcastServiceInterface $broadcastService; // Corrected type hint
     private BroadcastMessageFactory $messageFactory;
 
     public function __construct(
             LoggerService $logger,
-            NotificationService $notificationService,
             BroadcastServiceInterface $broadcastService, // Corrected type hint
             BroadcastMessageFactory $messageFactory
     ) {
         $this->logger = $logger;
-        $this->notificationService = $notificationService;
         $this->broadcastService = $broadcastService;
         $this->messageFactory = $messageFactory;
     }
 
     /**
-     * Handles chat messages by delegating to NotificationService to create and broadcast.
+     * Handles chat messages by delegating to create and broadcast.
      */
     public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
         $this->logger->logStart("SendingMessageHandler: handle sessionId=[{$sessionId}], clientId=[{$clientId}]", $data);

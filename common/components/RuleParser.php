@@ -707,13 +707,13 @@ class RuleParser extends Component
         // Iterate through the backtrace
         foreach ($backTrace as $trace) {
             // Check if file information is available and matches the current file
-            $file = isset($trace['file']) ? $trace['file'] : "??";
+            $file = $trace['file'] ?? "??";
             if ($file === 'C:\Users\franc\OneDrive\devenv\htdocs\DnD\common\components\RuleParser.php') {
                 // Extract function name and line number
-                $function = isset($trace['function']) ? $trace['function'] : "??";
-                $line = isset($trace['line']) ? $trace['line'] : "??";
+                $function = $trace['function'];
+                $line = $trace['line'] ?? "??";
                 // Add trace to the list
-                array_unshift($traces, $line . '=>' . $function);
+                array_unshift($traces, "{$line}=>{$function}");
             }
         }
         // Display the traceback

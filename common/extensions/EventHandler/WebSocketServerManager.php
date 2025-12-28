@@ -22,7 +22,7 @@ class WebSocketServerManager
     private QuestSessionManager $questSessionManager; // Property for QuestSessionManager
     private LoopInterface $loop;
     private ?SocketServer $socket = null;
-    private ?IoServer $server = null;
+    private IoServer $IOServer; // @phpstan-ignore-line
 
     // Constructor updated
     public function __construct(
@@ -66,7 +66,7 @@ class WebSocketServerManager
 
         $this->logger->log("WebSocketServerManager: Attempting to create IoServer...");
         try {
-            $this->server = new IoServer($httpServer, $this->socket, $this->loop);
+            $this->IOServer = new IoServer($httpServer, $this->socket, $this->loop);
             $this->logger->log("WebSocketServerManager: IoServer created successfully.");
         } catch (\Throwable $e) {
             $this->logger->log("WebSocketServerManager: Error creating IoServer: " . $e->getMessage() . " - Trace: " . $e->getTraceAsString(), null, 'error');
@@ -91,12 +91,6 @@ class WebSocketServerManager
         if ($this->socket !== null) {
             $this->socket->close();
         }
-
-        // IoServer typically doesn't have a 'stop' method itself.
-        // Stopping the loop is the standard way to halt the server.
-        // if ($this->server !== null && method_exists($this->server, 'stop')) {
-        // $this->server->stop();
-        // }
 
         $this->loop->stop();
         $this->logger->logEnd("WebSocket server shut down."); // Use LoggerService

@@ -5,7 +5,6 @@ namespace frontend\components;
 use common\models\Item;
 use common\models\Player;
 use common\models\PlayerCart;
-use common\models\PlayerCoin;
 use common\models\PlayerItem;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -24,9 +23,9 @@ class Shopping
         'pp' => ['rate' => 1000, 'prev' => 'gp'],
     ];
 
-    private $coins = [];        // Array to store coin details (exchange rates and relationships).
-    private $purse = [];        // Array to represent the player's purse.
-    private $purseValue = 0;    // Total value of the player's purse in copper coins.
+    private array $coins = [];        // Array to store coin details (exchange rates and relationships).
+    private array $purse = [];        // Array to represent the player's purse.
+    private int $purseValue = 0;    // Total value of the player's purse in copper coins.
 
     /**
      * Constructor for the Shopping class.
@@ -72,9 +71,9 @@ class Shopping
             $coin = $playerCoin->coin;
 
             // Retrieve the coin details for the current coin type.
-            $thisCoin = $this->coins[$coin];
+            $thisCoin = $this->coins[$coin] ?? null;
             // Check if the coin details exist.
-            if ($thisCoin) {
+            if ($thisCoin !== null) {
                 // Create an entry in the purse array with quantity,
                 // copper value, and link to the previous coin type.
                 $purseContent = [

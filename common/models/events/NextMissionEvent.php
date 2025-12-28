@@ -13,24 +13,24 @@ class NextMissionEvent extends Event
 {
 
     /**
-     * @var string The action type
+     * @var string|null The action type
      */
-    public $action;
+    public ?string $action = null;
 
     /**
      * @var array Additional action data
      */
-    public $detail;
+    public $detail = [];
 
     /**
      * Constructor
      *
      * @param Player $player The player who performed the action
      * @param Quest $quest The quest context
-     * @param string $action The action type
+     * @param string|null $action The action type
      * @param array $detail Additional action data
      */
-    public function __construct(string $sessionId, Player $player, Quest $quest, string $action, array $detail = []) {
+    public function __construct(string $sessionId, Player $player, Quest $quest, ?string $action, array $detail = []) {
         parent::__construct($sessionId, $player, $quest);
         $this->action = $action;
         $this->detail = $detail;

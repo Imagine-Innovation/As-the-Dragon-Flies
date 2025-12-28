@@ -75,7 +75,7 @@ class EventHandler extends Component
     protected function initializeMessageHandlers(): void {
         $specificHandlers = [
             'register' => new RegistrationHandler($this->loggerService, $this->questSessionManager, $this->broadcastService, new BroadcastMessageFactory()),
-            'sending-message' => new SendingMessageHandler($this->loggerService, $this->notificationService, $this->broadcastService, new BroadcastMessageFactory()),
+            'sending-message' => new SendingMessageHandler($this->loggerService, $this->broadcastService, new BroadcastMessageFactory()),
             'game-action' => new GameActionHandler($this->loggerService, $this->broadcastService, new BroadcastMessageFactory()),
             'player-joining' => new PlayerJoiningHandler($this->loggerService, $this->broadcastService, new BroadcastMessageFactory()),
             'player-quitting' => new PlayerQuittingHandler($this->loggerService, $this->broadcastService, new BroadcastMessageFactory()),
@@ -87,7 +87,6 @@ class EventHandler extends Component
         $this->messageHandlerOrchestrator = new MessageHandlerOrchestrator(
                 $this->loggerService,
                 $this->broadcastService,
-                $this->questSessionManager,
                 $this->notificationService,
                 $specificHandlers
         );

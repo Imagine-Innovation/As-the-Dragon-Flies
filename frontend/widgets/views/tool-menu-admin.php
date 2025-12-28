@@ -27,7 +27,7 @@ $quest = Yii::$app->session->get('currentQuest');
                         ?>
                     </div>
                     <a href="<?= Url::toRoute($menu->accessRight->route . '/' . $menu->accessRight->action) ?>">
-                        <img class="card-img-top" src="<?= Utilities::toolImage($menu->image, $menu->is_context) ?>">
+                        <img class="card-img-top" src="<?= Utilities::toolImage($menu->image, ($menu->is_context === 1)) ?>">
                     </a>
                     <div class="card-body">
                         <h4 class="card-title"><?= $menu->card_title ?></h4>

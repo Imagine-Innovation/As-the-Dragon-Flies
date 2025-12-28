@@ -105,7 +105,7 @@ class BroadcastMessageFactory
         return null;
     }
 
-    private function handleUnknownType(string $type): ?BroadcastMessageInterface {
+    private function handleUnknownType(string $type) {
         $this->loggerService->log("BroadcastMessageFactory - createMessage - unhandled type=[{$type}]", null, 'warning');
         return null;
     }

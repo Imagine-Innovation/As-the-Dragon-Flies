@@ -355,7 +355,8 @@ class GameController extends Controller
             return true;
         } catch (\Exception $e) {
             Yii::error("Failed to broadcast '{$eventType}' event: " . $e->getMessage());
-            throw new \Exception(implode("<br />", ArrayHelper::getColumn($e, 0, false)));
+            $errorMessage = "Error: " . $e->getMessage() . "<br />Stack Trace:<br />" . nl2br($e->getTraceAsString());
+            throw new \Exception($errorMessage);
         }
     }
 }

@@ -4,7 +4,6 @@ namespace common\components\gameplay;
 
 use common\components\AppStatus;
 use common\components\NarrativeComponent;
-use common\models\events\Event;
 use common\models\events\EventFactory;
 use common\models\Chapter;
 use common\models\Mission;
@@ -222,7 +221,7 @@ class QuestManager extends BaseManager
         return $questProgress;
     }
 
-    private function newQuestProgress(Mission &$mission, int $nextPlayerId): ?QuestProgress {
+    private function newQuestProgress(Mission &$mission, int $nextPlayerId): QuestProgress {
 
         $narrative = new NarrativeComponent(['mission' => $mission]);
 
@@ -364,7 +363,8 @@ class QuestManager extends BaseManager
             return true;
         } catch (\Exception $e) {
             Yii::error("Failed to broadcast '{$eventType}' event: " . $e->getMessage());
-            throw new \Exception(implode("<br />", ArrayHelper::getColumn($e, 0, false)));
+            $errorMessage = "Error: " . $e->getMessage() . "<br />Stack Trace:<br />" . nl2br($e->getTraceAsString());
+            throw new \Exception($errorMessage);
         }
     }
 }

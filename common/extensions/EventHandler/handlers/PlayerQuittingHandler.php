@@ -37,7 +37,7 @@ class PlayerQuittingHandler implements SpecificMessageHandlerInterface
         $questName = array_key_exists('questName', $payload) ? $payload['questName'] : 'Unknown';
         $reason = array_key_exists('reason', $payload) ? $payload['reason'] : 'Unknown';
 
-        if ($questId === null || $questId === '' || $questName === 'Unknown') {
+        if ($questId === null || $questName === 'Unknown') {
             $this->logger->log("PlayerQuittingHandler: Missing questId, or questName in data['payload'].", $data, 'warning');
             $errorDto = $this->messageFactory->createErrorMessage("Invalid player leaving announcement: questId, or questName missing within payload.");
             $this->broadcastService->sendToClient($clientId, $errorDto, false, $sessionId);

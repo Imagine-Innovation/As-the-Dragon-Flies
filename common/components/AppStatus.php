@@ -34,8 +34,8 @@ enum AppStatus: int
     case PARTIAL = 1;       // Binary: 001=1
     case FAILURE = 4;       // Binary: 100=4
     case NOT_FAILED = 3;    // Binary: 011=3 (2 | 1)
-    case NOT_SUCCEEDED = 5; // Binary: 101=5 (1 | 4)
-    case ANY = 7;           // Binary: 111=7 (2 | 1 | 4)
+    case NOT_SUCCEEDED = 5; // Binary: 101=5 (4 | 1)
+    case ANY_OUTCOME = 7;   // Binary: 111=7 (4 | 2 | 1)
 
     public function getLabel(): string {
         return match ($this) {
@@ -66,7 +66,7 @@ enum AppStatus: int
             self::FAILURE => 'Failure',
             self::NOT_FAILED => 'Total or partial success',
             self::NOT_SUCCEEDED => 'Partial success or failure',
-            self::ANY => 'Any outcome',
+            self::ANY_OUTCOME => 'Any outcome', // @phpstan-ignore-line
             default => 'Unknown Status',
         };
     }
@@ -100,7 +100,7 @@ enum AppStatus: int
             self::FAILURE => ['icon' => 'dnd-danger', 'tooltip' => 'Failure'],
             self::NOT_FAILED => ['icon' => 'bi-star-fill', 'tooltip' => 'Total or partial success'],
             self::NOT_SUCCEEDED => ['icon' => 'bi-star', 'tooltip' => 'Partial success or failure'],
-            self::ANY => ['icon' => 'bi-stars', 'tooltip' => 'Any outcome'],
+            self::ANY_OUTCOME => ['icon' => 'bi-stars', 'tooltip' => 'Any outcome'], // @phpstan-ignore-line
             default => ['icon' => 'bi-exclamation-square', 'tooltip' => 'Undefined'],
         };
     }
@@ -112,7 +112,7 @@ enum AppStatus: int
             self::FAILURE => [self::FAILURE->value],
             self::NOT_FAILED => [self::SUCCESS->value, self::PARTIAL->value],
             self::NOT_SUCCEEDED => [self::PARTIAL->value, self::FAILURE->value],
-            self::ANY => [self::SUCCESS->value, self::PARTIAL->value, self::FAILURE->value],
+            self::ANY_OUTCOME => [self::SUCCESS->value, self::PARTIAL->value, self::FAILURE->value],
             default => [self::SUCCESS->value, self::PARTIAL->value, self::FAILURE->value, null],
         };
     }
@@ -178,7 +178,7 @@ enum AppStatus: int
             self::FAILURE->value,
             self::NOT_FAILED->value,
             self::NOT_SUCCEEDED->value,
-            self::ANY->value,
+            self::ANY_OUTCOME->value,
         ];
     }
 
@@ -189,7 +189,7 @@ enum AppStatus: int
             self::FAILURE->value => self::FAILURE->getLabel(),
             self::NOT_FAILED->value => self::NOT_FAILED->getLabel(),
             self::NOT_SUCCEEDED->value => self::NOT_SUCCEEDED->getLabel(),
-            self::ANY->value => self::ANY->getLabel(),
+            self::ANY_OUTCOME->value => self::ANY_OUTCOME->getLabel(),
         ];
     }
 

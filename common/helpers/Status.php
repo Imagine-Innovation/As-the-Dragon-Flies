@@ -57,7 +57,7 @@ class Status
      */
     public static function changeStatus(\yii\db\ActiveRecord $model, int $statusCode): bool {
         // Check if the model exists
-        if (!$model) {
+        if ($model->isNewRecord) {
             return false;
         }
 

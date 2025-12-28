@@ -47,7 +47,7 @@ class PlayerManager extends BaseManager
                 ->where(['<=', 'xp_min', $xp])
                 ->andWhere(['>', 'xp_max', $xp])
                 ->one();
-        return $level?->id ?? 1;
+        return $level->id ?? 1;
     }
 
     private function updateXp(?int $gainedXp = 0): array {
@@ -81,8 +81,8 @@ class PlayerManager extends BaseManager
     }
 
     public function updatePlayerStats(Outcome $outcome): void {
-        Yii::debug("*** debug *** updatePlayerStats - player={$this?->player?->name}, outcome=" . print_r($outcome, true));
-        If (!$this->player) {
+        Yii::debug("*** debug *** updatePlayerStats - player={$this->player?->name}, outcome=" . print_r($outcome, true));
+        If ($this->player->isNewRecord) {
             return;
         }
 

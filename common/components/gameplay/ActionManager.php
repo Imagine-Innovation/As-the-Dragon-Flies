@@ -4,6 +4,7 @@ namespace common\components\gameplay;
 
 use common\components\AppStatus;
 use common\components\gameplay\BaseManager;
+use common\helpers\DiceRoller;
 use common\models\Action;
 use common\models\ActionFlow;
 use common\models\ActionTypeSkill;
@@ -12,7 +13,6 @@ use common\models\PlayerSkill;
 use common\models\QuestAction;
 use common\models\QuestProgress;
 use common\models\Outcome;
-use common\helpers\DiceRoller;
 use Yii;
 
 class ActionManager extends BaseManager
@@ -42,7 +42,7 @@ class ActionManager extends BaseManager
         }
 
         $this->action ??= $this->questAction?->action;
-        $this->player ??= $this->questProgress?->currentPlayer;
+        $this->player ??= $this->questProgress->currentPlayer;
     }
 
     private function getModifier(): int {

@@ -14,21 +14,18 @@ class MessageHandlerOrchestrator implements MessageHandlerInterface
 
     private LoggerService $logger;
     private BroadcastService $broadcastService; // Updated
-    private QuestSessionManager $questSessionManager;
     private NotificationService $notificationService;
     private array $specificHandlers;
 
     public function __construct(
             LoggerService $logger,
             BroadcastService $broadcastService,
-            QuestSessionManager $questSessionManager,
             NotificationService $notificationService,
             array $specificHandlers = [] // Added
     ) {
         $this->logger = $logger;
         $this->specificHandlers = $specificHandlers;
         $this->broadcastService = $broadcastService;
-        $this->questSessionManager = $questSessionManager;
         $this->notificationService = $notificationService;
     }
 

@@ -33,7 +33,7 @@ class RegistrationHandler implements SpecificMessageHandlerInterface
         $this->messageFactory = $messageFactory;
     }
 
-    private function updateQuestPlayerStatus(int $questId, int $playerId, string $sessionId): void {
+    private function updateQuestPlayerStatus(?int $questId, ?int $playerId, string $sessionId): void {
         if ($questId === null || $playerId === null) {
             return;
         }

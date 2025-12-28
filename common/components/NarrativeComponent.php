@@ -18,7 +18,7 @@ class NarrativeComponent extends Component
     }
 
     public function missionDecription(): array {
-        if (!$this->mission) {
+        if ($this->mission->isNewRecord) {
             return ['The mission has not been found, even by the most learned magicians'];
         }
 

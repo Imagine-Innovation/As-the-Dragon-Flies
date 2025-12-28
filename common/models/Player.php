@@ -35,10 +35,10 @@ use Yii;
  * @property int|null $updated_at Last update timestamp
  *
  * @property Ability[] $abilities
- * @property Alignment $alignment
+ * @property Alignment|null $alignment
  * @property Background $background
  * @property CharacterClass $class
- * @property Image $image
+ * @property Image|null $image
  * @property Item[] $cartItems
  * @property Item[] $items
  * @property Language[] $languages
@@ -617,7 +617,7 @@ class Player extends \yii\db\ActiveRecord
 
     public function addCoins(?int $quantity, string $coin = 'gp'): ?bool {
         Yii::debug("*** debug *** - Player - addCoins(quantity=" . ($quantity ?? 'null') . ", coin={$coin})");
-        if (!$quantity || $quantity === 0) {
+        if ($quantity === null || $quantity === 0) {
             return null;
         }
 
