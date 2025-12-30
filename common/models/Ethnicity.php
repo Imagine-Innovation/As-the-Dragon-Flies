@@ -18,7 +18,6 @@ use Yii;
 class Ethnicity extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -53,7 +52,7 @@ class Ethnicity extends \yii\db\ActiveRecord
     /**
      * Gets query for [[FirstNames]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<FirstName>
      */
     public function getFirstNames() {
         return $this->hasMany(FirstName::class, ['ethnicity_id' => 'id']);
@@ -62,7 +61,7 @@ class Ethnicity extends \yii\db\ActiveRecord
     /**
      * Gets query for [[LastNames]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<LastName>
      */
     public function getLastNames() {
         return $this->hasMany(LastName::class, ['ethnicity_id' => 'id']);
@@ -71,10 +70,9 @@ class Ethnicity extends \yii\db\ActiveRecord
     /**
      * Gets query for [[RaceGroup]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<RaceGroup>
      */
     public function getRaceGroup() {
         return $this->hasOne(RaceGroup::class, ['id' => 'race_group_id']);
     }
-
 }

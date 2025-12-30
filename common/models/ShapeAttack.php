@@ -28,7 +28,6 @@ use Yii;
 class ShapeAttack extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -79,7 +78,7 @@ class ShapeAttack extends \yii\db\ActiveRecord
     /**
      * Gets query for [[DamageType]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<DamageType>
      */
     public function getDamageType() {
         return $this->hasOne(DamageType::class, ['id' => 'damage_type_id']);
@@ -88,7 +87,7 @@ class ShapeAttack extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Shape]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Shape>
      */
     public function getShape() {
         return $this->hasOne(Shape::class, ['id' => 'shape_id']);
@@ -97,10 +96,9 @@ class ShapeAttack extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Weapon]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Weapon>
      */
     public function getWeapon() {
         return $this->hasOne(Weapon::class, ['item_id' => 'weapon_id']);
     }
-
 }

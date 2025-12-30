@@ -4,10 +4,20 @@ namespace common\extensions\EventHandler\dtos;
 
 use common\extensions\EventHandler\contracts\BroadcastMessageInterface;
 
-class NotificationDto implements BroadcastMessageInterface {
+class NotificationDto implements BroadcastMessageInterface
+{
+
     private string $type = 'notification';
+
+    /** @var array<string, mixed> $payload */
     private array $payload;
 
+    /**
+     *
+     * @param string $message
+     * @param string $level
+     * @param array<string, mixed>|null $details
+     */
     public function __construct(string $message, string $level = 'info', ?array $details = null) {
         $this->payload = [
             'message' => $message,
@@ -19,14 +29,26 @@ class NotificationDto implements BroadcastMessageInterface {
         }
     }
 
+    /**
+     *
+     * @return string
+     */
     public function getType(): string {
         return $this->type;
     }
 
+    /**
+     *
+     * @return array<string, mixed>
+     */
     public function getPayload(): array {
         return $this->payload;
     }
 
+    /**
+     *
+     * @return string
+     */
     public function toJson(): string {
         return json_encode(['type' => $this->type, 'payload' => $this->payload]);
     }

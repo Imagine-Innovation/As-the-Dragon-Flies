@@ -56,7 +56,7 @@ class BackgroundTrait extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Background]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Background>
      */
     public function getBackground() {
         return $this->hasOne(Background::class, ['id' => 'background_id']);
@@ -65,7 +65,7 @@ class BackgroundTrait extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Trait]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<CharacterTrait>
      */
     public function getTrait() {
         return $this->hasOne(CharacterTrait::class, ['id' => 'trait_id']);

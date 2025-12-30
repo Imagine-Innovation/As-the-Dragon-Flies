@@ -57,7 +57,7 @@ class ClassEndowment extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Class]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<CharacterClass>
      */
     public function getClass() {
         return $this->hasOne(CharacterClass::class, ['id' => 'class_id']);
@@ -66,7 +66,7 @@ class ClassEndowment extends \yii\db\ActiveRecord
     /**
      * Gets query for [[ClassEquipments]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<ClassEquipment>
      */
     public function getClassEquipments() {
         return $this->hasMany(ClassEquipment::class, ['endowment_id' => 'id']);

@@ -16,7 +16,6 @@ use Yii;
 class StoryTag extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -50,7 +49,7 @@ class StoryTag extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Story]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Story>
      */
     public function getStory() {
         return $this->hasOne(Story::class, ['id' => 'story_id']);
@@ -59,10 +58,9 @@ class StoryTag extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Tag]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Tag>
      */
     public function getTag() {
         return $this->hasOne(Tag::class, ['id' => 'tag_id']);
     }
-
 }

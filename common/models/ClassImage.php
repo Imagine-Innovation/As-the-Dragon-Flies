@@ -16,7 +16,6 @@ use Yii;
 class ClassImage extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -50,7 +49,7 @@ class ClassImage extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Class]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<CharacterClass>
      */
     public function getClass() {
         return $this->hasOne(CharacterClass::class, ['id' => 'class_id']);
@@ -59,10 +58,9 @@ class ClassImage extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Image]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Image>
      */
     public function getImage() {
         return $this->hasOne(Image::class, ['id' => 'image_id']);
     }
-
 }

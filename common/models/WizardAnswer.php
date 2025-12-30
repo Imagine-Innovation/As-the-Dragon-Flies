@@ -24,7 +24,6 @@ use Yii;
 class WizardAnswer extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -67,7 +66,7 @@ class WizardAnswer extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Alignment]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Alignment>
      */
     public function getAlignment() {
         return $this->hasOne(Alignment::class, ['id' => 'alignment_id']);
@@ -76,7 +75,7 @@ class WizardAnswer extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Class]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<CharacterClass>
      */
     public function getClass() {
         return $this->hasOne(CharacterClass::class, ['id' => 'class_id']);
@@ -85,7 +84,7 @@ class WizardAnswer extends \yii\db\ActiveRecord
     /**
      * Gets query for [[NextQuestion]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<WizardQuestion>
      */
     public function getNextQuestion() {
         return $this->hasOne(WizardQuestion::class, ['id' => 'next_question_id']);
@@ -94,7 +93,7 @@ class WizardAnswer extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Question]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<WizardQuestion>
      */
     public function getQuestion() {
         return $this->hasOne(WizardQuestion::class, ['id' => 'question_id']);
@@ -103,10 +102,9 @@ class WizardAnswer extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Race]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Race>
      */
     public function getRace() {
         return $this->hasOne(Race::class, ['id' => 'race_id']);
     }
-
 }

@@ -26,7 +26,6 @@ use Yii;
 class Mission extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -64,7 +63,7 @@ class Mission extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Actions]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Action>
      */
     public function getActions() {
         return $this->hasMany(Action::class, ['mission_id' => 'id']);
@@ -73,7 +72,7 @@ class Mission extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Chapter]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Chapter>
      */
     public function getChapter() {
         return $this->hasOne(Chapter::class, ['id' => 'chapter_id']);
@@ -82,7 +81,7 @@ class Mission extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Chapters]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Chapter>
      */
     public function getChapters() {
         return $this->hasMany(Chapter::class, ['first_mission_id' => 'id']);
@@ -91,7 +90,7 @@ class Mission extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Decors]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Decor>
      */
     public function getDecors() {
         return $this->hasMany(Decor::class, ['mission_id' => 'id']);
@@ -100,7 +99,7 @@ class Mission extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Monsters]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Monster>
      */
     public function getMonsters() {
         return $this->hasMany(Monster::class, ['mission_id' => 'id']);
@@ -109,7 +108,7 @@ class Mission extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Npcs]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Npc>
      */
     public function getNpcs() {
         return $this->hasMany(Npc::class, ['mission_id' => 'id']);
@@ -118,7 +117,7 @@ class Mission extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Outcomes]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Outcome>
      */
     public function getOutcomes() {
         return $this->hasMany(Outcome::class, ['next_mission_id' => 'id']);
@@ -127,7 +126,7 @@ class Mission extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Passages]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Passage>
      */
     public function getPassages() {
         return $this->hasMany(Passage::class, ['mission_id' => 'id']);
@@ -136,10 +135,9 @@ class Mission extends \yii\db\ActiveRecord
     /**
      * Gets query for [[QuestProgresses]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<QuestProgress>
      */
     public function getQuestProgresses() {
         return $this->hasMany(QuestProgress::class, ['mission_id' => 'id']);
     }
-
 }

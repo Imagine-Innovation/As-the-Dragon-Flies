@@ -23,7 +23,6 @@ use Yii;
 class RuleCondition extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -67,7 +66,7 @@ class RuleCondition extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Expression]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<RuleExpression>
      */
     public function getExpression() {
         return $this->hasOne(RuleExpression::class, ['id' => 'expression_id']);
@@ -76,7 +75,7 @@ class RuleCondition extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Model]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<RuleModel>
      */
     public function getModel() {
         return $this->hasOne(RuleModel::class, ['id' => 'model_id']);
@@ -85,10 +84,9 @@ class RuleCondition extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Rule]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Rule>
      */
     public function getRule() {
         return $this->hasOne(Rule::class, ['id' => 'rule_id']);
     }
-
 }

@@ -86,7 +86,7 @@ class Race extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Abilities]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Ability>
      */
     public function getAbilities() {
         return $this->hasMany(Ability::class, ['id' => 'ability_id'])->viaTable('race_ability', ['race_id' => 'id']);
@@ -95,7 +95,7 @@ class Race extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Players]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Player>
      */
     public function getPlayers() {
         return $this->hasMany(Player::class, ['race_id' => 'id']);
@@ -104,7 +104,7 @@ class Race extends \yii\db\ActiveRecord
     /**
      * Gets query for [[RaceAbilities]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<RaceAbility>
      */
     public function getRaceAbilities() {
         return $this->hasMany(RaceAbility::class, ['race_id' => 'id']);
@@ -113,7 +113,7 @@ class Race extends \yii\db\ActiveRecord
     /**
      * Gets query for [[RaceGroup]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<RaceGroup>
      */
     public function getRaceGroup() {
         return $this->hasOne(RaceGroup::class, ['id' => 'race_group_id']);
@@ -122,7 +122,7 @@ class Race extends \yii\db\ActiveRecord
     /**
      * Gets query for [[WizardAnswers]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<WizardAnswer>
      */
     public function getWizardAnswers() {
         return $this->hasMany(WizardAnswer::class, ['race_id' => 'id']);

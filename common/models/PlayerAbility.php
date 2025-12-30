@@ -21,7 +21,6 @@ use Yii;
 class PlayerAbility extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -62,7 +61,7 @@ class PlayerAbility extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Ability]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Ability>
      */
     public function getAbility() {
         return $this->hasOne(Ability::class, ['id' => 'ability_id']);
@@ -71,10 +70,9 @@ class PlayerAbility extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Player]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Player>
      */
     public function getPlayer() {
         return $this->hasOne(Player::class, ['id' => 'player_id']);
     }
-
 }

@@ -16,7 +16,6 @@ use Yii;
 class Wizard extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -49,10 +48,9 @@ class Wizard extends \yii\db\ActiveRecord
     /**
      * Gets query for [[WizardQuestions]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<WizardQuestion>
      */
     public function getWizardQuestions() {
         return $this->hasMany(WizardQuestion::class, ['wizard_id' => 'id']);
     }
-
 }

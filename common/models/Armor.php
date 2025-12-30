@@ -69,7 +69,7 @@ class Armor extends Item
     /**
      * Gets query for [[Item]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Item>
      */
     public function getItem() {
         return $this->hasOne(Item::class, ['id' => 'item_id']);
@@ -78,7 +78,7 @@ class Armor extends Item
     /**
      * Gets query for [[ShapeArmors]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<ShapeArmor>
      */
     public function getShapeArmors() {
         return $this->hasMany(ShapeArmor::class, ['armor_id' => 'item_id']);
@@ -87,7 +87,7 @@ class Armor extends Item
     /**
      * Gets query for [[Shapes]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Shape>
      */
     public function getShapes() {
         return $this->hasMany(Shape::class, ['id' => 'shape_id'])->viaTable('shape_armor', ['armor_id' => 'item_id']);

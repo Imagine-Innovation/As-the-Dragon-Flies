@@ -55,7 +55,7 @@ class ClassAbility extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Ability]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Ability>
      */
     public function getAbility() {
         return $this->hasOne(Ability::class, ['id' => 'ability_id']);
@@ -64,7 +64,7 @@ class ClassAbility extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Class]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<CharacterClass>
      */
     public function getClass() {
         return $this->hasOne(CharacterClass::class, ['id' => 'class_id']);

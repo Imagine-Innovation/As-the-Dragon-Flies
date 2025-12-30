@@ -18,7 +18,6 @@ use Yii;
 class ClassItemProficiency extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -54,7 +53,7 @@ class ClassItemProficiency extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Category]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Category>
      */
     public function getCategory() {
         return $this->hasOne(Category::class, ['id' => 'category_id']);
@@ -63,7 +62,7 @@ class ClassItemProficiency extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Class]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<CharacterClass>
      */
     public function getClass() {
         return $this->hasOne(CharacterClass::class, ['id' => 'class_id']);
@@ -72,10 +71,9 @@ class ClassItemProficiency extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Item]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Item>
      */
     public function getItem() {
         return $this->hasOne(Item::class, ['id' => 'item_id']);
     }
-
 }

@@ -26,7 +26,6 @@ use Yii;
 class Notification extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -74,7 +73,7 @@ class Notification extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Initiator]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Player>
      */
     public function getInitiator() {
         return $this->hasOne(Player::class, ['id' => 'initiator_id']);
@@ -83,7 +82,7 @@ class Notification extends \yii\db\ActiveRecord
     /**
      * Gets query for [[NotificationPlayers]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<NotificationPlayer>
      */
     public function getNotificationPlayers() {
         return $this->hasMany(NotificationPlayer::class, ['notification_id' => 'id']);
@@ -92,7 +91,7 @@ class Notification extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Players]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Player>
      */
     public function getPlayers() {
         return $this->hasMany(Player::class, ['id' => 'player_id'])->viaTable('notification_player', ['notification_id' => 'id']);
@@ -101,10 +100,9 @@ class Notification extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Quest]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Quest>
      */
     public function getQuest() {
         return $this->hasOne(Quest::class, ['id' => 'quest_id']);
     }
-
 }

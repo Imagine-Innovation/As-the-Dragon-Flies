@@ -16,7 +16,6 @@ use Yii;
 class Feature extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -51,10 +50,9 @@ class Feature extends \yii\db\ActiveRecord
     /**
      * Gets query for [[ClassFeatures]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<ClassFeature>
      */
     public function getClassFeatures() {
         return $this->hasMany(ClassFeature::class, ['feature_id' => 'id']);
     }
-
 }

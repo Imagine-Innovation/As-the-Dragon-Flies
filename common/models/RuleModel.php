@@ -19,7 +19,6 @@ use Yii;
 class RuleModel extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -36,8 +35,7 @@ class RuleModel extends \yii\db\ActiveRecord
             [['is_method'], 'default', 'value' => 0],
             [['name', 'attribute'], 'required'],
             [['is_method'], 'integer'],
-            [['path', 'name'], 'string', 'max' => 64],
-            [['attribute'], 'string', 'max' => 64],
+            [['path', 'name', 'attribute'], 'string', 'max' => 64],
             [['name', 'attribute'], 'unique', 'targetAttribute' => ['name', 'attribute']],
         ];
     }
@@ -58,7 +56,7 @@ class RuleModel extends \yii\db\ActiveRecord
     /**
      * Gets query for [[RuleActions]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<RuleAction>
      */
     public function getRuleActions() {
         return $this->hasMany(RuleAction::class, ['model_id' => 'id']);
@@ -67,10 +65,9 @@ class RuleModel extends \yii\db\ActiveRecord
     /**
      * Gets query for [[RuleConditions]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<RuleCondition>
      */
     public function getRuleConditions() {
         return $this->hasMany(RuleCondition::class, ['model_id' => 'id']);
     }
-
 }

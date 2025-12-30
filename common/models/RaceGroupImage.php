@@ -17,7 +17,6 @@ use Yii;
 class RaceGroupImage extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -53,7 +52,7 @@ class RaceGroupImage extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Image]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Image>
      */
     public function getImage() {
         return $this->hasOne(Image::class, ['id' => 'image_id']);
@@ -62,10 +61,9 @@ class RaceGroupImage extends \yii\db\ActiveRecord
     /**
      * Gets query for [[RaceGroup]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<RaceGroup>
      */
     public function getRaceGroup() {
         return $this->hasOne(RaceGroup::class, ['id' => 'race_group_id']);
     }
-
 }

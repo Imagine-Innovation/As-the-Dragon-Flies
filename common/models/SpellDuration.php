@@ -20,7 +20,6 @@ use Yii;
 class SpellDuration extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -60,10 +59,9 @@ class SpellDuration extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Spells]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Spell>
      */
     public function getSpells() {
         return $this->hasMany(Spell::class, ['duration_id' => 'id']);
     }
-
 }

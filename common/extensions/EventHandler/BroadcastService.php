@@ -17,6 +17,12 @@ class BroadcastService implements BroadcastServiceInterface
     private QuestSessionManager $questSessionManager;
     private ?NotificationService $notificationService = null; // Updated property
 
+    /**
+     *
+     * @param LoggerService $logger
+     * @param WebSocketServerManager $webSocketServerManager
+     * @param QuestSessionManager $questSessionManager
+     */
     public function __construct(
             LoggerService $logger,
             WebSocketServerManager $webSocketServerManager,
@@ -27,10 +33,19 @@ class BroadcastService implements BroadcastServiceInterface
         $this->questSessionManager = $questSessionManager;
     }
 
+    /**
+     *
+     */
     public function setNotificationService(NotificationService $notificationService): void {
         $this->notificationService = $notificationService;
     }
 
+    /**
+     *
+     * @param ConnectionInterface $connection
+     * @param string $jsonData
+     * @return void
+     */
     public function sendToConnection(ConnectionInterface $connection, string $jsonData): void {
         $this->logger->log("BroadcastService: Sending direct to connection", ['remoteAddress' => $connection->remoteAddress, 'dataLength' => strlen($jsonData)]);
         try {
@@ -40,7 +55,14 @@ class BroadcastService implements BroadcastServiceInterface
         }
     }
 
-    // sendBack is part of BroadcastServiceInterface, keep signature as is for now.
+    /**
+     * sendBack is part of BroadcastServiceInterface, keep signature as is for now.
+     *
+     * @param ConnectionInterface $to
+     * @param string $type
+     * @param mixed $message
+     * @return void
+     */
     public function sendBack(ConnectionInterface $to, string $type, mixed $message): void {
         $this->logger->logStart("BroadcastService: sendBack type={$type}", ['to' => $to->resourceId]);
         $jsonData = json_encode([
@@ -58,6 +80,14 @@ class BroadcastService implements BroadcastServiceInterface
         $this->logger->logEnd("BroadcastService: sendBack type={$type}");
     }
 
+    /**
+     *
+     * @param string $clientId
+     * @param BroadcastMessageInterface $message
+     * @param bool $updateTimestamp
+     * @param string|null $sessionId
+     * @return bool
+     */
     public function sendToClient(string $clientId, BroadcastMessageInterface $message, bool $updateTimestamp = true, ?string $sessionId = null): bool {
         $this->logger->logStart("BroadcastService: sendToClient clientId=[{$clientId}] type=" . $message->getType(), ['updateTimestamp' => $updateTimestamp, 'sessionId' => $sessionId]);
         $clientConnection = $this->webSocketServerManager->getClient($clientId);
@@ -78,6 +108,13 @@ class BroadcastService implements BroadcastServiceInterface
         return true;
     }
 
+    /**
+     *
+     * @param QuestSession $session
+     * @param BroadcastMessageInterface $message
+     * @param bool $updateTimestamp
+     * @return bool
+     */
     public function sendToSession(QuestSession $session, BroadcastMessageInterface $message, bool $updateTimestamp = true): bool {
         $this->logger->logStart("BroadcastService: sendToSession sessionId={$session->id} type=" . $message->getType(), ['updateTimestamp' => $updateTimestamp]);
 
@@ -95,20 +132,29 @@ class BroadcastService implements BroadcastServiceInterface
         return $sent;
     }
 
+    /**
+     *
+     * @param BroadcastMessageInterface $message
+     * @return void
+     */
     public function broadcast(BroadcastMessageInterface $message): void {
         $this->logger->logStart("BroadcastService: broadcast type=" . $message->getType());
         $jsonData = $message->toJson();
 
         $allClients = $this->webSocketServerManager->getAllClients();
         foreach ($allClients as $client) {
-            if ($client instanceof ConnectionInterface) {
-                $this->sendToConnection($client, $jsonData);
-            }
+            $this->sendToConnection($client, $jsonData);
         }
         $this->logger->log("BroadcastService: Message (type=" . $message->getType() . ") broadcasted to " . count($allClients) . " clients");
         $this->logger->logEnd("BroadcastService: broadcast type=" . $message->getType());
     }
 
+    /**
+     *
+     * @param int $questId
+     * @param string|null $excludeSessionId
+     * @return QuestSession[]
+     */
     private function findOtherSessions(int $questId, ?string $excludeSessionId = null): array {
         $this->logger->logStart("BroadcastService: findOtherSessions for questId={$questId}, excluding=[{$excludeSessionId}]");
 
@@ -122,11 +168,17 @@ class BroadcastService implements BroadcastServiceInterface
 
         $sessions = $query->all();
         $this->logger->log("BroadcastService: Found " . count($sessions) . " other sessions for questId={$questId}.");
-        // $this->questSessionManager->logQuestSession("Other sessions for quest {$questId}", $sessions); // If detailed logging is needed
         $this->logger->logEnd("BroadcastService: findOtherSessions");
         return $sessions;
     }
 
+    /**
+     *
+     * @param int $questId
+     * @param BroadcastMessageInterface $message
+     * @param string|null $excludeSessionId
+     * @return void
+     */
     public function broadcastToQuest(int $questId, BroadcastMessageInterface $message, ?string $excludeSessionId = null): void {
         $this->logger->logStart("BroadcastService: broadcastToQuest questId={$questId}, excluding=[{$excludeSessionId}] type=" . $message->getType());
 
@@ -149,8 +201,15 @@ class BroadcastService implements BroadcastServiceInterface
         $this->logger->logEnd("BroadcastService: broadcastToQuest type=" . $message->getType());
     }
 
-    // recoverMessageHistory is part of BroadcastServiceInterface, keep signature as is.
-    // Internal logic uses NotificationService which prepares JSON, so direct DTO usage for sending might not fit cleanly without larger refactor of NotificationService.
+    /**
+     * recoverMessageHistory is part of BroadcastServiceInterface, keep signature as is.
+     * Internal logic uses NotificationService which prepares JSON, so direct DTO usage
+     * for sending might not fit cleanly without larger refactor of NotificationService.
+     *
+     * @param string $sessionId
+     * @return void
+     * @throws \LogicException
+     */
     public function recoverMessageHistory(string $sessionId): void {
         if (!$this->notificationService) {
             $this->logger->log("BroadcastService: NotificationService not set. Cannot recover history for session {$sessionId}.", null, 'error');
@@ -186,6 +245,12 @@ class BroadcastService implements BroadcastServiceInterface
         $this->logger->logEnd("BroadcastService: recoverMessageHistory");
     }
 
+    /**
+     *
+     * @param ConnectionInterface $clientConnection
+     * @param QuestSession $session
+     * @return int
+     */
     private function sendChatHistory(ConnectionInterface $clientConnection, QuestSession $session): int {
         $chatNotifications = $this->notificationService->getNotifications($session->quest_id, 'new-message', $session->last_ts);
         $notificationCount = count($chatNotifications);

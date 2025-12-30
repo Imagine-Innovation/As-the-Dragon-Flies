@@ -114,7 +114,7 @@ class Item extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Actions]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Action>
      */
     public function getActions() {
         return $this->hasMany(Action::class, ['required_item_id' => 'id']);
@@ -123,7 +123,7 @@ class Item extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Armor]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Armor>
      */
     public function getArmor() {
         return $this->hasOne(Armor::class, ['item_id' => 'id']);
@@ -132,7 +132,7 @@ class Item extends \yii\db\ActiveRecord
     /**
      * Gets query for [[BackgroundItems]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<BackgroundItem>
      */
     public function getBackgroundItems() {
         return $this->hasMany(BackgroundItem::class, ['item_id' => 'id']);
@@ -141,7 +141,7 @@ class Item extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Categories]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Category>
      */
     public function getCategories() {
         return $this->hasMany(Category::class, ['id' => 'category_id'])->viaTable('item_category', ['item_id' => 'id']);
@@ -150,7 +150,7 @@ class Item extends \yii\db\ActiveRecord
     /**
      * Gets query for [[ClassEquipments]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<ClassEquipment>
      */
     public function getClassEquipments() {
         return $this->hasMany(ClassEquipment::class, ['item_id' => 'id']);
@@ -159,7 +159,7 @@ class Item extends \yii\db\ActiveRecord
     /**
      * Gets query for [[ClassItemProficiencies]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<ClassItemProficiency>
      */
     public function getClassItemProficiencies() {
         return $this->hasMany(ClassItemProficiency::class, ['item_id' => 'id']);
@@ -168,7 +168,7 @@ class Item extends \yii\db\ActiveRecord
     /**
      * Gets query for [[DecorItems]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<DecorItem>
      */
     public function getDecorItems() {
         return $this->hasMany(DecorItem::class, ['item_id' => 'id']);
@@ -177,7 +177,7 @@ class Item extends \yii\db\ActiveRecord
     /**
      * Gets query for [[ItemCategories]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<ItemCategory>
      */
     public function getItemCategories() {
         return $this->hasMany(ItemCategory::class, ['item_id' => 'id']);
@@ -186,7 +186,7 @@ class Item extends \yii\db\ActiveRecord
     /**
      * Gets query for [[ItemType]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<ItemType>
      */
     public function getItemType() {
         return $this->hasOne(ItemType::class, ['id' => 'item_type_id']);
@@ -195,7 +195,7 @@ class Item extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Items]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Item>
      */
     public function getItems() {
         return $this->hasMany(Item::class, ['id' => 'item_id'])->viaTable('pack', ['parent_item_id' => 'id']);
@@ -204,7 +204,7 @@ class Item extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Outcomes]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Outcome>
      */
     public function getOutcomes() {
         return $this->hasMany(Outcome::class, ['item_id' => 'id']);
@@ -213,7 +213,7 @@ class Item extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Packs]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Pack>
      */
     public function getPacks() {
         return $this->hasMany(Pack::class, ['item_id' => 'id']);
@@ -222,7 +222,7 @@ class Item extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Packs0]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Pack>
      */
     public function getPacks0() {
         return $this->hasMany(Pack::class, ['parent_item_id' => 'id']);
@@ -231,7 +231,7 @@ class Item extends \yii\db\ActiveRecord
     /**
      * Gets query for [[PackItems]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Item>
      */
     public function getPackItems() {
         return $this->hasMany(Item::class, ['id' => 'item_id'])->viaTable('pack', ['item_id' => 'id']);
@@ -240,7 +240,7 @@ class Item extends \yii\db\ActiveRecord
     /**
      * Gets query for [[ParentItems]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Item>
      */
     public function getParentItems() {
         return $this->hasMany(Item::class, ['id' => 'parent_item_id'])->viaTable('pack', ['item_id' => 'id']);
@@ -249,7 +249,7 @@ class Item extends \yii\db\ActiveRecord
     /**
      * Gets query for [[PlayerCarts]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<PlayerCart>
      */
     public function getPlayerCarts() {
         return $this->hasMany(PlayerCart::class, ['item_id' => 'id']);
@@ -258,7 +258,7 @@ class Item extends \yii\db\ActiveRecord
     /**
      * Gets query for [[PlayerItems]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<PlayerItem>
      */
     public function getPlayerItems() {
         return $this->hasMany(PlayerItem::class, ['item_id' => 'id']);
@@ -267,7 +267,7 @@ class Item extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Players]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Player>
      */
     public function getPlayers() {
         return $this->hasMany(Player::class, ['id' => 'player_id'])->viaTable('player_cart', ['item_id' => 'id']);
@@ -276,7 +276,7 @@ class Item extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Players0]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Player>
      */
     public function getPlayers0() {
         return $this->hasMany(Player::class, ['id' => 'player_id'])->viaTable('player_item', ['item_id' => 'id']);
@@ -285,7 +285,7 @@ class Item extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Poison]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Poison>
      */
     public function getPoison() {
         return $this->hasOne(Poison::class, ['item_id' => 'id']);
@@ -294,7 +294,7 @@ class Item extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Scroll]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Scroll>
      */
     public function getScroll() {
         return $this->hasOne(Scroll::class, ['item_id' => 'id']);
@@ -303,7 +303,7 @@ class Item extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Weapon]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Weapon>
      */
     public function getWeapon() {
         return $this->hasOne(Weapon::class, ['item_id' => 'id']);
@@ -312,7 +312,7 @@ class Item extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Weapons]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Weapon>
      */
     public function getWeapons() {
         return $this->hasMany(Weapon::class, ['amunition_id' => 'id']);

@@ -24,7 +24,6 @@ use Yii;
 class Trap extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -70,7 +69,7 @@ class Trap extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Actions]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Action>
      */
     public function getActions() {
         return $this->hasMany(Action::class, ['trap_id' => 'id']);
@@ -79,7 +78,7 @@ class Trap extends \yii\db\ActiveRecord
     /**
      * Gets query for [[DamageType]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<DamageType>
      */
     public function getDamageType() {
         return $this->hasOne(DamageType::class, ['id' => 'damage_type_id']);
@@ -88,10 +87,9 @@ class Trap extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Decor]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Decor>
      */
     public function getDecor() {
         return $this->hasOne(Decor::class, ['id' => 'decor_id']);
     }
-
 }

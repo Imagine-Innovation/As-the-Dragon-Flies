@@ -19,7 +19,6 @@ use Yii;
 class RuleAction extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -58,7 +57,7 @@ class RuleAction extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Model]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<RuleModel>
      */
     public function getModel() {
         return $this->hasOne(RuleModel::class, ['id' => 'model_id']);
@@ -67,10 +66,9 @@ class RuleAction extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Rule]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Rule>
      */
     public function getRule() {
         return $this->hasOne(Rule::class, ['id' => 'rule_id']);
     }
-
 }

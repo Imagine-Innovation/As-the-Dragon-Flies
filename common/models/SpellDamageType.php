@@ -16,7 +16,6 @@ use Yii;
 class SpellDamageType extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -50,7 +49,7 @@ class SpellDamageType extends \yii\db\ActiveRecord
     /**
      * Gets query for [[DamageType]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<DamageType>
      */
     public function getDamageType() {
         return $this->hasOne(DamageType::class, ['id' => 'damage_type_id']);
@@ -59,10 +58,9 @@ class SpellDamageType extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Spell]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Spell>
      */
     public function getSpell() {
         return $this->hasOne(Spell::class, ['id' => 'spell_id']);
     }
-
 }

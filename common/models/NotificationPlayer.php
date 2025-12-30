@@ -20,7 +20,6 @@ use Yii;
 class NotificationPlayer extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -60,7 +59,7 @@ class NotificationPlayer extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Notification]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Notification>
      */
     public function getNotification() {
         return $this->hasOne(Notification::class, ['id' => 'notification_id']);
@@ -69,10 +68,9 @@ class NotificationPlayer extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Player]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Player>
      */
     public function getPlayer() {
         return $this->hasOne(Player::class, ['id' => 'player_id']);
     }
-
 }

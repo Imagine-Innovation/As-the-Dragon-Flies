@@ -137,7 +137,7 @@ class PlayerItem extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Item]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Item>
      */
     public function getItem() {
         return $this->hasOne(Item::class, ['id' => 'item_id']);
@@ -146,7 +146,7 @@ class PlayerItem extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Player]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Player>
      */
     public function getPlayer() {
         return $this->hasOne(Player::class, ['id' => 'player_id']);
@@ -155,7 +155,7 @@ class PlayerItem extends \yii\db\ActiveRecord
     /**
      * Gets query for [[PlayerBody]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<PlayerBody>
      */
     public function getPlayerBody() {
         return $this->hasOne(PlayerBody::class, ['player_id' => 'player_id']);
@@ -164,7 +164,7 @@ class PlayerItem extends \yii\db\ActiveRecord
     /**
      * Gets query for [[PlayerHead]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<PlayerBody>
      */
     public function getPlayerHead() {
         return $this->hasOne(PlayerBody::class, ['player_id' => 'player_id', 'head_item_id' => 'item_id']);
@@ -173,7 +173,7 @@ class PlayerItem extends \yii\db\ActiveRecord
     /**
      * Gets query for [[PlayerChest]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<PlayerBody>
      */
     public function getPlayerChest() {
         return $this->hasOne(PlayerBody::class, ['player_id' => 'player_id', 'chest_item_id' => 'item_id']);
@@ -182,7 +182,7 @@ class PlayerItem extends \yii\db\ActiveRecord
     /**
      * Gets query for [[PlayerRightHand]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<PlayerBody>
      */
     public function getPlayerRightHand() {
         return $this->hasOne(PlayerBody::class, ['player_id' => 'player_id', 'right_hand_item_id' => 'item_id']);
@@ -191,7 +191,7 @@ class PlayerItem extends \yii\db\ActiveRecord
     /**
      * Gets query for [[PlayerLeftHand]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<PlayerBody>
      */
     public function getPlayerLeftHand() {
         return $this->hasOne(PlayerBody::class, ['player_id' => 'player_id', 'left_hand_item_id' => 'item_id']);
@@ -200,7 +200,7 @@ class PlayerItem extends \yii\db\ActiveRecord
     /**
      * Gets query for [[PlayerBack]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<PlayerBody>
      */
     public function getPlayerBack() {
         return $this->hasOne(PlayerBody::class, ['player_id' => 'player_id', 'back_item_id' => 'item_id']);
@@ -213,7 +213,7 @@ class PlayerItem extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Armor]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Armor>
      */
     public function getArmor() {
         return $this->hasOne(Armor::class, ['item_id' => 'item_id']);
@@ -222,16 +222,16 @@ class PlayerItem extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Pack]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Pack>
      */
     public function getPack() {
-        return $this->hasOne(Armor::class, ['parent_item_id' => 'item_id']);
+        return $this->hasOne(Pack::class, ['parent_item_id' => 'item_id']);
     }
 
     /**
      * Gets query for [[Poison]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Poison>
      */
     public function getPoison() {
         return $this->hasOne(Poison::class, ['item_id' => 'item_id']);
@@ -240,7 +240,7 @@ class PlayerItem extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Weapon]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Weapon>
      */
     public function getWeapon() {
         return $this->hasOne(Weapon::class, ['item_id' => 'item_id']);

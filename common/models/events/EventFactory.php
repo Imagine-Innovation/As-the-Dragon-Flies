@@ -2,9 +2,10 @@
 
 namespace common\models\events;
 
-use Yii;
+use common\models\events\Event;
 use common\models\Player;
 use common\models\Quest;
+use Yii;
 
 class EventFactory
 {
@@ -15,8 +16,8 @@ class EventFactory
      * @param string $sessionId
      * @param Player $player
      * @param Quest $quest
-     * @param array $data
-     * @return \common\models\events\Event
+     * @param array<string, mixed> $data
+     * @return Event
      */
     public static function createEvent(string $eventType, string $sessionId, Player $player, Quest $quest, array $data = []): Event {
 

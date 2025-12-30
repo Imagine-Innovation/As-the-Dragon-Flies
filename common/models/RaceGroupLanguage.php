@@ -16,7 +16,6 @@ use Yii;
 class RaceGroupLanguage extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -50,7 +49,7 @@ class RaceGroupLanguage extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Language]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Language>
      */
     public function getLanguage() {
         return $this->hasOne(Language::class, ['id' => 'language_id']);
@@ -59,10 +58,9 @@ class RaceGroupLanguage extends \yii\db\ActiveRecord
     /**
      * Gets query for [[RaceGroup]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<RaceGroup>
      */
     public function getRaceGroup() {
         return $this->hasOne(RaceGroup::class, ['id' => 'race_group_id']);
     }
-
 }

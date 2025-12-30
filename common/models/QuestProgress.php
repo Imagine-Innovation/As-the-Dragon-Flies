@@ -74,7 +74,7 @@ class QuestProgress extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Actions]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Action>
      */
     public function getActions() {
         return $this->hasMany(Action::class, ['id' => 'action_id'])->viaTable('quest_action', ['quest_progress_id' => 'id']);
@@ -83,7 +83,7 @@ class QuestProgress extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Mission]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Mission>
      */
     public function getMission() {
         return $this->hasOne(Mission::class, ['id' => 'mission_id']);
@@ -92,7 +92,7 @@ class QuestProgress extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Quest]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Quest>
      */
     public function getQuest() {
         return $this->hasOne(Quest::class, ['id' => 'quest_id']);
@@ -101,7 +101,7 @@ class QuestProgress extends \yii\db\ActiveRecord
     /**
      * Gets query for [[QuestPlayer]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<QuestPlayer>
      */
     public function getQuestPlayer() {
         return $this->hasOne(QuestPlayer::class, ['quest_id' => 'quest_id', 'player_id' => 'current_player_id']);
@@ -110,7 +110,7 @@ class QuestProgress extends \yii\db\ActiveRecord
     /**
      * Gets query for [[QuestActions]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<QuestAction>
      */
     public function getQuestActions() {
         return $this->hasMany(QuestAction::class, ['quest_progress_id' => 'id']);
@@ -119,7 +119,7 @@ class QuestProgress extends \yii\db\ActiveRecord
     /**
      * Gets query for [[QuestTurns]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<QuestTurn>
      */
     public function getQuestTurns() {
         return $this->hasMany(QuestTurn::class, ['quest_progress_id' => 'id']);
@@ -132,7 +132,7 @@ class QuestProgress extends \yii\db\ActiveRecord
     /**
      * Gets query for [[CurrentPlayer]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Player>
      */
     public function getCurrentPlayer(): \yii\db\ActiveQuery {
         return $this->hasOne(Player::class, ['id' => 'current_player_id']);
@@ -154,7 +154,7 @@ class QuestProgress extends \yii\db\ActiveRecord
     /**
      * Gets query for [[RemainingActions]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<QuestAction>
      */
     public function getRemainingActions(): \yii\db\ActiveQuery {
         return $this->hasMany(QuestAction::class, ['quest_progress_id' => 'id'])

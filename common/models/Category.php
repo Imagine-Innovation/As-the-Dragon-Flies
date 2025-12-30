@@ -54,7 +54,7 @@ class Category extends \yii\db\ActiveRecord
     /**
      * Gets query for [[BackgroundItems]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<BackgroundItem>
      */
     public function getBackgroundItems() {
         return $this->hasMany(BackgroundItem::class, ['category_id' => 'id']);
@@ -63,7 +63,7 @@ class Category extends \yii\db\ActiveRecord
     /**
      * Gets query for [[ClassEquipments]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<ClassEquipment>
      */
     public function getClassEquipments() {
         return $this->hasMany(ClassEquipment::class, ['category_id' => 'id']);
@@ -72,7 +72,7 @@ class Category extends \yii\db\ActiveRecord
     /**
      * Gets query for [[ClassItemProficiencies]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<ClassItemProficiency>
      */
     public function getClassItemProficiencies() {
         return $this->hasMany(ClassItemProficiency::class, ['category_id' => 'id']);
@@ -81,7 +81,7 @@ class Category extends \yii\db\ActiveRecord
     /**
      * Gets query for [[ItemCategories]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<ItemCategory>
      */
     public function getItemCategories() {
         return $this->hasMany(ItemCategory::class, ['category_id' => 'id']);
@@ -90,7 +90,7 @@ class Category extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Items]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Item>
      */
     public function getItems() {
         return $this->hasMany(Item::class, ['id' => 'item_id'])->viaTable('item_category', ['category_id' => 'id']);

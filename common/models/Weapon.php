@@ -100,7 +100,7 @@ class Weapon extends Item
     /**
      * Gets query for [[Amunition]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Item>
      */
     public function getAmunition() {
         return $this->hasOne(Item::class, ['id' => 'amunition_id']);
@@ -109,7 +109,7 @@ class Weapon extends Item
     /**
      * Gets query for [[DamageType]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<DamageType>
      */
     public function getDamageType() {
         return $this->hasOne(DamageType::class, ['id' => 'damage_type_id']);
@@ -118,7 +118,7 @@ class Weapon extends Item
     /**
      * Gets query for [[Item]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Item>
      */
     public function getItem() {
         return $this->hasOne(Item::class, ['id' => 'item_id']);
@@ -127,7 +127,7 @@ class Weapon extends Item
     /**
      * Gets query for [[ShapeAttacks]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<ShapeAttack>
      */
     public function getShapeAttacks() {
         return $this->hasMany(ShapeAttack::class, ['weapon_id' => 'item_id']);

@@ -17,7 +17,6 @@ use Yii;
 class CreatureSkill extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -53,7 +52,7 @@ class CreatureSkill extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Creature]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Creature>
      */
     public function getCreature() {
         return $this->hasOne(Creature::class, ['id' => 'creature_id']);
@@ -62,10 +61,9 @@ class CreatureSkill extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Skill]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Skill>
      */
     public function getSkill() {
         return $this->hasOne(Skill::class, ['id' => 'skill_id']);
     }
-
 }

@@ -16,7 +16,6 @@ use Yii;
 class CreatureSize extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -50,10 +49,9 @@ class CreatureSize extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Shapes]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Shape>
      */
     public function getShapes() {
         return $this->hasMany(Shape::class, ['size_id' => 'id']);
     }
-
 }

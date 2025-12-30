@@ -16,7 +16,6 @@ use Yii;
 class LastName extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -50,10 +49,9 @@ class LastName extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Ethnicity]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Ethnicity>
      */
     public function getEthnicity() {
         return $this->hasOne(Ethnicity::class, ['id' => 'ethnicity_id']);
     }
-
 }

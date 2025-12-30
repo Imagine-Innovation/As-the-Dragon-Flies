@@ -20,7 +20,6 @@ use Yii;
 class RuleExpression extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -57,7 +56,7 @@ class RuleExpression extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Parent]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<RuleExpression>
      */
     public function getParent() {
         return $this->hasOne(RuleExpression::class, ['id' => 'parent_id']);
@@ -66,7 +65,7 @@ class RuleExpression extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Rule]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Rule>
      */
     public function getRule() {
         return $this->hasOne(Rule::class, ['id' => 'rule_id']);
@@ -75,7 +74,7 @@ class RuleExpression extends \yii\db\ActiveRecord
     /**
      * Gets query for [[RuleConditions]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<RuleCondition>
      */
     public function getRuleConditions() {
         return $this->hasMany(RuleCondition::class, ['expression_id' => 'id']);
@@ -84,10 +83,9 @@ class RuleExpression extends \yii\db\ActiveRecord
     /**
      * Gets query for [[RuleExpressions]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<RuleExpression>
      */
     public function getRuleExpressions() {
         return $this->hasMany(RuleExpression::class, ['parent_id' => 'id']);
     }
-
 }

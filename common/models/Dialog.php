@@ -22,7 +22,6 @@ use Yii;
 class Dialog extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -61,7 +60,7 @@ class Dialog extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Npc]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Npc>
      */
     public function getNpc() {
         return $this->hasOne(Npc::class, ['id' => 'npc_id']);
@@ -70,7 +69,7 @@ class Dialog extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Npcs]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Npc>
      */
     public function getNpcs() {
         return $this->hasMany(Npc::class, ['first_dialog_id' => 'id']);
@@ -79,7 +78,7 @@ class Dialog extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Outcome]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Outcome>
      */
     public function getOutcome() {
         return $this->hasOne(Outcome::class, ['id' => 'outcome_id']);
@@ -88,7 +87,7 @@ class Dialog extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Replies]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Reply>
      */
     public function getReplies() {
         return $this->hasMany(Reply::class, ['dialog_id' => 'id']);
@@ -97,10 +96,9 @@ class Dialog extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Replies0]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Reply>
      */
     public function getReplies0() {
         return $this->hasMany(Reply::class, ['next_dialog_id' => 'id']);
     }
-
 }

@@ -20,7 +20,6 @@ use Yii;
 class ClassEquipment extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -60,7 +59,7 @@ class ClassEquipment extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Category]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Category>
      */
     public function getCategory() {
         return $this->hasOne(Category::class, ['id' => 'category_id']);
@@ -69,7 +68,7 @@ class ClassEquipment extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Endowment]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<ClassEndowment>
      */
     public function getEndowment() {
         return $this->hasOne(ClassEndowment::class, ['id' => 'endowment_id']);
@@ -78,10 +77,9 @@ class ClassEquipment extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Item]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Item>
      */
     public function getItem() {
         return $this->hasOne(Item::class, ['id' => 'item_id']);
     }
-
 }

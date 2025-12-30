@@ -14,7 +14,6 @@ use Yii;
 class History extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -44,5 +43,4 @@ class History extends \yii\db\ActiveRecord
             'description' => 'Short description',
         ];
     }
-
 }

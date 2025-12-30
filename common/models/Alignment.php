@@ -22,7 +22,6 @@ use Yii;
 class Alignment extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -59,7 +58,7 @@ class Alignment extends \yii\db\ActiveRecord
     /**
      * Gets query for [[CreatureAlignments]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<CreatureAlignment>
      */
     public function getCreatureAlignments() {
         return $this->hasMany(CreatureAlignment::class, ['alignment_id' => 'id']);
@@ -68,7 +67,7 @@ class Alignment extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Creatures]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Creature>
      */
     public function getCreatures() {
         return $this->hasMany(Creature::class, ['id' => 'creature_id'])->viaTable('creature_alignment', ['alignment_id' => 'id']);
@@ -77,7 +76,7 @@ class Alignment extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Players]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Player>
      */
     public function getPlayers() {
         return $this->hasMany(Player::class, ['alignment_id' => 'id']);
@@ -86,7 +85,7 @@ class Alignment extends \yii\db\ActiveRecord
     /**
      * Gets query for [[RaceGroupAlignments]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<RaceGroupAlignment>
      */
     public function getRaceGroupAlignments() {
         return $this->hasMany(RaceGroupAlignment::class, ['alignment_id' => 'id']);
@@ -95,7 +94,7 @@ class Alignment extends \yii\db\ActiveRecord
     /**
      * Gets query for [[RaceGroups]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<RaceGroup>
      */
     public function getRaceGroups() {
         return $this->hasMany(RaceGroup::class, ['id' => 'race_group_id'])->viaTable('race_group_alignment', ['alignment_id' => 'id']);
@@ -104,10 +103,9 @@ class Alignment extends \yii\db\ActiveRecord
     /**
      * Gets query for [[WizardAnswers]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<WizardAnswer>
      */
     public function getWizardAnswers() {
         return $this->hasMany(WizardAnswer::class, ['alignment_id' => 'id']);
     }
-
 }

@@ -2,18 +2,20 @@
 
 namespace common\models;
 
+use common\models\User;
 use Yii;
 use yii\base\Model;
 
 /**
  * Login form
  */
-class LoginForm extends Model {
+class LoginForm extends Model
+{
 
-    public $username;
-    public $password;
-    public $rememberMe = true;
-    private $_user;
+    public string $username;
+    public string $password;
+    public bool $rememberMe = true;
+    private User $_user;
 
     /**
      * {@inheritdoc}
@@ -34,9 +36,10 @@ class LoginForm extends Model {
      * This method serves as the inline validation for password.
      *
      * @param string $attribute the attribute currently being validated
-     * @param array $params the additional name-value pairs given in the rule
+     * @param array<string, mixed> $params the additional name-value pairs given in the rule
+     * @return void
      */
-    public function validatePassword($attribute, $params) {
+    public function validatePassword(string $attribute, array $params): void {
         if (!$this->hasErrors()) {
             $user = $this->getUser();
             if (!$user || !$user->validatePassword($this->password)) {
@@ -50,7 +53,7 @@ class LoginForm extends Model {
      *
      * @return bool whether the user is logged in successfully
      */
-    public function login() {
+    public function login(): bool {
         if ($this->validate()) {
             return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600 * 24 * 30 : 0);
         }
@@ -63,8 +66,8 @@ class LoginForm extends Model {
      *
      * @return User|null
      */
-    protected function getUser() {
-        if ($this->_user === null) {
+    protected function getUser(): ?User {
+        if ($this->_user->isNewRecord) {
             $this->_user = User::findByUsername($this->username);
         }
 

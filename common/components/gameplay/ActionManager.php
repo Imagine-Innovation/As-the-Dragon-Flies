@@ -28,6 +28,11 @@ class ActionManager extends BaseManager
     private ?int $nextMissionId = null;
     private int $hpLoss = 0;
 
+    /**
+     *
+     * @param array<string, mixed> $config
+     * @throws \Exception
+     */
     public function __construct($config = []) {
         // Call the parent's constructor
         parent::__construct($config);
@@ -45,6 +50,10 @@ class ActionManager extends BaseManager
         $this->player ??= $this->questProgress->currentPlayer;
     }
 
+    /**
+     *
+     * @return int
+     */
     private function getModifier(): int {
         Yii::debug("*** debug *** getModifier - action={$this->action->name}, player={$this->player->name}");
         $skillIds = ActionTypeSkill::find()
@@ -64,6 +73,11 @@ class ActionManager extends BaseManager
         return $modifier ?? 0;
     }
 
+    /**
+     *
+     * @param int $diceRoll
+     * @return AppStatus
+     */
     private function determineActionStatus(int $diceRoll): AppStatus {
         Yii::debug("*** debug *** determineActionStatus - action={$this->action->name}, diceRoll={$diceRoll}");
         $dc = $this->action->dc;
@@ -80,6 +94,12 @@ class ActionManager extends BaseManager
         return AppStatus::FAILURE;
     }
 
+    /**
+     *
+     * @param AppStatus $status
+     * @param bool|null $canReplay
+     * @return void
+     */
     private function endCurrentAction(AppStatus $status, ?bool $canReplay = true): void {
         Yii::debug("*** debug *** endCurrentAction - action={$this->action->name}, status={$status->getLabel()}");
 
@@ -89,6 +109,11 @@ class ActionManager extends BaseManager
         );
     }
 
+    /**
+     *
+     * @param AppStatus $status
+     * @return QuestAction[]
+     */
     private function unlockNextActions(AppStatus $status): array {
         Yii::debug("*** debug *** unlockNextActions - action={$this->action->name}, status={$status->getLabel()}");
         $triggeredActions = $this->action->triggers;
@@ -108,6 +133,11 @@ class ActionManager extends BaseManager
         return $unlockedQuestActions;
     }
 
+    /**
+     *
+     * @param AppStatus $status
+     * @return Outcome[]
+     */
     private function getOutcomes(AppStatus $status): array {
         Yii::debug("*** debug *** getOutcomes - status={$status->getLabel()}");
         $outcomes = Outcome::findAll(['action_id' => $this->action->id]);
@@ -131,6 +161,11 @@ class ActionManager extends BaseManager
         return $selectedOutcomes;
     }
 
+    /**
+     *
+     * @param Outcome[] $outcomes
+     * @return bool
+     */
     private function canReplay(array $outcomes): bool {
         Yii::debug("*** debug *** canReplay - outcomes=" . count($outcomes));
 
@@ -149,6 +184,14 @@ class ActionManager extends BaseManager
         return $canReplay;
     }
 
+    /**
+     *
+     * @param AppStatus $status
+     * @param Outcome[] $outcomes
+     * @param string $diceRollLabel
+     * @param bool $canReplay
+     * @return array<string, mixed>
+     */
     private function returnOutcomeEvaluation(AppStatus &$status, array $outcomes, string $diceRollLabel, bool $canReplay): array {
         $missionId = $this->questProgress->mission_id;
         return [
@@ -165,6 +208,11 @@ class ActionManager extends BaseManager
         ];
     }
 
+    /**
+     *
+     * @return array<string, mixed>
+     * @throws \Exception
+     */
     public function evaluateActionOutcome(): array {
         Yii::debug("*** debug *** evaluateActionOutcome");
         if (!$this->action) {
@@ -191,6 +239,12 @@ class ActionManager extends BaseManager
         return $this->returnOutcomeEvaluation($status, $outcomes, "Rolling {$diceToRoll} gave {$diceRoll}", $canReplay);
     }
 
+    /**
+     *
+     * @param ActionFlow $prerequisite
+     * @param int $questProgressId
+     * @return bool
+     */
     private function isActionPrerequisiteMet(ActionFlow &$prerequisite, int $questProgressId): bool {
         Yii::debug("*** debug *** isActionPrerequisiteMet - prequisite={$prerequisite->previousAction->name}, questProgressId={$questProgressId}");
         $questAction = QuestAction::findOne([
@@ -212,6 +266,12 @@ class ActionManager extends BaseManager
         return false;
     }
 
+    /**
+     *
+     * @param Action $action
+     * @param int $questProgressId
+     * @return bool
+     */
     private function isActionEligible(Action &$action, int $questProgressId): bool {
         Yii::debug("*** debug *** isActionEligible - action={$action->name}, questProgressId={$questProgressId}");
         foreach ($action->prerequisites as $prerequisite) {
@@ -225,6 +285,12 @@ class ActionManager extends BaseManager
         return true;
     }
 
+    /**
+     *
+     * @param int $actionId
+     * @param int $questProgressId
+     * @return QuestAction
+     */
     private function addOneQuestAction(int $actionId, int $questProgressId): QuestAction {
         Yii::debug("*** debug *** addQuestAction - actionId={$actionId}, questProgressId={$questProgressId}");
 
@@ -249,7 +315,12 @@ class ActionManager extends BaseManager
         return $questAction;
     }
 
-    public function addQuestActions(int $missionId) {
+    /**
+     *
+     * @param int $missionId
+     * @return void
+     */
+    public function addQuestActions(int $missionId): void {
         $actions = Action::findAll(['mission_id' => $missionId]);
 
         foreach ($actions as $action) {

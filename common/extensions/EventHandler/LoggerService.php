@@ -9,11 +9,23 @@ class LoggerService
     private bool $debug;
     private int $nestedLevel = 0;
 
+    /**
+     *
+     * @param string $logFilePath
+     * @param bool $debug
+     */
     public function __construct(string $logFilePath, bool $debug = true) {
         $this->logFilePath = $logFilePath;
         $this->debug = $debug;
     }
 
+    /**
+     *
+     * @param string $message
+     * @param mixed $dump
+     * @param string $level
+     * @return void
+     */
     public function log(string $message, mixed $dump = null, string $level = 'info'): void {
         if (!$this->debug) {
             return;
@@ -43,22 +55,34 @@ class LoggerService
         fclose($myfile);
     }
 
+    /**
+     *
+     * @param string $message
+     * @param mixed $dump
+     * @param string $level
+     * @return void
+     */
     public function logStart(string $message, mixed $dump = null, string $level = 'info'): void {
         $this->nestedLevel++;
         $this->log("----------> start {$message}", $dump, $level);
     }
 
+    /**
+     *
+     * @param string $message
+     * @param mixed $dump
+     * @param string $level
+     * @return void
+     */
     public function logEnd(string $message, mixed $dump = null, string $level = 'info'): void {
         $this->log("----------< end {$message}\n", $dump, $level);
         $this->nestedLevel--;
     }
 
-    // logQuestSession has been moved to QuestSessionManager.php
-    // Ensure QuestSession model is imported there if direct model calls are made.
-
     /**
      * Checks if debugging is enabled.
      * Helper method for QuestSessionManager or other services that depend on this logger's debug status.
+     *
      * @return bool
      */
     public function isDebugEnabled(): bool {

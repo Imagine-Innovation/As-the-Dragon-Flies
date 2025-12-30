@@ -23,7 +23,6 @@ use Yii;
 class ClassFeature extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -68,7 +67,7 @@ class ClassFeature extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Class]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<CharacterClass>
      */
     public function getClass() {
         return $this->hasOne(CharacterClass::class, ['id' => 'class_id']);
@@ -77,7 +76,7 @@ class ClassFeature extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Feature]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Feature>
      */
     public function getFeature() {
         return $this->hasOne(Feature::class, ['id' => 'feature_id']);
@@ -86,10 +85,9 @@ class ClassFeature extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Level]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Level>
      */
     public function getLevel() {
         return $this->hasOne(Level::class, ['id' => 'level_id']);
     }
-
 }

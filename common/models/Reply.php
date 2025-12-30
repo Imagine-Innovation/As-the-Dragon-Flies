@@ -8,7 +8,7 @@ use Yii;
  * This is the model class for table "reply".
  *
  * @property int $id Primary key
- * @property int $dialog_id Foreign key to “dialog” table
+ * @property int|null $dialog_id Optional foreign key to “dialog” table
  * @property int|null $next_dialog_id Optional foreign key to “dialog” table
  * @property string|null $text Question
  *
@@ -18,7 +18,6 @@ use Yii;
  */
 class Reply extends \yii\db\ActiveRecord
 {
-
 
     /**
      * {@inheritdoc}
@@ -32,8 +31,7 @@ class Reply extends \yii\db\ActiveRecord
      */
     public function rules() {
         return [
-            [['next_dialog_id', 'text'], 'default', 'value' => null],
-            [['dialog_id'], 'required'],
+            [['dialog_id', 'next_dialog_id', 'text'], 'default', 'value' => null],
             [['dialog_id', 'next_dialog_id'], 'integer'],
             [['text'], 'string', 'max' => 255],
             [['dialog_id'], 'exist', 'skipOnError' => true, 'targetClass' => Dialog::class, 'targetAttribute' => ['dialog_id' => 'id']],
@@ -47,7 +45,7 @@ class Reply extends \yii\db\ActiveRecord
     public function attributeLabels() {
         return [
             'id' => 'Primary key',
-            'dialog_id' => 'Foreign key to “dialog” table',
+            'dialog_id' => 'Optional foreign key to “dialog” table',
             'next_dialog_id' => 'Optional foreign key to “dialog” table',
             'text' => 'Question',
         ];
@@ -56,7 +54,7 @@ class Reply extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Actions]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Action>
      */
     public function getActions() {
         return $this->hasMany(Action::class, ['reply_id' => 'id']);
@@ -65,7 +63,7 @@ class Reply extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Dialog]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Dialog>
      */
     public function getDialog() {
         return $this->hasOne(Dialog::class, ['id' => 'dialog_id']);
@@ -74,10 +72,9 @@ class Reply extends \yii\db\ActiveRecord
     /**
      * Gets query for [[NextDialog]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Dialog>
      */
     public function getNextDialog() {
         return $this->hasOne(Dialog::class, ['id' => 'next_dialog_id']);
     }
-
 }

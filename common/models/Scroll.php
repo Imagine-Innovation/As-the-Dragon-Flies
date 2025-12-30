@@ -17,7 +17,6 @@ use Yii;
 class Scroll extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -53,7 +52,7 @@ class Scroll extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Item]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Item>
      */
     public function getItem() {
         return $this->hasOne(Item::class, ['id' => 'item_id']);
@@ -62,10 +61,9 @@ class Scroll extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Language]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Language>
      */
     public function getLanguage() {
         return $this->hasOne(Language::class, ['id' => 'language_id']);
     }
-
 }

@@ -54,7 +54,7 @@ class CharacterTrait extends \yii\db\ActiveRecord
     /**
      * Gets query for [[BackgroundTraits]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<BackgroundTrait>
      */
     public function getBackgroundTraits() {
         return $this->hasMany(BackgroundTrait::class, ['trait_id' => 'id']);
@@ -63,7 +63,7 @@ class CharacterTrait extends \yii\db\ActiveRecord
     /**
      * Gets query for [[PlayerTraits]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<PlayerTrait>
      */
     public function getPlayerTraits() {
         return $this->hasMany(PlayerTrait::class, ['trait_id' => 'id']);
@@ -72,7 +72,7 @@ class CharacterTrait extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Players]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Player>
      */
     public function getPlayers() {
         return $this->hasMany(Player::class, ['id' => 'player_id'])->viaTable('player_trait', ['trait_id' => 'id']);

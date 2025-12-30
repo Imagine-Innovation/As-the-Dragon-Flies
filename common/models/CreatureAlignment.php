@@ -17,7 +17,6 @@ use Yii;
 class CreatureAlignment extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -53,7 +52,7 @@ class CreatureAlignment extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Alignment]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Alignment>
      */
     public function getAlignment() {
         return $this->hasOne(Alignment::class, ['id' => 'alignment_id']);
@@ -62,10 +61,9 @@ class CreatureAlignment extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Creature]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Creature>
      */
     public function getCreature() {
         return $this->hasOne(Creature::class, ['id' => 'creature_id']);
     }
-
 }

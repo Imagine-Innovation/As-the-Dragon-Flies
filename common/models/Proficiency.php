@@ -17,7 +17,6 @@ use Yii;
 class Proficiency extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -54,10 +53,9 @@ class Proficiency extends \yii\db\ActiveRecord
     /**
      * Gets query for [[ClassProficiencies]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<ClassProficiency>
      */
     public function getClassProficiencies() {
         return $this->hasMany(ClassProficiency::class, ['proficiency_id' => 'id']);
     }
-
 }

@@ -54,7 +54,7 @@ class ActionFlow extends \yii\db\ActiveRecord
     /**
      * Gets query for [[NextAction]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Action>
      */
     public function getNextAction() {
         return $this->hasOne(Action::class, ['id' => 'next_action_id']);
@@ -63,7 +63,7 @@ class ActionFlow extends \yii\db\ActiveRecord
     /**
      * Gets query for [[PreviousAction]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Action>
      */
     public function getPreviousAction() {
         return $this->hasOne(Action::class, ['id' => 'previous_action_id']);

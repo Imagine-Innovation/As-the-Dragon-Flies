@@ -27,7 +27,6 @@ use Yii;
 class Outcome extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -75,7 +74,7 @@ class Outcome extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Action]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Action>
      */
     public function getAction() {
         return $this->hasOne(Action::class, ['id' => 'action_id']);
@@ -84,7 +83,7 @@ class Outcome extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Dialogs]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Dialog>
      */
     public function getDialogs() {
         return $this->hasMany(Dialog::class, ['outcome_id' => 'id']);
@@ -93,7 +92,7 @@ class Outcome extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Item]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Item>
      */
     public function getItem() {
         return $this->hasOne(Item::class, ['id' => 'item_id']);
@@ -102,10 +101,9 @@ class Outcome extends \yii\db\ActiveRecord
     /**
      * Gets query for [[NextMission]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Mission>
      */
     public function getNextMission() {
         return $this->hasOne(Mission::class, ['id' => 'next_mission_id']);
     }
-
 }

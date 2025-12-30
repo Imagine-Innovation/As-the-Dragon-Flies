@@ -11,6 +11,10 @@ class QuestSessionManager
 
     private LoggerService $logger;
 
+    /**
+     *
+     * @param LoggerService $logger
+     */
     public function __construct(LoggerService $logger) {
         $this->logger = $logger;
     }
@@ -18,8 +22,9 @@ class QuestSessionManager
     /**
      * Register a player for a quest.
      * Original logic from EventHandler::registerSessionForQuest
+     *
      * @param string $sessionId
-     * @param array $data Should contain 'questId'
+     * @param array<string, mixed> $data Should contain 'questId'
      * @return bool True if registration was successful, false otherwise
      */
     public function registerSessionForQuest(string $sessionId, array $data): bool {
@@ -51,14 +56,15 @@ class QuestSessionManager
     /**
      * Register a player with a client ID, linking them to a session.
      * Original logic from EventHandler::registerSession
+     *
      * @param string|null $sessionId
      * @param int|null $playerId
      * @param int|null $questId
      * @param string|null $clientId
-     * @param mixed|null $contextData For logging purposes, original $data from message
+     * @param array<string, mixed>|null $contextData For logging purposes, original $data from message
      * @return bool
      */
-    public function registerSession(?string $sessionId, ?int $playerId, ?int $questId, ?string $clientId, mixed $contextData = null): bool {
+    public function registerSession(?string $sessionId, ?int $playerId, ?int $questId, ?string $clientId, array $contextData = null): bool {
         $this->logger->logStart("QuestSessionManager: registerSession (sessionId=[{$sessionId}], playerId=[{$playerId}], questId=[{$questId}], clientId=[{$clientId}])", $contextData);
 
         if ($sessionId === null) {
@@ -67,11 +73,7 @@ class QuestSessionManager
             return false;
         }
 
-        // Note: In original EventHandler, $data was passed to newSession/updateSession.
-        // Here, we pass individual parameters. If $data had other relevant fields for these methods,
-        // this needs adjustment or those methods need to be updated to accept $contextData.
-        // For now, assuming $playerId, $questId, $clientId are the key fields from $data for session management.
-
+        // Assuming $playerId, $questId, $clientId are the key fields from $data for session management.
         $session = QuestSession::findOne(['id' => $sessionId]);
 
         if ($session) {
@@ -87,6 +89,7 @@ class QuestSessionManager
     /**
      * Create a new session.
      * Original logic from EventHandler::newSession
+     *
      * @param string $sessionId
      * @param int|null $questId
      * @param int|null $playerId
@@ -123,8 +126,56 @@ class QuestSessionManager
     }
 
     /**
+     *
+     * @param QuestSession $session
+     * @param int|null $playerId
+     * @return bool
+     */
+    private function updatedSessionPlayerId(QuestSession &$session, ?int $playerId): bool {
+        if ($playerId !== null && $session->player_id != $playerId) {
+            $this->logger->log("QuestSessionManager: Updating playerId from [{$session->player_id}] to [{$playerId}] for session [{$session->id}]");
+            $session->player_id = $playerId;
+            $session->last_ts = 0; // Reset timestamp on player change
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     *
+     * @param QuestSession $session
+     * @param int|null $questId
+     * @return bool
+     */
+    private function updatedSessionQuestId(QuestSession &$session, ?int $questId): bool {
+        if ($questId !== null && $session->quest_id != $questId) {
+            $this->logger->log("QuestSessionManager: Updating questId from [{$session->quest_id}] to [{$questId}] for session [{$session->id}]");
+            $session->quest_id = $questId;
+            $session->last_ts = 0; // Reset timestamp on quest change
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     *
+     * @param QuestSession $session
+     * @param string|null $clientId
+     * @return bool
+     */
+    private function updatedSessionClientId(QuestSession &$session, ?string $clientId): bool {
+        if ($clientId !== null && $session->client_id != $clientId) {
+            $this->logger->log("QuestSessionManager: Updating clientId from [{$session->client_id}] to [{$clientId}] for session [{$session->id}]");
+            $session->client_id = $clientId;
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Update an existing session.
      * Original logic from EventHandler::updateSession
+     *
      * @param QuestSession $session
      * @param int|null $questId
      * @param int|null $playerId
@@ -133,37 +184,11 @@ class QuestSessionManager
      */
     private function updateSession(QuestSession $session, ?int $questId, ?int $playerId, ?string $clientId): bool {
         $this->logger->logStart("QuestSessionManager: updateSession session=[{$session->id}], newQuestId=[{$questId}], newPlayerId=[{$playerId}], newClientId=[{$clientId}]");
-        $needUpdate = false;
+        $needUpdate = $this->updatedSessionPlayerId($session, $playerId) ||
+                $this->updatedSessionQuestId($session, $questId) ||
+                $this->updatedSessionClientId($session, $clientId);
 
-        if ($playerId !== null && $session->player_id != $playerId) {
-            $this->logger->log("QuestSessionManager: Updating playerId from [{$session->player_id}] to [{$playerId}] for session [{$session->id}]");
-            $session->player_id = $playerId;
-            $session->last_ts = 0; // Reset timestamp on player change
-            $needUpdate = true;
-        }
-
-        if ($questId !== null && $session->quest_id != $questId) {
-            $this->logger->log("QuestSessionManager: Updating questId from [{$session->quest_id}] to [{$questId}] for session [{$session->id}]");
-            $session->quest_id = $questId;
-            $session->last_ts = 0; // Reset timestamp on quest change
-            $needUpdate = true;
-        }
-
-        if ($clientId !== null && $session->client_id != $clientId) {
-            $this->logger->log("QuestSessionManager: Updating clientId from [{$session->client_id}] to [{$clientId}] for session [{$session->id}]");
-            $session->client_id = $clientId;
-            $needUpdate = true;
-            /*
-              } elseif ($clientId === null && $session->client_id !== null) { // Explicitly clearing clientId
-              $this->logger->log("QuestSessionManager: Clearing clientId from [{$session->client_id}] for session [{$session->id}]");
-              $session->client_id = null;
-              $needUpdate = true;
-             *
-             */
-        }
-
-
-        if (!$needUpdate) {
+        if ($needUpdate === false) {
             $this->logger->log("QuestSessionManager: No updates needed for QuestSession: id=[{$session->id}]");
             return true; // Assume success if no update is needed
         }
@@ -188,16 +213,17 @@ class QuestSessionManager
 
     /**
      * Logs the state of QuestSessions.
-     * Moved from LoggerService, uses injected LoggerService.
+     *
      * @param string|null $message A contextual message.
-     * @param array|null $sessions An array of QuestSession models. If null, fetches all.
+     * @param QuestSession[]|null $sessions An array of QuestSession models. If null, fetches all.
+     * @return void
      */
     public function logQuestSession(?string $message = null, ?array $sessions = null): void {
         // This method now uses $this->logger
-        if (!$this->logger->isDebugEnabled()) { // Assuming LoggerService has a method to check debug status
+        if (!$this->logger->isDebugEnabled()) {
             return;
         }
-        if (!$sessions) {
+        if ($sessions === null) {
             $sessions = QuestSession::find()->all();
         }
 
@@ -205,20 +231,18 @@ class QuestSessionManager
             $this->logger->log($message);
         }
         foreach ($sessions as $session) {
-            if (is_object($session) && method_exists($session, 'getAttributes')) {
-                $attributes = $session->getAttributes(['id', 'quest_id', 'player_id', 'client_id', 'last_ts']);
-                $log = "Session Details: id=[{$attributes['id']}], quest_id=[{$attributes['quest_id']}], player_id=[{$attributes['player_id']}], client_id=[{$attributes['client_id']}], last_ts=[{$attributes['last_ts']}]";
-                $this->logger->log($log);
-            } else {
-                $this->logger->log("Invalid session object provided to logQuestSession.");
-            }
+            $attributes = $session->getAttributes(['id', 'quest_id', 'player_id', 'client_id', 'last_ts']);
+            $log = "Session Details: id=[{$attributes['id']}], quest_id=[{$attributes['quest_id']}], player_id=[{$attributes['player_id']}], client_id=[{$attributes['client_id']}], last_ts=[{$attributes['last_ts']}]";
+            $this->logger->log($log);
         }
     }
 
     /**
      * Clears the client_id for any QuestSession associated with the given clientId.
      * This is new method based on logic from EventHandler::removeClient.
+     *
      * @param string $clientId The client ID to clear.
+     * @return void
      */
     public function clearClientId(string $clientId): void {
         $this->logger->logStart("QuestSessionManager: clearClientId for clientId=[{$clientId}]");

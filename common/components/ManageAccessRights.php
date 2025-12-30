@@ -35,7 +35,7 @@ class ManageAccessRights extends Component
      * @param User $user The user to get authorizations for
      * @param bool $hasPlayerSelected Whether the user has selected a player
      * @param bool $inQuest Whether the selected player is in a quest
-     * @return ActiveQuery Query containing all authorized access right IDs
+     * @return ActiveQuery<AccessRight> Query containing all authorized access right IDs
      */
     public static function getAuthorizedIds(User $user, bool $hasPlayerSelected = false, bool $inQuest = false): ActiveQuery {
 
@@ -130,7 +130,11 @@ class ManageAccessRights extends Component
      * Checks that the requested action is authorised within the controller
      *
      * @param \yii\web\Controller $controller
-     * @return array
+     * @return array{
+     *     denied: bool,
+     *     severity: string,
+     *     reason: string
+     * }
      */
     private static function checkAccess(Controller $controller): array {
 
@@ -177,7 +181,11 @@ class ManageAccessRights extends Component
      * Check player-specific access conditions
      *
      * @param \common\models\AccessRight $accessRight
-     * @return array
+     * @return array{
+     *     denied: bool,
+     *     severity: string,
+     *     reason: string
+     * }
      */
     private static function checkPlayerAccess(AccessRight $accessRight): array {
         // Deny if player selection is required but none selected
@@ -233,7 +241,11 @@ class ManageAccessRights extends Component
      * @param bool $denied
      * @param string $severity
      * @param string $reason
-     * @return array
+     * @return array{
+     *     denied: bool,
+     *     severity: string,
+     *     reason: string
+     * }
      * @throws \Exception
      */
     private static function logAccess(int|null $accessRightId, bool $denied, string $severity, string $reason): array {
@@ -292,7 +304,7 @@ class ManageAccessRights extends Component
      * 3. Checks if the action requires administrative privileges and if the user is an admin.
      * 4. Checks if the action requires ownership and if the user is the owner.
      *
-     * @param array $action An associative array containing the action details and requirements.
+     * @param array<string, mixed> $action An associative array containing the action details and requirements.
      * @param string $modelName The name of the model to check against the action's allowed models.
      * @param bool $isOwner Indicates whether the user is the owner of the resource.
      * @param string $mode The mode in which the action is being performed: table or view.
@@ -336,7 +348,7 @@ class ManageAccessRights extends Component
      * @param string $route
      * @param string $action
      * @param int $status
-     * @return array type
+     * @return list<array<string, string>>
      */
     public static function selectActionButtons(string $route, string $action = 'index', int $status = AppStatus::ACTIVE->value): array {
 

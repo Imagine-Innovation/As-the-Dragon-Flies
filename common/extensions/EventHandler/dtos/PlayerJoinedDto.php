@@ -8,8 +8,16 @@ class PlayerJoinedDto implements BroadcastMessageInterface
 {
 
     private string $type = 'player-joined';
+
+    /** @var array<string, mixed> $payload */
     private array $payload;
 
+    /**
+     *
+     * @param string $playerName
+     * @param string $sessionId
+     * @param string $questName
+     */
     public function __construct(string $playerName, string $sessionId, string $questName) {
         $this->payload = [
             'playerName' => $playerName,
@@ -19,14 +27,26 @@ class PlayerJoinedDto implements BroadcastMessageInterface
         ];
     }
 
+    /**
+     *
+     * @return string
+     */
     public function getType(): string {
         return $this->type;
     }
 
+    /**
+     *
+     * @return array<string, mixed>
+     */
     public function getPayload(): array {
         return $this->payload;
     }
 
+    /**
+     *
+     * @return string
+     */
     public function toJson(): string {
         return json_encode(['type' => $this->type, 'payload' => $this->payload]);
     }

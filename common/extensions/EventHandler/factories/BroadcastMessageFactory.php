@@ -23,42 +23,107 @@ class BroadcastMessageFactory
 
     private ?LoggerService $loggerService = null;
 
+    /**
+     *
+     * @param string $message
+     * @param string $sender
+     * @param string|null $recipient
+     * @return NewMessageDto
+     */
     public function createNewMessage(string $message, string $sender, ?string $recipient = null): NewMessageDto {
         return new NewMessageDto($message, $sender, $recipient);
     }
 
+    /**
+     *
+     * @param string $playerName
+     * @param string $sessionId
+     * @param string $questName
+     * @return PlayerJoinedDto
+     */
     public function createPlayerJoinedMessage(string $playerName, string $sessionId, string $questName): PlayerJoinedDto {
         return new PlayerJoinedDto($playerName, $sessionId, $questName);
     }
 
+    /**
+     *
+     * @param string $playerName
+     * @param string $sessionId
+     * @param string $questName
+     * @param string $reason
+     * @return PlayerQuitDto
+     */
     public function createPlayerQuitMessage(string $playerName, string $sessionId, string $questName, string $reason): PlayerQuitDto {
         return new PlayerQuitDto($playerName, $sessionId, $questName, $reason);
     }
 
+    /**
+     *
+     * @param string $sessionId
+     * @param int $questId
+     * @param string $questName
+     * @return QuestStartedDto
+     */
     public function createQuestStartedMessage(string $sessionId, int $questId, string $questName): QuestStartedDto {
         return new QuestStartedDto($sessionId, $questId, $questName);
     }
 
+    /**
+     *
+     * @param string $playerName
+     * @param string $action
+     * @param array<string, mixed> $detail
+     * @return GameActionDto
+     */
     public function createGameActionMessage(string $playerName, string $action, array $detail): GameActionDto {
         return new GameActionDto($playerName, $action, $detail);
     }
 
+    /**
+     *
+     * @param array<string, mixed> $detail
+     * @return NextTurnDto
+     */
     public function createNextTurnMessage(array $detail): NextTurnDto {
         return new NextTurnDto($detail);
     }
 
+    /**
+     *
+     * @param array<string, mixed> $detail
+     * @return NextMissionDto
+     */
     public function createNextMissionMessage(array $detail): NextMissionDto {
         return new NextMissionDto($detail);
     }
 
+    /**
+     *
+     * @param array<string, mixed> $detail
+     * @return GameOverDto
+     */
     public function createGameOverMessage(array $detail): GameOverDto {
         return new GameOverDto($detail);
     }
 
+    /**
+     *
+     * @param string $message
+     * @param string $level
+     * @param array<string, mixed>|null $details
+     * @return NotificationDto
+     */
     public function createNotificationMessage(string $message, string $level = 'info', ?array $details = null): NotificationDto {
         return new NotificationDto($message, $level, $details);
     }
 
+    /**
+     *
+     * @param string $errorMessage
+     * @param int|null $errorCode
+     * @param array<string, mixed>|null $details
+     * @return ErrorDto
+     */
     public function createErrorMessage(string $errorMessage, ?int $errorCode = null, ?array $details = null): ErrorDto {
         return new ErrorDto($errorMessage, $errorCode, $details);
     }
@@ -66,8 +131,8 @@ class BroadcastMessageFactory
     /**
      * Validates if all required keys are present in the payload.
      *
-     * @param array $payload
-     * @param array $requiredKeys
+     * @param array<string, mixed> $payload
+     * @param array<string, mixed> $requiredKeys
      * @return bool
      */
     private function validatePayload(array $payload, array $requiredKeys): bool {
@@ -84,9 +149,9 @@ class BroadcastMessageFactory
      *
      * @param string $dtoClass
      * @param string $type
-     * @param array $payload
-     * @param array $requiredKeys
-     * @param array $optionalKeys
+     * @param array<string, mixed> $payload
+     * @param array<string> $requiredKeys
+     * @param array<string> $optionalKeys
      * @return BroadcastMessageInterface|null
      */
     private function newDto(string $dtoClass, string $type, array $payload, array $requiredKeys, array $optionalKeys = []): ?BroadcastMessageInterface {
@@ -105,16 +170,21 @@ class BroadcastMessageFactory
         return null;
     }
 
-    private function handleUnknownType(string $type) {
+    /**
+     *
+     * @param string $type
+     * @return void
+     */
+    private function handleUnknownType(string $type): void {
         $this->loggerService->log("BroadcastMessageFactory - createMessage - unhandled type=[{$type}]", null, 'warning');
-        return null;
+        return;
     }
 
     /**
      * Generic factory method if type and payload are already known.
      *
      * @param string $type
-     * @param array $payload
+     * @param array<string, mixed> $payload
      * @return BroadcastMessageInterface|null
      */
     public function createMessage(string $type, array $payload): ?BroadcastMessageInterface {

@@ -37,6 +37,10 @@ enum AppStatus: int
     case NOT_SUCCEEDED = 5; // Binary: 101=5 (4 | 1)
     case ANY_OUTCOME = 7;   // Binary: 111=7 (4 | 2 | 1)
 
+    /**
+     *
+     * @return string
+     */
     public function getLabel(): string {
         return match ($this) {
             self::DELETED => 'Deleted',
@@ -71,6 +75,13 @@ enum AppStatus: int
         };
     }
 
+    /**
+     *
+     * @return array{
+     *     icon: string,
+     *     tooltip: string
+     * }
+     */
     public function getIcon(): array {
         return match ($this) {
             self::DELETED => ['icon' => 'bi-x-square', 'tooltip' => 'Deleted, only adminstrators can restore'],
@@ -105,6 +116,10 @@ enum AppStatus: int
         };
     }
 
+    /**
+     *
+     * @return array<int>
+     */
     public function getActionStatusFilter(): array {
         return match ($this) {
             self::SUCCESS => [self::SUCCESS->value],
@@ -117,6 +132,10 @@ enum AppStatus: int
         };
     }
 
+    /**
+     *
+     * @return string
+     */
     public function getActionAdjective(): string {
         return match ($this) {
             self::SUCCESS => 'succeeded',
@@ -126,15 +145,27 @@ enum AppStatus: int
         };
     }
 
-    // Helper to get an array of values for a specific entity type for validation rules
+    /**
+     * Helper to get an array of values for a specific entity type for validation rules
+     *
+     * @return array<int>
+     */
     public static function getValuesForUser(): array {
         return [self::ACTIVE->value, self::INACTIVE->value, self::DELETED->value];
     }
 
+    /**
+     *
+     * @return array<int>
+     */
     public static function getValuesForPlayer(): array {
         return [self::ACTIVE->value, self::INACTIVE->value, self::DELETED->value];
     }
 
+    /**
+     *
+     * @return array<int>
+     */
     public static function getValuesForQuest(): array {
         return [
             self::WAITING->value,
@@ -147,6 +178,10 @@ enum AppStatus: int
         ];
     }
 
+    /**
+     *
+     * @return array<int>
+     */
     public static function getValuesForStory(): array {
         return [
             self::DRAFT->value,
@@ -155,6 +190,10 @@ enum AppStatus: int
         ];
     }
 
+    /**
+     *
+     * @return array<int>
+     */
     public static function getValuesForQuestPlayer(): array {
         return [
             self::ONLINE->value,
@@ -163,6 +202,10 @@ enum AppStatus: int
         ];
     }
 
+    /**
+     *
+     * @return array<int>
+     */
     public static function getValuesForQuestProgress(): array {
         return [
             self::PENDING->value,
@@ -171,6 +214,10 @@ enum AppStatus: int
         ];
     }
 
+    /**
+     *
+     * @return array<int>
+     */
     public static function getValuesForAction(): array {
         return [
             self::SUCCESS->value,
@@ -182,6 +229,10 @@ enum AppStatus: int
         ];
     }
 
+    /**
+     *
+     * @return array<int, string>
+     */
     public static function getActionStatus(): array {
         return [
             self::SUCCESS->value => self::SUCCESS->getLabel(),
@@ -193,6 +244,12 @@ enum AppStatus: int
         ];
     }
 
+    /**
+     *
+     * @param string $entityName
+     * @param int $statusValue
+     * @return bool
+     */
     public static function isValidForEntity(string $entityName, int $statusValue): bool {
         Yii::debug("*** Debug *** - isValidForEntity entityName={$entityName}, statusValue={$statusValue}");
         $folders = explode("\\", $entityName);

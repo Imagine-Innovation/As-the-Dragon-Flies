@@ -50,7 +50,7 @@ class BackgroundSkill extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Background]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Background>
      */
     public function getBackground() {
         return $this->hasOne(Background::class, ['id' => 'background_id']);
@@ -59,7 +59,7 @@ class BackgroundSkill extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Skill]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Skill>
      */
     public function getSkill() {
         return $this->hasOne(Skill::class, ['id' => 'skill_id']);

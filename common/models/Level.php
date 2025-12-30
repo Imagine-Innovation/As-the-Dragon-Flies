@@ -20,7 +20,6 @@ use Yii;
 class Level extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -57,7 +56,7 @@ class Level extends \yii\db\ActiveRecord
     /**
      * Gets query for [[ClassFeatures]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<ClassFeature>
      */
     public function getClassFeatures() {
         return $this->hasMany(ClassFeature::class, ['level_id' => 'id']);
@@ -66,7 +65,7 @@ class Level extends \yii\db\ActiveRecord
     /**
      * Gets query for [[ClassProficiencies]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<ClassProficiency>
      */
     public function getClassProficiencies() {
         return $this->hasMany(ClassProficiency::class, ['level_id' => 'id']);
@@ -75,10 +74,9 @@ class Level extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Players]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Player>
      */
     public function getPlayers() {
         return $this->hasMany(Player::class, ['level_id' => 'id']);
     }
-
 }

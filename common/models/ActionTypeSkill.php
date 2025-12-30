@@ -16,7 +16,6 @@ use Yii;
 class ActionTypeSkill extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -50,7 +49,7 @@ class ActionTypeSkill extends \yii\db\ActiveRecord
     /**
      * Gets query for [[ActionType]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<ActionType>
      */
     public function getActionType() {
         return $this->hasOne(ActionType::class, ['id' => 'action_type_id']);
@@ -59,10 +58,9 @@ class ActionTypeSkill extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Skill]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Skill>
      */
     public function getSkill() {
         return $this->hasOne(Skill::class, ['id' => 'skill_id']);
     }
-
 }

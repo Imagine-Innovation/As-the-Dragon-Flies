@@ -8,8 +8,14 @@ class GameOverDto implements BroadcastMessageInterface
 {
 
     private string $type = 'game-over';
+
+    /** @var array<string, mixed> $payload */
     private array $payload;
 
+    /**
+     *
+     * @param array<string, mixed> $detail
+     */
     public function __construct(array $detail) {
         $this->payload = [
             'detail' => $detail,
@@ -17,14 +23,26 @@ class GameOverDto implements BroadcastMessageInterface
         ];
     }
 
+    /**
+     *
+     * @return string
+     */
     public function getType(): string {
         return $this->type;
     }
 
+    /**
+     *
+     * @return array<string, mixed>
+     */
     public function getPayload(): array {
         return $this->payload;
     }
 
+    /**
+     *
+     * @return string
+     */
     public function toJson(): string {
         return json_encode(['type' => $this->type, 'payload' => $this->payload]);
     }

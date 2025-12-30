@@ -8,8 +8,16 @@ class QuestStartedDto implements BroadcastMessageInterface
 {
 
     public string $type = 'quest-started';
+
+    /** @var array<string, mixed> $payload */
     private array $payload;
 
+    /**
+     *
+     * @param string $sessionId
+     * @param int $questId
+     * @param string $questName
+     */
     public function __construct(string $sessionId, int $questId, string $questName) {
         $this->payload = [
             'sessionId' => $sessionId,
@@ -22,14 +30,26 @@ class QuestStartedDto implements BroadcastMessageInterface
         ];
     }
 
+    /**
+     *
+     * @return string
+     */
     public function getType(): string {
         return $this->type;
     }
 
+    /**
+     *
+     * @return array<string, mixed>
+     */
     public function getPayload(): array {
         return $this->payload;
     }
 
+    /**
+     *
+     * @return string
+     */
     public function toJson(): string {
         return json_encode(['type' => $this->type, 'payload' => $this->payload]);
     }

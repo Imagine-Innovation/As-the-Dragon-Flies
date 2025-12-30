@@ -16,7 +16,6 @@ use Yii;
 class DamageGroup extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -50,10 +49,9 @@ class DamageGroup extends \yii\db\ActiveRecord
     /**
      * Gets query for [[DamageTypes]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<DamageType>
      */
     public function getDamageTypes() {
         return $this->hasMany(DamageType::class, ['group_id' => 'id']);
     }
-
 }

@@ -22,7 +22,6 @@ use Yii;
 class Monster extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -66,7 +65,7 @@ class Monster extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Creature]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Creature>
      */
     public function getCreature() {
         return $this->hasOne(Creature::class, ['id' => 'creature_id']);
@@ -75,10 +74,9 @@ class Monster extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Mission]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Mission>
      */
     public function getMission() {
         return $this->hasOne(Mission::class, ['id' => 'mission_id']);
     }
-
 }

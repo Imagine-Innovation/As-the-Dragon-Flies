@@ -16,40 +16,62 @@ use Ratchet\ConnectionInterface;
 class WebSocketServerManager
 {
 
-    private array $clients = []; // Changed from static
-    // private MessageHandlerInterface $messageHandler; // Removed as property
-    private LoggerService $logger; // Property for LoggerService
-    private QuestSessionManager $questSessionManager; // Property for QuestSessionManager
+    /** @var array<int, ConnectionInterface> $clients */
+    private array $clients = [];
+    private LoggerService $logger;
+    private QuestSessionManager $questSessionManager;
     private LoopInterface $loop;
     private ?SocketServer $socket = null;
     private IoServer $IOServer; // @phpstan-ignore-line
 
-    // Constructor updated
+    /**
+     *
+     * @param LoggerService $logger
+     * @param LoopInterface $loop
+     * @param QuestSessionManager $questSessionManager
+     */
     public function __construct(
             LoggerService $logger,
             LoopInterface $loop,
             QuestSessionManager $questSessionManager
     ) {
-        // $this->messageHandler = $messageHandler; // Removed
         $this->logger = $logger;
         $this->loop = $loop;
         $this->questSessionManager = $questSessionManager;
     }
 
+    /**
+     *
+     * @param ConnectionInterface $conn
+     * @param string $clientId
+     * @return void
+     */
     public function addClient(ConnectionInterface $conn, string $clientId): void {
         $this->logger->log("Adding client: {$clientId}");
         $this->clients[$clientId] = $conn;
     }
 
+    /**
+     *
+     * @param string $clientId
+     * @return void
+     */
     public function removeClient(string $clientId): void {
         $this->logger->log("Removing client: {$clientId}");
         if (isset($this->clients[$clientId])) {
             unset($this->clients[$clientId]);
-            // $messageHandler->close($clientId); // This call is likely done by WebSocketHandler
         }
         $this->questSessionManager->clearClientId($clientId);
     }
 
+    /**
+     *
+     * @param MessageHandlerInterface $messageHandler
+     * @param string $host
+     * @param int $port
+     * @return void
+     * @throws \Throwable
+     */
     public function setup(MessageHandlerInterface $messageHandler, string $host, int $port): void {
         $webSocketHandler = new WebSocketHandler($messageHandler, $this->logger, $this);
         $wsServer = new WsServer($webSocketHandler);
@@ -76,15 +98,15 @@ class WebSocketServerManager
         $this->logger->log("WebSocketServerManager: WebSocket server setup complete.");
     }
 
+    /**
+     *
+     * @return void
+     */
     public function shutdown(): void {
         $this->logger->logStart("Shutting down WebSocket server..."); // Use LoggerService
         // Close all client connections
-        foreach ($this->clients as $clientId => $client) { // Use $this->clients
-            if ($client instanceof ConnectionInterface) { // Check if $client is a ConnectionInterface
-                $client->close();
-            }
-            // Optionally, inform the message handler about the closure if not already handled by removeClient
-            // $this->messageHandler->close($clientId);
+        foreach ($this->clients as $clientId => $client) {
+            $client->close();
         }
         $this->clients = []; // Use $this->clients
 
@@ -96,10 +118,19 @@ class WebSocketServerManager
         $this->logger->logEnd("WebSocket server shut down."); // Use LoggerService
     }
 
+    /**
+     *
+     * @param string $clientId
+     * @return ConnectionInterface|null
+     */
     public function getClient(string $clientId): ?ConnectionInterface {
         return $this->clients[$clientId] ?? null;
     }
 
+    /**
+     *
+     * @return array<int, ConnectionInterface>
+     */
     public function getAllClients(): array {
         return $this->clients;
     }

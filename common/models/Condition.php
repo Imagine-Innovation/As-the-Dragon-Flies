@@ -52,7 +52,7 @@ class Condition extends \yii\db\ActiveRecord
     /**
      * Gets query for [[CreatureImmunizations]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<CreatureImmunization>
      */
     public function getCreatureImmunizations() {
         return $this->hasMany(CreatureImmunization::class, ['condition_id' => 'id']);
@@ -61,7 +61,7 @@ class Condition extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Creatures]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Creature>
      */
     public function getCreatures() {
         return $this->hasMany(Creature::class, ['id' => 'creature_id'])->viaTable('creature_immunization', ['condition_id' => 'id']);
@@ -70,7 +70,7 @@ class Condition extends \yii\db\ActiveRecord
     /**
      * Gets query for [[QuestPlayerConditions]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<QuestPlayerCondition>
      */
     public function getQuestPlayerConditions() {
         return $this->hasMany(QuestPlayerCondition::class, ['condition_id' => 'id']);
@@ -79,7 +79,7 @@ class Condition extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Quests]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<QuestPlayer>
      */
     public function getQuests() {
         return $this->hasMany(QuestPlayer::class, ['quest_id' => 'quest_id', 'player_id' => 'player_id'])->viaTable('quest_player_condition', ['condition_id' => 'id']);

@@ -119,9 +119,9 @@ class User extends ActiveRecord implements IdentityInterface
      * Finds user by username
      *
      * @param string $username
-     * @return static|null
+     * @return User|null
      */
-    public static function findByUsername($username) {
+    public static function findByUsername(string $username): ?User {
         return static::findOne(['username' => $username, 'status' => AppStatus::ACTIVE->value]);
     }
 
@@ -129,9 +129,9 @@ class User extends ActiveRecord implements IdentityInterface
      * Finds user by password reset token
      *
      * @param string $token password reset token
-     * @return static|null
+     * @return User|null
      */
-    public static function findByPasswordResetToken($token) {
+    public static function findByPasswordResetToken(string $token): ?User {
         if (!static::isPasswordResetTokenValid($token)) {
             return null;
         }
@@ -146,9 +146,9 @@ class User extends ActiveRecord implements IdentityInterface
      * Finds user by verification email token
      *
      * @param string $token verify email token
-     * @return static|null
+     * @return User|null
      */
-    public static function findByVerificationToken($token) {
+    public static function findByVerificationToken(string $token): ?User {
         return static::findOne([
                     'verification_token' => $token,
                     'status' => AppStatus::INACTIVE->value
@@ -161,7 +161,7 @@ class User extends ActiveRecord implements IdentityInterface
      * @param string $token password reset token
      * @return bool
      */
-    public static function isPasswordResetTokenValid($token) {
+    public static function isPasswordResetTokenValid(string $token): bool {
         if (empty($token)) {
             return false;
         }
@@ -198,7 +198,7 @@ class User extends ActiveRecord implements IdentityInterface
      * @param string $password password to validate
      * @return bool if password provided is valid for current user
      */
-    public function validatePassword($password) {
+    public function validatePassword(string $password): bool {
         return Yii::$app->security->validatePassword($password, $this->password_hash);
     }
 
@@ -206,47 +206,57 @@ class User extends ActiveRecord implements IdentityInterface
      * Generates password hash from password and sets it to the model
      *
      * @param string $password
+     * @return void
      */
-    public function setPassword($password) {
+    public function setPassword(string $password): void {
         $this->password_hash = Yii::$app->security->generatePasswordHash($password);
     }
 
     /**
      * Generates "remember me" authentication key
+     * @return void
      */
-    public function generateAuthKey() {
+    public function generateAuthKey(): void {
         $this->auth_key = Yii::$app->security->generateRandomString();
     }
 
     /**
      * Generates new password reset token
+     * @return void
      */
-    public function generatePasswordResetToken() {
+    public function generatePasswordResetToken(): void {
         $this->password_reset_token = Yii::$app->security->generateRandomString() . '_' . time();
     }
 
     /**
      * Generates new token for email verification
+     * @return void
      */
-    public function generateEmailVerificationToken() {
+    public function generateEmailVerificationToken(): void {
         $this->verification_token = Yii::$app->security->generateRandomString() . '_' . time();
     }
 
     /**
      * Removes password reset token
+     * @return void
      */
-    public function removePasswordResetToken() {
+    public function removePasswordResetToken(): void {
         $this->password_reset_token = null;
     }
 
-    public static function getAppUser($id) {
+    /**
+     *
+     * @param int $id
+     * @return User|null
+     */
+    public static function getAppUser(int $id): ?User {
         return static::findOne(['id' => $id]);
     }
 
     /**
      * Gets query for [[AccessRights]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<AccessRight>
      */
     public function getAccessRights() {
         return $this->hasOne(AccessRight::class, ['user_id' => 'id']);
@@ -255,7 +265,7 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * Gets query for [[CurrentPlayer]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Player>
      */
     public function getCurrentPlayer() {
         return $this->hasOne(Player::class, ['id' => 'current_player_id']);
@@ -264,7 +274,7 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * Gets query for [[Players]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Player>
      */
     public function getPlayers() {
         return $this->hasMany(Player::class, ['user_id' => 'id']);
@@ -273,7 +283,7 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * Gets query for [[UserLogins]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<UserLogin>
      */
     public function getUserLogins() {
         return $this->hasMany(UserLogin::class, ['user_id' => 'id']);
@@ -282,7 +292,7 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * Gets query for [[UserLogs]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<UserLog>
      */
     public function getUserLogs() {
         return $this->hasMany(UserLog::class, ['user_id' => 'id']);
@@ -293,7 +303,7 @@ class User extends ActiveRecord implements IdentityInterface
      *
      * @return bool
      */
-    public function hasPlayers() {
+    public function hasPlayers(): bool {
         return $this->getPlayers()->count() > 0;
     }
 }

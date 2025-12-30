@@ -18,8 +18,14 @@ class PlayerManager extends BaseManager
     public ?Quest $quest = null;
     public ?Player $player = null;
     // internal use
+
+    /** @var array<string, mixed> */
     private array $stats = [];
 
+    /**
+     *
+     * @param array<string, mixed> $config
+     */
     public function __construct($config = []) {
         // Call the parent's constructor
         parent::__construct($config);
@@ -32,6 +38,10 @@ class PlayerManager extends BaseManager
         $this->player ??= $this->quest?->currentPlayer;
     }
 
+    /**
+     *
+     * @return void
+     */
     private function initStats(): void {
         $this->stats = [
             'hpLoss' => 0,
@@ -41,6 +51,11 @@ class PlayerManager extends BaseManager
         ];
     }
 
+    /**
+     *
+     * @param int $xp
+     * @return int
+     */
     private function getLevelId(int $xp): int {
         Yii::debug("*** debug *** getLevelId - xp={$xp}");
         $level = \common\models\Level::find()
@@ -50,6 +65,11 @@ class PlayerManager extends BaseManager
         return $level->id ?? 1;
     }
 
+    /**
+     *
+     * @param int|null $gainedXp
+     * @return array<string, int>
+     */
     private function updateXp(?int $gainedXp = 0): array {
         Yii::debug("*** debug *** updateXp - gainedXp={$gainedXp}");
         $updateSetStatement = [];
@@ -68,6 +88,11 @@ class PlayerManager extends BaseManager
         return $updateSetStatement;
     }
 
+    /**
+     *
+     * @param string $hpLossDice
+     * @return array<string, int>
+     */
     private function updateHp(string $hpLossDice): array {
         Yii::debug("*** debug *** updateHp - hpLossDice={$hpLossDice}");
         $hpLoss = DiceRoller::roll($hpLossDice);
@@ -80,6 +105,11 @@ class PlayerManager extends BaseManager
         return ['hit_points' => $newHP];
     }
 
+    /**
+     *
+     * @param Outcome $outcome
+     * @return void
+     */
     public function updatePlayerStats(Outcome $outcome): void {
         Yii::debug("*** debug *** updatePlayerStats - player={$this->player?->name}, outcome=" . print_r($outcome, true));
         If ($this->player->isNewRecord) {
@@ -106,6 +136,11 @@ class PlayerManager extends BaseManager
         }
     }
 
+    /**
+     *
+     * @param Outcome[] $outcomes
+     * @return array<string, mixed>
+     */
     public function registerGainsAndLosses(array $outcomes): array {
         Yii::debug("*** debug *** registerGainsAndLosses - outcomes=" . count($outcomes));
 

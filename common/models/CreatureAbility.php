@@ -18,7 +18,6 @@ use Yii;
 class CreatureAbility extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -55,7 +54,7 @@ class CreatureAbility extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Ability]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Ability>
      */
     public function getAbility() {
         return $this->hasOne(Ability::class, ['id' => 'ability_id']);
@@ -64,10 +63,9 @@ class CreatureAbility extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Creature]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Creature>
      */
     public function getCreature() {
         return $this->hasOne(Creature::class, ['id' => 'creature_id']);
     }
-
 }

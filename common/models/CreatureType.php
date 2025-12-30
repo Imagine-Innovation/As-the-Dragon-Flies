@@ -16,7 +16,6 @@ use Yii;
 class CreatureType extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -50,10 +49,9 @@ class CreatureType extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Creatures]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Creature>
      */
     public function getCreatures() {
         return $this->hasMany(Creature::class, ['type_id' => 'id']);
     }
-
 }

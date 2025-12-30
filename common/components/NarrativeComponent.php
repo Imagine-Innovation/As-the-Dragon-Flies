@@ -13,10 +13,18 @@ class NarrativeComponent extends Component
 
     public Mission $mission;
 
+    /**
+     *
+     * @param array<string, mixed> $config
+     */
     public function __construct($config = []) {
         parent::__construct($config);
     }
 
+    /**
+     *
+     * @return array<string>
+     */
     public function missionDecription(): array {
         if ($this->mission->isNewRecord) {
             return ['The mission has not been found, even by the most learned magicians'];
@@ -34,6 +42,10 @@ class NarrativeComponent extends Component
         return $narrative;
     }
 
+    /**
+     *
+     * @return string
+     */
     public function renderDescription(): string {
         $descriptions = $this->missionDecription();
         $text = '';
@@ -45,6 +57,11 @@ class NarrativeComponent extends Component
         return $text;
     }
 
+    /**
+     *
+     * @param string $details
+     * @return array<string>
+     */
     private function describeDetail(string $details): array {
         $narrative = [];
         $detailList = $this->mission->$details;

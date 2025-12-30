@@ -9,36 +9,69 @@ use Yii;
 class PlayerQuittingEvent extends Event
 {
 
-    public $reason;
+    public string $reason;
 
-    public function __construct(string $sessionId, Player $player, Quest $quest, $reason, array $config = []) {
+    /**
+     *
+     * @param string $sessionId
+     * @param Player $player
+     * @param Quest $quest
+     * @param string $reason
+     * @param array<string, mixed> $config
+     */
+    public function __construct(string $sessionId, Player $player, Quest $quest, string $reason, array $config = []) {
         parent::__construct($sessionId, $player, $quest, $config);
         $this->reason = $reason;
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @return string
+     */
     public function getType(): string {
         return 'player-quit';
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @return string
+     */
     public function getTitle(): string {
         return 'Player quitting';
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @return string
+     */
     public function getMessage(): string {
         return "{$this->player->name} is quitting the quest";
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @return array<string, mixed>
+     */
     public function getPayload(): array {
         return [
             'playerName' => $this->player->name,
             'playerId' => $this->player->id,
-            'questName' => ($this->quest) ? $this->quest->name : null,
-            'questId' => ($this->quest) ? $this->quest->id : null,
+            'questName' => $this->quest->name,
+            'questId' => $this->quest->id,
             'leftAt' => date('Y-m-d H:i:s', $this->timestamp),
             'reason' => $this->reason,
         ];
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @return void
+     */
     public function process(): void {
         Yii::debug("*** Debug *** PlayerQuittingEvent - process");
         $notification = $this->createNotification();

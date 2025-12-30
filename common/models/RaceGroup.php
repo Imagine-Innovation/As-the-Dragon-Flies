@@ -61,7 +61,7 @@ class RaceGroup extends \yii\db\ActiveRecord
     /**
      * Gets query for [[AbilityDefaults]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<AbilityDefault>
      */
     public function getAbilityDefaults() {
         return $this->hasMany(AbilityDefault::class, ['race_group_id' => 'id']);
@@ -70,7 +70,7 @@ class RaceGroup extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Alignments]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Alignment>
      */
     public function getAlignments() {
         return $this->hasMany(Alignment::class, ['id' => 'alignment_id'])->viaTable('race_group_alignment', ['race_group_id' => 'id']);
@@ -79,7 +79,7 @@ class RaceGroup extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Ethnicities]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Ethnicity>
      */
     public function getEthnicities() {
         return $this->hasMany(Ethnicity::class, ['race_group_id' => 'id']);
@@ -88,7 +88,7 @@ class RaceGroup extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Images]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Image>
      */
     public function getImages() {
         return $this->hasMany(Image::class, ['id' => 'image_id'])->viaTable('race_group_image', ['race_group_id' => 'id']);
@@ -97,7 +97,7 @@ class RaceGroup extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Languages]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Language>
      */
     public function getLanguages() {
         return $this->hasMany(Language::class, ['id' => 'language_id'])->viaTable('race_group_language', ['race_group_id' => 'id']);
@@ -106,7 +106,7 @@ class RaceGroup extends \yii\db\ActiveRecord
     /**
      * Gets query for [[RaceGroupAlignments]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<RaceGroupAlignment>
      */
     public function getRaceGroupAlignments() {
         return $this->hasMany(RaceGroupAlignment::class, ['race_group_id' => 'id']);
@@ -115,7 +115,7 @@ class RaceGroup extends \yii\db\ActiveRecord
     /**
      * Gets query for [[RaceGroupImages]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<RaceGroupImage>
      */
     public function getRaceGroupImages() {
         return $this->hasMany(RaceGroupImage::class, ['race_group_id' => 'id']);
@@ -124,7 +124,7 @@ class RaceGroup extends \yii\db\ActiveRecord
     /**
      * Gets query for [[RaceGroupLanguages]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<RaceGroupLanguage>
      */
     public function getRaceGroupLanguages() {
         return $this->hasMany(RaceGroupLanguage::class, ['race_group_id' => 'id']);
@@ -133,7 +133,7 @@ class RaceGroup extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Races]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Race>
      */
     public function getRaces() {
         return $this->hasMany(Race::class, ['race_group_id' => 'id']);

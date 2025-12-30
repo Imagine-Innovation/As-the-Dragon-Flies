@@ -34,7 +34,6 @@ use Yii;
 class Shape extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -82,7 +81,7 @@ class Shape extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Armors]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Armor>
      */
     public function getArmors() {
         return $this->hasMany(Armor::class, ['item_id' => 'armor_id'])->viaTable('shape_armor', ['shape_id' => 'id']);
@@ -91,7 +90,7 @@ class Shape extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Creature]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Creature>
      */
     public function getCreature() {
         return $this->hasOne(Creature::class, ['id' => 'creature_id']);
@@ -100,7 +99,7 @@ class Shape extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Languages0]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Language>
      */
     public function getLanguages0() {
         return $this->hasMany(Language::class, ['id' => 'language_id'])->viaTable('shape_language', ['shape_id' => 'id']);
@@ -109,7 +108,7 @@ class Shape extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Movements]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Movement>
      */
     public function getMovements() {
         return $this->hasMany(Movement::class, ['id' => 'movement_id'])->viaTable('shape_movement', ['shape_id' => 'id']);
@@ -118,7 +117,7 @@ class Shape extends \yii\db\ActiveRecord
     /**
      * Gets query for [[ShapeArmors]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<ShapeArmor>
      */
     public function getShapeArmors() {
         return $this->hasMany(ShapeArmor::class, ['shape_id' => 'id']);
@@ -127,7 +126,7 @@ class Shape extends \yii\db\ActiveRecord
     /**
      * Gets query for [[ShapeAttacks]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<ShapeAttack>
      */
     public function getShapeAttacks() {
         return $this->hasMany(ShapeAttack::class, ['shape_id' => 'id']);
@@ -136,7 +135,7 @@ class Shape extends \yii\db\ActiveRecord
     /**
      * Gets query for [[ShapeLanguages]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<ShapeLanguage>
      */
     public function getShapeLanguages() {
         return $this->hasMany(ShapeLanguage::class, ['shape_id' => 'id']);
@@ -145,7 +144,7 @@ class Shape extends \yii\db\ActiveRecord
     /**
      * Gets query for [[ShapeMovements]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<ShapeMovement>
      */
     public function getShapeMovements() {
         return $this->hasMany(ShapeMovement::class, ['shape_id' => 'id']);
@@ -154,10 +153,9 @@ class Shape extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Size]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<CreatureSize>
      */
     public function getSize() {
         return $this->hasOne(CreatureSize::class, ['id' => 'size_id']);
     }
-
 }

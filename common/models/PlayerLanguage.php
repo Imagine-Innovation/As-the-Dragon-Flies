@@ -16,7 +16,6 @@ use Yii;
 class PlayerLanguage extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -50,7 +49,7 @@ class PlayerLanguage extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Language]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Language>
      */
     public function getLanguage() {
         return $this->hasOne(Language::class, ['id' => 'language_id']);
@@ -59,10 +58,9 @@ class PlayerLanguage extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Player]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Player>
      */
     public function getPlayer() {
         return $this->hasOne(Player::class, ['id' => 'player_id']);
     }
-
 }

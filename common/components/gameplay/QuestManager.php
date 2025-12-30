@@ -26,6 +26,10 @@ class QuestManager extends BaseManager
     private ?Player $player = null;
     private ?int $nextSequence = null;
 
+    /**
+     *
+     * @param array<string, mixed> $config
+     */
     public function __construct($config = []) {
         // Call the parent's constructor
         parent::__construct($config);
@@ -36,6 +40,11 @@ class QuestManager extends BaseManager
         $this->player ??= $this->quest?->currentPlayer;
     }
 
+    /**
+     *
+     * @param int|null $currentTurn
+     * @return QuestPlayer|null
+     */
     private function getActiveQuestPlayer(?int $currentTurn = null): ?QuestPlayer {
         // Find the next active player
         $query = QuestPlayer::find()
@@ -50,6 +59,10 @@ class QuestManager extends BaseManager
                         ->one();
     }
 
+    /**
+     *
+     * @return QuestPlayer|null
+     */
     private function getNextQuestPlayer(): ?QuestPlayer {
         $currentTurn = $this->quest?->currentQuestPlayer?->player_turn;
 
@@ -68,7 +81,12 @@ class QuestManager extends BaseManager
         return null;
     }
 
-    private function setQuestCurrentPlayerId(int $playerId) {
+    /**
+     *
+     * @param int $playerId
+     * @return void
+     */
+    private function setQuestCurrentPlayerId(int $playerId): void {
         $this->quest->current_player_id = $playerId;
         $this->save($this->quest);
 
@@ -76,6 +94,10 @@ class QuestManager extends BaseManager
         $this->save($this->questProgress);
     }
 
+    /**
+     *
+     * @return int
+     */
     private function getLastTurnSequence(): int {
 
         $questProgressId = $this->questProgress->id;
@@ -87,6 +109,11 @@ class QuestManager extends BaseManager
         return $nextSequence ?? 0;
     }
 
+    /**
+     *
+     * @return QuestTurn|null
+     * @throws \Exception
+     */
     private function setNextQuestTurn(): ?QuestTurn {
         $nextQuestPlayer = $this->getNextQuestPlayer();
 
@@ -116,6 +143,12 @@ class QuestManager extends BaseManager
         return $questTurn;
     }
 
+    /**
+     *
+     * @param int|null $questProgressId
+     * @param AppStatus|null $status
+     * @return int
+     */
     private function endCurrentTurn(?int $questProgressId = null, ?AppStatus $status = AppStatus::TERMINATED): int {
         return QuestTurn::updateAll(
                         ['status' => $status->value],
@@ -126,6 +159,12 @@ class QuestManager extends BaseManager
                 );
     }
 
+    /**
+     *
+     * @param int $questId
+     * @param string $reason
+     * @return int
+     */
     private function endQuestPlayers(int $questId, string $reason): int {
         return QuestPlayer::updateAll(
                         [
@@ -139,6 +178,11 @@ class QuestManager extends BaseManager
                 );
     }
 
+    /**
+     *
+     * @param int $questId
+     * @return int
+     */
     private function detachPlayersFromQuest(int $questId): int {
         return Player::updateAll(
                         ['quest_id' => null],
@@ -146,6 +190,14 @@ class QuestManager extends BaseManager
                 );
     }
 
+    /**
+     *
+     * @param AppStatus $status
+     * @return array{
+     *     error: bool,
+     *     msg: string
+     * }
+     */
     private function gameOver(AppStatus $status): array {
         // End the quest
         $this->quest->status = $status->value;
@@ -183,7 +235,12 @@ class QuestManager extends BaseManager
         return ($questProgress !== null);
     }
 
-    private function endCurrentQuestProgress(?AppStatus $status = AppStatus::TERMINATED) {
+    /**
+     *
+     * @param AppStatus|null $status
+     * @return void
+     */
+    private function endCurrentQuestProgress(?AppStatus $status = AppStatus::TERMINATED): void {
         $questProgressId = $this->questProgress->id;
 
         $this->endCurrentTurn($questProgressId, $status);
@@ -221,6 +278,12 @@ class QuestManager extends BaseManager
         return $questProgress;
     }
 
+    /**
+     *
+     * @param Mission $mission
+     * @param int $nextPlayerId
+     * @return QuestProgress
+     */
     private function newQuestProgress(Mission &$mission, int $nextPlayerId): QuestProgress {
 
         $narrative = new NarrativeComponent(['mission' => $mission]);
@@ -242,6 +305,10 @@ class QuestManager extends BaseManager
         return $questProgress;
     }
 
+    /**
+     *
+     * @return int|null
+     */
     private function getFirstMissionIdInNextChapter(): ?int {
         $currentChapterNumber = $this->questProgress->mission->chapter->chapter_number;
         $nextChapter = Chapter::find()
@@ -253,6 +320,10 @@ class QuestManager extends BaseManager
         return $nextChapter?->first_mission_id;
     }
 
+    /**
+     *
+     * @return int|null
+     */
     private function getNextDefaultMissionId(): ?int {
         $nextMissionInChapter = Mission::find()
                 ->where(['>', 'id', $this->questProgress->mission_id])
@@ -265,6 +336,12 @@ class QuestManager extends BaseManager
         return $this->getFirstMissionIdInNextChapter();
     }
 
+    /**
+     *
+     * @param QuestProgress $currentQuestProgress
+     * @param QuestProgress $nextQuestProgress
+     * @return array<string, mixed>
+     */
     private function getNextMissionDetail(QuestProgress &$currentQuestProgress, QuestProgress &$nextQuestProgress): array {
         $currentMission = $currentQuestProgress->mission;
         $nextMission = $nextQuestProgress->mission;
@@ -288,6 +365,14 @@ class QuestManager extends BaseManager
         return $detail;
     }
 
+    /**
+     *
+     * @param int $nextMissionId
+     * @return array{
+     *     error: bool,
+     *     msg: string
+     * }
+     */
     private function setNextMission(int $nextMissionId): array {
         Yii::debug("*** debug *** setNextMission nextMissionId={$nextMissionId}");
 
@@ -304,6 +389,14 @@ class QuestManager extends BaseManager
         return ['error' => false, 'msg' => $message];
     }
 
+    /**
+     *
+     * @param int|null $nextMissionId
+     * @return array{
+     *     error: bool,
+     *     msg: string
+     * }
+     */
     public function moveToNextMission(?int $nextMissionId = null): array {
         Yii::debug("*** debug *** moveToNextMission nextMissionId=" . ($nextMissionId ? $nextMissionId : 'null'));
 
@@ -319,6 +412,13 @@ class QuestManager extends BaseManager
         return $this->gameOver(AppStatus::COMPLETED);
     }
 
+    /**
+     *
+     * @return array{
+     *     error: bool,
+     *     msg: string
+     * }
+     */
     public function nextPlayer(): array {
         $this->endCurrentTurn();
 
@@ -348,6 +448,15 @@ class QuestManager extends BaseManager
         return ['error' => false, 'msg' => $message];
     }
 
+    /**
+     *
+     * @param string $eventType
+     * @param string $eventDescription
+     * @param Player|null $initiator
+     * @param array<string, mixed> $detail
+     * @return bool
+     * @throws \Exception
+     */
     private function createQuestEvent(string $eventType, string $eventDescription, ?Player $initiator, array $detail = []): bool {
         Yii::debug("*** debug *** createQuestEvent - eventType={$eventType}, eventDescription={$eventDescription} initiator={$initiator->name}, detail=" . print_r($detail, true));
         try {

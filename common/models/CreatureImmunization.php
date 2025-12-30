@@ -16,7 +16,6 @@ use Yii;
 class CreatureImmunization extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -50,7 +49,7 @@ class CreatureImmunization extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Condition]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Condition>
      */
     public function getCondition() {
         return $this->hasOne(Condition::class, ['id' => 'condition_id']);
@@ -59,10 +58,9 @@ class CreatureImmunization extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Creature]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Creature>
      */
     public function getCreature() {
         return $this->hasOne(Creature::class, ['id' => 'creature_id']);
     }
-
 }

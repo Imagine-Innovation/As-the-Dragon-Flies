@@ -20,7 +20,6 @@ use Yii;
 class Passage extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -60,7 +59,7 @@ class Passage extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Actions]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Action>
      */
     public function getActions() {
         return $this->hasMany(Action::class, ['passage_id' => 'id']);
@@ -69,10 +68,9 @@ class Passage extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Mission]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Mission>
      */
     public function getMission() {
         return $this->hasOne(Mission::class, ['id' => 'mission_id']);
     }
-
 }

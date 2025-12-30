@@ -15,6 +15,12 @@ class NextMissionHandler implements SpecificMessageHandlerInterface
     private BroadcastServiceInterface $broadcastService;
     private BroadcastMessageFactory $messageFactory;
 
+    /**
+     *
+     * @param LoggerService $logger
+     * @param BroadcastServiceInterface $broadcastService
+     * @param BroadcastMessageFactory $messageFactory
+     */
     public function __construct(
             LoggerService $logger,
             BroadcastServiceInterface $broadcastService,
@@ -27,6 +33,12 @@ class NextMissionHandler implements SpecificMessageHandlerInterface
 
     /**
      * Handles game next-mission messages.
+     *
+     * @param ConnectionInterface $from
+     * @param string $clientId
+     * @param string $sessionId
+     * @param array<string, mixed> $data
+     * @return void
      */
     public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
         $this->logger->logStart("NextMissionHandler: handle from clientId={$clientId}, sessionId={$sessionId}", $data);

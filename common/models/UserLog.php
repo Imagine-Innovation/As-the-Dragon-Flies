@@ -24,7 +24,6 @@ use Yii;
 class UserLog extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -69,7 +68,7 @@ class UserLog extends \yii\db\ActiveRecord
     /**
      * Gets query for [[AccessRight]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<AccessRight>
      */
     public function getAccessRight() {
         return $this->hasOne(AccessRight::class, ['id' => 'access_right_id']);
@@ -78,7 +77,7 @@ class UserLog extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Player]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Player>
      */
     public function getPlayer() {
         return $this->hasOne(Player::class, ['id' => 'player_id']);
@@ -87,7 +86,7 @@ class UserLog extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Quest]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Quest>
      */
     public function getQuest() {
         return $this->hasOne(Quest::class, ['id' => 'quest_id']);
@@ -96,10 +95,9 @@ class UserLog extends \yii\db\ActiveRecord
     /**
      * Gets query for [[User]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<User>
      */
     public function getUser() {
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
-
 }

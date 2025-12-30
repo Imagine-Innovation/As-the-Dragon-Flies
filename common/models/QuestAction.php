@@ -32,7 +32,7 @@ class QuestAction extends \yii\db\ActiveRecord
         return [
             [['status'], 'default', 'value' => null],
             [['eligible'], 'default', 'value' => 1],
-            [['quest_progress_id', 'action_id', 'eligible'], 'required'],
+            [['quest_progress_id', 'action_id'], 'required'],
             [['quest_progress_id', 'action_id', 'status', 'eligible'], 'integer'],
             [['quest_progress_id', 'action_id'], 'unique', 'targetAttribute' => ['quest_progress_id', 'action_id']],
             [['quest_progress_id'], 'exist', 'skipOnError' => true, 'targetClass' => QuestProgress::class, 'targetAttribute' => ['quest_progress_id' => 'id']],
@@ -55,7 +55,7 @@ class QuestAction extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Action]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Action>
      */
     public function getAction() {
         return $this->hasOne(Action::class, ['id' => 'action_id']);
@@ -64,7 +64,7 @@ class QuestAction extends \yii\db\ActiveRecord
     /**
      * Gets query for [[QuestProgress]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<QuestProgress>
      */
     public function getQuestProgress() {
         return $this->hasOne(QuestProgress::class, ['id' => 'quest_progress_id']);

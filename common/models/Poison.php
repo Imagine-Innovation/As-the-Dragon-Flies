@@ -58,7 +58,7 @@ class Poison extends Item
     /**
      * Gets query for [[Ability]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Ability>
      */
     public function getAbility() {
         return $this->hasOne(Ability::class, ['id' => 'ability_id']);
@@ -67,7 +67,7 @@ class Poison extends Item
     /**
      * Gets query for [[DamageType]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<DamageType>
      */
     public function getDamageType() {
         return $this->hasOne(DamageType::class, ['id' => 'damage_type_id']);
@@ -76,7 +76,7 @@ class Poison extends Item
     /**
      * Gets query for [[Item]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Item>
      */
     public function getItem() {
         return $this->hasOne(Item::class, ['id' => 'item_id']);

@@ -17,7 +17,6 @@ use Yii;
 class ItemType extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -54,10 +53,9 @@ class ItemType extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Items]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Item>
      */
     public function getItems() {
         return $this->hasMany(Item::class, ['item_type_id' => 'id']);
     }
-
 }

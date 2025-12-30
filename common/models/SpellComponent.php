@@ -17,7 +17,6 @@ use Yii;
 class SpellComponent extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -54,7 +53,7 @@ class SpellComponent extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Component]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Component>
      */
     public function getComponent() {
         return $this->hasOne(Component::class, ['id' => 'component_id']);
@@ -63,10 +62,9 @@ class SpellComponent extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Spell]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Spell>
      */
     public function getSpell() {
         return $this->hasOne(Spell::class, ['id' => 'spell_id']);
     }
-
 }

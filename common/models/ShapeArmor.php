@@ -16,7 +16,6 @@ use Yii;
 class ShapeArmor extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -50,7 +49,7 @@ class ShapeArmor extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Armor]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Armor>
      */
     public function getArmor() {
         return $this->hasOne(Armor::class, ['item_id' => 'armor_id']);
@@ -59,10 +58,9 @@ class ShapeArmor extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Shape]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Shape>
      */
     public function getShape() {
         return $this->hasOne(Shape::class, ['id' => 'shape_id']);
     }
-
 }

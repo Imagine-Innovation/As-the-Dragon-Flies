@@ -12,14 +12,10 @@ use Yii;
 class NextMissionEvent extends Event
 {
 
-    /**
-     * @var string|null The action type
-     */
+    /** @var string|null The action type */
     public ?string $action = null;
 
-    /**
-     * @var array Additional action data
-     */
+    /** @var array<string, mixed> Additional action data */
     public $detail = [];
 
     /**
@@ -28,7 +24,7 @@ class NextMissionEvent extends Event
      * @param Player $player The player who performed the action
      * @param Quest $quest The quest context
      * @param string|null $action The action type
-     * @param array $detail Additional action data
+     * @param array<string, mixed> $detail Additional action data
      */
     public function __construct(string $sessionId, Player $player, Quest $quest, ?string $action, array $detail = []) {
         parent::__construct($sessionId, $player, $quest);
@@ -38,15 +34,27 @@ class NextMissionEvent extends Event
 
     /**
      * {@inheritdoc}
+     *
+     * @return string
      */
     public function getType(): string {
         return 'next-mission';
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @return string
+     */
     public function getTitle(): string {
         return $this->action ?? 'Next mission';
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @return string
+     */
     public function getMessage(): string {
         $detail = $this->detail;
 
@@ -56,6 +64,8 @@ class NextMissionEvent extends Event
 
     /**
      * {@inheritdoc}
+     *
+     * @return array<string, mixed>
      */
     public function getPayload(): array {
         return [
@@ -66,6 +76,8 @@ class NextMissionEvent extends Event
 
     /**
      * {@inheritdoc}
+     *
+     * @return void
      */
     public function process(): void {
         Yii::debug("*** Debug *** NextMissionEvent - process");

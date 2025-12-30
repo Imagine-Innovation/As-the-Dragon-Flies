@@ -2,14 +2,31 @@
 
 namespace common\helpers;
 
-class StoryPlayers {
+use common\models\Player;
+use common\models\Quest;
+use common\models\Story;
 
-    public static function exists($story, $players) {
+class StoryPlayers
+{
+
+    /**
+     *
+     * @param Story $story
+     * @param Player[] $players
+     * @return string
+     */
+    public static function exists(Story $story, array $players): string {
         $html = ($story->tavern) ? self::playerList($story->tavern, $players) : "";
         return $html;
     }
 
-    private static function playerList($quest, $players) {
+    /**
+     *
+     * @param Quest $quest
+     * @param Player[] $players
+     * @return string
+     */
+    private static function playerList(Quest $quest, array $players): string {
         $playerNames = [];
         foreach ($quest->questPlayers as $questPlayer) {
             foreach ($players as $player) {

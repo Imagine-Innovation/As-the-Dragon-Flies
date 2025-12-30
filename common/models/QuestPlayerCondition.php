@@ -18,7 +18,6 @@ use Yii;
 class QuestPlayerCondition extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -55,7 +54,7 @@ class QuestPlayerCondition extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Condition]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Condition>
      */
     public function getCondition() {
         return $this->hasOne(Condition::class, ['id' => 'condition_id']);
@@ -64,10 +63,9 @@ class QuestPlayerCondition extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Quest]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<QuestPlayer>
      */
     public function getQuest() {
         return $this->hasOne(QuestPlayer::class, ['quest_id' => 'quest_id', 'player_id' => 'player_id']);
     }
-
 }

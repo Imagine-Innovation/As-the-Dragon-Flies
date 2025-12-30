@@ -17,7 +17,6 @@ use Yii;
 class RaceAbility extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -53,7 +52,7 @@ class RaceAbility extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Ability]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Ability>
      */
     public function getAbility() {
         return $this->hasOne(Ability::class, ['id' => 'ability_id']);
@@ -62,10 +61,9 @@ class RaceAbility extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Race]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Race>
      */
     public function getRace() {
         return $this->hasOne(Race::class, ['id' => 'race_id']);
     }
-
 }

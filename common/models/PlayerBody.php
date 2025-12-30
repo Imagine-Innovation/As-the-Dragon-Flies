@@ -90,7 +90,7 @@ class PlayerBody extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Player]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Player>
      */
     public function getPlayer() {
         return $this->hasOne(Player::class, ['id' => 'player_id']);
@@ -99,7 +99,7 @@ class PlayerBody extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Head]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<PlayerItem>
      */
     public function getHead() {
         return $this->hasOne(PlayerItem::class, ['player_id' => 'player_id', 'item_id' => 'head_item_id']);
@@ -108,7 +108,7 @@ class PlayerBody extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Chest]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<PlayerItem>
      */
     public function getChest() {
         return $this->hasOne(PlayerItem::class, ['player_id' => 'player_id', 'item_id' => 'chest_item_id']);
@@ -117,7 +117,7 @@ class PlayerBody extends \yii\db\ActiveRecord
     /**
      * Gets query for [[RightHand]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<PlayerItem>
      */
     public function getRightHand() {
         return $this->hasOne(PlayerItem::class, ['player_id' => 'player_id', 'item_id' => 'right_hand_item_id']);
@@ -126,7 +126,7 @@ class PlayerBody extends \yii\db\ActiveRecord
     /**
      * Gets query for [[LeftHand]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<PlayerItem>
      */
     public function getLeftHand() {
         return $this->hasOne(PlayerItem::class, ['player_id' => 'player_id', 'item_id' => 'left_hand_item_id']);
@@ -135,7 +135,7 @@ class PlayerBody extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Back]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<PlayerItem>
      */
     public function getBack() {
         return $this->hasOne(PlayerItem::class, ['player_id' => 'player_id', 'item_id' => 'back_item_id']);

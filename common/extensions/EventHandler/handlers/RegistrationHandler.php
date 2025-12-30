@@ -21,6 +21,13 @@ class RegistrationHandler implements SpecificMessageHandlerInterface
     private BroadcastService $broadcastService;
     private BroadcastMessageFactory $messageFactory;
 
+    /**
+     *
+     * @param LoggerService $logger
+     * @param QuestSessionManager $questSessionManager
+     * @param BroadcastService $broadcastService
+     * @param BroadcastMessageFactory $messageFactory
+     */
     public function __construct(
             LoggerService $logger,
             QuestSessionManager $questSessionManager,
@@ -33,6 +40,13 @@ class RegistrationHandler implements SpecificMessageHandlerInterface
         $this->messageFactory = $messageFactory;
     }
 
+    /**
+     *
+     * @param int|null $questId
+     * @param int|null $playerId
+     * @param string $sessionId
+     * @return void
+     */
     private function updateQuestPlayerStatus(?int $questId, ?int $playerId, string $sessionId): void {
         if ($questId === null || $playerId === null) {
             return;
@@ -53,7 +67,12 @@ class RegistrationHandler implements SpecificMessageHandlerInterface
 
     /**
      * Handles attachment messages.
-     * Original logic from EventHandler::handleAttachment
+     *
+     * @param ConnectionInterface $from
+     * @param string $clientId
+     * @param string $sessionId
+     * @param array<string, mixed> $data
+     * @return void
      */
     public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
         $this->logger->logStart("RegistrationHandler: handle clientId=[{$clientId}], sessionId=[{$sessionId}]", $data);

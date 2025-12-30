@@ -19,7 +19,6 @@ use Yii;
 class SpellRange extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -58,10 +57,9 @@ class SpellRange extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Spells]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Spell>
      */
     public function getSpells() {
         return $this->hasMany(Spell::class, ['range_id' => 'id']);
     }
-
 }

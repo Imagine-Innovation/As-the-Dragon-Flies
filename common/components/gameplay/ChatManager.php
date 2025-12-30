@@ -19,6 +19,11 @@ class ChatManager extends BaseManager
     public ?int $questId = null;
     public ?int $playerId = null;
 
+    /**
+     *
+     * @param array<string, mixed> $config
+     * @throws \Exception
+     */
     public function __construct($config = []) {
         parent::__construct($config);
 
@@ -51,7 +56,7 @@ class ChatManager extends BaseManager
      *
      * @param \common\models\Notification $chatNotification
      * @param int $playerId
-     * @return array
+     * @return array<string, mixed>
      */
     private function newChatEntry(Notification $chatNotification, int $playerId): array {
         if ($chatNotification->notification_type !== self::CHAT_NOTIFICATION_TYPE) {
@@ -77,7 +82,7 @@ class ChatManager extends BaseManager
      *
      * @param int|null $since
      * @param int|null $limit
-     * @return array
+     * @return array<int, array{messages: list<string>}>
      */
     public function getLastMessages(?int $since = null, ?int $limit = null): array {
 

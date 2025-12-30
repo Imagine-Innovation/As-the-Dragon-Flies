@@ -12,13 +12,20 @@ use yii\base\BaseObject;
 abstract class Event extends BaseObject
 {
 
-    public $sessionId;
-    public $player;
-    public $quest;
-    public $timestamp;
-    public $notificationId;
+    public string $sessionId;
+    public Player $player;
+    public Quest $quest;
+    public int $timestamp;
+    public ?int $notificationId = null;
 
-    public function __construct(string $sessionId, Player $player, Quest $quest, $config = []) {
+    /**
+     *
+     * @param string $sessionId
+     * @param Player $player
+     * @param Quest $quest
+     * @param array<string, mixed> $config
+     */
+    public function __construct(string $sessionId, Player $player, Quest $quest, array $config = []) {
         $this->notificationId = null;
         $this->sessionId = $sessionId;
         $this->player = $player;
@@ -27,16 +34,40 @@ abstract class Event extends BaseObject
         parent::__construct($config);
     }
 
+    /**
+     *
+     * @return string
+     */
     abstract public function getType(): string;
 
+    /**
+     *
+     * @return array<string, mixed>
+     */
     abstract public function getPayload(): array;
 
+    /**
+     *
+     * @return string
+     */
     abstract public function getTitle(): string;
 
+    /**
+     *
+     * @return string
+     */
     abstract public function getMessage(): string;
 
+    /**
+     *
+     * @return void
+     */
     abstract public function process(): void;
 
+    /**
+     *
+     * @return array<string, mixed>
+     */
     public function toArray(): array {
         $array = [
             'type' => $this->getType(),
@@ -51,7 +82,11 @@ abstract class Event extends BaseObject
         return $array;
     }
 
-    protected function broadcast() {
+    /**
+     *
+     * @return void
+     */
+    protected function broadcast(): void {
         $client = new \yii\httpclient\Client();
         $data = [
             'questId' => $this->quest->id,
@@ -78,7 +113,12 @@ abstract class Event extends BaseObject
         }
     }
 
-    protected function savePlayerNotification($notificationId): void {
+    /**
+     *
+     * @param int $notificationId
+     * @return void
+     */
+    protected function savePlayerNotification(int $notificationId): void {
         // Create notification_player entries for all players in quest
         $players = $this->quest->currentPlayers;
         foreach ($players as $player) {
@@ -94,8 +134,12 @@ abstract class Event extends BaseObject
         }
     }
 
+    /**
+     *
+     * @return Notification
+     */
     protected function createNotification(): Notification {
-        $record = ([
+        $notificationData = ([
             'initiator_id' => $this->player->id,
             'quest_id' => $this->quest->id,
             'notification_type' => $this->getType(),
@@ -106,7 +150,7 @@ abstract class Event extends BaseObject
             'is_private' => 0,
         ]);
         Yii::debug("*** debug *** Event - createNotification");
-        $notification = new Notification($record);
+        $notification = new Notification($notificationData);
 
         $this->notificationId = ($notification->save()) ? $notification->id : null;
 

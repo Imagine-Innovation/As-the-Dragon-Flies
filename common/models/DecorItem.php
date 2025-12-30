@@ -23,7 +23,6 @@ use Yii;
 class DecorItem extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -67,16 +66,16 @@ class DecorItem extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Actions]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Action>
      */
     public function getActions() {
-        return $this->hasMany(Action::class, ['item_id' => 'id']);
+        return $this->hasMany(Action::class, ['decor_item_id' => 'id']);
     }
 
     /**
      * Gets query for [[Decor]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Decor>
      */
     public function getDecor() {
         return $this->hasOne(Decor::class, ['id' => 'decor_id']);
@@ -85,10 +84,9 @@ class DecorItem extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Item]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Item>
      */
     public function getItem() {
         return $this->hasOne(Item::class, ['id' => 'item_id']);
     }
-
 }

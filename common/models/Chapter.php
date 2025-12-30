@@ -66,7 +66,7 @@ class Chapter extends \yii\db\ActiveRecord
     /**
      * Gets query for [[FirstMission]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Mission>
      */
     public function getFirstMission() {
         return $this->hasOne(Mission::class, ['id' => 'first_mission_id']);
@@ -75,7 +75,7 @@ class Chapter extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Missions]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Mission>
      */
     public function getMissions() {
         return $this->hasMany(Mission::class, ['chapter_id' => 'id']);
@@ -84,7 +84,7 @@ class Chapter extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Quests]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Quest>
      */
     public function getQuests() {
         return $this->hasMany(Quest::class, ['current_chapter_id' => 'id']);
@@ -93,7 +93,7 @@ class Chapter extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Story]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Story>
      */
     public function getStory() {
         return $this->hasOne(Story::class, ['id' => 'story_id']);

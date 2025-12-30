@@ -24,6 +24,7 @@ parameters:
         - frontend/widgets
         - vendor
     excludePaths:
+        - common/config
         - common/tests
         - frontend/config
         - frontend/tests

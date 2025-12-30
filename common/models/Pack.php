@@ -51,7 +51,7 @@ class Pack extends Item
     /**
      * Gets query for [[Items]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Item>
      */
     public function getItems() {
         return $this->hasMany(Item::class, ['id' => 'item_id']);
@@ -60,7 +60,7 @@ class Pack extends Item
     /**
      * Gets query for [[ParentItem]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Item>
      */
     public function getParentItem() {
         return $this->hasOne(Item::class, ['id' => 'parent_item_id']);

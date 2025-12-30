@@ -24,7 +24,6 @@ use Yii;
 class ClassProficiency extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -67,7 +66,7 @@ class ClassProficiency extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Class]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<CharacterClass>
      */
     public function getClass() {
         return $this->hasOne(CharacterClass::class, ['id' => 'class_id']);
@@ -76,7 +75,7 @@ class ClassProficiency extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Level]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Level>
      */
     public function getLevel() {
         return $this->hasOne(Level::class, ['id' => 'level_id']);
@@ -85,10 +84,9 @@ class ClassProficiency extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Proficiency]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Proficiency>
      */
     public function getProficiency() {
         return $this->hasOne(Proficiency::class, ['id' => 'proficiency_id']);
     }
-
 }

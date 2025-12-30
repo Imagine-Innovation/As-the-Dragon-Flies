@@ -9,30 +9,62 @@ use Yii;
 class QuestStartingEvent extends Event
 {
 
+    /**
+     *
+     * @param string $sessionId
+     * @param Player $player
+     * @param Quest $quest
+     * @param array<string, mixed> $config
+     */
     public function __construct(string $sessionId, Player $player, Quest $quest, array $config = []) {
         parent::__construct($sessionId, $player, $quest, $config);
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @return string
+     */
     public function getType(): string {
         return 'quest-started';
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @return string
+     */
     public function getTitle(): string {
         return 'Quest Starting';
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @return string
+     */
     public function getMessage(): string {
         return "The quest {$this->quest->name} is starting";
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @return array<string, mixed>
+     */
     public function getPayload(): array {
         return [
-            'questName' => ($this->quest) ? $this->quest->name : null,
-            'questId' => ($this->quest) ? $this->quest->id : null,
+            'questName' => $this->quest->name,
+            'questId' => $this->quest->id,
             'startedAt' => date('Y-m-d H:i:s', $this->timestamp)
         ];
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @return void
+     */
     public function process(): void {
         Yii::debug("*** Debug *** QuestStartingEvent - process");
         $notification = $this->createNotification();

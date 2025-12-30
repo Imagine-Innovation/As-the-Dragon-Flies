@@ -14,7 +14,6 @@ use Yii;
 class AccessCount extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -45,5 +44,4 @@ class AccessCount extends \yii\db\ActiveRecord
             'calls' => 'Calls',
         ];
     }
-
 }

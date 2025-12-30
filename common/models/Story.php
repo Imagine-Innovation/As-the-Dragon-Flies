@@ -85,7 +85,7 @@ class Story extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Chapters]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Chapter>
      */
     public function getChapters() {
         return $this->hasMany(Chapter::class, ['story_id' => 'id'])
@@ -95,7 +95,7 @@ class Story extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Classes]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<CharacterClass>
      */
     public function getClasses() {
         return $this->hasMany(CharacterClass::class, ['id' => 'class_id'])->viaTable('story_class', ['story_id' => 'id']);
@@ -104,7 +104,7 @@ class Story extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Quests]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Quest>
      */
     public function getQuests() {
         return $this->hasMany(Quest::class, ['story_id' => 'id']);
@@ -113,7 +113,7 @@ class Story extends \yii\db\ActiveRecord
     /**
      * Gets query for [[StoryClasses]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<StoryClass>
      */
     public function getStoryClasses() {
         return $this->hasMany(StoryClass::class, ['story_id' => 'id']);
@@ -122,7 +122,7 @@ class Story extends \yii\db\ActiveRecord
     /**
      * Gets query for [[StoryTags]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<StoryTag>
      */
     public function getStoryTags() {
         return $this->hasMany(StoryTag::class, ['story_id' => 'id']);
@@ -131,7 +131,7 @@ class Story extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Tags]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Tag>
      */
     public function getTags() {
         return $this->hasMany(Tag::class, ['id' => 'tag_id'])->viaTable('story_tag', ['story_id' => 'id']);
@@ -144,7 +144,7 @@ class Story extends \yii\db\ActiveRecord
     /**
      * Gets query for [[FirstChapter]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Chapter>
      */
     public function getFirstChapter(): \yii\db\ActiveQuery {
         return $this->hasOne(Chapter::class, ['story_id' => 'id'])

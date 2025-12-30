@@ -30,8 +30,9 @@ use Yii;
 class Rule extends \yii\db\ActiveRecord
 {
 
-    private $parsingTree;
-    public $errorMessage;
+    /** @var array<string, mixed> $parsingTree */
+    private array $parsingTree = [];
+    public string $errorMessage;
 
     /**
      * {@inheritdoc}
@@ -75,7 +76,7 @@ class Rule extends \yii\db\ActiveRecord
     /**
      * Gets query for [[RuleActions]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<RuleAction>
      */
     public function getRuleActions() {
         return $this->hasMany(RuleAction::class, ['rule_id' => 'id']);
@@ -84,7 +85,7 @@ class Rule extends \yii\db\ActiveRecord
     /**
      * Gets query for [[RuleConditions]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<RuleCondition>
      */
     public function getRuleConditions() {
         return $this->hasMany(RuleCondition::class, ['rule_id' => 'id']);
@@ -93,7 +94,7 @@ class Rule extends \yii\db\ActiveRecord
     /**
      * Gets query for [[RuleExpressions]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<RuleExpression>
      */
     public function getRuleExpressions() {
         return $this->hasMany(RuleExpression::class, ['rule_id' => 'id']);
@@ -102,7 +103,7 @@ class Rule extends \yii\db\ActiveRecord
     /**
      * Gets query for [[RootExpression]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<RuleExpression>
      */
     public function getRootExpression() {
         return $this->hasOne(RuleExpression::class, ['rule_id' => 'id', 'parent_id' => null]);
@@ -183,12 +184,12 @@ class Rule extends \yii\db\ActiveRecord
      * It handles different types of expressions such as condition, boolean
      * expression, regular expression, and negate.
      *
-     * @param array $expression The parsing tree expression to save.
+     * @param array<string, mixed> $expression The parsing tree expression to save.
      * @param int $ruleId The ID of the rule associated with the parsing tree.
      * @param int|null $parentId The ID of the parent node in the parsing tree (optional).
      * @return bool Whether the save operation is successful (true) or not.
      */
-    private function saveParsingTree($expression, $ruleId, $parentId = null) {
+    private function saveParsingTree(array $expression, int $ruleId, ?int $parentId = null): bool {
         // Initialize the save status to false
         $saveStatus = false;
 
@@ -237,12 +238,13 @@ class Rule extends \yii\db\ActiveRecord
      * It initializes a new RuleCondition model, assigns values to its attributes,
      * and saves it in the database.
      *
-     * @param array $condition The condition node to save.
+     * @param array<string, mixed> $condition The condition node to save.
      * @param int $ruleId The ID of the rule associated with the condition.
      * @param int|null $parentId The ID of the parent node in the parsing tree.
      * @return bool Whether the save operation is successful (true) or not.
      */
-    private function saveRuleCondition($condition, $ruleId, $parentId) {
+    private function saveRuleCondition(array $condition, int $ruleId, ?int $parentId = null): bool {
+        Yii::debug($condition);
         // Get the Rule model associated with the condition component.
         $ruleModel = $this->getRuleModel($condition['component']);
 
@@ -275,7 +277,7 @@ class Rule extends \yii\db\ActiveRecord
      * @return int|null The ID of the newly created RuleExpression if the save
      *                  operation is successful, otherwise null.
      */
-    private function newRuleExpression($ruleId, $parentId, $op = null) {
+    private function newRuleExpression(int $ruleId, ?int $parentId = null, ?string $op = null): ?int {
         // Create a new instance of RuleExpression model and assign values to its attributes.
         $expr = new RuleExpression([
             'rule_id' => $ruleId,
@@ -299,12 +301,12 @@ class Rule extends \yii\db\ActiveRecord
      * and saves it in the database. Additionally, it recursively saves the child
      * nodes (left and right expressions) if they exist.
      *
-     * @param array $expression The expression node to save.
+     * @param array<string, mixed> $expression The expression node to save.
      * @param int $ruleId The ID of the rule associated with the expression.
      * @param int|null $parentId The ID of the parent node in the parsing tree (optional).
      * @return bool Whether the save operation is successful (true) or not.
      */
-    private function saveRuleExpression($expression, $ruleId, $parentId) {
+    private function saveRuleExpression(array $expression, int $ruleId, ?int $parentId = null): bool {
         // Initialize the save status to false.
         $saveStatus = false;
 
@@ -329,12 +331,12 @@ class Rule extends \yii\db\ActiveRecord
      * to its attributes, and saves it in the database. Additionally, it recursively
      * saves the child nodes (left and right expressions) if they exist.
      *
-     * @param array $expression The expression node to save.
+     * @param array<string, mixed> $expression The expression node to save.
      * @param int $ruleId The ID of the rule associated with the expression.
      * @param int|null $parentId The ID of the parent node in the parsing tree (optional).
      * @return bool Whether the save operation is successful (true) or not.
      */
-    private function saveNegativeExpression($expression, $ruleId, $parentId) {
+    private function saveNegativeExpression(array $expression, int $ruleId, ?int $parentId = null) {
         // Initialize the save status to false.
         $saveStatus = false;
 
@@ -359,12 +361,12 @@ class Rule extends \yii\db\ActiveRecord
      * and saves it in the database. Additionally, it recursively saves the child
      * nodes (left and right expressions) if they exist.
      *
-     * @param array $expression The expression node to save.
+     * @param array<string, mixed> $expression The expression node to save.
      * @param int $ruleId The ID of the rule associated with the expression.
      * @param int|null $parentId The ID of the parent node in the parsing tree (optional).
      * @return bool Whether the save operation is successful (true) or not.
      */
-    private function saveRuleBoolExpression($expression, $ruleId, $parentId) {
+    private function saveRuleBoolExpression(array $expression, int $ruleId, ?int $parentId = null): bool {
         // Initialize the save status to false.
         $saveStatus = false;
 
@@ -400,6 +402,8 @@ class Rule extends \yii\db\ActiveRecord
      * @throws \Exception if failed to save the RuleModel model
      */
     private function getRuleModel(string $component): RuleModel {
+        Yii::debug("*** debug *** getRuleModel - component={$component}");
+
         // Split the field name into model and attribute/method parts
         $parts = explode('->', $component, 2);
         $modelName = $parts[0];
@@ -417,18 +421,24 @@ class Rule extends \yii\db\ActiveRecord
             $modelAttribute = $isMethod ? substr($parts[1], 0, $parenthesis) : $parts[1];
         }
 
+        Yii::debug("*** debug *** getRuleModel - modelName={$modelName}, modelAttribute={$modelAttribute}");
+
         // Find an existing RuleModel instance by name and attribute/method
         $model = RuleModel::findOne(['name' => $modelName, 'attribute' => $modelAttribute]);
 
         // If no matching RuleModel instance is found, create a new one
-        if (!$model) {
+        if ($model->isNewRecord) {
             $path = ModelHelper::path($modelName);
-            $model = new RuleModel([
+            $data = [
                 'path' => $path,
                 'name' => $modelName,
                 'attribute' => $modelAttribute,
                 'is_method' => ($isMethod ? 1 : 0)
-            ]);
+            ];
+
+            Yii::debug($data);
+
+            $model = new RuleModel($data);
 
             // Save the new RuleModel instance in the database
             if (!$model->save()) {

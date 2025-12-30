@@ -35,8 +35,12 @@ class EventHandler extends Component
     private ?WebSocketServerManager $webSocketServerManager = null;
     private ?BroadcastService $broadcastService = null;
     private ?MessageHandlerOrchestrator $messageHandlerOrchestrator = null;
-    private $loop;
+    private \React\EventLoop\LoopInterface $loop;
 
+    /**
+     *
+     * @return void
+     */
     public function init(): void {
         parent::init();
 
@@ -53,6 +57,10 @@ class EventHandler extends Component
         $this->initializeMessageHandlers();
     }
 
+    /**
+     *
+     * @return void
+     */
     protected function initializeServices(): void {
         $actualLogFilePath = $this->logFilePath;
         $this->loggerService = new LoggerService($actualLogFilePath, $this->debug);
@@ -72,6 +80,10 @@ class EventHandler extends Component
         $this->broadcastService->setNotificationService($this->notificationService);
     }
 
+    /**
+     *
+     * @return void
+     */
     protected function initializeMessageHandlers(): void {
         $specificHandlers = [
             'register' => new RegistrationHandler($this->loggerService, $this->questSessionManager, $this->broadcastService, new BroadcastMessageFactory()),
@@ -92,6 +104,10 @@ class EventHandler extends Component
         );
     }
 
+    /**
+     *
+     * @return void
+     */
     public function run(): void {
         $this->suppressDeprecationWarnings();
         if (!$this->areServicesInitialized()) {
@@ -103,10 +119,18 @@ class EventHandler extends Component
         $this->startEventLoop();
     }
 
+    /**
+     *
+     * @return void
+     */
     protected function suppressDeprecationWarnings(): void {
         error_reporting(error_reporting() & ~E_DEPRECATED);
     }
 
+    /**
+     *
+     * @return bool
+     */
     protected function areServicesInitialized(): bool {
         if (!$this->loggerService || !$this->webSocketServerManager || !$this->messageHandlerOrchestrator) {
             $this->loggerService?->log("EventHandler: Essential services not initialized. Cannot run.", null, 'error');
@@ -115,11 +139,19 @@ class EventHandler extends Component
         return true;
     }
 
+    /**
+     *
+     * @return void
+     */
     protected function setupWebSocketServer(): void {
         $this->webSocketServerManager->setup($this->messageHandlerOrchestrator, $this->host, $this->port);
         $this->loggerService->log("EventHandler: WebSocket server configured to run at {$this->host}:{$this->port}");
     }
 
+    /**
+     *
+     * @return void
+     */
     protected function setupInternalHttpServer(): void {
         $http = new HttpServer($this->loop, [$this, 'handleBroadcastRequest']);
         $socket = new SocketServer("{$this->host}:{$this->internalPort}", [], $this->loop);
@@ -127,6 +159,11 @@ class EventHandler extends Component
         $this->loggerService->log("EventHandler: Internal HTTP server listening on {$this->host}:{$this->internalPort}");
     }
 
+    /**
+     *
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
+     */
     public function handleBroadcastRequest(ServerRequestInterface $request): ResponseInterface {
         $this->loggerService->logStart("EventHandler: handleBroadcastRequest - Received request: {$request->getMethod()} {$request->getUri()->getPath()}");
 
@@ -153,16 +190,31 @@ class EventHandler extends Component
         return $response;
     }
 
+    /**
+     *
+     * @param ServerRequestInterface $request
+     * @return bool
+     */
     protected function isValidBroadcastRequest(ServerRequestInterface $request): bool {
         return $request->getMethod() === 'POST' && $request->getUri()->getPath() === '/broadcast';
     }
 
+    /**
+     *
+     * @param ServerRequestInterface $request
+     * @return array<string, mixed>|null
+     */
     protected function parseRequestBody(ServerRequestInterface $request): ?array {
         $body = $request->getBody()->getContents();
         $data = json_decode($body, true);
         return json_last_error() === JSON_ERROR_NONE ? $data : null;
     }
 
+    /**
+     *
+     * @param array<string, mixed> $data
+     * @return ResponseInterface
+     */
     protected function processBroadcastRequest(array $data): ResponseInterface {
         $questId = $data['questId'] ?? null;
         $message = $data['message'] ?? null;
@@ -176,12 +228,23 @@ class EventHandler extends Component
         return new Response(400, ['Content-Type' => 'text/plain'], 'Missing questId or message');
     }
 
+    /**
+     *
+     * @return void
+     */
     protected function startEventLoop(): void {
         $this->loggerService->logStart("EventHandler: Starting event loop...");
         $this->loop->run();
         $this->loggerService->logEnd("EventHandler: Event loop stopped.");
     }
 
+    /**
+     *
+     * @param int $questId
+     * @param array<string, mixed> $message
+     * @param string|null $excludeSessionId
+     * @return void
+     */
     public function broadcastToQuest(int $questId, array $message, ?string $excludeSessionId = null): void {
         $this->loggerService->logStart("EventHandler: broadcastToQuest questId={$questId}, excludeSessionId={$excludeSessionId}, message:", $message);
         if (!$this->notificationService) {

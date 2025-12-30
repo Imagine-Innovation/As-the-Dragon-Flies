@@ -19,7 +19,6 @@ use Yii;
 class ActionType extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -54,7 +53,7 @@ class ActionType extends \yii\db\ActiveRecord
     /**
      * Gets query for [[ActionTypeSkills]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<ActionTypeSkill>
      */
     public function getActionTypeSkills() {
         return $this->hasMany(ActionTypeSkill::class, ['action_type_id' => 'id']);
@@ -63,7 +62,7 @@ class ActionType extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Actions]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Action>
      */
     public function getActions() {
         return $this->hasMany(Action::class, ['action_type_id' => 'id']);
@@ -72,10 +71,9 @@ class ActionType extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Skills]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Skill>
      */
     public function getSkills() {
         return $this->hasMany(Skill::class, ['id' => 'skill_id'])->viaTable('action_type_skill', ['action_type_id' => 'id']);
     }
-
 }

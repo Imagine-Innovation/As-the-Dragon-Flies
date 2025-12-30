@@ -5,7 +5,6 @@ namespace common\components;
 use common\helpers\ModelHelper;
 use Yii;
 use yii\base\Component;
-use yii\base\Model;
 use yii\base\InvalidParamException;
 
 /**
@@ -70,16 +69,20 @@ use yii\base\InvalidParamException;
 class RuleParser extends Component
 {
 
-    public $errorMessage = "";
-    public $parsingTree = [];
-    public $expected = "";
+    public string $errorMessage = "";
+
+    /** @var array<string, mixed> $parsingTree */
+    public array $parsingTree = [];
+    public string $expected = "";
     // For internal use
-    private $tokens = [];
-    private $tokenNb = 0;
-    private $pos = 0;
-    private $emergencyStop = 0;
+
+    /** @var list<array{type: string, value: string}> $tokens */
+    private array $tokens = [];
+    private int $tokenNb = 0;
+    private int $pos = 0;
+    private int $emergencyStop = 0;
     // for debug purpose
-    private $nestingLevel = 0;
+    private int $nestingLevel = 0;
 
     /**
      * Parses a rule from the given input string.
@@ -88,16 +91,16 @@ class RuleParser extends Component
      * a recursive descent parser. If parsing fails, an error message is generated.
      *
      * @param string $inputString The input string containing the rule to be parsed.
-     * @return mixed The parsing tree if the rule is successfully parsed, or false if parsing fails.
+     * @return bool The parsing tree if the rule is successfully parsed, or false if parsing fails.
      */
-    public function parseRule($inputString) {
+    public function parseRule(string $inputString): bool {
         // Tokenize the input rule string
         $this->tokens = $this->tokenize($inputString);
         // Store the total number of tokens in the token array
         $this->tokenNb = count($this->tokens);
         // Debugging: log the tokens and the input string
-        $this->_debug('——> tokens = ' . $this->_parsingTokens($this->tokenNb - 1));
-        $this->_debug('——> $inputString = ' . $inputString);
+        $this->_debug("——> tokens = {$this->_parsingTokens($this->tokenNb - 1)}");
+        $this->_debug("——> inputString = {$inputString}");
 
         // Parse the rule using the recursive descent parser
         $match = $this->rootExpression($inputString);
@@ -117,15 +120,15 @@ class RuleParser extends Component
      * If a match is found, it logs a debug message indicating that the input string is a valid rule.
      *
      * @param string $inputString The input string containing the rule to be parsed.
-     * @return mixed The matched parsing tree if the rule is valid, or false if the rule is invalid.
+     * @return bool The matched parsing tree if the rule is valid, or false if the rule is invalid.
      */
-    private function rootExpression($inputString) {
+    private function rootExpression(string $inputString): bool {
         // Attempt to match the root expression of the parsing tree
         $match = $this->expression($this->parsingTree);
 
         // If a match is found, log a debug message
         if ($match) {
-            $this->_debug('"' . $inputString . '" is a valid rule');
+            $this->_debug("'{$inputString}' is a valid rule");
         }
 
         // Return the matched parsing tree or false if no match is found
@@ -139,10 +142,10 @@ class RuleParser extends Component
      * a boolean expression, or a basic condition. It handles negation by consuming the 'not' token.
      * If a valid expression is found, it updates the provided expression reference.
      *
-     * @param array &$expression A reference to the expression array that will be updated.
+     * @param array<string, mixed> &$expression A reference to the expression array that will be updated.
      * @return bool True if a valid expression is found, false otherwise.
      */
-    private function expression(&$expression) {
+    private function expression(array &$expression): bool {
         // Set a recovery point in case the expression parsing fails
         $context = $this->setRecoveryPoint('expression');
         $expr = [];
@@ -151,7 +154,7 @@ class RuleParser extends Component
         $negate = ($this->nextTokenType() === 'not');
         if ($negate) {
             $this->getToken(); // Consume the 'not' token
-            $this->_debug('Negative expression, next token=' . $this->nextToken());
+            $this->_debug("Negative expression, next token={$this->nextToken()}");
 
             // Recursively parse the negated expression
             $match = $this->expression($expr);
@@ -182,7 +185,7 @@ class RuleParser extends Component
      * parenthesis '(', then parses the expression inside, and finally checks for a closing parenthesis ')'.
      * If the nested expression is valid, it updates the provided expression reference.
      *
-     * @param array &$expression A reference to the expression array that will be updated.
+     * @param array<string, mixed> &$expression A reference to the expression array that will be updated.
      * @return bool True if a valid nested expression is found, false otherwise.
      */
     private function nestedExpression(&$expression) {
@@ -222,10 +225,10 @@ class RuleParser extends Component
      * It checks each component in sequence and constructs a condition node if all components are matched.
      * If the basic condition is valid, it updates the provided condition reference.
      *
-     * @param array &$condition A reference to the condition array that will be updated.
+     * @param array<string, mixed> $condition A reference to the condition array that will be updated.
      * @return bool True if a valid basic condition is found, false otherwise.
      */
-    private function basicCondition(&$condition) {
+    private function basicCondition(array &$condition): bool {
         // Set a recovery point in case the basic condition parsing fails
         $context = $this->setRecoveryPoint('basicCondition');
         $className = '';
@@ -257,7 +260,7 @@ class RuleParser extends Component
      * and boolean operators ('and', 'or'). It handles nested expressions and combines them using boolean operators
      * if present. If the boolean expression is valid, it updates the provided expression reference.
      *
-     * @param array &$expression A reference to the expression array that will be updated.
+     * @param array<string, mixed> &$expression A reference to the expression array that will be updated.
      * @return bool True if a valid boolean expression is found, false otherwise.
      */
     private function booleanExpression(&$expression) {
@@ -284,7 +287,7 @@ class RuleParser extends Component
                     'type' => 'booleanExpression',
                     'left' => $left,
                     'boolOperator' => $boolOperator,
-                    'right' => $right['type'] == 'negate' ? $right : $right['node'],
+                    'right' => $right['type'] === 'negate' ? $right : $right['node'],
                 ];
             }
         }
@@ -313,20 +316,11 @@ class RuleParser extends Component
         $context = $this->setRecoveryPoint('object');
 
         // Determine the next token type and parse accordingly
-        switch ($this->nextTokenType()) {
-            case 'className':
-                // Attempt to match a property object
-                $match = $this->property($className);
-                break;
-            case 'string':
-                // Attempt to match a method object
-                $match = $this->method($className);
-                break;
-            default:
-                // No valid token type found for an object
-                $match = false;
-                break;
-        }
+        $match = match ($this->nextTokenType()) {
+            'className' => $this->property($className),
+            'string' => $this->method($className),
+            default => false
+        };
 
         // If a match is found, log the parsed object for debugging
         if ($match) {
@@ -353,6 +347,7 @@ class RuleParser extends Component
     private function property(&$property) {
         // Set a recovery point in case the property parsing fails
         $context = $this->setRecoveryPoint('property');
+        /** @var array<string> $properties */
         $properties = [];
 
         // Assuming the current token type is a className, collect the token
@@ -385,10 +380,10 @@ class RuleParser extends Component
      * consuming '->' tokens and matching methods or strings. The loop terminates when a method is encountered
      * or when a comparator token type is reached.
      *
-     * @param array &$properties A reference to the properties array that will be updated.
+     * @param array<string> $properties A reference to the properties array that will be updated.
      * @return bool True if a valid nested property chain is found, false otherwise.
      */
-    private function nestedProperty(&$properties) {
+    private function nestedProperty(array &$properties): bool {
         // Check if the next token is '->' indicating a nested property
         if ($this->nextToken() === '->') {
             $this->getToken(); // Consume the '->' token
@@ -435,16 +430,18 @@ class RuleParser extends Component
         $expected = '(';
 
         // Check if the next token is an opening parenthesis '('
-        $match = ($this->getToken() == $expected);
+        $match = ($this->getToken() === $expected);
+        /** @var array<string> $parameters */
         $parameters = [];
         if ($match) {
             // Parse the parameter list
-            $match = $this->parameterList($parameters);
+            $match = $this->parseParameterList($parameters);
         }
 
         // If a match is found, construct the full method string including parameters
         if ($match) {
-            $method = $methodName . '(' . implode(', ', $parameters) . ')';
+            $paramList = implode(', ', $parameters);
+            $method = "{$methodName}({$paramList})";
             $this->_debug("method=[{$method}]");
         } else {
             // If no match is found, rewind to the recovery point
@@ -462,15 +459,15 @@ class RuleParser extends Component
      * parameters until a closing parenthesis ')' is encountered. Parameters can be strings, numbers, or
      * quoted values. The function handles commas ',' between parameters.
      *
-     * @param array &$parameters A reference to the parameters array that will be updated.
+     * @param array<string> $parameters A reference to the parameters array that will be updated.
      * @return bool True if a valid parameter list is found, false otherwise.
      */
-    private function parameterList(&$parameters) {
+    private function parseParameterList(array &$parameters): bool {
         // Get the type of the next token
         $tokenType = $this->nextTokenType();
         // Get the current token
         $parameter = $this->getToken();
-        $this->_debug('parameterList => tokenType=[' . $tokenType . ']; parameter=[' . $parameter . ']');
+        $this->_debug('parseParameterList => tokenType=[' . $tokenType . ']; parameter=[' . $parameter . ']');
 
         // Depending on the token type, handle different cases
         switch ($tokenType) {
@@ -485,7 +482,7 @@ class RuleParser extends Component
                 $parameters[] = $parameter;
             case 'comma':
                 // If the token type is a comma, continue parsing the parameter list
-                $match = $this->parameterList($parameters);
+                $match = $this->parseParameterList($parameters);
                 break;
             default:
                 // Invalid token type
@@ -579,9 +576,9 @@ class RuleParser extends Component
      * a context array containing information about the current parsing state.
      *
      * @param string $msg A message describing the recovery point.
-     * @return array The context array containing parsing state information.
+     * @return array<string, mixed> The context array containing parsing state information.
      */
-    private function setRecoveryPoint($msg) {
+    private function setRecoveryPoint(string $msg): array {
         $this->_debug("--------------------");
         $this->_debug("'Try {$msg}");
         $this->_traceBack();
@@ -590,15 +587,6 @@ class RuleParser extends Component
         $caller = explode(' ', $msg);
 
         // Construct and return the context array with parsing state information
-        /*
-          $context['nestingLevel'] = $this->nestingLevel++;
-          $context['msg'] = $msg;
-          $context['caller'] = $caller[0];
-          $context['pos'] = $this->pos;
-          $context['parsingTree'] = $this->parsingTree;
-         *
-         */
-
         return [
             'nestingLevel' => $this->nestingLevel++,
             'msg' => $msg,
@@ -615,11 +603,11 @@ class RuleParser extends Component
      * to the state captured in the provided context array. It updates the parsing position, nesting level,
      * parsing tree, and the expected token if provided. It logs debugging information about the rewind operation.
      *
-     * @param array $context The context array containing parsing state information to rewind to.
+     * @param array<string, mixed> $context The context array containing parsing state information to rewind to.
      * @param string|null $expected (Optional) The expected token after rewinding.
      * @return void
      */
-    private function rewind($context, $expected = null) {
+    private function rewind(array $context, $expected = null): void {
         // Restore parsing state from the provided context
         $this->nestingLevel = $context['nestingLevel'];
         $this->pos = $context['pos'];
@@ -638,10 +626,10 @@ class RuleParser extends Component
      * This function recursively displays the parsing tree in a formatted string representation.
      * It traverses the parsing tree and constructs a string representing the types of nodes encountered.
      *
-     * @param array $parsingTree The parsing tree to display.
+     * @param array<string, mixed> $parsingTree The parsing tree to display.
      * @return string The formatted string representation of the parsing tree.
      */
-    private function _displayParsingTree($parsingTree) {
+    private function _displayParsingTree(array $parsingTree): string {
         $trace = "";
         if (isset($parsingTree['type'])) {
             $trace = $parsingTree['type'];
@@ -662,14 +650,14 @@ class RuleParser extends Component
      * if provided. It logs debugging information about the parsing status.
      *
      * @param bool $match Indicates whether a match is found.
-     * @param array &$parsingTree A reference to the parsing tree to update.
+     * @param array<string, mixed> $parsingTree A reference to the parsing tree to update.
      * @param string $type The type of the current node in the parsing tree.
      * @param mixed $node The node data to update in the parsing tree.
-     * @param array $context The context array containing parsing state information.
+     * @param array<string, mixed> $context The context array containing parsing state information.
      * @param string|null $expected (Optional) The expected token after rewinding.
      * @return bool The parsing status indicating whether a match is found.
      */
-    private function parsingStatus($match, &$parsingTree, $type, $node, $context, $expected = null) {
+    private function parsingStatus(bool $match, array &$parsingTree, string $type, mixed $node, array $context, string $expected = null): bool {
         if ($match) {
             // Update the parsing tree with the provided type and node
             $parsingTree['type'] = $type;
@@ -699,7 +687,7 @@ class RuleParser extends Component
      *
      * @return void
      */
-    private function _traceBack() {
+    private function _traceBack(): void {
         // Get debug backtrace
         $backTrace = debug_backtrace();
         $traces = [];
@@ -729,7 +717,7 @@ class RuleParser extends Component
      * @param string $msg The debug message to log.
      * @return void
      */
-    private function _debug($msg) {
+    private function _debug(string $msg): void {
         // Get the current nesting level
         $level = $this->nestingLevel;
         // Format the debug message with nesting level and visual indentation
@@ -748,7 +736,7 @@ class RuleParser extends Component
      * @return string The retrieved token.
      * @throws InvalidParamException if an emergency stop condition is encountered.
      */
-    private function _token($pos, $element) {
+    private function _token(int $pos, string $element): string {
         // Check for an emergency stop condition
         if ($this->emergencyStop++ > 200) {
             // Throw an exception indicating an emergency stop condition
@@ -780,7 +768,7 @@ class RuleParser extends Component
      * @param int $n The index of the last token to include in the string.
      * @return string The string representation of parsing tokens.
      */
-    private function _parsingTokens($n) {
+    private function _parsingTokens(int $n): string {
         $str = "";
         // Check if there are tokens available
         if ($this->tokenNb > 0) {
@@ -802,7 +790,7 @@ class RuleParser extends Component
      *
      * @return string The retrieved token.
      */
-    private function getToken() {
+    private function getToken(): string {
         // Retrieve the current token
         $token = $this->_token($this->pos, 'value');
         // Increment the position pointer if more tokens are available
@@ -822,7 +810,7 @@ class RuleParser extends Component
      *
      * @return string The next token.
      */
-    private function nextToken() {
+    private function nextToken(): string {
         // Retrieve the next token without advancing the position pointer
         $token = $this->_token($this->pos, 'value');
         // Log debugging information about the next token
@@ -839,7 +827,7 @@ class RuleParser extends Component
      *
      * @return string The type of the next token.
      */
-    private function nextTokenType() {
+    private function nextTokenType(): string {
         // Retrieve the type of the next token without advancing the position pointer
         $tokenType = $this->_token($this->pos, 'type');
         // Log debugging information about the type of the next token
@@ -861,9 +849,12 @@ class RuleParser extends Component
      * - \s* matches zero or more whitespace characters (spaces, tabs, etc.)
      *
      * @param string $inputString The input string to tokenize.
-     * @return array An array of tokens with their corresponding types and values.
+     * @return list<array{
+     *     type: string,
+     *     value: string
+     * }> An array of tokens with their corresponding types and values.
      */
-    private function tokenize($inputString) {
+    private function tokenize(string $inputString): array {
         // Define the pattern for tokenizing
         $pattern = "/\\s*(->|<=|>=|<>|!=|==|=|<|>|,|\\(|\\)|[a-zA-Z_][a-zA-Z0-9_]*|\\d+|'[^']*'|\"[^\"]*\")\\s*/";
 
@@ -923,7 +914,7 @@ class RuleParser extends Component
      *
      * @return string The error message.
      */
-    private function makeErrorMessage() {
+    private function makeErrorMessage(): string {
         // Check if an expected token is set
         if ($this->expected) {
             // Determine the token found, considering the end of the token stream
@@ -932,7 +923,7 @@ class RuleParser extends Component
             // Construct the input string up to the current position
             $in = $this->tokens[0]['value'];
             for ($i = 1; $i <= $this->pos; $i++) {
-                $in = $in . ' ' . $this->tokens[$i]['value'];
+                $in = "{$in} {$this->tokens[$i]['value']}";
             }
 
             // Generate the error message

@@ -18,7 +18,6 @@ use Yii;
 class SpellDoc extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -56,10 +55,9 @@ class SpellDoc extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Spell]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Spell>
      */
     public function getSpell() {
         return $this->hasOne(Spell::class, ['id' => 'spell_id']);
     }
-
 }

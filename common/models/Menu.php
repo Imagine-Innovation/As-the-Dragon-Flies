@@ -24,7 +24,6 @@ use Yii;
 class Menu extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -72,10 +71,9 @@ class Menu extends \yii\db\ActiveRecord
     /**
      * Gets query for [[AccessRight]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<AccessRight>
      */
     public function getAccessRight() {
         return $this->hasOne(AccessRight::class, ['id' => 'access_right_id']);
     }
-
 }

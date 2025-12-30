@@ -15,6 +15,12 @@ class SendingMessageHandler implements SpecificMessageHandlerInterface
     private BroadcastServiceInterface $broadcastService; // Corrected type hint
     private BroadcastMessageFactory $messageFactory;
 
+    /**
+     *
+     * @param LoggerService $logger
+     * @param BroadcastServiceInterface $broadcastService
+     * @param BroadcastMessageFactory $messageFactory
+     */
     public function __construct(
             LoggerService $logger,
             BroadcastServiceInterface $broadcastService, // Corrected type hint
@@ -27,6 +33,12 @@ class SendingMessageHandler implements SpecificMessageHandlerInterface
 
     /**
      * Handles chat messages by delegating to create and broadcast.
+     *
+     * @param ConnectionInterface $from
+     * @param string $clientId
+     * @param string $sessionId
+     * @param array<string, mixed> $data
+     * @return void
      */
     public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
         $this->logger->logStart("SendingMessageHandler: handle sessionId=[{$sessionId}], clientId=[{$clientId}]", $data);

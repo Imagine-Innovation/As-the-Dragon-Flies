@@ -23,7 +23,6 @@ use Yii;
 class AccessRight extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -62,7 +61,7 @@ class AccessRight extends \yii\db\ActiveRecord
     /**
      * Gets query for [[AccessRightActionButtons]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<AccessRightActionButton>
      */
     public function getAccessRightActionButtons() {
         return $this->hasMany(AccessRightActionButton::class, ['access_right_id' => 'id']);
@@ -71,7 +70,7 @@ class AccessRight extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Menu]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Menu>
      */
     public function getMenu() {
         return $this->hasOne(Menu::class, ['access_right_id' => 'id']);
@@ -80,10 +79,9 @@ class AccessRight extends \yii\db\ActiveRecord
     /**
      * Gets query for [[UserLogs]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<UserLog>
      */
     public function getUserLogs() {
         return $this->hasMany(UserLog::class, ['access_right_id' => 'id']);
     }
-
 }

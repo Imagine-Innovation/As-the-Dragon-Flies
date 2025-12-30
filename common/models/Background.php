@@ -23,7 +23,6 @@ use Yii;
 class Background extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -61,7 +60,7 @@ class Background extends \yii\db\ActiveRecord
     /**
      * Gets query for [[BackgroundAttributes]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<BackgroundAttribute>
      */
     public function getBackgroundAttributes() {
         return $this->hasMany(BackgroundAttribute::class, ['background_id' => 'id']);
@@ -70,7 +69,7 @@ class Background extends \yii\db\ActiveRecord
     /**
      * Gets query for [[BackgroundItems]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<BackgroundItem>
      */
     public function getBackgroundItems() {
         return $this->hasMany(BackgroundItem::class, ['background_id' => 'id']);
@@ -79,7 +78,7 @@ class Background extends \yii\db\ActiveRecord
     /**
      * Gets query for [[BackgroundSkills]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<BackgroundSkill>
      */
     public function getBackgroundSkills() {
         return $this->hasMany(BackgroundSkill::class, ['background_id' => 'id']);
@@ -88,7 +87,7 @@ class Background extends \yii\db\ActiveRecord
     /**
      * Gets query for [[BackgroundTraits]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<BackgroundTrait>
      */
     public function getBackgroundTraits() {
         return $this->hasMany(BackgroundTrait::class, ['background_id' => 'id']);
@@ -97,7 +96,7 @@ class Background extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Players]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Player>
      */
     public function getPlayers() {
         return $this->hasMany(Player::class, ['background_id' => 'id']);
@@ -106,10 +105,9 @@ class Background extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Skills]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Skill>
      */
     public function getSkills() {
         return $this->hasMany(Skill::class, ['id' => 'skill_id'])->viaTable('background_skill', ['background_id' => 'id']);
     }
-
 }

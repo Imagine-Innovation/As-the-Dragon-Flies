@@ -21,7 +21,6 @@ use Yii;
 class ActionButton extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -63,10 +62,9 @@ class ActionButton extends \yii\db\ActiveRecord
     /**
      * Gets query for [[AccessRightActionButtons]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<AccessRightActionButton>
      */
     public function getAccessRightActionButtons() {
         return $this->hasMany(AccessRightActionButton::class, ['action_button_id' => 'id']);
     }
-
 }

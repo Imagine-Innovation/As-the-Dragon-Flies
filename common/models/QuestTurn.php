@@ -62,7 +62,7 @@ class QuestTurn extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Player]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Player>
      */
     public function getPlayer() {
         return $this->hasOne(Player::class, ['id' => 'player_id']);
@@ -71,7 +71,7 @@ class QuestTurn extends \yii\db\ActiveRecord
     /**
      * Gets query for [[QuestProgress]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<QuestProgress>
      */
     public function getQuestProgress() {
         return $this->hasOne(QuestProgress::class, ['id' => 'quest_progress_id']);

@@ -13,11 +13,19 @@ use yii\base\Component;
 class ContextManager extends Component
 {
 
+    /**
+     *
+     * @return User|null
+     */
     private static function user(): ?User {
         return Yii::$app->user->identity instanceof User ? Yii::$app->user->identity : null;
     }
 
-    public static function initContext() {
+    /**
+     *
+     * @return void
+     */
+    public static function initContext(): void {
         if (Yii::$app->user->isGuest) {
             return;
         }
@@ -30,13 +38,22 @@ class ContextManager extends Component
         self::updatePlayerContext($user->current_player_id);
     }
 
-    private static function setSessionId() {
+    /**
+     *
+     * @return void
+     */
+    private static function setSessionId(): void {
         if (Yii::$app->session->get('sessionId') === null) {
             $sessionId = Utilities::newUUID();
             Yii::$app->session->set('sessionId', $sessionId);
         }
     }
 
+    /**
+     *
+     * @param int|null $playerId
+     * @return void
+     */
     public static function updatePlayerContext(?int $playerId = null): void {
         if (Yii::$app->user->isGuest) {
             return;
@@ -64,6 +81,11 @@ class ContextManager extends Component
         }
     }
 
+    /**
+     *
+     * @param int|null $questId
+     * @return void
+     */
     public static function updateQuestContext(?int $questId = null): void {
         if (Yii::$app->user->isGuest) {
             return;
@@ -89,6 +111,10 @@ class ContextManager extends Component
         }
     }
 
+    /**
+     *
+     * @return array<string, mixed>
+     */
     public static function getContext(): array {
         $user = self::user();
         return [

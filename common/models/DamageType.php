@@ -25,7 +25,6 @@ use Yii;
 class DamageType extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -62,7 +61,7 @@ class DamageType extends \yii\db\ActiveRecord
     /**
      * Gets query for [[CreatureDamageTypes]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<CreatureDamageType>
      */
     public function getCreatureDamageTypes() {
         return $this->hasMany(CreatureDamageType::class, ['damage_type_id' => 'id']);
@@ -71,7 +70,7 @@ class DamageType extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Creatures]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Creature>
      */
     public function getCreatures() {
         return $this->hasMany(Creature::class, ['id' => 'creature_id'])->viaTable('creature_damage_type', ['damage_type_id' => 'id']);
@@ -80,7 +79,7 @@ class DamageType extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Group]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<DamageGroup>
      */
     public function getGroup() {
         return $this->hasOne(DamageGroup::class, ['id' => 'group_id']);
@@ -89,7 +88,7 @@ class DamageType extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Poisons]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Poison>
      */
     public function getPoisons() {
         return $this->hasMany(Poison::class, ['damage_type_id' => 'id']);
@@ -98,7 +97,7 @@ class DamageType extends \yii\db\ActiveRecord
     /**
      * Gets query for [[ShapeAttacks]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<ShapeAttack>
      */
     public function getShapeAttacks() {
         return $this->hasMany(ShapeAttack::class, ['damage_type_id' => 'id']);
@@ -107,7 +106,7 @@ class DamageType extends \yii\db\ActiveRecord
     /**
      * Gets query for [[SpellDamageTypes]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<SpellDamageType>
      */
     public function getSpellDamageTypes() {
         return $this->hasMany(SpellDamageType::class, ['damage_type_id' => 'id']);
@@ -116,7 +115,7 @@ class DamageType extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Spells]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Spell>
      */
     public function getSpells() {
         return $this->hasMany(Spell::class, ['id' => 'spell_id'])->viaTable('spell_damage_type', ['damage_type_id' => 'id']);
@@ -125,7 +124,7 @@ class DamageType extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Traps]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Trap>
      */
     public function getTraps() {
         return $this->hasMany(Trap::class, ['damage_type_id' => 'id']);
@@ -134,10 +133,9 @@ class DamageType extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Weapons]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Weapon>
      */
     public function getWeapons() {
         return $this->hasMany(Weapon::class, ['damage_type_id' => 'id']);
     }
-
 }

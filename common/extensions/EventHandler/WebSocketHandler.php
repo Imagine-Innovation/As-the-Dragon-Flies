@@ -14,8 +14,16 @@ class WebSocketHandler implements MessageComponentInterface
     private MessageHandlerInterface $messageHandler;
     private LoggerService $logger;
     private WebSocketServerManager $serverManager; // To call addClient/removeClient on the manager
+
+    /** @var array<int, string> $clientsMap */
     private array $clientsMap = []; // Maps $conn->resourceId to our generated $clientId
 
+    /**
+     *
+     * @param MessageHandlerInterface $messageHandler
+     * @param LoggerService $logger
+     * @param WebSocketServerManager $serverManager
+     */
     public function __construct(
             MessageHandlerInterface $messageHandler,
             LoggerService $logger,
@@ -27,7 +35,12 @@ class WebSocketHandler implements MessageComponentInterface
         $this->logger->log("WebSocketHandler: Initialized");
     }
 
-    public function onOpen(ConnectionInterface $conn) {
+    /**
+     *
+     * @param ConnectionInterface $conn
+     * @return void
+     */
+    public function onOpen(ConnectionInterface $conn): void {
         $this->logger->logStart("WebSocketHandler: onOpen from {$conn->remoteAddress}");
 
         $clientId = uniqid('client_'); // Generate a unique client ID
@@ -43,6 +56,11 @@ class WebSocketHandler implements MessageComponentInterface
         $this->logger->logEnd("WebSocketHandler: onOpen");
     }
 
+    /**
+     *
+     * @param ConnectionInterface $conn
+     * @return string|null
+     */
     private function getClientId(ConnectionInterface $conn): ?string {
         // Retrieve our clientId
         if (isset($conn->appClientId)) {
@@ -55,23 +73,34 @@ class WebSocketHandler implements MessageComponentInterface
         return null;
     }
 
-    public function onMessage(ConnectionInterface $from, $msg) {
+    /**
+     *
+     * @param ConnectionInterface $from
+     * @param mixed $msg
+     * @return void
+     */
+    public function onMessage(ConnectionInterface $from, mixed $msg): void {
         $clientId = $this->getClientId($from);
-        if (!$clientId) {
+        if ($clientId === null) {
             $this->logger->log("WebSocketHandler: Error - Could not determine client ID for message from resourceId: {$from->resourceId}", ['message' => $msg], 'error');
-            $from->close(); // Close connection if client ID is unknown
+            $from->close();
             return;
         }
 
         $this->logger->logStart("WebSocketHandler: onMessage from clientId=[{$clientId}], resourceId=[{$from->resourceId}]", ['message_summary' => substr($msg, 0, 100) . (strlen($msg) > 100 ? '...' : '')]);
 
         // Delegate message handling to the MessageHandler (Orchestrator)
-        $this->messageHandler->handle($from, $clientId, $msg);
+        $this->messageHandler->handle($from, $clientId, (string) $msg);
 
         $this->logger->logEnd("WebSocketHandler: onMessage from clientId=[{$clientId}]");
     }
 
-    public function onClose(ConnectionInterface $conn) {
+    /**
+     *
+     * @param ConnectionInterface $conn
+     * @return void
+     */
+    public function onClose(ConnectionInterface $conn): void {
         $clientId = $this->getClientId($conn);
         if (!$clientId) {
             // This might happen if onError closed the connection before appClientId was set or if it was never opened properly.
@@ -103,7 +132,13 @@ class WebSocketHandler implements MessageComponentInterface
         $this->logger->logEnd("WebSocketHandler: onClose");
     }
 
-    public function onError(ConnectionInterface $conn, \Exception $e) {
+    /**
+     *
+     * @param ConnectionInterface $conn
+     * @param \Exception $e
+     * @return void
+     */
+    public function onError(ConnectionInterface $conn, \Exception $e): void {
         $clientId = $this->getClientId($conn);
         if (!$clientId) {
             $this->logger->log("WebSocketHandler: onError - Could not determine client ID for resourceId: {$conn->resourceId}. Error: " . $e->getMessage(), $e->getTraceAsString(), 'error');

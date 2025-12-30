@@ -16,7 +16,6 @@ use Yii;
 class RaceGroupAlignment extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -50,7 +49,7 @@ class RaceGroupAlignment extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Alignment]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Alignment>
      */
     public function getAlignment() {
         return $this->hasOne(Alignment::class, ['id' => 'alignment_id']);
@@ -59,10 +58,9 @@ class RaceGroupAlignment extends \yii\db\ActiveRecord
     /**
      * Gets query for [[RaceGroup]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<RaceGroup>
      */
     public function getRaceGroup() {
         return $this->hasOne(RaceGroup::class, ['id' => 'race_group_id']);
     }
-
 }

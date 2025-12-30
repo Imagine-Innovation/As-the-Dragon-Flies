@@ -21,6 +21,7 @@ use Yii;
  * @property Ability[] $abilities
  * @property Ability[] $abilities0
  * @property Alignment[] $alignments
+ * @property Condition[] $conditions
  * @property CreatureAbility[] $creatureAbilities
  * @property CreatureAlignment[] $creatureAlignments
  * @property CreatureDamageType[] $creatureDamageTypes
@@ -82,7 +83,7 @@ class Creature extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Abilities]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Ability>
      */
     public function getAbilities() {
         return $this->hasMany(Ability::class, ['id' => 'ability_id'])->viaTable('creature_ability', ['creature_id' => 'id']);
@@ -91,7 +92,7 @@ class Creature extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Abilities0]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Ability>
      */
     public function getAbilities0() {
         return $this->hasMany(Ability::class, ['id' => 'ability_id'])->viaTable('creature_saving_throw', ['creature_id' => 'id']);
@@ -100,16 +101,25 @@ class Creature extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Alignments]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Alignment>
      */
     public function getAlignments() {
         return $this->hasMany(Alignment::class, ['id' => 'alignment_id'])->viaTable('creature_alignment', ['creature_id' => 'id']);
     }
 
     /**
+     * Gets query for [[Conditions]].
+     *
+     * @return \yii\db\ActiveQuery<Condition>
+     */
+    public function getConditions() {
+        return $this->hasMany(Condition::class, ['id' => 'condition_id'])->viaTable('creature_immunization', ['creature_id' => 'id']);
+    }
+
+    /**
      * Gets query for [[CreatureAbilities]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<CreatureAbility>
      */
     public function getCreatureAbilities() {
         return $this->hasMany(CreatureAbility::class, ['creature_id' => 'id']);
@@ -118,7 +128,7 @@ class Creature extends \yii\db\ActiveRecord
     /**
      * Gets query for [[CreatureAlignments]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<CreatureAlignment>
      */
     public function getCreatureAlignments() {
         return $this->hasMany(CreatureAlignment::class, ['creature_id' => 'id']);
@@ -127,7 +137,7 @@ class Creature extends \yii\db\ActiveRecord
     /**
      * Gets query for [[CreatureDamageTypes]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<CreatureDamageType>
      */
     public function getCreatureDamageTypes() {
         return $this->hasMany(CreatureDamageType::class, ['creature_id' => 'id']);
@@ -136,7 +146,7 @@ class Creature extends \yii\db\ActiveRecord
     /**
      * Gets query for [[CreatureImmunizations]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<CreatureImmunization>
      */
     public function getCreatureImmunizations() {
         return $this->hasMany(CreatureImmunization::class, ['creature_id' => 'id']);
@@ -145,7 +155,7 @@ class Creature extends \yii\db\ActiveRecord
     /**
      * Gets query for [[CreatureSavingThrows]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<CreatureSavingThrow>
      */
     public function getCreatureSavingThrows() {
         return $this->hasMany(CreatureSavingThrow::class, ['creature_id' => 'id']);
@@ -154,7 +164,7 @@ class Creature extends \yii\db\ActiveRecord
     /**
      * Gets query for [[CreatureSkills]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<CreatureSkill>
      */
     public function getCreatureSkills() {
         return $this->hasMany(CreatureSkill::class, ['creature_id' => 'id']);
@@ -163,7 +173,7 @@ class Creature extends \yii\db\ActiveRecord
     /**
      * Gets query for [[DamageTypes]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<DamageType>
      */
     public function getDamageTypes() {
         return $this->hasMany(DamageType::class, ['id' => 'damage_type_id'])->viaTable('creature_damage_type', ['creature_id' => 'id']);
@@ -172,7 +182,7 @@ class Creature extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Monsters]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Monster>
      */
     public function getMonsters() {
         return $this->hasMany(Monster::class, ['creature_id' => 'id']);
@@ -181,7 +191,7 @@ class Creature extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Shapes]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Shape>
      */
     public function getShapes() {
         return $this->hasMany(Shape::class, ['creature_id' => 'id']);
@@ -190,7 +200,7 @@ class Creature extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Skills]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Skill>
      */
     public function getSkills() {
         return $this->hasMany(Skill::class, ['id' => 'skill_id'])->viaTable('creature_skill', ['creature_id' => 'id']);
@@ -199,7 +209,7 @@ class Creature extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Type]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<CreatureType>
      */
     public function getType() {
         return $this->hasOne(CreatureType::class, ['id' => 'type_id']);

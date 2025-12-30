@@ -15,6 +15,12 @@ class NotificationService
     private BroadcastServiceInterface $broadcastService;
     private BroadcastMessageFactory $messageFactory;
 
+    /**
+     *
+     * @param LoggerService $logger
+     * @param BroadcastServiceInterface $broadcastService
+     * @param BroadcastMessageFactory $messageFactory
+     */
     public function __construct(
             LoggerService $logger,
             BroadcastServiceInterface $broadcastService,
@@ -25,6 +31,14 @@ class NotificationService
         $this->messageFactory = $messageFactory;
     }
 
+    /**
+     *
+     * @param int $questId
+     * @param array<string, mixed> $data
+     * @param string|null $excludeSessionId
+     * @param int|null $userId
+     * @return void
+     */
     public function broadcast(int $questId, array $data, ?string $excludeSessionId = null, ?int $userId = null): void {
         $this->logger->logStart("NotificationService: broadcast questId=[{$questId}], excludeSessionId=[{$excludeSessionId}], userId=[{$userId}]");
 
@@ -55,7 +69,11 @@ class NotificationService
     /**
      * Retrieves notifications for a quest.
      * Original logic from EventHandler::getNotifications
-     * @return array|null An array of Notification objects.
+     *
+     * @param int $questId
+     * @param string $type
+     * @param int $since
+     * @return Notification[]|null
      */
     public function getNotifications(int $questId, string $type, int $since): ?array {
         $this->logger->logStart("NotificationService: getNotifications for questId=[{$questId}], type=[{$type}], since=[{$since}]");
@@ -84,12 +102,16 @@ class NotificationService
 
     /**
      * Prepares a NewMessageDto from a Notification model.
+     *
+     * @param Notification $notification
+     * @param string $sessionId
+     * @return NewMessageDto
      */
     public function prepareNewMessageDto(Notification $notification, string $sessionId): NewMessageDto {
         $this->logger->log("NotificationService: Preparing NewMessageDto for Notification ID: {$notification->id}, Session ID: {$sessionId}");
 
         $payload = json_decode($notification->payload, true);
-        $senderDisplayName = $notification->initiator->name; // Adjust according to your Player model's name attribute
+        $senderDisplayName = $notification->initiator->name;
         // Message content can come from notification's message field or a specific field in payload
         $messageContent = $payload['message'] ?? $notification->message;
 

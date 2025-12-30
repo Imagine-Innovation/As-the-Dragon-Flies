@@ -100,7 +100,7 @@ class Action extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Triggers]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<ActionFlow>
      */
     public function getTriggers() {
         return $this->hasMany(ActionFlow::class, ['previous_action_id' => 'id']);
@@ -109,7 +109,7 @@ class Action extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Prerequisites]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<ActionFlow>
      */
     public function getPrerequisites() {
         return $this->hasMany(ActionFlow::class, ['next_action_id' => 'id']);
@@ -118,7 +118,7 @@ class Action extends \yii\db\ActiveRecord
     /**
      * Gets query for [[ActionType]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<ActionType>
      */
     public function getActionType() {
         return $this->hasOne(ActionType::class, ['id' => 'action_type_id']);
@@ -127,7 +127,7 @@ class Action extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Decor]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Decor>
      */
     public function getDecor() {
         return $this->hasOne(Decor::class, ['id' => 'decor_id']);
@@ -136,7 +136,7 @@ class Action extends \yii\db\ActiveRecord
     /**
      * Gets query for [[DecorItem]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<DecorItem>
      */
     public function getDecorItem() {
         return $this->hasOne(DecorItem::class, ['id' => 'decor_item_id']);
@@ -145,7 +145,7 @@ class Action extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Mission]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Mission>
      */
     public function getMission() {
         return $this->hasOne(Mission::class, ['id' => 'mission_id']);
@@ -154,7 +154,7 @@ class Action extends \yii\db\ActiveRecord
     /**
      * Gets query for [[NextActions]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Action>
      */
     public function getNextActions() {
         return $this->hasMany(Action::class, ['id' => 'next_action_id'])->viaTable('action_flow', ['previous_action_id' => 'id']);
@@ -163,7 +163,7 @@ class Action extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Npc]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Npc>
      */
     public function getNpc() {
         return $this->hasOne(Npc::class, ['id' => 'npc_id']);
@@ -172,7 +172,7 @@ class Action extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Outcomes]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Outcome>
      */
     public function getOutcomes() {
         return $this->hasMany(Outcome::class, ['action_id' => 'id']);
@@ -181,7 +181,7 @@ class Action extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Passage]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Passage>
      */
     public function getPassage() {
         return $this->hasOne(Passage::class, ['id' => 'passage_id']);
@@ -190,7 +190,7 @@ class Action extends \yii\db\ActiveRecord
     /**
      * Gets query for [[PreviousActions]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Action>
      */
     public function getPreviousActions() {
         return $this->hasMany(Action::class, ['id' => 'previous_action_id'])->viaTable('action_flow', ['next_action_id' => 'id']);
@@ -199,7 +199,7 @@ class Action extends \yii\db\ActiveRecord
     /**
      * Gets query for [[QuestActions]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<QuestAction>
      */
     public function getQuestActions() {
         return $this->hasMany(QuestAction::class, ['action_id' => 'id']);
@@ -208,7 +208,7 @@ class Action extends \yii\db\ActiveRecord
     /**
      * Gets query for [[QuestProgresses]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<QuestProgress>
      */
     public function getQuestProgresses() {
         return $this->hasMany(QuestProgress::class, ['id' => 'quest_progress_id'])->viaTable('quest_action', ['action_id' => 'id']);
@@ -217,7 +217,7 @@ class Action extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Reply]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Reply>
      */
     public function getReply() {
         return $this->hasOne(Reply::class, ['id' => 'reply_id']);
@@ -226,7 +226,7 @@ class Action extends \yii\db\ActiveRecord
     /**
      * Gets query for [[RequiredItem]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Item>
      */
     public function getRequiredItem() {
         return $this->hasOne(Item::class, ['id' => 'required_item_id']);
@@ -235,7 +235,7 @@ class Action extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Trap]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Trap>
      */
     public function getTrap() {
         return $this->hasOne(Trap::class, ['id' => 'trap_id']);

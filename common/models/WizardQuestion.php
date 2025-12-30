@@ -19,7 +19,6 @@ use Yii;
 class WizardQuestion extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -55,7 +54,7 @@ class WizardQuestion extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Wizard]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Wizard>
      */
     public function getWizard() {
         return $this->hasOne(Wizard::class, ['id' => 'wizard_id']);
@@ -64,7 +63,7 @@ class WizardQuestion extends \yii\db\ActiveRecord
     /**
      * Gets query for [[WizardAnswers]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<WizardAnswer>
      */
     public function getWizardAnswers() {
         return $this->hasMany(WizardAnswer::class, ['question_id' => 'id']);
@@ -73,10 +72,9 @@ class WizardQuestion extends \yii\db\ActiveRecord
     /**
      * Gets query for [[WizardAnswers0]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<WizardAnswer>
      */
     public function getWizardAnswers0() {
         return $this->hasMany(WizardAnswer::class, ['next_question_id' => 'id']);
     }
-
 }

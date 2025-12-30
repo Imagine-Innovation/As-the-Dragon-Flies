@@ -16,7 +16,6 @@ use Yii;
 class ClassSpell extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -50,7 +49,7 @@ class ClassSpell extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Class]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<CharacterClass>
      */
     public function getClass() {
         return $this->hasOne(CharacterClass::class, ['id' => 'class_id']);
@@ -59,10 +58,9 @@ class ClassSpell extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Spell]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Spell>
      */
     public function getSpell() {
         return $this->hasOne(Spell::class, ['id' => 'spell_id']);
     }
-
 }

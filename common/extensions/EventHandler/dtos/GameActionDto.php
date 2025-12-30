@@ -8,8 +8,16 @@ class GameActionDto implements BroadcastMessageInterface
 {
 
     private string $type = 'game-action';
+
+    /** @var array<string, mixed> $payload */
     private array $payload;
 
+    /**
+     *
+     * @param string $playerName
+     * @param string $action
+     * @param array<string, mixed> $detail
+     */
     public function __construct(string $playerName, string $action, array $detail) {
         $this->payload = [
             'playerName' => $playerName,
@@ -19,14 +27,26 @@ class GameActionDto implements BroadcastMessageInterface
         ];
     }
 
+    /**
+     *
+     * @return string
+     */
     public function getType(): string {
         return $this->type;
     }
 
+    /**
+     *
+     * @return array<string, mixed>
+     */
     public function getPayload(): array {
         return $this->payload;
     }
 
+    /**
+     *
+     * @return string
+     */
     public function toJson(): string {
         return json_encode(['type' => $this->type, 'payload' => $this->payload]);
     }

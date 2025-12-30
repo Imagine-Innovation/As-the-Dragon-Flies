@@ -18,7 +18,6 @@ use Yii;
 class ShapeMovement extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
@@ -55,7 +54,7 @@ class ShapeMovement extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Movement]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Movement>
      */
     public function getMovement() {
         return $this->hasOne(Movement::class, ['id' => 'movement_id']);
@@ -64,10 +63,9 @@ class ShapeMovement extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Shape]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery<Shape>
      */
     public function getShape() {
         return $this->hasOne(Shape::class, ['id' => 'shape_id']);
     }
-
 }
