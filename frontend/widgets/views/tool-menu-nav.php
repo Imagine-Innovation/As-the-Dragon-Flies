@@ -4,7 +4,6 @@ use yii\helpers\Url;
 
 /** @var yii\web\View $this */
 /** @var common\models\Menu[] $menus */
-/** @var array $debugMode */
 ?>
 <li class="dropdown top-nav__notifications">
     <a href="#" data-bs-toggle="dropdown">

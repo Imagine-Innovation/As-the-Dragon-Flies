@@ -2,14 +2,23 @@
 
 namespace frontend\widgets;
 
+use common\models\Player;
 use yii\base\Widget;
+use yii\db\ActiveRecord;
 
-class BuilderTab extends Widget {
+class BuilderTab extends Widget
+{
 
-    public $player;
-    public $tabContent;
+    public Player $player;
 
-    public function run() {
+    /** @var array<string, mixed> $tabContent */
+    public array $tabContent;
+
+    /**
+     *
+     * @return string
+     */
+    public function run(): string {
         $tab = $this->tabContent;
 
         if ($tab['model_name']) {
@@ -27,7 +36,12 @@ class BuilderTab extends Widget {
         }
     }
 
-    private function getModels($modelName) {
+    /**
+     *
+     * @param string $modelName
+     * @return ActiveRecord
+     */
+    private function getModels(string $modelName): ActiveRecord {
         $model = "common\\models\\" . $modelName;
         return $model::find()->all();
     }

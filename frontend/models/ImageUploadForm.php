@@ -6,13 +6,11 @@ use Yii;
 use yii\base\Model;
 use yii\web\UploadedFile;
 
-class ImageUploadForm extends Model {
+class ImageUploadForm extends Model
+{
 
-    /**
-     * @var UploadedFile
-     */
-    public $imageFile;
-    public $folder;
+    public UploadedFile $imageFile;
+    public string $folder;
 
     public function rules() {
         return [
@@ -21,7 +19,11 @@ class ImageUploadForm extends Model {
         ];
     }
 
-    public function upload() {
+    /**
+     *
+     * @return bool
+     */
+    public function upload(): bool {
         Yii::debug("*** Debug *** upload this->folder=" . $this->folder, __METHOD__);
         Yii::debug("*** Debug *** upload this->imageFile->baseName=" . $this->imageFile->baseName, __METHOD__);
         Yii::debug("*** Debug *** upload this->imageFile->extension=" . $this->imageFile->extension, __METHOD__);
@@ -39,7 +41,11 @@ class ImageUploadForm extends Model {
         return false;
     }
 
-    private function uploadPath() {
+    /**
+     *
+     * @return string
+     */
+    private function uploadPath(): string {
         $rootPath = 'web' . DIRECTORY_SEPARATOR . 'img';
         if ($this->folder) {
             return $rootPath . DIRECTORY_SEPARATOR . $this->folder;

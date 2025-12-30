@@ -89,7 +89,7 @@ class ItemController extends Controller
         Yii::debug("*** debug *** actionAjax - itemTypeId={$itemTypeId}");
         $param = [
             'modelName' => 'Item',
-            'param' => ['itemType' => $itemTypeId],
+            'param' => ['itemTypeId' => $itemTypeId],
             'filter' => ['item_type_id' => $itemTypeId],
             'sortOrder' => [
                 'sort_order' => SORT_ASC,

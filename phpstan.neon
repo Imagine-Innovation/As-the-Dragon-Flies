@@ -29,6 +29,8 @@ parameters:
         - frontend/config
         - frontend/tests
         - frontend/views/site/icons.php
+        - frontend/web/index.php
+        - frontend/web/index-test.php
         - vendor
     # Yii2 often uses undefined properties; this helps ignore those specific errors
     ignoreErrors:

@@ -33,6 +33,12 @@ class ItemHelper
         'is_versatile' => 'Versatile (%s)',
     ];
 
+    /**
+     *
+     * @param Weapon $weapon
+     * @param array<string, string> $propertiesConst
+     * @return string
+     */
     private static function getWeaponProperties(Weapon &$weapon, array $propertiesConst): string {
 
         $properties = [];
@@ -42,7 +48,7 @@ class ItemHelper
                 if (str_contains($displayName, '%s')) {
                     $value = ($property == 'is_versatile') ?
                             $weapon->versatile_dice :
-                            $weapon->range_min . '-' . $weapon->range_max;
+                            "{$weapon->range_min}-{$weapon->range_max}";
                     $properties[] = sprintf($displayName, $value);
                 } else {
                     $properties[] = $displayName;
@@ -52,14 +58,29 @@ class ItemHelper
         return implode(", ", $properties);
     }
 
+    /**
+     *
+     * @param Weapon $weapon
+     * @return string
+     */
     public static function getFullWeaponProperties(Weapon &$weapon): string {
         return self::getWeaponProperties($weapon, self::FULL_WEAPON_PROPERTIES);
     }
 
+    /**
+     *
+     * @param Weapon $weapon
+     * @return string
+     */
     public static function getLiteWeaponProperties(Weapon &$weapon): string {
         return self::getWeaponProperties($weapon, self::LITE_WEAPON_PROPERTIES);
     }
 
+    /**
+     *
+     * @param PlayerItem $playerItem
+     * @return string|null
+     */
     public static function getRemainingAmunitions(PlayerItem &$playerItem): ?string {
         $weapon = $playerItem->weapon;
 
@@ -74,13 +95,10 @@ class ItemHelper
             return "You need {$amunition} to use it";
         }
 
-        switch ($weaponAmunition->quantity) {
-            case 0;
-                return "No more {$amunition}";
-            case 1;
-                return "Only one {$amunition} left";
-            default:
-                return "{$weaponAmunition->quantity} {$amunition}s left";
-        }
+        return match ($weaponAmunition->quantity) {
+            0 => "No more {$amunition}",
+            1 => "Only one {$amunition} left",
+            default => "{$weaponAmunition->quantity} {$amunition}s left"
+        };
     }
 }

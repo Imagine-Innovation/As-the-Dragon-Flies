@@ -6,7 +6,7 @@ use frontend\widgets\Button;
 /** @var string $title */
 /** @var string $img */
 /** @var string[] $paragraphs */
-/** @var array $button */
+/** @var array<string, mixed> $button */
 ?>
 <section id="level1">
     <div class="card overflow-hidden rounded-4">

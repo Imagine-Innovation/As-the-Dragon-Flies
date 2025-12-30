@@ -3,7 +3,7 @@
 use frontend\widgets\Button;
 
 /** @var yii\web\View $this */
-/** @var array $playerItems */
+/** @var array<string, mixed> $playerItems */
 $itemTypes = ['Armor', 'Helmet', 'Shield', 'Weapon', 'Tool'];
 ?>
 <div class="row">

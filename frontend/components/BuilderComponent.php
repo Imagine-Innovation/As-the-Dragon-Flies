@@ -7,6 +7,8 @@ use common\models\AbilityDefault;
 use common\models\BackgroundSkill;
 use common\models\BackgroundTrait;
 use common\models\CharacterTrait;
+use common\models\ClassEndowment;
+use common\models\ClassEquipment;
 use common\models\ClassSkill;
 use common\models\Language;
 use common\models\Player;
@@ -169,7 +171,7 @@ class BuilderComponent
      * @param int $raceId
      * @param string $gender
      * @param int $n
-     * @return array
+     * @return array<int, string>
      */
     public static function loadRandomNames(int $raceId, string $gender, int $n): array {
         $race = Race::findOne(['id' => $raceId]);
@@ -205,7 +207,7 @@ class BuilderComponent
      * @param int $ethnicityId
      * @param string $className Can be either FirstName or LastName
      * @param string|null $gender
-     * @return array
+     * @return array<int, string>
      */
     private static function getEthnicNames(int $ethnicityId, string $className, ?string $gender = null): array {
         $nameClass = "common\\models\\$className";
@@ -221,7 +223,7 @@ class BuilderComponent
     /**
      * Randomly selects a name from the provided array of names.
      *
-     * @param array $names
+     * @param aarray<int, string> $names
      * @return string|null
      */
     private static function randomize(array $names): ?string {
@@ -241,13 +243,15 @@ class BuilderComponent
      * and the corresponding age ('age').
      *
      * @param int $raceId The race internal id.
-     * @return array An associative array of age categories with their corresponding ages.
+     * @return array<string, mixed> An associative array of age categories with their corresponding ages.
      */
     public static function loadAgeTable(int $raceId): array {
         $race = Race::findOne(['id' => $raceId]);
         if (!$race) {
             return [
-                ['lib' => 'unknown', 'age' => 0],
+                'labels' => [
+                    ['lib' => 'unknown', 'age' => 0]
+                ]
             ];
         }
 
@@ -308,9 +312,9 @@ class BuilderComponent
 
     /**
      *
-     * @param array $equipments
+     * @param ClassEquipment[] $equipments
      * @param int|null $choice
-     * @return array
+     * @return array<string, mixed>
      */
     public static function setEquipmentResponse(array $equipments, ?int $choice = null): array {
         $items = [];
@@ -366,7 +370,12 @@ class BuilderComponent
         }
     }
 
-    private static function getFundingFromBackground(Player &$player) {
+    /**
+     *
+     * @param Player $player
+     * @return int
+     */
+    private static function getFundingFromBackground(Player &$player): int {
         $backgroundItems = $player->background->backgroundItems;
 
         $funding = 0;
@@ -424,7 +433,7 @@ class BuilderComponent
      * Set the initial list of skills regarding the actual player class and backgroung
      *
      * @param Player $player
-     * @return array Array of possible skills with default proficiency
+     * @return array<string, mixed> Array of possible skills with default proficiency
      */
     public static function initPlayerSkills(Player &$player): array {
         $skillList = [
@@ -453,6 +462,11 @@ class BuilderComponent
         return $skillList;
     }
 
+    /**
+     *
+     * @param Player $player
+     * @return array<int, bool|int>
+     */
     private static function getPlayerSkillProficiencies(Player &$player): array {
         $proficiencies = [];
         if ($player->playerSkills) {
@@ -463,6 +477,12 @@ class BuilderComponent
         return $proficiencies;
     }
 
+    /**
+     *
+     * @param Skill $skill
+     * @param int $isProficient
+     * @return array<string, mixed>
+     */
     private static function initSkillData(Skill &$skill, int $isProficient): array {
         $skillData = [
             'skill_id' => $skill->id,
@@ -473,6 +493,13 @@ class BuilderComponent
         return $skillData;
     }
 
+    /**
+     *
+     * @param Player $player
+     * @param array<int, bool|int> $proficiencies
+     * @return void
+     * @throws \Exception
+     */
     private static function initPlayerSkillTable(Player &$player, array $proficiencies): void {
         $abilityModifiers = [];
         foreach ($player->playerAbilities as $playerAbility) {
@@ -593,8 +620,8 @@ class BuilderComponent
      * Set ability default value regarding both race and class
      *
      * @param \common\models\Player $player
-     * @param array $initAbilityArray
-     * @return array
+     * @param array<int, array<string, mixed>> $initAbilityArray
+     * @return array<int, array<string, mixed>>
      */
     private static function addDefaultAbilityScore(Player $player, array &$initAbilityArray): array {
 
@@ -617,7 +644,7 @@ class BuilderComponent
      * Adds any bonuses provided by the player's race
      *
      * @param \common\models\Player $player
-     * @param array $initAbilityArray
+     * @param array<int, array<string, mixed>> $initAbilityArray
      * @return void
      */
     private static function addRaceAbilities(Player $player, array &$initAbilityArray): void {
@@ -633,7 +660,7 @@ class BuilderComponent
     /**
      * Determines the saving throws defined by the player's class
      *
-     * @param array $initAbilityArray
+     * @param array<int, array<string, mixed>> $initAbilityArray
      * @return void
      */
     private static function addClassSavingThrow(Player $player, array &$initAbilityArray): void {
@@ -650,7 +677,7 @@ class BuilderComponent
     /**
      * Initialize the player ability to an array of default values
      *
-     * @return array
+     * @return array<int, array<string, mixed>>
      */
     private static function initAbilityArray(): array {
 
@@ -685,7 +712,7 @@ class BuilderComponent
      * Set the initial list of languages regarding the actual player class and backgroung
      *
      * @param Player $player
-     * @return array Array of possible languages with default proficiency
+     * @return array<string, mixed> Array of possible languages with default proficiency
      */
     public static function initPlayerLanguages(Player &$player): array {
         $languageList = ['RaceLanguages' => [], 'OtherLanguages' => []];
@@ -714,6 +741,11 @@ class BuilderComponent
         return $languageList;
     }
 
+    /**
+     *
+     * @param Language $language
+     * @return array<string, mixed>
+     */
     private static function initLanguageData(Language &$language): array {
         $languageData = [
             'language_id' => $language->id,

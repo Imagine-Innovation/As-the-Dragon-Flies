@@ -5,19 +5,23 @@ namespace frontend\widgets;
 use yii\base\Widget;
 use common\components\AppStatus;
 use common\models\Player;
+use common\models\User;
 
 class CurrentPlayer extends Widget
 {
 
-    public $user;
-    public $mode;
+    public User $user;
+    public ?string $mode = null;
 
-    public function run() {
+    /**
+     *
+     * @return string
+     */
+    public function run(): string {
         $currentUser = $this->user;
         $displayMode = $this->mode ?? 'navbar';
-        $render = $displayMode == 'navbar' ? 'current-player-navbar' : 'current-player-modal';
+        $render = ($displayMode === 'navbar') ? 'current-player-navbar' : 'current-player-modal';
 
-        //$selectedPlayerId = $currentUser->current_player_id ? $currentUser->currentPlayer->id : null;
         $selectedPlayerId = $currentUser?->current_player_id;
 
         $players = $this->loadPlayers($currentUser->id);
@@ -33,7 +37,12 @@ class CurrentPlayer extends Widget
         }
     }
 
-    private function loadPlayers($userId) {
+    /**
+     *
+     * @param int $userId
+     * @return array<string, mixed>
+     */
+    private function loadPlayers(int $userId): array {
         $players = $this->getPlayers($userId);
         $data = [];
         foreach ($players as $player) {
@@ -54,7 +63,12 @@ class CurrentPlayer extends Widget
         return $data;
     }
 
-    private function setTooltip($player) {
+    /**
+     *
+     * @param Player $player
+     * @return string
+     */
+    private function setTooltip(Player &$player): string {
         $genders = ['F' => 'female', 'M' => 'male'];
 
         return $genders[$player->gender] . ' '
@@ -65,9 +79,10 @@ class CurrentPlayer extends Widget
     /**
      * Gets query for [[Players]].
      *
-     * @return \common\models\Player[]
+     * @param int $userId
+     * @return Player[]
      */
-    private function getPlayers($userId): array {
+    private function getPlayers(int $userId): array {
         return Player::find()
                         ->with(['class', 'race'])
                         ->where([

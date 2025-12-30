@@ -2,13 +2,15 @@
 
 namespace frontend\widgets;
 
+use common\models\Item;
 use Yii;
 use yii\base\Widget;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\helpers\ArrayHelper;
 
-class ItemTable extends Widget {
+class ItemTable extends Widget
+{
 
     /**
      *  Define constant for column configurations.
@@ -41,16 +43,16 @@ class ItemTable extends Widget {
             'is-repeated' => true,
             'is-link' => true,
             'iconography' => null,
-            'filter' => ['Armor', 'Weapon', 'Tool', 'Gear', 'Pack', 'Poison'],
+            'filter' => ['Armor', 'Shield', 'Weapon', 'Tool', 'Gear', 'Pack', 'Poison'],
         ],
         'Image' => [
             'column-header' => 'Image',
-            'property' => 'picture',
+            'property' => 'image',
             'class' => '',
             'is-repeated' => true,
             'is-link' => false,
             'iconography' => 'image',
-            'filter' => ['Armor', 'Weapon', 'Tool', 'Gear', 'Pack', 'Poison'],
+            'filter' => ['Armor', 'Shield', 'Weapon', 'Tool', 'Gear', 'Pack', 'Poison'],
         ],
         'Description' => [
             'column-header' => 'Description',
@@ -68,7 +70,7 @@ class ItemTable extends Widget {
             'is-repeated' => true,
             'is-link' => false,
             'iconography' => null,
-            'filter' => ['Armor', 'Weapon', 'Tool', 'Gear', 'Pack', 'Poison'],
+            'filter' => ['Armor', 'Shield', 'Weapon', 'Tool', 'Gear', 'Pack', 'Poison'],
         ],
         'Quantity' => [
             'column-header' => 'Quantity',
@@ -86,7 +88,7 @@ class ItemTable extends Widget {
             'is-repeated' => true,
             'is-link' => false,
             'iconography' => null,
-            'filter' => ['Armor', 'Weapon', 'Tool', 'Gear', 'Pack'],
+            'filter' => ['Armor', 'Shield', 'Weapon', 'Tool', 'Gear', 'Pack'],
         ],
         'Armor Class (AC)' => [
             'column-header' => 'Armor Class (AC)',
@@ -95,7 +97,7 @@ class ItemTable extends Widget {
             'is-repeated' => true,
             'is-link' => false,
             'iconography' => null,
-            'filter' => ['Armor'],
+            'filter' => ['Armor', 'Shield'],
         ],
         'Strength' => [
             'column-header' => 'Strength',
@@ -143,30 +145,40 @@ class ItemTable extends Widget {
             'filter' => ['Poison'],
         ],
     ];
-    private const LUT_TYPE = ['Armor', 'Weapon', 'Tool', 'Gear', 'Pack', 'Poison'];
+    private const LUT_TYPE = ['Armor', 'Weapon', 'Tool', 'Gear', 'Pack', 'Poison', 'Shield', 'Scroll'];
 
-    public $items;
-    public $itemType;
-    private static $type;
-    private static $models;
-    private static $columns;
-    private static $previousContent;
+    /** @var Item[] $items */
+    public array $items = [];
+    public int $itemTypeId;
+    private string $type;
+    private string $previousContent;
 
-    public function init() {
+    /** @var array<string, array<string, mixed>> $columns */
+    private array $columns;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function init(): void {
         Yii::debug("*** Debug ***  ItemTable Widget - init()", __METHOD__);
         parent::init();
 
-        self::$columns = self::COLS;
+        $this->columns = self::COLS;
     }
 
-    public function run() {
-        Yii::debug("*** Debug ***  ItemTable Widget - run()", __METHOD__);
-        Yii::debug("*** Debug ***  ItemTable Widget *** itemType=$this->itemType", __METHOD__);
-        self::$previousContent = "";
-        self::$type = self::LUT_TYPE[$this->itemType - 1];
-        self::$models = $this->items;
+    /**
+     *
+     * @return string
+     */
+    public function run(): string {
+        Yii::debug("*** Debug ***  ItemTable Widget - run(), itemTypeId={$this->itemTypeId}");
+        $this->previousContent = "";
+        $this->type = self::LUT_TYPE[$this->itemTypeId - 1];
 
-        return $this->render('item-table');
+        return $this->render('item-table', [
+                    'tableHeader' => $this->renderTableHeader(),
+                    'tableBody' => $this->renderTableBody(),
+        ]);
     }
 
     /**
@@ -177,78 +189,86 @@ class ItemTable extends Widget {
      * column configurations such as icons, scope (for the first column), unique
      * content, and links. It also maintains state to handle unique content display.
      *
-     * @param array $col An associative array representing the configuration of the column.
+     * @param array<string, mixed> $col An associative array representing the configuration of the column.
      *                   It includes keys such as 'iconography' (string), 'class' (string),
      *                   'is-repeated' (boolean), 'is-link' (boolean).
-     * @param \common\models\Item $model The Item model containing information for the current row.
+     * @param Item $model The Item model containing information for the current row.
      * @param int $colIndex The index of the current column.
      *
      * @return string The HTML content for the table cell, including any necessary
      *                tags and formatting.
      */
-    private static function renderTableCell($col, $model, $colIndex) {
-        Yii::debug("*** Debug ***  ItemTable Widget - renderTableCell() - colIndex=$colIndex, col['property']=" . $col['property'], __METHOD__);
+    private function renderTableCell(array $col, Item $model, int $colIndex): string {
+        Yii::debug("*** Debug ***  ItemTable Widget - renderTableCell() - colIndex={$colIndex}, col['property']={$col['property']}");
         // Retrieve the content for the table cell using the model's property.
-        $cellContent = $col['property'] === "categories" ?
+        $cellContent = ($col['property'] === 'categories') ?
                 implode(", ", ArrayHelper::getColumn($model->categories, 'name')) :
                 $model[$col['property']];
 
+        Yii::debug("*** Debug ***  ItemTable Widget - renderTableCell() - cellContent={$cellContent}");
+
         // Format the content for display, considering whether it's an icon, an image
         // or needs HTML encoding.
-        switch ($col['iconography']) {
-            case 'icon':
-                $display = '<i class="bi ' . $cellContent . '"></i>';
-                break;
-            case 'image':
-                $display = '<img src="img/item/' . $cellContent . '" class="image-thumbnail">';
-                break;
-            default:
-                $display = Html::encode($cellContent);
-        }
+        $display = match ($col['iconography']) {
+            'icon' => "<i class=\"bi {$cellContent}\"></i>",
+            'image' => "<img src=\"img/item/{$cellContent}\" class=\"image-thumbnail\">",
+            default => Html::encode($cellContent)
+        };
+
+        Yii::debug("*** Debug ***  ItemTable Widget - renderTableCell() - display={$display}");
 
         // Define the HTML tag properties, for the first column.
-        $tag_name = ($colIndex === 0 ? 'th' : 'td');
+        $tagName = ($colIndex === 0) ? 'th' : 'td';
 
         // Start building the HTML content for the table cell.
-        $element = '<' . $tag_name . ' ' . ($colIndex === 0 ? 'scope="row"' : '') . ' class=" ' . $col['class'] . '">';
+        $scope = ($colIndex === 0) ? ' scope="row"' : '';
+        $element = "<{$tagName}{$scope} class=\"{$col['class']}\">";
 
         // Handle unique content display based on the 'is-repeated' configuration.
         if ($col['is-repeated'] === false) {
-            $display = $cellContent == self::$previousContent ? "&nbsp;" : $cellContent;
-            self::$previousContent = $cellContent;
+            $display = ($cellContent === $this->previousContent) ? '&nbsp;' : $cellContent;
+            $this->previousContent = $cellContent;
         }
 
         // Check if the column requires a link and construct the HTML accordingly.
-        $innerHtml = $col['is-link'] ? '<a href="' . Url::toRoute(['item/view', 'id' => $model->id]) . '">' . $display . '</a>' : $display;
+        $innerHtml = $col['is-link'] ?
+                '<a href="' . Url::toRoute(['item/view', 'id' => $model->id]) . '">' . $display . '</a>' :
+                $display;
 
         // Return the final HTML content for the table cell.
-        return $element . $innerHtml . "</$tag_name>";
+        return $element . $innerHtml . "</{$tagName}>";
     }
 
-    public static function renderTableHeader() {
-        Yii::debug("*** Debug ***  ItemTable Widget - renderTableHeader()", __METHOD__);
+    /**
+     *
+     * @return string
+     */
+    public function renderTableHeader(): string {
         $html = "";
-        foreach (self::$columns as $col) {
-            if (in_array(self::$type, $col['filter'])) {
+        foreach ($this->columns as $col) {
+            if (in_array($this->type, $col['filter'])) {
                 $html .= '<th class = "' . $col['class'] . '">' . $col['column-header'] . '</th>';
             }
         }
         return $html;
     }
 
-    public static function renderTableBody() {
-        Yii::debug("*** Debug ***  ItemTable Widget - renderTableBody()", __METHOD__);
-        $html = "";
-        foreach (self::$models as $item) {
-            $html .= "<tr>";
+    /**
+     *
+     * @return string
+     */
+    public function renderTableBody(): string {
+        $html = '';
+        foreach ($this->items as $item) {
+            $html .= '<tr>';
             $i = 0;
-            foreach (self::$columns as $col) {
-                if (in_array(self::$type, $col['filter'])) {
-                    $html .= self::renderTableCell($col, $item, $i++);
-                } // endif
-            } // endforeach column
+            foreach ($this->columns as $col) {
+                if (in_array($this->type, $col['filter'])) {
+                    $html .= $this->renderTableCell($col, $item, $i++);
+                }
+            }
             $html .= "</tr>";
-        } // endforeach item i.e. line
+        }
         return $html;
     }
 }

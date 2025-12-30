@@ -9,15 +9,19 @@ use yii\base\Widget;
 class ActionButtons extends Widget
 {
 
-    public $model;
-    public $isOwner;
-    public $mode;
+    public mixed $model;
+    public ?bool $isOwner = null;
+    public ?string $mode = null;
 
-    public function run() {
+    /**
+     *
+     * @return string
+     */
+    public function run(): string {
         $modelName = Utilities::modelName($this->model);
         $actions = ActionButtonsConfig::getActions($modelName, $this->model->status);
 
-        $widgetView = $this->mode == "table" ? 'action-buttons-table' : 'action-buttons-icon';
+        $widgetView = ($this->mode === 'table') ? 'action-buttons-table' : 'action-buttons-icon';
 
         return $this->render($widgetView, [
                     'model' => $this->model,

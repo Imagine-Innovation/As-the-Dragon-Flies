@@ -13,7 +13,7 @@ use yii\base\Model;
 class PasswordResetRequestForm extends Model
 {
 
-    public $email;
+    public string $email;
 
     /**
      * {@inheritdoc}
@@ -36,7 +36,7 @@ class PasswordResetRequestForm extends Model
      *
      * @return bool whether the email was send
      */
-    public function sendEmail() {
+    public function sendEmail(): bool {
         /** @var User $user */
         $user = User::findOne([
             'status' => AppStatus::ACTIVE->value,

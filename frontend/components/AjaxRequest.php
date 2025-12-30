@@ -3,9 +3,12 @@
 namespace frontend\components;
 
 use Yii;
-use yii\web\Response;
+use yii\web\Request;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
-class AjaxRequest {
+class AjaxRequest
+{
 
     public CONST NOTAJAX = 0;
     public CONST FAILED = 1;
@@ -40,18 +43,37 @@ class AjaxRequest {
         ],
     ];
 
-    public $response;
-    public $request;
-    public $modelName;
-    public $render;
-    public $param = [];
-    public $with = [];
-    public $filter = [];
-    public $select = [];
-    public $innerJoin = [];
-    public $sortOrder = [];
-    public $defaultResponse;
+    /** @var array{error: bool, msg: string, content: string} $response */
+    public array $response;
+    public Request $request;
+    public string $modelName;
+    public string $render;
 
+    /** @var array<string, mixed> $param */
+    public array $param = [];
+
+    /** @var array<string, mixed> $with */
+    public ?array $with = null;
+
+    /** @var array<string, mixed> $filter */
+    public ?array $filter = null;
+
+    /** @var array<string, mixed> $select */
+    public ?array $select = null;
+
+    /** @var array<string, mixed> $innerJoin */
+    public array $innerJoin = [];
+
+    /** @var array<string, mixed> $sortOrder */
+    public ?array $sortOrder = null;
+
+    /** @var array<int, array<string, bool|string>> $defaultResponse */
+    public array $defaultResponse = [];
+
+    /**
+     *
+     * @param array<string, mixed> $param
+     */
     public function __construct(array $param) {
         $this->defaultResponse = self::RESPONSE;
         foreach ($param as $key => $value) {
@@ -61,7 +83,15 @@ class AjaxRequest {
         }
     }
 
-    private function loadModels(yii\db\ActiveQuery $query, int $limit, int $page): array {
+    /**
+     *
+     * @template T of \yii\db\ActiveRecord
+     * @param ActiveQuery<T> $query
+     * @param int $limit
+     * @param int $page
+     * @return T[]  // Array of ActiveRecord models of type T
+     */
+    private function loadModels(ActiveQuery $query, int $limit, int $page): array {
         $offset = $limit * $page;
         $models = $query->offset($offset)->limit($limit);
 
@@ -72,7 +102,13 @@ class AjaxRequest {
         return $models->all();
     }
 
-    private function buildQuery(): yii\db\ActiveQuery {
+    /**
+     *
+     * @template T of \yii\db\ActiveRecord
+     * @return \yii\db\ActiveQuery<T>
+     * @phpstan-ignore-next-line
+     */
+    private function buildQuery(): ActiveQuery {
         $modelName = 'common\\models\\' . $this->modelName;
 
         if ($this->innerJoin) {
@@ -91,7 +127,12 @@ class AjaxRequest {
         return $this->filter ? $modelName::find()->where($this->filter) : $modelName::find();
     }
 
-    public function makeResponse(yii\web\Request $request): bool {
+    /**
+     *
+     * @param Request $request
+     * @return bool
+     */
+    public function makeResponse(Request $request): bool {
         $limit = $request->post('limit', 100);
         $pageNo = $request->post('page', 0);
         $query = $this->buildQuery();

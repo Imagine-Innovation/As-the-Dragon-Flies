@@ -1,18 +1,17 @@
 <?php
-
-use frontend\widgets\ItemTable;
-
 /** @var yii\web\View $this */
+/** @var string $tableHeader */
+/** @var string $tableBody */
 ?>
 <div class="table-responsive">
     <table class="table table-dark table-hover mb-0">
         <thead>
             <tr>
-                <?= ItemTable::renderTableHeader() ?>
+                <?= $tableHeader ?>
             </tr>
         </thead>
         <tbody>
-            <?= ItemTable::renderTableBody() ?>
+            <?= $tableBody ?>
         </tbody>
     </table>
 </div>

@@ -7,7 +7,6 @@ use yii\helpers\HtmlPurifier;
 
 /** @var yii\web\View $this */
 /** @var common\models\Menu[] $menus */
-/** @var array $debugMode */
 $questId = Yii::$app->session->get('questId');
 $quest = Yii::$app->session->get('currentQuest');
 ?>

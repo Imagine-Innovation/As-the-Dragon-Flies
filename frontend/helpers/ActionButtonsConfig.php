@@ -7,6 +7,12 @@ use common\components\AppStatus;
 class ActionButtonsConfig
 {
 
+    /**
+     *
+     * @param string $modelName
+     * @param int $status
+     * @return array<int, array<string, mixed>>
+     */
     public static function getActions(string $modelName, int $status): array {
         $actions = [
             AppStatus::DELETED->value => [

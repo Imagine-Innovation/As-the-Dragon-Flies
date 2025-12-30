@@ -8,7 +8,11 @@ use yii\console\Controller;
 class EventServerController extends Controller
 {
 
-    public function actionStart() {
+    /**
+     *
+     * @return void
+     */
+    public function actionStart(): void {
         $this->stdout("Starting ATDF Event Server...\n");
         $this->stdout("\n");
         $this->stdout("******************************************\n");

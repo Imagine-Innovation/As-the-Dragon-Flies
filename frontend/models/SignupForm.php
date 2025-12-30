@@ -12,10 +12,10 @@ use common\models\User;
 class SignupForm extends Model
 {
 
-    public $username;
-    public $fullname;
-    public $email;
-    public $password;
+    public string $username;
+    public string $fullname;
+    public string $email;
+    public string $password;
 
     /**
      * {@inheritdoc}
@@ -62,7 +62,7 @@ class SignupForm extends Model
      * @param User $user user model to with email should be send
      * @return bool whether the email was sent
      */
-    protected function sendEmail($user) {
+    protected function sendEmail(User $user): bool {
         return Yii::$app
                         ->mailer
                         ->compose(

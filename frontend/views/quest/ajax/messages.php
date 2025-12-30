@@ -1,6 +1,6 @@
 <?php
 /** @var yii\web\View $this */
-/** @var array $messages[] */
+/** @var array<string, mixed> $messages[] */
 ?>
 <?php if ($messages): ?>
     <?php foreach ($messages as $chatMessage): ?>

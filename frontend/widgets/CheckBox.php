@@ -4,17 +4,22 @@ namespace frontend\widgets;
 
 use yii\base\Widget;
 
-class CheckBox extends Widget {
+class CheckBox extends Widget
+{
 
-    public $id;
-    public $onclick;
-    public $checked;
-    public $disabled;
-    public $label;
-    public $title;
-    public $icon;
+    public ?string $id = null;
+    public ?string $onclick = null;
+    public ?string $checked = null;
+    public ?string $disabled = null;
+    public ?string $label = null;
+    public ?string $title = null;
+    public ?string $icon = null;
 
-    public function run() {
+    /**
+     *
+     * @return string
+     */
+    public function run(): string {
 
         $id = $this->id ? 'id="' . $this->id . '"' : "";
         $onClick = $this->onclick ? 'onclick="' . $this->onclick . '"' : "";

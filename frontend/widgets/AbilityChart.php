@@ -4,12 +4,13 @@ namespace frontend\widgets;
 
 use yii\base\Widget;
 
-class AbilityChart extends Widget {
+class AbilityChart extends Widget
+{
 
-    public $id;
-    public $score;
-    public $code;
-    public $bonus;
+    public int $id;
+    public int $score;
+    public string $code;
+    public int $bonus;
 
     public function run() {
         $abilityScore = $this->score + $this->bonus;

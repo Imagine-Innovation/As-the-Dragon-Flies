@@ -60,7 +60,7 @@ class PlayerComponent
      *
      * @param PlayerAbility[] $playerAbilities
      * @param int $proficiencyModifier
-     * @return array
+     * @return array<string, array<string, mixed>>
      */
     public static function getAbilitiesAndSavingThrow(array $playerAbilities, int $proficiencyModifier): array {
         // set the initialization order to the common way of displaying abilities
@@ -105,7 +105,10 @@ class PlayerComponent
      * @param int $playerId
      * @param int $weaponId
      * @param int $proficiencyModifier
-     * @return array
+     * @return array{
+     *     attackModifier: int|null,
+     *     damage: string|null
+     * }
      */
     public static function getPlayerWeaponProperties(int $playerId, int $weaponId, int $proficiencyModifier): array {
 
