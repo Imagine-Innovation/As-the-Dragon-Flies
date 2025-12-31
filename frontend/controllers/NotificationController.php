@@ -17,7 +17,8 @@ use yii\web\Response;
 /**
  * NotificationController implements the CRUD actions for Notification model.
  */
-class NotificationController extends Controller {
+class NotificationController extends Controller
+{
 
     /**
      * @inheritDoc
@@ -59,7 +60,7 @@ class NotificationController extends Controller {
      *
      * @return string
      */
-    public function actionIndex() {
+    public function actionIndex(): string {
         $user = Yii::$app->user->identity;
         if ($user->is_admin) {
             return $this->render('index');
@@ -73,7 +74,7 @@ class NotificationController extends Controller {
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id) {
+    public function actionView(int $id): string {
         $user = Yii::$app->user->identity;
         if ($user->is_admin) {
             return $this->render('view', [
@@ -83,7 +84,11 @@ class NotificationController extends Controller {
         throw new ForbiddenHttpException('You are not allowed to see the notifications');
     }
 
-    public function actionAjax() {
+    /**
+     *
+     * @return array{error: bool, msg: string, content?: string}
+     */
+    public function actionAjax(): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -104,7 +109,11 @@ class NotificationController extends Controller {
         return ['error' => true, 'msg' => 'Error encountered'];
     }
 
-    public function actionAjaxMarkAsRead() {
+    /**
+     *
+     * @return array{error: bool, msg: string, content?: int}
+     */
+    public function actionAjaxMarkAsRead(): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -131,7 +140,7 @@ class NotificationController extends Controller {
      * @return Notification the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel(int $id) {
+    protected function findModel(int $id): Notification {
         if (($model = Notification::findOne(['id' => $id])) !== null) {
             return $model;
         }

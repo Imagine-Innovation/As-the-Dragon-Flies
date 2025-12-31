@@ -16,7 +16,8 @@ use yii\web\Response;
 /**
  * CharacterClassController implements the CRUD actions for CharacterClass model.
  */
-class CharacterClassController extends Controller {
+class CharacterClassController extends Controller
+{
 
     /**
      * @inheritDoc
@@ -55,7 +56,7 @@ class CharacterClassController extends Controller {
      *
      * @return string
      */
-    public function actionIndex() {
+    public function actionIndex(): string {
         $dataProvider = new ActiveDataProvider([
             'query' => CharacterClass::find(),
         ]);
@@ -65,6 +66,10 @@ class CharacterClassController extends Controller {
         ]);
     }
 
+    /**
+     *
+     * @return array{error: bool, msg: string, content?: string}
+     */
     public function actionAjaxWizard() {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -93,7 +98,7 @@ class CharacterClassController extends Controller {
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id) {
+    public function actionView(int $id): string {
         return $this->render('view', [
                     'model' => $this->findModel($id),
         ]);

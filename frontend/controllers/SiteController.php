@@ -77,6 +77,12 @@ class SiteController extends Controller
         ];
     }
 
+    /**
+     *
+     * @param Player[] $players
+     * @param int $state
+     * @return Player|null
+     */
     private function getLastPlayer(array &$players, int $state): ?Player {
         if ($state === 1) {
             return $players[0] ?? null;
@@ -84,6 +90,13 @@ class SiteController extends Controller
         return null;
     }
 
+    /**
+     *
+     * @param Player[] $players
+     * @param int $state
+     * @param int|null $currentPlayerId
+     * @return Player[]|null
+     */
     private function getOtherPlayers(array &$players, int $state, ?int $currentPlayerId): ?array {
         switch ($state) {
             case 1:
@@ -137,9 +150,9 @@ class SiteController extends Controller
     /**
      * Displays homepage.
      *
-     * @return mixed
+     * @return string
      */
-    public function actionIndex() {
+    public function actionIndex(): string {
         if (Yii::$app->user->isGuest) {
             return $this->render('guest');
         }
@@ -173,24 +186,36 @@ class SiteController extends Controller
     /**
      * Displays homepage.
      *
-     * @return mixed
+     * @return string
      */
-    public function actionIcons() {
+    public function actionIcons(): string {
         ManageAccessRights::isRouteAllowed($this);
         return $this->render('icons');
     }
 
-    public function actionFonts() {
+    /**
+     *
+     * @return string
+     */
+    public function actionFonts(): string {
         ManageAccessRights::isRouteAllowed($this);
         return $this->render('fonts');
     }
 
-    public function actionGame() {
+    /**
+     *
+     * @return string
+     */
+    public function actionGame(): string {
         ManageAccessRights::isRouteAllowed($this);
         return $this->render('game');
     }
 
-    public function actionColors() {
+    /**
+     *
+     * @return string
+     */
+    public function actionColors(): string {
         ManageAccessRights::isRouteAllowed($this);
         return $this->render('colors');
     }
@@ -198,9 +223,10 @@ class SiteController extends Controller
     /**
      * Logs in a user.
      *
-     * @return mixed
+     * @return string|Response
+     * @throws \Exception
      */
-    public function actionLogin() {
+    public function actionLogin(): string|Response {
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
@@ -236,9 +262,9 @@ class SiteController extends Controller
     /**
      * Logs out the current user.
      *
-     * @return mixed
+     * @return Response
      */
-    public function actionLogout() {
+    public function actionLogout(): Response {
         $user = Yii::$app->user->identity;
         $ipAddress = Yii::$app->getRequest()->getUserIP();
 
@@ -259,9 +285,9 @@ class SiteController extends Controller
     /**
      * Displays contact page.
      *
-     * @return mixed
+     * @return string|Response
      */
-    public function actionContact() {
+    public function actionContact(): string|Response {
         $model = new ContactForm();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if ($model->sendEmail(Yii::$app->params['adminEmail'])) {
@@ -281,18 +307,18 @@ class SiteController extends Controller
     /**
      * Displays about page.
      *
-     * @return mixed
+     * @return string
      */
-    public function actionAbout() {
+    public function actionAbout(): string {
         return $this->render('about');
     }
 
     /**
      * Signs user up.
      *
-     * @return mixed
+     * @return string|Response
      */
-    public function actionSignup() {
+    public function actionSignup(): string|Response {
         $model = new SignupForm();
         $this->layout = 'blank';
 
@@ -309,9 +335,9 @@ class SiteController extends Controller
     /**
      * Requests password reset.
      *
-     * @return mixed
+     * @return string|Response
      */
-    public function actionRequestPasswordReset() {
+    public function actionRequestPasswordReset(): string|Response {
         $model = new PasswordResetRequestForm();
         $this->layout = 'blank';
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
@@ -333,10 +359,10 @@ class SiteController extends Controller
      * Resets password.
      *
      * @param string $token
-     * @return mixed
+     * @return string|Response
      * @throws BadRequestHttpException
      */
-    public function actionResetPassword($token) {
+    public function actionResetPassword($token): string|Response {
         try {
             $model = new ResetPasswordForm($token);
         } catch (InvalidArgumentException $e) {
@@ -379,9 +405,9 @@ class SiteController extends Controller
     /**
      * Resend verification email
      *
-     * @return mixed
+     * @return string|Response
      */
-    public function actionResendVerificationEmail() {
+    public function actionResendVerificationEmail(): string|Response {
         $model = new ResendVerificationEmailForm();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if ($model->sendEmail()) {
@@ -396,15 +422,19 @@ class SiteController extends Controller
         ]);
     }
 
-    public function actionAjaxToast() {
+    /**
+     *
+     * @return array{error: bool, msg: string, UUID?: string, content?: string}
+     */
+    public function actionAjaxToast(): array {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-// Check if the request is a POST request and if it is an AJAX request
+        // Check if the request is a POST request and if it is an AJAX request
         if (!$this->request->isPost || !$this->request->isAjax) {
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
-// Retrieve the item ID from the POST data and find the item
+        // Retrieve the item ID from the POST data and find the item
         $messageHeader = Yii::$app->request->post('messageHeader');
         $message = Yii::$app->request->post('message');
         $severity = Yii::$app->request->post('severity');
@@ -423,15 +453,19 @@ class SiteController extends Controller
         ];
     }
 
-    public function actionImageUpload() {
+    /**
+     *
+     * @return string|null
+     */
+    public function actionImageUpload(): ?string {
         $model = new ImageUploadForm();
 
         if ($model->load(Yii::$app->request->post())) {
             $model->imageFile = UploadedFile::getInstance($model, 'imageFile');
             if ($model->upload()) {
-// file is uploaded successfully
+                // file is uploaded successfully
                 Yii::debug("*** Debug *** actionImageUpload ---> file is uploaded successfully !!!!", __METHOD__);
-                return;
+                return null;
             }
             Yii::debug("*** Debug *** actionImageUpload ---> POST, but upload failed !!!!", __METHOD__);
         }

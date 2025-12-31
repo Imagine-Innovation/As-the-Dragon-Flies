@@ -43,7 +43,7 @@ class AjaxRequest
         ],
     ];
 
-    /** @var array{error: bool, msg: string, content: string} $response */
+    /** @var array{error: bool, msg: string, content?: string} $response */
     public array $response;
     public Request $request;
     public string $modelName;

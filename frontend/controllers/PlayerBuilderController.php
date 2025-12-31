@@ -64,7 +64,11 @@ class PlayerBuilderController extends Controller
         );
     }
 
-    public function actionAjaxAge() {
+    /**
+     *
+     * @return array{error: bool, msg: string, content?: string, ageTable?: mixed}
+     */
+    public function actionAjaxAge(): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -87,13 +91,17 @@ class PlayerBuilderController extends Controller
         ]);
 
         return [
-            'error' => false,
+            'error' => false, 'msg' => '',
             'content' => $content,
             'ageTable' => json_encode($ageTable['labels']),
         ];
     }
 
-    public function actionAjaxNames() {
+    /**
+     *
+     * @return array{error: bool, msg: string, content?: string}
+     */
+    public function actionAjaxNames(): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -109,14 +117,22 @@ class PlayerBuilderController extends Controller
         $n = $request->post('n', 3);
 
         return [
-            'error' => false,
+            'error' => false, 'msg' => '',
             'content' => $this->renderPartial('ajax/names', [
                 'names' => BuilderComponent::loadRandomNames($raceId, $gender, $n)
             ]),
         ];
     }
 
-    private function renderImages($imageId, $raceId, $classId, $gender) {
+    /**
+     *
+     * @param int $imageId
+     * @param int $raceId
+     * @param int $classId
+     * @param string $gender
+     * @return array{error: bool, msg: string, content?: string}
+     */
+    private function renderImages(int $imageId, int $raceId, int $classId, string $gender): array {
         $images = Image::find()
                 ->select('image.*')
                 ->innerJoin('class_image', 'image.id = class_image.image_id')
@@ -133,7 +149,11 @@ class PlayerBuilderController extends Controller
             'content' => $this->renderPartial('ajax/image', ['imageId' => $imageId, 'images' => $images])];
     }
 
-    public function actionAjaxImages() {
+    /**
+     *
+     * @return array{error: bool, msg: string, content?: string}
+     */
+    public function actionAjaxImages(): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -157,7 +177,11 @@ class PlayerBuilderController extends Controller
             . ($gender ? '' : 'gender')];
     }
 
-    public function actionAjaxSkills() {
+    /**
+     *
+     * @return array{error: bool, msg: string, content?: string}
+     */
+    public function actionAjaxSkills(): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -173,7 +197,7 @@ class PlayerBuilderController extends Controller
 
         $skills = BuilderComponent::initPlayerSkills($player);
         return [
-            'error' => false,
+            'error' => false, 'msg' => '',
             'content' => $this->renderPartial('ajax/skills', [
                 'player' => $player,
                 'backgroundSkills' => $skills['BackgroundSkills'],
@@ -185,8 +209,10 @@ class PlayerBuilderController extends Controller
 
     /**
      * Player Languages handling
+     *
+     * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxLanguages() {
+    public function actionAjaxLanguages(): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -203,7 +229,7 @@ class PlayerBuilderController extends Controller
         $languages = BuilderComponent::initPlayerLanguages($player);
         $this->saveLanguages($playerId, $languages['RaceLanguages']);
         return [
-            'error' => false,
+            'error' => false, 'msg' => '',
             'content' => $this->renderPartial('ajax/languages', [
                 'player' => $player,
                 'raceLanguages' => $languages['RaceLanguages'],
@@ -214,7 +240,11 @@ class PlayerBuilderController extends Controller
         ];
     }
 
-    public function actionAjaxUpdateLanguage() {
+    /**
+     *
+     * @return array{error: bool, msg: string, content?: string}
+     */
+    public function actionAjaxUpdateLanguage(): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -241,6 +271,12 @@ class PlayerBuilderController extends Controller
         return ['error' => false, 'msg' => 'Language is updated'];
     }
 
+    /**
+     *
+     * @param int $playerId
+     * @param array<string, mixed> $languages
+     * @return void
+     */
     private function saveLanguages(int $playerId, array $languages): void {
         Yii::debug("*** debug *** saveLanguages - playerId={$playerId}, languageId=" . print_r($languages, true));
         foreach ($languages as $lang) {
@@ -248,6 +284,13 @@ class PlayerBuilderController extends Controller
         }
     }
 
+    /**
+     *
+     * @param int $playerId
+     * @param int $languageId
+     * @return void
+     * @throws \Exception
+     */
     private function addLanguage(int $playerId, int $languageId): void {
         Yii::debug("*** debug *** addLanguage - playerId={$playerId}, languageId=[$languageId}");
         $playerLanguage = PlayerLanguage::findOne([
@@ -270,8 +313,10 @@ class PlayerBuilderController extends Controller
 
     /**
      * Player Traits handling
+     *
+     * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxTraits() {
+    public function actionAjaxTraits(): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -287,14 +332,18 @@ class PlayerBuilderController extends Controller
         BuilderComponent::initTraits($player);
 
         return [
-            'error' => false,
+            'error' => false, 'msg' => '',
             'content' => $this->renderPartial('ajax/traits', [
                 'player' => $player,
             ]),
         ];
     }
 
-    public function actionAjaxEndowment() {
+    /**
+     *
+     * @return array{error: bool, msg: string, content?: string}
+     */
+    public function actionAjaxEndowment(): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -312,7 +361,7 @@ class PlayerBuilderController extends Controller
         $choices = max(array_keys($endowmentTable));
         Yii::debug($endowmentTable);
         return [
-            'error' => false,
+            'error' => false, 'msg' => '',
             'content' => $this->renderPartial('ajax/endowment', [
                 'endowments' => $endowmentTable,
                 'choices' => $choices,
@@ -322,7 +371,11 @@ class PlayerBuilderController extends Controller
         ];
     }
 
-    public function actionAjaxBackgroundEquipment() {
+    /**
+     *
+     * @return array{error: bool, msg: string, content?: mixed}
+     */
+    public function actionAjaxBackgroundEquipment(): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -337,12 +390,16 @@ class PlayerBuilderController extends Controller
 
         $content = BuilderComponent::setEquipmentResponse($equipments);
         return [
-            'error' => false,
+            'error' => false, 'msg' => '',
             'content' => $content,
         ];
     }
 
-    public function actionAjaxEquipment() {
+    /**
+     *
+     * @return array{error: bool, msg: string, content?: mixed}
+     */
+    public function actionAjaxEquipment(): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -359,7 +416,7 @@ class PlayerBuilderController extends Controller
 
         $content = BuilderComponent::setEquipmentResponse($equipments, $choice);
         return [
-            'error' => false,
+            'error' => false, 'msg' => '',
             'content' => $content,
         ];
     }
@@ -368,7 +425,7 @@ class PlayerBuilderController extends Controller
      * Parse the json string into an associative array
      *
      * @param string[] $itemIds
-     * @return array Associative array with the following structure ['itemId' => 123, 'quantity' => 1]
+     * @return list<array{itemId: int, quantity: int}> Associative array with the following structure ['itemId' => 123, 'quantity' => 1]
      */
     private function getItemQuantityFromJson(array $itemIds): array {
         $itemQuantity = [];
@@ -377,8 +434,8 @@ class PlayerBuilderController extends Controller
             foreach ($selections as $selection) {
                 $data = explode('|', $selection);
                 $itemQuantity[] = [
-                    'itemId' => $data[0],
-                    'quantity' => $data[1]
+                    'itemId' => (int) $data[0],
+                    'quantity' => (int) $data[1]
                 ];
             }
         }
@@ -450,6 +507,13 @@ class PlayerBuilderController extends Controller
         ]);
     }
 
+    /**
+     *
+     * @param Player $player
+     * @param Item $pack
+     * @param int $quantity
+     * @return void
+     */
     private function unpack(Player &$player, Item &$pack, int $quantity): void {
         $packItems = $pack->packItems;
         foreach ($packItems as $item) {
@@ -457,7 +521,11 @@ class PlayerBuilderController extends Controller
         }
     }
 
-    public function actionAjaxSaveEquipment() {
+    /**
+     *
+     * @return array{error: bool, msg: string, content?: string}
+     */
+    public function actionAjaxSaveEquipment(): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -487,10 +555,15 @@ class PlayerBuilderController extends Controller
             $this->addItem($player, $itemQuantity['itemId'], $itemQuantity['quantity']);
         }
 
-        return ['error' => 'false', 'msg' => 'Initial items are saved'];
+        return ['error' => false, 'msg' => 'Initial items are saved'];
     }
 
-    private function getItemsCategory($request) {
+    /**
+     *
+     * @param \yii\web\Request $request
+     * @return AjaxRequest
+     */
+    private function getItemsCategory(\yii\web\Request $request): AjaxRequest {
         // First split by comma to get each pair
         $ids = $request->post('categoryIds');
         $pairs = explode(',', $ids);
@@ -517,7 +590,11 @@ class PlayerBuilderController extends Controller
         return new AjaxRequest($param);
     }
 
-    public function actionAjaxItemCategory() {
+    /**
+     *
+     * @return array{error: bool, msg: string, content?: string}
+     */
+    public function actionAjaxItemCategory(): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -536,7 +613,11 @@ class PlayerBuilderController extends Controller
         return ['error' => true, 'msg' => 'Error encountered'];
     }
 
-    public function actionAjaxUpdateSkill() {
+    /**
+     *
+     * @return array{error: bool, msg: string, content?: string}
+     */
+    public function actionAjaxUpdateSkill(): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -560,7 +641,12 @@ class PlayerBuilderController extends Controller
         return ['error' => false, 'msg' => 'Skill is updated'];
     }
 
-    public function actionAjaxSaveAbilities() {
+    /**
+     *
+     * @return array{error: bool, msg: string, content?: string}
+     * @throws \Exception
+     */
+    public function actionAjaxSaveAbilities(): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -584,7 +670,7 @@ class PlayerBuilderController extends Controller
             }
         }
 
-        return ['error' => 'false', 'msg' => 'Abilities are saved'];
+        return ['error' => false, 'msg' => 'Abilities are saved'];
     }
 
     /**
@@ -593,7 +679,7 @@ class PlayerBuilderController extends Controller
      *
      * @return string|\yii\web\Response
      */
-    public function actionCreate() {
+    public function actionCreate(): string|Response {
         $model = new PlayerBuilder();
 
         if ($this->request->isPost) {
@@ -615,11 +701,10 @@ class PlayerBuilderController extends Controller
      * If update is successful, the browser will be redirected to the 'view' page.
      *
      * @param int $id ID
-     *
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate(int $id) {
+    public function actionUpdate(int $id): string|Response {
         $model = $this->findModel($id);
 
         if ($model->status === AppStatus::ACTIVE->value) {
@@ -650,7 +735,7 @@ class PlayerBuilderController extends Controller
      * Finds the Player model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
-     * @return \frontend\models\PlayerBuilder the loaded model
+     * @return PlayerBuilder the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel(int $id): PlayerBuilder {
@@ -671,7 +756,13 @@ class PlayerBuilderController extends Controller
         throw new NotFoundHttpException('The player you are looking for does not exist.');
     }
 
-    protected function findSkill(int $id) {
+    /**
+     *
+     * @param int $id
+     * @return Skill
+     * @throws NotFoundHttpException
+     */
+    protected function findSkill(int $id): Skill {
         if (($model = Skill::findOne(['id' => $id])) !== null) {
             return $model;
         }
@@ -679,7 +770,13 @@ class PlayerBuilderController extends Controller
         throw new NotFoundHttpException('The skill you are looking for does not exist.');
     }
 
-    protected function findItem(int $id) {
+    /**
+     *
+     * @param int $id
+     * @return Item
+     * @throws NotFoundHttpException
+     */
+    protected function findItem(int $id): Item {
         if (($model = Item::findOne(['id' => $id])) !== null) {
             return $model;
         }

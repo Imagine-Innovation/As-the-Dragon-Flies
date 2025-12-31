@@ -62,23 +62,23 @@ class PlayerCartController extends Controller
      * orders them by item type and name,
      * and then renders the 'shop' view with the fetched models.
      *
-     * @param int $id Player ID
+     * @param int|null $playerId Player ID
      * @return string The rendered shop view.
      */
-    public function actionShop($id = null) {
+    public function actionShop(?int $playerId = null): string {
         // Query items with cost greater than 0
-        $query = Item::find()->where(['>', 'cost', 0]);
-
         // Fetch models and order them by item type and name
-        $models = $query->orderBy([
-                    'item_type_id' => SORT_ASC,
-                    'name' => SORT_ASC,
-                ])->all();
+        $items = Item::find()
+                        ->where(['>', 'cost', 0])
+                        ->orderBy([
+                            'item_type_id' => SORT_ASC,
+                            'name' => SORT_ASC,
+                        ])->all();
 
         // Render the shop view with the fetched models
         return $this->render('shop', [
-                    'models' => $models,
-                    'player_id' => $id,
+                    'models' => $items,
+                    'playerId' => $playerId,
         ]);
     }
 
@@ -90,24 +90,23 @@ class PlayerCartController extends Controller
      * If the specified model cannot be found, it throws a NotFoundHttpException.
      *
      * @return string The rendered cart view.
-     * @throws NotFoundHttpException if the model cannot be found.
      */
-    public function actionCart() {
+    public function actionCart(): string {
         // Find the PlayerCart model
-        $model = $this->findCart();
+        $playerCarts = $this->findCart();
 
         // Render the cart view with the found model
         return $this->render('cart', [
-                    'models' => $model,
+                    'playerCarts' => $playerCarts,
         ]);
     }
 
     /**
      * Handles AJAX request to add an item to the player's cart.
      *
-     * @return array The response in JSON format
+     * @return array{error: bool, msg: string, content?: string} The response in JSON format
      */
-    public function actionAjaxAdd() {
+    public function actionAjaxAdd(): array {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         // Check if the request is a POST request and if it is an AJAX request
@@ -128,10 +127,6 @@ class PlayerCartController extends Controller
         $itemId = Yii::$app->request->post('itemId');
         $quantity = Yii::$app->request->post('quantity', 1);
         $item = $this->findItem($itemId);
-        // If no item is found, return an error response
-        if (!$item) {
-            return ['error' => true, 'msg' => 'Item not found'];
-        }
 
         // Create a new Shopping instance and calculate the funding
         $shopping = new Shopping();
@@ -152,9 +147,9 @@ class PlayerCartController extends Controller
     /**
      * Validates the items in the player's cart via an AJAX request.
      *
-     * @return array The JSON response indicating the success or failure of the cart validation.
+     * @return array{error: bool, msg: string, content?: string} The JSON response indicating the success or failure of the cart validation.
      */
-    public function actionAjaxValidate() {
+    public function actionAjaxValidate(): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -192,9 +187,9 @@ class PlayerCartController extends Controller
     /**
      * Handles AJAX request to remove an item from the player's cart.
      *
-     * @return array The response in JSON format
+     * @return array{error: bool, msg: string, content?: string} The response in JSON format
      */
-    public function actionAjaxRemove() {
+    public function actionAjaxRemove(): array {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         // Check if the request is a POST request and if it is an AJAX request
@@ -216,17 +211,17 @@ class PlayerCartController extends Controller
         $quantity = Yii::$app->request->post('quantity', 1);
         // Find the item
         $item = $this->findItem($itemId);
-        // If no item is found, return an error response
-        if (!$item) {
-            return ['error' => true, 'msg' => 'Item not found'];
-        }
 
         // Remove the item from the player's cart and return the result
         $shopping = new Shopping();
         return $shopping->removeFromCart($player, $item, $quantity);
     }
 
-    public function actionAjaxDelete() {
+    /**
+     *
+     * @return array{error: bool, msg: string, content?: string}
+     */
+    public function actionAjaxDelete(): array {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         // Check if the request is a POST request and if it is an AJAX request
@@ -246,10 +241,6 @@ class PlayerCartController extends Controller
         $itemId = Yii::$app->request->post('itemId');
         // Find the item
         $item = $this->findItem($itemId);
-        // If no item is found, return an error response
-        if (!$item) {
-            return ['error' => true, 'msg' => 'Item not found'];
-        }
 
         // Remove the item from the player's cart and return the result
         $shopping = new Shopping();
@@ -259,10 +250,18 @@ class PlayerCartController extends Controller
     /**
      * Retrieves information from the player's cart via an AJAX request.
      *
-     * @return array The JSON response containing the total count of items in the player's cart,
-     *               the cart string, and the purse string.
+     * @return array{
+     *      error: bool,
+     *      msg: string,
+     *      count?: int,
+     *      cartString?: string,
+     *      cartValueString?: string,
+     *      purseString?: string
+     * }
+     * The JSON response containing the total count of items in the player's cart,
+     * the cart string, and the purse string.
      */
-    public function actionAjaxInfo() {
+    public function actionAjaxInfo(): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -294,7 +293,6 @@ class PlayerCartController extends Controller
         return [
             'error' => false, 'msg' => '', 'count' => $count,
             'cartString' => "You have " . ($count > 0 ? $count : "no") . " article" . ($count > 1 ? "s" : "") . " in your cart",
-            //'cartValueString' => $shopping->getCartValueString($player->playerCarts),
             'cartValueString' => $shopping->getCartValueString($this->findCart()),
             'purseString' => $purseMsg,
         ];
@@ -303,9 +301,9 @@ class PlayerCartController extends Controller
     /**
      * Handles AJAX request to retrieve the quantity of a specific item in the player's cart.
      *
-     * @return array The response in JSON format
+     * @return array{error: bool, msg: string, content?: string, count?: int}
      */
-    public function actionAjaxItemCount() {
+    public function actionAjaxItemCount(): array {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         // Check if the request is a POST request and if it is an AJAX request
@@ -339,7 +337,7 @@ class PlayerCartController extends Controller
      * @return PlayerCart[] The player's carts
      * @throws NotFoundHttpException if no player is selected
      */
-    protected function findCart() {
+    protected function findCart(): array {
         // Find the player associated with the selected player
         $playerId = Yii::$app->session->get('playerId');
 
@@ -369,10 +367,10 @@ class PlayerCartController extends Controller
      * If the model is found, it is returned. If not found, a 404 HTTP exception is thrown.
      *
      * @param int $id The primary key value of the Item model to be found.
-     * @return Item|null The loaded Item model if found, or null if not found.
+     * @return Item The loaded Item model if found, or null if not found.
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findItem($id): ?Item {
+    protected function findItem(int $id): Item {
         // Find the Item model based on the provided primary key.
         $item = Item::findOne(['id' => $id]);
 

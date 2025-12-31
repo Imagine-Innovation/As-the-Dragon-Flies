@@ -93,7 +93,7 @@ class QuestController extends Controller
      *
      * @return string Rendered index view with quest listing
      */
-    public function actionIndex() {
+    public function actionIndex(): string {
         $user = Yii::$app->user->identity;
 
         // Admin users get full quest access
@@ -129,7 +129,7 @@ class QuestController extends Controller
      * @return string Rendered view page
      * @throws NotFoundHttpException if quest not found
      */
-    public function actionView($id) {
+    public function actionView(int $id): string {
         return $this->render('view', [
                     'model' => $this->findModel($id),
         ]);
@@ -145,10 +145,11 @@ class QuestController extends Controller
      * Validates story access, creates or joins quest, and manages player onboarding flow.
      * Core entry point for quest participation.
      *
-     * @param int $storyId The ID of the story to join
-     * @return string|Response Rendered tavern view or error redirect
+     * @param int $storyId
+     * @param int|null $playerId
+     * @return Response|null
      */
-    public function actionJoin(int $storyId, ?int $playerId = null) {
+    public function actionJoin(int $storyId, ?int $playerId = null): Response|null {
         $story = $this->findValidStory($storyId);
 
         $tavernManager = new TavernManager(['story' => $story]);
@@ -158,20 +159,23 @@ class QuestController extends Controller
         // Validate player eligibility
         $canJoin = $tavernManager->canPlayerJoinQuest($player);
         if ($canJoin['denied']) {
-            return UserErrorMessage::throw($this, 'error', $canJoin['reason'], self::DEFAULT_REDIRECT);
+            UserErrorMessage::throw($this, 'error', $canJoin['reason'], self::DEFAULT_REDIRECT);
+            return null;
         }
 
         // Process player onboarding
         $onboarded = $tavernManager->addPlayerToQuest($player);
         if ($onboarded['error']) {
-            return UserErrorMessage::throw($this, 'error', $onboarded['message'], self::DEFAULT_REDIRECT);
+            UserErrorMessage::throw($this, 'error', $onboarded['message'], self::DEFAULT_REDIRECT);
+            return null;
         }
 
         $success = $this->createEvent('player-joining', $player, $tavern);
         if ($success) {
             return $this->redirect(['tavern', 'id' => $tavern->id]);
         }
-        return UserErrorMessage::throw($this, 'error', "Could not trigger event", self::DEFAULT_REDIRECT);
+        UserErrorMessage::throw($this, 'error', "Could not trigger event", self::DEFAULT_REDIRECT);
+        return null;
     }
 
     /**
@@ -180,7 +184,7 @@ class QuestController extends Controller
      * Retrieves and returns the current tavern state for real-time updates.
      * Used for periodic polling from the frontend.
      *
-     * @return array JSON response containing tavern state
+     * @return array{error: bool, msg: string, content?: string} JSON response containing tavern state
      *   - error: boolean indicating request status
      *   - msg: string message for client
      *   - content: HTML content for tavern update
@@ -220,12 +224,12 @@ class QuestController extends Controller
      * Provides real-time welcome message updates for the tavern interface.
      * Used for dynamic content refresh and player engagement tracking.
      *
-     * @return array JSON response containing:
+     * @return array{error: bool, msg: string, content?: string} JSON response containing:
      *   - error: boolean indicating operation status
      *   - msg: status message (empty on success)
      *   - content: HTML content with welcome message
      */
-    public function actionAjaxWelcomeMessages(?int $questId) {
+    public function actionAjaxWelcomeMessages(?int $questId): array {
         // Configure response as JSON format
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -253,7 +257,11 @@ class QuestController extends Controller
         ];
     }
 
-    public function actionAjaxSendMessage() {
+    /**
+     *
+     * @return array{error: bool, msg: string, content?: string}
+     */
+    public function actionAjaxSendMessage(): array {
         Yii::debug("*** Debug *** actionAjaxSendMessage");
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -281,7 +289,13 @@ class QuestController extends Controller
         return ['error' => !$success, 'msg' => "Create 'sending-message' event " . ($success ? 'succeded' : 'failed')];
     }
 
-    public function actionStart(?int $id) {
+    /**
+     *
+     * @param int|null $id
+     * @return Response|null
+     * @throws \Exception
+     */
+    public function actionStart(?int $id): Response|null {
         $quest = $this->findModel($id);
 
         $player = $quest->initiator;
@@ -301,7 +315,8 @@ class QuestController extends Controller
         if ($success) {
             return $this->redirect(['game/view', 'id' => $id]);
         }
-        return UserErrorMessage::throw($this, 'error', "Could not trigger event", self::DEFAULT_REDIRECT);
+        UserErrorMessage::throw($this, 'error', "Could not trigger event", self::DEFAULT_REDIRECT);
+        return null;
     }
 
     /**
@@ -310,9 +325,9 @@ class QuestController extends Controller
      * Handles periodic polling for new messages in the tavern chat.
      * Supports message grouping by timestamp.
      *
-     * @return array JSON response with latest messages
+     * @return array{error: bool, msg: string, content?: string} JSON response with latest messages
      */
-    public function actionAjaxGetMessages() {
+    public function actionAjaxGetMessages(): array {
         // Configure response format
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -339,9 +354,9 @@ class QuestController extends Controller
     /**
      * Check if the quest can start or not
      *
-     * @return array JSON response with latest messages
+     * @return array{canStart: bool, msg: string}
      */
-    public function actionAjaxCanStart() {
+    public function actionAjaxCanStart(): array {
         // Configure response format
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -357,7 +372,12 @@ class QuestController extends Controller
         return $tavernManager->questCanStart($playerId);
     }
 
-    public function actionTavern($id) {
+    /**
+     *
+     * @param int $id
+     * @return string
+     */
+    public function actionTavern(int $id): string {
         $tavern = $this->findModel($id);
 
         ContextManager::updateQuestContext($tavern->id);
@@ -368,7 +388,13 @@ class QuestController extends Controller
         ]);
     }
 
-    public function actionQuit(?int $playerId, ?int $id) {
+    /**
+     *
+     * @param int|null $playerId
+     * @param int|null $id
+     * @return Response|null
+     */
+    public function actionQuit(?int $playerId, ?int $id): Response|null {
 
         $player = $this->findPlayer($playerId);
         $quest = $this->findModel($id);
@@ -385,7 +411,8 @@ class QuestController extends Controller
         if ($success) {
             return $this->redirect(['story/index']);
         }
-        return UserErrorMessage::throw($this, 'error', "Could not trigger event", self::DEFAULT_REDIRECT);
+        UserErrorMessage::throw($this, 'error', "Could not trigger event", self::DEFAULT_REDIRECT);
+        return null;
     }
 
     /**
@@ -394,9 +421,10 @@ class QuestController extends Controller
      * Validates current player and quest state before allowing
      * player to rejoin their active quest.
      *
-     * @return string|Response Rendered tavern view or error redirect
+     * @param int|null $id
+     * @return Response Redirect to tavern view or game view
      */
-    public function actionResume(?int $id = null) {
+    public function actionResume(?int $id = null): Response {
         $quest = $this->findModel($id);
 
         if ($quest->status == AppStatus::PLAYING->value) {
@@ -414,7 +442,7 @@ class QuestController extends Controller
      *
      * @return string|Response Rendered create form or redirect to view
      */
-    public function actionCreate() {
+    public function actionCreate(): string|Response {
         $model = new Quest();
 
         // Handle form submission
@@ -441,7 +469,7 @@ class QuestController extends Controller
      * @return string|Response Rendered update form or redirect to view
      * @throws NotFoundHttpException if quest not found
      */
-    public function actionUpdate(int $id) {
+    public function actionUpdate(int $id): string|Response {
         $model = $this->findModel($id);
 
         // Process form submission
@@ -464,7 +492,7 @@ class QuestController extends Controller
      * @return Response Redirect to index page
      * @throws NotFoundHttpException if quest not found
      */
-    public function actionDelete(int $id) {
+    public function actionDelete(int $id): Response {
         $this->findModel($id)->delete();
         return $this->redirect(['index']);
     }
@@ -489,6 +517,12 @@ class QuestController extends Controller
         throw new NotFoundHttpException("The quest (id={$id}) you are looking for does not exist.");
     }
 
+    /**
+     *
+     * @param int|null $playerId
+     * @return Player
+     * @throws NotFoundHttpException
+     */
     protected function findPlayer(?int $playerId = null): Player {
         $player = Player::findOne(['id' => ($playerId ?? Yii::$app->session->get('playerId'))]);
 
@@ -499,6 +533,12 @@ class QuestController extends Controller
         throw new NotFoundHttpException("The player (playerId={$playerId}) you are looking for does not exist.");
     }
 
+    /**
+     *
+     * @param int $storyId
+     * @return Story|null
+     * @throws NotFoundHttpException
+     */
     protected function findValidStory(int $storyId): ?Story {
         if ($storyId) {
             $story = Story::findOne(['id' => $storyId, 'status' => AppStatus::PUBLISHED->value]);
@@ -510,6 +550,15 @@ class QuestController extends Controller
         throw new NotFoundHttpException("Missing story ID");
     }
 
+    /**
+     *
+     * @param string $eventType
+     * @param Player $player
+     * @param Quest $quest
+     * @param array<string, mixed> $data
+     * @return bool
+     * @throws \Exception
+     */
     protected function createEvent(string $eventType, Player &$player, Quest &$quest, array $data = []): bool {
         $sessionId = Yii::$app->session->get('sessionId');
         try {

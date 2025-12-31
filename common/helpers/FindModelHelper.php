@@ -3,6 +3,7 @@
 namespace common\helpers;
 
 use common\models\Action;
+use common\models\ActionFlow;
 use common\models\Chapter;
 use common\models\Decor;
 use common\models\Mission;
@@ -30,10 +31,10 @@ class FindModelHelper
      *
      * @param string $modelName
      * @param int|array<string, mixed> $param
-     * @return Action|Chapter|Decor|Mission|Player|Quest|QuestAction|QuestProgress|Reply
+     * @return Action|Chapter|Decor|Mission|Player|Quest|QuestAction|QuestProgress|Reply|ActionFlow
      * @throws NotFoundHttpException
      */
-    public static function findModel(string $modelName, int|array $param): Action|Chapter|Decor|Mission|Player|Quest|QuestAction|QuestProgress|Reply {
+    public static function findModel(string $modelName, int|array $param): Action|Chapter|Decor|Mission|Player|Quest|QuestAction|QuestProgress|Reply|ActionFlow {
         $searchParams = self::searchParams($param);
         Yii::debug("*** debug *** findModel modelName={$modelName}, param={$searchParams}");
 

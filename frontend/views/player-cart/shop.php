@@ -7,15 +7,14 @@ use frontend\widgets\Button;
 
 /** @var yii\web\View $this */
 /** @var yii\data\ActiveDataProvider $dataProvider */
-/** @var common\models\Item[] $models */
-/** @var number|null $player_id */
+/** @var common\models\Item[] $items */
 $this->title = 'Shop';
 $this->params['breadcrumbs'][] = $this->title;
 
 $shopping = new Shopping();
 
 $itemTypes = $shopping->itemTypes;
-$shopData = $shopping->loadShopData($models);
+$shopData = $shopping->loadShopData($items);
 
 $user = Yii::$app->session->get('user');
 $currentPlayer = Yii::$app->session->get('currentPlayer');

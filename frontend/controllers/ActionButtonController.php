@@ -6,13 +6,15 @@ use common\models\ActionButton;
 use common\components\ManageAccessRights;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
+use yii\web\Response;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
  * ActionButtonController implements the CRUD actions for ActionButton model.
  */
-class ActionButtonController extends Controller {
+class ActionButtonController extends Controller
+{
 
     /**
      * @inheritDoc
@@ -36,7 +38,7 @@ class ActionButtonController extends Controller {
      *
      * @return string
      */
-    public function actionIndex() {
+    public function actionIndex(): string {
         $dataProvider = new ActiveDataProvider([
             'query' => ActionButton::find(),
                 /*
@@ -62,7 +64,7 @@ class ActionButtonController extends Controller {
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id) {
+    public function actionView(int $id): string {
         return $this->render('view', [
                     'model' => $this->findModel($id),
         ]);
@@ -73,7 +75,7 @@ class ActionButtonController extends Controller {
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate() {
+    public function actionCreate(): string|Response {
         $model = new ActionButton();
 
         if ($this->request->isPost) {
@@ -96,7 +98,7 @@ class ActionButtonController extends Controller {
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id) {
+    public function actionUpdate(int $id): string|Response {
         $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
@@ -115,7 +117,7 @@ class ActionButtonController extends Controller {
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id) {
+    public function actionDelete(int $id): Response {
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

@@ -7,11 +7,17 @@ use common\models\NotificationPlayer;
 use Yii;
 use yii\base\Component;
 
-class QuestNotification extends Component {
+class QuestNotification extends Component
+{
 
     const INTERVAL = 30000; // 30s
 
-    public static function getCount($playerId) {
+    /**
+     *
+     * @param int $playerId
+     * @return int
+     */
+    public static function getCount(int $playerId): int {
         Yii::debug("*** Debug *** getCount playerId=$playerId");
         $count = NotificationPlayer::find()
                 ->where([
@@ -24,7 +30,13 @@ class QuestNotification extends Component {
         return $count;
     }
 
-    public static function getList($playerId, $dateFrom) {
+    /**
+     *
+     * @param int $playerId
+     * @param int $dateFrom
+     * @return Notification[]
+     */
+    public static function getList(int $playerId, int $dateFrom): array {
         Yii::debug("*** Debug *** getList playerId=$playerId, dateFrom=$dateFrom");
         $notifications = Notification::find()
                 ->where(['>=', 'created_at', $dateFrom])
@@ -41,7 +53,12 @@ class QuestNotification extends Component {
         return $notifications;
     }
 
-    public static function markNotificationsAsRead($playerId) {
+    /**
+     *
+     * @param int $playerId
+     * @return int
+     */
+    public static function markNotificationsAsRead(int $playerId): int {
         Yii::debug("*** Debug *** markNotificationsAsRead playerId=$playerId");
         return NotificationPlayer::updateAll(
                         [

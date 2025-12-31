@@ -20,7 +20,8 @@ use yii\behaviors\AttributeBehavior;
 /**
  * RuleController implements the CRUD actions for Rule model.
  */
-class RuleController extends Controller {
+class RuleController extends Controller
+{
 
     /**
      * @inheritDoc
@@ -74,11 +75,15 @@ class RuleController extends Controller {
      *
      * @return string
      */
-    public function actionIndex() {
+    public function actionIndex(): string {
         return $this->render('index');
     }
 
-    public function actionAjax() {
+    /**
+     *
+     * @return array{error: bool, msg: string, content?: string}
+     */
+    public function actionAjax(): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -105,7 +110,7 @@ class RuleController extends Controller {
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id) {
+    public function actionView(int $id): string {
         return $this->render('view', [
                     'model' => $this->findModel($id)
         ]);
@@ -114,9 +119,10 @@ class RuleController extends Controller {
     /**
      * Creates a new Rule model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     *
      * @return string|\yii\web\Response
      */
-    public function actionCreate() {
+    public function actionCreate(): string|Response {
         $model = new Rule();
 
         if ($this->request->isPost) {
@@ -136,11 +142,12 @@ class RuleController extends Controller {
     /**
      * Updates an existing Rule model.
      * If update is successful, the browser will be redirected to the 'view' page.
+     *
      * @param int $id Primary key.
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id) {
+    public function actionUpdate(int $id): string|Response {
         $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
@@ -157,11 +164,12 @@ class RuleController extends Controller {
     /**
      * Deletes an existing Rule model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
+     *
      * @param int $id Primary key.
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id) {
+    public function actionDelete(int $id): Response {
         $model = $this->findModel($id);
         if (Status::changeStatus($model, AppStatus::DELETED->value)) {
             return $this->redirect(['index']);
@@ -169,7 +177,13 @@ class RuleController extends Controller {
         throw new NotFoundHttpException('Could not delete this rule');
     }
 
-    public function actionValidate($id) {
+    /**
+     *
+     * @param int $id
+     * @return Response
+     * @throws NotFoundHttpException
+     */
+    public function actionValidate(int $id): Response {
         $model = $this->findModel($id);
         if (Status::changeStatus($model, AppStatus::ACTIVE->value)) {
             return $this->redirect(['index']);
@@ -177,7 +191,13 @@ class RuleController extends Controller {
         throw new NotFoundHttpException('Could not validate this rule');
     }
 
-    public function actionRestore($id) {
+    /**
+     *
+     * @param int $id
+     * @return Response
+     * @throws NotFoundHttpException
+     */
+    public function actionRestore(int $id): Response {
         $model = $this->findModel($id);
         if (Status::changeStatus($model, AppStatus::INACTIVE->value)) {
             return $this->redirect(['index']);
@@ -188,11 +208,12 @@ class RuleController extends Controller {
     /**
      * Finds the Rule model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
+     *
      * @param int $id Primary key.
      * @return Rule the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel(int $id) {
+    protected function findModel(int $id): Rule {
         if (($model = Rule::findOne(['id' => $id])) !== null) {
             return $model;
         }

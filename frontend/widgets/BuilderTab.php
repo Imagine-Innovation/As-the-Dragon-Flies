@@ -4,7 +4,6 @@ namespace frontend\widgets;
 
 use common\models\Player;
 use yii\base\Widget;
-use yii\db\ActiveRecord;
 
 class BuilderTab extends Widget
 {
@@ -23,6 +22,7 @@ class BuilderTab extends Widget
 
         if ($tab['model_name']) {
             return $this->render('builder-tab', [
+                        /** @phpstan-ignore-next-line */
                         'models' => $this->getModels($tab['model_name']),
                         'field_name' => $tab['field_name'],
                         'paragraphs' => $tab['paragraphs'],
@@ -37,12 +37,13 @@ class BuilderTab extends Widget
     }
 
     /**
-     *
-     * @param string $modelName
-     * @return ActiveRecord
+     * @template T of \yii\db\ActiveRecord
+     * @param class-string<T> $modelName
+     * @return T[]
      */
-    private function getModels(string $modelName): ActiveRecord {
-        $model = "common\\models\\" . $modelName;
-        return $model::find()->all();
+    private function getModels(string $modelName): array {
+        /** @var class-string<T> $fullyQualifiedName */
+        $fullyQualifiedName = "common\\models\\" . $modelName;
+        return $fullyQualifiedName::find()->all();
     }
 }

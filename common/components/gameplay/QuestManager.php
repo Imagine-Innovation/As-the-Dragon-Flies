@@ -193,10 +193,7 @@ class QuestManager extends BaseManager
     /**
      *
      * @param AppStatus $status
-     * @return array{
-     *     error: bool,
-     *     msg: string
-     * }
+     * @return array{error: bool, msg: string, content?: string}
      */
     private function gameOver(AppStatus $status): array {
         // End the quest
@@ -368,10 +365,7 @@ class QuestManager extends BaseManager
     /**
      *
      * @param int $nextMissionId
-     * @return array{
-     *     error: bool,
-     *     msg: string
-     * }
+     * @return array{error: bool, msg: string, content?: string}
      */
     private function setNextMission(int $nextMissionId): array {
         Yii::debug("*** debug *** setNextMission nextMissionId={$nextMissionId}");
@@ -392,10 +386,7 @@ class QuestManager extends BaseManager
     /**
      *
      * @param int|null $nextMissionId
-     * @return array{
-     *     error: bool,
-     *     msg: string
-     * }
+     * @return array{error: bool, msg: string, content?: string}
      */
     public function moveToNextMission(?int $nextMissionId = null): array {
         Yii::debug("*** debug *** moveToNextMission nextMissionId=" . ($nextMissionId ? $nextMissionId : 'null'));
@@ -414,10 +405,7 @@ class QuestManager extends BaseManager
 
     /**
      *
-     * @return array{
-     *     error: bool,
-     *     msg: string
-     * }
+     * @return array{error: bool, msg: string, content?: string}
      */
     public function nextPlayer(): array {
         $this->endCurrentTurn();

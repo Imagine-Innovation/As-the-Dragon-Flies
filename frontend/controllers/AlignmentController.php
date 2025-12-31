@@ -48,13 +48,18 @@ class AlignmentController extends Controller
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id) {
+    public function actionView(int $id): string {
         return $this->render('view', [
                     'model' => $this->findModel($id),
         ]);
     }
 
-    public function actionAjaxWizard() {
+    /**
+     *
+     * @return array{error: bool, msg: string, content?: string}
+     * }
+     */
+    public function actionAjaxWizard(): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -83,7 +88,7 @@ class AlignmentController extends Controller
      * @return Alignment the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel(int $id) {
+    protected function findModel(int $id): Alignment {
         if (($model = Alignment::findOne(['id' => $id])) !== null) {
             return $model;
         }

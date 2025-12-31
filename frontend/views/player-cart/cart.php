@@ -1,85 +1,22 @@
 <?php
 
 use yii\helpers\Url;
-use frontend\components\Shopping;
-use frontend\widgets\Button;
-use frontend\widgets\ModalDesc;
 
 /** @var yii\web\View $this */
-/** @var common\models\PlayerCart[] $models */
+/** @var common\models\PlayerCart[] $playerCarts */
 $this->title = 'Cart';
 $this->params['breadcrumbs'][] = ['label' => 'Shop', 'url' => ['shop']];
 $this->params['breadcrumbs'][] = $this->title;
-
-$shopping = new Shopping();
 ?>
 <div class="container g-0 p-0">
     <p id="purseContent"></p>
     <div class="row g-2">
         <div class="col-9">
-            <?php if ($models): ?>
-                <?php
-                foreach ($models as $model):
-                    $item = $model->item;
-                    ?>
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <div class="actions">
-                                <?=
-                                Button::widget([
-                                    'mode' => 'icon',
-                                    'id' => "cartButton-add-{$model->item_id}",
-                                    'icon' => 'bi-cart-plus',
-                                    'tooltip' => "Add a {$item->name} to cart"
-                                ])
-                                ?>
-                                <?=
-                                Button::widget([
-                                    'mode' => 'icon',
-                                    'id' => "cartButton-remove-{$model->item_id}",
-                                    'icon' => 'bi-cart-dash',
-                                    'tooltip' => "Remove a {$item->name} from cart"
-                                ])
-                                ?>
-                                <?=
-                                Button::widget([
-                                    'mode' => 'icon',
-                                    'id' => "cartButton-delete-{$model->item_id}",
-                                    'icon' => 'bi-trash3',
-                                    'tooltip' => "Delete every {$item->name} from cart"
-                                ])
-                                ?>
-                                <?=
-                                Button::widget([
-                                    'mode' => 'icon',
-                                    'icon' => 'bi-cart',
-                                    'tooltip' => "{$item->name} in your cart"
-                                ])
-                                ?>
-                                <a href="#" class="invisible" id="somethingWrongModal-hiddenButton" data-bs-toggle="modal" data-bs-target="#somethingWrongModal"></a>
-                                <div style="font-size: 12.35px">
-                                    <span id="cartCount-<?= $model->item_id ?>" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"><?= $model->quantity ?></span>
-                                </div>
-                            </div>
-                            <img src="img/item/<?= $item->image ?>" class="image-thumbnail float-start" style="width: 80px;height: 80px;">
-                            <h6 class="card-subtitle">
-        <?= $item->name ?><?= ($item->quantity > 1) ? "(x{$item->quantity})" : "" ?>(<?= $item->price ?>)
-                            </h6>
-                            <h6 class="card-subtitle text-muted w-75">
-                                <?=
-                                ModalDesc::widget([
-                                    'name' => $item->name,
-                                    'description' => $item->description,
-                                    'maxLength' => 180,
-                                    'type' => $item->itemType->name,
-                                    'id' => $model->item_id,
-                                ])
-                                ?>
-                            </h6>
-                        </div>
-                    </div>
+            <?php if ($playerCarts): ?>
+                <?php foreach ($playerCarts as $playerCart): ?>
+                    <?= $this->render('snippets/cart', ['playerCart' => $playerCart]) ?>
                 <?php endforeach; ?>
-<?php else: ?>
+            <?php else: ?>
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Your cart is empty</h5>
@@ -91,7 +28,7 @@ $shopping = new Shopping();
                         </h6>
                     </div>
                 </div>
-<?php endif; ?>
+            <?php endif; ?>
         </div>
         <div class="col">
             <div class="card">

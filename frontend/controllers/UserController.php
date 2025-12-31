@@ -74,7 +74,7 @@ class UserController extends Controller {
      *
      * @return string
      */
-    public function actionIndex() {
+    public function actionIndex(): string {
         $dataProvider = new ActiveDataProvider([
             'query' => User::find(),
             'sort' => [
@@ -145,13 +145,13 @@ class UserController extends Controller {
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id) {
+    public function actionView(int $id): string {
         return $this->render('view', [
                     'model' => $this->findModel($id),
         ]);
     }
 
-    public function actionDelete($id) {
+    public function actionDelete(int $id): Response {
         $model = $this->findModel($id);
         if (Status::changeStatus($model, AppStatus::DELETED->value)) {
             return $this->redirect(['index']);
@@ -159,7 +159,7 @@ class UserController extends Controller {
         throw new NotFoundHttpException('Could not delete this user');
     }
 
-    public function actionValidate($id) {
+    public function actionValidate(int $id) {
         $model = $this->findModel($id);
         if (Status::changeStatus($model, AppStatus::ACTIVE->value)) {
             return $this->redirect(['index']);
@@ -167,7 +167,7 @@ class UserController extends Controller {
         throw new NotFoundHttpException('Could not validate this user');
     }
 
-    public function actionRestore($id) {
+    public function actionRestore(int $id) {
         $model = $this->findModel($id);
         if (Status::changeStatus($model, AppStatus::INACTIVE->value)) {
             return $this->redirect(['index']);

@@ -55,7 +55,7 @@ class WizardController extends Controller {
      *
      * @return string
      */
-    public function actionIndex() {
+    public function actionIndex(): string {
         $dataProvider = new ActiveDataProvider([
             'query' => Wizard::find(),
         ]);
@@ -71,7 +71,7 @@ class WizardController extends Controller {
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id) {
+    public function actionView(int $id): string {
         return $this->render('view', [
                     'model' => $this->findModel($id),
         ]);

@@ -18,7 +18,8 @@ use yii\web\Response;
 /**
  * ImageController implements the CRUD actions for Image model.
  */
-class ImageController extends Controller {
+class ImageController extends Controller
+{
 
     /**
      * @inheritDoc
@@ -59,7 +60,7 @@ class ImageController extends Controller {
      *
      * @return string
      */
-    public function actionIndex() {
+    public function actionIndex(): string {
         $dataProvider = new ActiveDataProvider([
             'query' => Image::find(),
         ]);
@@ -69,7 +70,11 @@ class ImageController extends Controller {
         ]);
     }
 
-    public function actionAjax() {
+    /**
+     *
+     * @return array{error: bool, msg: string, content?: string}
+     */
+    public function actionAjax(): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -99,7 +104,11 @@ class ImageController extends Controller {
         return ['error' => true, 'msg' => 'Error encountered'];
     }
 
-    public function actionAjaxSetClass() {
+    /**
+     *
+     * @return array{error: bool, msg: string, content?: string}
+     */
+    public function actionAjaxSetClass(): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -139,7 +148,7 @@ class ImageController extends Controller {
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id) {
+    public function actionView(int $id): string {
         return $this->render('view', [
                     'model' => $this->findModel($id),
         ]);
@@ -150,7 +159,7 @@ class ImageController extends Controller {
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate() {
+    public function actionCreate(): string|Response {
         $model = new Image();
 
         if ($this->request->isPost) {
@@ -173,7 +182,7 @@ class ImageController extends Controller {
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id) {
+    public function actionUpdate(int $id): string|Response {
         $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
@@ -192,13 +201,17 @@ class ImageController extends Controller {
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id) {
+    public function actionDelete(int $id): Response {
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
     }
 
-    public function actionAjaxUpload() {
+    /**
+     *
+     * @return array{error: bool, msg: string, content?: string}
+     */
+    public function actionAjaxUpload(): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -228,7 +241,7 @@ class ImageController extends Controller {
      * @return Image the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel(int $id) {
+    protected function findModel(int $id): Image {
         if (($model = Image::findOne(['id' => $id])) !== null) {
             return $model;
         }

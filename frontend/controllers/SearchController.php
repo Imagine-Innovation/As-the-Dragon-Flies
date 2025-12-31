@@ -32,6 +32,11 @@ class SearchController extends Controller
         );
     }
 
+    /**
+     *
+     * @param string $search
+     * @return array<string>
+     */
     private function setFileSearchFilter(string $search): array {
         $extensions = ['.png', '.jpg', '.jpeg', '.gif'];
         $filter = [];
@@ -41,6 +46,12 @@ class SearchController extends Controller
         return $filter;
     }
 
+    /**
+     *
+     * @param string $search
+     * @param string $folder
+     * @return array{error: bool, msg: string, content?: string}
+     */
     private function imageSearch(string $search, string $folder): array {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -72,6 +83,11 @@ class SearchController extends Controller
         return ['error' => false, 'msg' => '', 'results' => $results];
     }
 
+    /**
+     *
+     * @param string|null $inputString
+     * @return string|null
+     */
     private function normalizeSearchString(?string $inputString): ?string {
         if (!$inputString) {
             return null;
@@ -91,6 +107,13 @@ class SearchController extends Controller
         return $normalizedString;
     }
 
+    /**
+     *
+     * @param string $modelName
+     * @param int $missionId
+     * @param string|null $userEntry
+     * @return array{error: bool, msg: string, results?: mixed}
+     */
     private function searchInDecor(string $modelName, int $missionId, ?string $userEntry): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -119,6 +142,13 @@ class SearchController extends Controller
         return ['error' => false, 'msg' => '', 'results' => $searchResult];
     }
 
+    /**
+     *
+     * @param string $modelName
+     * @param string|null $userEntry
+     * @param array<string, int>|null $filter
+     * @return array{error: bool, msg: string, results?: mixed}
+     */
     private function genericSearch(string $modelName, ?string $userEntry, ?array $filter = null): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -147,6 +177,12 @@ class SearchController extends Controller
         return ['error' => false, 'msg' => '', 'results' => $searchResult];
     }
 
+    /**
+     *
+     * @param string $modelName
+     * @param string $search
+     * @return array{error: bool, msg: string, results?: mixed}
+     */
     private function searchInTextColumn(string $modelName, string $search): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -169,6 +205,14 @@ class SearchController extends Controller
         return ['error' => false, 'msg' => '', 'results' => $searchResult];
     }
 
+    /**
+     *
+     * @param string|null $valueType
+     * @param string|null $search
+     * @param int|null $parentId
+     * @param string|null $folder
+     * @return array{error: bool, msg: string, results?: mixed}
+     */
     private function searchBrocker(?string $valueType, ?string $search, ?int $parentId, ?string $folder): array {
         Yii::debug("*** Debug *** searchBrocker(valueType={$valueType}, search={$search}, parentId={$parentId}, folder={$folder})");
         return match ($valueType) {
@@ -199,6 +243,10 @@ class SearchController extends Controller
         };
     }
 
+    /**
+     *
+     * @return array{error: bool, msg: string, results?: mixed}
+     */
     public function actionValues(): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;

@@ -18,7 +18,7 @@ class Inventory
      *
      * @param PlayerItem[] $playerItems An array of models, where each model contains
      *                     an item with an item type.
-     * @return array A list of unique item types.
+     * @return array<string> A list of unique item types.
      */
     public function getItemTypes(array $playerItems): array {
         // Initialize an empty array to hold unique item types
@@ -49,7 +49,7 @@ class Inventory
      * in ascending order.
      *
      * @param PlayerItem[] $playerItems The models to load data for.
-     * @return array The organized data for rendering the shop page.
+     * @return array<string, list<array<string, float|int|string|null>>> The organized data for rendering the shop page.
      */
     public function loadItemsData(array $playerItems): array {
         // Initialize an array to store organized shop data.
@@ -121,6 +121,11 @@ class Inventory
         return $weight;
     }
 
+    /**
+     *
+     * @param Player $player
+     * @return Item|null
+     */
     public function getContainer(Player $player): ?Item {
         $items = $player->items;
         if (!$items) {
@@ -148,6 +153,12 @@ class Inventory
         return $containerItem;
     }
 
+    /**
+     *
+     * @param PlayerItem $playerItem
+     * @param Item $containerItem
+     * @return array{error: bool, msg: string, content?: string}
+     */
     public function addToPack(PlayerItem $playerItem, Item $containerItem): array {
         $weight = $playerItem->item->weight;
         if ($weight === null) {
@@ -158,8 +169,9 @@ class Inventory
             return ['error' => true, 'msg' => "Your have already packed this item"];
         }
 
-        if ($playerItem->item_type === 'Weapon' || $playerItem->item_type === 'Armor') {
-            return ['error' => true, 'msg' => "{$playerItem->item_type} items don't have to be packed"];
+        $itemType = $playerItem->item_type;
+        if ($itemType === 'Weapon' || $itemType === 'Armor') {
+            return ['error' => true, 'msg' => "{$itemType} items don't have to be packed"];
         }
 
         $maxLoad = $containerItem->max_load;
@@ -178,13 +190,20 @@ class Inventory
         return ['error' => true, 'msg' => "Internal Error. Could not add the item {$playerItem->item_name} to the {$containerItem->name}"];
     }
 
-    public function removeFromPack($playerItem, $containerItem) {
+    /**
+     *
+     * @param PlayerItem $playerItem
+     * @param Item $containerItem
+     * @return array{error: bool, msg: string, content?: string}
+     */
+    public function removeFromPack(PlayerItem $playerItem, Item $containerItem) {
         if (!$playerItem->is_carrying) {
             return ['error' => true, 'msg' => "Your haven't packed this item yet"];
         }
 
-        if ($playerItem->item_type === 'Weapon' || $playerItem->item_type === 'Armor') {
-            return ['error' => true, 'msg' => "{$playerItem->item_type} items cannot be unpacked"];
+        $itemType = $playerItem->item_type;
+        if ($itemType === 'Weapon' || $itemType === 'Armor') {
+            return ['error' => true, 'msg' => "{$itemType} items cannot be unpacked"];
         }
 
         $playerItem->is_carrying = 0;

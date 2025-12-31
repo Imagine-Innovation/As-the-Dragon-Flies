@@ -4,6 +4,7 @@ namespace frontend\components;
 
 use common\models\Ability;
 use common\models\AbilityDefault;
+use common\models\BackgroundItem;
 use common\models\BackgroundSkill;
 use common\models\BackgroundTrait;
 use common\models\CharacterTrait;
@@ -207,27 +208,38 @@ class BuilderComponent
      * @param int $ethnicityId
      * @param string $className Can be either FirstName or LastName
      * @param string|null $gender
-     * @return array<int, string>
+     * @return array<array<string, string>>
      */
     private static function getEthnicNames(int $ethnicityId, string $className, ?string $gender = null): array {
-        $nameClass = "common\\models\\$className";
-        $query = $nameClass::find()
-                ->select('name')
-                ->where(['ethnicity_id' => $ethnicityId]);
+
+        $query = match ($className) {
+            'FirstName' => \common\models\FirstName::find()->select('name'),
+            'LastName' => \common\models\LastName::find()->select('name'),
+            default => null
+        };
+
+        if ($query === null) {
+            return[];
+        }
+
+        $query->where(['ethnicity_id' => $ethnicityId]);
+
         if ($gender) {
             $query->andWhere(['gender' => $gender]);
         }
-        return $query->asArray()->all();
+
+        $ethnicNames = $query->asArray()->all();
+        return $ethnicNames;
     }
 
     /**
      * Randomly selects a name from the provided array of names.
      *
-     * @param aarray<int, string> $names
+     * @param array<array<string, string>> $names
      * @return string|null
      */
     private static function randomize(array $names): ?string {
-        return $names ? $names[array_rand($names)]['name'] : null;
+        return empty($names) ? null : $names[array_rand($names)]['name'];
     }
 
     /*
@@ -312,7 +324,7 @@ class BuilderComponent
 
     /**
      *
-     * @param ClassEquipment[] $equipments
+     * @param ClassEquipment[]|BackgroundItem[] $equipments
      * @param int|null $choice
      * @return array<string, mixed>
      */

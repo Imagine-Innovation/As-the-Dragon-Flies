@@ -62,7 +62,7 @@ class GameController extends Controller
      * @return string Rendered view page
      * @throws NotFoundHttpException if quest not found
      */
-    public function actionView(int $id) {
+    public function actionView(int $id): string {
         $this->layout = 'game';
 
         $quest = FindModelHelper::findQuest($id);
@@ -80,12 +80,12 @@ class GameController extends Controller
     /**
      * Handles AJAX request to retreive the player's current health
      *
-     * @return array JSON response containing tavern state
+     * @return array{error: bool, msg: string, content?: string} JSON response containing tavern state
      *   - error: boolean indicating request status
      *   - msg: string message for client
      *   - content: HTML content for tavern update
      */
-    public function actionAjaxPlayer(?int $id) {
+    public function actionAjaxPlayer(?int $id): array {
         // Configure JSON response format
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -109,7 +109,7 @@ class GameController extends Controller
      * Ajax POST request to handle player's quitting the game
      *
      * @param string $reason
-     * @return array
+     * @return array{error: bool, msg: string, content?: string}
      */
     public function actionAjaxQuit(string $reason): array {
         // Configure response format
@@ -145,7 +145,7 @@ class GameController extends Controller
     /**
      * Ajax GET request to get the mission description layout
      *
-     * @return array
+     * @return array{error: bool, msg: string, content?: string}
      */
     public function actionAjaxMission(int $missionId): array {
         // Configure JSON response format
@@ -164,9 +164,9 @@ class GameController extends Controller
     /**
      * Ajax GET request to get the turn info
      *
-     * @return array
+     * @return  array{error: bool, msg: string, content?: mixed}
      */
-    public function actionAjaxTurn() {
+    public function actionAjaxTurn(): array {
         // Configure JSON response format
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -193,7 +193,7 @@ class GameController extends Controller
     /**
      * Ajax GET request to retreive the eligible actions for a player
      *
-     * @return array
+     * @return array{error: bool, msg: string, content?: string}
      */
     public function actionAjaxActions(int $questProgressId): array {
         // Configure JSON response format
@@ -228,7 +228,7 @@ class GameController extends Controller
      * @param int $replyId
      * @param int $playerId
      * @param int $storyId
-     * @return array
+     * @return array{error: bool, msg: string, content?: string}
      */
     public function actionAjaxDialog(int $replyId, int $playerId, int $storyId): array {
         // Set the response format to JSON
@@ -262,7 +262,7 @@ class GameController extends Controller
      * Retrieves the POST parameters, evaluates the results of the completed action, and triggers a "game-action" event.
      *
      * @param Request $postRequest
-     * @return array An associative array that contains what should be displayed
+     * @return array{error: bool, msg: string, content?: string} An associative array that contains what should be displayed
      */
     protected function getOutcome(Request $postRequest): array {
         $param = [
@@ -281,7 +281,7 @@ class GameController extends Controller
     /**
      * Ajax POST request that evaluates the outcome of the completed action
      *
-     * @return array Json encoded associative array with error status, internal message, and content to display
+     * @return array{error: bool, msg: string, content?: string} Json encoded associative array with error status, internal message, and content to display
      */
     public function actionAjaxEvaluate(): array {
         // Set the response format to JSON
@@ -302,7 +302,7 @@ class GameController extends Controller
     /**
      * Ajax POST request to handle moving to the next turn
      *
-     * @return array Json encoded associative array with error status, internal message, and content to display
+     * @return array{error: bool, msg: string, content?: string} Json encoded associative array with error status, internal message, and content to display
      */
     public function actionAjaxNextTurn(): array {
         // Set the response format to JSON
@@ -338,6 +338,15 @@ class GameController extends Controller
         return $questManager->moveToNextMission($nextMissionId);
     }
 
+    /**
+     *
+     * @param string $eventType
+     * @param Request $postRequest
+     * @param string $actionName
+     * @param array<string, mixed> $outcome
+     * @return bool
+     * @throws \Exception
+     */
     protected function createEvent(string $eventType, Request $postRequest, string $actionName, array $outcome = []): bool {
         $sessionId = Yii::$app->session->get('sessionId');
         try {

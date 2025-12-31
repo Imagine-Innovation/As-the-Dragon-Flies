@@ -61,7 +61,7 @@ class StoryController extends Controller
      *
      * @return string
      */
-    public function actionIndex() {
+    public function actionIndex(): string {
         $user = Yii::$app->user->identity;
 
         $query = Story::find();
@@ -82,7 +82,7 @@ class StoryController extends Controller
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id) {
+    public function actionView(int $id): string {
         return $this->render('view', [
                     'model' => $this->findModel($id),
         ]);
@@ -93,7 +93,7 @@ class StoryController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate() {
+    public function actionCreate(): string|Response {
         $model = new Story();
 
         if ($this->request->isPost) {
@@ -116,7 +116,7 @@ class StoryController extends Controller
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id) {
+    public function actionUpdate(int $id): string|Response {
         $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
@@ -135,7 +135,7 @@ class StoryController extends Controller
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id) {
+    public function actionDelete(int $id): Response {
         $model = $this->findModel($id);
         if (Status::changeStatus($model, AppStatus::ARCHIVED->value)) {
             return $this->redirect(['index']);
@@ -143,7 +143,7 @@ class StoryController extends Controller
         throw new NotFoundHttpException('Could not delete this story');
     }
 
-    public function actionValidate($id) {
+    public function actionValidate(int $id) {
         $model = $this->findModel($id);
         if (Status::changeStatus($model, AppStatus::PUBLISHED->value)) {
             return $this->redirect(['index']);
@@ -151,7 +151,7 @@ class StoryController extends Controller
         throw new NotFoundHttpException('Could not validate this story');
     }
 
-    public function actionRestore($id) {
+    public function actionRestore(int $id) {
         $model = $this->findModel($id);
         if (Status::changeStatus($model, AppStatus::DRAFT->value)) {
             return $this->redirect(['index']);

@@ -12,7 +12,8 @@ use yii\helpers\ArrayHelper;
 class Shopping
 {
 
-    public $itemTypes = ['Armor', 'Weapon', 'Pack', 'Gear', 'Tool', 'Poison'];
+    /** @var array<string> $itemTypes */
+    public array $itemTypes = ['Armor', 'Shield', 'Weapon', 'Pack', 'Gear', 'Tool', 'Poison'];
 
     // Constants defining the exchange rates and relationships between coin types.
     private const COINS = [
@@ -23,7 +24,10 @@ class Shopping
         'pp' => ['rate' => 1000, 'prev' => 'gp'],
     ];
 
+    /** @var array<string, array<string, mixed>> $coins */
     private array $coins = [];        // Array to store coin details (exchange rates and relationships).
+
+    /** @var array<string, mixed> $purse */
     private array $purse = [];        // Array to represent the player's purse.
     private int $purseValue = 0;    // Total value of the player's purse in copper coins.
 
@@ -44,7 +48,7 @@ class Shopping
      *
      * @return int Total funding in copper coins.
      */
-    private function getPurseValue() {
+    private function getPurseValue(): int {
         // Use array_column to extract the 'cp' values for each coin type and sum them up.
         return array_sum(array_column($this->purse, 'copperValue'));
     }
@@ -56,7 +60,7 @@ class Shopping
      * converting quantities to copper values and establishing links between array elements.
      *
      * @param \common\models\PlayerCoin[] $playerCoins Content of the player's purse.
-     * @return array Associative array representing the player's purse with coin types as keys.
+     * @return array<string, mixed> Associative array representing the player's purse with coin types as keys.
      */
     private function initPurse(array $playerCoins): array {
         // Initialize the purse array.
@@ -390,6 +394,10 @@ class Shopping
         return implode(" + ", $string);
     }
 
+    /**
+     *
+     * @return array<string, array<string, mixed>>
+     */
     private function initCoinage(): array {
         $coinage = [];
         foreach (array_keys($this->coins) as $coin) {
@@ -469,7 +477,7 @@ class Shopping
      * @param Player &$player The Player model representing the player.
      * @param Item &$item The Item model representing the item to be removed from the cart.
      * @param int|null $quantity The quantity of the item to be removed.
-     * @return array An associative array containing the result of the operation.
+     * @return array{error: bool, msg: string, content?: string} An associative array containing the result of the operation.
      */
     public function removeFromCart(Player &$player, Item &$item, ?int $quantity = null): array {
         // Find the cart entry for the specified item
@@ -503,6 +511,12 @@ class Shopping
         return ['error' => true, 'msg' => 'Save failed'];
     }
 
+    /**
+     *
+     * @param Player $player
+     * @param Item $item
+     * @return array{error: bool, msg: string, content?: string}
+     */
     public function deleteFromCart(Player &$player, Item &$item): array {
         // Find the cart entry for the specified item
         $cartItem = PlayerCart::findOne(['player_id' => $player->id, 'item_id' => $item->id]);
@@ -531,7 +545,7 @@ class Shopping
      * @param Player &$player The Player model representing the player.
      * @param Item &$item The Item model representing the item to be added to the cart.
      * @param int|null $quantity The quantity to be added to the cart.
-     * @return array An associative array containing the result of the operation.
+     * @return array{error: bool, msg: string, content?: string}  An associative array containing the result of the operation.
      */
     public function addToCart(Player &$player, Item &$item, ?int $quantity = null): array {
         // Find if the item already exists in the player's cart
@@ -569,7 +583,7 @@ class Shopping
      * is successful, otherwise, it returns an error response.
      *
      * @param PlayerCart $playerCart The player cart item to validate.
-     * @return array The JSON response indicating the success or failure of the validation.
+     * @return array{error: bool, msg: string, content?: string} The JSON response indicating the success or failure of the validation.
      */
     private function validateSingleItemPurchase(PlayerCart &$playerCart): array {
         // Find the corresponding PlayerItem for the player cart item
@@ -635,8 +649,7 @@ class Shopping
      * and a success message is returned.
      *
      * @param PlayerCart $playerCart The player's cart item to be validated.
-     * @return array An associative array containing 'error' and 'msg' keys to
-     *               indicate the validation result.
+     * @return array{error: bool, msg: string, content?: string} An associative array containing 'error' and 'msg' keys to indicate the validation result.
      */
     private function validatePackPurchase(PlayerCart &$playerCart): array {
         // Retrieve the list of packs associated with the item in the cart
@@ -677,8 +690,7 @@ class Shopping
      * Otherwise, it validates the purchase as a single item.
      *
      * @param PlayerCart $playerCart The player's cart item to be validated.
-     * @return array An associative array containing 'error' and 'msg' keys to
-     *               indicate the validation result.
+     * @return array{error: bool, msg: string, content?: string} An associative array containing 'error' and 'msg' keys to indicate the validation result.
      */
     public function validatePurchase(PlayerCart $playerCart): array {
         // Check if the item type in the cart is 'Pack'
@@ -712,7 +724,7 @@ class Shopping
      * in ascending order.
      *
      * @param Item[] $items The models to load data for.
-     * @return array The organized data for rendering the shop page.
+     * @return array<string, list<array<string, int|string|null>>> The organized data for rendering the shop page.
      */
     public function loadShopData(array $items): array {
         // Initialize an array to store organized shop data.

@@ -49,7 +49,7 @@ class ItemController extends Controller
      *
      * @return string
      */
-    public function actionIndex() {
+    public function actionIndex(): string {
         if (Yii::$app->user->identity->is_designer) {
             return $this->render('index');
         }
@@ -61,7 +61,7 @@ class ItemController extends Controller
      *
      * @return string
      */
-    public function actionShop() {
+    public function actionShop(): string {
         $query = Item::find()->where(['>', 'cost', 0]);
 
         $models = $query->orderBy([
@@ -74,7 +74,11 @@ class ItemController extends Controller
         ]);
     }
 
-    public function actionAjax() {
+    /**
+     *
+     * @return array{error: bool, msg: string, content?: string}
+     */
+    public function actionAjax(): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -104,7 +108,11 @@ class ItemController extends Controller
         return ['error' => true, 'msg' => 'Error encountered'];
     }
 
-    public function actionAjaxImages() {
+    /**
+     *
+     * @return array{error: bool, msg: string, content?: string}
+     */
+    public function actionAjaxImages(): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -136,7 +144,7 @@ class ItemController extends Controller
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id) {
+    public function actionView(int $id): string {
         return $this->render('view', [
                     'model' => $this->findModel($id),
         ]);
@@ -149,7 +157,7 @@ class ItemController extends Controller
      * @return Item the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel(int $id) {
+    protected function findModel(int $id): Item {
         if (($model = Item::findOne(['id' => $id])) !== null) {
             return $model;
         }

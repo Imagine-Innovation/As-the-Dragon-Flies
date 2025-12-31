@@ -58,7 +58,7 @@ class UserLoginController extends Controller {
      *
      * @return string
      */
-    public function actionIndex() {
+    public function actionIndex(): string {
         $dataProvider = new ActiveDataProvider([
             'query' => UserLogin::find(),
             'sort' => [

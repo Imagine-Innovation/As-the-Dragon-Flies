@@ -158,11 +158,7 @@ class TavernManager extends BaseManager
     /**
      * Check if a quest is valid
      *
-     * @return array{
-     *     error: bool,
-     *     denied: bool,
-     *     reason: string
-     * } Associative array with an error status, a deny status and the reason why
+     * @return array{error: bool, denied: bool, reason: string} Associative array with an error status, a deny status and the reason why
      */
     private function isQuestValid(): array {
         // Check if quest exists
@@ -181,11 +177,7 @@ class TavernManager extends BaseManager
      * Check if a player is valid to join a new quest
      *
      * @param Player|null $player reference to a Player object
-     * @return array{
-     *     error: bool,
-     *     denied: bool,
-     *     reason: string
-     * } Associative array with an error status, a deny status and the reason why
+     * @return array{error: bool, denied: bool, reason: string} Associative array with an error status, a deny status and the reason why
      */
     private function isPlayerValid(?Player $player): array {
         // Check if player is selected
@@ -326,10 +318,7 @@ class TavernManager extends BaseManager
      *
      * @param Player $player reference to a Player object
      * @param int|null $questId ID of the quest in which the player is engaged. Null if he leaves the quest
-     * @return array{
-     *     error: bool,
-     *     message: string
-     * }
+     * @return array{error: bool, message: string}
      */
     private function updatePlayerQuestId(Player &$player, ?int $questId = null): array {
         $player->quest_id = $questId;
@@ -359,10 +348,7 @@ class TavernManager extends BaseManager
      * @param int $playerId ID of the player
      * @param int $status Status of the player in the quest
      * @param string|null $reasonWhyPlayerQuit Reason why the player left the quest, null when inserting a new entry
-     * @return array{
-     *     error: bool,
-     *     message: string
-     * }
+     * @return array{error: bool, message: string}
      */
     private function upsertQuestPlayer(int $questId, int $playerId, int $status, ?string $reasonWhyPlayerQuit = null): array {
         $questPlayer = QuestPlayer::findOne(['quest_id' => $questId, 'player_id' => $playerId]);
@@ -391,10 +377,7 @@ class TavernManager extends BaseManager
      * Add a player to a quest
      *
      * @param Player $player reference to a Player object
-     * @return array{
-     *     error: bool,
-     *     message: string
-     * }
+     * @return array{error: bool, message: string}
      */
     public function addPlayerToQuest(Player &$player): array {
 
@@ -419,10 +402,7 @@ class TavernManager extends BaseManager
      *
      * @param Player $player reference to a Player object
      * @param string $reason
-     * @return array{
-     *     error: bool,
-     *     message: string
-     * }
+     * @return array{error: bool, message: string}
      */
     public function withdrawPlayerFromQuest(Player &$player, string $reason = null): array {
 
@@ -488,10 +468,7 @@ class TavernManager extends BaseManager
     /**
      *
      * @param int $playerId
-     * @return array{
-     *     canStart: bool,
-     *     msg: string
-     * }
+     * @return array{canStart: bool, msg: string}
      */
     public function questCanStart(int $playerId): array {
         Yii::debug("*** debug *** - questCanStart - questId={$this->quest->id}, initiatorId={$this->quest->initiator_id}, playerId={$playerId}");

@@ -56,11 +56,12 @@ class ChapterController extends Controller
 
     /**
      * Displays a single Chapter model.
+     *
      * @param int $id Primary key
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id) {
+    public function actionView(int $id): string {
         return $this->render('view', [
                     'model' => $this->findModel($id),
         ]);
@@ -69,9 +70,11 @@ class ChapterController extends Controller
     /**
      * Creates a new Chapter model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     *
+     * @param int $storyId
      * @return string|\yii\web\Response
      */
-    public function actionCreate($storyId) {
+    public function actionCreate(int $storyId): string|Response {
         // Check if $id is a valid Story ID
         $story = $this->findStory($storyId);
         $model = new Chapter();
@@ -93,11 +96,12 @@ class ChapterController extends Controller
     /**
      * Updates an existing Chapter model.
      * If update is successful, the browser will be redirected to the 'view' page.
+     *
      * @param int $id Primary key
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id) {
+    public function actionUpdate(int $id): string|Response {
         $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
@@ -112,11 +116,12 @@ class ChapterController extends Controller
     /**
      * Finds the Chapter model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
+     *
      * @param int $id Primary key
      * @return Chapter the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel(int $id) {
+    protected function findModel(int $id): Chapter {
         if (($model = Chapter::findOne(['id' => $id])) !== null) {
             return $model;
         }
@@ -124,7 +129,13 @@ class ChapterController extends Controller
         throw new NotFoundHttpException('The requested chapter does not exist.');
     }
 
-    protected function findStory($id) {
+    /**
+     *
+     * @param int $id
+     * @return Story
+     * @throws NotFoundHttpException
+     */
+    protected function findStory($id): Story {
         if (($model = Story::findOne(['id' => $id])) !== null) {
             return $model;
         }
