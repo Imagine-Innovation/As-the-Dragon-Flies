@@ -11,13 +11,13 @@ use yii\helpers\Url;
 class MissionElement extends Widget
 {
 
-    /**
-     * @var \yii\db\ActiveRecord[] $properties: list of properties associated to a mission
-     * @var string $type: property type
-     * @var string[] $propertyNames array of every attributes defines within the property
-     */
+    /** @var \yii\db\ActiveRecord[] $properties: list of properties associated to a mission */
     public array $properties = [];
+
+    /** @var string $type: property type */
     public string $type = 'unkown';
+
+    /** @var array<string> $propertyNames array of every attributes defines within the property */
     public array $propertyNames = [];
 
     public function run() {
@@ -27,6 +27,11 @@ class MissionElement extends Widget
         return "<p>No {$this->type} has been defined yet</p>";
     }
 
+    /**
+     *
+     * @param array<ActiveRecord> $properties
+     * @return string
+     */
     private function listContent(array $properties): string {
         $liElements = '';
         foreach ($properties as $property) {
@@ -36,6 +41,11 @@ class MissionElement extends Widget
         return $listContent;
     }
 
+    /**
+     *
+     * @param ActiveRecord $property
+     * @return string
+     */
     private function getPropertyStatusLabel(ActiveRecord $property): string {
         if (!$property->hasAttribute('status') || $property->status === null) {
             return '';
@@ -50,6 +60,11 @@ class MissionElement extends Widget
         return $label;
     }
 
+    /**
+     *
+     * @param ActiveRecord $property
+     * @return string
+     */
     private function displayName(ActiveRecord $property): string {
         $status = strtolower($this->getPropertyStatusLabel($property));
         return match ($this->type) {
@@ -60,6 +75,12 @@ class MissionElement extends Widget
         };
     }
 
+    /**
+     *
+     * @param ActiveRecord $property
+     * @param array<string> $propertyNames
+     * @return string
+     */
     private function liElement(ActiveRecord $property, array $propertyNames): string {
         $attribute1 = $propertyNames[0];
         $attribute2 = $propertyNames[1];

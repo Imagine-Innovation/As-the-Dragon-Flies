@@ -143,7 +143,13 @@ class StoryController extends Controller
         throw new NotFoundHttpException('Could not delete this story');
     }
 
-    public function actionValidate(int $id) {
+    /**
+     *
+     * @param int $id
+     * @return Response
+     * @throws NotFoundHttpException
+     */
+    public function actionValidate(int $id): Response {
         $model = $this->findModel($id);
         if (Status::changeStatus($model, AppStatus::PUBLISHED->value)) {
             return $this->redirect(['index']);
@@ -151,7 +157,13 @@ class StoryController extends Controller
         throw new NotFoundHttpException('Could not validate this story');
     }
 
-    public function actionRestore(int $id) {
+    /**
+     *
+     * @param int $id
+     * @return Response
+     * @throws NotFoundHttpException
+     */
+    public function actionRestore(int $id): Response {
         $model = $this->findModel($id);
         if (Status::changeStatus($model, AppStatus::DRAFT->value)) {
             return $this->redirect(['index']);
@@ -162,11 +174,12 @@ class StoryController extends Controller
     /**
      * Finds the Story model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
+     *
      * @param int $id Primary key
      * @return Story the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel(int $id) {
+    protected function findModel(int $id): Story {
         if (($model = Story::findOne(['id' => $id])) !== null) {
             return $model;
         }

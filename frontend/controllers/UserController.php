@@ -21,7 +21,8 @@ use yii\behaviors\AttributeBehavior;
 /**
  * UserController implements the CRUD actions for User model.
  */
-class UserController extends Controller {
+class UserController extends Controller
+{
 
     /**
      * @inheritDoc
@@ -89,7 +90,11 @@ class UserController extends Controller {
         ]);
     }
 
-    public function actionAjax() {
+    /**
+     *
+     * @return array{error: bool, msg: string, content?: string}
+     */
+    public function actionAjax(): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -111,7 +116,11 @@ class UserController extends Controller {
         return ['error' => true, 'msg' => 'Error encountered'];
     }
 
-    public function actionAjaxSetRole() {
+    /**
+     *
+     * @return array{error: bool, msg: string, content?: string}
+     */
+    public function actionAjaxSetRole(): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -141,6 +150,7 @@ class UserController extends Controller {
 
     /**
      * Displays a single User model.
+     *
      * @param int $id Primary Key
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
@@ -151,6 +161,12 @@ class UserController extends Controller {
         ]);
     }
 
+    /**
+     *
+     * @param int $id
+     * @return Response
+     * @throws NotFoundHttpException
+     */
     public function actionDelete(int $id): Response {
         $model = $this->findModel($id);
         if (Status::changeStatus($model, AppStatus::DELETED->value)) {
@@ -159,7 +175,13 @@ class UserController extends Controller {
         throw new NotFoundHttpException('Could not delete this user');
     }
 
-    public function actionValidate(int $id) {
+    /**
+     *
+     * @param int $id
+     * @return Response
+     * @throws NotFoundHttpException
+     */
+    public function actionValidate(int $id): Response {
         $model = $this->findModel($id);
         if (Status::changeStatus($model, AppStatus::ACTIVE->value)) {
             return $this->redirect(['index']);
@@ -167,7 +189,13 @@ class UserController extends Controller {
         throw new NotFoundHttpException('Could not validate this user');
     }
 
-    public function actionRestore(int $id) {
+    /**
+     *
+     * @param int $id
+     * @return Response
+     * @throws NotFoundHttpException
+     */
+    public function actionRestore(int $id): Response {
         $model = $this->findModel($id);
         if (Status::changeStatus($model, AppStatus::INACTIVE->value)) {
             return $this->redirect(['index']);
@@ -178,11 +206,12 @@ class UserController extends Controller {
     /**
      * Finds the User model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
+     * 
      * @param int $id Primary Key
      * @return User the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel(int $id) {
+    protected function findModel(int $id): User {
         if (($model = User::findOne(['id' => $id])) !== null) {
             return $model;
         }

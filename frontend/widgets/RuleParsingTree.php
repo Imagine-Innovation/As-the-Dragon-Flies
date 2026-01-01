@@ -4,14 +4,19 @@ namespace frontend\widgets;
 
 use Yii;
 use yii\base\Widget;
+use common\models\RuleCondition;
 use common\models\RuleExpression;
 
 class RuleParsingTree extends Widget
 {
 
-    public $id;
+    public int $id;
 
-    public function run() {
+    /**
+     *
+     * @return string
+     */
+    public function run(): string {
         if (!$this->id) {
             return '';
         }
@@ -21,7 +26,12 @@ class RuleParsingTree extends Widget
         return $model ? $this->digParsingTree($model) : '';
     }
 
-    private function digParsingTree($expression) {
+    /**
+     *
+     * @param RuleExpression $expression
+     * @return string
+     */
+    private function digParsingTree(RuleExpression $expression): string {
         $tree = [];
         if ($expression->op) {
             if ($expression->ruleConditions) {
@@ -55,9 +65,17 @@ class RuleParsingTree extends Widget
         return $html;
     }
 
-    private function renderCondition($cond) {
+    /**
+     *
+     * @param RuleCondition $cond
+     * @return string
+     */
+    private function renderCondition(RuleCondition $cond): string {
         $ruleModel = $cond->model;
-        $left = $ruleModel->name . '->' . $ruleModel->attribute . ($ruleModel->is_method ? '()' : '');
-        return '<li>[' . $left . ' ' . $cond->comparator . ' ' . $cond->val . '] = ' . ($cond->target ? 'True' : 'False') . '</li>';
+        $attribute = $ruleModel->is_method ? "{$ruleModel->attribute}()" : $ruleModel->attribute;
+        $left = "{$ruleModel->name}->{$attribute}";
+        $target = $cond->target ? 'True' : 'False';
+
+        return "<li>[{$left} {$cond->comparator} {$cond->val}] = {$target}</li>";
     }
 }

@@ -2,17 +2,19 @@
 
 namespace frontend\widgets;
 
+use common\models\Player;
 use yii\base\Widget;
 
-class PlayerCharacteristics extends Widget {
+class PlayerCharacteristics extends Widget
+{
 
-    public $player;
-    public $embedded;
+    public Player $player;
+    public bool $embedded;
 
     public function run() {
         return $this->render('player-characteristics', [
-                        'model' => $this->player,
-                        'embedded' => $this->embedded ?? false,
+                    'model' => $this->player,
+                    'embedded' => $this->embedded ?? false,
         ]);
     }
 }

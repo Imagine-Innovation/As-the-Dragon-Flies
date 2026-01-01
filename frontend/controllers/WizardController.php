@@ -16,7 +16,8 @@ use yii\web\Response;
 /**
  * WizardController implements the CRUD actions for Wizard model.
  */
-class WizardController extends Controller {
+class WizardController extends Controller
+{
 
     /**
      * @inheritDoc
@@ -77,7 +78,11 @@ class WizardController extends Controller {
         ]);
     }
 
-    public function actionAjaxQuestion() {
+    /**
+     *
+     * @return array{error: bool, msg: string, content?: string}
+     */
+    public function actionAjaxQuestion(): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -108,11 +113,12 @@ class WizardController extends Controller {
     /**
      * Finds the Wizard model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
+     *
      * @param int $id ID
      * @return Wizard the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel(int $id) {
+    protected function findModel(int $id): Wizard {
         if (($model = Wizard::findOne(['id' => $id])) !== null) {
             return $model;
         }

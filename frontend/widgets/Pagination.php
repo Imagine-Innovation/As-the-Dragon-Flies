@@ -2,21 +2,16 @@
 
 namespace frontend\widgets;
 
-/**
- * Description of Pagination
- *
- * @author franc
- */
 use yii\base\Widget;
 
-class Pagination extends Widget {
+class Pagination extends Widget
+{
 
-    public $limit;
-    public $pageCount;
-    public $page;
-    
-    private $firstPage = 0;
-    private $lastVisiblePage = 0;
+    public int $limit;
+    public int $pageCount;
+    public int $page;
+    private int $firstPage = 0;
+    private int $lastVisiblePage = 0;
 
     public function run() {
         $maxPages = 3;
@@ -35,7 +30,11 @@ class Pagination extends Widget {
         ]);
     }
 
-    private function calculatePages() {
+    /**
+     *
+     * @return array<int>
+     */
+    private function calculatePages(): array {
         $pages = [];
         for ($i = $this->firstPage; $i <= $this->lastVisiblePage; $i++) {
             $pages[] = $i;

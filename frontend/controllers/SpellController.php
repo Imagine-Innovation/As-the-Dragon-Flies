@@ -17,7 +17,8 @@ use yii\web\Response;
 /**
  * SpellController implements the CRUD actions for Spell model.
  */
-class SpellController extends Controller {
+class SpellController extends Controller
+{
 
     /**
      * @inheritDoc
@@ -67,7 +68,11 @@ class SpellController extends Controller {
         ]);
     }
 
-    public function actionAjax() {
+    /**
+     *
+     * @return array{error: bool, msg: string, content?: string}
+     */
+    public function actionAjax(): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -87,6 +92,7 @@ class SpellController extends Controller {
 
     /**
      * Displays a single Spell model.
+     *
      * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
@@ -100,11 +106,12 @@ class SpellController extends Controller {
     /**
      * Finds the Spell model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
+     *
      * @param int $id ID
      * @return Spell the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel(int $id) {
+    protected function findModel(int $id): Spell {
         if (($model = Spell::findOne(['id' => $id])) !== null) {
             return $model;
         }

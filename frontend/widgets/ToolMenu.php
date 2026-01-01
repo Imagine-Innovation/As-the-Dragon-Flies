@@ -10,10 +10,14 @@ use yii\base\Widget;
 class ToolMenu extends Widget
 {
 
-    public $mode = 'nav';
-    public $isAdmin = false;
+    public string $mode = 'nav';
+    public bool $isAdmin = false;
 
-    public function run() {
+    /**
+     *
+     * @return string
+     */
+    public function run(): string {
         if ($this->isAdmin) {
             $render = $this->mode == 'nav' ? 'tool-menu-nav' : 'tool-menu-admin';
         } elseif ($this->mode === 'nav') {
@@ -28,7 +32,11 @@ class ToolMenu extends Widget
         ]);
     }
 
-    private function getMenus() {
+    /**
+     *
+     * @return Menu[]
+     */
+    private function getMenus(): array {
         $user = Yii::$app->user->identity;
 
         $hasPlayerSelected = false;

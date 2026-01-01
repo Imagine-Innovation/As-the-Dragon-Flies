@@ -4,13 +4,14 @@ namespace frontend\widgets;
 
 use yii\base\Widget;
 
-class ModalDesc extends Widget {
+class ModalDesc extends Widget
+{
 
-    public $name;
-    public $description;
-    public $maxLength;
-    public $type;
-    public $id;
+    public string $name;
+    public string $description;
+    public int $maxLength;
+    public string $type;
+    public int $id;
 
     public function run() {
         if (!$this->description) {

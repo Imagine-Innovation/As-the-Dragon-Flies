@@ -4,12 +4,15 @@ namespace frontend\widgets;
 
 use yii\base\Widget;
 
-class RecordCount extends Widget {
+class RecordCount extends Widget
+{
 
-    public $model;
-    public $count;
-    public $adjective;
-    public $actions;
+    public string $model;
+    public int $count;
+    public string $adjective;
+
+    /** @var array<string, mixed>|null $actions */
+    public ?array $actions;
 
     public function run() {
         return $this->render('record-count', [
@@ -18,15 +21,17 @@ class RecordCount extends Widget {
         ]);
     }
 
-    private function setCountLabel() {
+    /**
+     *
+     * @return string
+     */
+    private function setCountLabel(): string {
         $adjective = $this->adjective ?? 'available';
-        switch ($this->count) {
-            case 0:
-                return 'There is no ' . $adjective . ' ' . $this->model . ' in the game';
-            case 1:
-                return 'There only one ' . $adjective . ' ' . $this->model . ' in the game';
-            default:
-                return 'List of the ' . $this->count . ' ' . $adjective . ' ' . $this->model . 's in the game';
-        }
+
+        return match ($this->count) {
+            0 => "There is no {$adjective} {$this->model} in the game",
+            1 => "There is only one {$adjective} {$this->model} in the game",
+            default => "List of the {$this->count} {$adjective} {$this->model}'s in the game"
+        };
     }
 }

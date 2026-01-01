@@ -16,7 +16,8 @@ use yii\web\Response;
 /**
  * UserLoginController implements the CRUD actions for UserLogin model.
  */
-class UserLoginController extends Controller {
+class UserLoginController extends Controller
+{
 
     /**
      * @inheritDoc
@@ -74,7 +75,11 @@ class UserLoginController extends Controller {
         ]);
     }
 
-    public function actionAjax() {
+    /**
+     *
+     * @return array{error: bool, msg: string, content?: string}
+     */
+    public function actionAjax(): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -102,13 +107,14 @@ class UserLoginController extends Controller {
     /**
      * Finds the UserLogin model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
+     *
      * @param int $userId Primary Key and Foreign Key to the [User] entity
      * @param string $application Application logged to
      * @param int $loginAt Login at
      * @return UserLogin the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($userId, $application, $loginAt) {
+    protected function findModel(int $userId, string $application, int $loginAt): UserLogin {
         if (($model = UserLogin::findOne([
             'user_id' => $userId,
             'application' => $application,

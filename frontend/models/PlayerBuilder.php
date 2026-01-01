@@ -59,7 +59,7 @@ class PlayerBuilder extends Player
 
     /**
      *
-     * @return array<int, non-empty-array{id: int, name: string|null}>
+     * @return array<int, non-empty-array<int, array{id: int, name: string|null}>>
      */
     public function getInitialEndowment(): array {
         $endowments = $this->class->classEndowments;

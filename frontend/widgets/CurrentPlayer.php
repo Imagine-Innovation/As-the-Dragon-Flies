@@ -22,7 +22,7 @@ class CurrentPlayer extends Widget
         $displayMode = $this->mode ?? 'navbar';
         $render = ($displayMode === 'navbar') ? 'current-player-navbar' : 'current-player-modal';
 
-        $selectedPlayerId = $currentUser?->current_player_id;
+        $selectedPlayerId = $currentUser->current_player_id;
 
         $players = $this->loadPlayers($currentUser->id);
         if ($players) {
@@ -40,7 +40,7 @@ class CurrentPlayer extends Widget
     /**
      *
      * @param int $userId
-     * @return array<string, mixed>
+     * @return array<int, array<string, int|string|null>>
      */
     private function loadPlayers(int $userId): array {
         $players = $this->getPlayers($userId);
