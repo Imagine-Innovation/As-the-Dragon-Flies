@@ -4,19 +4,13 @@ use common\models\Level;
 
 /** @var yii\web\View $this */
 /** @var common\models\CharacterClass $model */
-$header = array();
-$data = array();
-
-$header[0] = "Level";
-$header[1] = "Proficiency Bonus";
-$header[2] = "Features";
+$header = ['Level', 'Proficiency Bonus', 'Features'];
 
 $levels = Level::find()->all();
 
+$data = [];
 foreach ($levels as $level) {
-    $data[$level->id][0] = $level->name;
-    $data[$level->id][1] = "+" . $level->proficiency_bonus;
-    $data[$level->id][2] = "&nbsp;";
+    $data[$level->id] = [$level->name, "+{$level->proficiency_bonus}", '&nbsp;'];
 }
 
 foreach ($model->classFeatures as $f) {

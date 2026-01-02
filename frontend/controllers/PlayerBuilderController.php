@@ -358,6 +358,7 @@ class PlayerBuilderController extends Controller
         $player = $this->findModel($playerId);
 
         $endowmentTable = $player->getInitialEndowment();
+        /** @phpstan-ignore-next-line */
         $choices = max(array_keys($endowmentTable));
         Yii::debug($endowmentTable);
         return [

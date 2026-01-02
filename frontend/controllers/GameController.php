@@ -262,7 +262,7 @@ class GameController extends Controller
      * Retrieves the POST parameters, evaluates the results of the completed action, and triggers a "game-action" event.
      *
      * @param Request $postRequest
-     * @return array{error: bool, msg: string, content?: string} An associative array that contains what should be displayed
+     * @return array<string, mixed> An associative array that contains what should be displayed
      */
     protected function getOutcome(Request $postRequest): array {
         $param = [

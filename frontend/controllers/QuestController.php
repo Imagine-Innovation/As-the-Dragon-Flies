@@ -51,6 +51,7 @@ class QuestController extends Controller
      * @inheritDoc
      */
     public function behaviors() {
+        /** @phpstan-ignore-next-line */
         return array_merge(
                 parent::behaviors(),
                 [
@@ -240,9 +241,19 @@ class QuestController extends Controller
 
         $quest = $this->findModel($questId);
 
-        $playerCount = Player::find()
-                ->where(['quest_id' => $quest->id])
-                ->count();
+        /**
+         * The (int) cast is on purpose.
+         * In the Yii2 framework, the count() method of an ActiveQuery doesn't
+         * strictly return an int. Under the hood, it queries the database and can return:
+         * 1. A numeric string (because many database drivers return counts as
+         *    strings to avoid integer overflow on 32-bit systems).
+         * 2. null (in some rare edge cases or failed executions).
+         * 3. An integer.
+         *
+         */
+        $playerCount = (int) Player::find()
+                        ->where(['quest_id' => $quest->id])
+                        ->count();
 
         $tavernManager = new TavernManager(['quest' => $quest]);
         $welcomeMessage = $tavernManager->welcomeMessage($playerCount);

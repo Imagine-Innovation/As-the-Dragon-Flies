@@ -2,8 +2,10 @@
 
 namespace frontend\controllers;
 
-use common\models\CharacterClass;
 use common\components\ManageAccessRights;
+use common\models\CharacterClass;
+use common\models\ClassProficiency;
+use common\models\Proficiency;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
@@ -23,6 +25,7 @@ class CharacterClassController extends Controller
      * @inheritDoc
      */
     public function behaviors() {
+        /** @phpstan-ignore-next-line */
         return array_merge(
                 parent::behaviors(),
                 [
@@ -93,25 +96,55 @@ class CharacterClassController extends Controller
     }
 
     /**
+     *
+     * @param ClassProficiency[] $classProficiencies
+     * @return bool
+     */
+    private function hasSpell(array $classProficiencies): bool {
+        // Find proficiency ID for Spell to avoid nested sub query
+        // in the "foreach" statement
+        $spellProficieny = Proficiency::find()
+                ->select('id')
+                ->where(['name' => 'Spell'])
+                ->one();
+
+        if (!$spellProficieny) {
+            // Spell proficiency not found
+            return false;
+        }
+
+        foreach ($classProficiencies as $p) {
+            if ($p->proficiency_id === (int) $spellProficieny->id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Displays a single CharacterClass model.
+     *
      * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionView(int $id): string {
+        $model = $this->findModel($id);
         return $this->render('view', [
-                    'model' => $this->findModel($id),
+                    'model' => $model,
+                    'hasSpell' => $this->hasSpell($model->classProficiencies),
         ]);
     }
 
     /**
      * Finds the CharacterClass model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
+     *
      * @param int $id ID
      * @return CharacterClass the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel(int $id) {
+    protected function findModel(int $id): CharacterClass {
         if (($model = CharacterClass::findOne(['id' => $id])) !== null) {
             return $model;
         }

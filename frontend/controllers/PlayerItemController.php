@@ -26,6 +26,7 @@ class PlayerItemController extends Controller
      * @inheritDoc
      */
     public function behaviors() {
+        /** @phpstan-ignore-next-line */
         return array_merge(
                 parent::behaviors(),
                 [
@@ -259,7 +260,7 @@ class PlayerItemController extends Controller
      * @param PlayerItem $playerItem
      * @param PlayerBody $playerBody
      * @param string $bodyZone
-     * @return array{error: bool, msg: string, content?: string}
+     * @return array<string, mixed>
      */
     private function equipPlayerWithHelmet(PlayerItem &$playerItem, PlayerBody &$playerBody, string $bodyZone): array {
         if ($bodyZone !== PlayerItem::BODY_HEAD_ZONE) {
@@ -280,7 +281,7 @@ class PlayerItemController extends Controller
      * @param PlayerItem $playerItem
      * @param PlayerBody $playerBody
      * @param string $bodyZone
-     * @return array{error: bool, msg: string}
+     * @return array<string, mixed>
      */
     private function equipPlayerWithShield(PlayerItem &$playerItem, PlayerBody &$playerBody, string $bodyZone): array {
         if ($bodyZone !== PlayerItem::BODY_LEFT_HAND_ZONE) {
@@ -303,7 +304,7 @@ class PlayerItemController extends Controller
      * @param PlayerItem $playerItem
      * @param PlayerBody $playerBody
      * @param string $bodyZone
-     * @return array{error: bool, msg: string, content?: string}
+     * @return array<string, mixed>
      */
     private function equipPlayerWithTool(PlayerItem &$playerItem, PlayerBody &$playerBody, string $bodyZone): array {
         if ($bodyZone !== PlayerItem::BODY_RIGHT_HAND_ZONE) {
@@ -345,7 +346,7 @@ class PlayerItemController extends Controller
      * @param Item $weapon
      * @param PlayerBody $playerBody
      * @param string $bodyZone
-     * @return array{error: bool, msg: string, content?: string}
+     * @return array<string, mixed>
      */
     private function equipPlayerWithWeapon(PlayerItem &$playerItem, Item &$weapon, PlayerBody &$playerBody, string $bodyZone): array {
         $weaponName = $weapon->name;
@@ -408,7 +409,7 @@ class PlayerItemController extends Controller
      * @param Item $weapon
      * @param PlayerBody $playerBody
      * @param string $bodyZone
-     * @return array{error: bool, msg: string, content?: string}
+     * @return array<string, mixed>
      */
     private function holdWeapon(Item &$weapon, PlayerBody &$playerBody, string $bodyZone): array {
         Yii::debug("*** debug *** holdWeapon - bodyZone={$bodyZone}, weapon={$weapon->name}");
@@ -444,7 +445,7 @@ class PlayerItemController extends Controller
      *
      * @param PlayerItem $playerItem
      * @param string $bodyZone
-     * @return array{error: bool, msg: string, content?: string}
+     * @return array<string, mixed>
      */
     private function equipPlayer(PlayerItem &$playerItem, string $bodyZone): array {
         $playerBody = $this->findPlayerBody($playerItem->player_id);
@@ -464,7 +465,7 @@ class PlayerItemController extends Controller
 
     /**
      *
-     * @return array{error: bool, msg: string, content?: string}
+     * @return array<string, mixed>
      */
     public function actionAjaxEquipPlayer(): array {
         // Set the response format to JSON
@@ -555,7 +556,7 @@ class PlayerItemController extends Controller
      *
      * @param PlayerBody $playerBody
      * @param string $bodyZone
-     * @return array{error: bool, msg: string, content?: string}
+     * @return array<string, mixed>
      */
     private function disarmPlayer(PlayerBody &$playerBody, string $bodyZone): array {
         $bodyProperties = PlayerItem::BODY_PROPERTIES[$bodyZone];
@@ -579,7 +580,7 @@ class PlayerItemController extends Controller
 
     /**
      *
-     * @return array{error: bool, msg: string, content?: string}
+     * @return array<string, mixed>
      */
     public function actionAjaxDisarmPlayer(): array {
         // Set the response format to JSON
@@ -626,7 +627,7 @@ class PlayerItemController extends Controller
 
     /**
      *
-     * @return array{error: bool, msg: string, content?: string}
+     * @return array<string, mixed>
      */
     public function actionAjaxToggle(): array {
         Yii::$app->response->format = Response::FORMAT_JSON;

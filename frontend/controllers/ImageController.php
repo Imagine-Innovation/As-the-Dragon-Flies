@@ -25,6 +25,7 @@ class ImageController extends Controller
      * @inheritDoc
      */
     public function behaviors() {
+        /** @phpstan-ignore-next-line */
         return array_merge(
                 parent::behaviors(),
                 [

@@ -477,7 +477,7 @@ class BuilderComponent
     /**
      *
      * @param Player $player
-     * @return array<int, bool|int>
+     * @return array<int, int>
      */
     private static function getPlayerSkillProficiencies(Player &$player): array {
         $proficiencies = [];

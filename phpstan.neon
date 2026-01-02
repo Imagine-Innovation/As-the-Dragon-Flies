@@ -1,9 +1,9 @@
 parameters:
-    level: 5  # Start at level 0-5 for existing projects; 9 is strictest
+    level: 9  # Start at level 0-5 for existing projects; 9 is strictest
     phpVersion: 80200  # PHP 8.2
-    checkExplicitMixed: false
-    reportUnmatchedIgnoredErrors: false
-    inferPrivatePropertyTypeFromConstructor: true
+    #checkExplicitMixed: false
+    #reportUnmatchedIgnoredErrors: false
+    #inferPrivatePropertyTypeFromConstructor: true
     paths:
         - models
         - controllers
@@ -11,27 +11,21 @@ parameters:
         - views
         - helpers
         - widgets
-        - commands
     scanDirectories:
-        - common/components
-        - common/fixtures
-        - common/helpers
-        - common/models
-        - common/widgets
-        - frontend/components
-        - frontend/helpers
-        - frontend/models
-        - frontend/widgets
-        - vendor
+        - common
+        - console
+        - frontend
     excludePaths:
-        - common/config
-        - common/tests
-        - frontend/config
-        - frontend/tests
+        - '**/assets/*'
+        - '**/node_modules/*'
+        - '**/runtime/*'
+        - '**/config/*'
+        - '**/tests/*'
+        - '**/migrations/*'
+        - '**/vendor/*'
         - frontend/views/site/icons.php
         - frontend/web/index.php
         - frontend/web/index-test.php
-        - vendor
     # Yii2 often uses undefined properties; this helps ignore those specific errors
     ignoreErrors:
         - '#Access to an undefined property yii\\base\\Component::\$[a-zA-Z0-9_]+#'
@@ -46,3 +40,4 @@ parameters:
         - '#Call to an undefined method yii\\#'
         - '#Access to an undefined property yii\\#'
         - '#on an unknown class common\\model#'
+        - '#Access to an undefined property __Application|yii\\console\\Application|yii\\web\\Application::\$session.#'

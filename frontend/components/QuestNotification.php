@@ -26,8 +26,8 @@ class QuestNotification extends Component
                 ])
                 ->andWhere(['>', 'distributed_at', time() - self::INTERVAL])
                 ->count();
-        Yii::debug("*** Debug *** getCount count=$count");
-        return $count;
+        Yii::debug("*** Debug *** getCount count={$count}");
+        return (int) $count;
     }
 
     /**

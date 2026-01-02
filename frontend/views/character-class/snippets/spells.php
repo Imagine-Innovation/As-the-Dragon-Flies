@@ -9,14 +9,14 @@ $data = array();
 $spell = array();
 
 foreach ($model->spells as $s) {
-    $box = $s->spell_level;
-    if (!in_array($box, $index, TRUE)) {
-        $index[] = $box;
+    $spellLevel = $s->spell_level;
+    if (!in_array($spellLevel, $index, TRUE)) {
+        $index[] = $spellLevel;
     }
 
     $spell['id'] = $s->id;
     $spell['name'] = $s->name;
-    $data[$box][] = $spell;
+    $data[$spellLevel][] = $spell;
 }
 
 sort($index);
@@ -24,9 +24,9 @@ sort($index);
 <div class="card">
     <div class="card-body">
         <div class="container">
-            <div class="row g-4">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-5 row-cols-3xl-10 g-4">
                 <?php foreach ($index as $i): ?>
-                    <div class="col-12 col-md-6 col-lg-4">
+                    <div class="col">
                         <h6>Spell level <?= $i ?></h6>
                         <ul>
                             <?php foreach ($data[$i] as $l): ?>
