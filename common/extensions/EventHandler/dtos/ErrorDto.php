@@ -49,9 +49,9 @@ class ErrorDto implements BroadcastMessageInterface
 
     /**
      *
-     * @return string
+     * @return string|false
      */
-    public function toJson(): string {
+    public function toJson(): string|false {
         return json_encode(['type' => $this->type, 'payload' => $this->payload]);
     }
 }

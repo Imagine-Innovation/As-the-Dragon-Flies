@@ -43,11 +43,17 @@ class BroadcastService implements BroadcastServiceInterface
     /**
      *
      * @param ConnectionInterface $connection
-     * @param string $jsonData
+     * @param string|false $jsonData
      * @return void
      */
-    public function sendToConnection(ConnectionInterface $connection, string $jsonData): void {
-        $this->logger->log("BroadcastService: Sending direct to connection", ['remoteAddress' => $connection->remoteAddress, 'dataLength' => strlen($jsonData)]);
+    public function sendToConnection(ConnectionInterface $connection, string|false $jsonData): void {
+        $dataLength = $jsonData === false ? 0 : strlen($jsonData);
+        $this->logger->log("BroadcastService: Sending direct to connection", ['remoteAddress' => $connection->remoteAddress, 'dataLength' => $dataLength]);
+
+        if ($jsonData === false) {
+            $this->logger->log("BroadcastService: Exception: Json encoding problem", 'error');
+            return;
+        }
         try {
             $connection->send($jsonData);
         } catch (\Exception $e) {

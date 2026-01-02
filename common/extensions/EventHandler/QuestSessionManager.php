@@ -30,19 +30,16 @@ class QuestSessionManager
     public function registerSessionForQuest(string $sessionId, array $data): bool {
         $this->logger->logStart("QuestSessionManager: registerSessionForQuest sessionId=[{$sessionId}]", $data);
 
-        $questId = $data['questId'] ?? null;
+        $questId = array_key_exists('questId', $data) ? $data['questId'] : null;
         // Validate input parameters
-        if (!$sessionId || !is_numeric($questId) || $questId <= 0) {
+        if (!$sessionId || !$questId || $questId <= 0) {
             $this->logger->log("QuestSessionManager: Invalid sessionId or quest ID", ['sessionId' => $sessionId, 'questId' => $questId], 'error');
             $this->logger->logEnd("QuestSessionManager: registerSessionForQuest");
             return false;
         }
 
         try {
-            // The original $data array was passed which might contain more than just questId and playerId.
-            // The registerSession method below has been simplified to accept specific parameters.
-            // We need to ensure we extract all necessary info from $data if there's more than just playerId/questId.
-            // For now, assuming $data might also be used by registerSession indirectly or for other logging.
+            // Assuming $data might also be used by registerSession indirectly or for other logging.
             $this->registerSession($sessionId, $data['playerId'] ?? null, $questId, $data['clientId'] ?? null, $data);
             $this->logger->logEnd("QuestSessionManager: registerSessionForQuest");
             return true;

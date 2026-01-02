@@ -222,7 +222,12 @@ class EventHandler extends Component
 
         if ($questId && $message) {
             $this->broadcastToQuest($questId, $message, $excludeSessionId);
-            return new Response(200, ['Content-Type' => 'application/json'], json_encode(['status' => 'ok', 'message' => 'Broadcast initiated.']));
+            $jsonData = json_encode(['status' => 'ok', 'message' => 'Broadcast initiated.']);
+            if ($jsonData) {
+                return new Response(200, ['Content-Type' => 'application/json'], $jsonData);
+            } else {
+                return new Response(400, ['Content-Type' => 'text/plain'], 'Encoding error');
+            }
         }
 
         return new Response(400, ['Content-Type' => 'text/plain'], 'Missing questId or message');

@@ -118,7 +118,7 @@ enum AppStatus: int
 
     /**
      *
-     * @return array<int>
+     * @return list<int|null>
      */
     public function getActionStatusFilter(): array {
         return match ($this) {

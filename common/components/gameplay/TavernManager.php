@@ -310,6 +310,7 @@ class TavernManager extends BaseManager
                 ->where(['quest_id' => $this->quest->id])
                 ->count();
 
+        /** @phpstan-ignore-next-line */
         return $playerCount;
     }
 

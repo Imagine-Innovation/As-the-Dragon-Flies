@@ -16,7 +16,7 @@ use Ratchet\ConnectionInterface;
 class WebSocketServerManager
 {
 
-    /** @var array<int, ConnectionInterface> $clients */
+    /** @var array<string, ConnectionInterface> $clients */
     private array $clients = [];
     private LoggerService $logger;
     private QuestSessionManager $questSessionManager;
@@ -129,7 +129,7 @@ class WebSocketServerManager
 
     /**
      *
-     * @return array<int, ConnectionInterface>
+     * @return array<string, ConnectionInterface>
      */
     public function getAllClients(): array {
         return $this->clients;

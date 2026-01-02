@@ -147,7 +147,7 @@ class BroadcastMessageFactory
     /**
      * Creates the appropriate DTO if validation passes, otherwise logs an error.
      *
-     * @param string $dtoClass
+     * @param class-string<BroadcastMessageInterface> $dtoClass
      * @param string $type
      * @param array<string, mixed> $payload
      * @param array<string> $requiredKeys

@@ -21,5 +21,5 @@ interface BroadcastMessageInterface
      *
      * @return string
      */
-    public function toJson(): string;
+    public function toJson(): string|false;
 }

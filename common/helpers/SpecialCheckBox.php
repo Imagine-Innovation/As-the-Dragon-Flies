@@ -2,9 +2,12 @@
 
 namespace common\helpers;
 
+use common\models\AccessRight;
+use common\models\User;
 use frontend\widgets\CheckBox;
 
-class SpecialCheckBox {
+class SpecialCheckBox
+{
 
     /**
      * Generates an HTML checkbox for a given role on a model.
@@ -13,12 +16,12 @@ class SpecialCheckBox {
      * has the specified role.
      * The checkbox includes a JavaScript `onclick` event to toggle the role.
      *
-     * @param object $model The model object which contains the role information.
+     * @param AccessRight|User $model The model object which contains the role information.
      * @param string $role The role to check for and create a checkbox for.
      * @return string The generated HTML for the checkbox, or an empty string
      *                if the role property is not set on the model.
      */
-    public static function setUserRole($model, $role) {
+    public static function setUserRole(AccessRight|User $model, string $role): string {
         // Construct the property name for the role (e.g., 'is_admin' for the 'admin' role)
         $property = 'is_' . $role;
 
@@ -48,12 +51,12 @@ class SpecialCheckBox {
      * has the specified access right.
      * The checkbox includes a JavaScript `onclick` event to toggle the access right.
      *
-     * @param object $model The model object which contains the access right information.
+     * @param AccessRight|User $model The model object which contains the access right information.
      * @param string $access The access right to check for and create a checkbox for.
      * @return string The generated HTML for the checkbox, or an empty string
      *                if the access right property is not set on the model.
      */
-    public static function setAccessRight($model, $access) {
+    public static function setAccessRight(AccessRight|User $model, string $access): string {
         // Check if the model has the role property
         if (isset($model->$access)) {
             // Determine if the checkbox should be checked based on the model's role property

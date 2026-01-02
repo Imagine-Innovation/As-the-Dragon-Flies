@@ -28,30 +28,31 @@ class FindModelHelper
     }
 
     /**
-     *
-     * @param string $modelName
+     * @template T of \yii\db\ActiveRecord
+     * @param class-string<T> $modelName The class name (e.g., Action::class or 'Action')
      * @param int|array<string, mixed> $param
-     * @return Action|Chapter|Decor|Mission|Player|Quest|QuestAction|QuestProgress|Reply|ActionFlow
+     * @return T
      * @throws NotFoundHttpException
      */
-    public static function findModel(string $modelName, int|array $param): Action|Chapter|Decor|Mission|Player|Quest|QuestAction|QuestProgress|Reply|ActionFlow {
+    public static function findModel(string $modelName, int|array $param): \yii\db\ActiveRecord {
         $searchParams = self::searchParams($param);
         Yii::debug("*** debug *** findModel modelName={$modelName}, param={$searchParams}");
 
-        // test if a primary key is used (integer value or 'id' field)
-        if (is_int($param)) {
-            $pk = $param;
-        } else {
-            $pk = $param['id'] ?? null;
-        }
+        // Resolve the FQCN (Fully Qualified Class Name)
+        /** @var class-string<T> $className */
+        $className = str_contains($modelName, '\\') ? $modelName : "\\common\\models\\{$modelName}";
 
-        $activeRecord = "\\common\\models\\{$modelName}";
-        $model = $activeRecord::findOne($pk ? ['id' => $pk] : $param);
-        if ($model !== null) {
+        // test if a primary key is used (integer value or 'id' field)
+        $pk = is_int($param) ? $param : ($param['id'] ?? null);
+
+        /** @var T|null $model */
+        $model = $className::findOne($pk ? ['id' => $pk] : $param);
+
+        if ($model instanceof $className) {
             return $model;
         }
 
-        throw new NotFoundHttpException("The requested {$modelName} does not exist with search params: {$searchParams}");
+        throw new NotFoundHttpException("The requested {$modelName} does not exist.");
     }
 
     /**
@@ -60,7 +61,7 @@ class FindModelHelper
      * @return Action
      */
     public static function findAction(int|array $param): Action {
-        return self::findModel('Action', $param);
+        return self::findModel(Action::class, $param);
     }
 
     /**
@@ -69,7 +70,7 @@ class FindModelHelper
      * @return Chapter
      */
     public static function findChapter(int|array $param): Chapter {
-        return self::findModel('Chapter', $param);
+        return self::findModel(Chapter::class, $param);
     }
 
     /**
@@ -78,7 +79,7 @@ class FindModelHelper
      * @return Decor
      */
     public static function findDecor(int|array $param): Decor {
-        return self::findModel('Decor', $param);
+        return self::findModel(Decor::class, $param);
     }
 
     /**
@@ -87,7 +88,7 @@ class FindModelHelper
      * @return Mission
      */
     public static function findMission(int|array $param): Mission {
-        return self::findModel('Mission', $param);
+        return self::findModel(Mission::class, $param);
     }
 
     /**
@@ -96,7 +97,7 @@ class FindModelHelper
      * @return Player
      */
     public static function findPlayer(int|array $param): Player {
-        return self::findModel('Player', $param);
+        return self::findModel(Player::class, $param);
     }
 
     /**
@@ -105,7 +106,7 @@ class FindModelHelper
      * @return Quest
      */
     public static function findQuest(int|array $param): Quest {
-        return self::findModel('Quest', $param);
+        return self::findModel(Quest::class, $param);
     }
 
     /**
@@ -114,7 +115,7 @@ class FindModelHelper
      * @return QuestAction
      */
     public static function findQuestAction(int|array $param): QuestAction {
-        return self::findModel('QuestAction', $param);
+        return self::findModel(QuestAction::class, $param);
     }
 
     /**
@@ -123,7 +124,7 @@ class FindModelHelper
      * @return QuestProgress
      */
     public static function findQuestProgress(int|array $param): QuestProgress {
-        return self::findModel('QuestProgress', $param);
+        return self::findModel(QuestProgress::class, $param);
     }
 
     /**
@@ -132,6 +133,6 @@ class FindModelHelper
      * @return Reply
      */
     public static function findReply(int|array $param): Reply {
-        return self::findModel('Reply', $param);
+        return self::findModel(Reply::class, $param);
     }
 }

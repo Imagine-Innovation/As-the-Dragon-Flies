@@ -82,7 +82,7 @@ class ChatManager extends BaseManager
      *
      * @param int|null $since
      * @param int|null $limit
-     * @return array<int, array{messages: list<string>}>
+     * @return non-empty-array<int<0, max>, array<string, mixed>>|array{}
      */
     public function getLastMessages(?int $since = null, ?int $limit = null): array {
 
