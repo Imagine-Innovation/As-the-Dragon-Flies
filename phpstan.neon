@@ -16,7 +16,6 @@ parameters:
         - console
         - frontend
     excludePaths:
-        - '**/assets/*'
         - '**/node_modules/*'
         - '**/runtime/*'
         - '**/config/*'

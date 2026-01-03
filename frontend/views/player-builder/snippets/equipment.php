@@ -5,6 +5,7 @@ use common\helpers\Utilities;
 /** @var yii\web\View $this */
 /** @var frontend\models\PlayerBuilder $model */
 $endowmentTable = $model->getInitialEndowment();
+/** @phpstan-ignore-next-line */
 $choices = max(array_keys($endowmentTable));
 
 $backgroundItems = $model->background->backgroundItems;

@@ -3,6 +3,7 @@
 /** @var array $playerBodyData */
 /** @var bool $withId */
 /** @var bool $withOffcanvas */
+/** @var array<string, array{cx: int, cy: int, r: int, x: int, y: int, size: int, fill: string, opacity: string}> $circles */
 $circles = [
     'equipmentHeadZone' => [
         'cx' => 200,
@@ -58,9 +59,10 @@ $circles = [
 
 $suffix = 0 + ($withId ? 0 : 1) + ($withOffcanvas ? 1 : 0);
 foreach ($playerBodyData as $zone => $playerBody) {
-    if ($playerBody['itemId']) {
+    // Check if itemId exists AND if the zone is actually defined in our $circles array
+    if (!empty($playerBody['itemId']) && isset($circles[$zone])) {
         $circles[$zone]['fill'] = "url(#pattern-{$zone}{$suffix})";
-        $circles[$zone]['opacity'] = "1";
+        $circles[$zone]['opacity'] = '1';
     }
 }
 ?>
@@ -68,7 +70,8 @@ foreach ($playerBodyData as $zone => $playerBody) {
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 900" preserveAspectRatio="xMidYMid meet" <?= $withId ? 'id="equipmentSvg"' : 'style="max-height: 30vh;"' ?>>
         <?php foreach ($playerBodyData as $zone => $playerBody): ?>
             <?php
-            if ($playerBody['itemId']):
+            // Ensure the zone exists in our SVG coordinate map
+            if (!empty($playerBody['itemId']) && isset($circles[$zone])):
                 $circle = $circles[$zone];
                 ?>
                 <defs>

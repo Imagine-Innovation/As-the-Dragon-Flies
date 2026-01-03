@@ -7,6 +7,7 @@ $choiceLabels = ['', '(a)', '(b)', '(c)', '(d)', '(e)'];
 <?php
 for ($choice = 1; $choice <= $choices; $choice++):
     $endowment = $endowments[$choice];
+    /** @phpstan-ignore-next-line */
     $options = max(array_keys($endowment));
     ?>
     <p>

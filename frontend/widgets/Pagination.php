@@ -17,7 +17,7 @@ class Pagination extends Widget
         $maxPages = 3;
         $offset = floor($maxPages / 2);
 
-        $this->firstPage = max(0, $this->page - $offset);
+        $this->firstPage = (int) max(0, $this->page - $offset);
         $tmpLastPage = $this->firstPage + $maxPages - 1;
         $this->lastVisiblePage = min($this->pageCount - 1, $tmpLastPage);
 

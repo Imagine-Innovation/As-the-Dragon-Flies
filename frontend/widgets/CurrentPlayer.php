@@ -69,9 +69,13 @@ class CurrentPlayer extends Widget
      * @return string
      */
     private function setTooltip(Player &$player): string {
-        $genders = ['F' => 'female', 'M' => 'male'];
+        $gender = match ($player->gender) {
+            'F' => 'female',
+            'M' => 'male',
+            default => 'gender-neutral'
+        };
 
-        return $genders[$player->gender] . ' '
+        return $gender . ' '
                 . mb_strtolower($player->race->name) . ' '
                 . mb_strtolower($player->class->name);
     }
