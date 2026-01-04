@@ -150,7 +150,7 @@ class PlayerItemController extends Controller
         }
 
         $request = Yii::$app->request;
-        $playerId = $request->get('playerId');
+        $playerId = (int) $request->get('playerId');
         $playerBody = $this->findPlayerBody($playerId);
 
         // If a player is found, return the player's packs
@@ -478,8 +478,8 @@ class PlayerItemController extends Controller
         }
 
         $request = Yii::$app->request;
-        $playerId = $request->post('playerId');
-        $itemId = $request->post('itemId');
+        $playerId = (int) $request->post('playerId');
+        $itemId = (int) $request->post('itemId');
 
         $playerItem = $this->findModel($playerId, $itemId);
 
@@ -593,7 +593,7 @@ class PlayerItemController extends Controller
         }
 
         $request = Yii::$app->request;
-        $playerId = $request->post('playerId');
+        $playerId = (int) $request->post('playerId');
         $bodyZone = $request->post('bodyZone');
 
         $playerBody = $this->findPlayerBody($playerId);

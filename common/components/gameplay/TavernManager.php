@@ -484,10 +484,10 @@ class TavernManager extends BaseManager
 
     /**
      *
-     * @return Quest|null
+     * @return Quest
      * @throws NotFoundHttpException
      */
-    public function findTavern(): ?Quest {
+    public function findTavern(): Quest {
 
         $tavern = $this->story->tavern ?? null;
         $questId = Yii::$app->session->get('questId');

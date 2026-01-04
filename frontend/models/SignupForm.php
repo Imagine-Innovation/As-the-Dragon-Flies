@@ -12,10 +12,10 @@ use common\models\User;
 class SignupForm extends Model
 {
 
-    public string $username;
-    public string $fullname;
-    public string $email;
-    public string $password;
+    public ?string $username = null;
+    public ?string $fullname = null;
+    public ?string $email = null;
+    public ?string $password = null;
 
     /**
      * {@inheritdoc}

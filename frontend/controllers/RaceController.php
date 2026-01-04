@@ -94,7 +94,7 @@ class RaceController extends Controller
         }
 
         $request = Yii::$app->request;
-        $id = $request->post('id');
+        $id = (int) $request->post('id');
 
         $model = $this->findModel($id);
 

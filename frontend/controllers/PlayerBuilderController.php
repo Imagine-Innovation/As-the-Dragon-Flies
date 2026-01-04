@@ -79,7 +79,7 @@ class PlayerBuilderController extends Controller
         }
 
         $request = Yii::$app->request;
-        $raceId = $request->post('raceId');
+        $raceId = (int) $request->post('raceId');
         $age = $request->post('age', 0);
         Yii::debug("*** Debug *** actionAjaxAge raceId=$raceId, age=$age", __METHOD__);
 
@@ -112,9 +112,9 @@ class PlayerBuilderController extends Controller
         }
 
         $request = Yii::$app->request;
-        $raceId = $request->post('raceId');
-        $gender = $request->post('gender', 'M');
-        $n = $request->post('n', 3);
+        $raceId = (int) $request->post('raceId');
+        $gender = (string) $request->post('gender', 'M');
+        $n = (int) $request->post('n', 3);
 
         return [
             'error' => false, 'msg' => '',
@@ -164,12 +164,13 @@ class PlayerBuilderController extends Controller
         }
 
         $request = Yii::$app->request;
-        $raceId = $request->post('raceId');
-        $classId = $request->post('classId');
-        $gender = $request->post('gender');
+        $raceId = (int) $request->post('raceId');
+        $classId = (int) $request->post('classId');
+        $gender = (string) $request->post('gender');
 
         if ($raceId && $classId && $gender) {
-            return $this->renderImages($request->post('imageId'), $raceId, $classId, $gender);
+            $imageId = (int) $request->post('imageId');
+            return $this->renderImages($imageId, $raceId, $classId, $gender);
         }
         return ['error' => true, 'msg' => 'Missing argument: '
             . ($raceId ? '' : 'race ')
@@ -192,7 +193,7 @@ class PlayerBuilderController extends Controller
         }
 
         $request = Yii::$app->request;
-        $playerId = $request->post('playerId');
+        $playerId = (int) $request->post('playerId');
         $player = $this->findModel($playerId);
 
         $skills = BuilderComponent::initPlayerSkills($player);
@@ -223,7 +224,7 @@ class PlayerBuilderController extends Controller
         }
 
         $request = Yii::$app->request;
-        $playerId = $request->post('playerId');
+        $playerId = (int) $request->post('playerId');
         $player = $this->findModel($playerId);
 
         $languages = BuilderComponent::initPlayerLanguages($player);
@@ -255,8 +256,8 @@ class PlayerBuilderController extends Controller
         }
 
         $request = Yii::$app->request;
-        $playerId = $request->post('playerId');
-        $languageId = $request->post('languageId');
+        $playerId = (int) $request->post('playerId');
+        $languageId = (int) $request->post('languageId');
         $selected = $request->post('selected');
         Yii::debug("*** debug *** actionAjaxUpdateLanguage - playerId={$playerId}, languageId=[$languageId}, selected={$selected}");
         if ($selected) {
@@ -354,7 +355,7 @@ class PlayerBuilderController extends Controller
         }
 
         $request = Yii::$app->request;
-        $playerId = $request->post('playerId');
+        $playerId = (int) $request->post('playerId');
         $player = $this->findModel($playerId);
 
         $endowmentTable = $player->getInitialEndowment();
@@ -455,6 +456,10 @@ class PlayerBuilderController extends Controller
     private function addItem(Player &$player, int $itemId, int $quantity): void {
 
         $item = Item::findOne(['id' => $itemId]);
+        if ($item === null) {
+            return;
+        }
+
         $itemType = $item->itemType->name;
         if ($itemType === 'Pack') {
             $this->unpack($player, $item, $quantity);
@@ -487,7 +492,7 @@ class PlayerBuilderController extends Controller
      * @return PlayerItem
      */
     private function newPlayerItem(Player &$player, Item &$item, int $quantity): PlayerItem {
-        $isProficient = PlayerComponent::isProficient($player->class->id, $item->id) ? 1 : 0;
+        $isProficient = PlayerComponent::isProficient($player->class_id, $item->id) ? 1 : 0;
         $proficiencyModifier = $isProficient ? $player->level->proficiency_bonus : 0;
 
         $weaponProperties = PlayerComponent::getPlayerWeaponProperties($player->id, $item->id, $proficiencyModifier);
@@ -502,7 +507,7 @@ class PlayerBuilderController extends Controller
             'quantity' => ($item->quantity ?? 1) * $quantity,
             'is_carrying' => 1,
             'is_proficient' => $isProficient,
-            'is_two_handed' => ($item->weapon->is_two_handed ? 1 : 0),
+            'is_two_handed' => $item->weapon->is_two_handed ? 1 : 0,
             'attack_modifier' => $weaponProperties['attackModifier'],
             'damage' => $weaponProperties['damage'],
         ]);
@@ -537,7 +542,7 @@ class PlayerBuilderController extends Controller
         }
 
         $request = Yii::$app->request;
-        $playerId = $request->post('playerId');
+        $playerId = (int) $request->post('playerId');
         $player = $this->findModel($playerId);
 
         $itemIds = $request->post('itemIds');
@@ -629,13 +634,13 @@ class PlayerBuilderController extends Controller
         }
 
         $request = Yii::$app->request;
-        $playerId = $request->post('playerId');
+        $playerId = (int) $request->post('playerId');
         $player = $this->findModel($playerId);
 
-        $skillId = $request->post('skillId');
+        $skillId = (int) $request->post('skillId');
         $skill = $this->findSkill($skillId);
 
-        $isProficient = $request->post('isProficient');
+        $isProficient = (int) $request->post('isProficient');
 
         BuilderComponent::updateSkill($player, $skill, $isProficient);
 

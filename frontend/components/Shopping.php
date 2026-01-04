@@ -262,11 +262,11 @@ class Shopping
      *
      * @param \common\models\PlayerCoin[] $playerCoins The player's current coin holdings represented as an associative array.
      * @param float $cost The cost of the item to be purchased.
-     * @param string $coin The type of coin for the item cost (e.g., 'gold', 'silver', 'copper').
+     * @param string|null $coin The type of coin for the item cost (e.g., 'gold', 'silver', 'copper').
      *
      * @return bool True if the spending is successful, false otherwise.
      */
-    public function spend(array $playerCoins, float $cost, string $coin): bool {
+    public function spend(array $playerCoins, float $cost, ?string $coin = 'gp'): bool {
         // Check if the player has sufficient funding for the specified cost and coin type.
         $itemCopperValue = $this->getFunding($playerCoins, $cost, $coin);
 
@@ -296,11 +296,11 @@ class Shopping
      * Restores the player's coins after a transaction.
      *
      * @param \common\models\PlayerCoin[] $playerCoins The player's current coins.
-     * @param int $cost The cost to be restored.
-     * @param string $coin The type of coin to be restored.
+     * @param int|null $cost The cost to be restored.
+     * @param string|null $coin The type of coin to be restored.
      * @return bool Whether the restoration was successful.
      */
-    public function restoreFunding(array $playerCoins, int $cost, string $coin): bool {
+    public function restoreFunding(array $playerCoins, ?int $cost = 0, ?string $coin = 'gp'): bool {
         $this->initPurse($playerCoins);
 
         // Iterate over the player's coins
@@ -321,12 +321,12 @@ class Shopping
      * Calculates the maximum funding a player can contribute towards an item purchase.
      *
      * @param \common\models\PlayerCoin[] $playerCoins The player's current coin holdings represented as an associative array.
-     * @param float $cost The cost of the item to be purchased.
-     * @param string $coin The type of coin for the item cost (e.g., 'gold', 'silver', 'copper').
+     * @param int|float $cost The cost of the item to be purchased.
+     * @param string|null $coin The type of coin for the item cost (e.g., 'gold', 'silver', 'copper').
      *
      * @return float The maximum funding the player can contribute towards the item purchase in copper coins.
      */
-    public function getFunding(array $playerCoins, float $cost, string $coin): float {
+    public function getFunding(array $playerCoins, int|float $cost, ?string $coin = 'gp'): float {
         // Check if the specified coin type exists in the coins array,
         // and if the item cost is positive.
         if (!isset($this->coins[$coin]) || $cost <= 0) {

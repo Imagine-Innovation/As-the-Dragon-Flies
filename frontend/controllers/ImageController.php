@@ -86,7 +86,7 @@ class ImageController extends Controller
         }
 
         $request = Yii::$app->request;
-        $raceGroupId = $request->post('currentId', 1);
+        $raceGroupId = (int) $request->post('currentId', 1);
         $gender = $request->post('filter', null);
 
         $param = [
@@ -120,8 +120,8 @@ class ImageController extends Controller
         }
 
         $request = Yii::$app->request;
-        $imageId = $request->post('imageId');
-        $classId = $request->post('classId');
+        $imageId = (int) $request->post('imageId');
+        $classId = (int) $request->post('classId');
         $className = $request->post('className');
         $status = $request->post('status');
 
@@ -223,7 +223,7 @@ class ImageController extends Controller
         }
 
         $request = Yii::$app->request;
-        $id = $request->post('id');
+        $id = (int) $request->post('id');
 
         $model = $this->findModel($id);
 

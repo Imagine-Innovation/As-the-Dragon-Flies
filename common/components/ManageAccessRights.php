@@ -107,9 +107,10 @@ class ManageAccessRights extends Component
      * @return bool
      */
     private static function isPublic(string $route, string $action): bool {
-        $publicSiteActions = ['error', 'login', 'captcha', 'index', 'signup', 'error',
+        $publicSiteActions = ['error', 'login', 'logout', 'captcha', 'index', 'signup',
+            'request-password-reset', 'reset-password', 'verify-email', 'resend-verification-email',
             'colors', 'icons', 'fonts', 'game',
-            'request-password-reset', 'reset-password', 'verify-email', 'resend-verification-email'];
+        ];
 
         // Allow access to site/error, site/login, site/captcha, site/index,...
         // or to any ajax call (side effect, every ajax call actions should be prefixed with 'ajax'

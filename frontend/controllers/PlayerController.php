@@ -150,7 +150,7 @@ class PlayerController extends Controller
         }
 
         $request = Yii::$app->request;
-        $userId = $request->post('userId');
+        $userId = (int) $request->post('userId');
 
         $param = [
             'modelName' => 'Player',

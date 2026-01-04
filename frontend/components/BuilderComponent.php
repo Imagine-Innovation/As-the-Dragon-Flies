@@ -18,6 +18,7 @@ use common\models\PlayerCoin;
 use common\models\PlayerSkill;
 use common\models\PlayerTrait;
 use common\models\Race;
+use common\models\RaceGroup;
 use common\models\RaceGroupLanguage;
 use common\models\Skill;
 use common\models\Wizard;
@@ -176,6 +177,10 @@ class BuilderComponent
      */
     public static function loadRandomNames(int $raceId, string $gender, int $n): array {
         $race = Race::findOne(['id' => $raceId]);
+        if ($race === null) {
+            return [];
+        }
+
         $ethnicity = $race->raceGroup->ethnicities[0];
         $ethnicityId = $ethnicity->id;
 
@@ -188,15 +193,11 @@ class BuilderComponent
         for ($i = 0; $i < $n; $i++) {
             $attempts = 0;
             do {
-                $name = trim(
-                        self::randomize($firstNames) . ' ' .
-                        self::randomize($lastNames)
-                );
+                $name = trim(self::randomize($firstNames) . ' ' . self::randomize($lastNames));
                 $attempts++;
             } while (in_array($name, $names) && $attempts < $maxAttempts);
 
-            $names[$i] = in_array($name, $names) ?
-                    "The {$ethnicity->name} #{$i}" : $name;
+            $names[$i] = in_array($name, $names) ? "The {$ethnicity->name} #{$i}" : $name;
         }
 
         return $names;

@@ -120,7 +120,7 @@ class AccessRightController extends Controller
         }
 
         $request = Yii::$app->request;
-        $id = $request->post('id');
+        $id = (int) $request->post('id');
         $model = AccessRight::findOne(['id' => $id]);
         if (!$model) {
             return ['error' => true, 'msg' => "Access right id {$id} not found!"];

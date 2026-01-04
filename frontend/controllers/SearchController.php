@@ -49,17 +49,17 @@ class SearchController extends Controller
     /**
      *
      * @param string $search
-     * @param string $folder
+     * @param string|null $folder
      * @return array{error: bool, msg: string, content?: string}
      */
-    private function imageSearch(string $search, string $folder): array {
+    private function imageSearch(string $search, ?string $folder): array {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isGet || !$this->request->isAjax) {
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
         }
 
-        $path = Yii::getAlias('@frontend/web/') . $folder;
+        $path = Yii::getAlias('@frontend/web/') . $folder ?? 'invalid';
         $results = [];
 
         if (!is_dir($path)) {
@@ -207,13 +207,13 @@ class SearchController extends Controller
 
     /**
      *
-     * @param string|null $valueType
-     * @param string|null $search
+     * @param string $valueType
+     * @param string $search
      * @param int|null $parentId
      * @param string|null $folder
      * @return array{error: bool, msg: string, results?: mixed}
      */
-    private function searchBrocker(?string $valueType, ?string $search, ?int $parentId, ?string $folder): array {
+    private function searchBrocker(string $valueType, string $search, ?int $parentId, ?string $folder): array {
         Yii::debug("*** Debug *** searchBrocker(valueType={$valueType}, search={$search}, parentId={$parentId}, folder={$folder})");
         return match ($valueType) {
             'image' => $this->imageSearch($search, $folder),
@@ -260,7 +260,7 @@ class SearchController extends Controller
         $request = Yii::$app->request;
         $valueType = $request->get('valueType');
         $search = $request->get('search');
-        $parentId = $request->get('parentId');
+        $parentId = (int) $request->get('parentId');
         $folder = $request->get('folder');
 
         return $this->searchBrocker($valueType, $search, $parentId, $folder);

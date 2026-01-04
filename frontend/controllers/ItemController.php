@@ -89,7 +89,7 @@ class ItemController extends Controller
         }
 
         $request = Yii::$app->request;
-        $itemTypeId = $request->post('currentTab', 1);
+        $itemTypeId = (int) $request->post('currentTab', 1);
         Yii::debug("*** debug *** actionAjax - itemTypeId={$itemTypeId}");
         $param = [
             'modelName' => 'Item',

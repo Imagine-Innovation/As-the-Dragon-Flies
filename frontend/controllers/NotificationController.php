@@ -125,7 +125,7 @@ class NotificationController extends Controller
         }
 
         $request = Yii::$app->request;
-        $playerId = $request->post('playerId', 0);
+        $playerId = (int) $request->post('playerId', 0);
         Yii::debug("*** Debug *** actionAjaxMarkAsRead - playerId=$playerId");
         $ret = QuestNotification::markNotificationsAsRead($playerId);
         if ($ret) {

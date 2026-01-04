@@ -319,8 +319,8 @@ class GameController extends Controller
 
         // Set the context of the QuestManager to the current QuestProgress
         $questManager = new QuestManager(['questProgress' => $questProgress]);
-        $nextMissionId = $request->post('nextMissionId');
-        $currentMissionId = $request->post('missionId');
+        $nextMissionId = (int) $request->post('nextMissionId');
+        $currentMissionId = (int) $request->post('missionId');
         $remainingActions = $questProgress->remainingActions;
 
         Yii::debug("*** debug *** actionAjaxNextTurn - currentMissionId={$currentMissionId}, nextMissionId={$nextMissionId}, remainingAction=" . count($remainingActions));

@@ -70,7 +70,7 @@ class AlignmentController extends Controller
         }
 
         $request = Yii::$app->request;
-        $id = $request->post('id');
+        $id = (int) $request->post('id');
         Yii::debug("*** Debug *** actionAjaxWizard - id={$id}");
         $model = $this->findModel($id);
 

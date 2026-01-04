@@ -132,7 +132,7 @@ class UserController extends Controller
         }
 
         $request = Yii::$app->request;
-        $id = $request->post('id');
+        $id = (int) $request->post('id');
         $model = User::findOne(['id' => $id]);
         if (!$model) {
             return ['error' => true, 'msg' => "User id $id not found!"];

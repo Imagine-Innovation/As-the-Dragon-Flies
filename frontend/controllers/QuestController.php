@@ -312,7 +312,7 @@ class QuestController extends Controller
         $player = $quest->initiator;
 
         $quest->status = AppStatus::PLAYING->value;
-        $quest->current_chapter_id = $quest->story->firstChapter->id;
+        $quest->current_chapter_id = (int) $quest->story->firstChapter->id;
         $quest->started_at = time();
 
         if (!$quest->save()) {
@@ -349,9 +349,9 @@ class QuestController extends Controller
 
         // Extract request parameters
         $request = Yii::$app->request;
-        $playerId = $request->get('playerId');
-        $questId = $request->get('questId');
-        $roundedTime = $request->get('roundedTime');
+        $playerId = (int) $request->get('playerId');
+        $questId = (int) $request->get('questId');
+        $roundedTime = (int) $request->get('roundedTime');
 
         // Fetch and render messages
         $chatManager = new ChatManager(['questId' => $questId, 'playerId' => $playerId]);

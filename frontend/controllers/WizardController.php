@@ -94,8 +94,8 @@ class WizardController extends Controller
         }
 
         $request = Yii::$app->request;
-        $id = $request->post('id', 1);
-        $topic = $request->post('topic', 1);
+        $id = (int) $request->post('id', 1);
+        $topic = (int) $request->post('topic', 1);
 
         $model = WizardQuestion::findOne(['id' => $id]);
 
