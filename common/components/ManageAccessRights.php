@@ -7,14 +7,28 @@ use common\models\AccessCount;
 use common\models\AccessRight;
 use common\models\ActionButton;
 use common\models\User;
+use RuntimeException;
 use Yii;
 use yii\base\Component;
 use yii\db\ActiveQuery;
-use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 
 class ManageAccessRights extends Component
 {
+// --- Strict Accessors (The Level 8/9 "Secret Sauce") ---
+
+    /**
+     *
+     * @param Controller $controller
+     * @return string
+     * @throws RuntimeException
+     */
+    private static function getAction(Controller $controller): string {
+        if ($controller->action === null) {
+            throw new RuntimeException("ManageAccessRights component error: Action is missing.");
+        }
+        return $controller->action->id;
+    }
 
     /**
      * Gets all authorized access rights for a user based on their roles and status
@@ -139,7 +153,7 @@ class ManageAccessRights extends Component
     private static function checkAccess(Controller $controller): array {
 
         $route = $controller->id;
-        $action = $controller->action->id;
+        $action = self::getAction($controller);
 
         self::countAccess($route, $action);
 

@@ -63,7 +63,7 @@ class ChatManager extends BaseManager
             return [];
         }
 
-        $payload = json_decode($chatNotification->payload, true);
+        $payload = json_decode((string) $chatNotification->payload, true);
 
         Yii::debug($chatNotification->payload);
         Yii::debug($payload);
@@ -86,7 +86,7 @@ class ChatManager extends BaseManager
      */
     public function getLastMessages(?int $since = null, ?int $limit = null): array {
 
-        $chatNotifications = $this->getNotifications($this->questId, self::CHAT_NOTIFICATION_TYPE, $since, $limit);
+        $chatNotifications = $this->getNotifications((int) $this->questId, self::CHAT_NOTIFICATION_TYPE, $since, $limit);
 
         if (!$chatNotifications) {
             return []; // returns an empty array
@@ -101,7 +101,7 @@ class ChatManager extends BaseManager
 
             if (($roundedTime !== $previousRoundedTime) || ($chatNotification->initiator_id !== $previousInitiatorId)) {
                 // If the message is not sent during the same minute by the same user then create a new entry
-                $chatMessages[++$i] = $this->newChatEntry($chatNotification, $this->playerId);
+                $chatMessages[++$i] = $this->newChatEntry($chatNotification, (int) $this->playerId);
             } else {
                 // otherwise, append the chat message to the current entry
                 $chatMessages[$i]['messages'][] = Utilities::encode($chatNotification->message);

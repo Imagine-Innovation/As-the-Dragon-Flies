@@ -56,7 +56,7 @@ class NextMissionHandler implements SpecificMessageHandlerInterface
 
         $nextMissionDto = $this->messageFactory->createNextMissionMessage($detail);
 
-        $this->broadcastService->broadcastToQuest($questId, $nextMissionDto, $sessionId);
+        $this->broadcastService->broadcastToQuest((int) $questId, $nextMissionDto, $sessionId);
 
         $this->logger->log("NextMissionHandler: NextMissionDto broadcasted", ['quest_id' => $questId, 'payload' => $payload]);
         $this->broadcastService->sendBack($from, 'ack', ['type' => 'next-mission_processed', 'detail' => $detail]);

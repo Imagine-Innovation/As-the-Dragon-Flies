@@ -3,6 +3,7 @@
 namespace common\extensions\EventHandler;
 
 use React\EventLoop\Loop;
+use React\EventLoop\LoopInterface;
 use React\Http\Server as HttpServer;
 use React\Http\Message\Response;
 use React\Socket\SocketServer;
@@ -29,13 +30,13 @@ class EventHandler extends Component
     public int $internalPort = 8083;
     public string $logFilePath = 'c:/temp/EventHandler.log';
     public bool $debug = true;
-    private ?LoggerService $loggerService = null;
-    private ?QuestSessionManager $questSessionManager = null;
-    private ?NotificationService $notificationService = null;
-    private ?WebSocketServerManager $webSocketServerManager = null;
-    private ?BroadcastService $broadcastService = null;
-    private ?MessageHandlerOrchestrator $messageHandlerOrchestrator = null;
-    private \React\EventLoop\LoopInterface $loop;
+    private LoggerService $loggerService;
+    private QuestSessionManager $questSessionManager;
+    private NotificationService $notificationService;
+    private WebSocketServerManager $webSocketServerManager;
+    private BroadcastService $broadcastService;
+    private MessageHandlerOrchestrator $messageHandlerOrchestrator;
+    private LoopInterface $loop;
 
     /**
      *
@@ -110,10 +111,6 @@ class EventHandler extends Component
      */
     public function run(): void {
         $this->suppressDeprecationWarnings();
-        if (!$this->areServicesInitialized()) {
-            return;
-        }
-
         $this->setupWebSocketServer();
         $this->setupInternalHttpServer();
         $this->startEventLoop();
@@ -125,18 +122,6 @@ class EventHandler extends Component
      */
     protected function suppressDeprecationWarnings(): void {
         error_reporting(error_reporting() & ~E_DEPRECATED);
-    }
-
-    /**
-     *
-     * @return bool
-     */
-    protected function areServicesInitialized(): bool {
-        if (!$this->loggerService || !$this->webSocketServerManager || !$this->messageHandlerOrchestrator) {
-            $this->loggerService?->log("EventHandler: Essential services not initialized. Cannot run.", null, 'error');
-            return false;
-        }
-        return true;
     }
 
     /**
@@ -252,14 +237,10 @@ class EventHandler extends Component
      */
     public function broadcastToQuest(int $questId, array $message, ?string $excludeSessionId = null): void {
         $this->loggerService->logStart("EventHandler: broadcastToQuest questId={$questId}, excludeSessionId={$excludeSessionId}, message:", $message);
-        if (!$this->notificationService) {
-            $this->loggerService?->logEnd("EventHandler: broadcastToQuest => notificationService not initialized when calling broadcastToQuest.", null, 'error');
-            return;
-        }
 
         try {
             $this->notificationService->broadcast($questId, $message, $excludeSessionId);
-            $this->loggerService?->logEnd("EventHandler: broadcastToQuest");
+            $this->loggerService->logEnd("EventHandler: broadcastToQuest");
         } catch (\Throwable $e) {
             $this->loggerService->logEnd("EventHandler: broadcastToQuest - Exception in broadcastToQuest: " . $e->getMessage(), null, 'error');
         }

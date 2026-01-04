@@ -21,7 +21,7 @@ class BroadcastMessageFactory
 
     const LOG_FILE_PATH = 'c:/temp/BroadcastMessage.log';
 
-    private ?LoggerService $loggerService = null;
+    private LoggerService $loggerService;
 
     /**
      *

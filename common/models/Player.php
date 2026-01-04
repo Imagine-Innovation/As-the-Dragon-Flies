@@ -661,13 +661,13 @@ class Player extends \yii\db\ActiveRecord
 
     /**
      *
-     * @param int|null $itemId
+     * @param int $itemId
      * @param int $quantity
      * @return bool|null
      */
-    public function addItems(?int $itemId, int $quantity = 1): ?bool {
-        Yii::debug("*** debug *** - Player - addItems(itemId=" . ($itemId ?? 'null') . ", quantity={$quantity})");
-        if (!$itemId || $quantity === 0) {
+    public function addItems(int $itemId, int $quantity = 1): ?bool {
+        Yii::debug("*** debug *** - Player - addItems(itemId={$itemId}, quantity={$quantity})");
+        if ($quantity === 0) {
             return null;
         }
 
@@ -678,6 +678,9 @@ class Player extends \yii\db\ActiveRecord
 
         if ($updatedRows === 0) {
             $item = Item::findOne($itemId);
+            if ($item === null) {
+                return false;
+            }
             $playerItem = new PlayerItem([
                 'player_id' => $this->id,
                 'item_id' => $itemId,

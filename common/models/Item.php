@@ -398,12 +398,11 @@ class Item extends \yii\db\ActiveRecord
      *             item's cost and coin type.
      */
     public function getCopperValue(): int {
-        // Create a new instance of the Shopping class.
         $shopping = new Shopping();
 
         // Call the 'copperValue' method of the Shopping class to convert the
-        // item's cost to copper coins.
-        return $shopping->copperValue($this->cost, $this->coin);
+        // item's cost into copper coins.
+        return $shopping->copperValue((float) $this->cost, $this->coin ?? '?');
     }
 
     /**
@@ -452,9 +451,9 @@ class Item extends \yii\db\ActiveRecord
     /**
      * Retrieves the damage dice string of the specified Weapon.
      *
-     * @return string The damage dice string of the weapon.
+     * @return string|null The damage dice string of the weapon.
      */
-    public function getDamageDice(): string {
+    public function getDamageDice(): ?string {
         return $this->weapon->damage_dice;
     }
 

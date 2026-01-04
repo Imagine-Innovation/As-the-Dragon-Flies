@@ -15,10 +15,11 @@ class ContextManager extends Component
 
     /**
      *
-     * @return User|null
+     * @return User
      */
-    private static function user(): ?User {
-        return Yii::$app->user->identity instanceof User ? Yii::$app->user->identity : null;
+    private static function getUser(): User {
+        //return Yii::$app->user->identity instanceof User ? Yii::$app->user->identity : null;
+        return Yii::$app->user->identity;
     }
 
     /**
@@ -31,7 +32,7 @@ class ContextManager extends Component
         }
         Yii::debug("*** debug *** ContextManager - initContext");
 
-        $user = self::user();
+        $user = self::getUser();
         Yii::$app->session->set('user', $user);
         Yii::$app->session->set('userId', $user->id);
 
@@ -68,7 +69,7 @@ class ContextManager extends Component
             Yii::$app->session->set('hasPlayerSelected', true);
             Yii::$app->session->set('playerId', $currentPlayer->id);
             Yii::$app->session->set('playerName', $currentPlayer->name);
-            Yii::$app->session->set('avatar', $currentPlayer->image->file_name);
+            Yii::$app->session->set('avatar', $currentPlayer->image?->file_name);
             Yii::$app->session->set('currentPlayer', $currentPlayer);
             self::updateQuestContext($currentPlayer->quest_id);
         } else {
@@ -116,7 +117,7 @@ class ContextManager extends Component
      * @return array<string, mixed>
      */
     public static function getContext(): array {
-        $user = self::user();
+        $user = self::getUser();
         return [
             'isGuest' => Yii::$app->user->isGuest,
             'isAdmin' => $user->is_admin,

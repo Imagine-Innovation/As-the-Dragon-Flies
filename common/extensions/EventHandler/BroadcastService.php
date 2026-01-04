@@ -6,6 +6,7 @@ use common\extensions\EventHandler\contracts\BroadcastMessageInterface;
 use common\extensions\EventHandler\contracts\BroadcastServiceInterface;
 use Ratchet\ConnectionInterface;
 use common\models\QuestSession;
+use LogicException;
 
 // Assuming LoggerService, WebSocketServerManager, QuestSessionManager, NotificationService are properly imported or aliased if not in this namespace.
 
@@ -31,6 +32,19 @@ class BroadcastService implements BroadcastServiceInterface
         $this->logger = $logger;
         $this->webSocketServerManager = $webSocketServerManager;
         $this->questSessionManager = $questSessionManager;
+    }
+
+    /**
+     *
+     * @return NotificationService
+     * @throws LogicException
+     */
+    private function getNotificationService(): NotificationService {
+        if ($this->notificationService === null) {
+            $this->logger->log("BroadcastService: NotificationService not set.", null, 'error');
+            throw new LogicException("NotificationService has not been set in BroadcastService.");
+        }
+        return $this->notificationService;
     }
 
     /**
@@ -217,11 +231,7 @@ class BroadcastService implements BroadcastServiceInterface
      * @throws \LogicException
      */
     public function recoverMessageHistory(string $sessionId): void {
-        if (!$this->notificationService) {
-            $this->logger->log("BroadcastService: NotificationService not set. Cannot recover history for session {$sessionId}.", null, 'error');
-            throw new \LogicException("NotificationService has not been set in BroadcastService. Cannot recover history.");
-            // return; // Alternative: just log and return
-        }
+        $notificationService = $this->getNotificationService();
         $this->logger->logStart("BroadcastService: recoverMessageHistory for sessionId=[{$sessionId}]");
 
         $session = QuestSession::findOne(['id' => $sessionId]);
@@ -258,7 +268,8 @@ class BroadcastService implements BroadcastServiceInterface
      * @return int
      */
     private function sendChatHistory(ConnectionInterface $clientConnection, QuestSession $session): int {
-        $chatNotifications = $this->notificationService->getNotifications($session->quest_id, 'new-message', $session->last_ts);
+        $notificationService = $this->getNotificationService();
+        $chatNotifications = $notificationService->getNotifications((int) $session->quest_id, 'new-message', $session->last_ts);
         $notificationCount = count($chatNotifications);
         $this->logger->log("BroadcastService: Processing {$notificationCount} 'new-message' notifications for history recovery.");
 
@@ -266,7 +277,7 @@ class BroadcastService implements BroadcastServiceInterface
         foreach ($chatNotifications as $notification) {
             $this->logger->log("BroadcastService: Preparing historical chat message: Notification.id=[{$notification->id}]");
             // Use the new DTO method from NotificationService
-            $newMessageDto = $this->notificationService->prepareNewMessageDto($notification, $session->id);
+            $newMessageDto = $notificationService->prepareNewMessageDto($notification, $session->id);
 
             // Send directly to the specific client's connection
             $this->sendToConnection($clientConnection, $newMessageDto->toJson());

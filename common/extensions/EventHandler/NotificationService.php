@@ -46,6 +46,7 @@ class NotificationService
         $playerId = $userId ?? ($data['playerId'] ?? null);
         if (!$playerId) {
             $this->logger->log("NotificationService: Player ID not provided for notification.", $data, 'error');
+            $this->logger->logEnd("NotificationService: broadcast");
             return;
         }
 
@@ -60,6 +61,11 @@ class NotificationService
             $payload['sessionId'] = $data['sessionId']; // ensure sessionId is in the payload
             $messageDto = $this->messageFactory->createMessage($data['type'], $payload);
         }
+        if (!$messageDto) {
+            $this->logger->log("NotificationService: No message to broadcast.", $data, 'error');
+            $this->logger->logEnd("NotificationService: broadcast");
+            return;
+        }
         $this->logger->log("NotificationService: Message DTO [{$data['type']}] broadcasted for questId=[{$questId}]");
         $this->broadcastService->broadcastToQuest($questId, $messageDto, $excludeSessionId);
 
@@ -73,9 +79,9 @@ class NotificationService
      * @param int $questId
      * @param string $type
      * @param int $since
-     * @return Notification[]|null
+     * @return Notification[]
      */
-    public function getNotifications(int $questId, string $type, int $since): ?array {
+    public function getNotifications(int $questId, string $type, int $since): array {
         $this->logger->logStart("NotificationService: getNotifications for questId=[{$questId}], type=[{$type}], since=[{$since}]");
 
         try {
@@ -92,7 +98,7 @@ class NotificationService
             $notificationCount = count($notifications);
             $this->logger->log("NotificationService: {$notificationCount} notification(s) found.");
         } catch (\Exception $e) {
-            $notifications = null;
+            $notifications = [];
             $this->logger->log("NotificationService: Exception while getting notifications. Error: " . $e->getMessage(), $e->getTraceAsString(), 'error');
         }
 
@@ -110,11 +116,11 @@ class NotificationService
     public function prepareNewMessageDto(Notification $notification, string $sessionId): NewMessageDto {
         $this->logger->log("NotificationService: Preparing NewMessageDto for Notification ID: {$notification->id}, Session ID: {$sessionId}");
 
-        $payload = json_decode($notification->payload, true);
+        $payload = json_decode((string) $notification->payload, true);
         $senderDisplayName = $notification->initiator->name;
         // Message content can come from notification's message field or a specific field in payload
         $messageContent = $payload['message'] ?? $notification->message;
 
-        return $this->messageFactory->createNewMessage($messageContent, $senderDisplayName);
+        return $this->messageFactory->createNewMessage($messageContent, $senderDisplayName ?? 'Unknown');
     }
 }

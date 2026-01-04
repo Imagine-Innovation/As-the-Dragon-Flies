@@ -23,7 +23,7 @@ use Yii;
  *
  * Custom Properties
  *
- * @property string|null $randomImage
+ * @property string $randomImage
  */
 class RaceGroup extends \yii\db\ActiveRecord
 {
@@ -146,15 +146,15 @@ class RaceGroup extends \yii\db\ActiveRecord
     /**
      * Gets query for [[$randomImage]].
      *
-     * @return string|null
+     * @return string
      */
-    public function getRandomImage(): ?string {
+    public function getRandomImage(): string {
         $images = $this->images;
         if ($images) {
             $count = count($images);
             $image = $images[mt_rand(0, $count - 1)];
             return $image->file_name;
         }
-        return null;
+        return 'halfelf-male-13.png';
     }
 }

@@ -12,6 +12,8 @@ use common\models\Story;
 use common\models\StoryClass;
 use Yii;
 use yii\web\NotFoundHttpException;
+use Exception;
+use RuntimeException;
 
 class TavernManager extends BaseManager
 {
@@ -30,6 +32,30 @@ class TavernManager extends BaseManager
         if ($this->quest) {
             $this->story = $this->quest->story;
         }
+    }
+
+    /**
+     *
+     * @return Quest
+     * @throws RuntimeException
+     */
+    private function getQuest(): Quest {
+        if ($this->quest === null) {
+            throw new RuntimeException("TavernManager context error: Quest is missing.");
+        }
+        return $this->quest;
+    }
+
+    /**
+     *
+     * @return Story
+     * @throws RuntimeException
+     */
+    private function getStory(): Story {
+        if ($this->story === null) {
+            throw new RuntimeException("TavernManager context error: Story is missing.");
+        }
+        return $this->story;
     }
 
     /**
@@ -57,8 +83,9 @@ class TavernManager extends BaseManager
      * @return string Missing player message
      */
     public function missingPlayers(?int $playerCount = null): string {
+        $quest = $this->getQuest();
         $actualPlayerCount = $playerCount ?? 0;
-        $storyMinPlayers = $this->quest->story->min_players;
+        $storyMinPlayers = $quest->story->min_players;
         $missingCount = $storyMinPlayers - $actualPlayerCount;
 
         if ($missingCount > 1) {
@@ -104,7 +131,8 @@ class TavernManager extends BaseManager
      */
     private function getMissingClassIds(): ?array {
         // Get the required classes
-        $requiredClassIds = $this->getRequiredClassIds($this->quest->story_id);
+        $quest = $this->getQuest();
+        $requiredClassIds = $this->getRequiredClassIds($quest->story_id);
 
         // If no specific class is required, consider that they are all present
         if (!$requiredClassIds) {
@@ -112,7 +140,7 @@ class TavernManager extends BaseManager
         }
 
         // Fetch the actual player classes
-        $actualPlayerClasses = $this->getActualPlayerClassIds($this->quest->id);
+        $actualPlayerClasses = $this->getActualPlayerClassIds($quest->id);
 
         return array_diff($requiredClassIds, $actualPlayerClasses);
     }
@@ -120,18 +148,21 @@ class TavernManager extends BaseManager
     /**
      * Check if a player can join a quest.
      *
-     * @param Player|null $player
+     * @param Player $player
      * @return array{
      *     denied: bool,
      *     reason: string
      * } Associative array with a deny status and the reason why
      */
-    public function canPlayerJoinQuest(?Player &$player): array {
-        // Check if the player is eliible to join a quest
+    public function canPlayerJoinQuest(Player &$player): array {
+        // Check if the player is eligible to join a quest
         $playerStatus = $this->isPlayerValid($player);
         if ($playerStatus['error']) {
             return $playerStatus;
         }
+
+        $quest = $this->getQuest();
+        $story = $this->getStory();
 
         // Check if the quest is a valid one
         $questStatus = $this->isQuestValid();
@@ -140,12 +171,12 @@ class TavernManager extends BaseManager
         }
 
         if (!$this->isPlayerLevelValid($player)) {
-            return ['denied' => true, 'reason' => "canPlayerJoinQuest->Player {$player->name}'s level ({$player->level->name}) is not within story requirements ({$this->story->min_level} to {$this->story->max_level})"];
+            return ['denied' => true, 'reason' => "canPlayerJoinQuest->Player {$player->name}'s level ({$player->level->name}) is not within story requirements ({$story->min_level} to {$story->max_level})"];
         }
 
-        $playerCount = $this->quest->getCurrentPlayers()->count();
-        if ($playerCount >= $this->story->max_players) {
-            return ['denied' => true, 'reason' => "canPlayerJoinQuest->Quest has reached maximum players ({$this->story->max_players})"];
+        $playerCount = $quest->getCurrentPlayers()->count();
+        if ($playerCount >= $story->max_players) {
+            return ['denied' => true, 'reason' => "canPlayerJoinQuest->Quest has reached maximum players ({$story->max_players})"];
         }
 
         if (!$this->isPlayerClassValid($player)) {
@@ -206,7 +237,8 @@ class TavernManager extends BaseManager
      * @return bool
      */
     private function isPlayerLevelValid(Player &$player): bool {
-        return $this->story->min_level <= $player->level_id && $player->level_id <= $this->story->max_level;
+        $story = $this->getStory();
+        return $story->min_level <= $player->level_id && $player->level_id <= $story->max_level;
     }
 
     /**
@@ -217,14 +249,15 @@ class TavernManager extends BaseManager
      * @return bool
      */
     private function isPlayerClassValid(Player &$player): bool {
-        $requiredClassIds = $this->getRequiredClassIds($this->quest->story_id);
+        $quest = $this->getQuest();
+        $requiredClassIds = $this->getRequiredClassIds($quest->story_id);
 
         // If no specific class is required, consider that they are all present
         if (count($requiredClassIds) === 0) {
             return true;
         }
 
-        $actualPlayerClasses = $this->getActualPlayerClassIds($this->quest->id);
+        $actualPlayerClasses = $this->getActualPlayerClassIds($quest->id);
 
         // If player's class is required and not yet present
         if (in_array($player->class_id, $requiredClassIds) && !in_array($player->class_id, $actualPlayerClasses)) {
@@ -232,7 +265,7 @@ class TavernManager extends BaseManager
         }
 
         // Check if we need to reserve slots for missing required classes
-        $remainingSlots = $this->quest->story->max_players - $this->getCurrentPlayerCount();
+        $remainingSlots = $quest->story->max_players - $this->getCurrentPlayerCount();
         $missingClassesCount = count(array_diff($requiredClassIds, $actualPlayerClasses));
 
         return $remainingSlots > $missingClassesCount;
@@ -306,8 +339,9 @@ class TavernManager extends BaseManager
      * @return int
      */
     private function getCurrentPlayerCount(): int {
+        $quest = $this->getQuest();
         $playerCount = Player::find()
-                ->where(['quest_id' => $this->quest->id])
+                ->where(['quest_id' => $quest->id])
                 ->count();
 
         /** @phpstan-ignore-next-line */
@@ -381,17 +415,18 @@ class TavernManager extends BaseManager
      * @return array{error: bool, message: string}
      */
     public function addPlayerToQuest(Player &$player): array {
+        $quest = $this->getQuest();
 
-        if ($player->quest_id === $this->quest->id) {
+        if ($player->quest_id === $quest->id) {
             return ['error' => false, 'message' => "Player is already onboarded in the quest"];
         }
 
-        $playerUpdate = $this->updatePlayerQuestId($player, $this->quest->id);
+        $playerUpdate = $this->updatePlayerQuestId($player, $quest->id);
         if ($playerUpdate['error']) {
             return $playerUpdate;
         }
 
-        $result = $this->upsertQuestPlayer($this->quest->id, $player->id, AppStatus::ONLINE->value);
+        $result = $this->upsertQuestPlayer($quest->id, $player->id, AppStatus::ONLINE->value);
         if ($result['error']) {
             return $result;
         }
@@ -406,40 +441,42 @@ class TavernManager extends BaseManager
      * @return array{error: bool, message: string}
      */
     public function withdrawPlayerFromQuest(Player &$player, string $reason = null): array {
+        $quest = $this->getQuest();
 
         // Player is already onboarded on a different quest => error
-        if ($player->quest_id === null || $player->quest_id !== $this->quest->id) {
-            return ['error' => true, 'message' => "player {$player->name} (id {$player->id}) is not in quest={$this->quest->id}, player->quest_id=" . ($player->quest_id ?? "null")];
+        if ($player->quest_id === null || $player->quest_id !== $quest->id) {
+            return ['error' => true, 'message' => "player {$player->name} (id {$player->id}) is not in quest={$quest->id}, player->quest_id=" . ($player->quest_id ?? "null")];
         }
 
         $playerUpdate = $this->updatePlayerQuestId($player, null);
         if ($playerUpdate['error']) {
             return $playerUpdate;
         }
-        return $this->upsertQuestPlayer($this->quest->id, $player->id, AppStatus::LEFT->value, $reason);
+        return $this->upsertQuestPlayer($quest->id, $player->id, AppStatus::LEFT->value, $reason);
     }
 
     /**
      *
      * @return Quest
-     * @throws \Exception
+     * @throws Exception
      */
     private function newTavern(): Quest {
         Yii::debug("*** Debug *** findTavern  ===>  Create a new Tavern");
+        $story = $this->getStory();
         $newTavern = new Quest([
-            'story_id' => $this->story->id,
+            'story_id' => $story->id,
             'initiator_id' => Yii::$app->session->get('playerId'),
-            'current_chapter_id' => $this->story->firstChapter->id,
-            'name' => $this->story->name,
-            'description' => $this->story->description,
-            'image' => $this->story->image,
+            'current_chapter_id' => $story->firstChapter?->id,
+            'name' => $story->name,
+            'description' => $story->description,
+            'image' => $story->image,
             'status' => AppStatus::WAITING->value,
             'created_at' => time(),
             'local_time' => time(),
         ]);
 
         if (!$newTavern->save()) {
-            throw new \Exception(implode("<br />", \yii\helpers\ArrayHelper::getColumn($newTavern->errors, 0, false)));
+            throw new Exception(implode("<br />", \yii\helpers\ArrayHelper::getColumn($newTavern->errors, 0, false)));
         }
 
         return $newTavern;
@@ -456,7 +493,7 @@ class TavernManager extends BaseManager
         $questId = Yii::$app->session->get('questId');
 
         if ($questId && (!$tavern || $tavern->id !== $questId)) {
-            throw new NotFoundHttpException("Tavern is not the current quest for story {$this->story->name}");
+            throw new NotFoundHttpException("Tavern is not the current quest for story {$this->story?->name}");
         }
 
         $foundTavern = $tavern ?? $this->newTavern();
@@ -472,25 +509,27 @@ class TavernManager extends BaseManager
      * @return array{canStart: bool, msg: string}
      */
     public function questCanStart(int $playerId): array {
-        Yii::debug("*** debug *** - questCanStart - questId={$this->quest->id}, initiatorId={$this->quest->initiator_id}, playerId={$playerId}");
-        if ($playerId !== $this->quest->initiator_id) {
+        $quest = $this->getQuest();
+        Yii::debug("*** debug *** - questCanStart - questId={$quest->id}, initiatorId={$quest->initiator_id}, playerId={$playerId}");
+        if ($playerId !== $quest->initiator_id) {
             return ['canStart' => false, 'msg' => "Your are the quest initiator"];
         }
 
-        if ($this->quest->status !== AppStatus::WAITING->value) {
-            return ['canStart' => false, 'msg' => "Quest {$this->quest->name} is not in wating state."];
+        if ($quest->status !== AppStatus::WAITING->value) {
+            return ['canStart' => false, 'msg' => "Quest {$quest->name} is not in wating state."];
         }
 
         $playersCount = $this->getCurrentPlayerCount();
+        $story = $this->getStory();
 
-        if ($playersCount < $this->story->min_players) {
-            return ['canStart' => false, 'msg' => "Quest can start once {$this->story->min_players} joined. Current count is {$playersCount}"];
+        if ($playersCount < $story->min_players) {
+            return ['canStart' => false, 'msg' => "Quest can start once {$story->min_players} joined. Current count is {$playersCount}"];
         }
 
         if (!$this->areRequiredClassesPresent()) {
             return ['canStart' => false, 'msg' => "Missing required player classes"];
         }
 
-        return ['canStart' => true, 'msg' => "Quest can start", 'questName' => $this->quest->name, 'questId' => $this->quest->id];
+        return ['canStart' => true, 'msg' => "Quest can start", 'questName' => $quest->name, 'questId' => $quest->id];
     }
 }

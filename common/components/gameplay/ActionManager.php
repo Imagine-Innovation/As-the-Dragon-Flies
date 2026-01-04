@@ -55,10 +55,10 @@ class ActionManager extends BaseManager
      * @return int
      */
     private function getModifier(): int {
-        Yii::debug("*** debug *** getModifier - action={$this->action->name}, player={$this->player->name}");
+        Yii::debug("*** debug *** getModifier - action={$this->action?->name}, player={$this->player?->name}");
         $skillIds = ActionTypeSkill::find()
                 ->select('skill_id')
-                ->where(['action_type_id' => $this->action->action_type_id])
+                ->where(['action_type_id' => $this->action?->action_type_id])
                 ->column();
 
         if (!$skillIds) {
@@ -67,7 +67,7 @@ class ActionManager extends BaseManager
         }
 
         $modifier = PlayerSkill::find()
-                ->where(['player_id' => $this->player->id, 'skill_id' => $skillIds])
+                ->where(['player_id' => $this->player?->id, 'skill_id' => $skillIds])
                 ->max('bonus');
 
         return $modifier ?? 0;
@@ -79,9 +79,9 @@ class ActionManager extends BaseManager
      * @return AppStatus
      */
     private function determineActionStatus(int $diceRoll): AppStatus {
-        Yii::debug("*** debug *** determineActionStatus - action={$this->action->name}, diceRoll={$diceRoll}");
-        $dc = $this->action->dc;
-        $partialDc = $this->action->partial_dc;
+        Yii::debug("*** debug *** determineActionStatus - action={$this->action?->name}, diceRoll={$diceRoll}");
+        $dc = $this->action?->dc;
+        $partialDc = $this->action?->partial_dc;
 
         if ($diceRoll >= $dc) {
             return AppStatus::SUCCESS;
@@ -101,11 +101,11 @@ class ActionManager extends BaseManager
      * @return void
      */
     private function endCurrentAction(AppStatus $status, ?bool $canReplay = true): void {
-        Yii::debug("*** debug *** endCurrentAction - action={$this->action->name}, status={$status->getLabel()}");
+        Yii::debug("*** debug *** endCurrentAction - action={$this->action?->name}, status={$status->getLabel()}");
 
         QuestAction::updateAll(
                 ['status' => $status->value, 'eligible' => $canReplay],
-                ['action_id' => $this->questAction->action_id, 'quest_progress_id' => $this->questAction->quest_progress_id]
+                ['action_id' => $this->questAction?->action_id, 'quest_progress_id' => $this->questAction?->quest_progress_id]
         );
     }
 
@@ -115,11 +115,16 @@ class ActionManager extends BaseManager
      * @return QuestAction[]
      */
     private function unlockNextActions(AppStatus $status): array {
-        Yii::debug("*** debug *** unlockNextActions - action={$this->action->name}, status={$status->getLabel()}");
-        $triggeredActions = $this->action->triggers;
-
+        Yii::debug("*** debug *** unlockNextActions - action={$this->action?->name}, status={$status->getLabel()}");
         $unlockedQuestActions = [];
-        $questProgressId = $this->questProgress->id;
+        $triggeredActions = $this->action?->triggers;
+
+        if ($triggeredActions === null) {
+            return $unlockedQuestActions;
+        }
+
+        $questProgressId = (int) $this->questProgress?->id;
+        /** @var ActionFlow $actionFlow */
         foreach ($triggeredActions as $actionFlow) {
             // Bitwise comparison between actual status and expected status to unlock next action
             $bitwiseComparison = ($actionFlow->status & $status->value);
@@ -140,7 +145,7 @@ class ActionManager extends BaseManager
      */
     private function getOutcomes(AppStatus $status): array {
         Yii::debug("*** debug *** getOutcomes - status={$status->getLabel()}");
-        $outcomes = Outcome::findAll(['action_id' => $this->action->id]);
+        $outcomes = Outcome::findAll(['action_id' => $this->action?->id]);
 
         if (!$outcomes) {
             // nothing to register
@@ -178,7 +183,7 @@ class ActionManager extends BaseManager
         $canReplay = true;
         foreach ($outcomes as $outcome) {
             $canReplay = $canReplay && ($outcome->can_replay === 1);
-            $nextMissionId = ($outcome->next_mission_id === $this->questProgress->mission_id) ? null : $outcome->next_mission_id;
+            $nextMissionId = ($outcome->next_mission_id === $this->questProgress?->mission_id) ? null : $outcome->next_mission_id;
         }
         $this->nextMissionId = $nextMissionId;
         return $canReplay;
@@ -193,16 +198,16 @@ class ActionManager extends BaseManager
      * @return array<string, mixed>
      */
     private function returnOutcomeEvaluation(AppStatus &$status, array $outcomes, string $diceRollLabel, bool $canReplay): array {
-        $missionId = $this->questProgress->mission_id;
+        $missionId = $this->questProgress?->mission_id;
         return [
             'action' => $this->action,
             'status' => $status,
             'outcomes' => $outcomes,
             'diceRoll' => $diceRollLabel,
             'hpLoss' => $this->hpLoss,
-            'isFree' => $this->action->is_free,
+            'isFree' => $this->action?->is_free,
             'canReplay' => $canReplay,
-            'questProgressId' => $this->questProgress->id,
+            'questProgressId' => $this->questProgress?->id,
             'missionId' => $missionId,
             'nextMissionId' => $this->nextMissionId ?? $missionId,
         ];
@@ -324,8 +329,9 @@ class ActionManager extends BaseManager
         $actions = Action::findAll(['mission_id' => $missionId]);
 
         foreach ($actions as $action) {
-            if ($this->isActionEligible($action, $this->questProgress->id)) {
-                $this->addOneQuestAction($action->id, $this->questProgress->id);
+            $questProgressId = (int) $this->questProgress?->id;
+            if ($this->isActionEligible($action, $questProgressId)) {
+                $this->addOneQuestAction($action->id, $questProgressId);
             }
         }
     }

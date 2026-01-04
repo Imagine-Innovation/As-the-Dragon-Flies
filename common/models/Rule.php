@@ -427,7 +427,7 @@ class Rule extends \yii\db\ActiveRecord
         $model = RuleModel::findOne(['name' => $modelName, 'attribute' => $modelAttribute]);
 
         // If no matching RuleModel instance is found, create a new one
-        if ($model->isNewRecord) {
+        if ($model === null) {
             $path = ModelHelper::path($modelName);
             $data = [
                 'path' => $path,

@@ -116,7 +116,7 @@ class MessageHandlerOrchestrator implements MessageHandlerInterface
             $questPlayer->save();
 
             $this->notificationService->broadcast(
-                    $session->quest_id,
+                    (int) $session->quest_id,
                     [
                         'type' => 'notification',
                         'sessionId' => $session->id,
