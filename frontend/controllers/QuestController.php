@@ -312,7 +312,7 @@ class QuestController extends Controller
         $player = $quest->initiator;
 
         $quest->status = AppStatus::PLAYING->value;
-        $quest->current_chapter_id = (int) $quest->story->firstChapter->id;
+        $quest->current_chapter_id = (int) $quest->story->firstChapter?->id;
         $quest->started_at = time();
 
         if (!$quest->save()) {

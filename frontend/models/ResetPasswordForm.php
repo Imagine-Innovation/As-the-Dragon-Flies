@@ -15,10 +15,8 @@ class ResetPasswordForm extends Model
 
     public string $password;
 
-    /**
-     * @var \common\models\User
-     */
-    private User $_user;
+    /** @var User|null */
+    private ?User $_user;
 
     /**
      * Creates a form model given a token.
@@ -32,7 +30,7 @@ class ResetPasswordForm extends Model
             throw new InvalidArgumentException('Password reset token cannot be blank.');
         }
         $this->_user = User::findByPasswordResetToken($token);
-        if ($this->_user->isNewRecord) {
+        if ($this->_user === null) {
             throw new InvalidArgumentException('Wrong password reset token.');
         }
         parent::__construct($config);
@@ -55,6 +53,10 @@ class ResetPasswordForm extends Model
      */
     public function resetPassword(): bool {
         $user = $this->_user;
+
+        if ($user === null) {
+            return false;
+        }
         $user->setPassword($this->password);
         $user->removePasswordResetToken();
         $user->generateAuthKey();

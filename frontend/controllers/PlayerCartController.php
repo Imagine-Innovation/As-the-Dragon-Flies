@@ -6,7 +6,6 @@ use Yii;
 use common\models\PlayerCart;
 use common\models\Player;
 use common\models\Item;
-use common\models\User;
 use frontend\components\Shopping;
 use common\components\ManageAccessRights;
 use yii\web\Controller;
@@ -76,7 +75,6 @@ class PlayerCartController extends Controller
                             'name' => SORT_ASC,
                         ])->all();
 
-        // Render the shop view with the fetched models
         return $this->render('shop', [
                     'models' => $items,
                     'playerId' => $playerId,
@@ -93,10 +91,8 @@ class PlayerCartController extends Controller
      * @return string The rendered cart view.
      */
     public function actionCart(): string {
-        // Find the PlayerCart model
         $playerCarts = $this->findCart();
 
-        // Render the cart view with the found model
         return $this->render('cart', [
                     'playerCarts' => $playerCarts,
         ]);
@@ -110,28 +106,20 @@ class PlayerCartController extends Controller
     public function actionAjaxAdd(): array {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a POST request and if it is an AJAX request
         if (!$this->request->isPost || !$this->request->isAjax) {
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
-        // Retrieve the player
-        $playerId = Yii::$app->session->get('playerId');
-        $player = Player::findOne(['id' => $playerId]);
 
-        // If no player is found, return an error response
-        if (!$player) {
-            return ['error' => true, 'msg' => 'Player not found'];
-        }
+        $playerId = (int) Yii::$app->session->get('playerId');
+        $player = $this->findPlayer($playerId);
 
-        // Retrieve the item ID from the POST data and find the item
-        $itemId = Yii::$app->request->post('itemId');
-        $quantity = Yii::$app->request->post('quantity', 1);
+        $itemId = (int) Yii::$app->request->post('itemId');
+        $quantity = (int) Yii::$app->request->post('quantity', 1);
         $item = $this->findItem($itemId);
 
-        // Create a new Shopping instance and calculate the funding
         $shopping = new Shopping();
-        $funding = $shopping->getFunding($player->playerCoins, $item->cost, $item->coin);
+        $funding = $shopping->getFunding($player->playerCoins, $item->cost ?? 0, $item->coin);
 
         // If the funding is insufficient, return an error response
         if ($funding <= 0) {
@@ -151,29 +139,20 @@ class PlayerCartController extends Controller
      * @return array{error: bool, msg: string, content?: string} The JSON response indicating the success or failure of the cart validation.
      */
     public function actionAjaxValidate(): array {
-        // Set the response format to JSON
+
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a POST request and if it is an AJAX request
         if (!$this->request->isPost || !$this->request->isAjax) {
-            // If not, return an error response
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
-        // Retrieve the player
-        $playerId = Yii::$app->session->get('playerId');
-        $player = Player::findOne(['id' => $playerId]);
 
-        // If no player is found, return an error response
-        if (!$player) {
-            return ['error' => true, 'msg' => 'Player not found'];
-        }
+        $playerId = (int) Yii::$app->session->get('playerId');
+        $player = $this->findPlayer($playerId);
 
-        // Get the player's cart items
         $playerCarts = $player->playerCarts;
         $shopping = new Shopping();
 
-        // Iterate over the player's cart items
         foreach ($playerCarts as $playerCart) {
             $ret = $shopping->validatePurchase($playerCart);
             if ($ret['error']) {
@@ -181,7 +160,6 @@ class PlayerCartController extends Controller
             }
         }
 
-        // Return a success response indicating that the cart is validated
         return ['error' => false, 'msg' => 'Cart is validated'];
     }
 
@@ -193,24 +171,17 @@ class PlayerCartController extends Controller
     public function actionAjaxRemove(): array {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a POST request and if it is an AJAX request
         if (!$this->request->isPost || !$this->request->isAjax) {
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
-        // Retrieve the player
-        $playerId = Yii::$app->session->get('playerId');
-        $player = Player::findOne(['id' => $playerId]);
 
-        // If no player is found, return an error response
-        if (!$player) {
-            return ['error' => true, 'msg' => 'Player not found'];
-        }
+        $playerId = (int) Yii::$app->session->get('playerId');
+        $player = $this->findPlayer($playerId);
 
-        // Retrieve the item ID and quantity from the POST data
-        $itemId = Yii::$app->request->post('itemId');
-        $quantity = Yii::$app->request->post('quantity', 1);
-        // Find the item
+        $itemId = (int) Yii::$app->request->post('itemId');
+        $quantity = (int) Yii::$app->request->post('quantity', 1);
+
         $item = $this->findItem($itemId);
 
         // Remove the item from the player's cart and return the result
@@ -225,22 +196,14 @@ class PlayerCartController extends Controller
     public function actionAjaxDelete(): array {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a POST request and if it is an AJAX request
         if (!$this->request->isPost || !$this->request->isAjax) {
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
-        // Retrieve the player
-        $playerId = Yii::$app->session->get('playerId');
-        $player = Player::findOne(['id' => $playerId]);
-        // If no player is found, return an error response
-        if (!$player) {
-            return ['error' => true, 'msg' => 'Player not found'];
-        }
+        $playerId = (int) Yii::$app->session->get('playerId');
+        $player = $this->findPlayer($playerId);
 
-        // Retrieve the item ID and quantity from the POST data
-        $itemId = Yii::$app->request->post('itemId');
-        // Find the item
+        $itemId = (int) Yii::$app->request->post('itemId');
         $item = $this->findItem($itemId);
 
         // Remove the item from the player's cart and return the result
@@ -263,34 +226,27 @@ class PlayerCartController extends Controller
      * the cart string, and the purse string.
      */
     public function actionAjaxInfo(): array {
-        // Set the response format to JSON
+
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a POST request and if it is an AJAX request
         if (!$this->request->isPost || !$this->request->isAjax) {
-            // If not, return an error response
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
-        // Retrieve the player
-        $playerId = Yii::$app->session->get('playerId');
-        $player = Player::findOne(['id' => $playerId]);
-        // If no player is found, return an error response
-        if (!$player) {
-            return ['error' => true, 'msg' => 'Player not found'];
-        }
+
+        $playerId = (int) Yii::$app->session->get('playerId');
+        $player = $this->findPlayer($playerId);
 
         // Calculate the total quantity of items in the player's cart
-        $sum = PlayerCart::find()->where(['=', 'player_id', $player->id])->sum('quantity');
+        $sum = PlayerCart::find()->where(['player_id' => $player->id])->sum('quantity');
         $count = $sum ?? 0;
 
-        // Construct a message indicating the player's name and their purse status based on the purse string
+        // Construct a message indicating the player's name and his purse status based on the purse string
         $shopping = new Shopping();
         $str = $shopping->getPurseValueString($player->playerCoins);
-        $playerDesc = "{$player->name} is a {$player->alignment?->name} {$player->race?->name} {$player->class?->name}";
+        $playerDesc = "{$player->name} is a {$player->alignment?->name} {$player->race->name} {$player->class->name}";
         $purseMsg = $str !== '' ? "{$playerDesc} that currently has {$str}" : "{$player->name}'s purse is empty";
 
-        // Construct the response containing the count of items and the cart string, and return it
         return [
             'error' => false, 'msg' => '', 'count' => $count,
             'cartString' => "You have " . ($count > 0 ? $count : "no") . " article" . ($count > 1 ? "s" : "") . " in your cart",
@@ -307,29 +263,21 @@ class PlayerCartController extends Controller
     public function actionAjaxItemCount(): array {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a POST request and if it is an AJAX request
         if (!$this->request->isPost || !$this->request->isAjax) {
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
-        // Retrieve the player
-        $playerId = Yii::$app->session->get('playerId');
-        $player = Player::findOne(['id' => $playerId]);
-        // If no player is found, return an error response
-        if (!$player) {
-            return ['error' => true, 'msg' => 'Player not found'];
-        }
 
-        // Retrieve the item ID from the request
-        $itemId = Yii::$app->request->post('itemId');
+        $playerId = (int) Yii::$app->session->get('playerId');
+        $player = $this->findPlayer($playerId);
+
+        $itemId = (int) Yii::$app->request->post('itemId');
 
         // Find the PlayerCart model corresponding to the player ID and item ID
         $model = PlayerCart::findOne(['player_id' => $player->id, 'item_id' => $itemId]);
 
         // Construct the response containing the count of the item and return it
-        return [
-            'error' => false, 'msg' => '', 'count' => $model ? $model->quantity : 0
-        ];
+        return ['error' => false, 'msg' => '', 'count' => $model ? $model->quantity : 0];
     }
 
     /**
@@ -340,7 +288,7 @@ class PlayerCartController extends Controller
      */
     protected function findCart(): array {
         // Find the player associated with the selected player
-        $playerId = Yii::$app->session->get('playerId');
+        $playerId = (int) Yii::$app->session->get('playerId');
 
         // If a player is found, return the player's carts
         if ($playerId) {
@@ -379,6 +327,27 @@ class PlayerCartController extends Controller
         if ($item) {
             return $item;
         }
-        throw new NotFoundHttpException("The player's cart you are looking for does not exist.");
+        throw new NotFoundHttpException("The iten you are looking for does not exist.");
+    }
+
+    /**
+     * Finds the Player model based on its primary key value.
+     *
+     * This method retrieves the Player model based on the provided primary key.
+     * If the model is found, it is returned. If not found, a 404 HTTP exception is thrown.
+     *
+     * @param int $id The primary key value of the Item model to be found.
+     * @return Player The loaded Item model if found, or null if not found.
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findPlayer(int $id): Player {
+        // Find the Player model based on the provided primary key.
+        $player = Player::findOne(['id' => $id]);
+
+        // If the model is found, return it. Otherwise, throw a 404 HTTP exception.
+        if ($player) {
+            return $player;
+        }
+        throw new NotFoundHttpException("The player you are looking for does not exist.");
     }
 }

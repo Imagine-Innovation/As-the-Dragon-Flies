@@ -52,14 +52,14 @@ class SearchController extends Controller
      * @param string|null $folder
      * @return array{error: bool, msg: string, content?: string}
      */
-    private function imageSearch(string $search, ?string $folder): array {
+    private function imageSearch(string $search, ?string $folder = null): array {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isGet || !$this->request->isAjax) {
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
         }
 
-        $path = Yii::getAlias('@frontend/web/') . $folder ?? 'invalid';
+        $path = Yii::getAlias('@frontend/web/') . ($folder ?? 'invalid');
         $results = [];
 
         if (!is_dir($path)) {
@@ -110,11 +110,11 @@ class SearchController extends Controller
     /**
      *
      * @param string $modelName
-     * @param int $missionId
      * @param string|null $userEntry
+     * @param int|null $missionId
      * @return array{error: bool, msg: string, results?: mixed}
      */
-    private function searchInDecor(string $modelName, int $missionId, ?string $userEntry): array {
+    private function searchInDecor(string $modelName, ?string $userEntry, ?int $missionId = 0): array {
         // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -146,7 +146,7 @@ class SearchController extends Controller
      *
      * @param string $modelName
      * @param string|null $userEntry
-     * @param array<string, int>|null $filter
+     * @param array<string, int|null>|null $filter
      * @return array{error: bool, msg: string, results?: mixed}
      */
     private function genericSearch(string $modelName, ?string $userEntry, ?array $filter = null): array {
@@ -234,8 +234,8 @@ class SearchController extends Controller
             'monster' => $this->genericSearch('Monster', $search, ['mission_id' => $parentId]),
             'action' => $this->genericSearch('Action', $search, ['mission_id' => $parentId]),
             // Search in decor related data
-            'nested-trap' => $this->searchInDecor('Trap', $parentId, $search),
-            'nested-item' => $this->searchInDecor('DecorItem', $parentId, $search),
+            'nested-trap' => $this->searchInDecor('Trap', $search, $parentId),
+            'nested-item' => $this->searchInDecor('DecorItem', $search, $parentId),
             // Search in text
             'dialog' => $this->searchInTextColumn('Dialog', $search),
             'reply' => $this->searchInTextColumn('Reply', $search),

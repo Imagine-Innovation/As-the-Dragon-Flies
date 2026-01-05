@@ -24,14 +24,14 @@ $npc = $dialog->npc;
         <?php endif; ?>
 
         <h3><?= $npc->name ?></h3>
-        <p class="text-muted"><?= nl2br(Html::encode($npc->description)) ?></p>
+        <p class="text-muted"><?= nl2br(Html::encode($npc->description ?? '')) ?></p>
         <hr class="border border-warning border-1 opacity-50 w-50"><hr>
-        <p><span class="text-warning"><?= Html::encode($playerName) ?></span> &mdash; <span class="text-muted"><?= nl2br(Html::encode($reply->text)) ?></span></p>
-        <p><span class="text-warning"><?= Html::encode($npc->name) ?></span> &mdash; <span class="text-muted"><?= nl2br(Html::encode($dialog->text)) ?></span></p>
+        <p><span class="text-warning"><?= Html::encode($playerName) ?></span> &mdash; <span class="text-muted"><?= nl2br(Html::encode($reply->text ?? '')) ?></span></p>
+        <p><span class="text-warning"><?= Html::encode($npc->name) ?></span> &mdash; <span class="text-muted"><?= nl2br(Html::encode($dialog->text ?? '')) ?></span></p>
         <?php if ($dialog->replies): ?>
             <ul>
                 <?php foreach ($dialog->replies as $reply): ?>
-                    <li><a href="#" onclick="vtt.reply(<?= $reply->id ?>); return false;"><?= nl2br(Html::encode($reply->text)) ?></a></li>
+                    <li><a href="#" onclick="vtt.reply(<?= $reply->id ?>); return false;"><?= nl2br(Html::encode($reply->text ?? '')) ?></a></li>
                 <?php endforeach; ?>
             </ul>
         <?php else: ?>

@@ -9,7 +9,7 @@ use yii\web\UploadedFile;
 class ImageUploadForm extends Model
 {
 
-    public UploadedFile $imageFile;
+    public ?UploadedFile $imageFile;
     public string $folder;
 
     public function rules() {
@@ -25,10 +25,10 @@ class ImageUploadForm extends Model
      */
     public function upload(): bool {
         Yii::debug("*** Debug *** upload this->folder=" . $this->folder, __METHOD__);
-        Yii::debug("*** Debug *** upload this->imageFile->baseName=" . $this->imageFile->baseName, __METHOD__);
-        Yii::debug("*** Debug *** upload this->imageFile->extension=" . $this->imageFile->extension, __METHOD__);
-        Yii::debug("*** Debug *** upload this->imageFile->fullPath=" . $this->imageFile->fullPath, __METHOD__);
-        if ($this->validate()) {
+        Yii::debug("*** Debug *** upload this->imageFile->baseName=" . $this->imageFile?->baseName, __METHOD__);
+        Yii::debug("*** Debug *** upload this->imageFile->extension=" . $this->imageFile?->extension, __METHOD__);
+        Yii::debug("*** Debug *** upload this->imageFile->fullPath=" . $this->imageFile?->fullPath, __METHOD__);
+        if ($this->imageFile && $this->validate()) {
             $fileName = $this->imageFile->baseName . "." . $this->imageFile->extension;
             $path = $this->uploadPath();
             $fullFileName = $path . DIRECTORY_SEPARATOR . $fileName;

@@ -11,7 +11,9 @@ class VerifyEmailForm extends Model
 {
 
     public string $token;
-    private User $_user;
+
+    /** @var User|null $_user */
+    private ?User $_user;
 
     /**
      * Creates a form model with given token.
@@ -25,7 +27,7 @@ class VerifyEmailForm extends Model
             throw new InvalidArgumentException('Verify email token cannot be blank.');
         }
         $this->_user = User::findByVerificationToken($token);
-        if ($this->_user->isNewRecord) {
+        if ($this->_user === null) {
             throw new InvalidArgumentException('Wrong verify email token.');
         }
         parent::__construct($config);
@@ -38,6 +40,10 @@ class VerifyEmailForm extends Model
      */
     public function verifyEmail(): ?User {
         $user = $this->_user;
+
+        if ($user === null) {
+            return null;
+        }
         $user->status = AppStatus::ACTIVE->value;
         return $user->save(false) ? $user : null;
     }

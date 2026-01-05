@@ -12,6 +12,8 @@ use yii\helpers\ArrayHelper;
 class Shopping
 {
 
+    const DEFAULT_COIN = 'gp';
+
     /** @var array<string> $itemTypes */
     public array $itemTypes = ['Armor', 'Shield', 'Weapon', 'Pack', 'Gear', 'Tool', 'Poison'];
 
@@ -147,16 +149,16 @@ class Shopping
      * This function increments the quantity of the specified coin in the purse
      * by the given amount and updates its corresponding copper value.
      *
-     * @param string $coin The type of coin to update in the purse.
-     * @param int $added The quantity of coins to add to the wallet.
+     * @param int|float $amount The amount in coins to add to the wallet.
+     * @param string|null $coin The type of coin (e.g., 'gold', 'silver', 'copper').
      * @return void
      */
-    private function updateWallet(string $coin, int $added): void {
+    private function updateWallet(int|float $amount, ?string $coin = self::DEFAULT_COIN): void {
         // Retrieve the current wallet for the specified coin.
         $wallet = $this->purse[$coin];
 
         // Increment the quantity by the specified amount.
-        $wallet['quantity'] += $added;
+        $wallet['quantity'] += $amount;
 
         // Update the copper value based on the new quantity.
         $wallet['copperValue'] = $this->copperValue($wallet['quantity'], $coin);
@@ -171,10 +173,10 @@ class Shopping
      * This function identifies the coin with the lowest rate in the purse
      * and exchanges one unit of that coin for the target coin with a higher rate.
      *
-     * @param string $targetCoin The target coin type to exchange to.
+     * @param string|null $targetCoin The target coin type to exchange to.
      * @return bool True if the exchange is successful, false otherwise.
      */
-    private function changeHigherValueCoin(string $targetCoin): bool {
+    private function changeHigherValueCoin(?string $targetCoin = self::DEFAULT_COIN): bool {
         // Check if the target coin exists in the coins array.
         if (!isset($this->coins[$targetCoin])) {
             return false;
@@ -199,11 +201,11 @@ class Shopping
         // If a source coin is found, perform the exchange.
         if ($sourceCoin) {
             // Update the purse for the source coin with a decrease of one unit.
-            $this->updateWallet($sourceCoin, -1);
+            $this->updateWallet(-1, $sourceCoin);
 
             // Update the purse for the target coin with an increase
             // based on the exchange rate.
-            $this->updateWallet($targetCoin, $sourceRate / $targetRate);
+            $this->updateWallet($sourceRate / $targetRate, $targetCoin);
 
             return true;
         }
@@ -219,7 +221,7 @@ class Shopping
      * to deduct the equivalent value in copper coins based on the provided coin value.
      *
      * @param float $itemCopperValue The remaining value to be deducted in copper coins.
-     * @param string $coin The current coin type being processed.
+     * @param string|null $coin The current coin type being processed.
      * @return float The updated remaining value to be deducted.
      */
     private function removeCoinsFromPurse(&$itemCopperValue, $coin) {
@@ -258,17 +260,17 @@ class Shopping
     }
 
     /**
-     * Attempts to spend coins from a player's purse for a specified cost and coin type.
+     * Attempts to spend coins from a player's purse for a specified price.
      *
      * @param \common\models\PlayerCoin[] $playerCoins The player's current coin holdings represented as an associative array.
-     * @param float $cost The cost of the item to be purchased.
-     * @param string|null $coin The type of coin for the item cost (e.g., 'gold', 'silver', 'copper').
+     * @param int|float $amount The amount of coins needed to purchase the item.
+     * @param string|null $coin The type of coin (e.g., 'gold', 'silver', 'copper').
      *
      * @return bool True if the spending is successful, false otherwise.
      */
-    public function spend(array $playerCoins, float $cost, ?string $coin = 'gp'): bool {
+    public function spend(array $playerCoins, int|float $amount, ?string $coin = self::DEFAULT_COIN): bool {
         // Check if the player has sufficient funding for the specified cost and coin type.
-        $itemCopperValue = $this->getFunding($playerCoins, $cost, $coin);
+        $itemCopperValue = $this->getFunding($playerCoins, $amount, $coin);
 
         // If there's enough funding, attempt to remove coins from the player's purse for the item cost.
         if ($itemCopperValue > 0) {
@@ -296,11 +298,11 @@ class Shopping
      * Restores the player's coins after a transaction.
      *
      * @param \common\models\PlayerCoin[] $playerCoins The player's current coins.
-     * @param int|null $cost The cost to be restored.
-     * @param string|null $coin The type of coin to be restored.
+     * @param int|float|null $amount The cost to be restored.
+     * @param string|null $coin The type of coin (e.g., 'gold', 'silver', 'copper').
      * @return bool Whether the restoration was successful.
      */
-    public function restoreFunding(array $playerCoins, ?int $cost = 0, ?string $coin = 'gp'): bool {
+    public function restoreFunding(array $playerCoins, int|float|null $amount = 0, ?string $coin = self::DEFAULT_COIN): bool {
         $this->initPurse($playerCoins);
 
         // Iterate over the player's coins
@@ -308,7 +310,7 @@ class Shopping
             // Check if the current coin matches the specified coin type
             if ($playerCoin->coin === $coin) {
                 // Increment the quantity by the cost
-                $playerCoin->quantity += $cost;
+                $playerCoin->quantity += (int) ($amount ?? 0);
                 // Save the updated coin quantity
                 return $playerCoin->save();
             }
@@ -321,15 +323,15 @@ class Shopping
      * Calculates the maximum funding a player can contribute towards an item purchase.
      *
      * @param \common\models\PlayerCoin[] $playerCoins The player's current coin holdings represented as an associative array.
-     * @param int|float $cost The cost of the item to be purchased.
-     * @param string|null $coin The type of coin for the item cost (e.g., 'gold', 'silver', 'copper').
+     * @param int|float $amount The amount of coins needed to purchase the item.
+     * @param string|null $coin The type of coin (e.g., 'gold', 'silver', 'copper').
      *
      * @return float The maximum funding the player can contribute towards the item purchase in copper coins.
      */
-    public function getFunding(array $playerCoins, int|float $cost, ?string $coin = 'gp'): float {
+    public function getFunding(array $playerCoins, int|float $amount, ?string $coin = self::DEFAULT_COIN): float {
         // Check if the specified coin type exists in the coins array,
         // and if the item cost is positive.
-        if (!isset($this->coins[$coin]) || $cost <= 0) {
+        if (!isset($this->coins[$coin]) || $amount <= 0) {
             // If not, return zero as the player cannot contribute funds.
             return 0;
         }
@@ -338,7 +340,7 @@ class Shopping
         $this->initPurse($playerCoins);
 
         // Calculate the value of the item cost in copper coins.
-        $itemCopperValue = $this->copperValue($cost, $coin);
+        $itemCopperValue = $this->copperValue($amount, $coin);
 
         // Determine the maximum funding the player can contribute based
         // on their purse and item cost.
@@ -352,19 +354,19 @@ class Shopping
      *
      * This function converts the given cost from the specified coin unit to copper coins.
      *
-     * @param float $cost Actual cost in the specified $coin unit.
-     * @param string $coin Current coin unit.
+     * @param int|float $amount The amount in coins defining the price of the item.
+     * @param string|null $coin The type of coin (e.g., 'gold', 'silver', 'copper').
      * @return int Value converted into copper coins.
      */
-    public function copperValue(float $cost, string $coin): int {
+    public function copperValue(int|float $amount, ?string $coin = self::DEFAULT_COIN): int {
         // Check if the coin type is valid or the cost is non-positive.
-        if (!isset($this->coins[$coin]) || $cost <= 0) {
+        if (!isset($this->coins[$coin]) || $amount <= 0) {
             // Handle invalid coin types or negative cost.
             return 0;
         }
 
         // Calculate the value in copper coins by multiplying the cost with the coin's conversion rate.
-        return (int) ($cost * $this->coins[$coin]['rate']);
+        return (int) ($amount * $this->coins[$coin]['rate']);
     }
 
     /**
