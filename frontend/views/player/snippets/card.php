@@ -36,7 +36,7 @@ $route = $player->status == AppStatus::ACTIVE->value ? 'player/view' : 'player/u
         <div>
             <p>
                 <span class="badge badge-warning"><?= $player->level->name ?></span>
-                <span class="badge badge-warning"><?= $player->alignment_id ? $player->alignment->name : "Undefined" ?></span>
+                <span class="badge badge-warning"><?= $player->alignment_id ? $player->alignment?->name : "Undefined" ?></span>
                 <span class="badge badge-warning"><?= $player->class_id ? $player->class->name : "Undefined" ?></span>
             </p>
         </div>

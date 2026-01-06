@@ -18,7 +18,7 @@ class ActionButtons extends Widget
      * @return string
      */
     public function run(): string {
-        $modelName = Utilities::modelName($this->model);
+        $modelName = Utilities::modelName($this->model) ?? 'Unknown';
         $actions = ActionButtonsConfig::getActions($modelName, $this->model->status);
 
         $widgetView = ($this->mode === 'table') ? 'action-buttons-table' : 'action-buttons-icon';

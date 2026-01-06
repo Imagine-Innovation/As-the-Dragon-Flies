@@ -10,7 +10,7 @@
     <?php if ($dialog->replies): ?>
         <ol>
             <?php foreach ($dialog->replies as $reply): ?>
-                <li><?= nl2br($reply->text) ?></li>
+                <li><?= nl2br($reply->text ?? '') ?></li>
                 <?php if ($reply->next_dialog_id): ?>
                     <?= $this->renderFile('@app/views/mission/snippets/dialog.php', ['dialog' => $reply->nextDialog]) ?>
                 <?php endif; ?>

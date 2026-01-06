@@ -1,7 +1,7 @@
 <?php
 /** @var yii\web\View $this */
 /** @var common\models\Player $model */
-$this->title = $model->name;
+$this->title = $model->name ?? 'New player';
 $this->params['breadcrumbs'][] = ['label' => 'Players', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 

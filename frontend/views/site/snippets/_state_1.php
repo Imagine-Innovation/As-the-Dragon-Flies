@@ -15,7 +15,7 @@ use yii\helpers\Url;
         <?=
         $this->render('section1', [
             'title' => "Continue with {$lastPlayer->name}",
-            'img' => $lastPlayer->image->getImageUrl(),
+            'img' => $lastPlayer->image?->getImageUrl(),
             'paragraphs' => [
                 'Select this player to start a new adventure',
             ],

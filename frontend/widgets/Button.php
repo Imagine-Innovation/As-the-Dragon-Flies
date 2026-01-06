@@ -51,7 +51,7 @@ class Button extends Widget
         $defaultBtn = (strpos($paramStyle, "btn-") !== false) ? '' : ' btn-secondary';
         $style = ($this->isCta ? ' btn-warning' : $defaultBtn) . ' ' . $paramStyle;
         $icon = $this->icon ? $this->iconElement() : "";
-        $title = Html::encode($this->title);
+        $title = Html::encode($this->title ?? '');
 
         $html = $this->anchorTag('btn', $style) . "{$icon} {$title}</a>";
 
@@ -167,7 +167,7 @@ class Button extends Widget
         $icon = $this->icon ? $this->iconElement() : "";
 
         $html = '<button ' . $this->idElement() . ' role="button" class="btn' . $style . '"' . $this->tooltipElement() . '>';
-        $html .= "{$icon} " . Html::encode($this->title);
+        $html .= "{$icon} " . Html::encode($this->title ?? '');
         $html .= "</button>";
 
         return $html;

@@ -33,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <h3 class="card-title"><?= $model->name ?></h3>
                 </div>
                 <div class="card-body flex-grow-1"> <!-- Add flex-grow-1 -->
-                    <p class="card-text"><?= nl2br($model->description) ?></p>
+                    <p class="card-text"><?= nl2br($model->description ?? '') ?></p>
                     <br>
                     <?= StoryNeededClass::classList($model); ?>
                     <p>

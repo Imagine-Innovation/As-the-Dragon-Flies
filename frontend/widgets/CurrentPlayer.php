@@ -46,11 +46,11 @@ class CurrentPlayer extends Widget
         $players = $this->getPlayers($userId);
         $data = [];
         foreach ($players as $player) {
-            $names = explode(' ', $player->name);
+            $names = explode(' ', $player->name ?? '');
             if (count($names) > 1) {
                 $initial = $names[0][0] . $names[1][0];
             } else {
-                $initial = $player->name[0];
+                $initial = $player->name[0] ?? 'X';
             }
 
             $data[$player->id] = [

@@ -22,7 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?= ActionButtons::widget(['model' => $model]) ?>
                 <p class="text-mutted"><?= Utilities::encode($model->definition) ?></p>
                 <h5>Status: <span class="h6 text-mutted"><?= Status::label($model->status) ?></span></h5>
-                <p><?= Utilities::encode($model->description) ?></p>
+                <p><?= Utilities::encode($model->description ?? '') ?></p>
             </div>
         </div>
     </div>

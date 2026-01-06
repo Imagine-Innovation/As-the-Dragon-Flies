@@ -20,7 +20,7 @@ $histories = common\models\History::find()->all();
                     <div class="card-body">
                         <div class="custom-control custom-radio card-title">
                             <input type="radio" id="<?= $field_name ?><?= $history->id ?>" name="<?= $field_name ?>" class="custom-control-input"
-                                   onchange="PlayerBuilder.setProperty('description', `<?= Utilities::encode($history->description) ?>`);">
+                                   onchange="PlayerBuilder.setProperty('description', `<?= Utilities::encode($history->description ?? '') ?>`);">
                             <label class="custom-control-label text-decoration" for="<?= $field_name ?><?= $history->id ?>"><?= $history->name ?></label>
                         </div>
                         <h6 class="card-subtitle text-muted">

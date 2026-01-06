@@ -2,8 +2,6 @@
 /** @var yii\web\View $this */
 /** @var frontend\models\PlayerBuilder $model */
 /** @var string $embedded */
-$this->title = $model->name;
-
 $colSplit = $embedded ? "col-4" : "col-4 col-md-2 col-lg-1";
 ?>
 <div class="card">
