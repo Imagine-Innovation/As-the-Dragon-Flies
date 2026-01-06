@@ -63,16 +63,19 @@ class ChatManager extends BaseManager
             return [];
         }
 
+        /** @var array<string, mixed> $payload  */
         $payload = json_decode((string) $chatNotification->payload, true);
 
         Yii::debug($chatNotification->payload);
         Yii::debug($payload);
         $roundedTime = $payload['roundedTime'] ?? $this->roundedTime(time());
+        $sender = is_string($payload['playerName']) ? Utilities::encode($payload['playerName']) : '';
+        $message = is_string($payload['message']) ? Utilities::encode($payload['message']) : '';
         return [
             'isAuthor' => ($chatNotification->initiator_id === $playerId), // defines is the current player is the one who initiate the chat message
             'displayedDateTime' => Utilities::formatDate($roundedTime),
-            'sender' => Utilities::encode($payload['playerName']),
-            'messages' => [Utilities::encode($payload['message'])], // first entry of the message array
+            'sender' => $sender,
+            'messages' => [$message], // first entry of the message array
             'avatar' => $payload['avatar'] ?? self::DEFAULT_AVATAR,
             'roundedTime' => $roundedTime,
         ];
@@ -82,16 +85,17 @@ class ChatManager extends BaseManager
      *
      * @param int|null $since
      * @param int|null $limit
-     * @return non-empty-array<int<0, max>, array<string, mixed>>|array{}
+     * @return non-empty-array<'message'|int<0, max>, string>|array{}
      */
     public function getLastMessages(?int $since = null, ?int $limit = null): array {
 
         $chatNotifications = $this->getNotifications((int) $this->questId, self::CHAT_NOTIFICATION_TYPE, $since, $limit);
 
         if (!$chatNotifications) {
-            return []; // returns an empty array
+            return [];
         }
 
+        /** @var array{int, 'message': array<string>} $chatMessages */
         $chatMessages = [];
         $previousRoundedTime = 0;
         $previousInitiatorId = 0;

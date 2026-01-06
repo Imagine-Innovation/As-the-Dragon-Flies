@@ -175,7 +175,11 @@ class User extends ActiveRecord implements IdentityInterface
      * {@inheritdoc}
      */
     public function getId() {
-        return $this->getPrimaryKey();
+        $pk = $this->getPrimaryKey();
+        if (is_integer($pk)) {
+            return (int) $pk;
+        }
+        return 'error';
     }
 
     /**

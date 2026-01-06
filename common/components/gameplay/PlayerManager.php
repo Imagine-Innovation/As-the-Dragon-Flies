@@ -2,6 +2,7 @@
 
 namespace common\components\gameplay;
 
+use common\models\Item;
 use common\models\Outcome;
 use common\models\Player;
 use common\models\Quest;
@@ -19,8 +20,15 @@ class PlayerManager extends BaseManager
     public ?Player $player = null;
     // internal use
 
-    /** @var array<string, mixed> */
-    private array $stats = [];
+    /**
+     *  @var array{
+     *      hpLoss: int,
+     *      gainedXp: int,
+     *      gainedGp: int,
+     *      gainedItems: non-empty-array<Item>|array{}
+     *  } $stats
+     */
+    private array $stats;
 
     /**
      *
@@ -133,26 +141,22 @@ class PlayerManager extends BaseManager
         }
 
         $this->stats['gainedGp'] += $outcome->gained_gp ?? 0;
-        if ($outcome->item_id) {
-            $this->stats['gainedItems'][] = $outcome->item->name;
+        if ($outcome->item->isNewRecord) {
+            return;
         }
+        $this->stats['gainedItems'][] = $outcome->item;
     }
 
     /**
      *
      * @param Outcome[] $outcomes
-     * @return array<string, mixed>|array{}
+     * @return void
      */
-    public function registerGainsAndLosses(array &$outcomes): array {
+    public function registerGainsAndLosses(array &$outcomes): void {
         Yii::debug("*** debug *** registerGainsAndLosses - outcomes=" . count($outcomes));
 
-        if (empty($outcomes)) {
-            // nothing to register
-            return[];
-        }
-
-        if ($this->player === null) {
-            return[];
+        if (empty($outcomes) || $this->player === null) {
+            return;
         }
         $player = $this->player;
 
@@ -165,6 +169,6 @@ class PlayerManager extends BaseManager
                 $player->addItems($outcome->item_id);
             }
         }
-        return $this->stats;
+        return;
     }
 }

@@ -146,7 +146,7 @@ class QuestManager extends BaseManager
                 ->where(['quest_progress_id' => $progress->id])
                 ->max('sequence');
 
-        return (int) ($nextSequence ?? 0);
+        return is_scalar($nextSequence) ? (int) $nextSequence : 0;
     }
 
     /**
@@ -387,7 +387,18 @@ class QuestManager extends BaseManager
      *
      * @param QuestProgress $currentQuestProgress
      * @param QuestProgress $nextQuestProgress
-     * @return array<string, mixed>
+     * @return array{
+     *       currentMissionId: int,
+     *       currentMissionName: string,
+     *       currentPlayerId: int,
+     *       currentPlayerName: string|null,
+     *       nextMissionId: int,
+     *       nextMissionName: string,
+     *       nextPlayerId: int,
+     *       nextPlayerName: string|null,
+     *       nextQuestProgressId: int,
+     *       timestamp: int
+     * }
      * @throws RuntimeException
      */
     private function getNextMissionDetail(QuestProgress $currentQuestProgress, QuestProgress $nextQuestProgress): array {

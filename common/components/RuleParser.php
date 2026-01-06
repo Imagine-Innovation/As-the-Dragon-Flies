@@ -65,18 +65,37 @@ use yii\base\InvalidParamException;
  *
  *    <quoted>
  *    └── '([^']*)' | "([^"]*)"
- *     */
+ *
+ */
 class RuleParser extends Component
 {
+    /**
+     * @phpstan-type ParsingNode array{
+     * type: string,
+     * node?: array|ParsingNode,
+     * component?: string,
+     * comparator?: string,
+     * value?: string,
+     * left?: ParsingNode,
+     * boolOperator?: string,
+     * right?: ParsingNode
+     * }
+     */
 
+    /** @var string Detailed error message if parsing fails */
     public string $errorMessage = "";
 
-    /** @var array<string, mixed> $parsingTree */
+    /**
+     * @//var array<string, mixed> The resulting abstract syntax tree (AST)
+     * @phpstan-var ParsingNode|array{}
+     */
     public array $parsingTree = [];
+
+    /** @var string The token or grammar rule the parser was looking for when it failed */
     public string $expected = "";
     // For internal use
 
-    /** @var list<array{type: string, value: string}> $tokens */
+    /** @var list<array{type: string, value: string}> Internal token stream  */
     private array $tokens = [];
     private int $tokenNb = 0;
     private int $pos = 0;
@@ -142,12 +161,14 @@ class RuleParser extends Component
      * a boolean expression, or a basic condition. It handles negation by consuming the 'not' token.
      * If a valid expression is found, it updates the provided expression reference.
      *
-     * @param array<string, mixed> &$expression A reference to the expression array that will be updated.
-     * @return bool True if a valid expression is found, false otherwise.
+     * @param array<string, mixed> &$expression Reference to be populated with the parsed node.
+     * @phpstan-param ParsingNode &$expression
+     * @return bool True if a valid expression (negated, boolean, or basic) is found.
      */
     private function expression(array &$expression): bool {
         // Set a recovery point in case the expression parsing fails
         $context = $this->setRecoveryPoint('expression');
+        /** @var array<string, mixed> $expr */
         $expr = [];
 
         // Check if the expression is negated
@@ -575,8 +596,14 @@ class RuleParser extends Component
      * including the message describing the recovery point and the current parsing context. It returns
      * a context array containing information about the current parsing state.
      *
-     * @param string $msg A message describing the recovery point.
-     * @return array<string, mixed> The context array containing parsing state information.
+     * @param string $msg Context description for debugging.
+     * @return array{
+     *      nestingLevel: int,
+     *      msg: string,
+     *      caller: string,
+     *      pos: int,
+     *      parsingTree: array<string, mixed>
+     * }
      */
     private function setRecoveryPoint(string $msg): array {
         $this->_debug("--------------------");
@@ -603,8 +630,9 @@ class RuleParser extends Component
      * to the state captured in the provided context array. It updates the parsing position, nesting level,
      * parsing tree, and the expected token if provided. It logs debugging information about the rewind operation.
      *
-     * @param array<string, mixed> $context The context array containing parsing state information to rewind to.
-     * @param string|null $expected (Optional) The expected token after rewinding.
+     * @param array<string, mixed> $context The state returned by setRecoveryPoint.
+     * @phpstan-param array{nestingLevel: int, pos: int, parsingTree: array<string, mixed>, caller: string} $context
+     * @param string|null $expected (Optional) Override the 'expected' token for error reporting.
      * @return void
      */
     private function rewind(array $context, $expected = null): void {
@@ -848,11 +876,8 @@ class RuleParser extends Component
      * - [a-zA-Z_][a-zA-Z0-9_]*|\d+)                  # Matches names or numbers
      * - \s* matches zero or more whitespace characters (spaces, tabs, etc.)
      *
-     * @param string $inputString The input string to tokenize.
-     * @return list<array{
-     *     type: string,
-     *     value: string
-     * }> An array of tokens with their corresponding types and values.
+     * @param string $inputString The raw rule string.
+     * @return list<array{type: string, value: string}>
      */
     private function tokenize(string $inputString): array {
         // Define the pattern for tokenizing

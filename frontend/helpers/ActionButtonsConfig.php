@@ -11,7 +11,20 @@ class ActionButtonsConfig
      *
      * @param string $modelName
      * @param int $status
-     * @return array<int, array<string, mixed>>
+     * @return array<int,array{
+     *      tooltip: string,
+     *      route: string,
+     *      verb: string,
+     *      mode: string,
+     *      icon: string,
+     *      admin: bool,
+     *      player: bool,
+     *      owner: bool,
+     *      modelName: array<string>,
+     *      table: bool,
+     *      view: bool
+     * }> $action An associative array containing the action details and requirements.
+
      */
     public static function getActions(string $modelName, int $status): array {
         $actions = [

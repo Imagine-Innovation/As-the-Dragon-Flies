@@ -319,7 +319,19 @@ class ManageAccessRights extends Component
      * 3. Checks if the action requires administrative privileges and if the user is an admin.
      * 4. Checks if the action requires ownership and if the user is the owner.
      *
-     * @param array<string, mixed> $action An associative array containing the action details and requirements.
+     * @param array{
+     *      tooltip: string,
+     *      route: string,
+     *      verb: string,
+     *      mode: string,
+     *      icon: string,
+     *      admin: bool,
+     *      player: bool,
+     *      owner: bool,
+     *      modelName: array<string>,
+     *      table: bool,
+     *      view: bool
+     * } $action An associative array containing the action details and requirements.
      * @param string $modelName The name of the model to check against the action's allowed models.
      * @param bool $isOwner Indicates whether the user is the owner of the resource.
      * @param string $mode The mode in which the action is being performed: table or view.

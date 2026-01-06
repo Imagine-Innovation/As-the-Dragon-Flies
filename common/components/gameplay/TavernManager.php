@@ -371,9 +371,9 @@ class TavernManager extends BaseManager
      */
     private function getNextPlayerTurn(int $questId): int {
         $nextTurn = QuestPlayer::find()
-                        ->where(['quest_id' => $questId])
-                        ->max('player_turn') + 1;
-        return $nextTurn;
+                ->where(['quest_id' => $questId])
+                ->max('player_turn');
+        return is_scalar($nextTurn) ? (int) $nextTurn + 1 : 1;
     }
 
     /**

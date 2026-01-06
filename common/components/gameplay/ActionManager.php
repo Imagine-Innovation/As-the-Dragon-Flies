@@ -70,7 +70,7 @@ class ActionManager extends BaseManager
                 ->where(['player_id' => $this->player?->id, 'skill_id' => $skillIds])
                 ->max('bonus');
 
-        return $modifier ?? 0;
+        return is_numeric($modifier) ? (int) $modifier : 0;
     }
 
     /**
