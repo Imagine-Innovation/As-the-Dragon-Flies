@@ -132,7 +132,7 @@ class BroadcastMessageFactory
      * Validates if all required keys are present in the payload.
      *
      * @param array<string, mixed> $payload
-     * @param array<string, mixed> $requiredKeys
+     * @param array<string> $requiredKeys
      * @return bool
      */
     private function validatePayload(array $payload, array $requiredKeys): bool {

@@ -6,6 +6,7 @@ use common\extensions\EventHandler\contracts\BroadcastServiceInterface;
 use common\extensions\EventHandler\contracts\SpecificMessageHandlerInterface;
 use common\extensions\EventHandler\factories\BroadcastMessageFactory;
 use common\extensions\EventHandler\LoggerService;
+use common\helpers\PayloadHelper;
 use Ratchet\ConnectionInterface;
 
 class PlayerJoiningHandler implements SpecificMessageHandlerInterface
@@ -43,12 +44,13 @@ class PlayerJoiningHandler implements SpecificMessageHandlerInterface
     public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
         $this->logger->logStart("PlayerJoiningHandler: handle for session {$sessionId}, client {$clientId}", $data);
 
-        $payload = $data['payload'];
-        $playerName = $payload['playerName'] ?? 'Unknown';
-        $questId = $payload['questId'] ?? null;
-        $questName = $payload['questName'] ?? 'Unknown';
+        /** @var array<string, mixed> */
+        $payload = is_array($data['payload']) ? (array) $data['payload'] : [];
+        $questId = PayloadHelper::getQuestId($payload, $data);
+        $playerName = PayloadHelper::getPlayerName($payload);
+        $questName = PayloadHelper::getQuestName($payload);
 
-        if ($questId === null || $questId === '' || $questName === 'Unknown') {
+        if ($questId === null || $questName === 'Unknown') {
             $this->logger->log("PlayerJoiningHandler: Missing questId, or questName in data['payload'].", $data, 'warning');
             $errorDto = $this->messageFactory->createErrorMessage("Invalid player join announcement: questId, or questName missing within payload.");
             $this->broadcastService->sendToClient($clientId, $errorDto, false, $sessionId);

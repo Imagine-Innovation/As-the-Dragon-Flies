@@ -6,6 +6,7 @@ use common\extensions\EventHandler\contracts\BroadcastServiceInterface;
 use common\extensions\EventHandler\contracts\SpecificMessageHandlerInterface;
 use common\extensions\EventHandler\factories\BroadcastMessageFactory;
 use common\extensions\EventHandler\LoggerService;
+use common\helpers\PayloadHelper;
 use Ratchet\ConnectionInterface;
 
 class QuestStartingHandler implements SpecificMessageHandlerInterface
@@ -42,9 +43,10 @@ class QuestStartingHandler implements SpecificMessageHandlerInterface
     public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
         $this->logger->logStart("QuestStartingHandler: handle for session {$sessionId}, client {$clientId}", $data);
 
-        $payload = $data['payload'];
-        $questId = $payload['questId'] ?? null;
-        $questName = $payload['questName'] ?? 'Unknown';
+        /** @var array<string, mixed> */
+        $payload = is_array($data['payload']) ? (array) $data['payload'] : [];
+        $questId = PayloadHelper::getQuestId($payload, $data);
+        $questName = PayloadHelper::getQuestName($payload);
 
         if ($questId === null) {
             $this->logger->log("QuestStartingHandler: Missing questId in data['payload'].", $data, 'warning');

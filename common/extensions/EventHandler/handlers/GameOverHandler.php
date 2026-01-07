@@ -6,6 +6,7 @@ use common\extensions\EventHandler\contracts\BroadcastServiceInterface;
 use common\extensions\EventHandler\contracts\SpecificMessageHandlerInterface;
 use common\extensions\EventHandler\factories\BroadcastMessageFactory;
 use common\extensions\EventHandler\LoggerService;
+use common\helpers\PayloadHelper;
 use Ratchet\ConnectionInterface;
 
 class GameOverHandler implements SpecificMessageHandlerInterface
@@ -43,9 +44,12 @@ class GameOverHandler implements SpecificMessageHandlerInterface
     public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
         $this->logger->logStart("GameOverHandler: handle from clientId={$clientId}, sessionId={$sessionId}", $data);
 
-        $payload = $data['payload'];
-        $questId = array_key_exists('questId', $payload) ? (int) $payload['questId'] : ($data['quest_id'] ? (int) $data['quest_id'] : null);
-        $detail = array_key_exists('detail', $payload) ? $payload['detail'] : [];
+        /** @var array<string, mixed> */
+        $payload = is_array($data['payload']) ? (array) $data['payload'] : [];
+        $questId = PayloadHelper::getQuestId($payload, $data);
+
+        /** @var array<string, mixed> */
+        $detail = PayloadHelper::getDetail($payload);
 
         if ($questId === null || empty($detail)) {
             $this->logger->log("GameOverHandler: Missing required data (questId, detail).", $data, 'warning');

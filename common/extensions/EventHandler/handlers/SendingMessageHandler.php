@@ -6,6 +6,7 @@ use common\extensions\EventHandler\contracts\BroadcastServiceInterface;
 use common\extensions\EventHandler\contracts\SpecificMessageHandlerInterface;
 use common\extensions\EventHandler\factories\BroadcastMessageFactory;
 use common\extensions\EventHandler\LoggerService;
+use common\helpers\PayloadHelper;
 use Ratchet\ConnectionInterface;
 
 class SendingMessageHandler implements SpecificMessageHandlerInterface
@@ -43,9 +44,9 @@ class SendingMessageHandler implements SpecificMessageHandlerInterface
     public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
         $this->logger->logStart("SendingMessageHandler: handle sessionId=[{$sessionId}], clientId=[{$clientId}]", $data);
 
-        $messageText = $data['message'] ?? '';
-        $playerName = $data['playerName'] ?? 'Unknown';
-        $questId = $data['questId'] ?? null;
+        $questId = PayloadHelper::getQuestId($data);
+        $playerName = PayloadHelper::getPlayerName($data);
+        $messageText = implode(PHP_EOL, PayloadHelper::getMessage($data));
 
         if (empty($messageText) || $questId === null) {
             $this->logger->log("SendingMessageHandler: Missing message or questId.", $data, 'warning');

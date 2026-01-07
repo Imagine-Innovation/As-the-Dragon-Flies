@@ -6,6 +6,7 @@ use common\extensions\EventHandler\contracts\BroadcastServiceInterface;
 use common\extensions\EventHandler\contracts\SpecificMessageHandlerInterface;
 use common\extensions\EventHandler\factories\BroadcastMessageFactory;
 use common\extensions\EventHandler\LoggerService;
+use common\helpers\PayloadHelper;
 use Ratchet\ConnectionInterface;
 
 class PlayerQuittingHandler implements SpecificMessageHandlerInterface
@@ -43,11 +44,12 @@ class PlayerQuittingHandler implements SpecificMessageHandlerInterface
     public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
         $this->logger->logStart("PlayerQuittingHandler: handle for session {$sessionId}, client {$clientId}", $data);
 
-        $payload = $data['payload'];
-        $playerName = array_key_exists('playerName', $payload) ? $payload['playerName'] : 'Unknown';
-        $questId = array_key_exists('questId', $payload) ? (int) $payload['questId'] : null;
-        $questName = array_key_exists('questName', $payload) ? $payload['questName'] : 'Unknown';
-        $reason = array_key_exists('reason', $payload) ? $payload['reason'] : 'Unknown';
+        /** @var array<string, mixed> */
+        $payload = is_array($data['payload']) ? (array) $data['payload'] : [];
+        $questId = PayloadHelper::getQuestId($payload, $data);
+        $playerName = PayloadHelper::getPlayerName($payload);
+        $questName = PayloadHelper::getQuestName($payload);
+        $reason = PayloadHelper::getReason($payload);
 
         if ($questId === null || $questName === 'Unknown') {
             $this->logger->log("PlayerQuittingHandler: Missing questId, or questName in data['payload'].", $data, 'warning');

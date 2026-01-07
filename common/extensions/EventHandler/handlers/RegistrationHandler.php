@@ -8,6 +8,7 @@ use common\extensions\EventHandler\factories\BroadcastMessageFactory;
 use common\extensions\EventHandler\BroadcastService;
 use common\extensions\EventHandler\LoggerService;
 use common\extensions\EventHandler\QuestSessionManager;
+use common\helpers\PayloadHelper;
 use common\models\QuestPlayer;
 use Ratchet\ConnectionInterface;
 
@@ -77,8 +78,9 @@ class RegistrationHandler implements SpecificMessageHandlerInterface
     public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
         $this->logger->logStart("RegistrationHandler: handle clientId=[{$clientId}], sessionId=[{$sessionId}]", $data);
 
-        $playerId = $data['playerId'] ?? null;
-        $questId = $data['questId'] ?? null;
+        $questId = PayloadHelper::getQuestId($data);
+        $playerId = PayloadHelper::getPlayerId($data);
+
         $registered = $this->questSessionManager->registerSession($sessionId, $playerId, $questId, $clientId, $data);
         $this->logger->log("RegistrationHandler: Session registration via QuestSessionManager. Result: " . ($registered ? 'Success' : 'Failure'));
 

@@ -47,9 +47,10 @@ class LoggerService
             if (is_array($dump) || is_object($dump)) {
                 $output = print_r($dump, true);
             } else {
-                $output = (string) $dump;
+                $output = $dump;
             }
-            fwrite($myfile, "{$output}\n");
+            $log = is_string($output) ? (string) $output : '';
+            fwrite($myfile, "{$log}\n");
         }
 
         fclose($myfile);

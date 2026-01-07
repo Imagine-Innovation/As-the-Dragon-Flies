@@ -2,13 +2,6 @@
 
 namespace common\extensions\EventHandler;
 
-use React\EventLoop\Loop;
-use React\EventLoop\LoopInterface;
-use React\Http\Server as HttpServer;
-use React\Http\Message\Response;
-use React\Socket\SocketServer;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
 use common\extensions\EventHandler\handlers\RegistrationHandler;
 use common\extensions\EventHandler\handlers\SendingMessageHandler;
 use common\extensions\EventHandler\handlers\GameActionHandler;
@@ -19,6 +12,14 @@ use common\extensions\EventHandler\handlers\NextTurnHandler;
 use common\extensions\EventHandler\handlers\NextMissionHandler;
 use common\extensions\EventHandler\handlers\GameOverHandler;
 use common\extensions\EventHandler\factories\BroadcastMessageFactory;
+use common\helpers\PayloadHelper;
+use React\EventLoop\Loop;
+use React\EventLoop\LoopInterface;
+use React\Http\Server as HttpServer;
+use React\Http\Message\Response;
+use React\Socket\SocketServer;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Yii;
 use yii\base\Component;
 
@@ -191,6 +192,8 @@ class EventHandler extends Component
      */
     protected function parseRequestBody(ServerRequestInterface $request): ?array {
         $body = $request->getBody()->getContents();
+
+        /** @var array<string, mixed> */
         $data = json_decode($body, true);
         return json_last_error() === JSON_ERROR_NONE ? $data : null;
     }
@@ -201,9 +204,9 @@ class EventHandler extends Component
      * @return ResponseInterface
      */
     protected function processBroadcastRequest(array $data): ResponseInterface {
-        $questId = $data['questId'] ?? null;
-        $message = $data['message'] ?? null;
-        $excludeSessionId = $data['excludeSessionId'] ?? null;
+        $questId = PayloadHelper::getQuestId($data);
+        $message = PayloadHelper::getMessage($data);
+        $excludeSessionId = PayloadHelper::getExcludeSessionId($data);
 
         if ($questId && $message) {
             $this->broadcastToQuest($questId, $message, $excludeSessionId);
