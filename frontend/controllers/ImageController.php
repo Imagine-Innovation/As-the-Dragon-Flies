@@ -76,12 +76,9 @@ class ImageController extends Controller
      * @return array{error: bool, msg: string, content?: string}
      */
     public function actionAjax(): array {
-        // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a POST request and if it is an AJAX request
         if (!$this->request->isPost || !$this->request->isAjax) {
-            // If not, return an error response
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
@@ -110,12 +107,9 @@ class ImageController extends Controller
      * @return array{error: bool, msg: string, content?: string}
      */
     public function actionAjaxSetClass(): array {
-        // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a POST request and if it is an AJAX request
         if (!$this->request->isPost || !$this->request->isAjax) {
-            // If not, return an error response
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
@@ -138,9 +132,9 @@ class ImageController extends Controller
         }
 
         if ($success) {
-            return ['error' => false, 'msg' => "Class $className has been " . ($status == 1 ? "added" : "removed") . " to the image."];
+            return ['error' => false, 'msg' => "Class $className has been " . (($status === 1) ? "added" : "removed") . " to the image."];
         }
-        return ['error' => true, 'msg' => "Unable to " . ($status == 1 ? "add" : "remove") . " class $className to the image!"];
+        return ['error' => true, 'msg' => "Unable to " . (($status === 1) ? "add" : "remove") . " class $className to the image!"];
     }
 
     /**
@@ -213,12 +207,9 @@ class ImageController extends Controller
      * @return array{error: bool, msg: string, content?: string}
      */
     public function actionAjaxUpload(): array {
-        // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a POST request and if it is an AJAX request
         if (!$this->request->isPost || !$this->request->isAjax) {
-            // If not, return an error response
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 

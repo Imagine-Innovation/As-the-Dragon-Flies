@@ -10,7 +10,7 @@ class ModalDesc extends Widget
     public string $name;
     public string $description;
     public int $maxLength;
-    public string $type;
+    public ?string $type = null;
     public int $id;
 
     public function run() {
@@ -26,7 +26,7 @@ class ModalDesc extends Widget
         }
 
         return $this->render('modal-desc', [
-                    'UUID' => $this->type . $this->id,
+                    'UUID' => ($this->type ?? '') . $this->id,
                     'description' => $this->description,
                     'maxLength' => $this->maxLength,
                     'name' => $this->name,

@@ -77,12 +77,9 @@ class CharacterClassController extends Controller
      * @return array{error: bool, msg: string, content?: string}
      */
     public function actionAjaxWizard() {
-        // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a POST request and if it is an AJAX request
         if (!$this->request->isPost || !$this->request->isAjax) {
-            // If not, return an error response
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 

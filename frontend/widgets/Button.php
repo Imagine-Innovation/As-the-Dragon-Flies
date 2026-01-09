@@ -36,7 +36,7 @@ class Button extends Widget
         if ($this->isPost) {
             return $this->postForm();
         }
-        return $this->mode == 'icon' ? $this->iconButton() : $this->button();
+        return ($this->mode === 'icon') ? $this->iconButton() : $this->button();
     }
 
     /**

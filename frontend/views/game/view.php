@@ -101,7 +101,7 @@ $isCurrentPlayer = ($currentQuestProgress->current_player_id === $playerId);
     <section class="col-12 col-xxl-9 col-3xl-10">
         <div class="row">
             <!-- Game Scene -->
-            <div class="<?= $nbPlayers == 1 ? "col-12" : "col-12 col-xl-7 col-3xl-9" ?>">
+            <div class="<?= ($nbPlayers === 1) ? "col-12" : "col-12 col-xl-7 col-3xl-9" ?>">
                 <div class="card p-3 h-100 d-flex flex-column">
                     <div class="actions">
                         <!-- Button to trigger the offcanvas on smaller screens -->

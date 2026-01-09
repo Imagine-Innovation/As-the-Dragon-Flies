@@ -34,7 +34,7 @@ if ($playerName) {
                             <div class="custom-control custom-radio mb-2">
                                 <input type="radio" class="custom-control-input"
                                        id="player-<?= $model->id ?>" name="player"
-                                       <?= $model->id == $checkedId ? "checked" : "" ?>
+                                       <?= ($model->id === $checkedId) ? "checked" : "" ?>
                                        onclick='PlayerSelector.select(<?= $userId ?>, <?= $model->id ?>);'
                                        />
                                 <label class="custom-control-label" for="player-<?= $model->id ?>"><?= $model->name ?></label>

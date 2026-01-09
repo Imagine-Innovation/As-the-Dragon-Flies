@@ -69,12 +69,9 @@ class PlayerBuilderController extends Controller
      * @return array{error: bool, msg: string, content?: string, ageTable?: mixed}
      */
     public function actionAjaxAge(): array {
-        // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a POST request and if it is an AJAX request
         if (!$this->request->isPost || !$this->request->isAjax) {
-            // If not, return an error response
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
@@ -102,12 +99,9 @@ class PlayerBuilderController extends Controller
      * @return array{error: bool, msg: string, content?: string}
      */
     public function actionAjaxNames(): array {
-        // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a POST request and if it is an AJAX request
         if (!$this->request->isPost || !$this->request->isAjax) {
-            // If not, return an error response
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
@@ -154,12 +148,9 @@ class PlayerBuilderController extends Controller
      * @return array{error: bool, msg: string, content?: string}
      */
     public function actionAjaxImages(): array {
-        // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a POST request and if it is an AJAX request
         if (!$this->request->isPost || !$this->request->isAjax) {
-            // If not, return an error response
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
@@ -183,12 +174,9 @@ class PlayerBuilderController extends Controller
      * @return array{error: bool, msg: string, content?: string}
      */
     public function actionAjaxSkills(): array {
-        // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a POST request and if it is an AJAX request
         if (!$this->request->isPost || !$this->request->isAjax) {
-            // If not, return an error response
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
@@ -214,12 +202,9 @@ class PlayerBuilderController extends Controller
      * @return array{error: bool, msg: string, content?: string}
      */
     public function actionAjaxLanguages(): array {
-        // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a POST request and if it is an AJAX request
         if (!$this->request->isPost || !$this->request->isAjax) {
-            // If not, return an error response
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
@@ -246,12 +231,9 @@ class PlayerBuilderController extends Controller
      * @return array{error: bool, msg: string, content?: string}
      */
     public function actionAjaxUpdateLanguage(): array {
-        // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a POST request and if it is an AJAX request
         if (!$this->request->isPost || !$this->request->isAjax) {
-            // If not, return an error response
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
@@ -318,12 +300,9 @@ class PlayerBuilderController extends Controller
      * @return array{error: bool, msg: string, content?: string}
      */
     public function actionAjaxTraits(): array {
-        // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a POST request and if it is an AJAX request
         if (!$this->request->isPost || !$this->request->isAjax) {
-            // If not, return an error response
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
@@ -345,12 +324,9 @@ class PlayerBuilderController extends Controller
      * @return array{error: bool, msg: string, content?: string}
      */
     public function actionAjaxEndowment(): array {
-        // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a POST request and if it is an AJAX request
         if (!$this->request->isPost || !$this->request->isAjax) {
-            // If not, return an error response
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
@@ -378,12 +354,9 @@ class PlayerBuilderController extends Controller
      * @return array{error: bool, msg: string, content?: mixed}
      */
     public function actionAjaxBackgroundEquipment(): array {
-        // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a POST request and if it is an AJAX request
         if (!$this->request->isPost || !$this->request->isAjax) {
-            // If not, return an error response
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
@@ -402,12 +375,9 @@ class PlayerBuilderController extends Controller
      * @return array{error: bool, msg: string, content?: mixed}
      */
     public function actionAjaxEquipment(): array {
-        // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a POST request and if it is an AJAX request
         if (!$this->request->isPost || !$this->request->isAjax) {
-            // If not, return an error response
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
@@ -507,7 +477,7 @@ class PlayerBuilderController extends Controller
             'quantity' => ($item->quantity ?? 1) * $quantity,
             'is_carrying' => 1,
             'is_proficient' => $isProficient,
-            'is_two_handed' => $item->weapon->is_two_handed ? 1 : 0,
+            'is_two_handed' => $item->weapon?->is_two_handed ? 1 : 0,
             'attack_modifier' => $weaponProperties['attackModifier'],
             'damage' => $weaponProperties['damage'],
         ]);
@@ -532,12 +502,9 @@ class PlayerBuilderController extends Controller
      * @return array{error: bool, msg: string, content?: string}
      */
     public function actionAjaxSaveEquipment(): array {
-        // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a POST request and if it is an AJAX request
         if (!$this->request->isPost || !$this->request->isAjax) {
-            // If not, return an error response
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
@@ -601,12 +568,9 @@ class PlayerBuilderController extends Controller
      * @return array{error: bool, msg: string, content?: string}
      */
     public function actionAjaxItemCategory(): array {
-        // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a POST request and if it is an AJAX request
         if (!$this->request->isPost || !$this->request->isAjax) {
-            // If not, return an error response
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
@@ -624,12 +588,9 @@ class PlayerBuilderController extends Controller
      * @return array{error: bool, msg: string, content?: string}
      */
     public function actionAjaxUpdateSkill(): array {
-        // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a POST request and if it is an AJAX request
         if (!$this->request->isPost || !$this->request->isAjax) {
-            // If not, return an error response
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
@@ -653,10 +614,8 @@ class PlayerBuilderController extends Controller
      * @throws \Exception
      */
     public function actionAjaxSaveAbilities(): array {
-        // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a POST request and if it is an AJAX request
         if (!$this->request->isPost || !$this->request->isAjax) {
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }

@@ -285,9 +285,14 @@ class PlayerBuilder {
     static initWizard(topic) {
         Logger.log(1, 'initWizard', `topic=${topic}`);
         const target = "#hiddenWizard-topic";
-
+console.log ("**************************************");
+console.log ("**************************************");
+console.log ("**************************************");
         if (!DOMUtils.exists(target))
             return;
+console.log ("**************************************");
+console.log ("**************************************");
+console.log ("**************************************");
 
         if (topic) {
             $('#showBuilderWizardModal-button').css('visibility', 'visible');
@@ -324,10 +329,16 @@ class PlayerBuilder {
 
     static _loadWizardModalContent(type, id, url, showNextButton = false) {
         Logger.log(2, `_load${type}`, `id=${id}`);
+console.log ("**************************************");
+console.log ("**************************************");
+console.log ("**************************************");
 
         const target = `#ajaxBuilderWizardQA`;
         if (!DOMUtils.exists(target))
             return;
+console.log ("**************************************");
+console.log ("**************************************");
+console.log ("**************************************");
 
         $('#nextQuestionButton').css('visibility', showNextButton ? 'visible' : 'hidden');
 

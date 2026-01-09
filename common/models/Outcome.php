@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "outcome".
@@ -19,10 +20,10 @@ use Yii;
  * @property string $hp_loss_dice Dice to throw to determine the HP loss when failed
  * @property int $can_replay Can be played again
  *
- * @property Action $action
+ * @property Action|null $action
  * @property Dialog[] $dialogs
- * @property Item $item
- * @property Mission $nextMission
+ * @property Item|null $item
+ * @property Mission|null $nextMission
  */
 class Outcome extends \yii\db\ActiveRecord
 {
@@ -74,9 +75,9 @@ class Outcome extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Action]].
      *
-     * @return \yii\db\ActiveQuery<Action>
+     * @return \yii\db\ActiveQuery<Action>|null
      */
-    public function getAction() {
+    public function getAction(): ?ActiveQuery {
         return $this->hasOne(Action::class, ['id' => 'action_id']);
     }
 
@@ -92,18 +93,18 @@ class Outcome extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Item]].
      *
-     * @return \yii\db\ActiveQuery<Item>
+     * @return \yii\db\ActiveQuery<Item>|null
      */
-    public function getItem() {
+    public function getItem(): ?ActiveQuery {
         return $this->hasOne(Item::class, ['id' => 'item_id']);
     }
 
     /**
      * Gets query for [[NextMission]].
      *
-     * @return \yii\db\ActiveQuery<Mission>
+     * @return \yii\db\ActiveQuery<Mission>|null
      */
-    public function getNextMission() {
+    public function getNextMission(): ?ActiveQuery {
         return $this->hasOne(Mission::class, ['id' => 'next_mission_id']);
     }
 }

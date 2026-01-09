@@ -161,8 +161,8 @@ class TavernManager extends BaseManager
             return $playerStatus;
         }
 
-        $quest = $this->getQuest();
-        $story = $this->getStory();
+        $quest = $this->quest; // quest can be null. Don't call the getter getQuest()
+        $story = $this->story;
 
         // Check if the quest is a valid one
         $questStatus = $this->isQuestValid();
@@ -171,12 +171,12 @@ class TavernManager extends BaseManager
         }
 
         if (!$this->isPlayerLevelValid($player)) {
-            return ['denied' => true, 'reason' => "canPlayerJoinQuest->Player {$player->name}'s level ({$player->level->name}) is not within story requirements ({$story->min_level} to {$story->max_level})"];
+            return ['denied' => true, 'reason' => "canPlayerJoinQuest->Player {$player->name}'s level ({$player->level->name}) is not within story requirements ({$story?->min_level} to {$story?->max_level})"];
         }
 
-        $playerCount = $quest->getCurrentPlayers()->count();
-        if ($playerCount >= $story->max_players) {
-            return ['denied' => true, 'reason' => "canPlayerJoinQuest->Quest has reached maximum players ({$story->max_players})"];
+        $playerCount = $quest?->getCurrentPlayers()->count();
+        if ($playerCount >= $story?->max_players) {
+            return ['denied' => true, 'reason' => "canPlayerJoinQuest->Quest has reached maximum players ({$story?->max_players})"];
         }
 
         if (!$this->isPlayerClassValid($player)) {

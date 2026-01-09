@@ -51,7 +51,7 @@ class NarrativeComponent extends Component
         $text = '';
         $i = 0;
         foreach ($descriptions as $description) {
-            $tag = $i++ == 0 ? "h3" : "p";
+            $tag = ($i++ === 0) ? "h3" : "p";
             $text .= "<{$tag} class=\"card-text\">{$description}</{$tag}>";
         }
         return $text;

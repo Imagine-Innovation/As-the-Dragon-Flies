@@ -231,12 +231,9 @@ class GameController extends Controller
      * @return array{error: bool, msg: string, content?: string}
      */
     public function actionAjaxDialog(int $replyId, int $playerId, int $storyId): array {
-        // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a POST request and if it is an AJAX request
         if (!$this->request->isGet || !$this->request->isAjax) {
-            // If not, return an error response
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
         }
 
@@ -284,12 +281,9 @@ class GameController extends Controller
      * @return array{error: bool, msg: string, content?: string} Json encoded associative array with error status, internal message, and content to display
      */
     public function actionAjaxEvaluate(): array {
-        // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a POST request and if it is an AJAX request
         if (!$this->request->isPost || !$this->request->isAjax) {
-            // If not, return an error response
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
@@ -305,12 +299,9 @@ class GameController extends Controller
      * @return array{error: bool, msg: string, content?: string} Json encoded associative array with error status, internal message, and content to display
      */
     public function actionAjaxNextTurn(): array {
-        // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a POST request and if it is an AJAX request
         if (!$this->request->isPost || !$this->request->isAjax) {
-            // If not, return an error response
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 

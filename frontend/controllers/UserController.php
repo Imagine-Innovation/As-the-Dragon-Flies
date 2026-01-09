@@ -96,12 +96,9 @@ class UserController extends Controller
      * @return array{error: bool, msg: string, content?: string}
      */
     public function actionAjax(): array {
-        // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a POST request and if it is an AJAX request
         if (!$this->request->isPost || !$this->request->isAjax) {
-            // If not, return an error response
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
@@ -122,12 +119,9 @@ class UserController extends Controller
      * @return array{error: bool, msg: string, content?: string}
      */
     public function actionAjaxSetRole(): array {
-        // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a POST request and if it is an AJAX request
         if (!$this->request->isPost || !$this->request->isAjax) {
-            // If not, return an error response
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
@@ -144,9 +138,9 @@ class UserController extends Controller
         $model->$property = $status;
 
         if ($model->save()) {
-            return ['error' => false, 'msg' => "Role $role has been " . ($status == 1 ? "granted" : "revoked") . " to user $model->username"];
+            return ['error' => false, 'msg' => "Role $role has been " . (($status === 1) ? "granted" : "revoked") . " to user $model->username"];
         }
-        return ['error' => true, 'msg' => "Unable to " . ($status == 1 ? "grant" : "revoke") . " role $role to user $model->username"];
+        return ['error' => true, 'msg' => "Unable to " . (($status === 1) ? "grant" : "revoke") . " role $role to user $model->username"];
     }
 
     /**

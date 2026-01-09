@@ -438,7 +438,7 @@ class QuestController extends Controller
     public function actionResume(?int $id = null): Response {
         $quest = $this->findModel($id);
 
-        if ($quest->status == AppStatus::PLAYING->value) {
+        if ($quest->status === AppStatus::PLAYING->value) {
             return $this->redirect(['game/view', 'id' => $quest->id]);
         }
 

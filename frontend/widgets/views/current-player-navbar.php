@@ -44,7 +44,7 @@ foreach ($players as $player) {
                         <div class="custom-control custom-radio mb-2">
                             <input type="radio" class="custom-control-input"
                                    id="playerNav-<?= $player['id'] ?>" name="playerNav"
-                                   <?= $player['id'] == $selectedPlayerId ? "checked" : "" ?>
+                                   <?= ($player['id'] === $selectedPlayerId) ? "checked" : "" ?>
                                    onclick="PlayerSelector.select(<?= $userId ?>, <?= $player['id'] ?>);">
                             <label class="custom-control-label" for="playerNav-<?= $player['id'] ?>">
                                 <span data-bs-toggle="tooltip" title="<?= ucfirst($player['tooltip']) ?>" data-placement="bottom">

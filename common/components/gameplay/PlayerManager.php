@@ -141,7 +141,7 @@ class PlayerManager extends BaseManager
         }
 
         $this->stats['gainedGp'] += $outcome->gained_gp ?? 0;
-        if ($outcome->item->isNewRecord) {
+        if ($outcome->item === null) {
             return;
         }
         $this->stats['gainedItems'][] = $outcome->item;

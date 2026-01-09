@@ -137,7 +137,7 @@ class AjaxRequest
         $pageNo = $request->post('page', 0);
         $query = $this->buildQuery();
         $count = $query->count();
-        $pageCount = $count == 0 ? 1 : ceil($count / $limit);
+        $pageCount = ($count === 0) ? 1 : ceil($count / $limit);
         $page = max(0, min($pageNo, $pageCount));
         $render = $this->render ?? 'index';
         $this->response = [

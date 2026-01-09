@@ -122,7 +122,7 @@ abstract class Event extends BaseObject
         // Create notification_player entries for all players in quest
         $players = $this->quest->currentPlayers;
         foreach ($players as $player) {
-            if ($player->id != $this->player->id) {
+            if ($player->id !== $this->player->id) {
                 Yii::debug("*** Debug *** Event - savePlayerNotification - notificationId={$notificationId}, player->id={$player->id}");
                 $notificationPlayer = new NotificationPlayer([
                     'notification_id' => $notificationId,

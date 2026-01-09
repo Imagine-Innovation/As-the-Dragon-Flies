@@ -350,7 +350,7 @@ class Item extends \yii\db\ActiveRecord
         $weight = 0;
 
         // Check if the item type is a "Pack".
-        if ($this->itemType->name == "Pack") {
+        if ($this->itemType->name === "Pack") {
             // Retrieve the pack items associated with the pack.
             $packItems = $this->packItems;
 

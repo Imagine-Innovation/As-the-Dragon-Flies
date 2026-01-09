@@ -131,7 +131,7 @@ class QuestSessionManager
      * @return bool
      */
     private function updatedSessionPlayerId(QuestSession &$session, ?int $playerId): bool {
-        if ($playerId !== null && $session->player_id != $playerId) {
+        if ($playerId !== null && $session->player_id !== $playerId) {
             $this->logger->log("QuestSessionManager: Updating playerId from [{$session->player_id}] to [{$playerId}] for session [{$session->id}]");
             $session->player_id = $playerId;
             $session->last_ts = 0; // Reset timestamp on player change
@@ -147,7 +147,7 @@ class QuestSessionManager
      * @return bool
      */
     private function updatedSessionQuestId(QuestSession &$session, ?int $questId): bool {
-        if ($questId !== null && $session->quest_id != $questId) {
+        if ($questId !== null && $session->quest_id !== $questId) {
             $this->logger->log("QuestSessionManager: Updating questId from [{$session->quest_id}] to [{$questId}] for session [{$session->id}]");
             $session->quest_id = $questId;
             $session->last_ts = 0; // Reset timestamp on quest change
@@ -163,7 +163,7 @@ class QuestSessionManager
      * @return bool
      */
     private function updatedSessionClientId(QuestSession &$session, ?string $clientId): bool {
-        if ($clientId !== null && $session->client_id != $clientId) {
+        if ($clientId !== null && $session->client_id !== $clientId) {
             $this->logger->log("QuestSessionManager: Updating clientId from [{$session->client_id}] to [{$clientId}] for session [{$session->id}]");
             $session->client_id = $clientId;
             return true;

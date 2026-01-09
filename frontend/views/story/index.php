@@ -31,9 +31,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
             <?php endif; ?>
             <?php if ($stories): ?>
-                <div class="row g-4">
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
                     <?php foreach ($stories as $story): ?>
-                        <div class="col-12 col-md-6 col-lg-4">
+                        <div class="col">
                             <?=
                             $this->renderFile('@app/views/story/snippets/card.php', [
                                 'user' => $user,

@@ -373,7 +373,7 @@ class BuilderComponent
             $playerCoin = new PlayerCoin([
                 'player_id' => $player->id,
                 'coin' => $coin,
-                'quantity' => ($coin == 'gp') ? self::getFundingFromBackground($player) : 0
+                'quantity' => ($coin === 'gp') ? self::getFundingFromBackground($player) : 0
             ]);
 
             // Save the player coin and track success status

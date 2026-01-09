@@ -56,7 +56,7 @@ $abilityValues = [15, 14, 13, 12, 10, 8];
                                     <div class="custom-control custom-radio">
                                         <input type="radio" id="abilityRadio-<?= $id ?>-<?= $val ?>" name="ability-<?= $id ?>"
                                                value="<?= $val ?>" class="custom-control-input score<?= $val ?>"
-                                               <?= $score == $val ? "checked" : "" ?>
+                                               <?= ($score === $val) ? "checked" : "" ?>
                                                onclick='PlayerBuilder.checkAbility(<?= $id ?>, <?= $val ?>);'>
                                         <label class="custom-control-label" for="abilityRadio-<?= $id ?>-<?= $val ?>"></label>
                                     </div>

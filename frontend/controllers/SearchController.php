@@ -115,12 +115,9 @@ class SearchController extends Controller
      * @return array{error: bool, msg: string, results?: mixed}
      */
     private function searchInDecor(string $modelName, ?string $userEntry, ?int $missionId = 0): array {
-        // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a GET request and if it is an AJAX request
         if (!$this->request->isGet || !$this->request->isAjax) {
-            // If not, return an error response
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
         }
 
@@ -150,12 +147,9 @@ class SearchController extends Controller
      * @return array{error: bool, msg: string, results?: mixed}
      */
     private function genericSearch(string $modelName, ?string $userEntry, ?array $filter = null): array {
-        // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a GET request and if it is an AJAX request
         if (!$this->request->isGet || !$this->request->isAjax) {
-            // If not, return an error response
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
         }
 
@@ -184,12 +178,9 @@ class SearchController extends Controller
      * @return array{error: bool, msg: string, results?: mixed}
      */
     private function searchInTextColumn(string $modelName, string $search): array {
-        // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a GET request and if it is an AJAX request
         if (!$this->request->isGet || !$this->request->isAjax) {
-            // If not, return an error response
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
         }
 
@@ -248,12 +239,9 @@ class SearchController extends Controller
      * @return array{error: bool, msg: string, results?: mixed}
      */
     public function actionValues(): array {
-        // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a GET request and if it is an AJAX request
         if (!$this->request->isGet || !$this->request->isAjax) {
-            // If not, return an error response
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
         }
 

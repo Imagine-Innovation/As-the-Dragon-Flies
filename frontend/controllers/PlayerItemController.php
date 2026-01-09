@@ -140,12 +140,9 @@ class PlayerItemController extends Controller
      * @return array<string, mixed>
      */
     public function actionAjaxEquipment(): array {
-        // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a GET request and if it is an AJAX request
         if (!$this->request->isGet || !$this->request->isAjax) {
-            // If not, return an error response
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
         }
 
@@ -184,7 +181,7 @@ class PlayerItemController extends Controller
 
         foreach (PlayerItem::BODY_ZONE as $property => $zone) {
             $playerItem = $playerBody->$property;
-            if (!$playerItem->isNewRecord) {
+            if ($playerItem !== null) {
                 $data[$zone] = [
                     'itemId' => $playerItem->item_id,
                     'itemName' => $playerItem->item_name,
@@ -468,12 +465,9 @@ class PlayerItemController extends Controller
      * @return array<string, mixed>
      */
     public function actionAjaxEquipPlayer(): array {
-        // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a POST request and if it is an AJAX request
         if (!$this->request->isPost || !$this->request->isAjax) {
-            // If not, return an error response
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
@@ -539,7 +533,7 @@ class PlayerItemController extends Controller
         Yii::debug("*** debug *** disarmPreviousItem - bodyZone={$bodyZone}, property={$property}");
         $playerItem = $playerBody->$property;
 
-        if ($playerItem->isNewRecord) {
+        if ($playerItem === null) {
             return;
         }
 
@@ -565,7 +559,7 @@ class PlayerItemController extends Controller
         Yii::debug("*** debug *** disarmPlayer - bodyZone={$bodyZone}, property={$property}");
         $playerItem = $playerBody->$property;
 
-        if ($playerItem->isNewRecord) {
+        if ($playerItem === null) {
             return [
                 'error' => true,
                 'msg' => "Body zone {$bodyZone} has no attached item"
@@ -583,12 +577,9 @@ class PlayerItemController extends Controller
      * @return array<string, mixed>
      */
     public function actionAjaxDisarmPlayer(): array {
-        // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a POST request and if it is an AJAX request
         if (!$this->request->isPost || !$this->request->isAjax) {
-            // If not, return an error response
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
@@ -648,7 +639,7 @@ class PlayerItemController extends Controller
             return ['error' => true, 'msg' => 'You cannot pack anything. Buy a container before you pack.'];
         }
 
-        if ($status == 1) {
+        if ($status === 1) {
             return $inventory->addToPack($item, $container);
         } else {
             return $inventory->removeFromPack($item, $container);
@@ -706,7 +697,7 @@ class PlayerItemController extends Controller
 
         $playerBody = $player->playerBody;
 
-        if ($playerBody->isNewRecord) {
+        if ($playerBody === null) {
             $playerBody = new PlayerBody(['player_id' => $player->id]);
             if (!$playerBody->save()) {
                 throw new \Exception(implode("<br />", ArrayHelper::getColumn($playerBody->errors, 0, false)));

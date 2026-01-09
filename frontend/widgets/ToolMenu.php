@@ -19,7 +19,7 @@ class ToolMenu extends Widget
      */
     public function run(): string {
         if ($this->isAdmin) {
-            $render = $this->mode == 'nav' ? 'tool-menu-nav' : 'tool-menu-admin';
+            $render = ($this->mode === 'nav') ? 'tool-menu-nav' : 'tool-menu-admin';
         } elseif ($this->mode === 'nav') {
             return '';
         } else {

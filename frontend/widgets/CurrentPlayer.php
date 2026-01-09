@@ -32,7 +32,7 @@ class CurrentPlayer extends Widget
                         'userId' => $currentUser->id,
             ]);
         } else {
-            $html = $displayMode == 'navbar' ? '' : $this->render('current-player-empty');
+            $html = ($displayMode === 'navbar') ? '' : $this->render('current-player-empty');
             return $html;
         }
     }

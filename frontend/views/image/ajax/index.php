@@ -19,7 +19,7 @@ foreach ($models as $model) {
     foreach ($classes as $class) {
         $checked[$model->id][$class->id] = false;
         foreach ($model->classImages as $classImage) {
-            if ($classImage->class_id == $class->id) {
+            if ($classImage->class_id === $class->id) {
                 $checked[$model->id][$class->id] = true;
                 break;
             }

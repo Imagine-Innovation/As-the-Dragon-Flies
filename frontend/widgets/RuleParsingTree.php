@@ -34,35 +34,58 @@ class RuleParsingTree extends Widget
     private function digParsingTree(RuleExpression $expression): string {
         $tree = [];
         if ($expression->op) {
-            if ($expression->ruleConditions) {
-                foreach ($expression->ruleConditions as $cond) {
-                    $tree[] = $this->renderCondition($cond);
-                }
-            }
-            if ($expression->ruleExpressions) {
-                foreach ($expression->ruleExpressions as $expr) {
-                    $tree[] = '<li>(' . $this->digParsingTree($expr) . ')</li>';
-                }
-            }
-            if ($expression->op === 'not') {
-                $ul = '<ul style="list-style-type: none;">' . implode('', $tree) . '</ul>';
-                $html = '<ul style="list-style-type: none;"><li>not</li>' . $ul . '</ul>';
-            } else {
-                $separator = '<li>' . $expression->op . '</li>';
-                $html = '<ul style="list-style-type: none;">' . implode($separator, $tree) . '</ul>';
-            }
-        } else {
-            if ($expression->ruleExpressions) {
-                foreach ($expression->ruleExpressions as $expr) {
-                    $tree[] = '<li>(' . $this->digParsingTree($expr) . ')</li>';
-                }
-                $html = '<ul style="list-style-type: none;">' . implode('', $tree) . '</ul>';
-            } else {
-                $cond = $expression->ruleConditions[0];
-                $html = $this->renderCondition($cond);
+            return $this->digOpParsingTree($expression);
+        }
+        return $this->digNonOpParsingTree($expression);
+    }
+
+    /**
+     *
+     * @param RuleExpression $expression
+     * @return string
+     */
+    private function digOpParsingTree(RuleExpression &$expression): string {
+        $tree = [];
+        if ($expression->ruleConditions) {
+            foreach ($expression->ruleConditions as $cond) {
+                $tree[] = $this->renderCondition($cond);
             }
         }
-        return $html;
+        if ($expression->ruleExpressions) {
+            foreach ($expression->ruleExpressions as $expr) {
+                $tree[] = '<li>(' . $this->digParsingTree($expr) . ')</li>';
+            }
+        }
+        if ($expression->op === 'not') {
+            $ul = '<ul style="list-style-type: none;">' . implode('', $tree) . '</ul>';
+            return '<ul style="list-style-type: none;"><li>not</li>' . $ul . '</ul>';
+        } else {
+            $separator = '<li>' . $expression->op . '</li>';
+            return '<ul style="list-style-type: none;">' . implode($separator, $tree) . '</ul>';
+        }
+    }
+
+    /**
+     *
+     * @param RuleExpression $expression
+     * @return string
+     */
+    private function digNonOpParsingTree(RuleExpression &$expression): string {
+        if ($expression->ruleExpressions) {
+            $tree = [];
+            foreach ($expression->ruleExpressions as $expr) {
+                $tree[] = '<li>(' . $this->digParsingTree($expr) . ')</li>';
+            }
+            return '<ul style="list-style-type: none;">' . implode('', $tree) . '</ul>';
+        }
+
+        if ($expression->ruleConditions) {
+            Yii::debug($expression->ruleConditions);
+            $cond = $expression->ruleConditions[0];
+            return $this->renderCondition($cond);
+        }
+
+        return '<>';
     }
 
     /**

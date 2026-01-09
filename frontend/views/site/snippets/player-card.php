@@ -17,7 +17,7 @@ $route = $current ? 'player/update' : 'player/set-current';
             <div class="image-card-body" style="background-image: url('img/character/<?= $player->image?->file_name ?>');">
                 <div class="image-card-label">
                     <h5><?= $player->name ?></h5>
-                    <p class="small mb-1"><?= $player->age ?>-year-old <?= $player->gender == 'M' ? 'male' : 'female' ?> <?= $player->race->name ?></p>
+                    <p class="small mb-1"><?= $player->age ?>-year-old <?= ($player->gender === 'M') ? 'male' : 'female' ?> <?= $player->race->name ?></p>
                     <p class="small mb-0"><?= $player->level->name ?> <?= $player->alignment?->name ?> <?= $player->class->name ?></p>
                     <p></p>
                     <?=

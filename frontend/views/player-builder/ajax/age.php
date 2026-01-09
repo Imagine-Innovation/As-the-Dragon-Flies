@@ -20,10 +20,10 @@ $currentLabel = current(array_filter(
                 ))['lib'] ?? 'fine';
 ?>
 <h4 class="card-title text-decoration">Age</h4>
-<div id="useSliderAgeLabel" style="visibility: <?= $currentAge == 0 ? "visible" : "hidden" ?>">
+<div id="useSliderAgeLabel" style="visibility: <?= ($currentAge === 0) ? "visible" : "hidden" ?>">
     <h6 class="card-subtitle">Simply move the slider below to select your player's age.</h6>
 </div>
-<div id="displayAgeLabel" style="visibility: <?= $currentAge == 0 ? "hidden" : "visible" ?>">
+<div id="displayAgeLabel" style="visibility: <?= ($currentAge === 0) ? "hidden" : "visible" ?>">
     <h6 class="card-subtitle">Your player is <span id="playerAgeNum"><?= $currentAge ?></span>. He is <span id="playerAgeLabel"><?= $currentLabel ?></span></h6>
 </div>
 <br>

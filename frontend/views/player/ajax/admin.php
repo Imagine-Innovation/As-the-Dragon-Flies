@@ -60,7 +60,7 @@ if (Yii::$app->user->identity->is_player) {
                 </thead>
                 <tbody>
                     <?php foreach ($models as $model): ?>
-                        <?php $isOwner = ($model->user->id == $currentUserId); ?>
+                        <?php $isOwner = ($model->user->id === $currentUserId); ?>
                         <tr>
                             <th scope="row">
                                 <img src="img/character/<?= $model->avatar ?>" class="image-thumbnail">

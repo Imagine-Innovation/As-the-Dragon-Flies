@@ -85,12 +85,9 @@ class AccessRightController extends Controller
      * @return array{error: bool, msg: string, content?: string}
      */
     public function actionAjax(): array {
-        // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a POST request and if it is an AJAX request
         if (!$this->request->isPost || !$this->request->isAjax) {
-            // If not, return an error response
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
@@ -110,12 +107,9 @@ class AccessRightController extends Controller
      * @return array{error: bool, msg: string, content?: string}
      */
     public function actionAjaxSetAccessRight(): array {
-        // Set the response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if the request is a POST request and if it is an AJAX request
         if (!$this->request->isPost || !$this->request->isAjax) {
-            // If not, return an error response
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
@@ -135,9 +129,9 @@ class AccessRightController extends Controller
         $model->$access = $status;
 
         if ($model->save()) {
-            return ['error' => false, 'msg' => "Access right {$access} has been " . ($status == 1 ? "granted" : "revoked") . " to route {$model->route}"];
+            return ['error' => false, 'msg' => "Access right {$access} has been " . (($status === 1) ? "granted" : "revoked") . " to route {$model->route}"];
         }
-        return ['error' => true, 'msg' => "Unable to " . ($status == 1 ? "grant" : "revoke") . " Access right {$access} to route {$model->route}"];
+        return ['error' => true, 'msg' => "Unable to " . (($status === 1) ? "grant" : "revoke") . " Access right {$access} to route {$model->route}"];
     }
 
     /**

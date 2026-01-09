@@ -46,7 +46,7 @@ class ItemHelper
         foreach ($propertiesConst as $property => $displayName) {
             if ($weapon->$property) {
                 if (str_contains($displayName, '%s')) {
-                    $value = ($property == 'is_versatile') ?
+                    $value = ($property === 'is_versatile') ?
                             $weapon->versatile_dice :
                             "{$weapon->range_min}-{$weapon->range_max}";
                     $properties[] = sprintf($displayName, $value);
