@@ -56,6 +56,7 @@ class NextMissionEvent extends Event
      * @return string
      */
     public function getMessage(): string {
+        /** @var array{currentPlayerName: string, currentMissionName: string, nextPlayerName: string, nextMissionName: string} */
         $detail = $this->detail;
 
         return "{$detail['currentPlayerName']} has completed mission “{$detail['currentMissionName']}”.\n"

@@ -56,6 +56,7 @@ class NextTurnEvent extends Event
      * @return string
      */
     public function getMessage(): string {
+        /** @var array{currentPlayerName: string, nextPlayerName: string} */
         $detail = $this->detail;
 
         return "{$detail['currentPlayerName']} has finished his turn. Now it's {$detail['nextPlayerName']}'s turn to play.";

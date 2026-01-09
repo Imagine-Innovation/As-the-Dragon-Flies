@@ -6,8 +6,10 @@ use common\extensions\EventHandler\contracts\MessageHandlerInterface; // Updated
 use common\extensions\EventHandler\contracts\SpecificMessageHandlerInterface; // Updated
 use common\models\QuestPlayer;
 use common\models\QuestSession;
-use Ratchet\ConnectionInterface;
 use common\components\AppStatus;
+use common\helpers\JsonHelper;
+use common\helpers\PayloadHelper;
+use Ratchet\ConnectionInterface;
 
 class MessageHandlerOrchestrator implements MessageHandlerInterface
 {
@@ -48,7 +50,7 @@ class MessageHandlerOrchestrator implements MessageHandlerInterface
     public function handle(ConnectionInterface $conn, string $clientId, string $message): void {
         $this->logger->logStart("Orchestrator: handle message from clientId=[{$clientId}]", $message);
         try {
-            $data = json_decode($message, true);
+            $data = JsonHelper::decode($message);
 
             if (json_last_error() === JSON_ERROR_NONE) {
                 $this->logger->log("Orchestrator: Message is JSON. Processing...", $data);
@@ -183,7 +185,7 @@ class MessageHandlerOrchestrator implements MessageHandlerInterface
     private function handleJsonMessage(ConnectionInterface $conn, string $clientId, array $data): void {
         $this->logger->logStart("Orchestrator: handleJsonMessage for clientId=[{$clientId}]");
 
-        $sessionId = $data['sessionId'] ?? null; // Used by some original handlers, kept for context
+        $sessionId = PayloadHelper::extractStringFromPayload('$sessionId', $data);
         if (!$sessionId) {
             $this->logger->log("Orchestrator: Missing SessionId in JSON message from clientId=[{$clientId}]", $data, 'warning');
             $this->broadcastService->sendBack($conn, 'error', 'Missing SessionId in source message');
@@ -191,11 +193,10 @@ class MessageHandlerOrchestrator implements MessageHandlerInterface
             return;
         }
 
-        $type = $data['type'] ?? null;
+        $type = PayloadHelper::extractStringFromPayload('type', $data, '');
 
-        if ($type || isset($data['playerId'])) {
-            $handlerKey = $type ?? 'register';
-            $this->handleTypedMessage($handlerKey, $conn, $clientId, $sessionId, $data);
+        if ($type !== '' || isset($data['playerId'])) {
+            $this->handleTypedMessage($type, $conn, $clientId, $sessionId, $data);
         } else {
             // No type and no playerId (already handled by registration logic) -> generic JSON
             $this->logger->log("Orchestrator: Message has no 'type' or specific registration trigger. Calling handleGenericJsonMessage for clientId={$clientId}");

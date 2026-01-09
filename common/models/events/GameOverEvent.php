@@ -55,6 +55,7 @@ class GameOverEvent extends Event
      * @return string
      */
     public function getMessage(): string {
+        /** @var array{playerName: string, questName: string, status: string} */
         $detail = $this->detail;
 
         return "{$detail['playerName']} has ended quest “{$detail['questName']}” with status {$detail['status']}.";

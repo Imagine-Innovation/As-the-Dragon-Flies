@@ -7,6 +7,8 @@ use common\extensions\EventHandler\dtos\NewMessageDto;
 use common\extensions\EventHandler\factories\BroadcastMessageFactory;
 use common\extensions\EventHandler\LoggerService;
 use common\models\Notification;
+use common\helpers\JsonHelper;
+use common\helpers\PayloadHelper;
 
 class NotificationService
 {
@@ -43,30 +45,32 @@ class NotificationService
         $this->logger->logStart("NotificationService: broadcast questId=[{$questId}], excludeSessionId=[{$excludeSessionId}], userId=[{$userId}]");
 
         // Assuming $userId is equivalent to player_id for the notification
-        $playerId = $userId ?? ($data['playerId'] ?? null);
+        $playerId = $userId ?? PayloadHelper::extractIntFromPayload('playerId', $data);
         if (!$playerId) {
             $this->logger->log("NotificationService: Player ID not provided for notification.", $data, 'error');
             $this->logger->logEnd("NotificationService: broadcast");
             return;
         }
 
-        $payload = $data['payload'];
-        if ($data['type'] === 'new-message') {
-            $message = $data['message'] ?? ($payload['message'] ?? 'I had something to say, but I completely forgot!');
-            $sender = $data['sender_name'] ?? ($payload['playerName'] ?? 'Unknown Sender');
+        $payload = PayloadHelper::extractPayloadFromData($data);
+        $type = PayloadHelper::extractStringFromPayload('type', $data);
+        if ($type === 'new-message') {
+            $message = PayloadHelper::extractStringFromPayload('message', $payload, 'I had something to say, but I completely forgot!');
+            $sender = PayloadHelper::extractStringFromPayload('sender', $payload);
+
             $this->logger->log("NotificationService: broadcast - createNewMessage({$message}, {$sender})");
             $messageDto = $this->messageFactory->createNewMessage($message, $sender);
         } else {
-            $this->logger->log("NotificationService: create messageDto -> Notification type={$data['type']}");
-            $payload['sessionId'] = $data['sessionId']; // ensure sessionId is in the payload
-            $messageDto = $this->messageFactory->createMessage($data['type'], $payload);
+            $this->logger->log("NotificationService: create messageDto -> Notification type={$type}");
+            $payload['sessionId'] = PayloadHelper::extractStringFromPayload('sessionId', $data); // ensure sessionId is in the payload
+            $messageDto = $this->messageFactory->createMessage($type, $payload);
         }
         if (!$messageDto) {
             $this->logger->log("NotificationService: No message to broadcast.", $data, 'error');
             $this->logger->logEnd("NotificationService: broadcast");
             return;
         }
-        $this->logger->log("NotificationService: Message DTO [{$data['type']}] broadcasted for questId=[{$questId}]");
+        $this->logger->log("NotificationService: Message DTO [{$type}] broadcasted for questId=[{$questId}]");
         $this->broadcastService->broadcastToQuest($questId, $messageDto, $excludeSessionId);
 
         $this->logger->logEnd("NotificationService: broadcast");
@@ -116,10 +120,12 @@ class NotificationService
     public function prepareNewMessageDto(Notification $notification, string $sessionId): NewMessageDto {
         $this->logger->log("NotificationService: Preparing NewMessageDto for Notification ID: {$notification->id}, Session ID: {$sessionId}");
 
-        $payload = json_decode((string) $notification->payload, true);
+        $payload = JsonHelper::decode($notification->payload);
         $senderDisplayName = $notification->initiator->name;
+        $message = PayloadHelper::extractStringFromPayload('message', $payload);
         // Message content can come from notification's message field or a specific field in payload
-        $messageContent = $payload['message'] ?? $notification->message;
+
+        $messageContent = empty($message) ? $notification->message : $message;
 
         return $this->messageFactory->createNewMessage($messageContent, $senderDisplayName ?? 'Unknown');
     }

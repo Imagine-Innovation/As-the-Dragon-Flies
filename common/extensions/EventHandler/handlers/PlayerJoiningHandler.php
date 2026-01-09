@@ -44,11 +44,10 @@ class PlayerJoiningHandler implements SpecificMessageHandlerInterface
     public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
         $this->logger->logStart("PlayerJoiningHandler: handle for session {$sessionId}, client {$clientId}", $data);
 
-        /** @var array<string, mixed> */
-        $payload = is_array($data['payload']) ? (array) $data['payload'] : [];
-        $questId = PayloadHelper::getQuestId($payload, $data);
-        $playerName = PayloadHelper::getPlayerName($payload);
-        $questName = PayloadHelper::getQuestName($payload);
+        $payload = PayloadHelper::extractPayloadFromData($data);
+        $questId = PayloadHelper::extractIntFromPayload('questId', $payload, $data);
+        $playerName = PayloadHelper::extractStringFromPayload('playerName', $payload);
+        $questName = PayloadHelper::extractStringFromPayload('questName', $payload);
 
         if ($questId === null || $questName === 'Unknown') {
             $this->logger->log("PlayerJoiningHandler: Missing questId, or questName in data['payload'].", $data, 'warning');

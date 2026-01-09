@@ -12,6 +12,7 @@ use common\extensions\EventHandler\handlers\NextTurnHandler;
 use common\extensions\EventHandler\handlers\NextMissionHandler;
 use common\extensions\EventHandler\handlers\GameOverHandler;
 use common\extensions\EventHandler\factories\BroadcastMessageFactory;
+use common\helpers\JsonHelper;
 use common\helpers\PayloadHelper;
 use React\EventLoop\Loop;
 use React\EventLoop\LoopInterface;
@@ -193,8 +194,8 @@ class EventHandler extends Component
     protected function parseRequestBody(ServerRequestInterface $request): ?array {
         $body = $request->getBody()->getContents();
 
-        /** @var array<string, mixed> */
-        $data = json_decode($body, true);
+        $data = JsonHelper::decode($body);
+
         return json_last_error() === JSON_ERROR_NONE ? $data : null;
     }
 
@@ -204,9 +205,9 @@ class EventHandler extends Component
      * @return ResponseInterface
      */
     protected function processBroadcastRequest(array $data): ResponseInterface {
-        $questId = PayloadHelper::getQuestId($data);
-        $message = PayloadHelper::getMessage($data);
-        $excludeSessionId = PayloadHelper::getExcludeSessionId($data);
+        $questId = PayloadHelper::extractIntFromPayload('questId', $data);
+        $message = PayloadHelper::extractArrayFromPayload('message', $data);
+        $excludeSessionId = PayloadHelper::extractStringFromPayload('excludeSessionId', $data);
 
         if ($questId && $message) {
             $this->broadcastToQuest($questId, $message, $excludeSessionId);

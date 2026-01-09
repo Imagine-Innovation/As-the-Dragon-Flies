@@ -3,6 +3,7 @@
 namespace common\models;
 
 use common\components\AppStatus;
+use common\components\RuleNode;
 use common\components\RuleParser;
 use common\components\RuleValidator;
 use common\models\RuleCondition;
@@ -30,8 +31,7 @@ use Yii;
 class Rule extends \yii\db\ActiveRecord
 {
 
-    /** @var array<string, mixed> $parsingTree */
-    private array $parsingTree = [];
+    private ?RuleNode $parsingTree = null;
     public string $errorMessage;
 
     /**
@@ -184,51 +184,28 @@ class Rule extends \yii\db\ActiveRecord
      * It handles different types of expressions such as condition, boolean
      * expression, regular expression, and negate.
      *
-     * @param array<string, mixed> $expression The parsing tree expression to save.
-     * @param int $ruleId The ID of the rule associated with the parsing tree.
+     * @param RuleNode|null $expression The parsing tree expression to save.
+     * @param int|null $ruleId The ID of the rule associated with the parsing tree.
      * @param int|null $parentId The ID of the parent node in the parsing tree (optional).
      * @return bool Whether the save operation is successful (true) or not.
      */
-    private function saveParsingTree(array $expression, int $ruleId, ?int $parentId = null): bool {
-        // Initialize the save status to false
-        $saveStatus = false;
+    private function saveParsingTree(?RuleNode $expression = null, ?int $ruleId = null, ?int $parentId = null): bool {
 
-        // Check the type of expression in the parsing tree
-        switch ($expression['type']) {
-            // If the expression type is condition, save the rule condition
-            case 'condition':
-                // If parent ID is not provided, create a new root rule expression
-                $parentId = $parentId ?? $this->newRuleExpression($ruleId, null);
-                // Save the rule condition and update the save status
-                $saveStatus = $this->saveRuleCondition($expression['node'], $ruleId, $parentId);
-                break;
-
-            // If the expression type is boolean expression, save the rule boolean expression
-            case 'booleanExpression':
-                // Save the rule boolean expression and update the save status
-                $saveStatus = $this->saveRuleBoolExpression($expression, $ruleId, $parentId);
-                break;
-
-            // If the expression type is regular expression, save the rule expression
-            case 'expression':
-                // Save the rule expression and update the save status
-                $saveStatus = $this->saveRuleExpression($expression, $ruleId, $parentId);
-                break;
-
-            // If the expression type is negate, save the negate expression
-            case 'negate':
-                // Save the negate expression and update the save status
-                $saveStatus = $this->saveNegativeExpression($expression['node'], $ruleId, $parentId);
-                break;
-
-            // If the expression type is not recognized, do nothing (saveStatus remains false)
-            default:
-                // Optionally log or handle unknown expression types here
-                break;
+        if ($expression === null || $ruleId === null) {
+            return false;
         }
 
-        // Return the result of the save operation
-        return $saveStatus;
+        if ($expression->type === 'condition') {
+            $parentId = $parentId ?? $this->newRuleExpression($ruleId, null);
+        }
+
+        return match ($expression->type) {
+            'condition' => $this->saveRuleCondition($expression->node, $ruleId, $parentId),
+            'booleanExpression' => $this->saveRuleBoolExpression($expression, $ruleId, $parentId),
+            'expression' => $this->saveRuleExpression($expression, $ruleId, $parentId),
+            'negate' => $this->saveNegativeExpression($expression->node, $ruleId, $parentId),
+            default => false
+        };
     }
 
     /**
@@ -238,23 +215,26 @@ class Rule extends \yii\db\ActiveRecord
      * It initializes a new RuleCondition model, assigns values to its attributes,
      * and saves it in the database.
      *
-     * @param array<string, mixed> $condition The condition node to save.
-     * @param int $ruleId The ID of the rule associated with the condition.
+     * @param RuleNode|null $condition The condition node to save.
+     * @param int|null $ruleId The ID of the rule associated with the condition.
      * @param int|null $parentId The ID of the parent node in the parsing tree.
      * @return bool Whether the save operation is successful (true) or not.
      */
-    private function saveRuleCondition(array $condition, int $ruleId, ?int $parentId = null): bool {
-        Yii::debug($condition);
+    private function saveRuleCondition(?RuleNode $condition = null, ?int $ruleId = null, ?int $parentId = null): bool {
+        if ($condition === null || $ruleId === null) {
+            return false;
+        }
+
         // Get the Rule model associated with the condition component.
-        $ruleModel = $this->getRuleModel($condition['component']);
+        $ruleModel = $this->getRuleModel($condition->component ?? 'Unknown');
 
         // Create a new instance of RuleCondition model with the provided attributes.
         $cond = new RuleCondition([
             'rule_id' => $ruleId,
             'expression_id' => $parentId,
             'model_id' => $ruleModel->id,
-            'comparator' => $condition['comparator'],
-            'val' => $condition['value']
+            'comparator' => $condition->comparator,
+            'val' => $condition->value
         ]);
 
         // Save the RuleCondition model and return the result of the save operation.
@@ -301,12 +281,12 @@ class Rule extends \yii\db\ActiveRecord
      * and saves it in the database. Additionally, it recursively saves the child
      * nodes (left and right expressions) if they exist.
      *
-     * @param array<string, mixed> $expression The expression node to save.
+     * @param RuleNode $expression The expression node to save.
      * @param int $ruleId The ID of the rule associated with the expression.
      * @param int|null $parentId The ID of the parent node in the parsing tree (optional).
      * @return bool Whether the save operation is successful (true) or not.
      */
-    private function saveRuleExpression(array $expression, int $ruleId, ?int $parentId = null): bool {
+    private function saveRuleExpression(RuleNode $expression, int $ruleId, ?int $parentId = null): bool {
         // Initialize the save status to false.
         $saveStatus = false;
 
@@ -316,7 +296,7 @@ class Rule extends \yii\db\ActiveRecord
         // If the expression node was successfully saved, proceed to save its child node.
         if ($id) {
             // Recursively save the child node of the expression.
-            $saveStatus = $this->saveParsingTree($expression['node'], $ruleId, $id);
+            $saveStatus = $this->saveParsingTree($expression->node, $ruleId, $id);
         }
 
         // Return the result of the save operation.
@@ -331,25 +311,22 @@ class Rule extends \yii\db\ActiveRecord
      * to its attributes, and saves it in the database. Additionally, it recursively
      * saves the child nodes (left and right expressions) if they exist.
      *
-     * @param array<string, mixed> $expression The expression node to save.
-     * @param int $ruleId The ID of the rule associated with the expression.
+     * @param RuleNode|null $expression The expression node to save.
+     * @param int|null $ruleId The ID of the rule associated with the expression.
      * @param int|null $parentId The ID of the parent node in the parsing tree (optional).
      * @return bool Whether the save operation is successful (true) or not.
      */
-    private function saveNegativeExpression(array $expression, int $ruleId, ?int $parentId = null) {
-        // Initialize the save status to false.
-        $saveStatus = false;
-
-        // Create and save a new rule expression node with the 'not' operator, and get its ID.
-        $id = $this->newRuleExpression($ruleId, $parentId, 'not');
-
-        // If the expression node was successfully saved, proceed to save its child node.
-        if ($id) {
-            // Recursively save the child expression node.
-            $saveStatus = $this->saveParsingTree($expression, $ruleId, $id);
+    private function saveNegativeExpression(?RuleNode $expression = null, ?int $ruleId = null, ?int $parentId = null) {
+        if ($expression === null || $ruleId === null) {
+            return false;
         }
 
-        // Return the result of the save operation.
+        $id = $this->newRuleExpression($ruleId, $parentId, 'not');
+
+        $saveStatus = false;
+        if ($id) {
+            $saveStatus = $this->saveParsingTree($expression, $ruleId, $id);
+        }
         return $saveStatus;
     }
 
@@ -361,31 +338,28 @@ class Rule extends \yii\db\ActiveRecord
      * and saves it in the database. Additionally, it recursively saves the child
      * nodes (left and right expressions) if they exist.
      *
-     * @param array<string, mixed> $expression The expression node to save.
-     * @param int $ruleId The ID of the rule associated with the expression.
+     * @param RuleNode|null $expression The expression node to save.
+     * @param int|null $ruleId The ID of the rule associated with the expression.
      * @param int|null $parentId The ID of the parent node in the parsing tree (optional).
      * @return bool Whether the save operation is successful (true) or not.
      */
-    private function saveRuleBoolExpression(array $expression, int $ruleId, ?int $parentId = null): bool {
-        // Initialize the save status to false.
-        $saveStatus = false;
-
-        // Create and save a new rule expression node with the boolean operator, and get its ID.
-        $id = $this->newRuleExpression($ruleId, $parentId, $expression['boolOperator']);
-
-        // If the expression node was successfully saved, proceed to save its child nodes.
-        if ($id) {
-            // Recursively save the left expression node.
-            $saveStatus = $this->saveParsingTree($expression['left'], $ruleId, $id);
-
-            // If saving the left expression is successful and the boolean operator is not empty,
-            if ($saveStatus && $expression['boolOperator'] !== "") {
-                // Recursively save the right expression node.
-                $saveStatus = $this->saveParsingTree($expression['right'], $ruleId, $id);
-            }
+    private function saveRuleBoolExpression(?RuleNode $expression = null, ?int $ruleId = null, ?int $parentId = null): bool {
+        if ($expression === null || $ruleId === null) {
+            return false;
         }
 
-        // Return the result of the save operation.
+        $id = $this->newRuleExpression($ruleId, $parentId, $expression->boolOperator);
+
+        $saveStatus = false;
+        if ($id) {
+            $saveStatus = $this->saveParsingTree($expression->left, $ruleId, $id);
+
+            if ($saveStatus && $expression->boolOperator !== null) {
+                // If saving the left expression is successful and
+                // the boolean operator is not empty, save the right expression node.
+                $saveStatus = $this->saveParsingTree($expression->right, $ruleId, $id);
+            }
+        }
         return $saveStatus;
     }
 

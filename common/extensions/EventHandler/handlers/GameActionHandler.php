@@ -44,16 +44,15 @@ class GameActionHandler implements SpecificMessageHandlerInterface
     public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
         $this->logger->logStart("GameActionHandler: handle from clientId={$clientId}, sessionId={$sessionId}", $data);
 
-        /** @var array<string, mixed> */
-        $payload = is_array($data['payload']) ? (array) $data['payload'] : [];
-        $questId = PayloadHelper::getQuestId($payload, $data);
-        $playerName = PayloadHelper::getPlayerName($payload);
-        $action = PayloadHelper::getAction($payload);
+        $payload = PayloadHelper::extractPayloadFromData($data);
+        $questId = PayloadHelper::extractIntFromPayload('questId', $payload, $data);
+        $playerName = PayloadHelper::extractStringFromPayload('playerName', $payload);
+        $action = PayloadHelper::extractStringFromPayload('action', $payload);
 
         /** @var array<string, mixed> */
-        $detail = PayloadHelper::getDetail($payload);
+        $detail = PayloadHelper::extractArrayFromPayload('detail', $payload);
 
-        if ($questId === null || $action === null) {
+        if ($questId === null || $action === 'Unknown') {
             $this->logger->log("GameActionHandler: Missing required data (questId, playerName, action).", $data, 'warning');
             $errorDto = $this->messageFactory->createErrorMessage("Invalid game action data provided.");
             $this->broadcastService->sendToClient($clientId, $errorDto, false, $sessionId);

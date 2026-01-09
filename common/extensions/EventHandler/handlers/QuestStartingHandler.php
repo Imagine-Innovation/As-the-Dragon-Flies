@@ -43,10 +43,9 @@ class QuestStartingHandler implements SpecificMessageHandlerInterface
     public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
         $this->logger->logStart("QuestStartingHandler: handle for session {$sessionId}, client {$clientId}", $data);
 
-        /** @var array<string, mixed> */
-        $payload = is_array($data['payload']) ? (array) $data['payload'] : [];
-        $questId = PayloadHelper::getQuestId($payload, $data);
-        $questName = PayloadHelper::getQuestName($payload);
+        $payload = PayloadHelper::extractPayloadFromData($data);
+        $questId = PayloadHelper::extractIntFromPayload('questId', $payload, $data);
+        $questName = PayloadHelper::extractStringFromPayload('questName', $payload);
 
         if ($questId === null) {
             $this->logger->log("QuestStartingHandler: Missing questId in data['payload'].", $data, 'warning');

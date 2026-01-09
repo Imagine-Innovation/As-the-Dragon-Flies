@@ -3,6 +3,7 @@
 namespace common\models;
 
 use yii\helpers\Url;
+use yii\web\UploadedFile;
 
 /**
  * This is the model class for table "image".
@@ -27,7 +28,7 @@ class Image extends \yii\db\ActiveRecord
         return 'image';
     }
 
-    public mixed $image;
+    public UploadedFile $image;
 
     /**
      * {@inheritdoc}

@@ -44,9 +44,10 @@ class SendingMessageHandler implements SpecificMessageHandlerInterface
     public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
         $this->logger->logStart("SendingMessageHandler: handle sessionId=[{$sessionId}], clientId=[{$clientId}]", $data);
 
-        $questId = PayloadHelper::getQuestId($data);
-        $playerName = PayloadHelper::getPlayerName($data);
-        $messageText = implode(PHP_EOL, PayloadHelper::getMessage($data));
+        $questId = PayloadHelper::extractIntFromPayload('questId', $data);
+        $playerName = PayloadHelper::extractStringFromPayload('playerName', $data);
+        $messages = PayloadHelper::extractArrayFromPayload('message', $data);
+        $messageText = implode(PHP_EOL, $messages);
 
         if (empty($messageText) || $questId === null) {
             $this->logger->log("SendingMessageHandler: Missing message or questId.", $data, 'warning');

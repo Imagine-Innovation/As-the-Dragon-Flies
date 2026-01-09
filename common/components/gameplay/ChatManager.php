@@ -4,6 +4,8 @@ namespace common\components\gameplay;
 
 use common\components\ContextManager;
 use common\models\Notification;
+use common\helpers\JsonHelper;
+use common\helpers\PayloadHelper;
 use common\helpers\Utilities;
 use Yii;
 
@@ -63,20 +65,20 @@ class ChatManager extends BaseManager
             return [];
         }
 
-        /** @var array<string, mixed> $payload  */
-        $payload = json_decode((string) $chatNotification->payload, true);
+        $payload = JsonHelper::decode($chatNotification->payload);
 
         Yii::debug($chatNotification->payload);
         Yii::debug($payload);
-        $roundedTime = $payload['roundedTime'] ?? $this->roundedTime(time());
-        $sender = is_string($payload['playerName']) ? Utilities::encode($payload['playerName']) : '';
-        $message = is_string($payload['message']) ? Utilities::encode($payload['message']) : '';
+        $roundedTime = PayloadHelper::extractIntFromPayload('roundedTime', $payload) ?? $this->roundedTime(time());
+        $sender = PayloadHelper::extractStringFromPayload('playerName', $payload);
+        $message = PayloadHelper::extractStringFromPayload('message', $payload, '');
+        $avatar = PayloadHelper::extractStringFromPayload('avatar', $payload, self::DEFAULT_AVATAR);
         return [
             'isAuthor' => ($chatNotification->initiator_id === $playerId), // defines is the current player is the one who initiate the chat message
             'displayedDateTime' => Utilities::formatDate($roundedTime),
             'sender' => $sender,
             'messages' => [$message], // first entry of the message array
-            'avatar' => $payload['avatar'] ?? self::DEFAULT_AVATAR,
+            'avatar' => $avatar,
             'roundedTime' => $roundedTime,
         ];
     }

@@ -2,6 +2,7 @@
 
 namespace common\models\events;
 
+use common\helpers\PayloadHelper;
 use common\models\events\Event;
 use common\models\Player;
 use common\models\Quest;
@@ -23,10 +24,10 @@ class EventFactory
 
         Yii::debug("*** debug *** EventFactory.createEvent type=$eventType, sessionId={$sessionId}, playerId={$player->id}, questId={$quest->id}, data=" . print_r($data, true));
 
-        $reason = is_string($data['reason']) ? (string) $data['reason'] : 'Unknown reason';
-        $message = is_string($data['message']) ? (string) $data['message'] : '';
-        $action = is_string($data['action']) ? (string) $data['action'] : '';
-        $detail = is_array($data['detail']) ? (array) $data['detail'] : [];
+        $reason = PayloadHelper::extractStringFromPayload('reason', $data, 'Unknown reason');
+        $message = PayloadHelper::extractStringFromPayload('message', $data, '');
+        $action = PayloadHelper::extractStringFromPayload('action', $data, '');
+        $detail = PayloadHelper::extractArrayFromPayload('detail', $data);
         return match ($eventType) {
             'player-joining' => new PlayerJoiningEvent($sessionId, $player, $quest),
             'player-quitting' => new PlayerQuittingEvent($sessionId, $player, $quest, $reason),

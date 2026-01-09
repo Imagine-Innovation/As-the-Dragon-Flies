@@ -57,6 +57,7 @@ class GameActionEvent extends Event
      * @return string
      */
     public function getMessage(): string {
+        /** @var AppStatus */
         $status = $this->detail['status'];
         Yii::debug("*** debug *** GameActionEvent->getMessage status={$status->getLabel()}");
         return match ($status->value) {

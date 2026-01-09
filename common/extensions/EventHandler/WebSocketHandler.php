@@ -87,10 +87,11 @@ class WebSocketHandler implements MessageComponentInterface
             return;
         }
 
-        $this->logger->logStart("WebSocketHandler: onMessage from clientId=[{$clientId}], resourceId=[{$from->resourceId}]", ['message_summary' => substr($msg, 0, 100) . (strlen($msg) > 100 ? '...' : '')]);
+        $message = is_string($msg) ? (string) $msg : '';
+        $this->logger->logStart("WebSocketHandler: onMessage from clientId=[{$clientId}], resourceId=[{$from->resourceId}]", ['message_summary' => substr($message, 0, 100) . (strlen($message) > 100 ? '...' : '')]);
 
         // Delegate message handling to the MessageHandler (Orchestrator)
-        $this->messageHandler->handle($from, $clientId, (string) $msg);
+        $this->messageHandler->handle($from, $clientId, $message);
 
         $this->logger->logEnd("WebSocketHandler: onMessage from clientId=[{$clientId}]");
     }

@@ -78,8 +78,8 @@ class RegistrationHandler implements SpecificMessageHandlerInterface
     public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
         $this->logger->logStart("RegistrationHandler: handle clientId=[{$clientId}], sessionId=[{$sessionId}]", $data);
 
-        $questId = PayloadHelper::getQuestId($data);
-        $playerId = PayloadHelper::getPlayerId($data);
+        $questId = PayloadHelper::extractIntFromPayload('questId', $data);
+        $playerId = PayloadHelper::extractIntFromPayload('playerId', $data);
 
         $registered = $this->questSessionManager->registerSession($sessionId, $playerId, $questId, $clientId, $data);
         $this->logger->log("RegistrationHandler: Session registration via QuestSessionManager. Result: " . ($registered ? 'Success' : 'Failure'));

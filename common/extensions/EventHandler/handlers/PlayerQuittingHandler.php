@@ -44,12 +44,11 @@ class PlayerQuittingHandler implements SpecificMessageHandlerInterface
     public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
         $this->logger->logStart("PlayerQuittingHandler: handle for session {$sessionId}, client {$clientId}", $data);
 
-        /** @var array<string, mixed> */
-        $payload = is_array($data['payload']) ? (array) $data['payload'] : [];
-        $questId = PayloadHelper::getQuestId($payload, $data);
-        $playerName = PayloadHelper::getPlayerName($payload);
-        $questName = PayloadHelper::getQuestName($payload);
-        $reason = PayloadHelper::getReason($payload);
+        $payload = PayloadHelper::extractPayloadFromData($data);
+        $questId = PayloadHelper::extractIntFromPayload('questId', $payload, $data);
+        $playerName = PayloadHelper::extractStringFromPayload('playerName', $payload);
+        $questName = PayloadHelper::extractStringFromPayload('questName', $payload);
+        $reason = PayloadHelper::extractStringFromPayload('reason', $payload);
 
         if ($questId === null || $questName === 'Unknown') {
             $this->logger->log("PlayerQuittingHandler: Missing questId, or questName in data['payload'].", $data, 'warning');

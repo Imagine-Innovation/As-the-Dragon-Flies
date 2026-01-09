@@ -44,12 +44,9 @@ class NextTurnHandler implements SpecificMessageHandlerInterface
     public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
         $this->logger->logStart("NextTurnHandler: handle from clientId={$clientId}, sessionId={$sessionId}", $data);
 
-        /** @var array<string, mixed> */
-        $payload = is_array($data['payload']) ? (array) $data['payload'] : [];
-        $questId = PayloadHelper::getQuestId($payload, $data);
-
-        /** @var array<string, mixed> */
-        $detail = PayloadHelper::getDetail($payload);
+        $payload = PayloadHelper::extractPayloadFromData($data);
+        $questId = PayloadHelper::extractIntFromPayload('questId', $payload, $data);
+        $detail = PayloadHelper::extractArrayFromPayload('detail', $payload);
 
         if ($questId === null || empty($detail)) {
             $this->logger->log("NextTurnHandler: Missing required data (questId, detail).", $data, 'warning');

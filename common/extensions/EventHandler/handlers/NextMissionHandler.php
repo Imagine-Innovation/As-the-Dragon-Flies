@@ -44,12 +44,9 @@ class NextMissionHandler implements SpecificMessageHandlerInterface
     public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
         $this->logger->logStart("NextMissionHandler: handle from clientId={$clientId}, sessionId={$sessionId}", $data);
 
-        /** @var array<string, mixed> */
-        $payload = is_array($data['payload']) ? (array) $data['payload'] : [];
-        $questId = PayloadHelper::getQuestId($payload, $data);
-
-        /** @var array<string, mixed> */
-        $detail = PayloadHelper::getDetail($payload);
+        $payload = PayloadHelper::extractPayloadFromData($data);
+        $questId = PayloadHelper::extractIntFromPayload('questId', $payload, $data);
+        $detail = PayloadHelper::extractArrayFromPayload('detail', $payload);
 
         if ($questId === null || empty($detail)) {
             $this->logger->log("NextMissionHandler: Missing required data (questId, detail).", $data, 'warning');

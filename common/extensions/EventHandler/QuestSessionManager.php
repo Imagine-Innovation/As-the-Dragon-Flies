@@ -3,8 +3,8 @@
 namespace common\extensions\EventHandler;
 
 use common\models\QuestSession; // Required for QuestSession model usage
-
-// use common\extensions\EventHandler\LoggerService; // Will be injected
+use common\extensions\EventHandler\LoggerService; // Will be injected
+use common\helpers\PayloadHelper;
 
 class QuestSessionManager
 {
@@ -30,9 +30,9 @@ class QuestSessionManager
     public function registerSessionForQuest(string $sessionId, array $data): bool {
         $this->logger->logStart("QuestSessionManager: registerSessionForQuest sessionId=[{$sessionId}]", $data);
 
-        $questId = array_key_exists('questId', $data) ? $data['questId'] : null;
+        $questId = PayloadHelper::extractIntFromPayload('questId', $data);
         // Validate input parameters
-        if (!$sessionId || !$questId || $questId <= 0) {
+        if ($sessionId !== '' || !$questId) {
             $this->logger->log("QuestSessionManager: Invalid sessionId or quest ID", ['sessionId' => $sessionId, 'questId' => $questId], 'error');
             $this->logger->logEnd("QuestSessionManager: registerSessionForQuest");
             return false;
@@ -40,7 +40,9 @@ class QuestSessionManager
 
         try {
             // Assuming $data might also be used by registerSession indirectly or for other logging.
-            $this->registerSession($sessionId, $data['playerId'] ?? null, $questId, $data['clientId'] ?? null, $data);
+            $playerId = PayloadHelper::extractIntFromPayload('playerId', $data);
+            $clientId = PayloadHelper::extractStringFromPayload('clientId', $data);
+            $this->registerSession($sessionId, $playerId, $questId, $clientId, $data);
             $this->logger->logEnd("QuestSessionManager: registerSessionForQuest");
             return true;
         } catch (\Exception $e) {
@@ -228,6 +230,7 @@ class QuestSessionManager
             $this->logger->log($message);
         }
         foreach ($sessions as $session) {
+            /** @var array{id: int, quest_id: int, player_id: int, client_id: string, last_ts: int} */
             $attributes = $session->getAttributes(['id', 'quest_id', 'player_id', 'client_id', 'last_ts']);
             $log = "Session Details: id=[{$attributes['id']}], quest_id=[{$attributes['quest_id']}], player_id=[{$attributes['player_id']}], client_id=[{$attributes['client_id']}], last_ts=[{$attributes['last_ts']}]";
             $this->logger->log($log);
