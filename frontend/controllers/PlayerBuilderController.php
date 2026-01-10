@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\helpers\MixedHelper;
 use common\models\BackgroundItem;
 use common\models\ClassEquipment;
 use common\models\Image;
@@ -648,7 +649,8 @@ class PlayerBuilderController extends Controller
         $model = new PlayerBuilder();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
+            $post = MixedHelper::toArray($this->request->post());
+            if ($model->load($post) && $model->save()) {
                 return $this->redirect(['update', 'id' => $model->id]);
             }
         } else {
@@ -676,7 +678,8 @@ class PlayerBuilderController extends Controller
             return $this->redirect(['player/view', 'id' => $id]);
         }
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        $post = MixedHelper::toArray($this->request->post());
+        if ($this->request->isPost && $model->load($post) && $model->save()) {
             return $this->redirect(['update', 'id' => $id]);
         }
 

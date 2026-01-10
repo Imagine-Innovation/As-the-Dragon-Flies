@@ -28,7 +28,7 @@ class Image extends \yii\db\ActiveRecord
         return 'image';
     }
 
-    public UploadedFile $image;
+    public ?UploadedFile $image = null;
 
     /**
      * {@inheritdoc}

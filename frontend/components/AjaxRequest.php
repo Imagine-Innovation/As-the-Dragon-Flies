@@ -47,24 +47,24 @@ class AjaxRequest
     public array $response;
     public Request $request;
     public string $modelName;
-    public string $render;
+    public ?string $render = null;
 
     /** @var array<string, mixed> $param */
     public array $param = [];
 
-    /** @var array<string, mixed> $with */
+    /** @var array<string, mixed>|null $with */
     public ?array $with = null;
 
-    /** @var array<string, mixed> $filter */
+    /** @var array<string, mixed>|null $filter */
     public ?array $filter = null;
 
-    /** @var array<string, mixed> $select */
+    /** @var array<string, mixed>|null $select */
     public ?array $select = null;
 
-    /** @var array<string, mixed> $innerJoin */
-    public array $innerJoin = [];
+    /** @var array<array{table: string, clause: string}>|null $innerJoin */
+    public ?array $innerJoin = null;
 
-    /** @var array<string, mixed> $sortOrder */
+    /** @var array<string, mixed>|null $sortOrder */
     public ?array $sortOrder = null;
 
     /** @var array<int, array<string, bool|string>> $defaultResponse */
@@ -133,12 +133,12 @@ class AjaxRequest
      * @return bool
      */
     public function makeResponse(Request $request): bool {
-        $limit = $request->post('limit', 100);
-        $pageNo = $request->post('page', 0);
+        $limit = $this->getIntVal($request->post('limit', 100));
+        $pageNo = $this->getIntVal($request->post('page', 0));
         $query = $this->buildQuery();
-        $count = $query->count();
+        $count = (int) $query->count();
         $pageCount = ($count === 0) ? 1 : ceil($count / $limit);
-        $page = max(0, min($pageNo, $pageCount));
+        $page = (int) max(0, min($pageNo, $pageCount));
         $render = $this->render ?? 'index';
         $this->response = [
             'error' => false, 'msg' => '',
@@ -153,5 +153,9 @@ class AjaxRequest
             )
         ];
         return true;
+    }
+
+    private function getIntVal(mixed $postData): int {
+        return is_integer($postData) ? (int) $postData : 0;
     }
 }

@@ -24,6 +24,7 @@ use common\components\ManageAccessRights;
 use common\components\gameplay\ChatManager;
 use common\components\gameplay\QuestManager;
 use common\components\gameplay\TavernManager;
+use common\helpers\MixedHelper;
 use common\helpers\UserErrorMessage;
 use common\models\Player;
 use common\models\Quest;
@@ -458,7 +459,8 @@ class QuestController extends Controller
 
         // Handle form submission
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
+            $post = MixedHelper::toArray($this->request->post());
+            if ($model->load($post) && $model->save()) {
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
@@ -484,7 +486,8 @@ class QuestController extends Controller
         $model = $this->findModel($id);
 
         // Process form submission
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        $post = MixedHelper::toArray($this->request->post());
+        if ($this->request->isPost && $model->load($post) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 

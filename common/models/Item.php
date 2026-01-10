@@ -402,7 +402,7 @@ class Item extends \yii\db\ActiveRecord
 
         // Call the 'copperValue' method of the Shopping class to convert the
         // item's cost into copper coins.
-        return $shopping->copperValue((float) $this->cost, $this->coin ?? '?');
+        return $shopping->copperValue($this->cost, $this->coin ?? '?');
     }
 
     /**

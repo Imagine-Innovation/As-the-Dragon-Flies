@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\helpers\MixedHelper;
 use common\models\Image;
 use common\models\ClassImage;
 use frontend\components\AjaxRequest;
@@ -158,7 +159,8 @@ class ImageController extends Controller
         $model = new Image();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
+            $post = MixedHelper::toArray($this->request->post());
+            if ($model->load($post) && $model->save()) {
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
@@ -180,7 +182,8 @@ class ImageController extends Controller
     public function actionUpdate(int $id): string|Response {
         $model = $this->findModel($id);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        $post = MixedHelper::toArray($this->request->post());
+        if ($this->request->isPost && $model->load($post) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 

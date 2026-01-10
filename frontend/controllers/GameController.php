@@ -8,6 +8,7 @@ use common\components\gameplay\ActionManager;
 use common\components\gameplay\QuestManager;
 use common\components\gameplay\TavernManager;
 use common\components\ManageAccessRights;
+use common\helpers\MixedHelper;
 use common\helpers\FindModelHelper;
 use common\models\events\EventFactory;
 use common\models\QuestPlayer;
@@ -341,8 +342,10 @@ class GameController extends Controller
     protected function createEvent(string $eventType, Request $postRequest, string $actionName, array $outcome = []): bool {
         $sessionId = Yii::$app->session->get('sessionId');
         try {
-            $player = FindModelHelper::findPlayer($postRequest->post('playerId'));
-            $quest = FindModelHelper::findQuest($postRequest->post('questId'));
+            $playerId = MixedHelper::toInt($postRequest->post('playerId'));
+            $questId = MixedHelper::toInt($postRequest->post('questId'));
+            $player = FindModelHelper::findPlayer($playerId);
+            $quest = FindModelHelper::findQuest($questId);
             $data['action'] = $actionName;
             $data['detail'] = [
                 'diceRoll' => $outcome['diceRoll'],
