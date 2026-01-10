@@ -13,10 +13,8 @@ use common\models\User;
 class ResetPasswordForm extends Model
 {
 
-    public string $password;
-
-    /** @var User|null */
-    private ?User $_user;
+    public ?string $password = null;
+    private ?User $_user = null;
 
     /**
      * Creates a form model given a token.

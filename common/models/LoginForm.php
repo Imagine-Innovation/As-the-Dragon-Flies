@@ -15,7 +15,7 @@ class LoginForm extends Model
     public ?string $username = null;
     public ?string $password = null;
     public bool $rememberMe = true;
-    private User $_user;
+    private ?User $_user = null;
 
     /**
      * {@inheritdoc}
@@ -36,10 +36,10 @@ class LoginForm extends Model
      * This method serves as the inline validation for password.
      *
      * @param string $attribute the attribute currently being validated
-     * @param array<string, mixed> $params the additional name-value pairs given in the rule
+     * @param array<string, mixed>|null $params the additional name-value pairs given in the rule
      * @return void
      */
-    public function validatePassword(string $attribute, array $params): void {
+    public function validatePassword(string $attribute, ?array $params = null): void {
         if (!$this->hasErrors()) {
             $user = $this->getUser();
             if (!$user || !$user->validatePassword((string) $this->password)) {
@@ -67,7 +67,8 @@ class LoginForm extends Model
      * @return User|null
      */
     protected function getUser(): ?User {
-        if ($this->_user->isNewRecord) {
+        $user = $this->_user;
+        if ($user === null) {
             $user = User::findByUsername($this->username ?? '');
             if ($user === null) {
                 return null;

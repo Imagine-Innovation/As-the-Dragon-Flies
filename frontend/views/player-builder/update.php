@@ -55,7 +55,7 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
                 <?php foreach ($tabs as $tab): ?>
                     <?php if (($isAdmin && $tab['admin']) || !$tab['admin']): ?>
                         <li class="nav-item">
-                            <a role="tab" class="nav-link<?= $(tab['anchor'] === $firstTab) ? " active" : "" ?>"
+                            <a role="tab" class="nav-link<?= ($tab['anchor'] === $firstTab) ? " active" : "" ?>"
                                id="builderTab-<?= $tab['anchor'] ?>-<?= $tab['wizard'] ?>"
                                data-bs-toggle="tab" href="#<?= $tab['anchor'] ?>-tabContent">
                                    <?= $tab['name'] ?>
@@ -67,7 +67,7 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
 
             <div class="tab-content">
                 <?php foreach ($tabs as $tab): ?>
-                    <div class="tab-pane <?= $(tab['anchor'] === $firstTab) ? "active fade show" : "fade" ?>" id="<?= $tab['anchor'] ?>-tabContent" role="tabpanel">
+                    <div class="tab-pane <?= ($tab['anchor'] === $firstTab) ? "active fade show" : "fade" ?>" id="<?= $tab['anchor'] ?>-tabContent" role="tabpanel">
                         <?= BuilderTab::widget(['player' => $model, 'tabContent' => $tab]) ?>
                     </div>
                 <?php endforeach; ?>
