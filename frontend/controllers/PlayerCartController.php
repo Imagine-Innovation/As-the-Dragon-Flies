@@ -2,12 +2,13 @@
 
 namespace frontend\controllers;
 
-use Yii;
+use common\helpers\MixedHelper;
 use common\models\PlayerCart;
 use common\models\Player;
 use common\models\Item;
-use frontend\components\Shopping;
 use common\components\ManageAccessRights;
+use frontend\components\Shopping;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -239,7 +240,7 @@ class PlayerCartController extends Controller
 
         // Calculate the total quantity of items in the player's cart
         $sum = PlayerCart::find()->where(['player_id' => $player->id])->sum('quantity');
-        $count = $sum ?? 0;
+        $count = MixedHelper::toInt($sum);
 
         // Construct a message indicating the player's name and his purse status based on the purse string
         $shopping = new Shopping();

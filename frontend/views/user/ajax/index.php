@@ -7,7 +7,7 @@ use frontend\widgets\RecordCount;
 use frontend\widgets\ActionButtons;
 
 /** @var yii\web\View $this */
-/** @var common\models\User $models */
+/** @var common\models\User[] $models */
 /** @var int $count: total number of records retrived by the query */
 /** @var int $page: current page number */
 /** @var int $pageCount: nomber of pages regarding the limit of the query */

@@ -6,7 +6,7 @@ use frontend\widgets\RecordCount;
 use frontend\widgets\CheckBox;
 
 /** @var yii\web\View $this */
-/** @var common\models\Image $models */
+/** @var common\models\Image[] $models */
 /** @var int $count: total number of records retrived by the query */
 /** @var int $page: current page number */
 /** @var int $pageCount: nomber of pages regarding the limit of the query */

@@ -1,6 +1,6 @@
 <?php
 /** @var yii\web\View $this */
-/** @var common\models\Item $models */
+/** @var common\models\Item[] $models */
 ?>
 <div class="container-fluid">
     <div class="row g-4">

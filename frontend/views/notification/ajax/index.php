@@ -4,7 +4,7 @@ use frontend\widgets\Pagination;
 use frontend\widgets\RecordCount;
 
 /** @var yii\web\View $this */
-/** @var common\models\Notification $models */
+/** @var common\models\Notification[] $models */
 /** @var int $count: total number of records retrived by the query */
 /** @var int $page: current page number */
 /** @var int $pageCount: nomber of pages regarding the limit of the query */

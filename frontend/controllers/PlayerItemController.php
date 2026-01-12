@@ -2,11 +2,12 @@
 
 namespace frontend\controllers;
 
+use common\components\ManageAccessRights;
+use common\helpers\MixedHelper;
 use common\models\Item;
 use common\models\Player;
 use common\models\PlayerBody;
 use common\models\PlayerItem;
-use common\components\ManageAccessRights;
 use frontend\components\Inventory;
 use Yii;
 use yii\web\Controller;
@@ -111,7 +112,10 @@ class PlayerItemController extends Controller
     /**
      *
      * @param PlayerItem[] $playerItems
-     * @return array<string, mixed>
+     * @return array{
+     * playerItems: array<string, non-empty-list<array{itemId: int, name: string, image: string|null, quantity: int, isProficient: int, isTwoHanded: int, buttonId: non-falsy-string}>>,
+     * items: list<array{itemId: int, name: string, image: string|null, quantity: int, isProficient: int, isTwoHanded: int, buttonId: non-falsy-string}>
+     * }
      */
     private function getEquipmentData(array &$playerItems): array {
         $playerItemData = [];
@@ -137,7 +141,7 @@ class PlayerItemController extends Controller
 
     /**
      *
-     * @return array<string, mixed>
+     * @return array{error: false, msg: '', content: string, contentModal: string, contentAside: string, contentOffcanvas: string, items: list<array{itemId: int, name: string, image: string|null, quantity: int, isProficient: int, isTwoHanded: int, buttonId: non-falsy-string}>, data: array<string, array{itemId: int|null, itemName: string|null, image: string|null}>}|array{error: true, msg: string}
      */
     public function actionAjaxEquipment(): array {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -174,14 +178,14 @@ class PlayerItemController extends Controller
     /**
      *
      * @param PlayerBody $playerBody
-     * @return array<string, mixed>
+     * @return array<string, array{itemId: int|null, itemName: string|null, image: string|null}>
      */
     private function getPlayerBodyData(PlayerBody &$playerBody): array {
         $data = [];
 
         foreach (PlayerItem::BODY_ZONE as $property => $zone) {
-            $playerItem = $playerBody->$property;
-            if ($playerItem !== null) {
+            if ($playerBody->hasProperty($property)) {
+                $playerItem = $playerBody->$property;
                 $data[$zone] = [
                     'itemId' => $playerItem->item_id,
                     'itemName' => $playerItem->item_name,
@@ -475,7 +479,7 @@ class PlayerItemController extends Controller
         $playerId = (int) $request->post('playerId');
         $itemId = (int) $request->post('itemId');
 
-        $playerItem = $this->findModel($playerId, $itemId);
+        $playerItem = $this->findPlayerItem($playerId, $itemId);
 
         $bodyZone = $request->post('bodyZone');
         Yii::debug("*** debug *** actionAjaxEquipPlayer - playerId={$playerId}, itemId={$itemId}, bodyZone={$bodyZone}");
@@ -531,11 +535,11 @@ class PlayerItemController extends Controller
         $bodyProperties = PlayerItem::BODY_PROPERTIES[$bodyZone];
         $property = $bodyProperties['property'];
         Yii::debug("*** debug *** disarmPreviousItem - bodyZone={$bodyZone}, property={$property}");
-        $playerItem = $playerBody->$property;
 
-        if ($playerItem === null) {
+        if (!$playerBody->hasProperty($property)) {
             return;
         }
+        $playerItem = $playerBody->$property;
 
         $previousItemName = $playerItem->item_name;
         Yii::debug("*** debug *** disarmPreviousItem - bodyZone={$bodyZone}, previousItem={$previousItemName}");
@@ -557,14 +561,14 @@ class PlayerItemController extends Controller
 
         $property = $bodyProperties['property'];
         Yii::debug("*** debug *** disarmPlayer - bodyZone={$bodyZone}, property={$property}");
-        $playerItem = $playerBody->$property;
 
-        if ($playerItem === null) {
+        if (!$playerBody->hasProperty($property)) {
             return [
                 'error' => true,
                 'msg' => "Body zone {$bodyZone} has no attached item"
             ];
         }
+        $playerItem = $playerBody->$property;
         $previousItem = $playerItem->item;
 
         $this->disarmPreviousItem($playerBody, $bodyZone);
@@ -595,7 +599,7 @@ class PlayerItemController extends Controller
     /**
      *
      * @param \yii\web\Request $request
-     * @return array<string, mixed>
+     * @return array{error: bool, msg: string, player?: Player, playerItem?: PlayerItem, status?: int}
      */
     private function prepareAjax(\yii\web\Request $request): array {
         if (!$request->isPost || !$request->isAjax) {
@@ -603,22 +607,15 @@ class PlayerItemController extends Controller
         }
 
         $player = $this->findPlayer();
-        if ($player->isNewRecord) {
-            return ['error' => true, 'msg' => 'Player not found'];
-        }
-
-        $itemId = Yii::$app->request->post('item_id');
-        $status = Yii::$app->request->post('status', 0);
-        $item = $this->findModel($player->id, $itemId);
-        if ($item->isNewRecord) {
-            return ['error' => true, 'msg' => 'Item not found'];
-        }
-        return ['error' => false, 'player' => $player, 'item' => $item, 'status' => $status];
+        $itemId = MixedHelper::toInt(Yii::$app->request->post('item_id'));
+        $status = MixedHelper::toInt(Yii::$app->request->post('status', 0));
+        $playerItem = $this->findPlayerItem($player->id, $itemId);
+        return ['error' => false, 'msg' => '', 'player' => $player, 'playerItem' => $playerItem, 'status' => $status];
     }
 
     /**
      *
-     * @return array<string, mixed>
+     * @return array{error: bool, msg: string, content?: string}
      */
     public function actionAjaxToggle(): array {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -626,11 +623,14 @@ class PlayerItemController extends Controller
         $checkAjax = $this->prepareAjax($this->request);
 
         if ($checkAjax['error']) {
-            return $checkAjax;
+            return ['error' => $checkAjax['error'], 'msg' => $checkAjax['msg']];
         }
 
+        /** @phpstan-ignore-next-line */
         $player = $checkAjax['player'];
-        $item = $checkAjax['item'];
+        /** @phpstan-ignore-next-line */
+        $playerItem = $checkAjax['playerItem'];
+        /** @phpstan-ignore-next-line */
         $status = $checkAjax['status'];
 
         $inventory = new Inventory();
@@ -640,9 +640,9 @@ class PlayerItemController extends Controller
         }
 
         if ($status === 1) {
-            return $inventory->addToPack($item, $container);
+            return $inventory->addToPack($playerItem, $container);
         } else {
-            return $inventory->removeFromPack($item, $container);
+            return $inventory->removeFromPack($playerItem, $container);
         }
     }
 
@@ -650,24 +650,19 @@ class PlayerItemController extends Controller
      * Finds the PlayerItem model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      *
-     * This method is used internally to retrieve the PlayerItem model based on
-     * the provided player ID and item ID.
-     * It queries the PlayerItem table for a record with matching player_id and item_id values.
-     * If a matching model is found, it is returned. Otherwise, a NotFoundHttpException is thrown.
-     *
      * @param int $playerId Player ID
      * @param int $itemId Item ID
      * @return PlayerItem The loaded PlayerItem model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel(int $playerId, int $itemId): PlayerItem {
-        // Find the PlayerItem model based on its primary key value
-        if (($model = PlayerItem::findOne(['player_id' => $playerId, 'item_id' => $itemId])) !== null) {
+    protected function findPlayerItem(int $playerId, int $itemId): PlayerItem {
+        $model = PlayerItem::findOne(['player_id' => $playerId, 'item_id' => $itemId]);
+        if ($model) {
             return $model;
         }
 
         // If the model is not found, throw a 404 HTTP exception
-        throw new NotFoundHttpException("The player's item you are looking for does not exist. playerId={$playerId}, itemId={$itemId}");
+        throw new NotFoundHttpException("The player' s item you are looking for does not exist. playerId = {$playerId}, itemId = {$itemId}");
     }
 
     /**
@@ -683,7 +678,7 @@ class PlayerItemController extends Controller
             return $player;
         }
 
-        throw new NotFoundHttpException("The player (playerId={$playerId}) you are looking for does not exist.");
+        throw new NotFoundHttpException("The player(playerId = {$playerId}) you are looking for does not exist.");
     }
 
     /**
@@ -695,13 +690,13 @@ class PlayerItemController extends Controller
     protected function findPlayerBody(?int $playerId = null): PlayerBody {
         $player = $this->findPlayer($playerId);
 
-        $playerBody = $player->playerBody;
-
-        if ($playerBody === null) {
+        if (!$player->hasProperty('playerBody')) {
             $playerBody = new PlayerBody(['player_id' => $player->id]);
             if (!$playerBody->save()) {
                 throw new \Exception(implode("<br />", ArrayHelper::getColumn($playerBody->errors, 0, false)));
             }
+        } else {
+            $playerBody = $player->playerBody;
         }
         return $playerBody;
     }

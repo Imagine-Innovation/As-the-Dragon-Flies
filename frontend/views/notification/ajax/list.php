@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var common\models\Notification $models */
+/** @var common\models\Notification[] $models */
 ?>
 <?php foreach ($models as $model): ?>
     <a href="#" class="listview__item">

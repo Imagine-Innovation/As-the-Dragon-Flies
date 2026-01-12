@@ -7,6 +7,7 @@ use frontend\components\PlayerComponent;
 $avatar = Yii::$app->session->get('avatar');
 $proficiencyBonus = $player->level->proficiency_bonus;
 
+/** @var non-empty-array<string, array{code: string, name: string, score: int, modifier: int, savingThrow: int}> */
 $playerAbilities = PlayerComponent::getAbilitiesAndSavingThrow($player->playerAbilities, $proficiencyBonus);
 ?>
 <div class="m-3">

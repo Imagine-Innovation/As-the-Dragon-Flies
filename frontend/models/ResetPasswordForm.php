@@ -52,7 +52,8 @@ class ResetPasswordForm extends Model
     public function resetPassword(): bool {
         $user = $this->_user;
 
-        if ($user === null) {
+        // Don't allow blank password
+        if ($user === null || $this->password === null) {
             return false;
         }
         $user->setPassword($this->password);

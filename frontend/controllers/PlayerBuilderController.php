@@ -258,7 +258,7 @@ class PlayerBuilderController extends Controller
     /**
      *
      * @param int $playerId
-     * @param array<string, mixed> $languages
+     * @param array<int, array{language_id: int, name: string}>|array{} $languages
      * @return void
      */
     private function saveLanguages(int $playerId, array $languages): void {
@@ -478,7 +478,7 @@ class PlayerBuilderController extends Controller
             'quantity' => ($item->quantity ?? 1) * $quantity,
             'is_carrying' => 1,
             'is_proficient' => $isProficient,
-            'is_two_handed' => $item->weapon?->is_two_handed ? 1 : 0,
+            'is_two_handed' => $weaponProperties['isTwoHanded'],
             'attack_modifier' => $weaponProperties['attackModifier'],
             'damage' => $weaponProperties['damage'],
         ]);
@@ -539,8 +539,8 @@ class PlayerBuilderController extends Controller
      */
     private function getItemsCategory(\yii\web\Request $request): AjaxRequest {
         // First split by comma to get each pair
-        $ids = $request->post('categoryIds');
-        $pairs = explode(',', $ids);
+        $ids = MixedHelper::toString($request->post('categoryIds'));
+        $pairs = explode(',', $ids ?? '');
 
         $quantity = explode('|', $pairs[0])[1];
 

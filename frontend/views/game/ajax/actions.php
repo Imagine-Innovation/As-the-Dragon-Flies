@@ -1,6 +1,6 @@
 <?php
 /** @var yii\web\View $this */
-/** @var common\models\QuestAction $questActions */
+/** @var common\models\QuestAction[] $questActions */
 ?>
 
 <div class="card">

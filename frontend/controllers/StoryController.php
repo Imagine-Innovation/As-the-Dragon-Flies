@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use common\components\AppStatus;
 use common\components\ManageAccessRights;
+use common\helpers\MixedHelper;
 use common\helpers\Status;
 use common\models\Story;
 use Yii;

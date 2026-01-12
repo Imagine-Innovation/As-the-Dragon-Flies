@@ -114,7 +114,9 @@ class Image extends \yii\db\ActiveRecord
      * @return bool
      */
     public function upload(): bool {
-
+        if ($this->image === null) {
+            return false;
+        }
         $fileName = $this->id . "." . $this->image->extension;
         $fullFileName = $this->uploadPath() . $fileName;
         $this->image->saveAs($fullFileName);

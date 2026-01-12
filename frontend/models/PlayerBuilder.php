@@ -15,6 +15,7 @@ class PlayerBuilder extends Player
 {
 
     /**
+     * {@inheritdoc}
      * Saves the advanced properties of the Player model.
      *
      * This method saves the player model itself and ensures that associated
@@ -25,7 +26,7 @@ class PlayerBuilder extends Player
      * initializes and saves them accordingly.
      *
      * @param bool $runValidation
-     * @param mixed $attributeNames
+     * @param array<string, mixed>|null $attributeNames
      * @return bool Returns true if all player's advanced properties are successfully saved, false otherwise.
      */
     public function save($runValidation = true, $attributeNames = null): bool {

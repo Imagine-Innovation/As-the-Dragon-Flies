@@ -35,7 +35,7 @@ if (empty($outcomes)) {
         }
 
         if ($outcome->item_id) {
-            echo "<p>You now have a {$outcome->item->name} in your back bag</p>";
+            echo "<p>You now have a {$outcome->item?->name} in your back bag</p>";
         }
 
         $canReplay = $canReplay || $outcome->can_replay;

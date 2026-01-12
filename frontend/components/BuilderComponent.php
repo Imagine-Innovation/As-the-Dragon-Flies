@@ -725,7 +725,10 @@ class BuilderComponent
      * Set the initial list of languages regarding the actual player class and backgroung
      *
      * @param Player $player
-     * @return array<string, mixed> Array of possible languages with default proficiency
+     * @return array{
+     * RaceLanguages: array<int, array{language_id: int, name: string}>,
+     * OtherLanguages: array<int, array{language_id: int, name: string}>|array{}
+     * } Array of possible languages with default proficiency
      */
     public static function initPlayerLanguages(Player &$player): array {
         $languageList = ['RaceLanguages' => [], 'OtherLanguages' => []];
@@ -757,7 +760,7 @@ class BuilderComponent
     /**
      *
      * @param Language $language
-     * @return array<string, mixed>
+     * @return array{language_id: int, name: string}
      */
     private static function initLanguageData(Language &$language): array {
         $languageData = [

@@ -60,7 +60,7 @@ class PlayerComponent
      *
      * @param PlayerAbility[] $playerAbilities
      * @param int $proficiencyModifier
-     * @return array<string, array<string, mixed>>
+     * @return non-empty-array<string, array{}|array{code: string, name: string, score: int, modifier: int, savingThrow: int}>
      */
     public static function getAbilitiesAndSavingThrow(array $playerAbilities, int $proficiencyModifier): array {
         // set the initialization order to the common way of displaying abilities
@@ -106,15 +106,16 @@ class PlayerComponent
      * @param int $weaponId
      * @param int $proficiencyModifier
      * @return array{
-     *     attackModifier: int|null,
-     *     damage: string|null
+     * attackModifier: int|null,
+     * damage: string|null,
+     * isTwoHanded: int|null
      * }
      */
     public static function getPlayerWeaponProperties(int $playerId, int $weaponId, int $proficiencyModifier): array {
 
         $weapon = Weapon::findOne(['item_id' => $weaponId]);
-        if (!$weapon) {
-            return ['attackModifier' => null, 'damage' => null];
+        if ($weapon === null) {
+            return ['attackModifier' => null, 'damage' => null, 'isTwoHanded' => null];
         }
 
         if ($weapon->is_finesse) {
@@ -129,7 +130,8 @@ class PlayerComponent
 
         return [
             'attackModifier' => $abilityModifier + $proficiencyModifier,
-            'damage' => "{$weapon->damage_dice}+{$abilityModifier}"
+            'damage' => "{$weapon->damage_dice}+{$abilityModifier}",
+            'isTwoHanded' => $weapon->is_two_handed ? 1 : 0
         ];
     }
 }
