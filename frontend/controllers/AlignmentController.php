@@ -2,8 +2,9 @@
 
 namespace frontend\controllers;
 
-use common\models\Alignment;
 use common\components\ManageAccessRights;
+use common\helpers\MixedHelper;
+use common\models\Alignment;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -67,7 +68,7 @@ class AlignmentController extends Controller
         }
 
         $request = Yii::$app->request;
-        $id = (int) $request->post('id');
+        $id = MixedHelper::toInt($request->post('id'));
         Yii::debug("*** Debug *** actionAjaxWizard - id={$id}");
         $model = $this->findModel($id);
 

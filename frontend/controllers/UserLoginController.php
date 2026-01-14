@@ -2,9 +2,10 @@
 
 namespace frontend\controllers;
 
+use common\components\ManageAccessRights;
+use common\helpers\MixedHelper;
 use common\models\UserLogin;
 use frontend\components\AjaxRequest;
-use common\components\ManageAccessRights;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;

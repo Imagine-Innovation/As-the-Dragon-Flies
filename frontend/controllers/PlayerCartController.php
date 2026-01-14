@@ -2,11 +2,11 @@
 
 namespace frontend\controllers;
 
+use common\components\ManageAccessRights;
 use common\helpers\MixedHelper;
 use common\models\PlayerCart;
 use common\models\Player;
 use common\models\Item;
-use common\components\ManageAccessRights;
 use frontend\components\Shopping;
 use Yii;
 use yii\web\Controller;

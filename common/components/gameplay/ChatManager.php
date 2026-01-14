@@ -69,7 +69,7 @@ class ChatManager extends BaseManager
 
         Yii::debug($chatNotification->payload);
         Yii::debug($payload);
-        $roundedTime = PayloadHelper::extractIntFromPayload('roundedTime', $payload) ?? $this->roundedTime(time());
+        $roundedTime = PayloadHelper::extractIntFromPayload('roundedTime', $payload) ?? $this->roundedTime();
         $sender = PayloadHelper::extractStringFromPayload('playerName', $payload);
         $message = PayloadHelper::extractStringFromPayload('message', $payload, '');
         $avatar = PayloadHelper::extractStringFromPayload('avatar', $payload, self::DEFAULT_AVATAR);

@@ -18,7 +18,6 @@ class ContextManager extends Component
      * @return User
      */
     private static function getUser(): User {
-        //return Yii::$app->user->identity instanceof User ? Yii::$app->user->identity : null;
         return Yii::$app->user->identity;
     }
 

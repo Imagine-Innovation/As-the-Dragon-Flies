@@ -2,9 +2,9 @@
 
 namespace frontend\controllers;
 
+use common\components\ManageAccessRights;
 use common\helpers\MixedHelper;
 use common\models\AccessRight;
-use common\components\ManageAccessRights;
 use frontend\components\AjaxRequest;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -115,14 +115,14 @@ class AccessRightController extends Controller
         }
 
         $request = Yii::$app->request;
-        $id = (int) $request->post('id');
+        $id = MixedHelper::toInt($request->post('id'));
         $model = AccessRight::findOne(['id' => $id]);
         if (!$model) {
             return ['error' => true, 'msg' => "Access right id {$id} not found!"];
         }
 
-        $access = $request->post('access');
-        $status = $request->post('status') ? 1 : 0; // Ensure status is boolean (0 or 1)
+        $access = MixedHelper::toString($request->post('access'));
+        $status = MixedHelper::toInt($request->post('status')) ? 1 : 0; // Ensure status is boolean (0 or 1)
 
         if (ManageAccessRights::isValidAttribute($access ?? 'null') === false) {
             return ['error' => true, 'msg' => "Invalid access attribute {$access} specified."];

@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use common\components\AppStatus;
 use common\components\ManageAccessRights;
+use common\helpers\MixedHelper;
 use common\helpers\Status;
 use common\models\User;
 use frontend\components\AjaxRequest;
@@ -126,15 +127,15 @@ class UserController extends Controller
         }
 
         $request = Yii::$app->request;
-        $id = (int) $request->post('id');
+        $id = MixedHelper::toInt($request->post('id'));
         $model = User::findOne(['id' => $id]);
         if (!$model) {
             return ['error' => true, 'msg' => "User id $id not found!"];
         }
 
-        $role = $request->post('role');
-        $status = $request->post('status');
-        $property = "is_" . $role;
+        $role = MixedHelper::toString($request->post('role'));
+        $status = MixedHelper::toInt($request->post('status'));
+        $property = "is_{$role}";
         $model->$property = $status;
 
         if ($model->save()) {

@@ -476,12 +476,12 @@ class PlayerItemController extends Controller
         }
 
         $request = Yii::$app->request;
-        $playerId = (int) $request->post('playerId');
-        $itemId = (int) $request->post('itemId');
+        $playerId = MixedHelper::toInt($request->post('playerId'));
+        $itemId = MixedHelper::toInt($request->post('itemId'));
 
         $playerItem = $this->findPlayerItem($playerId, $itemId);
 
-        $bodyZone = $request->post('bodyZone');
+        $bodyZone = MixedHelper::toString($request->post('bodyZone')) ?? '';
         Yii::debug("*** debug *** actionAjaxEquipPlayer - playerId={$playerId}, itemId={$itemId}, bodyZone={$bodyZone}");
 
         return $this->equipPlayer($playerItem, $bodyZone);
@@ -588,8 +588,8 @@ class PlayerItemController extends Controller
         }
 
         $request = Yii::$app->request;
-        $playerId = (int) $request->post('playerId');
-        $bodyZone = $request->post('bodyZone');
+        $playerId = MixedHelper::toInt($request->post('playerId'));
+        $bodyZone = MixedHelper::toString($request->post('bodyZone')) ?? '';
 
         $playerBody = $this->findPlayerBody($playerId);
 

@@ -84,8 +84,8 @@ class ImageController extends Controller
         }
 
         $request = Yii::$app->request;
-        $raceGroupId = (int) $request->post('currentId', 1);
-        $gender = $request->post('filter', null);
+        $raceGroupId = MixedHelper::toInt($request->post('currentId', 1));
+        $gender = MixedHelper::toString($request->post('filter'));
 
         $param = [
             'modelName' => 'Image',
@@ -115,10 +115,10 @@ class ImageController extends Controller
         }
 
         $request = Yii::$app->request;
-        $imageId = (int) $request->post('imageId');
-        $classId = (int) $request->post('classId');
-        $className = $request->post('className');
-        $status = $request->post('status');
+        $imageId = MixedHelper::toInt($request->post('imageId'));
+        $classId = MixedHelper::toInt($request->post('classId'));
+        $className = MixedHelper::toString($request->post('className'));
+        $status = MixedHelper::toInt($request->post('status'));
 
         $model = ClassImage::findOne(['image_id' => $imageId, 'class_id' => $classId]);
 
@@ -217,7 +217,7 @@ class ImageController extends Controller
         }
 
         $request = Yii::$app->request;
-        $id = (int) $request->post('id');
+        $id = MixedHelper::toInt($request->post('id'));
 
         $model = $this->findModel($id);
 

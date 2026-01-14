@@ -2,10 +2,11 @@
 
 namespace frontend\controllers;
 
-use Yii;
+use common\components\ManageAccessRights;
+use common\helpers\MixedHelper;
 use common\models\Item;
 use frontend\components\AjaxRequest;
-use common\components\ManageAccessRights;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\UnauthorizedHttpException;
@@ -86,7 +87,7 @@ class ItemController extends Controller
         }
 
         $request = Yii::$app->request;
-        $itemTypeId = (int) $request->post('currentTab', 1);
+        $itemTypeId = MixedHelper::toInt($request->post('currentTab', 1));
         Yii::debug("*** debug *** actionAjax - itemTypeId={$itemTypeId}");
         $param = [
             'modelName' => 'Item',
@@ -117,12 +118,12 @@ class ItemController extends Controller
         }
 
         $request = Yii::$app->request;
-        $itemIds = $request->post('itemIds');
-        Yii::debug("*** debug *** actionAjaxImages - itemIds={$itemIds}");
+        $itemIdsString = MixedHelper::toString($request->post('itemIds')) ?? '';
+        Yii::debug("*** debug *** actionAjaxImages - itemIds={$itemIdsString}");
         $param = [
             'modelName' => 'Item',
             'render' => 'images',
-            'filter' => ['id' => explode(',', $itemIds)],
+            'filter' => ['id' => explode(',', $itemIdsString)],
         ];
         $ajaxRequest = new AjaxRequest($param);
 

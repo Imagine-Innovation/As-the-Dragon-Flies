@@ -2,8 +2,9 @@
 
 namespace frontend\controllers;
 
-use common\models\Race;
 use common\components\ManageAccessRights;
+use common\helpers\MixedHelper;
+use common\models\Race;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
@@ -91,7 +92,7 @@ class RaceController extends Controller
         }
 
         $request = Yii::$app->request;
-        $id = (int) $request->post('id');
+        $id = MixedHelper::toInt($request->post('id'));
 
         $model = $this->findModel($id);
 

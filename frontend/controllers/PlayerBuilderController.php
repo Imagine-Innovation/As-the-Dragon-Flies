@@ -2,6 +2,8 @@
 
 namespace frontend\controllers;
 
+use common\components\AppStatus;
+use common\components\ManageAccessRights;
 use common\helpers\MixedHelper;
 use common\models\BackgroundItem;
 use common\models\ClassEquipment;
@@ -11,8 +13,6 @@ use common\models\Player;
 use common\models\PlayerItem;
 use common\models\PlayerLanguage;
 use common\models\Skill;
-use common\components\AppStatus;
-use common\components\ManageAccessRights;
 use frontend\models\PlayerBuilder;
 use frontend\components\AjaxRequest;
 use frontend\components\BuilderComponent;

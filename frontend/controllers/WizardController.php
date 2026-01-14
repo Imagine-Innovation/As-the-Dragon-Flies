@@ -2,9 +2,10 @@
 
 namespace frontend\controllers;
 
+use common\components\ManageAccessRights;
+use common\helpers\MixedHelper;
 use common\models\Wizard;
 use common\models\WizardQuestion;
-use common\components\ManageAccessRights;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
@@ -91,8 +92,8 @@ class WizardController extends Controller
         }
 
         $request = Yii::$app->request;
-        $id = (int) $request->post('id', 1);
-        $topic = (string) $request->post('topic', 1);
+        $id = MixedHelper::toInt($request->post('id', 1));
+        $topic = MixedHelper::toString($request->post('topic'), 'Unknown');
         $propertyMap = [
             'class' => 'class_id',
             'race' => 'race_id',
