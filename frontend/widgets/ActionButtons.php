@@ -2,14 +2,17 @@
 
 namespace frontend\widgets;
 
+use common\helpers\MixedHelper;
 use common\helpers\Utilities;
 use frontend\helpers\ActionButtonsConfig;
 use yii\base\Widget;
 
+/** @template T of \yii\db\ActiveRecord */
 class ActionButtons extends Widget
 {
 
-    public mixed $model;
+    /** @var T */
+    public \yii\db\ActiveRecord $model;
     public ?bool $isOwner = null;
     public ?string $mode = null;
 
@@ -18,8 +21,10 @@ class ActionButtons extends Widget
      * @return string
      */
     public function run(): string {
+        // Narrow the type of status if it's not strictly an int or string in ActiveRecord
+        $status = MixedHelper::toInt($this->model->getAttribute('status'));
         $modelName = Utilities::modelName($this->model) ?? 'Unknown';
-        $actions = ActionButtonsConfig::getActions($modelName, $this->model->status);
+        $actions = ActionButtonsConfig::getActions($modelName, $status);
 
         $widgetView = ($this->mode === 'table') ? 'action-buttons-table' : 'action-buttons-icon';
 

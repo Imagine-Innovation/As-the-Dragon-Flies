@@ -7,6 +7,7 @@ use frontend\components\PlayerComponent;
 /** @var string $cardHeaderClass */
 $proficiencyBonus = $model->level->proficiency_bonus;
 
+/** @var non-empty-array<string, array{code: string, name: string, score: int, modifier: int, savingThrow: int}> */
 $playerAbilities = PlayerComponent::getAbilitiesAndSavingThrow($model->playerAbilities, $proficiencyBonus);
 
 $combatStat = [

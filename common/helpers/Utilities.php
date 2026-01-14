@@ -187,4 +187,27 @@ class Utilities extends Html
         // If the provided parameter is not an object, return null
         return null;
     }
+
+    /**
+     *
+     * @param array<string, mixed>|null $attributes
+     * @return string
+     */
+    public static function formatAttributes(?array $attributes): string {
+        if (!$attributes) {
+            return '';
+        }
+        $params = [];
+        foreach ($attributes as $attribute => $value) {
+            if (is_integer($value)) {
+                $intValue = (int) $value;
+                $params[] = "{$attribute}={$intValue}";
+            } elseif (is_string($value)) {
+                $strValue = Html::encode((string) $value);
+                $params[] = "{$attribute}=\"{$strValue}\"";
+            }
+            // otherwise, ignore this attribute
+        }
+        return implode(' ', $params);
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace frontend\widgets;
 
+use common\helpers\Utilities;
 use Yii;
 use yii\base\Widget;
 use yii\helpers\Html;
@@ -22,11 +23,11 @@ class Button extends Widget
     public bool $isCta = false;         // when 'true' is call to action (CTA) button
     public bool $isCloseModal = false;  // when 'true' is adding data-bs-dismiss="modal"
 
-    /** @var array<string, mixed> $postParams */
-    public array $postParams = [];      // Associative array ['param' => value, ...] for hidden POST params
+    /** @var array<string, string>|null $postParams */
+    public ?array $postParams = null;      // Associative array ['param' => value, ...] for hidden POST params
 
-    /** @var array<string, mixed> $ariaParams */
-    public array $ariaParams = [];      // Associative array ['param' => value, ...] for aria attributes
+    /** @var array<string, mixed>|null $ariaParams */
+    public ?array $ariaParams = null;      // Associative array ['param' => value, ...] for aria attributes
 
     /**
      *
@@ -54,26 +55,6 @@ class Button extends Widget
         $title = Html::encode($this->title ?? '');
 
         $html = $this->anchorTag('btn', $style) . "{$icon} {$title}</a>";
-
-        return $html;
-    }
-
-    /**
-     *
-     * @param array<string, mixed>|null $paramArray
-     * @return string
-     */
-    private function array2HTMLAttributes(?array $paramArray): string {
-        if (!$paramArray) {
-            return '';
-        }
-
-        $html = '';
-        foreach ($paramArray as $attribute => $value) {
-            // Caution: The spaces at the beginning of the line
-            // are intentional; do not delete them.
-            $html .= " {$attribute}=\"{$value}\"";
-        }
 
         return $html;
     }
@@ -108,7 +89,7 @@ class Button extends Widget
         $closeModal = $this->isCloseModal ? ' data-bs-dismiss="modal"' : '';
         $onclick = $this->onclick ? " onclick=\"{$this->onclick}\"" : '';
         $id = $this->idElement();
-        $aria = $this->array2HTMLAttributes($this->ariaParams);
+        $aria = $this->ariaParams ? ' ' . Utilities::formatAttributes($this->ariaParams) : '';
 
         $html = "<a href=\"{$url}\" {$id} role=\"button\" class=\"{$baseCss} {$AdditionalCss}\"{$closeModal}{$this->tooltipElement()}{$aria}{$onclick}>";
         return $html;
@@ -147,8 +128,10 @@ class Button extends Widget
     private function postForm(): string {
         $html = '<form action="' . $this->url . '" method="POST">';
         $html .= '<input type="hidden" name="' . Yii::$app->request->csrfParam . '" value="' . Yii::$app->request->csrfToken . '">';
-        foreach ($this->postParams as $name => $value) {
-            $html .= '<input type="hidden" name="' . $name . '" value="' . $value . '">';
+        if ($this->postParams) {
+            foreach ($this->postParams as $name => $value) {
+                $html .= '<input type="hidden" name="' . $name . '" value="' . $value . '">';
+            }
         }
         $html .= $this->postButton();
         $html .= '</form>';

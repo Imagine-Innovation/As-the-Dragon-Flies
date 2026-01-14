@@ -27,17 +27,15 @@ use frontend\widgets\RecordCount;
                         <th>Raised by</th>
                         <th>At</th>
                         <th>Message</th>
-                        <th>Acknowledged</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($models as $model): ?>
                         <tr>
                             <th scope="row"><?= $model->quest->name ?></th>
-                            <td><?= $model->sender->name ?></td>
+                            <td><?= $model->initiator->name ?></td>
                             <td class="text-center"><?= Yii::$app->formatter->asDateTime($model->created_at, 'dd/MM/yyyy HH:mm') ?></td>
                             <td><?= $model->message ?></td>
-                            <td><?= $model->acknowledged ? '<i class="bi bi-check-lg"></i>' : '&nbsp;' ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>

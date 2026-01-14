@@ -7,9 +7,9 @@ use yii\helpers\Html;
 ?>
 <?php foreach ($models as $model): ?>
     <a href="#" class="listview__item">
-        <img src="img/character/<?= $model->sender->image->file_name ?>" class="image-thumbnail">
+        <img src="img/character/<?= $model->initiator->image?->file_name ?>" class="image-thumbnail">
         <div class="listview__content">
-            <div class="listview__heading"><?= $model->sender->name ?></div>
+            <div class="listview__heading"><?= $model->initiator->name ?></div>
             <p><?= Html::encode($model->message) ?></p>
         </div>
     </a>

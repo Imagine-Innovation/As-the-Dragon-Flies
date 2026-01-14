@@ -5,12 +5,13 @@ namespace frontend\widgets;
 use common\models\Player;
 use yii\base\Widget;
 
+/** @template T of \yii\db\ActiveRecord */
 class BuilderTab extends Widget
 {
 
     public Player $player;
 
-    /** @var array<string, mixed> $tabContent */
+    /** @var array{model_name: class-string<T>, field_name: string, anchor: string, paragraphs: array<string>} $tabContent */
     public array $tabContent;
 
     /**
@@ -22,7 +23,6 @@ class BuilderTab extends Widget
 
         if ($tab['model_name']) {
             return $this->render('builder-tab', [
-                        /** @phpstan-ignore-next-line */
                         'models' => $this->getModels($tab['model_name']),
                         'field_name' => $tab['field_name'],
                         'paragraphs' => $tab['paragraphs'],
@@ -37,7 +37,6 @@ class BuilderTab extends Widget
     }
 
     /**
-     * @template T of \yii\db\ActiveRecord
      * @param class-string<T> $modelName
      * @return T[]
      */

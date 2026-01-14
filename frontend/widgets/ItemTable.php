@@ -2,6 +2,7 @@
 
 namespace frontend\widgets;
 
+use common\helpers\MixedHelper;
 use common\models\Item;
 use Yii;
 use yii\base\Widget;
@@ -153,7 +154,7 @@ class ItemTable extends Widget
     private string $type;
     private string $previousContent;
 
-    /** @var array<string, array<string, mixed>> $columns */
+    /** @var array<string, array{column-header: string, property: string, class: string, is-repeated: bool, is-link: bool, iconography: string|null, filter: string[]}> */
     private array $columns;
 
     /**
@@ -189,22 +190,21 @@ class ItemTable extends Widget
      * column configurations such as icons, scope (for the first column), unique
      * content, and links. It also maintains state to handle unique content display.
      *
-     * @param array<string, mixed> $col An associative array representing the configuration of the column.
-     *                   It includes keys such as 'iconography' (string), 'class' (string),
-     *                   'is-repeated' (boolean), 'is-link' (boolean).
-     * @param Item $model The Item model containing information for the current row.
+     * @param array{column-header: string, property: string, class: string, is-repeated: bool, is-link: bool, iconography: string|null, filter: string[]} $col
+     * @param Item $item The Item model containing information for the current row.
      * @param int $colIndex The index of the current column.
      *
      * @return string The HTML content for the table cell, including any necessary
      *                tags and formatting.
      */
-    private function renderTableCell(array $col, Item $model, int $colIndex): string {
+    private function renderTableCell(array $col, Item $item, int $colIndex): string {
         Yii::debug("*** Debug ***  ItemTable Widget - renderTableCell() - colIndex={$colIndex}, col['property']={$col['property']}");
         // Retrieve the content for the table cell using the model's property.
-        $cellContent = ($col['property'] === 'categories') ?
-                implode(", ", ArrayHelper::getColumn($model->categories, 'name')) :
-                $model[$col['property']];
+        $property = ($col['property'] === 'categories') ?
+                implode(", ", ArrayHelper::getColumn($item->categories, 'name')) :
+                $item[$col['property']];
 
+        $cellContent = MixedHelper::toString($property) ?? '';
         Yii::debug("*** Debug ***  ItemTable Widget - renderTableCell() - cellContent={$cellContent}");
 
         // Format the content for display, considering whether it's an icon, an image
@@ -232,7 +232,7 @@ class ItemTable extends Widget
 
         // Check if the column requires a link and construct the HTML accordingly.
         $innerHtml = $col['is-link'] ?
-                '<a href="' . Url::toRoute(['item/view', 'id' => $model->id]) . '">' . $display . '</a>' :
+                '<a href="' . Url::toRoute(['item/view', 'id' => $item->id]) . '">' . $display . '</a>' :
                 $display;
 
         // Return the final HTML content for the table cell.

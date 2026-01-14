@@ -3,12 +3,12 @@
 use frontend\widgets\Button;
 
 /** @var yii\web\View $this */
-/** @var array<string, mixed> $playerItems */
+/** @var array<string, non-empty-list<array{itemId: int, name: string, image: string|null, quantity: int, isProficient: int, isTwoHanded: int, buttonId: non-falsy-string}>> $playerItems */
 $itemTypes = ['Armor', 'Helmet', 'Shield', 'Weapon', 'Tool'];
 ?>
 <div class="row">
     <?php foreach ($itemTypes as $itemType): ?>
-        <?php if (array_key_exists($itemType, $playerItems) && !empty($playerItems[$itemType])): ?>
+        <?php if (array_key_exists($itemType, $playerItems)): ?>
             <div id="itemType-<?= $itemType ?>" class="card d-none">
                 <?php foreach ($playerItems[$itemType] as $item): ?>
                     <article id="item-<?= $item['itemId'] ?>" class="col-12 p-3">

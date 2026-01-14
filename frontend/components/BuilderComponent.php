@@ -171,11 +171,11 @@ class BuilderComponent
      * Returns an array of random names that takes into account the player's race and gender
      *
      * @param int $raceId
-     * @param string $gender
-     * @param int $n
+     * @param string|null $gender defaulted to M
+     * @param int|null $n defaulted to 3
      * @return array<int, string>
      */
-    public static function loadRandomNames(int $raceId, string $gender, int $n): array {
+    public static function loadRandomNames(int $raceId, ?string $gender = 'M', ?int $n = 3): array {
         $race = Race::findOne(['id' => $raceId]);
         if ($race === null) {
             return [];

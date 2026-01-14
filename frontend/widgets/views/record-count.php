@@ -3,12 +3,11 @@
 use frontend\widgets\Button;
 
 /** @var string $countLabel */
-/** @var array<string, mixed>|null $actions action buttons associated with the context */
+/** @var array<string, array{url: string, icon: string, tooltip: string}>|null $actions action buttons associated with the context */
 ?>
 <p class="text-muted"><?= $countLabel ?></p>
-<?php if (isset($actions)): ?>
+<?php if ($actions !== null && !empty($actions)): ?>
     <div class="actions">
-        <!-- Record Count -->
         <?php foreach ($actions as $action): ?>
             <?=
             Button::widget([

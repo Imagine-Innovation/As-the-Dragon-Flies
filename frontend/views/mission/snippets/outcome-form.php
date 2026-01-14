@@ -53,7 +53,7 @@ use yii\widgets\ActiveForm;
         <?=
                 $form->field($model, 'item_id')
                 ->dropdownList(
-                        $model->item_id ? [$model->item_id => $model->item->name] : [],
+                        $model->item_id ? [$model->item_id => $model->item?->name] : [],
                         [
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
@@ -67,7 +67,7 @@ use yii\widgets\ActiveForm;
         <?=
                 $form->field($model, 'next_mission_id')
                 ->dropdownList(
-                        $model->next_mission_id ? [$model->next_mission_id => $model->nextMission->name] : [],
+                        $model->next_mission_id ? [$model->next_mission_id => $model->nextMission?->name] : [],
                         [
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,

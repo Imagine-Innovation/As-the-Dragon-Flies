@@ -35,10 +35,9 @@ use frontend\widgets\RecordCount;
                 <tbody>
                     <?php foreach ($models as $model): ?>
                         <tr>
-                            <?php $user = $model->getUser()->one(); ?>
                             <th scope="row">
                                 <a href="<?= Url::toRoute(['user/view', 'id' => $model->user_id]) ?>">
-                                    <?= Html::encode($user->username) ?>
+                                    <?= Html::encode($model->user->username) ?>
                                 </a>
                             </th>
                             <td><?= $model->application ?></td>

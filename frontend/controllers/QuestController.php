@@ -350,9 +350,9 @@ class QuestController extends Controller
 
         // Extract request parameters
         $request = Yii::$app->request;
-        $playerId = (int) $request->get('playerId');
-        $questId = (int) $request->get('questId');
-        $roundedTime = (int) $request->get('roundedTime');
+        $playerId = MixedHelper::toInt($request->get('playerId'));
+        $questId = MixedHelper::toInt($request->get('questId'));
+        $roundedTime = MixedHelper::toInt($request->get('roundedTime'));
 
         // Fetch and render messages
         $chatManager = new ChatManager(['questId' => $questId, 'playerId' => $playerId]);

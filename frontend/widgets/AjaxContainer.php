@@ -2,6 +2,7 @@
 
 namespace frontend\widgets;
 
+use common\helpers\Utilities;
 use Yii;
 use yii\base\Widget;
 
@@ -23,28 +24,7 @@ class AjaxContainer extends Widget
         return $this->render('ajax-container', [
                     'tag' => $this->tag,
                     'name' => $this->name,
-                    'param' => $this->setParam($this->options),
+                    'param' => Utilities::formatAttributes($this->options),
         ]);
-    }
-
-    /**
-     *
-     * @param array<string, mixed> $options
-     * @return string
-     */
-    private function setParam(array $options): string {
-        $param = "";
-        if ($options) {
-            $keys = array_keys($options);
-            $values = array_values($options);
-            $params = [];
-
-            for ($i = 0; $i < count($options); $i++) {
-                $params[] = $keys[$i] . '="' . $values[$i] . '"';
-            }
-            $param = implode(" ", $params);
-        }
-
-        return $param;
     }
 }

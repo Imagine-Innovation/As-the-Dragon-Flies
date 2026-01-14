@@ -77,8 +77,8 @@ class PlayerBuilderController extends Controller
         }
 
         $request = Yii::$app->request;
-        $raceId = (int) $request->post('raceId');
-        $age = $request->post('age', 0);
+        $raceId = MixedHelper::toInt($request->post('raceId'));
+        $age = MixedHelper::toInt($request->post('age', 0));
         Yii::debug("*** Debug *** actionAjaxAge raceId=$raceId, age=$age", __METHOD__);
 
         $ageTable = BuilderComponent::loadAgeTable($raceId);
@@ -107,9 +107,9 @@ class PlayerBuilderController extends Controller
         }
 
         $request = Yii::$app->request;
-        $raceId = (int) $request->post('raceId');
-        $gender = (string) $request->post('gender', 'M');
-        $n = (int) $request->post('n', 3);
+        $raceId = MixedHelper::toInt($request->post('raceId'));
+        $gender = MixedHelper::toString($request->post('gender'));
+        $n = MixedHelper::toInt($request->post('n', 3));
 
         return [
             'error' => false, 'msg' => '',
@@ -156,12 +156,12 @@ class PlayerBuilderController extends Controller
         }
 
         $request = Yii::$app->request;
-        $raceId = (int) $request->post('raceId');
-        $classId = (int) $request->post('classId');
-        $gender = (string) $request->post('gender');
+        $raceId = MixedHelper::toInt($request->post('raceId'));
+        $classId = MixedHelper::toInt($request->post('classId'));
+        $gender = MixedHelper::toString($request->post('gender'), 'M');
 
-        if ($raceId && $classId && $gender) {
-            $imageId = (int) $request->post('imageId');
+        if ($raceId > 0 && $classId > 0 && $gender) {
+            $imageId = MixedHelper::toInt($request->post('imageId'));
             return $this->renderImages($imageId, $raceId, $classId, $gender);
         }
         return ['error' => true, 'msg' => 'Missing argument: '
@@ -182,7 +182,7 @@ class PlayerBuilderController extends Controller
         }
 
         $request = Yii::$app->request;
-        $playerId = (int) $request->post('playerId');
+        $playerId = MixedHelper::toInt($request->post('playerId'));
         $player = $this->findModel($playerId);
 
         $skills = BuilderComponent::initPlayerSkills($player);
@@ -210,7 +210,7 @@ class PlayerBuilderController extends Controller
         }
 
         $request = Yii::$app->request;
-        $playerId = (int) $request->post('playerId');
+        $playerId = MixedHelper::toInt($request->post('playerId'));
         $player = $this->findModel($playerId);
 
         $languages = BuilderComponent::initPlayerLanguages($player);
@@ -239,9 +239,9 @@ class PlayerBuilderController extends Controller
         }
 
         $request = Yii::$app->request;
-        $playerId = (int) $request->post('playerId');
-        $languageId = (int) $request->post('languageId');
-        $selected = $request->post('selected');
+        $playerId = MixedHelper::toInt($request->post('playerId'));
+        $languageId = MixedHelper::toInt($request->post('languageId'));
+        $selected = MixedHelper::toBool($request->post('selected'));
         Yii::debug("*** debug *** actionAjaxUpdateLanguage - playerId={$playerId}, languageId=[$languageId}, selected={$selected}");
         if ($selected) {
             $this->addLanguage($playerId, $languageId);
@@ -308,8 +308,8 @@ class PlayerBuilderController extends Controller
         }
 
         $request = Yii::$app->request;
-
-        $player = $this->findModel($request->post('playerId'));
+        $playerId = MixedHelper::toInt($request->post('playerId'));
+        $player = $this->findModel($playerId);
         BuilderComponent::initTraits($player);
 
         return [
@@ -332,7 +332,7 @@ class PlayerBuilderController extends Controller
         }
 
         $request = Yii::$app->request;
-        $playerId = (int) $request->post('playerId');
+        $playerId = MixedHelper::toInt($request->post('playerId'));
         $player = $this->findModel($playerId);
 
         $endowmentTable = $player->getInitialEndowment();
@@ -362,7 +362,8 @@ class PlayerBuilderController extends Controller
         }
 
         $request = Yii::$app->request;
-        $equipments = BackgroundItem::findAll(['background_id' => $request->post('backgroundId')]);
+        $backgroundId = MixedHelper::toInt($request->post('backgroundId'));
+        $equipments = BackgroundItem::findAll(['background_id' => $backgroundId]);
 
         $content = BuilderComponent::setEquipmentResponse($equipments);
         return [
@@ -383,9 +384,9 @@ class PlayerBuilderController extends Controller
         }
 
         $request = Yii::$app->request;
-        $choice = $request->post('choice');
-
-        $equipments = ClassEquipment::findAll(['endowment_id' => $request->post('endowmentId')]);
+        $choice = MixedHelper::toInt($request->post('choice'));
+        $endowmentId = MixedHelper::toInt($request->post('endowmentId'));
+        $equipments = ClassEquipment::findAll(['endowment_id' => $endowmentId]);
 
         $content = BuilderComponent::setEquipmentResponse($equipments, $choice);
         return [
@@ -510,17 +511,18 @@ class PlayerBuilderController extends Controller
         }
 
         $request = Yii::$app->request;
-        $playerId = (int) $request->post('playerId');
+        $playerId = MixedHelper::toInt($request->post('playerId'));
         $player = $this->findModel($playerId);
 
-        $itemIds = $request->post('itemIds');
+        /** @var array<string> */
+        $itemIds = MixedHelper::toArray($request->post('itemIds'));
 
         // first of all, delete existing items.
         // As a side effect, we must assume that the player has no other items
         // purchased or collected during the setup process.
         PlayerItem::deleteAll(['player_id' => $playerId]);
 
-        if (!$itemIds) {
+        if (empty($itemIds)) {
             return ['error' => true, 'msg' => 'Missing item ids'];
         }
 
@@ -539,8 +541,8 @@ class PlayerBuilderController extends Controller
      */
     private function getItemsCategory(\yii\web\Request $request): AjaxRequest {
         // First split by comma to get each pair
-        $ids = MixedHelper::toString($request->post('categoryIds'));
-        $pairs = explode(',', $ids ?? '');
+        $idsString = MixedHelper::toString($request->post('categoryIds'));
+        $pairs = explode(',', $idsString ?? '');
 
         $quantity = explode('|', $pairs[0])[1];
 
@@ -554,8 +556,8 @@ class PlayerBuilderController extends Controller
             'render' => 'item-category',
             'with' => ['item', 'image'],
             'param' => [
-                'choice' => $request->post('choice'),
-                'alreadySelectedItems' => $request->post('alreadySelectedItems'),
+                'choice' => MixedHelper::toInt($request->post('choice')),
+                'alreadySelectedItems' => MixedHelper::toArray($request->post('alreadySelectedItems')),
                 'quantity' => $quantity
             ],
             'filter' => ['category_id' => $categoryIds],
@@ -596,13 +598,13 @@ class PlayerBuilderController extends Controller
         }
 
         $request = Yii::$app->request;
-        $playerId = (int) $request->post('playerId');
+        $playerId = MixedHelper::toInt($request->post('playerId'));
         $player = $this->findModel($playerId);
 
-        $skillId = (int) $request->post('skillId');
+        $skillId = MixedHelper::toInt($request->post('skillId'));
         $skill = $this->findSkill($skillId);
 
-        $isProficient = (int) $request->post('isProficient');
+        $isProficient = MixedHelper::toInt($request->post('isProficient'));
 
         BuilderComponent::updateSkill($player, $skill, $isProficient);
 
@@ -622,12 +624,13 @@ class PlayerBuilderController extends Controller
         }
 
         $request = Yii::$app->request;
-        $model = $this->findModel($request->post('playerId'));
-        if (!$model->isNewRecord) {
-            $abilities = $request->post('abilities');
-            foreach ($model->playerAbilities as $playerAbility) {
+        $playerId = MixedHelper::toInt($request->post('playerId'));
+        $player = $this->findModel($playerId);
+        if (!$player->isNewRecord) {
+            $abilities = MixedHelper::toArray($request->post('abilities'));
+            foreach ($player->playerAbilities as $playerAbility) {
                 $ability_id = $playerAbility->ability_id;
-                $score = $abilities[$ability_id];
+                $score = MixedHelper::toInt($abilities[$ability_id]);
                 $playerAbility->score = $score;
                 $playerAbility->modifier = PlayerComponent::calcAbilityModifier($score);
                 if (!$playerAbility->save()) {
@@ -646,20 +649,20 @@ class PlayerBuilderController extends Controller
      * @return string|\yii\web\Response
      */
     public function actionCreate(): string|Response {
-        $model = new PlayerBuilder();
+        $playerBuilder = new PlayerBuilder();
 
         if ($this->request->isPost) {
             $post = MixedHelper::toArray($this->request->post());
-            if ($model->load($post) && $model->save()) {
-                return $this->redirect(['update', 'id' => $model->id]);
+            if ($playerBuilder->load($post) && $playerBuilder->save()) {
+                return $this->redirect(['update', 'id' => $playerBuilder->id]);
             }
         } else {
-            $model->loadDefaultValues();
-            $model->user_id = Yii::$app->user->identity->id;
+            $playerBuilder->loadDefaultValues();
+            $playerBuilder->user_id = Yii::$app->user->identity->id;
         }
 
         return $this->render('create', [
-                    'model' => $model
+                    'model' => $playerBuilder,
         ]);
     }
 
