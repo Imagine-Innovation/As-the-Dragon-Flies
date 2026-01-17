@@ -134,8 +134,7 @@ class PlayerController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxLite(): array
-    {
+    public function actionAjaxLite(): array {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -143,7 +142,7 @@ class PlayerController extends Controller
         }
 
         $request = Yii::$app->request;
-        $userId = Yii::$app->user->id; // Use authenticated user's ID
+        $userId = MixedHelper::toInt($request->post('userId'));
 
         $param = [
             'modelName' => 'Player',
@@ -162,8 +161,7 @@ class PlayerController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxSetContext(): array
-    {
+    public function actionAjaxSetContext(): array {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -171,17 +169,13 @@ class PlayerController extends Controller
         }
 
         $request = Yii::$app->request;
-        $userId = MixedHelper::toInt($request->post('userId'));
 
-        // A user can only change his own context
-        if ($userId !== Yii::$app->user->id) {
-            return ['error' => true, 'msg' => 'Unauthorized'];
-        }
+        $userId = MixedHelper::toInt($request->post('userId'));
         $playerId = MixedHelper::toInt($request->post('playerId'));
 
         $success = User::updateAll(
-            ['current_player_id' => $playerId > 0 ? $playerId : null],
-            ['id' => $userId]
+                ['current_player_id' => $playerId > 0 ? $playerId : null],
+                ['id' => $userId]
         );
 
         ContextManager::updatePlayerContext($playerId);

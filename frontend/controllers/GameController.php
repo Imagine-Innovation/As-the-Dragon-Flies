@@ -230,17 +230,11 @@ class GameController extends Controller
      * @param int $storyId
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxDialog(int $replyId, int $playerId, int $storyId): array
-    {
+    public function actionAjaxDialog(int $replyId, int $playerId, int $storyId): array {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isGet || !$this->request->isAjax) {
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
-        }
-
-        // A player can only act for himself
-        if ($playerId !== Yii::$app->session->get('playerId')) {
-            return ['error' => true, 'msg' => 'Unauthorized'];
         }
 
         $reply = FindModelHelper::findReply($replyId);
