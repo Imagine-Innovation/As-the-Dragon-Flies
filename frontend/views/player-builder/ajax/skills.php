@@ -25,9 +25,9 @@ foreach ($backgroundSkills as $backgroundSkill) {
         <br>
     <?php endif; ?>
     <?php if ($n > 1): ?>
-        <p class="text-muted">You can select a maximum of <?= $n ?> <?= $backgroundSkills ? "additional " : "" ?>skills</p>
+        <p class="text-muted">You can select a maximum of <?= $n ?> <?= $backgroundSkills ? "additional " : '' ?>skills</p>
     <?php else: ?>
-        <p class="text-muted">You can select only one <?= $backgroundSkills ? "additional " : "" ?>skill</p>
+        <p class="text-muted">You can select only one <?= $backgroundSkills ? "additional " : '' ?>skill</p>
     <?php endif; ?>
     <br>
     <?php foreach ($classSkills as $playerSkill): ?>

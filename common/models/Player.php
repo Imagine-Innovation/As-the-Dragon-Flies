@@ -583,8 +583,8 @@ class Player extends \yii\db\ActiveRecord
             'F' => 'female',
             default => '',
         };
-        $age = $this->age ? "{$this->age}-years-old" : "";
-        $alignment = $this->alignment ? $this->alignment->name : "";
+        $age = $this->age ? "{$this->age}-years-old" : '';
+        $alignment = $this->alignment ? $this->alignment->name : '';
         $description = "{$age} {$gender} {$this->race->name}, {$this->level->name} {$alignment} {$this->class->name}";
         return strtolower($description);
     }

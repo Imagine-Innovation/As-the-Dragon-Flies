@@ -25,7 +25,7 @@ use frontend\helpers\ItemHelper;
                             <h6 class="mb-0 fw-bold"><?= $weapon->item->name ?></h6>
                             <span class="badge btn-fantasy"><?= $playerItem->attack_modifier ?> to hit</span>
                         </div>
-                        <small class="text-muted"><?= $playerItem->damage ?> <?= $weapon->damageType->name ?><?= $properties ? ", {$properties}" : "" ?></small>
+                        <small class="text-muted"><?= $playerItem->damage ?> <?= $weapon->damageType->name ?><?= $properties ? ", {$properties}" : '' ?></small>
                         <?php if ($remaining): ?>
                             <br><small class="text-muted"><?= $remaining ?></small>
                         <?php endif; ?>

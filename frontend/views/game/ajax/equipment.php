@@ -53,7 +53,7 @@ $lastItemType = "none";
                     <div class="d-flex align-items-center justify-content-between">
                         <div class="d-flex align-items-center">
                             <img src="img/item/<?= $item['image'] ?>" class="image-thumbnail me-2" style="width: 50px;height: 50px;">
-                            <?= $item['name'] ?> <?= $item['quantity'] > 1 ? "(x{$item['quantity']})" : "" ?>
+                            <?= $item['name'] ?> <?= $item['quantity'] > 1 ? "(x{$item['quantity']})" : '' ?>
                         </div>
                     </div>
                 <?php endforeach; ?>

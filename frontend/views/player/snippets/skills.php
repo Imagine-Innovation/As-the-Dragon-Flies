@@ -12,7 +12,7 @@
     <article class="card-body p-4">
         <div class="vertical-columns">
             <?php foreach ($model->playerSkills as $playerSkill): ?>
-                <div><?= $playerSkill->skill->name ?><?= $playerSkill->is_proficient ? " (+{$proficiencyBonus})" : "" ?></div>
+                <div><?= $playerSkill->skill->name ?><?= $playerSkill->is_proficient ? " (+{$proficiencyBonus})" : '' ?></div>
             <?php endforeach; ?>
         </div>
     </article>

@@ -459,7 +459,7 @@ class QuestController extends Controller
 
         // Handle form submission
         if ($this->request->isPost) {
-            $post = MixedHelper::toArray($this->request->post());
+            $post = (array) $this->request->post();
             if ($model->load($post) && $model->save()) {
                 return $this->redirect(['view', 'id' => $model->id]);
             }
@@ -486,7 +486,7 @@ class QuestController extends Controller
         $model = $this->findModel($id);
 
         // Process form submission
-        $post = MixedHelper::toArray($this->request->post());
+        $post = (array) $this->request->post();
         if ($this->request->isPost && $model->load($post) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }

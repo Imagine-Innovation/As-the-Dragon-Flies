@@ -2,7 +2,6 @@
 
 namespace frontend\controllers;
 
-use common\helpers\MixedHelper;
 use common\models\Image;
 use common\models\ClassImage;
 use frontend\components\AjaxRequest;
@@ -84,8 +83,8 @@ class ImageController extends Controller
         }
 
         $request = Yii::$app->request;
-        $raceGroupId = MixedHelper::toInt($request->post('currentId', 1));
-        $gender = MixedHelper::toString($request->post('filter'));
+        $raceGroupId = $request->post('currentId', 1);
+        $gender = $request->post('filter', 'M');
 
         $param = [
             'modelName' => 'Image',
@@ -115,10 +114,10 @@ class ImageController extends Controller
         }
 
         $request = Yii::$app->request;
-        $imageId = MixedHelper::toInt($request->post('imageId'));
-        $classId = MixedHelper::toInt($request->post('classId'));
-        $className = MixedHelper::toString($request->post('className'));
-        $status = MixedHelper::toInt($request->post('status'));
+        $imageId = $request->post('imageId');
+        $classId = $request->post('classId');
+        $className = $request->post('className');
+        $status = $request->post('status');
 
         $model = ClassImage::findOne(['image_id' => $imageId, 'class_id' => $classId]);
 
@@ -159,7 +158,7 @@ class ImageController extends Controller
         $model = new Image();
 
         if ($this->request->isPost) {
-            $post = MixedHelper::toArray($this->request->post());
+            $post = (array) $this->request->post();
             if ($model->load($post) && $model->save()) {
                 return $this->redirect(['view', 'id' => $model->id]);
             }
@@ -182,7 +181,7 @@ class ImageController extends Controller
     public function actionUpdate(int $id): string|Response {
         $model = $this->findModel($id);
 
-        $post = MixedHelper::toArray($this->request->post());
+        $post = (array) $this->request->post();
         if ($this->request->isPost && $model->load($post) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
@@ -217,7 +216,7 @@ class ImageController extends Controller
         }
 
         $request = Yii::$app->request;
-        $id = MixedHelper::toInt($request->post('id'));
+        $id = $request->post('id');
 
         $model = $this->findModel($id);
 

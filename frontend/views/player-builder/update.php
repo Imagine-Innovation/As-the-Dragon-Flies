@@ -55,7 +55,7 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
                 <?php foreach ($tabs as $tab): ?>
                     <?php if (($isAdmin && $tab['admin']) || !$tab['admin']): ?>
                         <li class="nav-item">
-                            <a role="tab" class="nav-link<?= ($tab['anchor'] === $firstTab) ? " active" : "" ?>"
+                            <a role="tab" class="nav-link<?= ($tab['anchor'] === $firstTab) ? " active" : '' ?>"
                                id="builderTab-<?= $tab['anchor'] ?>-<?= $tab['wizard'] ?>"
                                data-bs-toggle="tab" href="#<?= $tab['anchor'] ?>-tabContent">
                                    <?= $tab['name'] ?>

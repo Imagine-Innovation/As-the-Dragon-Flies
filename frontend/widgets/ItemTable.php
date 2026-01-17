@@ -173,7 +173,7 @@ class ItemTable extends Widget
      */
     public function run(): string {
         Yii::debug("*** Debug ***  ItemTable Widget - run(), itemTypeId={$this->itemTypeId}");
-        $this->previousContent = "";
+        $this->previousContent = '';
         $this->type = self::LUT_TYPE[$this->itemTypeId - 1];
 
         return $this->render('item-table', [
@@ -244,7 +244,7 @@ class ItemTable extends Widget
      * @return string
      */
     public function renderTableHeader(): string {
-        $html = "";
+        $html = '';
         foreach ($this->columns as $col) {
             if (in_array($this->type, $col['filter'])) {
                 $html .= '<th class = "' . $col['class'] . '">' . $col['column-header'] . '</th>';

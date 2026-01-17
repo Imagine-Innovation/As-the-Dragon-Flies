@@ -45,13 +45,13 @@ class Button extends Widget
      * @return string
      */
     private function button(): string {
-        // Caution: The spaces at the beginning of the line are intentional; do not delete them.
-        //
-        // If the btn style is not defined by the user, default it to 'btn-seconday'
+// Caution: The spaces at the beginning of the line are intentional; do not delete them.
+//
+// If the btn style is not defined by the user, default it to 'btn-seconday'
         $paramStyle = $this->style ?? '';
         $defaultBtn = (strpos($paramStyle, "btn-") !== false) ? '' : ' btn-secondary';
         $style = ($this->isCta ? ' btn-warning' : $defaultBtn) . ' ' . $paramStyle;
-        $icon = $this->icon ? $this->iconElement() : "";
+        $icon = $this->icon ? $this->iconElement() : '';
         $title = Html::encode($this->title ?? '');
 
         $html = $this->anchorTag('btn', $style) . "{$icon} {$title}</a>";
@@ -100,7 +100,8 @@ class Button extends Widget
      * @return string
      */
     private function iconElement(): string {
-        return '<i class="bi ' . ($this->icon ?? "dnd-logo") . '"></i>';
+        $bootstropIcon = $this->icon ?? 'dnd-logo';
+        return "<i class=\"bi {$bootstropIcon}\"></i>";
     }
 
     /**
@@ -108,8 +109,9 @@ class Button extends Widget
      * @return string
      */
     private function tooltipElement(): string {
-        // Caution: The spaces at the beginning of the line are intentional; do not delete them.
-        return $this->tooltip ? ' data-bs-toggle="tooltip" title="' . Html::encode($this->tooltip) . '" data-bs-placement="bottom"' : '';
+// Caution: The spaces at the beginning of the line are intentional; do not delete them.
+        $tooltip = Html::encode($this->tooltip ?? '');
+        return $this->tooltip ? " data-bs-toggle=\"tooltip\" title=\"{$tooltip}\" data-bs-placement=\"bottom\"" : '';
     }
 
     /**
@@ -117,7 +119,7 @@ class Button extends Widget
      * @return string
      */
     private function idElement(): string {
-        // Caution: The spaces at the beginning of the line are intentional; do not delete them.
+// Caution: The spaces at the beginning of the line are intentional; do not delete them.
         return $this->id ? " id=\"{$this->id}\"" : '';
     }
 
@@ -126,11 +128,12 @@ class Button extends Widget
      * @return string
      */
     private function postForm(): string {
-        $html = '<form action="' . $this->url . '" method="POST">';
-        $html .= '<input type="hidden" name="' . Yii::$app->request->csrfParam . '" value="' . Yii::$app->request->csrfToken . '">';
+        $request = Yii::$app->request;
+        $html = "<form action=\"{$this->url}\" method=\"POST\">";
+        $html .= "<input type=\"hidden\" name=\"{$request->csrfParam}\" value=\"{$request->csrfToken}\">";
         if ($this->postParams) {
             foreach ($this->postParams as $name => $value) {
-                $html .= '<input type="hidden" name="' . $name . '" value="' . $value . '">';
+                $html .= "<input type=\"hidden\" name=\"{$name}\" value=\"{$value}\">";
             }
         }
         $html .= $this->postButton();
@@ -145,13 +148,16 @@ class Button extends Widget
      */
     private function postButton() {
         // Caution: The spaces at the beginning of the line are intentional; do not delete them.
-        $style = ($this->isCta ? ' btn-warning' : ' btn-secondary') . ' ' . ($this->style ?? '');
+        $style = $this->style ?? '';
+        $button = $this->isCta ? "btn btn-warning {$style}" : "btn btn-secondary {$style}";
+        $tooltip = $this->tooltipElement();
+        $title = Html::encode($this->title ?? '');
+        $id = $this->idElement();
+        $icon = $this->icon ? $this->iconElement() : '';
 
-        $icon = $this->icon ? $this->iconElement() : "";
-
-        $html = '<button ' . $this->idElement() . ' role="button" class="btn' . $style . '"' . $this->tooltipElement() . '>';
-        $html .= "{$icon} " . Html::encode($this->title ?? '');
-        $html .= "</button>";
+        $html = "<button {$id} role=\"button\" class=\"{$button}\" {$tooltip}>"
+                . "{$icon} {$title}"
+                . "</button>";
 
         return $html;
     }

@@ -86,13 +86,13 @@ class RuleParser extends Component
     ];
 
     /** @var string Detailed error message if parsing fails */
-    public string $errorMessage = "";
+    public string $errorMessage = '';
 
     /** @var RuleNode|null The resulting abstract syntax tree (AST) */
     public ?RuleNode $parsingTree = null;
 
     /** @var string The token or grammar rule the parser was looking for when it failed */
-    public string $expected = "";
+    public string $expected = '';
 
     /** @var list<array{type: string, value: string}> Internal token stream */
     private array $tokens = [];
@@ -319,7 +319,7 @@ class RuleParser extends Component
     private function nestedProperty(array &$properties): bool {
         if ($this->nextToken() === '->') {
             $this->getToken();
-            $method = "";
+            $method = '';
             $match = $this->method($method);
 
             if ($match) {
@@ -522,7 +522,7 @@ class RuleParser extends Component
     private function _token(int $pos, string $element): string {
         if ($this->emergencyStop++ > 500)
             throw new InvalidParamException('Emergency stop triggered: infinite loop suspected.');
-        return ($pos < $this->tokenNb) ? $this->tokens[$pos][$element] : "";
+        return ($pos < $this->tokenNb) ? $this->tokens[$pos][$element] : '';
     }
 
     /**
@@ -532,7 +532,7 @@ class RuleParser extends Component
      * @return string The string representation of parsing tokens.
      */
     private function _parsingTokens(int $n): string {
-        $str = "";
+        $str = '';
         for ($i = 0; $i <= $n && $i < $this->tokenNb; $i++) {
             $str .= "[{$this->tokens[$i]['type']} => {$this->tokens[$i]['value']}] ";
         }
@@ -582,12 +582,12 @@ class RuleParser extends Component
      */
     private function makeErrorMessage(): string {
         if (!$this->expected) {
-            return "";
+            return '';
         }
-        $found = $this->nextToken() === "" ? "end of rule" : $this->nextToken();
-        $in = "";
+        $found = $this->nextToken() === '' ? 'end of rule' : $this->nextToken();
+        $in = '';
         for ($i = 0; $i <= $this->pos && $i < $this->tokenNb; $i++) {
-            $in .= " " . $this->tokens[$i]['value'];
+            $in .= ' ' . $this->tokens[$i]['value'];
         }
         return "Expected '{$this->expected}', found '{$found}' in [{$in}]";
     }

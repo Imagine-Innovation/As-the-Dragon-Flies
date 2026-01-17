@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
 $inventory = new Inventory();
 $playerItems = $inventory->loadItemsData($models);
 $itemTypes = $inventory->getItemTypes($models);
-$firstType = $itemTypes[0] ?? "";
+$firstType = $itemTypes[0] ?? '';
 ?>
 <div class="container g-0 p-0">
     <div class="card">
@@ -48,7 +48,7 @@ $firstType = $itemTypes[0] ?? "";
                     <ul class="nav nav-tabs" role="tablist">
                         <?php foreach ($itemTypes as $itemType): ?>
                             <li class="nav-item">
-                                <a class="nav-link<?= ($itemType === $firstType) ? " active" : "" ?>"
+                                <a class="nav-link<?= ($itemType === $firstType) ? " active" : '' ?>"
                                    data-bs-toggle="tab" href="#tab-<?= $itemType ?>" role="tab" href="#">
                                        <?= $itemType ?>
                                 </a>

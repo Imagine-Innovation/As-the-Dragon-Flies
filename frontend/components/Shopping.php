@@ -328,7 +328,7 @@ class Shopping
      */
     public function getCartValueString(array $playerCarts): string {
         if (empty($playerCarts)) {
-            return "";
+            return '';
         }
 
         $coinage = $this->initCoinage();

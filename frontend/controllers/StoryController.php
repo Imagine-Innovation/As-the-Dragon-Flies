@@ -99,7 +99,7 @@ class StoryController extends Controller
         $model = new Story();
 
         if ($this->request->isPost) {
-            $post = MixedHelper::toArray($this->request->post());
+            $post = (array) $this->request->post();
             if ($model->load($post) && $model->save()) {
                 return $this->redirect(['view', 'id' => $model->id]);
             }
@@ -122,7 +122,7 @@ class StoryController extends Controller
     public function actionUpdate(int $id): string|Response {
         $model = $this->findModel($id);
 
-        $post = MixedHelper::toArray($this->request->post());
+        $post = (array) $this->request->post();
         if ($this->request->isPost && $model->load($post) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }

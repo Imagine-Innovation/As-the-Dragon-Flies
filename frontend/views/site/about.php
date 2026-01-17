@@ -11,7 +11,7 @@ $this->params['breadcrumbs'][] = $this->title;
 </header>
 
 <div class="card">
-    <img class="card-img-top" src="img/sm/1.jpg" alt="">
+    <img class="card-img-top" src="img/sm/1.jpg" alt=''>
 
     <div class="card-body">
         <p class="card-text">Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Nulla vitae elit libero, a pharetra augue. Sed posuere consectetur est at lobortis. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.</p>

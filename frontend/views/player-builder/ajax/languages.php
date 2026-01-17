@@ -26,9 +26,9 @@ foreach ($raceLanguages as $raceLanguage) {
     <?php endif; ?>
     <?php if ($n > 0): ?>
         <?php if ($n > 1): ?>
-            <p class="text-muted">You can select a maximum of <?= $n ?> <?= $raceLanguages ? "additional " : "" ?>languages</p>
+            <p class="text-muted">You can select a maximum of <?= $n ?> <?= $raceLanguages ? "additional " : '' ?>languages</p>
         <?php else: ?>
-            <p class="text-muted">You can select only one <?= $raceLanguages ? "additional " : "" ?>language</p>
+            <p class="text-muted">You can select only one <?= $raceLanguages ? "additional " : '' ?>language</p>
         <?php endif; ?>
         <br>
         <?php foreach ($otherLanguages as $otherLanguage): ?>

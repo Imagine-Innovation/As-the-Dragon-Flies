@@ -372,7 +372,7 @@ class Item extends \yii\db\ActiveRecord
         }
 
         // Return an empty string if the weight is zero.
-        return "";
+        return '';
     }
 
     /**
@@ -432,7 +432,7 @@ class Item extends \yii\db\ActiveRecord
      *                otherwise an empty string.
      */
     public function getArmorDisadvantage(): string {
-        return $this->armor->is_disadvantage ? 'bi-check-lg' : "";
+        return $this->armor->is_disadvantage ? 'bi-check-lg' : '';
     }
 
     /**

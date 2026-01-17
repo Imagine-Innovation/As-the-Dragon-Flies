@@ -48,7 +48,7 @@ $item = $playerCart->item;
         </div>
         <img src="img/item/<?= $item->image ?>" class="image-thumbnail float-start" style="width: 80px;height: 80px;">
         <h6 class="card-subtitle">
-            <?= $item->name ?><?= ($item->quantity > 1) ? "(x{$item->quantity})" : "" ?>(<?= $item->price ?>)
+            <?= $item->name ?><?= ($item->quantity > 1) ? "(x{$item->quantity})" : '' ?>(<?= $item->price ?>)
         </h6>
         <h6 class="card-subtitle text-muted w-75">
             <?=

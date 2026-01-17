@@ -19,7 +19,7 @@ $paragraphs = [
 ];
 
 $items = [];
-$category = "";
+$category = '';
 foreach ($backgroundItems as $backgroundItem) {
     if ($backgroundItem->item_id) {
         $items[] = "{$backgroundItem->item_id}|{$backgroundItem->quantity}";

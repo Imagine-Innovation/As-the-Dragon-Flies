@@ -47,17 +47,17 @@ use yii\widgets\ActiveForm;
     <-- Custom fields -->
     <div class="form-group field-playerbuilder-languages">
         <label class="control-label" for="playerbuilder-languages">Languages</label>
-        <input type="text" id="playerbuilder-languages" class="form-control" name="dummy-languages" value="<?= $model->playerLanguages ? "ok" : "" ?>">
+        <input type="text" id="playerbuilder-languages" class="form-control" name="dummy-languages" value="<?= $model->playerLanguages ? "ok" : '' ?>">
     </div>
 
     <div class="form-group field-playerbuilder-abilities">
         <label class="control-label" for="playerbuilder-abilities">Abilities</label>
-        <input type="text" id="playerbuilder-abilities" class="form-control" name="dummy-abilities" value="<?= $model->playerAbilities ? "ok" : "" ?>">
+        <input type="text" id="playerbuilder-abilities" class="form-control" name="dummy-abilities" value="<?= $model->playerAbilities ? "ok" : '' ?>">
     </div>
 
     <div class="form-group field-playerbuilder-skills">
         <label class="control-label" for="playerbuilder-skills">Skills</label>
-        <input type="text" id="playerbuilder-skills" class="form-control" name="dummy-skills" value="<?= $model->playerSkills ? "ok" : "" ?>">
+        <input type="text" id="playerbuilder-skills" class="form-control" name="dummy-skills" value="<?= $model->playerSkills ? "ok" : '' ?>">
     </div>
 
     <div class="form-group field-playerbuilder-items">

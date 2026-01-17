@@ -58,7 +58,7 @@ foreach ($models as $model) {
                                     CheckBox::widget([
                                         'id' => "image-{$model->id}-{$class->id}",
                                         'onclick' => "ImageManager.setClass({$model->id}, {$class->id}, '{$class->name}');",
-                                        'checked' => $checked[$model->id][$class->id] ? "checked" : "",
+                                        'checked' => $checked[$model->id][$class->id] ? "checked" : '',
                                         'title' => $class->name
                                     ])
                                     ?>

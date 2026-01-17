@@ -104,19 +104,19 @@ class Armor extends Item
      *                DEX modifier, max modifier, and armor bonus.
      */
     public function getArmorClass(): string {
-        $armorClass = "";
+        $armorClass = '';
 
         // Append base armor class if greater than zero.
-        $armorClass .= $this->armor_class > 0 ? $this->armor_class : "";
+        $armorClass .= $this->armor_class > 0 ? $this->armor_class : '';
 
         // Append DEX modifier if present.
-        $armorClass .= $this->dex_modifier ? " +DEX" : "";
+        $armorClass .= $this->dex_modifier ? " +DEX" : '';
 
         // Append max modifier if greater than zero.
-        $armorClass .= $this->max_modifier > 0 ? " (max " . $this->max_modifier . ")" : "";
+        $armorClass .= $this->max_modifier > 0 ? " (max " . $this->max_modifier . ")" : '';
 
         // Append armor bonus if greater than zero.
-        $armorClass .= $this->armor_bonus > 0 ? " +" . $this->armor_bonus : "";
+        $armorClass .= $this->armor_bonus > 0 ? " +" . $this->armor_bonus : '';
 
         return trim($armorClass);
     }

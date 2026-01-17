@@ -40,7 +40,7 @@ $isCurrentPlayer = ($currentQuestProgress->current_player_id === $playerId);
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
-            <section class="">
+            <section class=''>
                 <article id="player-offcanvas" class="card">
                 </article>
                 <article id="game-equipement" class="card">

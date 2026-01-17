@@ -22,7 +22,7 @@ class EventFactory
      */
     public static function createEvent(string $eventType, string $sessionId, Player $player, Quest $quest, array $data = []): Event {
 
-        Yii::debug("*** debug *** EventFactory.createEvent type=$eventType, sessionId={$sessionId}, playerId={$player->id}, questId={$quest->id}, data=" . print_r($data, true));
+        Yii::debug("*** debug *** EventFactory.createEvent type={$eventType}, sessionId={$sessionId}, playerId={$player->id}, questId={$quest->id}, data=" . print_r($data, true));
 
         $reason = PayloadHelper::extractStringFromPayload('reason', $data, 'Unknown reason');
         $message = PayloadHelper::extractStringFromPayload('message', $data, '');

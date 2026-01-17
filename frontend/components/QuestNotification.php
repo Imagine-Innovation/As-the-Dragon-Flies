@@ -18,7 +18,7 @@ class QuestNotification extends Component
      * @return int
      */
     public static function getCount(int $playerId): int {
-        Yii::debug("*** Debug *** getCount playerId=$playerId");
+        Yii::debug("*** Debug *** getCount playerId={$playerId}");
         $count = NotificationPlayer::find()
                 ->where([
                     'player_id' => $playerId,
@@ -37,7 +37,7 @@ class QuestNotification extends Component
      * @return Notification[]
      */
     public static function getList(int $playerId, int $dateFrom): array {
-        Yii::debug("*** Debug *** getList playerId=$playerId, dateFrom=$dateFrom");
+        Yii::debug("*** Debug *** getList playerId={$playerId}, dateFrom={$dateFrom}");
         $notifications = Notification::find()
                 ->where(['>=', 'created_at', $dateFrom])
                 ->andWhere([
@@ -59,7 +59,7 @@ class QuestNotification extends Component
      * @return int
      */
     public static function markNotificationsAsRead(int $playerId): int {
-        Yii::debug("*** Debug *** markNotificationsAsRead playerId=$playerId");
+        Yii::debug("*** Debug *** markNotificationsAsRead playerId={$playerId}");
         return NotificationPlayer::updateAll(
                         [
                             'is_read' => true,

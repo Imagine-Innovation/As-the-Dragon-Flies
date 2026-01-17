@@ -24,11 +24,11 @@ $v1 = false;
 
                             <h2 class="mb-2">
                                 <img src="img/Dragonfly32White.png" alt="Logo">
-<?= Caligraphy::appName() ?>
+                                <?= Caligraphy::appName() ?>
                             </h2>
                             <p class="mb-5">Please enter your login and password!</p>
 
-                                <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
+                            <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
                             <div class="form-group first">
                                 <?=
                                         $form->field($model, 'username',
@@ -72,7 +72,7 @@ $v1 = false;
                                 ?>
                             </div>
 
-<?php ActiveForm::end(); ?>
+                            <?php ActiveForm::end(); ?>
                             <p class="mb-0">
                                 Don't have an account?
                                 <a class="fw-bold" href="<?= Url::toRoute(['site/signup']) ?>">Sign Up</a>

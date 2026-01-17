@@ -16,7 +16,7 @@ class StoryPlayers
      * @return string
      */
     public static function exists(Story $story, array $players): string {
-        $html = ($story->tavern) ? self::playerList($story->tavern, $players) : "";
+        $html = ($story->tavern) ? self::playerList($story->tavern, $players) : '';
         return $html;
     }
 
@@ -41,6 +41,6 @@ class StoryPlayers
                     ($n > 1 ? 's ' : ' ') . implode(" and ", $playerNames) . ' ' .
                     ($n > 1 ? ' are ' : ' is ') . 'already waiting to start the quest</h6>';
         }
-        return "";
+        return '';
     }
 }

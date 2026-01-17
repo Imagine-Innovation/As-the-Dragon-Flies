@@ -38,7 +38,7 @@ class Utilities extends Html
     public static function trim($inputString, $maxLength = 250) {
         // If the input string is empty, return an empty string
         if (!$inputString) {
-            return "";
+            return '';
         }
 
         // If the length of the input string is less than or equal to the

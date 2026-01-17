@@ -37,7 +37,7 @@ $playerAbilities = PlayerComponent::getAbilitiesAndSavingThrow($player->playerAb
             <?php foreach ($playerAbilities as $playerAbility): ?>
                 <div class="col-4">
                     <?= $playerAbility['code'] ?> <?= $playerAbility['score'] ?>
-                    <?= $playerAbility['modifier'] ? ($playerAbility['modifier'] > 0 ? "(+{$playerAbility['modifier']})" : "({$playerAbility['modifier']})") : "" ?>
+                    <?= $playerAbility['modifier'] ? ($playerAbility['modifier'] > 0 ? "(+{$playerAbility['modifier']})" : "({$playerAbility['modifier']})") : '' ?>
                 </div>
             <?php endforeach; ?>
             <div class="col-12 g-2 mb-2">Armor Class <?= $player->armor_class ?></div>

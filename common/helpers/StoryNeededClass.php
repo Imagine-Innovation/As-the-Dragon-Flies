@@ -78,6 +78,6 @@ class StoryNeededClass {
             }
         }
 
-        return "";
+        return '';
     }
 }

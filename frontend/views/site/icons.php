@@ -71,7 +71,7 @@ if ($devIcons) {
                         <i class="bi dnd-<?= $icon ?>"></i>
                         <i class="bi dnd-<?= $icon ?>" style="color: var(--yellow);"></i>
                         <br>
-                        <a class="btn btn--icon" href="">
+                        <a class="btn btn--icon" href=''>
                             <i class="bi dnd-<?= $icon ?>"></i>
                         </a>
                         <div class="btn-group">

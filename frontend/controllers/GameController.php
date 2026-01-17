@@ -8,14 +8,13 @@ use common\components\gameplay\ActionManager;
 use common\components\gameplay\QuestManager;
 use common\components\gameplay\TavernManager;
 use common\components\ManageAccessRights;
-use common\helpers\MixedHelper;
 use common\helpers\FindModelHelper;
+use common\helpers\MixedHelper;
 use common\models\events\EventFactory;
 use common\models\QuestPlayer;
 use common\models\QuestTurn;
 use Yii;
 use yii\filters\AccessControl;
-use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Request;
@@ -311,8 +310,8 @@ class GameController extends Controller
 
         // Set the context of the QuestManager to the current QuestProgress
         $questManager = new QuestManager(['questProgress' => $questProgress]);
-        $nextMissionId = MixedHelper::toInt($request->post('nextMissionId'));
-        $currentMissionId = MixedHelper::toInt($request->post('missionId'));
+        $nextMissionId = (int) $request->post('nextMissionId');
+        $currentMissionId = (int) $request->post('missionId');
         $remainingActions = $questProgress->remainingActions;
 
         Yii::debug("*** debug *** actionAjaxNextTurn - currentMissionId={$currentMissionId}, nextMissionId={$nextMissionId}, remainingAction=" . count($remainingActions));

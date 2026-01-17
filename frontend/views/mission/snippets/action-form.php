@@ -30,14 +30,14 @@ $difficultyClass = [
 <?php if ($model->id): ?>
     <article>
         <p>Action:
-    <?= $model->actionType->name ?> <?= $model->actionType->description ? "({$model->actionType->description})" : "" ?>
+    <?= $model->actionType->name ?> <?= $model->actionType->description ? "({$model->actionType->description})" : '' ?>
             <?= $model->passage?->name ?>
             <?= $model->trap?->name ?>
             <?= $model->decorItem?->name ?>
-            <?= $model->decor ? "in {$model->decor->name}" : "" ?>
-            <?= $model->npc ? "with {$model->npc->name}" : "" ?>
-            <?= $model->reply ? "saying “{$model->reply->text}”" : "" ?>
-            <?= $model->requiredItem ? "will need {$model->requiredItem->name}" : "" ?>
+            <?= $model->decor ? "in {$model->decor->name}" : '' ?>
+            <?= $model->npc ? "with {$model->npc->name}" : '' ?>
+            <?= $model->reply ? "saying “{$model->reply->text}”" : '' ?>
+            <?= $model->requiredItem ? "will need {$model->requiredItem->name}" : '' ?>
         </p>
     </article>
 <?php endif; ?>
@@ -66,7 +66,7 @@ $difficultyClass = [
 
 <div class="row row-cols-1 row-cols-lg-4 g-3">
     <div class="col">
-        <article class="card mb-3 h-100"">
+        <article class="card mb-3 h-100''>
             <div class="card-header">
                 <h6 class="card-title">Short description</h6>
             </div>

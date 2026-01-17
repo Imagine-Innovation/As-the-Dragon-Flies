@@ -299,7 +299,7 @@ class ManageAccessRights extends Component
             Yii::$app->db->createCommand($sql, $values)->execute();
         } catch (\Exception $e) {
             Yii::debug($e);
-            $errorMessage = "Error: " . $e->getMessage() . "<br />Stack Trace:<br />" . nl2br($e->getTraceAsString());
+            $errorMessage = "Error: {$e->getMessage()}<br />Stack Trace:<br />" . nl2br($e->getTraceAsString());
             throw new \Exception($errorMessage);
         }
 

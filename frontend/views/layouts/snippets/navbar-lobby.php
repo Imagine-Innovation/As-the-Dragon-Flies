@@ -17,7 +17,7 @@ $isAdmin = $currentUser->is_admin;
 
     <div class="logo d-none d-md-inline-flex">
         <a href="<?= Url::toRoute(['site/index']) ?>">
-            <img src="img/Dragonfly32White.png" alt="">
+            <img src="img/Dragonfly32White.png" alt=''>
             <?= Caligraphy::appName() ?>
             (<?= $currentUser->username ?>)
         </a>
@@ -54,7 +54,7 @@ $isAdmin = $currentUser->is_admin;
                 <div class="listview listview--hover">
                     <!--
                     <a href="#" class="listview__item">
-                        <img src="demo/img/profile-pics/1.jpg" class="avatar-img" alt="">
+                        <img src="demo/img/profile-pics/1.jpg" class="avatar-img" alt=''>
 
                         <div class="listview__content">
                             <div class="listview__heading">
@@ -65,7 +65,7 @@ $isAdmin = $currentUser->is_admin;
                     </a>
 
                     <a href="#" class="listview__item">
-                        <img src="demo/img/profile-pics/2.jpg" class="avatar-img" alt="">
+                        <img src="demo/img/profile-pics/2.jpg" class="avatar-img" alt=''>
 
                         <div class="listview__content">
                             <div class="listview__heading">

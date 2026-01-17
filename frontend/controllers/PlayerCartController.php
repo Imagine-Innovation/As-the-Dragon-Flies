@@ -250,7 +250,7 @@ class PlayerCartController extends Controller
 
         return [
             'error' => false, 'msg' => '', 'count' => $count,
-            'cartString' => "You have " . ($count > 0 ? $count : "no") . " article" . ($count > 1 ? "s" : "") . " in your cart",
+            'cartString' => "You have " . ($count > 0 ? $count : "no") . " article" . ($count > 1 ? "s" : '') . " in your cart",
             'cartValueString' => $shopping->getCartValueString($this->findCart()),
             'purseString' => $purseMsg,
         ];

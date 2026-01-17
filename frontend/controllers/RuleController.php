@@ -125,7 +125,7 @@ class RuleController extends Controller
         $model = new Rule();
 
         if ($this->request->isPost) {
-            $post = MixedHelper::toArray($this->request->post());
+            $post = (array) $this->request->post();
             if ($model->load($post) && $model->save()) {
                 $model->saveRuleDefinition();
                 return $this->redirect(['view', 'id' => $model->id]);
@@ -150,7 +150,7 @@ class RuleController extends Controller
     public function actionUpdate(int $id): string|Response {
         $model = $this->findModel($id);
 
-        $post = MixedHelper::toArray($this->request->post());
+        $post = (array) $this->request->post();
         if ($this->request->isPost && $model->load($post) && $model->save()) {
             $affectedRows = RuleExpression::deleteAll(['rule_id' => $id]);
             $model->saveRuleDefinition();

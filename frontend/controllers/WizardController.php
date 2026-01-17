@@ -94,6 +94,7 @@ class WizardController extends Controller
         $request = Yii::$app->request;
         $id = MixedHelper::toInt($request->post('id', 1));
         $topic = MixedHelper::toString($request->post('topic'), 'Unknown');
+        Yii::debug("*** Debug *** actionAjaxQuestion - id={$id}, topic={$topic}");
         $propertyMap = [
             'class' => 'class_id',
             'race' => 'race_id',

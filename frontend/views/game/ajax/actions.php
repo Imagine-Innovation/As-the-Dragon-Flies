@@ -13,7 +13,7 @@
                         "vtt.talk({$questAction->action_id}, {$questAction->action->reply_id}); return false;" :
                         "vtt.evaluateAction({$questAction->action_id}); return false;";
                 ?>
-                <li><a href="" onclick="<?= $onclick ?>"><?= $questAction->action->name ?></a></li>
+                <li><a href='' onclick="<?= $onclick ?>"><?= $questAction->action->name ?></a></li>
             <?php endforeach; ?>
         </ol>
     </div>

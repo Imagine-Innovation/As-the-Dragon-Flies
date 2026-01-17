@@ -3,7 +3,6 @@
 namespace frontend\controllers;
 
 use common\components\ManageAccessRights;
-use common\helpers\MixedHelper;
 use common\models\AccessRight;
 use frontend\components\AjaxRequest;
 use Yii;
@@ -115,14 +114,14 @@ class AccessRightController extends Controller
         }
 
         $request = Yii::$app->request;
-        $id = MixedHelper::toInt($request->post('id'));
+        $id = (int) $request->post('id');
         $model = AccessRight::findOne(['id' => $id]);
         if (!$model) {
             return ['error' => true, 'msg' => "Access right id {$id} not found!"];
         }
 
-        $access = MixedHelper::toString($request->post('access'));
-        $status = MixedHelper::toInt($request->post('status')) ? 1 : 0; // Ensure status is boolean (0 or 1)
+        $access = $request->post('access');
+        $status = $request->post('status') ? 1 : 0; // Ensure status is boolean (0 or 1)
 
         if (ManageAccessRights::isValidAttribute($access ?? 'null') === false) {
             return ['error' => true, 'msg' => "Invalid access attribute {$access} specified."];
@@ -156,7 +155,7 @@ class AccessRightController extends Controller
         $model = new AccessRight();
 
         if ($this->request->isPost) {
-            $post = MixedHelper::toArray($this->request->post());
+            $post = (array) $this->request->post();
             if ($model->load($post) && $model->save()) {
                 return $this->redirect(['view', 'id' => $model->id]);
             }
@@ -179,7 +178,7 @@ class AccessRightController extends Controller
     public function actionUpdate(int $id): string|Response {
         $model = $this->findModel($id);
 
-        $post = MixedHelper::toArray($this->request->post());
+        $post = (array) $this->request->post();
         if ($this->request->isPost && $model->load($post) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }

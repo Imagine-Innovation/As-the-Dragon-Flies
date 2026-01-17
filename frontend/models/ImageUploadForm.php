@@ -32,9 +32,9 @@ class ImageUploadForm extends Model
             $fileName = $this->imageFile->baseName . "." . $this->imageFile->extension;
             $path = $this->uploadPath();
             $fullFileName = $path . DIRECTORY_SEPARATOR . $fileName;
-            Yii::debug("*** Debug *** upload fileName=$fileName", __METHOD__);
-            Yii::debug("*** Debug *** upload path=$path", __METHOD__);
-            Yii::debug("*** Debug *** upload fullFileName=$fullFileName", __METHOD__);
+            Yii::debug("*** Debug *** upload fileName={$fileName}", __METHOD__);
+            Yii::debug("*** Debug *** upload path={$path}", __METHOD__);
+            Yii::debug("*** Debug *** upload fullFileName={$fullFileName}", __METHOD__);
             return $this->imageFile->saveAs($fullFileName, false);
         }
         Yii::debug("*** Debug *** upload validation failed", __METHOD__);

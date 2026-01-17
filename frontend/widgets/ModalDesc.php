@@ -15,7 +15,7 @@ class ModalDesc extends Widget
 
     public function run() {
         if (!$this->description) {
-            return "";
+            return '';
         }
 
         $this->maxLength = $this->maxLength ?? 250;

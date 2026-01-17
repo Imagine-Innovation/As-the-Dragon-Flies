@@ -46,7 +46,7 @@ $firstType = $itemTypes[0];
                 <ul class="nav nav-tabs" role="tablist">
                     <?php foreach ($itemTypes as $itemType): ?>
                         <li class="nav-item">
-                            <a class="nav-link<?= ($itemType === $firstType) ? " active" : "" ?>"
+                            <a class="nav-link<?= ($itemType === $firstType) ? " active" : '' ?>"
                                data-bs-toggle="tab" href="#tab-<?= $itemType ?>" role="tab" href="#">
                                    <?= $itemType ?>
                             </a>

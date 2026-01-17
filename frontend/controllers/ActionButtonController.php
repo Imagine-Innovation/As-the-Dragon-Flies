@@ -2,7 +2,6 @@
 
 namespace frontend\controllers;
 
-use common\helpers\MixedHelper;
 use common\models\ActionButton;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
@@ -80,7 +79,7 @@ class ActionButtonController extends Controller
         $model = new ActionButton();
 
         if ($this->request->isPost) {
-            $post = MixedHelper::toArray($this->request->post());
+            $post = (array) $this->request->post();
             if ($model->load($post) && $model->save()) {
                 return $this->redirect(['view', 'id' => $model->id]);
             }
@@ -103,7 +102,7 @@ class ActionButtonController extends Controller
     public function actionUpdate(int $id): string|Response {
         $model = $this->findModel($id);
 
-        $post = MixedHelper::toArray($this->request->post());
+        $post = (array) $this->request->post();
         if ($this->request->isPost && $model->load($post) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }

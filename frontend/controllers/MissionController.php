@@ -84,7 +84,7 @@ class MissionController extends Controller
         $model->chapter_id = $chapter->id;
 
         if ($this->request->isPost) {
-            $post = MixedHelper::toArray($this->request->post());
+            $post = (array) $this->request->post();
             if ($model->load($post) && $model->save()) {
                 return $this->redirect(['view', 'id' => $model->id]);
             }
@@ -107,7 +107,7 @@ class MissionController extends Controller
     public function actionUpdate(int $id): string|Response {
         $model = FindModelHelper::findMission($id);
 
-        $post = MixedHelper::toArray($this->request->post());
+        $post = (array) $this->request->post();
         if ($this->request->isPost && $model->load($post) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
@@ -150,7 +150,7 @@ class MissionController extends Controller
      */
     private function createDetailModel(\yii\db\ActiveRecord &$model, Mission $mission, string $type, string $snippet): string|Response {
         if ($this->request->isPost) {
-            $post = MixedHelper::toArray($this->request->post());
+            $post = (array) $this->request->post();
             if ($model->load($post) && $model->save()) {
                 return $this->redirect(['view', 'id' => $mission->id]);
             }
@@ -263,7 +263,7 @@ class MissionController extends Controller
      */
     private function updateDetailModel(\yii\db\ActiveRecord &$model, Mission $mission, string $type, string $snippet): string|Response {
         if ($this->request->isPost) {
-            $post = MixedHelper::toArray($this->request->post());
+            $post = (array) $this->request->post();
             if ($model->load($post) && $model->save()) {
                 return $this->redirect(['view', 'id' => $mission->id]);
             }

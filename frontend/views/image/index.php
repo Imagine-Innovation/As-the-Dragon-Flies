@@ -44,7 +44,7 @@ $categories = ['Misc', 'Image', 'Item', 'Monster'];
             <ul class="nav nav-tabs" role="tablist">
                 <?php foreach ($raceGroups as $raceGroup): ?>
                     <li class="nav-item">
-                        <a class="nav-link<?= ($raceGroup->name === $initTab) ? " active" : "" ?>"
+                        <a class="nav-link<?= ($raceGroup->name === $initTab) ? " active" : '' ?>"
                            data-bs-toggle="tab" href="#tab-<?= $raceGroup->name ?>" role="tab"
                            onclick='ImageManager.loadTab("<?= $raceGroup->name ?>", <?= $raceGroup->id ?>);return false;'>
                                <?= $raceGroup->name ?>
@@ -94,7 +94,7 @@ $this->renderFile('@app/views/layouts/snippets/ajax-params.php', [
                 <br>
                 <form>
                     <label class="btn btn-theme btn--icon-text" for="uploadFileName">
-                        <input type="file" id="uploadFileName" name="" class="d-none" accept=".jpg,.gif,.png" required>
+                        <input type="file" id="uploadFileName" name='' class="d-none" accept=".jpg,.gif,.png" required>
                         <i class="bi bi-image"></i> Select an image
                     </label>
 

@@ -23,7 +23,7 @@ $textColor = [
                 $iconInfo = $statusEnum->getIcon();
                 ?>
                 <div class="m-3">
-                    <p class="text-<?= $textColor[$questPlayer->status] ?? "" ?>">
+                    <p class="text-<?= $textColor[$questPlayer->status] ?? '' ?>">
                         <span data-bs-toggle="tooltip" title="<?= $iconInfo['tooltip'] ?>" data-placement="bottom">
                             <i class="bi <?= $iconInfo['icon'] ?>"></i>
                             <?= $partner->name ?> (<?= $partner->race->name ?> <?= $partner->class->name ?>)
@@ -31,7 +31,7 @@ $textColor = [
                     </p>
                     <div class="progress" role="progressbar" aria-label="Hit points"
                          aria-valuenow="<?= $partner->hit_points ?>" aria-valuemin="0" aria-valuemax="<?= $partner->max_hit_points ?>">
-                        <div class="progress-bar text-bg-<?= $textColor[$questPlayer->status] ?? "" ?>"
+                        <div class="progress-bar text-bg-<?= $textColor[$questPlayer->status] ?? '' ?>"
                              style="width: <?= intval(($partner->hit_points ?? 0) / ($partner->max_hit_points ?? 1) * 100) ?>%">
                             <?= $partner->hit_points ?>/<?= $partner->max_hit_points ?>
                         </div>

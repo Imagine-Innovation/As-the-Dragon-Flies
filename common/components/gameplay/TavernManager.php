@@ -358,7 +358,7 @@ class TavernManager extends BaseManager
     private function updatePlayerQuestId(Player &$player, ?int $questId = null): array {
         $player->quest_id = $questId;
         if (!$player->save()) {
-            return ['error' => true, 'message' => "Could not save Player : " . implode("\n", \yii\helpers\ArrayHelper::getColumn($player->errors, 0, false))];
+            return ['error' => true, 'message' => 'Could not save Player : ' . implode('\n', \yii\helpers\ArrayHelper::getColumn($player->errors, 0, false))];
         }
         ContextManager::updateQuestContext($questId);
         return ['error' => false, 'message' => "Player's quest_id updated to {$questId}"];
@@ -403,9 +403,9 @@ class TavernManager extends BaseManager
         $questPlayer->reason = $reasonWhyPlayerQuit;
 
         if ($questPlayer->save()) {
-            return ['error' => false, 'message' => "Player successfully " . ($reasonWhyPlayerQuit ? "left" : "joined") . " on the quest"];
+            return ['error' => false, 'message' => 'Player successfully ' . ($reasonWhyPlayerQuit ? 'left' : 'joined') . ' on the quest'];
         }
-        return ['error' => true, 'message' => "Could not save QuestPlayer : " . implode("\n", \yii\helpers\ArrayHelper::getColumn($questPlayer->errors, 0, false))];
+        return ['error' => true, 'message' => 'Could not save QuestPlayer : ' . implode("\n", \yii\helpers\ArrayHelper::getColumn($questPlayer->errors, 0, false))];
     }
 
     /**

@@ -163,7 +163,7 @@ class Rule extends \yii\db\ActiveRecord
      */
     public function saveRuleDefinition(): bool {
         // Check if there is an error message indicating a missing rule model.
-        if ($this->errorMessage !== "") {
+        if ($this->errorMessage !== '') {
             // Log the error message for debugging purposes.
             Yii::debug("*** Debug *** saveRuleDefinition => ERROR: $this->errorMessage", __METHOD__);
 

@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <div class="card-body">
                         <h5 class="card-title">Your cart is empty</h5>
                         <h6 class="card-subtitle">Let's make some shopping
-                            <a class="" href="<?= Url::toRoute('player-cart/shop') ?>">
+                            <a class='' href="<?= Url::toRoute('player-cart/shop') ?>">
                                 <i class="bi bi-cart"></i>
                             </a>
 

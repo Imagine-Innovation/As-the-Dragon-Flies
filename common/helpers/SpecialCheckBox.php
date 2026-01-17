@@ -28,7 +28,7 @@ class SpecialCheckBox
         // Check if the model has the role property
         if (isset($model->$property)) {
             // Determine if the checkbox should be checked based on the model's role property
-            $checked = $model->$property ? "checked" : "";
+            $checked = $model->$property ? "checked" : '';
 
             $html = CheckBox::widget([
                 'id' => "user-{$role}-{$model->id}",
@@ -60,7 +60,7 @@ class SpecialCheckBox
         // Check if the model has the role property
         if (isset($model->$access)) {
             // Determine if the checkbox should be checked based on the model's role property
-            $checked = $model->$access ? "checked" : "";
+            $checked = $model->$access ? "checked" : '';
             $html = CheckBox::widget([
                 'id' => "access-right-{$access}-{$model->id}",
                 'onclick' => "UserManager.setAccessRight({$model->id}, '{$access}');",

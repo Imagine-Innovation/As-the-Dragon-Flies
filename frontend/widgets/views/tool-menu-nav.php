@@ -14,7 +14,7 @@ use yii\helpers\Url;
             <?php foreach ($menus as $menu): ?>
                 <a class="col-3 app-shortcuts__item" href="<?= Url::toRoute($menu->accessRight->route . '/' . $menu->accessRight->action) ?>">
                     <i class="bi <?= $menu->icon ?>"></i>
-                    <small class=""><?= $menu->label ?></small>
+                    <small class=''><?= $menu->label ?></small>
                 </a>
             <?php endforeach; ?>
         </div>

@@ -85,7 +85,7 @@ class CharacterClassController extends Controller
         }
 
         $request = Yii::$app->request;
-        $id = MixedHelper::toInt($request->post('id'));
+        $id = (int) $request->post('id');
 
         $model = $this->findModel($id);
 

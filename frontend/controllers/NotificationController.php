@@ -121,7 +121,7 @@ class NotificationController extends Controller
 
         $request = Yii::$app->request;
         $playerId = MixedHelper::toInt($request->post('playerId'));
-        Yii::debug("*** Debug *** actionAjaxMarkAsRead - playerId=$playerId");
+        Yii::debug("*** Debug *** actionAjaxMarkAsRead - playerId={$playerId}");
         $ret = QuestNotification::markNotificationsAsRead($playerId);
         if ($ret) {
             return ['error' => false, 'msg' => 'Notification updated', 'content' => 0];
