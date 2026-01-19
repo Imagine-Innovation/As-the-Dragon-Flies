@@ -3,7 +3,7 @@
 namespace frontend\controllers;
 
 use common\components\ManageAccessRights;
-use common\helpers\MixedHelper;
+use common\helpers\FindModelHelper;
 use common\models\PlayerCart;
 use common\models\Player;
 use common\models\Item;
@@ -63,10 +63,9 @@ class PlayerCartController extends Controller
      * orders them by item type and name,
      * and then renders the 'shop' view with the fetched models.
      *
-     * @param int|null $playerId Player ID
      * @return string The rendered shop view.
      */
-    public function actionShop(?int $playerId = null): string {
+    public function actionShop(): string {
         // Query items with cost greater than 0
         // Fetch models and order them by item type and name
         $items = Item::find()
@@ -77,8 +76,7 @@ class PlayerCartController extends Controller
                         ])->all();
 
         return $this->render('shop', [
-                    'models' => $items,
-                    'playerId' => $playerId,
+                    'items' => $items,
         ]);
     }
 
@@ -92,7 +90,7 @@ class PlayerCartController extends Controller
      * @return string The rendered cart view.
      */
     public function actionCart(): string {
-        $playerCarts = $this->findCart();
+        $playerCarts = $this->findPlayerCartContent();
 
         return $this->render('cart', [
                     'playerCarts' => $playerCarts,
@@ -112,12 +110,12 @@ class PlayerCartController extends Controller
         }
 
 
-        $playerId = (int) Yii::$app->session->get('playerId');
-        $player = $this->findPlayer($playerId);
+        $playerId = Yii::$app->session->get('playerId');
+        $player = FindModelHelper::findPlayer(['id' => $playerId]);
 
         $itemId = (int) Yii::$app->request->post('itemId');
         $quantity = (int) Yii::$app->request->post('quantity', 1);
-        $item = $this->findItem($itemId);
+        $item = FindModelHelper::findItem(['id' => $itemId]);
 
         $shopping = new Shopping();
         $funding = $shopping->getFunding($player->playerCoins, $item->cost ?? 0, $item->coin);
@@ -148,8 +146,8 @@ class PlayerCartController extends Controller
         }
 
 
-        $playerId = (int) Yii::$app->session->get('playerId');
-        $player = $this->findPlayer($playerId);
+        $playerId = Yii::$app->session->get('playerId');
+        $player = FindModelHelper::findPlayer(['id' => $playerId]);
 
         $playerCarts = $player->playerCarts;
         $shopping = new Shopping();
@@ -177,13 +175,13 @@ class PlayerCartController extends Controller
         }
 
 
-        $playerId = (int) Yii::$app->session->get('playerId');
-        $player = $this->findPlayer($playerId);
+        $playerId = Yii::$app->session->get('playerId');
+        $player = FindModelHelper::findPlayer(['id' => $playerId]);
 
         $itemId = (int) Yii::$app->request->post('itemId');
         $quantity = (int) Yii::$app->request->post('quantity', 1);
 
-        $item = $this->findItem($itemId);
+        $item = FindModelHelper::findItem(['id' => $itemId]);
 
         // Remove the item from the player's cart and return the result
         $shopping = new Shopping();
@@ -201,11 +199,11 @@ class PlayerCartController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
-        $playerId = (int) Yii::$app->session->get('playerId');
-        $player = $this->findPlayer($playerId);
+        $playerId = Yii::$app->session->get('playerId');
+        $player = FindModelHelper::findPlayer(['id' => $playerId]);
 
         $itemId = (int) Yii::$app->request->post('itemId');
-        $item = $this->findItem($itemId);
+        $item = FindModelHelper::findItem(['id' => $itemId]);
 
         // Remove the item from the player's cart and return the result
         $shopping = new Shopping();
@@ -235,12 +233,12 @@ class PlayerCartController extends Controller
         }
 
 
-        $playerId = (int) Yii::$app->session->get('playerId');
-        $player = $this->findPlayer($playerId);
+        $playerId = Yii::$app->session->get('playerId');
+        $player = FindModelHelper::findPlayer(['id' => $playerId]);
 
         // Calculate the total quantity of items in the player's cart
         $sum = PlayerCart::find()->where(['player_id' => $player->id])->sum('quantity');
-        $count = MixedHelper::toInt($sum);
+        $count = is_numeric($sum) ? (int) $sum : 0;
 
         // Construct a message indicating the player's name and his purse status based on the purse string
         $shopping = new Shopping();
@@ -251,7 +249,7 @@ class PlayerCartController extends Controller
         return [
             'error' => false, 'msg' => '', 'count' => $count,
             'cartString' => "You have " . ($count > 0 ? $count : "no") . " article" . ($count > 1 ? "s" : '') . " in your cart",
-            'cartValueString' => $shopping->getCartValueString($this->findCart()),
+            'cartValueString' => $shopping->getCartValueString($this->findPlayerCartContent()),
             'purseString' => $purseMsg,
         ];
     }
@@ -269,8 +267,8 @@ class PlayerCartController extends Controller
         }
 
 
-        $playerId = (int) Yii::$app->session->get('playerId');
-        $player = $this->findPlayer($playerId);
+        $playerId = Yii::$app->session->get('playerId');
+        $player = FindModelHelper::findPlayer(['id' => $playerId]);
 
         $itemId = (int) Yii::$app->request->post('itemId');
 
@@ -287,68 +285,18 @@ class PlayerCartController extends Controller
      * @return PlayerCart[] The player's carts
      * @throws NotFoundHttpException if no player is selected
      */
-    protected function findCart(): array {
-        // Find the player associated with the selected player
-        $playerId = (int) Yii::$app->session->get('playerId');
+    protected function findPlayerCartContent(): array {
+        $playerId = Yii::$app->session->get('playerId');
 
-        // If a player is found, return the player's carts
         if ($playerId) {
-            // Find the PlayerCart model based on its primary key value
             $models = PlayerCart::find()
                     ->where(['player_id' => $playerId])
                     ->all();
 
-            if (!empty($models)) {
-                return $models;
-            }
-
-            // If the model is not found, throw a 404 HTTP exception
-            throw new NotFoundHttpException('The requested page does not exist.');
+            return $models;
         }
 
         // If no player is selected, throw a NotFoundHttpException
         throw new NotFoundHttpException('No player is selected. Select one and try again.');
-    }
-
-    /**
-     * Finds the Item model based on its primary key value.
-     *
-     * This method retrieves the Item model based on the provided primary key.
-     * If the model is found, it is returned. If not found, a 404 HTTP exception is thrown.
-     *
-     * @param int $id The primary key value of the Item model to be found.
-     * @return Item The loaded Item model if found, or null if not found.
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findItem(int $id): Item {
-        // Find the Item model based on the provided primary key.
-        $item = Item::findOne(['id' => $id]);
-
-        // If the model is found, return it. Otherwise, throw a 404 HTTP exception.
-        if ($item) {
-            return $item;
-        }
-        throw new NotFoundHttpException("The iten you are looking for does not exist.");
-    }
-
-    /**
-     * Finds the Player model based on its primary key value.
-     *
-     * This method retrieves the Player model based on the provided primary key.
-     * If the model is found, it is returned. If not found, a 404 HTTP exception is thrown.
-     *
-     * @param int $id The primary key value of the Item model to be found.
-     * @return Player The loaded Item model if found, or null if not found.
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findPlayer(int $id): Player {
-        // Find the Player model based on the provided primary key.
-        $player = Player::findOne(['id' => $id]);
-
-        // If the model is found, return it. Otherwise, throw a 404 HTTP exception.
-        if ($player) {
-            return $player;
-        }
-        throw new NotFoundHttpException("The player you are looking for does not exist.");
     }
 }

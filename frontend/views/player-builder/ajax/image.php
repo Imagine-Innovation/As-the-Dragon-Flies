@@ -1,6 +1,6 @@
 <?php
 /** @var yii\web\View $this */
-/** @var int $imageId */
+/** @var int|null $imageId */
 /** @var common\models\Image[] $images */
 ?>
 <h4 class="card-title text-decoration">Images</h4>

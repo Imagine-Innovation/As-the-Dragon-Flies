@@ -2,7 +2,6 @@
 
 namespace frontend\widgets;
 
-use common\helpers\MixedHelper;
 use common\models\Item;
 use Yii;
 use yii\base\Widget;
@@ -84,7 +83,7 @@ class ItemTable extends Widget
         ],
         'Weight' => [
             'column-header' => 'Weight',
-            'property' => 'pounds',
+            'property' => 'totalWeight',
             'class' => 'text-center',
             'is-repeated' => true,
             'is-link' => false,
@@ -204,7 +203,7 @@ class ItemTable extends Widget
                 implode(", ", ArrayHelper::getColumn($item->categories, 'name')) :
                 $item[$col['property']];
 
-        $cellContent = MixedHelper::toString($property) ?? '';
+        $cellContent = is_string($property) ? $property : '';
         Yii::debug("*** Debug ***  ItemTable Widget - renderTableCell() - cellContent={$cellContent}");
 
         // Format the content for display, considering whether it's an icon, an image

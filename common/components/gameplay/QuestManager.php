@@ -272,7 +272,7 @@ class QuestManager extends BaseManager
     public function addFirstQuestProgress(): bool {
         $quest = $this->getQuest();
         $chapter = $quest->currentChapter;
-        if ($chapter->isNewRecord) {
+        if ($chapter === null) {
             throw new Exception("Current chapter not found for Quest #{$quest->id}");
         }
 
@@ -354,10 +354,6 @@ class QuestManager extends BaseManager
         $currentProgress = $this->getQuestProgress();
         $mission = $currentProgress->mission;
 
-        if ($mission->isNewRecord || $mission->chapter->isNewRecord) {
-            return null;
-        }
-
         $nextChapter = Chapter::find()
                 ->where(['>', 'chapter_number', $mission->chapter->chapter_number])
                 ->orderBy(['chapter_number' => SORT_ASC])
@@ -399,18 +395,12 @@ class QuestManager extends BaseManager
      *       nextQuestProgressId: int,
      *       timestamp: int
      * }
-     * @throws RuntimeException
      */
     private function getNextMissionDetail(QuestProgress $currentQuestProgress, QuestProgress $nextQuestProgress): array {
         $currentMission = $currentQuestProgress->mission;
         $nextMission = $nextQuestProgress->mission;
         $currentPlayer = $currentQuestProgress->currentPlayer;
         $nextPlayer = $nextQuestProgress->currentPlayer;
-
-        // Final safety check for Level 9
-        if ($currentMission->isNewRecord || $nextMission->isNewRecord || $currentPlayer->isNewRecord || $nextPlayer->isNewRecord) {
-            throw new RuntimeException("Incomplete relation data for mission detail.");
-        }
 
         return [
             'currentMissionId' => $currentMission->id,
@@ -437,7 +427,7 @@ class QuestManager extends BaseManager
         $currentQuestProgress = $this->getQuestProgress();
         $currentPlayer = $quest->currentPlayer;
 
-        if ($currentPlayer->isNewRecord) {
+        if ($currentPlayer === null) {
             throw new Exception("No current player found for quest.");
         }
 

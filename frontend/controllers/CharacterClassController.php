@@ -3,7 +3,6 @@
 namespace frontend\controllers;
 
 use common\components\ManageAccessRights;
-use common\helpers\MixedHelper;
 use common\models\CharacterClass;
 use common\models\ClassFeature;
 use common\models\Feature;

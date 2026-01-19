@@ -3,7 +3,6 @@
 namespace frontend\controllers;
 
 use common\components\ManageAccessRights;
-use common\helpers\MixedHelper;
 use common\models\UserLogin;
 use frontend\components\AjaxRequest;
 use Yii;

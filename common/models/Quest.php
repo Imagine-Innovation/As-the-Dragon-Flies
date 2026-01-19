@@ -23,8 +23,8 @@ use Yii;
  * @property int $local_time Local time
  * @property int $elapsed_time Elapsed time (minute)
  *
- * @property Chapter $currentChapter
- * @property Player $currentPlayer
+ * @property Chapter|null $currentChapter
+ * @property Player|null $currentPlayer
  * @property Player $initiator
  * @property Notification[] $notifications
  * @property Player[] $currentPlayers
@@ -95,7 +95,7 @@ class Quest extends \yii\db\ActiveRecord
     /**
      * Gets query for [[CurrentChapter]].
      *
-     * @return \yii\db\ActiveQuery<Chapter>
+     * @return \yii\db\ActiveQuery<Chapter>|null
      */
     public function getCurrentChapter() {
         return $this->hasOne(Chapter::class, ['id' => 'current_chapter_id']);
@@ -104,7 +104,7 @@ class Quest extends \yii\db\ActiveRecord
     /**
      * Gets query for [[CurrentPlayer]].
      *
-     * @return \yii\db\ActiveQuery<Player>
+     * @return \yii\db\ActiveQuery<Player>|null
      */
     public function getCurrentPlayer() {
         return $this->hasOne(Player::class, ['id' => 'current_player_id']);

@@ -25,7 +25,7 @@ use Yii;
  * @property int $is_purchasable Indicates that the item can be bought in the shop
  *
  * @property Action[] $actions
- * @property Armor $armor
+ * @property Armor|null $armor
  * @property BackgroundItem[] $backgroundItems
  * @property Category[] $categories
  * @property ClassEquipment[] $classEquipments
@@ -41,14 +41,14 @@ use Yii;
  * @property PlayerItem[] $playerItems
  * @property Player[] $players
  * @property Player[] $players0
- * @property Poison $poison
- * @property Scroll $scroll
- * @property Weapon $weapon
+ * @property Poison|null $poison
+ * @property Scroll|null $scroll
+ * @property Weapon|null $weapon
  * @property Weapon[] $weapons
  *
  * Custom properties
  * @property string $category
- * @property string $pounds
+ * @property string $totalWeight
  * @property string $price
  * @property int $copperValue
  * @property string $armorClass
@@ -123,7 +123,7 @@ class Item extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Armor]].
      *
-     * @return \yii\db\ActiveQuery<Armor>
+     * @return \yii\db\ActiveQuery<Armor>|null
      */
     public function getArmor() {
         return $this->hasOne(Armor::class, ['item_id' => 'id']);
@@ -285,7 +285,7 @@ class Item extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Poison]].
      *
-     * @return \yii\db\ActiveQuery<Poison>
+     * @return \yii\db\ActiveQuery<Poison>|null
      */
     public function getPoison() {
         return $this->hasOne(Poison::class, ['item_id' => 'id']);
@@ -294,7 +294,7 @@ class Item extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Scroll]].
      *
-     * @return \yii\db\ActiveQuery<Scroll>
+     * @return \yii\db\ActiveQuery<Scroll>|null
      */
     public function getScroll() {
         return $this->hasOne(Scroll::class, ['item_id' => 'id']);
@@ -303,7 +303,7 @@ class Item extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Weapon]].
      *
-     * @return \yii\db\ActiveQuery<Weapon>
+     * @return \yii\db\ActiveQuery<Weapon>|null
      */
     public function getWeapon() {
         return $this->hasOne(Weapon::class, ['item_id' => 'id']);
@@ -345,7 +345,7 @@ class Item extends \yii\db\ActiveRecord
      * @return string The formatted weight string in the format "X lb. (Y kg)" or
      *                an empty string if the weight is zero.
      */
-    public function getPounds(): string {
+    public function getTotalWeight(): string {
         // Initialize the weight variable to zero.
         $weight = 0;
 
@@ -402,7 +402,7 @@ class Item extends \yii\db\ActiveRecord
 
         // Call the 'copperValue' method of the Shopping class to convert the
         // item's cost into copper coins.
-        return $shopping->copperValue($this->cost ?? 0, $this->coin ?? '?');
+        return $shopping->copperValue($this->cost ?? 0, $this->coin ?? 'gp');
     }
 
     /**
@@ -412,7 +412,7 @@ class Item extends \yii\db\ActiveRecord
      *                DEX modifier, max modifier, and armor bonus.
      */
     public function getArmorClass(): string {
-        return $this->armor->armorClass;
+        return $this->armor?->armorClass ?? '';
     }
 
     /**
@@ -421,7 +421,7 @@ class Item extends \yii\db\ActiveRecord
      * @return int The required strength for wearing the armor.
      */
     public function getArmorStrength(): int {
-        return $this->armor->strength;
+        return $this->armor?->strength ?? 0;
     }
 
     /**
@@ -432,7 +432,7 @@ class Item extends \yii\db\ActiveRecord
      *                otherwise an empty string.
      */
     public function getArmorDisadvantage(): string {
-        return $this->armor->is_disadvantage ? 'bi-check-lg' : '';
+        return $this->armor?->is_disadvantage ? 'bi-check-lg' : '';
     }
 
     /**
@@ -445,7 +445,7 @@ class Item extends \yii\db\ActiveRecord
      * @return string The formatted string listing weapon properties, separated by commas.
      */
     public function getWeaponProperties(): string {
-        return $this->weapon->properties;
+        return $this->weapon?->properties ?? '';
     }
 
     /**
@@ -454,7 +454,7 @@ class Item extends \yii\db\ActiveRecord
      * @return string|null The damage dice string of the weapon.
      */
     public function getDamageDice(): ?string {
-        return $this->weapon->damage_dice;
+        return $this->weapon?->damage_dice ?? '';
     }
 
     /**
@@ -463,6 +463,6 @@ class Item extends \yii\db\ActiveRecord
      * @return string The poison type of the specified poison.
      */
     public function getPoisonType(): string {
-        return $this->poison->poison_type;
+        return $this->poison?->poison_type ?? '';
     }
 }

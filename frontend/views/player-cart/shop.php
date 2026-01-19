@@ -6,7 +6,6 @@ use frontend\widgets\CurrentPlayer;
 use frontend\widgets\Button;
 
 /** @var yii\web\View $this */
-/** @var yii\data\ActiveDataProvider $dataProvider */
 /** @var common\models\Item[] $items */
 $this->title = 'Shop';
 $this->params['breadcrumbs'][] = $this->title;

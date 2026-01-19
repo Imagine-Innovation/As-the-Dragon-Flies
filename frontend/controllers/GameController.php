@@ -9,7 +9,6 @@ use common\components\gameplay\QuestManager;
 use common\components\gameplay\TavernManager;
 use common\components\ManageAccessRights;
 use common\helpers\FindModelHelper;
-use common\helpers\MixedHelper;
 use common\models\events\EventFactory;
 use common\models\QuestPlayer;
 use common\models\QuestTurn;
@@ -65,7 +64,7 @@ class GameController extends Controller
     public function actionView(int $id): string {
         $this->layout = 'game';
 
-        $quest = FindModelHelper::findQuest($id);
+        $quest = FindModelHelper::findQuest(['id' => $id]);
         $nbPlayers = QuestPlayer::find()
                 ->where(['quest_id' => $quest->id])
                 ->andWhere(['<>', 'status', AppStatus::LEFT->value])
@@ -96,13 +95,9 @@ class GameController extends Controller
 
         $playerId = $id ?? Yii::$app->session->get('playerId');
 
-        $player = FindModelHelper::findPlayer($playerId);
-        if (!$player->isNewRecord) {
-            $render = $this->renderPartial('ajax/player', ['player' => $player]);
-            return ['error' => false, 'msg' => '', 'content' => $render];
-        }
-
-        return ['error' => true, 'msg' => 'Error encountered'];
+        $player = FindModelHelper::findPlayer(['id' => $playerId]);
+        $render = $this->renderPartial('ajax/player', ['player' => $player]);
+        return ['error' => false, 'msg' => '', 'content' => $render];
     }
 
     /**
@@ -156,7 +151,7 @@ class GameController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
         }
 
-        $mission = FindModelHelper::findMission($missionId);
+        $mission = FindModelHelper::findMission(['id' => $missionId]);
         $render = $this->renderPartial('ajax/mission', ['mission' => $mission]);
         return ['error' => false, 'msg' => '', 'content' => $render, 'title' => $mission->name];
     }
@@ -204,7 +199,7 @@ class GameController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
         }
 
-        $questProgress = FindModelHelper::findQuestProgress($questProgressId);
+        $questProgress = FindModelHelper::findQuestProgress(['id' => $questProgressId]);
 
         if ($questProgress->current_player_id !== Yii::$app->session->get('playerId')) {
             return ['error' => true, 'msg' => 'Not your turn'];
@@ -237,10 +232,10 @@ class GameController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
         }
 
-        $reply = FindModelHelper::findReply($replyId);
+        $reply = FindModelHelper::findReply(['id' => $replyId]);
         $dialog = $reply->nextDialog;
 
-        $player = FindModelHelper::findPlayer($playerId);
+        $player = FindModelHelper::findPlayer(['id' => $playerId]);
 
         $content = $this->renderPartial('ajax/dialog', [
             'storyId' => $storyId,
@@ -306,7 +301,8 @@ class GameController extends Controller
         }
 
         $request = Yii::$app->request;
-        $questProgress = FindModelHelper::findQuestProgress($request->post('questProgressId'));
+        $questProgressId = $request->post('questProgressId');
+        $questProgress = FindModelHelper::findQuestProgress(['id' => $questProgressId]);
 
         // Set the context of the QuestManager to the current QuestProgress
         $questManager = new QuestManager(['questProgress' => $questProgress]);
@@ -341,10 +337,10 @@ class GameController extends Controller
     protected function createEvent(string $eventType, Request $postRequest, string $actionName, array $outcome = []): bool {
         $sessionId = Yii::$app->session->get('sessionId');
         try {
-            $playerId = MixedHelper::toInt($postRequest->post('playerId'));
-            $questId = MixedHelper::toInt($postRequest->post('questId'));
-            $player = FindModelHelper::findPlayer($playerId);
-            $quest = FindModelHelper::findQuest($questId);
+            $playerId = $postRequest->post('playerId');
+            $questId = $postRequest->post('questId');
+            $player = FindModelHelper::findPlayer(['id' => $playerId]);
+            $quest = FindModelHelper::findQuest(['id' => $questId]);
             $data['action'] = $actionName;
             $data['detail'] = [
                 'diceRoll' => $outcome['diceRoll'],

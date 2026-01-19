@@ -504,7 +504,7 @@ class Shopping
             'quantity' => $playerCart->quantity * $item->quantity,
             'is_carrying' => $isCarrying ? 1 : 0,
             'is_proficient' => $isProficient,
-            'is_two_handed' => ($item->weapon->is_two_handed ? 1 : 0),
+            'is_two_handed' => ($item->weapon?->is_two_handed ? 1 : 0),
         ];
         Yii::debug($playerItemData);
         $playerItem = new PlayerItem($playerItemData);

@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use common\components\AppStatus;
 use common\components\ManageAccessRights;
+use common\helpers\FindModelHelper;
 use common\models\BackgroundItem;
 use common\models\ClassEquipment;
 use common\models\Image;
@@ -120,13 +121,13 @@ class PlayerBuilderController extends Controller
 
     /**
      *
-     * @param int $imageId
      * @param int $raceId
      * @param int $classId
      * @param string $gender
+     * @param int|null $imageId
      * @return array{error: bool, msg: string, content?: string}
      */
-    private function renderImages(int $imageId, int $raceId, int $classId, string $gender): array {
+    private function renderImages(int $raceId, int $classId, string $gender, ?int $imageId = null): array {
         $images = Image::find()
                 ->select('image.*')
                 ->innerJoin('class_image', 'image.id = class_image.image_id')
@@ -159,9 +160,11 @@ class PlayerBuilderController extends Controller
         $classId = $request->post('classId');
         $gender = $request->post('gender');
 
+        Yii::debug("*** debug *** actionAjaxImages - raceId={$raceId}, classId={$classId}, gender={$gender}");
         if ($raceId > 0 && $classId > 0 && $gender) {
             $imageId = $request->post('imageId');
-            return $this->renderImages($imageId, $raceId, $classId, $gender);
+            Yii::debug("*** debug *** actionAjaxImages - imageId={$imageId}");
+            return $this->renderImages($raceId, $classId, $gender, is_int($imageId) ? $imageId : null);
         }
         return ['error' => true, 'msg' => 'Missing argument: '
             . ($raceId ? '' : 'race ')
@@ -601,7 +604,7 @@ class PlayerBuilderController extends Controller
         $player = $this->findModel($playerId);
 
         $skillId = $request->post('skillId');
-        $skill = $this->findSkill($skillId);
+        $skill = FindModelHelper::findSkill(['id' => $skillId]);
         $isProficient = $request->post('isProficient');
 
         BuilderComponent::updateSkill($player, $skill, $isProficient);
@@ -624,16 +627,14 @@ class PlayerBuilderController extends Controller
         $request = Yii::$app->request;
         $playerId = $request->post('playerId');
         $player = $this->findModel($playerId);
-        if (!$player->isNewRecord) {
-            $abilities = $request->post('abilities');
-            foreach ($player->playerAbilities as $playerAbility) {
-                $ability_id = $playerAbility->ability_id;
-                $score = $abilities[$ability_id];
-                $playerAbility->score = $score;
-                $playerAbility->modifier = PlayerComponent::calcAbilityModifier($score);
-                if (!$playerAbility->save()) {
-                    throw new \Exception(implode("<br />", ArrayHelper::getColumn($playerAbility->errors, 0, false)));
-                }
+        $abilities = $request->post('abilities');
+        foreach ($player->playerAbilities as $playerAbility) {
+            $ability_id = $playerAbility->ability_id;
+            $score = $abilities[$ability_id];
+            $playerAbility->score = $score;
+            $playerAbility->modifier = PlayerComponent::calcAbilityModifier($score);
+            if (!$playerAbility->save()) {
+                throw new \Exception(implode("<br />", ArrayHelper::getColumn($playerAbility->errors, 0, false)));
             }
         }
 
@@ -723,33 +724,5 @@ class PlayerBuilderController extends Controller
         }
 
         throw new NotFoundHttpException('The player you are looking for does not exist.');
-    }
-
-    /**
-     *
-     * @param int $id
-     * @return Skill
-     * @throws NotFoundHttpException
-     */
-    protected function findSkill(int $id): Skill {
-        if (($model = Skill::findOne(['id' => $id])) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The skill you are looking for does not exist.');
-    }
-
-    /**
-     *
-     * @param int $id
-     * @return Item
-     * @throws NotFoundHttpException
-     */
-    protected function findItem(int $id): Item {
-        if (($model = Item::findOne(['id' => $id])) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The item you are looking for does not exist.');
     }
 }

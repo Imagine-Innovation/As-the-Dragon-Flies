@@ -2,33 +2,39 @@
 
 namespace frontend\widgets;
 
+use common\helpers\Utilities;
 use yii\base\Widget;
 
 class ModalDesc extends Widget
 {
 
+    const MAX_LENGTH = 250;
+
     public string $name;
-    public string $description;
-    public int $maxLength;
+    public ?string $description = null;
+    public ?int $maxLength = null;
     public ?string $type = null;
-    public int $id;
+    public ?int $id = null;
 
     public function run() {
         if (!$this->description) {
             return '';
         }
 
-        $this->maxLength = $this->maxLength ?? 250;
-        if (mb_strlen($this->description) <= $this->maxLength) {
+        $maxLength = $this->maxLength ?? self::MAX_LENGTH;
+
+        if (mb_strlen($this->description) <= $maxLength) {
             return $this->render('modal-desc-raw', [
                         'description' => $this->description,
             ]);
         }
 
+        $id = $this->id ?? Utilities::newUUID();
+
         return $this->render('modal-desc', [
-                    'UUID' => ($this->type ?? '') . $this->id,
+                    'UUID' => ($this->type ?? '') . $id,
                     'description' => $this->description,
-                    'maxLength' => $this->maxLength,
+                    'maxLength' => $maxLength,
                     'name' => $this->name,
         ]);
     }

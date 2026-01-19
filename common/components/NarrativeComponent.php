@@ -11,7 +11,7 @@ class NarrativeComponent extends Component
 
     const DETAILS = ['decors', 'npcs', 'passages', 'monsters'];
 
-    public Mission $mission;
+    public ?Mission $mission = null;
 
     /**
      *
@@ -26,7 +26,7 @@ class NarrativeComponent extends Component
      * @return array<string>
      */
     public function missionDecription(): array {
-        if ($this->mission->isNewRecord) {
+        if ($this->mission === null) {
             return ['The mission has not been found, even by the most learned magicians'];
         }
 

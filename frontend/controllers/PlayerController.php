@@ -5,7 +5,6 @@ namespace frontend\controllers;
 use common\components\AppStatus;
 use common\components\ContextManager;
 use common\components\ManageAccessRights;
-use common\helpers\MixedHelper;
 use common\helpers\Status;
 use common\models\Player;
 use common\models\User;
@@ -142,7 +141,7 @@ class PlayerController extends Controller
         }
 
         $request = Yii::$app->request;
-        $userId = MixedHelper::toInt($request->post('userId'));
+        $userId = $request->post('userId');
 
         $param = [
             'modelName' => 'Player',
@@ -170,11 +169,12 @@ class PlayerController extends Controller
 
         $request = Yii::$app->request;
 
-        $userId = MixedHelper::toInt($request->post('userId'));
-        $playerId = MixedHelper::toInt($request->post('playerId'));
+        $userId = $request->post('userId');
+        $postPlayerId = $request->post('playerId');
+        $playerId = is_int($postPlayerId) ? $postPlayerId : null;
 
         $success = User::updateAll(
-                ['current_player_id' => $playerId > 0 ? $playerId : null],
+                ['current_player_id' => $playerId],
                 ['id' => $userId]
         );
 

@@ -4,7 +4,6 @@ namespace frontend\controllers;
 
 use common\components\AppStatus;
 use common\components\ManageAccessRights;
-use common\helpers\MixedHelper;
 use common\helpers\Status;
 use common\models\Rule;
 use common\models\RuleExpression;

@@ -5,7 +5,6 @@ namespace frontend\controllers;
 use common\components\ManageAccessRights;
 use common\helpers\FindModelHelper;
 use common\helpers\JsonHelper;
-use common\helpers\MixedHelper;
 use common\models\Mission;
 use Yii;
 use yii\filters\AccessControl;
@@ -64,7 +63,7 @@ class MissionController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionView(int $id): string {
-        $model = FindModelHelper::findMission($id);
+        $model = FindModelHelper::findMission(['id' => $id]);
         return $this->render('view', [
                     'model' => $model,
         ]);
@@ -79,7 +78,7 @@ class MissionController extends Controller
      */
     public function actionCreate(int $chapterId): string|Response {
         // Check if $id is a valid Chapter ID
-        $chapter = FindModelHelper::findChapter($chapterId);
+        $chapter = FindModelHelper::findChapter(['id' => $chapterId]);
         $model = new Mission();
         $model->chapter_id = $chapter->id;
 
@@ -105,7 +104,7 @@ class MissionController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionUpdate(int $id): string|Response {
-        $model = FindModelHelper::findMission($id);
+        $model = FindModelHelper::findMission(['id' => $id]);
 
         $post = (array) $this->request->post();
         if ($this->request->isPost && $model->load($post) && $model->save()) {
@@ -176,7 +175,7 @@ class MissionController extends Controller
      * @return string|Response
      */
     private function addMissionChild(int $missionId, string $type, string $className, string $snippet): string|Response {
-        $mission = FindModelHelper::findMission($missionId);
+        $mission = FindModelHelper::findMission(['id' => $missionId]);
 
         /** @var class-string<\yii\db\ActiveRecord> $modelClass */
         $modelClass = "\\common\\models\\{$className}";
@@ -195,7 +194,7 @@ class MissionController extends Controller
      * @return string|Response
      */
     private function addDecorChild(int $decorId, string $type, string $className, string $snippet): string|Response {
-        $decor = FindModelHelper::findDecor($decorId);
+        $decor = FindModelHelper::findDecor(['id' => $decorId]);
         $mission = $decor->mission;
 
         /** @var class-string<\yii\db\ActiveRecord> $modelClass */
@@ -215,7 +214,7 @@ class MissionController extends Controller
      * @return string|Response
      */
     private function addActionChild(int $actionId, string $type, string $className, string $snippet): string|Response {
-        $action = FindModelHelper::findAction($actionId);
+        $action = FindModelHelper::findAction(['id' => $actionId]);
         $mission = $action->mission;
 
         /** @var class-string<\yii\db\ActiveRecord> $modelClass */
@@ -289,7 +288,7 @@ class MissionController extends Controller
     private function editMissionChild(string $jsonParams, string $type, string $className, string $snippet): string|Response {
         $searchParams = JsonHelper::decode($jsonParams);
 
-        $model = FindModelHelper::findModel($className, $searchParams);
+        $model = FindModelHelper::findModel($className, $searchParams, false);
         $mission = $model->mission;
 
         return $this->updateDetailModel($model, $mission, $type, $snippet);
@@ -306,7 +305,7 @@ class MissionController extends Controller
     private function editDecorChild(string $jsonParams, string $type, string $className, string $snippet): string|Response {
         $searchParams = JsonHelper::decode($jsonParams);
 
-        $model = FindModelHelper::findModel($className, $searchParams);
+        $model = FindModelHelper::findModel($className, $searchParams, false);
         $decor = $model->decor;
         $mission = $decor->mission;
 
@@ -324,7 +323,7 @@ class MissionController extends Controller
     private function editActionChild(string $jsonParams, string $type, string $className, string $snippet): string|Response {
         $searchParams = JsonHelper::decode($jsonParams);
 
-        $model = FindModelHelper::findModel($className, $searchParams);
+        $model = FindModelHelper::findModel($className, $searchParams, false);
         if ($type === 'Prerequisite') {
             $action = $model->nextAction;
         } elseif ($type === "Trigger") {

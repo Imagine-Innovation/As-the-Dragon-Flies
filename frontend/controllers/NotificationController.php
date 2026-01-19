@@ -3,7 +3,6 @@
 namespace frontend\controllers;
 
 use common\components\ManageAccessRights;
-use common\helpers\MixedHelper;
 use common\models\Notification;
 use frontend\components\AjaxRequest;
 use frontend\components\QuestNotification;
@@ -120,7 +119,7 @@ class NotificationController extends Controller
         }
 
         $request = Yii::$app->request;
-        $playerId = MixedHelper::toInt($request->post('playerId'));
+        $playerId = $request->post('playerId');
         Yii::debug("*** Debug *** actionAjaxMarkAsRead - playerId={$playerId}");
         $ret = QuestNotification::markNotificationsAsRead($playerId);
         if ($ret) {

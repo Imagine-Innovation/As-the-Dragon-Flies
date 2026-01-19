@@ -15,7 +15,7 @@ $isAdmin = $currentUser->is_admin;
     <div class="logo d-none d-md-inline-flex">
         <a href="<?= Url::toRoute(['site/index']) ?>">
             <h5 class="text-decoration">
-                <img src="img/Dragonfly32White.png" alt=''> <?= $questName ?>
+                <img src="img/Dragonfly32White.png" alt=""> <?= $questName ?>
             </h5>
         </a>
     </div>

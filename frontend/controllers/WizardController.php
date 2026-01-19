@@ -3,7 +3,6 @@
 namespace frontend\controllers;
 
 use common\components\ManageAccessRights;
-use common\helpers\MixedHelper;
 use common\models\Wizard;
 use common\models\WizardQuestion;
 use Yii;
@@ -92,8 +91,8 @@ class WizardController extends Controller
         }
 
         $request = Yii::$app->request;
-        $id = MixedHelper::toInt($request->post('id', 1));
-        $topic = MixedHelper::toString($request->post('topic'), 'Unknown');
+        $id = $request->post('id', 1);
+        $topic = $request->post('topic', 'Unknown');
         Yii::debug("*** Debug *** actionAjaxQuestion - id={$id}, topic={$topic}");
         $propertyMap = [
             'class' => 'class_id',

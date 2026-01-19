@@ -36,8 +36,8 @@ $missionDescription = $narrative->missionDecription();
             ])
             ?>
         </div>
-        <div class="row g-0 d-flex"> <!-- Add d-flex to the row -->
-            <div class="col-0 col-md-4 d-flex align-items-stretch"> <!-- Add d-flex and align-items-stretch -->
+        <div class="row g-0 d-flex">
+            <div class="col-0 col-md-4 d-flex align-items-stretch">
                 <img src="resources/story-<?= $story->id ?>/img/<?= $model->image ?>" class="img-fluid object-fit-cover rounded-start w-100" alt="<?= $model->name ?>">
             </div>
             <div class="col-12 col-md-8 d-flex flex-column"> <!-- Add d-flex and flex-column -->
@@ -50,7 +50,7 @@ $missionDescription = $narrative->missionDecription();
                     <?php endforeach; ?>
                     <br>
                     <section id="MissionEnvironment">
-                        <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3 row-cols-xxl-4 g-4">
+                        <div class="row row-cols-1 row-cols-xl-2 row-cols-xxl-4 g-4">
                             <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->npcs, 'parentId' => $model->id, 'type' => 'NPC']) ?>
                             <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->decors, 'parentId' => $model->id, 'type' => 'Decor']) ?>
                             <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->passages, 'parentId' => $model->id, 'type' => 'Passage']) ?>

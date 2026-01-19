@@ -24,7 +24,7 @@ use common\components\ManageAccessRights;
 use common\components\gameplay\ChatManager;
 use common\components\gameplay\QuestManager;
 use common\components\gameplay\TavernManager;
-use common\helpers\MixedHelper;
+use common\helpers\FindModelHelper;
 use common\helpers\UserErrorMessage;
 use common\models\Player;
 use common\models\Quest;
@@ -156,7 +156,7 @@ class QuestController extends Controller
 
         $tavernManager = new TavernManager(['story' => $story]);
         $tavern = $tavernManager->findTavern();
-        $player = $this->findPlayer($playerId);
+        $player = FindModelHelper::findPlayer(['id' => $playerId]);
 
         // Validate player eligibility
         $canJoin = $tavernManager->canPlayerJoinQuest($player);
@@ -283,13 +283,8 @@ class QuestController extends Controller
         }
 
         $quest = $this->findModel(Yii::$app->request->post('questId'));
-        if ($quest->isNewRecord) {
-            return ['error' => true, 'msg' => 'Quest not found'];
-        }
-        $player = $this->findPlayer(Yii::$app->request->post('playerId'));
-        if ($player->isNewRecord) {
-            return ['error' => true, 'msg' => 'Player not found'];
-        }
+        $playerId = Yii::$app->request->post('playerId');
+        $player = FindModelHelper::findPlayer(['id' => $playerId]);
 
         $message = Yii::$app->request->post('message');
         Yii::debug("*** Debug *** actionAjaxSendMessage - Player: {$player->name}, Quest: {$quest->name}, Message: " . ($message ?? 'empty'));
@@ -350,9 +345,9 @@ class QuestController extends Controller
 
         // Extract request parameters
         $request = Yii::$app->request;
-        $playerId = MixedHelper::toInt($request->get('playerId'));
-        $questId = MixedHelper::toInt($request->get('questId'));
-        $roundedTime = MixedHelper::toInt($request->get('roundedTime'));
+        $playerId = $request->get('playerId');
+        $questId = $request->get('questId');
+        $roundedTime = $request->get('roundedTime');
 
         // Fetch and render messages
         $chatManager = new ChatManager(['questId' => $questId, 'playerId' => $playerId]);
@@ -408,7 +403,7 @@ class QuestController extends Controller
      */
     public function actionQuit(?int $playerId, ?int $id): Response|null {
 
-        $player = $this->findPlayer($playerId);
+        $player = FindModelHelper::findPlayer(['id' => $playerId]);
         $quest = $this->findModel($id);
         $reason = 'Player decided to quit the quest';
         // Process player offboarding

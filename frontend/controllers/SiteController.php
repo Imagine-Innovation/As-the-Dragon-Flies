@@ -5,7 +5,6 @@ namespace frontend\controllers;
 use common\components\AppStatus;
 use common\components\ContextManager;
 use common\components\ManageAccessRights;
-use common\helpers\MixedHelper;
 use common\helpers\Utilities;
 use common\models\LoginForm;
 use common\models\Player;

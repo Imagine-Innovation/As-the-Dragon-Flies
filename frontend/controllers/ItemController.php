@@ -3,7 +3,6 @@
 namespace frontend\controllers;
 
 use common\components\ManageAccessRights;
-use common\helpers\MixedHelper;
 use common\models\Item;
 use frontend\components\AjaxRequest;
 use Yii;
@@ -87,7 +86,7 @@ class ItemController extends Controller
         }
 
         $request = Yii::$app->request;
-        $itemTypeId = MixedHelper::toInt($request->post('currentTab', 1));
+        $itemTypeId = $request->post('currentTab', 1);
         Yii::debug("*** debug *** actionAjax - itemTypeId={$itemTypeId}");
         $param = [
             'modelName' => 'Item',
@@ -118,8 +117,7 @@ class ItemController extends Controller
         }
 
         $request = Yii::$app->request;
-        $itemIdsString = MixedHelper::toString($request->post('itemIds')) ?? '';
-        Yii::debug("*** debug *** actionAjaxImages - itemIds={$itemIdsString}");
+        $itemIdsString = $request->post('itemIds') ?? '';
         $param = [
             'modelName' => 'Item',
             'render' => 'images',

@@ -32,7 +32,7 @@ use frontend\widgets\ModalDesc;
                             <?php if ($item['quantity'] > 1): ?>
                                 (x<?= $item['quantity'] ?>)
                             <?php endif; ?>
-                            <?php if (!$player->isNewRecord && $player->isProficient($item['id'])): ?>
+                            <?php if ($player->isProficient($item['id'])): ?>
                                 <span data-bs-toggle="tooltip" title="You have proficiency with this item" data-placement="bottom">
                                     <i class="bi bi-star-fill"></i>
                                 </span>

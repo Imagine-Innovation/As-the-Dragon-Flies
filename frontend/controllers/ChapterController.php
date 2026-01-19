@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\components\ManageAccessRights;
+use common\helpers\FindModelHelper;
 use common\models\Chapter;
 use common\models\Story;
 use Yii;
@@ -75,7 +76,7 @@ class ChapterController extends Controller
      */
     public function actionCreate(int $storyId): string|Response {
         // Check if $id is a valid Story ID
-        $story = $this->findStory($storyId);
+        $story = FindModelHelper::findStory(['id' => $storyId]);
         $model = new Chapter();
         $model->story_id = $story->id;
 
@@ -128,19 +129,5 @@ class ChapterController extends Controller
         }
 
         throw new NotFoundHttpException('The requested chapter does not exist.');
-    }
-
-    /**
-     *
-     * @param int $id
-     * @return Story
-     * @throws NotFoundHttpException
-     */
-    protected function findStory($id): Story {
-        if (($model = Story::findOne(['id' => $id])) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The requested story does not exist.');
     }
 }

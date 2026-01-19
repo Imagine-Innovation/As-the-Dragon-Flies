@@ -12,7 +12,7 @@ class RecordCount extends Widget
     public string $adjective;
 
     /** @var array<string, mixed>|null $actions */
-    public ?array $actions;
+    public ?array $actions = null;
 
     public function run() {
         return $this->render('record-count', [
