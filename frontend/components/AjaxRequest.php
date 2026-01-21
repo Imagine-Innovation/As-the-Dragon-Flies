@@ -133,8 +133,12 @@ class AjaxRequest
      * @return bool
      */
     public function makeResponse(Request $request): bool {
-        $limit = (int) $request->post('limit', 100);
-        $pageNo = (int) $request->post('page', 0);
+        $postLimit = $request->post('limit');
+        $postPageNo = $request->post('page');
+
+        $limit = is_numeric($postLimit) ? (int) $postLimit : 100;
+        $pageNo = is_numeric($postPageNo) ? (int) $postPageNo : 0;
+
         $query = $this->buildQuery();
         $count = (int) $query->count();
         $pageCount = ($count === 0) ? 1 : ceil($count / $limit);
@@ -153,9 +157,5 @@ class AjaxRequest
             )
         ];
         return true;
-    }
-
-    private function getIntVal(mixed $postData): int {
-        return is_numeric($postData) ? (int) $postData : 0;
     }
 }

@@ -2,13 +2,14 @@
 
 namespace frontend\components;
 
+use common\helpers\DiceRoller;
+use common\helpers\FindModelHelper;
 use common\models\Ability;
 use common\models\AbilityDefault;
 use common\models\BackgroundItem;
 use common\models\BackgroundSkill;
 use common\models\BackgroundTrait;
 use common\models\CharacterTrait;
-use common\models\ClassEndowment;
 use common\models\ClassEquipment;
 use common\models\ClassSkill;
 use common\models\Language;
@@ -18,11 +19,9 @@ use common\models\PlayerCoin;
 use common\models\PlayerSkill;
 use common\models\PlayerTrait;
 use common\models\Race;
-use common\models\RaceGroup;
 use common\models\RaceGroupLanguage;
 use common\models\Skill;
 use common\models\Wizard;
-use common\helpers\DiceRoller;
 use Yii;
 use yii\helpers\ArrayHelper;
 
@@ -177,6 +176,7 @@ class BuilderComponent
      */
     public static function loadRandomNames(int $raceId, ?string $gender = 'M', ?int $n = 3): array {
         $race = Race::findOne(['id' => $raceId]);
+        //$race = FindModelHelper::findR
         if ($race === null) {
             return [];
         }

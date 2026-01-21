@@ -412,7 +412,7 @@ class Item extends \yii\db\ActiveRecord
      *                DEX modifier, max modifier, and armor bonus.
      */
     public function getArmorClass(): string {
-        return $this->armor?->armorClass ?? '';
+        return $this->armor?->armorClass ? $this->armor->armorClass : '';
     }
 
     /**
@@ -421,7 +421,7 @@ class Item extends \yii\db\ActiveRecord
      * @return int The required strength for wearing the armor.
      */
     public function getArmorStrength(): int {
-        return $this->armor?->strength ?? 0;
+        return $this->armor?->strength ? $this->armor->strength : 0;
     }
 
     /**
@@ -445,7 +445,7 @@ class Item extends \yii\db\ActiveRecord
      * @return string The formatted string listing weapon properties, separated by commas.
      */
     public function getWeaponProperties(): string {
-        return $this->weapon?->properties ?? '';
+        return $this->weapon?->properties ? $this->weapon->properties : '';
     }
 
     /**
@@ -454,7 +454,7 @@ class Item extends \yii\db\ActiveRecord
      * @return string|null The damage dice string of the weapon.
      */
     public function getDamageDice(): ?string {
-        return $this->weapon?->damage_dice ?? '';
+        return $this->weapon?->damage_dice ? $this->weapon->damage_dice : '';
     }
 
     /**
@@ -463,6 +463,6 @@ class Item extends \yii\db\ActiveRecord
      * @return string The poison type of the specified poison.
      */
     public function getPoisonType(): string {
-        return $this->poison?->poison_type ?? '';
+        return $this->poison?->poison_type ? $this->poison->poison_type : '';
     }
 }

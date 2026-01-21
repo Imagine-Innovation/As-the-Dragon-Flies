@@ -14,6 +14,7 @@ use common\models\Quest;
 use common\models\QuestAction;
 use common\models\QuestProgress;
 use common\models\Reply;
+use common\models\Race;
 use common\models\Skill;
 use common\models\Story;
 use Yii;
@@ -74,7 +75,7 @@ class FindModelHelper
      *
      * @param int $param
      * @param array<string> $pkColumns
-     * @return array<string, int>
+     * @return array<string, mixed>
      */
     private static function getValidPkIntParam(int $param, array $pkColumns): array {
         $intParam = ['id' => $param];
@@ -88,7 +89,7 @@ class FindModelHelper
      *
      * @param array<string, mixed> $param
      * @param array<string> $pkColumns
-     * @return array<string, int>
+     * @return array<string, mixed>
      */
     private static function getValidPkArrayParam(array $param, array $pkColumns): array {
         if (empty($pkColumns)) {
@@ -119,7 +120,7 @@ class FindModelHelper
      * @param int|array<string, mixed> $param
      * @param array<string> $pkColumns
      * @param bool|null $withPk
-     * @return array<string, int>
+     * @return array<string, mixed>
      */
     private static function findOneFunctionParam(int|array $param, array $pkColumns, ?bool $withPk = true): array {
         if (is_int($param)) {
@@ -276,5 +277,14 @@ class FindModelHelper
      */
     public static function findPlayerBody(int|array $param): PlayerBody {
         return self::findModel(PlayerBody::class, $param);
+    }
+
+    /**
+     *
+     * @param int|array<string, mixed> $param
+     * @return Race
+     */
+    public static function findRace(int|array $param): Race {
+        return self::findModel(Race::class, $param);
     }
 }

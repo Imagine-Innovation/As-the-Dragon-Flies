@@ -337,6 +337,9 @@ class PlayerItemController extends Controller
             // Special treatment for weapons that use arrows:
             // carry arrows in a quiver on the player's back.
             $bow = $weapon->weapon;
+            if ($bow === null) {
+                return;
+            }
             $amunitionId = $bow->amunition_id;
             $playerBody->back_item_id = $amunitionId;
         }
