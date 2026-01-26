@@ -67,24 +67,28 @@ class NotificationClient {
         Logger.log(1, 'setupDefaultHandlers', '');
         // Handle connection established
         this.on('open', () => {
+            alert('open');
             Logger.log(2, 'setupDefaultHandlers', 'Connection to notification server established');
             this.updateConnectionStatus('Connected');
         });
 
         // Handle connection closed
         this.on('close', () => {
+            alert('close');
             Logger.log(2, 'setupDefaultHandlers', 'Connection to notification server closed');
             this.updateConnectionStatus('Disconnected - Reconnecting...');
         });
 
         // Handle errors
         this.on('error', (error) => {
+            alert('error');
             console.error('Notification error:', error);
             this.updateConnectionStatus('Connection Error');
         });
 
         // Handle incoming notifications
         this.on('notification', (data) => {
+            alert('notification');
             Logger.log(2, 'setupDefaultHandlers', 'Received notification:', data);
             // this.displayNotification(data);
             const message = data.message ?? null;
@@ -93,22 +97,26 @@ class NotificationClient {
 
         // Handle incoming notifications
         this.on('ack', (data) => {
+            alert('ack');
             Logger.log(2, 'setupDefaultHandlers', 'Received aknowledgement:', data);
         });
 
         // Handle chat messages
         this.on('new-message', (data) => {
+            alert('new-message');
             Logger.log(2, 'setupDefaultHandlers', 'Received new-message message:', data);
             this.updateChatMessages();
         });
 
         // Handle other player registration
         this.on('register', (data) => {
+            alert('register');
             Logger.log(2, 'setupDefaultHandlers', 'Received register message:', data);
             this.displayNotification(data);
         });
 
         this.on('quest-started', (data) => {
+            alert('quest-started');
             Logger.log(2, 'setupDefaultHandlers', 'Received quest-started message:', data);
             if (data.payload && data.payload.redirectUrl) {
                 window.location.href = data.payload.redirectUrl;
@@ -116,20 +124,23 @@ class NotificationClient {
         });
 
         this.on('game-action', (data) => {
+            alert('game-action');
             Logger.log(2, 'setupDefaultHandlers', 'Received game-action message:', data);
             Logger.log(10, 'setupDefaultHandlers', `Payload: ${JSON.stringify(data.payload)}`);
             VirtualTableTop.refresh(this.questId, this.sessionId);
         });
 
         this.on('next-turn', (data) => {
+            alert('next-turn');
             Logger.log(2, 'setupDefaultHandlers', 'Received next-turn message:', data);
             Logger.log(10, 'setupDefaultHandlers', `Payload: ${JSON.stringify(data.payload)}`);
-            
+
             const detail = data.payload.detail;
             VirtualTableTop.refreshTurn(this.questId, this.playerId, detail);
         });
 
         this.on('next-mission', (data) => {
+            alert('next-mission');
             Logger.log(2, 'setupDefaultHandlers', 'Received next-mission message:', data);
             Logger.log(10, 'setupDefaultHandlers', `Payload: ${JSON.stringify(data.payload)}`);
 
@@ -139,6 +150,7 @@ class NotificationClient {
         });
 
         this.on('game-over', (data) => {
+            alert('game-over');
             Logger.log(2, 'setupDefaultHandlers', 'Received game-over message:', data);
             Logger.log(10, 'setupDefaultHandlers', `Payload: ${JSON.stringify(data.payload)}`);
             const detail = data.payload.detail;
@@ -148,6 +160,7 @@ class NotificationClient {
         });
 
         this.on('player-joined', (data) => {
+            alert('player-joined');
             Logger.log(2, 'setupDefaultHandlers', 'Received player-joined event:', data);
             if (data.payload && data.payload.playerName && data.payload.questName) {
                 // Construct the message from the payload
@@ -160,6 +173,7 @@ class NotificationClient {
         });
 
         this.on('player-quit', (data) => {
+            alert('player-quit');
             Logger.log(2, 'setupDefaultHandlers', 'Received player-quit event:', data);
             if (data.payload && data.payload.playerName && data.payload.questName) {
                 // Construct the message from the payload
@@ -466,6 +480,7 @@ class NotificationClient {
         if (!message.trim())
             return;
 
+        alert(message);
         AjaxUtils.request({
             url: 'quest/ajax-send-message',
             data: {

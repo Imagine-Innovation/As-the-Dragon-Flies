@@ -76,7 +76,7 @@ class PlayerQuittingEvent extends Event
         Yii::debug("*** Debug *** PlayerQuittingEvent - process");
         $notification = $this->createNotification();
 
-        $this->savePlayerNotification($notification->id);
+        $this->savePlayerNotifications($notification->id);
 
         $this->broadcast();
         Yii::debug("*** Debug *** PlayerJoiningEvent - process");

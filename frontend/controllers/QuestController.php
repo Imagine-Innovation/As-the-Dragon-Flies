@@ -28,6 +28,7 @@ use common\helpers\FindModelHelper;
 use common\helpers\UserErrorMessage;
 use common\models\Player;
 use common\models\Quest;
+use common\models\QuestPlayer;
 use common\models\Story;
 use common\models\events\EventFactory;
 use frontend\components\AjaxRequest;
@@ -292,7 +293,7 @@ class QuestController extends Controller
             return ['error' => true, 'msg' => 'Message cannot be empty'];
         }
 
-        $success = $this->createEvent('sending-message', $player, $quest, ['msg' => $message]);
+        $success = $this->createEvent('sending-message', $player, $quest, ['message' => $message]);
         return ['error' => !$success, 'msg' => "Create 'sending-message' event " . ($success ? 'succeded' : 'failed')];
     }
 
@@ -517,29 +518,23 @@ class QuestController extends Controller
      * @throws NotFoundHttpException if quest not found
      */
     protected function findModel(?int $id = null): Quest {
-        $model = Quest::findOne(['id' => ($id ?? Yii::$app->session->get('questId'))]);
+        $questId = $id ?? Yii::$app->session->get('questId');
+        $user = Yii::$app->user->identity;
 
-        if ($model) {
+        if (!$user->is_admin) {
+            // For non-administrator users, limit access to quests in which their player participates.
+            $quesPlayer = QuestPlayer::findOne(['quest_id' => $questId, 'player_id' => $user->current_player_id ?? 0]);
+            if ($quesPlayer === null) {
+                throw new NotFoundHttpException("You are not a member of this quest (id={$questId}).");
+            }
+        }
+
+        $model = Quest::findOne(['id' => $questId]);
+        if ($model !== null) {
             return $model;
         }
 
-        throw new NotFoundHttpException("The quest (id={$id}) you are looking for does not exist.");
-    }
-
-    /**
-     *
-     * @param int|null $playerId
-     * @return Player
-     * @throws NotFoundHttpException
-     */
-    protected function findPlayer(?int $playerId = null): Player {
-        $player = Player::findOne(['id' => ($playerId ?? Yii::$app->session->get('playerId'))]);
-
-        if ($player) {
-            return $player;
-        }
-
-        throw new NotFoundHttpException("The player (playerId={$playerId}) you are looking for does not exist.");
+        throw new NotFoundHttpException("The quest (id={$questId}) you are looking for does not exist.");
     }
 
     /**

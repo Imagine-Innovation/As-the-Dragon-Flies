@@ -8,6 +8,7 @@ use common\models\Player;
 use common\models\Quest;
 use Yii;
 use yii\base\BaseObject;
+use yii\helpers\ArrayHelper;
 
 abstract class Event extends BaseObject
 {
@@ -84,16 +85,23 @@ abstract class Event extends BaseObject
 
     /**
      *
-     * @return void
+     * @return array<string, mixed>
      */
-    protected function broadcast(): void {
-        $client = new \yii\httpclient\Client();
-        $data = [
+    private function requestData(): array {
+        return [
             'questId' => $this->quest->id,
             'message' => $this->toArray(),
             'excludeSessionId' => $this->sessionId,
         ];
+    }
 
+    /**
+     *
+     * @return void
+     */
+    protected function broadcast(): void {
+        $client = new \yii\httpclient\Client();
+        $data = $this->requestData();
         try {
             $response = $client->createRequest()
                     ->setMethod('POST')
@@ -102,11 +110,11 @@ abstract class Event extends BaseObject
                     ->setFormat(\yii\httpclient\Client::FORMAT_JSON)
                     ->send();
 
-            if (!$response->isOk) {
+            if ($response->isOk) {
+                Yii::info("Successfully sent event to event server.", 'eventhandler');
+            } else {
                 Yii::error("Failed to broadcast event. HTTP status: " . $response->getStatusCode());
                 Yii::error("Response body: " . $response->getContent());
-            } else {
-                Yii::info("Successfully sent event to event server.", 'eventhandler');
             }
         } catch (\yii\httpclient\Exception $e) {
             Yii::error("Exception while trying to broadcast event: " . $e->getMessage());
@@ -116,20 +124,33 @@ abstract class Event extends BaseObject
     /**
      *
      * @param int $notificationId
+     * @param int $playerId
      * @return void
      */
-    protected function savePlayerNotification(int $notificationId): void {
+    protected function newPlayerNotification(int $notificationId, int $playerId): void {
+        Yii::debug("*** Debug *** Event - newPlayerNotification - notificationId={$notificationId}, player->id={$playerId}");
+        $notificationPlayer = new NotificationPlayer([
+            'notification_id' => $notificationId,
+            'player_id' => $playerId,
+            'is_read' => 0
+        ]);
+
+        if (!$notificationPlayer->save()) {
+            throw new \Exception(implode("<br />", ArrayHelper::getColumn($notificationPlayer->errors, 0, false)));
+        }
+    }
+
+    /**
+     *
+     * @param int $notificationId
+     * @return void
+     */
+    protected function savePlayerNotifications(int $notificationId): void {
         // Create notification_player entries for all players in quest
         $players = $this->quest->currentPlayers;
         foreach ($players as $player) {
             if ($player->id !== $this->player->id) {
-                Yii::debug("*** Debug *** Event - savePlayerNotification - notificationId={$notificationId}, player->id={$player->id}");
-                $notificationPlayer = new NotificationPlayer([
-                    'notification_id' => $notificationId,
-                    'player_id' => $player->id,
-                    'is_read' => 0
-                ]);
-                $notificationPlayer->save();
+                $this->newPlayerNotification($notificationId, $player->id);
             }
         }
     }
@@ -150,10 +171,14 @@ abstract class Event extends BaseObject
             'is_private' => 0,
         ]);
         Yii::debug("*** debug *** Event - createNotification");
+        Yii::debug($notificationData);
         $notification = new Notification($notificationData);
 
-        $this->notificationId = ($notification->save()) ? $notification->id : null;
+        if ($notification->save()) {
+            $this->notificationId = $notification->id;
+            return $notification;
+        }
 
-        return $notification;
+        throw new \Exception(implode("<br />", ArrayHelper::getColumn($notification->errors, 0, false)));
     }
 }

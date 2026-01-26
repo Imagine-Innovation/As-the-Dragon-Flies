@@ -148,13 +148,19 @@ class TavernManager extends BaseManager
     /**
      * Check if a player can join a quest.
      *
-     * @param Player $player
+     * @param Player|null $player
      * @return array{
      *     denied: bool,
      *     reason: string
      * } Associative array with a deny status and the reason why
      */
-    public function canPlayerJoinQuest(Player &$player): array {
+    public function canPlayerJoinQuest(?Player &$player): array {
+        // Check if player is selected
+        if (!$player) {
+            return ['error' => true, 'denied' => true, 'reason' => "canPlayerJoinQuest->No player is selected"];
+        }
+
+
         // Check if the player is eligible to join a quest
         $playerStatus = $this->isPlayerValid($player);
         if ($playerStatus['error']) {
@@ -207,15 +213,10 @@ class TavernManager extends BaseManager
     /**
      * Check if a player is valid to join a new quest
      *
-     * @param Player|null $player reference to a Player object
+     * @param Player $player reference to a Player object
      * @return array{error: bool, denied: bool, reason: string} Associative array with an error status, a deny status and the reason why
      */
-    private function isPlayerValid(?Player $player): array {
-        // Check if player is selected
-        if (!$player) {
-            return ['error' => true, 'denied' => true, 'reason' => "isPlayerValid->No player is selected"];
-        }
-
+    private function isPlayerValid(Player $player): array {
         // Check if player is in another quest
         if ($this->quest === null) {
             if ($player->quest_id) {

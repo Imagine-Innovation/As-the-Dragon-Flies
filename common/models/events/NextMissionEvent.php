@@ -84,7 +84,7 @@ class NextMissionEvent extends Event
         Yii::debug("*** Debug *** NextMissionEvent - process");
         $notification = $this->createNotification();
 
-        $this->savePlayerNotification($notification->id);
+        $this->savePlayerNotifications($notification->id);
 
         $this->broadcast();
 

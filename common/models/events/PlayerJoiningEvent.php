@@ -72,7 +72,7 @@ class PlayerJoiningEvent extends Event
         Yii::debug("*** Debug *** PlayerJoiningEvent - process");
         $notification = $this->createNotification();
 
-        $this->savePlayerNotification($notification->id);
+        $this->savePlayerNotifications($notification->id);
 
         $this->broadcast();
 

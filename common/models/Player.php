@@ -118,6 +118,7 @@ class Player extends \yii\db\ActiveRecord
             [['class_id', 'level_id', 'user_id', 'race_id', 'background_id', 'alignment_id', 'image_id', 'quest_id', 'status', 'age', 'experience_points', 'hit_points', 'max_hit_points', 'armor_class', 'speed', 'created_at', 'updated_at'], 'integer'],
             [['description', 'gender'], 'string'],
             [['name'], 'string', 'max' => 64],
+            ['name', 'match', 'pattern' => '/^[a-zA-Z0-9\s]+$/', 'message' => 'Name can only contain alphanumeric characters and spaces.'],
             ['gender', 'in', 'range' => array_keys(self::optsGender())],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
             [['race_id'], 'exist', 'skipOnError' => true, 'targetClass' => Race::class, 'targetAttribute' => ['race_id' => 'id']],

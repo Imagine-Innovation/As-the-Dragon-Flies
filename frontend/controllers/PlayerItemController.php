@@ -153,7 +153,7 @@ class PlayerItemController extends Controller
 
         $request = Yii::$app->request;
         $playerId = (int) $request->get('playerId');
-        $playerBody = FindModelHelper::findPlayerBody(['id' => $playerId]);
+        $playerBody = FindModelHelper::findPlayerBody(['player_id' => $playerId]);
 
         // If a player is found, return the player's packs
         $playerItems = PlayerItem::findAll(['player_id' => $playerId, 'is_carrying' => 1]);
@@ -185,7 +185,7 @@ class PlayerItemController extends Controller
         $data = [];
 
         foreach (PlayerItem::BODY_ZONE as $property => $zone) {
-            if ($playerBody->hasProperty($property)) {
+            if ($playerBody->hasProperty($property) && $playerBody->$property !== null) {
                 $playerItem = $playerBody->$property;
                 $data[$zone] = [
                     'itemId' => $playerItem->item_id,
@@ -453,7 +453,7 @@ class PlayerItemController extends Controller
      * @return array<string, mixed>
      */
     private function equipPlayer(PlayerItem &$playerItem, string $bodyZone): array {
-        $playerBody = FindModelHelper::findPlayerBody(['id' => $playerItem->player_id]);
+        $playerBody = FindModelHelper::findPlayerBody(['player_id' => $playerItem->player_id]);
         $item = $playerItem->item;
         $itemType = $playerItem->item_type;
         Yii::debug("*** debug *** equipPlayer - itemType={$itemType}, bodyZone={$bodyZone}");
@@ -595,7 +595,7 @@ class PlayerItemController extends Controller
         $playerId = $request->post('playerId');
         $bodyZone = $request->post('bodyZone') ?? '';
 
-        $playerBody = FindModelHelper::findPlayerBody(['id' => $playerId]);
+        $playerBody = FindModelHelper::findPlayerBody(['player_id' => $playerId]);
 
         return $this->disarmPlayer($playerBody, $bodyZone);
     }

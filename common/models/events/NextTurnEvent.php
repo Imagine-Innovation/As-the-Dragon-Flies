@@ -83,7 +83,7 @@ class NextTurnEvent extends Event
         Yii::debug("*** Debug *** NextTurnEvent - process");
         $notification = $this->createNotification();
 
-        $this->savePlayerNotification($notification->id);
+        $this->savePlayerNotifications($notification->id);
 
         $this->broadcast();
 
