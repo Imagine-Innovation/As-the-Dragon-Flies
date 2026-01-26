@@ -117,6 +117,7 @@ class Player extends \yii\db\ActiveRecord
             [['class_id', 'user_id', 'race_id', 'background_id'], 'required'],
             [['class_id', 'level_id', 'user_id', 'race_id', 'background_id', 'alignment_id', 'image_id', 'quest_id', 'status', 'age', 'experience_points', 'hit_points', 'max_hit_points', 'armor_class', 'speed', 'created_at', 'updated_at'], 'integer'],
             [['description', 'gender'], 'string'],
+            ['name', 'match', 'pattern' => '/^[\p{L}\p{N}\s\'-]+$/u', 'message' => 'Name can only contain letters, numbers, spaces, hyphens, and apostrophes.'],
             [['name'], 'string', 'max' => 64],
             ['gender', 'in', 'range' => array_keys(self::optsGender())],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
