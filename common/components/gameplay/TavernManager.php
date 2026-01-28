@@ -25,7 +25,8 @@ class TavernManager extends BaseManager
      *
      * @param array<string, mixed> $config
      */
-    public function __construct($config = []) {
+    public function __construct($config = [])
+    {
         // Call the parent's constructor
         parent::__construct($config);
 
@@ -39,7 +40,8 @@ class TavernManager extends BaseManager
      * @return Quest
      * @throws RuntimeException
      */
-    private function getQuest(): Quest {
+    private function getQuest(): Quest
+    {
         if ($this->quest === null) {
             throw new RuntimeException("TavernManager context error: Quest is missing.");
         }
@@ -51,7 +53,8 @@ class TavernManager extends BaseManager
      * @return Story
      * @throws RuntimeException
      */
-    private function getStory(): Story {
+    private function getStory(): Story
+    {
         if ($this->story === null) {
             throw new RuntimeException("TavernManager context error: Story is missing.");
         }
@@ -64,7 +67,8 @@ class TavernManager extends BaseManager
      * @param int $playerCount Number of already on boarded players
      * @return string Welcome message
      */
-    public function welcomeMessage(int $playerCount): string {
+    public function welcomeMessage(int $playerCount): string
+    {
         return match ($playerCount) {
             0 => 'There\'s nobody here!',
             1 => 'For the moment, it looks like you\'re the first one',
@@ -82,7 +86,8 @@ class TavernManager extends BaseManager
      * @param ?int $playerCount Number of already on boarded players, null when quest is beeing created
      * @return string Missing player message
      */
-    public function missingPlayers(?int $playerCount = null): string {
+    public function missingPlayers(?int $playerCount = null): string
+    {
         $quest = $this->getQuest();
         $actualPlayerCount = $playerCount ?? 0;
         $storyMinPlayers = $quest->story->min_players;
@@ -104,7 +109,8 @@ class TavernManager extends BaseManager
      *
      * @return string|null Missing classes message, null if no class is required
      */
-    public function missingClasses(): ?string {
+    public function missingClasses(): ?string
+    {
         $missingClassIds = $this->getMissingClassIds();
 
         if ($missingClassIds === null) {
@@ -129,7 +135,8 @@ class TavernManager extends BaseManager
      *
      * @return array<int>|null Missing class IDs, null if bo class is required
      */
-    private function getMissingClassIds(): ?array {
+    private function getMissingClassIds(): ?array
+    {
         // Get the required classes
         $quest = $this->getQuest();
         $requiredClassIds = $this->getRequiredClassIds($quest->story_id);
@@ -154,7 +161,8 @@ class TavernManager extends BaseManager
      *     reason: string
      * } Associative array with a deny status and the reason why
      */
-    public function canPlayerJoinQuest(?Player &$player): array {
+    public function canPlayerJoinQuest(?Player &$player): array
+    {
         // Check if player is selected
         if (!$player) {
             return ['error' => true, 'denied' => true, 'reason' => "canPlayerJoinQuest->No player is selected"];
@@ -197,7 +205,8 @@ class TavernManager extends BaseManager
      *
      * @return array{error: bool, denied: bool, reason: string} Associative array with an error status, a deny status and the reason why
      */
-    private function isQuestValid(): array {
+    private function isQuestValid(): array
+    {
         // Check if quest exists
         if (!$this->quest) {
             return ['error' => true, 'denied' => false, 'reason' => "canPlayerJoinQuest->You can create a new quest"];
@@ -216,7 +225,8 @@ class TavernManager extends BaseManager
      * @param Player $player reference to a Player object
      * @return array{error: bool, denied: bool, reason: string} Associative array with an error status, a deny status and the reason why
      */
-    private function isPlayerValid(Player $player): array {
+    private function isPlayerValid(Player $player): array
+    {
         // Check if player is in another quest
         if ($this->quest === null) {
             if ($player->quest_id) {
@@ -237,7 +247,8 @@ class TavernManager extends BaseManager
      * @param Player $player reference to a Player object
      * @return bool
      */
-    private function isPlayerLevelValid(Player &$player): bool {
+    private function isPlayerLevelValid(Player &$player): bool
+    {
         $story = $this->getStory();
         return $story->min_level <= $player->level_id && $player->level_id <= $story->max_level;
     }
@@ -249,7 +260,8 @@ class TavernManager extends BaseManager
      * @param Player $player reference to a Player object
      * @return bool
      */
-    private function isPlayerClassValid(Player &$player): bool {
+    private function isPlayerClassValid(Player &$player): bool
+    {
         $quest = $this->getQuest();
         $requiredClassIds = $this->getRequiredClassIds($quest->story_id);
 
@@ -278,7 +290,8 @@ class TavernManager extends BaseManager
      *
      * @return bool
      */
-    public function areRequiredClassesPresent(): bool {
+    public function areRequiredClassesPresent(): bool
+    {
         // Get the missing classes
         $missingClassIds = $this->getMissingClassIds();
 
@@ -296,7 +309,8 @@ class TavernManager extends BaseManager
      * @param int $storyId
      * @return array<int>
      */
-    private function getRequiredClassIds(int $storyId): array {
+    private function getRequiredClassIds(int $storyId): array
+    {
         // Get the required classes
         $classes = StoryClass::find()
                 ->select('class_id')
@@ -318,7 +332,8 @@ class TavernManager extends BaseManager
      * @param int $questId
      * @return array<int>
      */
-    private function getActualPlayerClassIds(int $questId): array {
+    private function getActualPlayerClassIds(int $questId): array
+    {
         // Fetch the actual player classes
         $classes = Player::find()
                 ->select('class_id')
@@ -339,7 +354,8 @@ class TavernManager extends BaseManager
      *
      * @return int
      */
-    private function getCurrentPlayerCount(): int {
+    private function getCurrentPlayerCount(): int
+    {
         $quest = $this->getQuest();
         $playerCount = Player::find()
                 ->where(['quest_id' => $quest->id])
@@ -356,7 +372,8 @@ class TavernManager extends BaseManager
      * @param int|null $questId ID of the quest in which the player is engaged. Null if he leaves the quest
      * @return array{error: bool, message: string}
      */
-    private function updatePlayerQuestId(Player &$player, ?int $questId = null): array {
+    private function updatePlayerQuestId(Player &$player, ?int $questId = null): array
+    {
         $player->quest_id = $questId;
         if (!$player->save()) {
             return ['error' => true, 'message' => 'Could not save Player : ' . implode('\n', \yii\helpers\ArrayHelper::getColumn($player->errors, 0, false))];
@@ -370,7 +387,8 @@ class TavernManager extends BaseManager
      * @param int $questId
      * @return int
      */
-    private function getNextPlayerTurn(int $questId): int {
+    private function getNextPlayerTurn(int $questId): int
+    {
         $nextTurn = QuestPlayer::find()
                 ->where(['quest_id' => $questId])
                 ->max('player_turn');
@@ -386,7 +404,8 @@ class TavernManager extends BaseManager
      * @param string|null $reasonWhyPlayerQuit Reason why the player left the quest, null when inserting a new entry
      * @return array{error: bool, message: string}
      */
-    private function upsertQuestPlayer(int $questId, int $playerId, int $status, ?string $reasonWhyPlayerQuit = null): array {
+    private function upsertQuestPlayer(int $questId, int $playerId, int $status, ?string $reasonWhyPlayerQuit = null): array
+    {
         $questPlayer = QuestPlayer::findOne(['quest_id' => $questId, 'player_id' => $playerId]);
 
         if (!$questPlayer) {
@@ -412,14 +431,19 @@ class TavernManager extends BaseManager
     /**
      * Add a player to a quest
      *
-     * @param Player $player reference to a Player object
+     * @param Player|null $player reference to a Player object
      * @return array{error: bool, message: string}
      */
-    public function addPlayerToQuest(Player &$player): array {
+    public function addPlayerToQuest(?Player &$player): array
+    {
+        if ($player === null) {
+            return ['error' => true, 'message' => 'No player is selected'];
+        }
+
         $quest = $this->getQuest();
 
         if ($player->quest_id === $quest->id) {
-            return ['error' => false, 'message' => "Player is already onboarded in the quest"];
+            return ['error' => false, 'message' => 'Player is already onboarded in the quest'];
         }
 
         $playerUpdate = $this->updatePlayerQuestId($player, $quest->id);
@@ -441,7 +465,8 @@ class TavernManager extends BaseManager
      * @param string $reason
      * @return array{error: bool, message: string}
      */
-    public function withdrawPlayerFromQuest(Player &$player, string $reason = null): array {
+    public function withdrawPlayerFromQuest(Player &$player, string $reason = null): array
+    {
         $quest = $this->getQuest();
 
         // Player is already onboarded on a different quest => error
@@ -461,7 +486,8 @@ class TavernManager extends BaseManager
      * @return Quest
      * @throws Exception
      */
-    private function newTavern(): Quest {
+    private function newTavern(): Quest
+    {
         Yii::debug("*** Debug *** findTavern  ===>  Create a new Tavern");
         $story = $this->getStory();
         $newTavern = new Quest([
@@ -488,7 +514,8 @@ class TavernManager extends BaseManager
      * @return Quest
      * @throws NotFoundHttpException
      */
-    public function findTavern(): Quest {
+    public function findTavern(): Quest
+    {
 
         $tavern = $this->story->tavern ?? null;
         $questId = Yii::$app->session->get('questId');
@@ -509,7 +536,8 @@ class TavernManager extends BaseManager
      * @param int $playerId
      * @return array{canStart: bool, msg: string}
      */
-    public function questCanStart(int $playerId): array {
+    public function questCanStart(int $playerId): array
+    {
         $quest = $this->getQuest();
         Yii::debug("*** debug *** - questCanStart - questId={$quest->id}, initiatorId={$quest->initiator_id}, playerId={$playerId}");
         if ($playerId !== $quest->initiator_id) {

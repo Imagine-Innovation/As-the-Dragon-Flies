@@ -7,6 +7,6 @@ use common\models\Outcome;
 ?>
 <div class="text-decoration">
     <h3><?= $outcome->name ?></h3>
-    <p class="text-muted"><?= nl2br(Html::encode($outcome->description ?? '')) ?></p>
+    <p class="text-muted"><?= nl2br($outcome->description ?? '') ?></p>
     <?= $actionOutcome ?>
 </div>

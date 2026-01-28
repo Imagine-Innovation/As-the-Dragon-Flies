@@ -26,7 +26,8 @@ class PlayerItemController extends Controller
     /**
      * @inheritDoc
      */
-    public function behaviors() {
+    public function behaviors()
+    {
         /** @phpstan-ignore-next-line */
         return array_merge(
                 parent::behaviors(),
@@ -65,7 +66,8 @@ class PlayerItemController extends Controller
      *
      * @return string The rendered index view.
      */
-    public function actionIndex(): string {
+    public function actionIndex(): string
+    {
         // Find the PlayerItem model
         /**/
         $playerId = Yii::$app->session->get('playerId');
@@ -93,7 +95,8 @@ class PlayerItemController extends Controller
      * @return string The rendered pack view.
      * @throws NotFoundHttpException if the model cannot be found.
      */
-    public function actionSeePackage(): string {
+    public function actionSeePackage(): string
+    {
         // Find the PlayerItem model based on its primary key value
         $playerId = Yii::$app->session->get('playerId');
         $player = FindModelHelper::findPlayer(['id' => $playerId]);
@@ -118,7 +121,8 @@ class PlayerItemController extends Controller
      * items: list<array{itemId: int, name: string, image: string|null, quantity: int, isProficient: int, isTwoHanded: int, buttonId: non-falsy-string}>
      * }
      */
-    private function getEquipmentData(array &$playerItems): array {
+    private function getEquipmentData(array &$playerItems): array
+    {
         $playerItemData = [];
         $items = [];
 
@@ -144,7 +148,8 @@ class PlayerItemController extends Controller
      *
      * @return array{error: false, msg: '', content: string, contentModal: string, contentAside: string, contentOffcanvas: string, items: list<array{itemId: int, name: string, image: string|null, quantity: int, isProficient: int, isTwoHanded: int, buttonId: non-falsy-string}>, data: array<string, array{itemId: int|null, itemName: string|null, image: string|null}>}|array{error: true, msg: string}
      */
-    public function actionAjaxEquipment(): array {
+    public function actionAjaxEquipment(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isGet || !$this->request->isAjax) {
@@ -181,11 +186,12 @@ class PlayerItemController extends Controller
      * @param PlayerBody $playerBody
      * @return array<string, array{itemId: int|null, itemName: string|null, image: string|null}>
      */
-    private function getPlayerBodyData(PlayerBody &$playerBody): array {
+    private function getPlayerBodyData(PlayerBody &$playerBody): array
+    {
         $data = [];
 
         foreach (PlayerItem::BODY_ZONE as $property => $zone) {
-            if ($playerBody->hasProperty($property) && $playerBody->$property !== null) {
+            if ($playerBody->hasProperty($property)) {
                 $playerItem = $playerBody->$property;
                 $data[$zone] = [
                     'itemId' => $playerItem->item_id,
@@ -211,7 +217,8 @@ class PlayerItemController extends Controller
      * @param bool $equiped
      * @return array<string, mixed>
      */
-    private function savePlayerBody(PlayerBody &$playerBody, string $itemName, bool $equiped = true): array {
+    private function savePlayerBody(PlayerBody &$playerBody, string $itemName, bool $equiped = true): array
+    {
         Yii::debug("*** debug *** savePlayerBody - itemName={$itemName}");
         if ($playerBody->save()) {
             $playerBodyData = $this->getPlayerBodyData($playerBody);
@@ -242,7 +249,8 @@ class PlayerItemController extends Controller
      * @param string $bodyZone
      * @return array<string, mixed>
      */
-    private function equipPlayerWithArmor(PlayerItem &$playerItem, PlayerBody &$playerBody, string $bodyZone): array {
+    private function equipPlayerWithArmor(PlayerItem &$playerItem, PlayerBody &$playerBody, string $bodyZone): array
+    {
         if ($bodyZone !== PlayerItem::BODY_CHEST_ZONE) {
             return [
                 'error' => true,
@@ -264,7 +272,8 @@ class PlayerItemController extends Controller
      * @param string $bodyZone
      * @return array<string, mixed>
      */
-    private function equipPlayerWithHelmet(PlayerItem &$playerItem, PlayerBody &$playerBody, string $bodyZone): array {
+    private function equipPlayerWithHelmet(PlayerItem &$playerItem, PlayerBody &$playerBody, string $bodyZone): array
+    {
         if ($bodyZone !== PlayerItem::BODY_HEAD_ZONE) {
             return [
                 'error' => true,
@@ -285,7 +294,8 @@ class PlayerItemController extends Controller
      * @param string $bodyZone
      * @return array<string, mixed>
      */
-    private function equipPlayerWithShield(PlayerItem &$playerItem, PlayerBody &$playerBody, string $bodyZone): array {
+    private function equipPlayerWithShield(PlayerItem &$playerItem, PlayerBody &$playerBody, string $bodyZone): array
+    {
         if ($bodyZone !== PlayerItem::BODY_LEFT_HAND_ZONE) {
             return [
                 'error' => true,
@@ -308,7 +318,8 @@ class PlayerItemController extends Controller
      * @param string $bodyZone
      * @return array<string, mixed>
      */
-    private function equipPlayerWithTool(PlayerItem &$playerItem, PlayerBody &$playerBody, string $bodyZone): array {
+    private function equipPlayerWithTool(PlayerItem &$playerItem, PlayerBody &$playerBody, string $bodyZone): array
+    {
         if ($bodyZone !== PlayerItem::BODY_RIGHT_HAND_ZONE) {
             return [
                 'error' => true,
@@ -329,7 +340,8 @@ class PlayerItemController extends Controller
      * @param Item $weapon
      * @return void
      */
-    private function equipWithQuiver(PlayerBody &$playerBody, Item &$weapon): void {
+    private function equipWithQuiver(PlayerBody &$playerBody, Item &$weapon): void
+    {
         Yii::debug("*** debug *** equipWithQuiver - weapon={$weapon->name}");
         $haystack = strtolower($weapon->name);
 
@@ -353,7 +365,8 @@ class PlayerItemController extends Controller
      * @param string $bodyZone
      * @return array<string, mixed>
      */
-    private function equipPlayerWithWeapon(PlayerItem &$playerItem, Item &$weapon, PlayerBody &$playerBody, string $bodyZone): array {
+    private function equipPlayerWithWeapon(PlayerItem &$playerItem, Item &$weapon, PlayerBody &$playerBody, string $bodyZone): array
+    {
         $weaponName = $weapon->name;
         Yii::debug("*** debug *** equipPlayerWithWeapon - bodyZone={$bodyZone}, item={$weaponName}");
         if ($bodyZone !== PlayerItem::BODY_RIGHT_HAND_ZONE && $bodyZone !== PlayerItem::BODY_LEFT_HAND_ZONE) {
@@ -389,7 +402,8 @@ class PlayerItemController extends Controller
      * @param array<string, mixed> $handProperties
      * @return void
      */
-    private function disarmTheOtherHand(PlayerBody &$playerBody, array $handProperties): void {
+    private function disarmTheOtherHand(PlayerBody &$playerBody, array $handProperties): void
+    {
         Yii::debug("*** debug *** disarmTheOtherHand - handProperties: " . print_r($handProperties, true));
         $otherHandItemIdField = $handProperties['otherHandItemIdField'];
         if ($playerBody->$otherHandItemIdField) {
@@ -416,7 +430,8 @@ class PlayerItemController extends Controller
      * @param string $bodyZone
      * @return array<string, mixed>
      */
-    private function holdWeapon(Item &$weapon, PlayerBody &$playerBody, string $bodyZone): array {
+    private function holdWeapon(Item &$weapon, PlayerBody &$playerBody, string $bodyZone): array
+    {
         Yii::debug("*** debug *** holdWeapon - bodyZone={$bodyZone}, weapon={$weapon->name}");
 
         $handProperties = PlayerItem::HAND_PROPERTIES[$bodyZone];
@@ -452,7 +467,8 @@ class PlayerItemController extends Controller
      * @param string $bodyZone
      * @return array<string, mixed>
      */
-    private function equipPlayer(PlayerItem &$playerItem, string $bodyZone): array {
+    private function equipPlayer(PlayerItem &$playerItem, string $bodyZone): array
+    {
         $playerBody = FindModelHelper::findPlayerBody(['player_id' => $playerItem->player_id]);
         $item = $playerItem->item;
         $itemType = $playerItem->item_type;
@@ -472,7 +488,8 @@ class PlayerItemController extends Controller
      *
      * @return array<string, mixed>
      */
-    public function actionAjaxEquipPlayer(): array {
+    public function actionAjaxEquipPlayer(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -499,7 +516,8 @@ class PlayerItemController extends Controller
      * @param string $weaponName
      * @return void
      */
-    private function disarmWeapon(PlayerItem &$playerItem, PlayerBody &$playerBody, string $bodyZone, string $weaponName): void {
+    private function disarmWeapon(PlayerItem &$playerItem, PlayerBody &$playerBody, string $bodyZone, string $weaponName): void
+    {
         Yii::debug("*** debug *** disarmWeapon - bodyZone={$bodyZone}, weaponName={$weaponName}");
         $haystack = strtolower($weaponName);
 
@@ -522,7 +540,8 @@ class PlayerItemController extends Controller
      * @param string $bodyZone
      * @return void
      */
-    private function clearBodyZone(PlayerBody &$playerBody, string $bodyZone): void {
+    private function clearBodyZone(PlayerBody &$playerBody, string $bodyZone): void
+    {
         $bodyProperties = PlayerItem::BODY_PROPERTIES[$bodyZone];
 
         $itemIdField = $bodyProperties['itemIdField'];
@@ -535,12 +554,13 @@ class PlayerItemController extends Controller
      * @param string $bodyZone
      * @return void
      */
-    private function disarmPreviousItem(PlayerBody &$playerBody, string $bodyZone): void {
+    private function disarmPreviousItem(PlayerBody &$playerBody, string $bodyZone): void
+    {
         $bodyProperties = PlayerItem::BODY_PROPERTIES[$bodyZone];
         $property = $bodyProperties['property'];
         Yii::debug("*** debug *** disarmPreviousItem - bodyZone={$bodyZone}, property={$property}");
 
-        if (!$playerBody->hasProperty($property) || $playerBody->$property === null) {
+        if (!$playerBody->hasProperty($property)) {
             return;
         }
         $playerItem = $playerBody->$property;
@@ -560,13 +580,14 @@ class PlayerItemController extends Controller
      * @param string $bodyZone
      * @return array<string, mixed>
      */
-    private function disarmPlayer(PlayerBody &$playerBody, string $bodyZone): array {
+    private function disarmPlayer(PlayerBody &$playerBody, string $bodyZone): array
+    {
         $bodyProperties = PlayerItem::BODY_PROPERTIES[$bodyZone];
 
         $property = $bodyProperties['property'];
         Yii::debug("*** debug *** disarmPlayer - bodyZone={$bodyZone}, property={$property}");
 
-        if (!$playerBody->hasProperty($property) || $playerBody->$property === null) {
+        if (!$playerBody->hasProperty($property)) {
             return [
                 'error' => true,
                 'msg' => "Body zone {$bodyZone} has no attached item"
@@ -584,7 +605,8 @@ class PlayerItemController extends Controller
      *
      * @return array<string, mixed>
      */
-    public function actionAjaxDisarmPlayer(): array {
+    public function actionAjaxDisarmPlayer(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -605,7 +627,8 @@ class PlayerItemController extends Controller
      * @param \yii\web\Request $request
      * @return array{error: bool, msg: string, player?: Player, playerItem?: PlayerItem, status?: int|mixed}
      */
-    private function prepareAjax(\yii\web\Request $request): array {
+    private function prepareAjax(\yii\web\Request $request): array
+    {
         if (!$request->isPost || !$request->isAjax) {
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
@@ -622,7 +645,8 @@ class PlayerItemController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxToggle(): array {
+    public function actionAjaxToggle(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         $checkAjax = $this->prepareAjax($this->request);

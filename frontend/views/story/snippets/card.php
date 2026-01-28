@@ -55,7 +55,7 @@ $image = $story->image ?
                 <?=
                 Button::widget([
                     'isPost' => true,
-                    'url' => Url::toRoute(['quest/join', 'storyId' => $story->id, 'playerId' => $player->id]),
+                    'url' => Url::toRoute(['quest/join', 'storyId' => $story->id, 'playerId' => $player?->id]),
                     'icon' => 'dnd-tower',
                     'title' => 'Join the quest',
                     'style' => 'text-decoration',

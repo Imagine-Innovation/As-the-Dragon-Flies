@@ -52,7 +52,8 @@ class QuestController extends Controller
     /**
      * @inheritDoc
      */
-    public function behaviors() {
+    public function behaviors()
+    {
         /** @phpstan-ignore-next-line */
         return array_merge(
                 parent::behaviors(),
@@ -96,7 +97,8 @@ class QuestController extends Controller
      *
      * @return string Rendered index view with quest listing
      */
-    public function actionIndex(): string {
+    public function actionIndex(): string
+    {
         $user = Yii::$app->user->identity;
 
         // Admin users get full quest access
@@ -132,7 +134,8 @@ class QuestController extends Controller
      * @return string Rendered view page
      * @throws NotFoundHttpException if quest not found
      */
-    public function actionView(int $id): string {
+    public function actionView(int $id): string
+    {
         return $this->render('view', [
                     'model' => $this->findModel($id),
         ]);
@@ -152,7 +155,8 @@ class QuestController extends Controller
      * @param int|null $playerId
      * @return Response|null
      */
-    public function actionJoin(int $storyId, ?int $playerId = null): Response|null {
+    public function actionJoin(int $storyId, ?int $playerId = null): Response|null
+    {
         $story = $this->findValidStory($storyId);
 
         $tavernManager = new TavernManager(['story' => $story]);
@@ -173,6 +177,7 @@ class QuestController extends Controller
             return null;
         }
 
+        /** @phpstan-ignore-next-line */
         $success = $this->createEvent('player-joining', $player, $tavern);
         if ($success) {
             return $this->redirect(['tavern', 'id' => $tavern->id]);
@@ -192,7 +197,8 @@ class QuestController extends Controller
      *   - msg: string message for client
      *   - content: HTML content for tavern update
      */
-    public function actionAjaxQuestMembers(?int $questId, ?string $render): array {
+    public function actionAjaxQuestMembers(?int $questId, ?string $render): array
+    {
         // Configure JSON response format
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -232,7 +238,8 @@ class QuestController extends Controller
      *   - msg: status message (empty on success)
      *   - content: HTML content with welcome message
      */
-    public function actionAjaxWelcomeMessages(?int $questId): array {
+    public function actionAjaxWelcomeMessages(?int $questId): array
+    {
         // Configure response as JSON format
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -274,7 +281,8 @@ class QuestController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxSendMessage(): array {
+    public function actionAjaxSendMessage(): array
+    {
         Yii::debug("*** Debug *** actionAjaxSendMessage");
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -294,7 +302,8 @@ class QuestController extends Controller
         }
 
         $success = $this->createEvent('sending-message', $player, $quest, ['message' => $message]);
-        return ['error' => !$success, 'msg' => "Create 'sending-message' event " . ($success ? 'succeded' : 'failed')];
+        return ['error' => !$success, 'msg' => "Create 'sending-message' event " . ($success
+                ? 'succeded' : 'failed')];
     }
 
     /**
@@ -303,7 +312,8 @@ class QuestController extends Controller
      * @return Response|null
      * @throws \Exception
      */
-    public function actionStart(?int $id): Response|null {
+    public function actionStart(?int $id): Response|null
+    {
         $quest = $this->findModel($id);
 
         $player = $quest->initiator;
@@ -335,7 +345,8 @@ class QuestController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string} JSON response with latest messages
      */
-    public function actionAjaxGetMessages(): array {
+    public function actionAjaxGetMessages(): array
+    {
         // Configure response format
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -364,7 +375,8 @@ class QuestController extends Controller
      *
      * @return array{canStart: bool, msg: string}
      */
-    public function actionAjaxCanStart(): array {
+    public function actionAjaxCanStart(): array
+    {
         // Configure response format
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -385,7 +397,8 @@ class QuestController extends Controller
      * @param int $id
      * @return string
      */
-    public function actionTavern(int $id): string {
+    public function actionTavern(int $id): string
+    {
         $tavern = $this->findModel($id);
 
         ContextManager::updateQuestContext($tavern->id);
@@ -402,7 +415,8 @@ class QuestController extends Controller
      * @param int|null $id
      * @return Response|null
      */
-    public function actionQuit(?int $playerId, ?int $id): Response|null {
+    public function actionQuit(?int $playerId, ?int $id): Response|null
+    {
 
         $player = FindModelHelper::findPlayer(['id' => $playerId]);
         $quest = $this->findModel($id);
@@ -432,7 +446,8 @@ class QuestController extends Controller
      * @param int|null $id
      * @return Response Redirect to tavern view or game view
      */
-    public function actionResume(?int $id = null): Response {
+    public function actionResume(?int $id = null): Response
+    {
         $quest = $this->findModel($id);
 
         if ($quest->status === AppStatus::PLAYING->value) {
@@ -450,7 +465,8 @@ class QuestController extends Controller
      *
      * @return string|Response Rendered create form or redirect to view
      */
-    public function actionCreate(): string|Response {
+    public function actionCreate(): string|Response
+    {
         $model = new Quest();
 
         // Handle form submission
@@ -478,7 +494,8 @@ class QuestController extends Controller
      * @return string|Response Rendered update form or redirect to view
      * @throws NotFoundHttpException if quest not found
      */
-    public function actionUpdate(int $id): string|Response {
+    public function actionUpdate(int $id): string|Response
+    {
         $model = $this->findModel($id);
 
         // Process form submission
@@ -502,7 +519,8 @@ class QuestController extends Controller
      * @return Response Redirect to index page
      * @throws NotFoundHttpException if quest not found
      */
-    public function actionDelete(int $id): Response {
+    public function actionDelete(int $id): Response
+    {
         $this->findModel($id)->delete();
         return $this->redirect(['index']);
     }
@@ -517,7 +535,8 @@ class QuestController extends Controller
      * @return Quest Found quest model
      * @throws NotFoundHttpException if quest not found
      */
-    protected function findModel(?int $id = null): Quest {
+    protected function findModel(?int $id = null): Quest
+    {
         $questId = $id ?? Yii::$app->session->get('questId');
         $user = Yii::$app->user->identity;
 
@@ -543,7 +562,8 @@ class QuestController extends Controller
      * @return Story|null
      * @throws NotFoundHttpException
      */
-    protected function findValidStory(int $storyId): ?Story {
+    protected function findValidStory(int $storyId): ?Story
+    {
         if ($storyId) {
             $story = Story::findOne(['id' => $storyId, 'status' => AppStatus::PUBLISHED->value]);
             if (!$story) {
@@ -563,7 +583,8 @@ class QuestController extends Controller
      * @return bool
      * @throws \Exception
      */
-    protected function createEvent(string $eventType, Player &$player, Quest &$quest, array $data = []): bool {
+    protected function createEvent(string $eventType, Player &$player, Quest &$quest, array $data = []): bool
+    {
         $sessionId = Yii::$app->session->get('sessionId');
         try {
             $event = EventFactory::createEvent($eventType, $sessionId, $player, $quest, $data);

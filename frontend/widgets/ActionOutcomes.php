@@ -25,10 +25,12 @@ class ActionOutcomes extends Widget
      *
      * @return string
      */
-    public function run(): string {
+    public function run(): string
+    {
 
         $canReplay = false;
-        $html = "<p>{$this->diceRoll}: the action {$this->status->getActionAdjective()}</p>" . PHP_EOL;
+        $status = $this->status ?? AppStatus::SUCCESS;
+        $html = "<p>{$this->diceRoll}: the action {$status->getActionAdjective()}</p>" . PHP_EOL;
         $html .= $this->hpLoss > 0 ? "<p>You lost {$this->hpLoss} hit points</p>" . PHP_EOL : '';
 
         if (empty($this->outcomes)) {
@@ -59,9 +61,11 @@ class ActionOutcomes extends Widget
                 'ariaParams' => ['data-bs-dismiss' => 'modal'],
             ]);
         }
+        return $html . $button;
     }
 
-    private function getActionOutcome(Outcome $outcome): string {
+    private function getActionOutcome(Outcome $outcome): string
+    {
         $actionOutcome = '';
         if ($outcome->description) {
             $actionOutcome .= '<p>' . nl2br($outcome->description) . '</p>' . PHP_EOL;
