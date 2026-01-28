@@ -171,7 +171,7 @@ class PlayerController extends Controller
 
         $userId = $request->post('userId');
         $postPlayerId = $request->post('playerId');
-        $playerId = is_int($postPlayerId) ? $postPlayerId : null;
+        $playerId = is_numeric($postPlayerId) ? (int) $postPlayerId : null;
 
         $success = User::updateAll(
                 ['current_player_id' => $playerId],
@@ -181,7 +181,7 @@ class PlayerController extends Controller
         ContextManager::updatePlayerContext($playerId);
 
         return [
-            'error' => false,
+            'error' => !$success,
             'msg' => $success ? 'Context is saved' : 'Could not save context'
         ];
     }

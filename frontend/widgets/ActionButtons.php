@@ -23,7 +23,7 @@ class ActionButtons extends Widget
         // Narrow the type of status if it's not strictly an int or string in ActiveRecord
         $status = $this->model->getAttribute('status');
         $modelName = Utilities::modelName($this->model) ?? 'Unknown';
-        $actions = ActionButtonsConfig::getActions($modelName, is_int($status) ? $status : 0);
+        $actions = ActionButtonsConfig::getActions($modelName, is_numeric($status) ? (int) $status : 0);
 
         $widgetView = ($this->mode === 'table') ? 'action-buttons-table' : 'action-buttons-icon';
 

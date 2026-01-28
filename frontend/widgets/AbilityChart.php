@@ -12,7 +12,12 @@ class AbilityChart extends Widget
     public string $code;
     public int $bonus;
 
-    public function run() {
+    /**
+     *
+     * @return string
+     */
+    public function run(): string
+    {
         $abilityScore = $this->score + $this->bonus;
         $tmp = ($abilityScore - 10) / 2;
         $modifier = $tmp >= 0 ? floor($tmp) : ceil($tmp);

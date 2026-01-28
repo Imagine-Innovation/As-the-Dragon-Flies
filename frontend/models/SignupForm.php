@@ -20,7 +20,8 @@ class SignupForm extends Model
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['username', 'fullname', 'email'], 'trim'],
             [['username', 'email', 'password'], 'required'],
@@ -42,7 +43,8 @@ class SignupForm extends Model
      *
      * @return bool|null whether the creating new account was successful and email was sent
      */
-    public function signup(): ?bool {
+    public function signup(): ?bool
+    {
         if (!$this->validate()) {
             return null;
         }
@@ -67,7 +69,8 @@ class SignupForm extends Model
      * @param User $user user model to with email should be send
      * @return bool whether the email was sent
      */
-    protected function sendEmail(User $user): bool {
+    protected function sendEmail(User $user): bool
+    {
         return Yii::$app
                         ->mailer
                         ->compose(

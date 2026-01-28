@@ -74,7 +74,8 @@ class AjaxRequest
      *
      * @param array<string, mixed> $param
      */
-    public function __construct(array $param) {
+    public function __construct(array $param)
+    {
         $this->defaultResponse = self::RESPONSE;
         foreach ($param as $key => $value) {
             if (property_exists($this, $key)) {
@@ -91,7 +92,8 @@ class AjaxRequest
      * @param int $page
      * @return T[]  // Array of ActiveRecord models of type T
      */
-    private function loadModels(ActiveQuery $query, int $limit, int $page): array {
+    private function loadModels(ActiveQuery $query, int $limit, int $page): array
+    {
         $offset = $limit * $page;
         $models = $query->offset($offset)->limit($limit);
 
@@ -108,7 +110,8 @@ class AjaxRequest
      * @return \yii\db\ActiveQuery<T>
      * @phpstan-ignore-next-line
      */
-    private function buildQuery(): ActiveQuery {
+    private function buildQuery(): ActiveQuery
+    {
         $modelName = 'common\\models\\' . $this->modelName;
 
         if ($this->innerJoin) {
@@ -132,7 +135,8 @@ class AjaxRequest
      * @param Request $request
      * @return bool
      */
-    public function makeResponse(Request $request): bool {
+    public function makeResponse(Request $request): bool
+    {
         $postLimit = $request->post('limit');
         $postPageNo = $request->post('page');
 

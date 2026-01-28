@@ -1,5 +1,6 @@
 <?php
 
+use frontend\widgets\ActionOutcomes;
 use frontend\widgets\Button;
 
 /** @var yii\web\View $this */
@@ -10,6 +11,8 @@ use frontend\widgets\Button;
 /** @var bool $isFree */
 /** @var int $questProgressId */
 /** @var int|null $nextMissionId */
+echo ActionOutcomes::widget([]);
+
 $canReplay = false;
 $hr = '<hr class="border border-warning border-1 opacity-50 w-50"><hr>';
 echo "<p>{$diceRoll}: the action {$status->getActionAdjective()}</p>";

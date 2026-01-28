@@ -20,23 +20,18 @@ class Inventory
      *                     an item with an item type.
      * @return array<string> A list of unique item types.
      */
-    public function getItemTypes(array $playerItems): array {
-        // Initialize an empty array to hold unique item types
+    public function getItemTypes(array $playerItems): array
+    {
         $itemTypes = [];
 
-        // Iterate over each model in the provided models array
         foreach ($playerItems as $playerItem) {
-            // Extract the item type from the model's item
             $itemType = $playerItem->item_type;
 
-            // Check if the item type is not already in the itemTypes array
             if (!in_array($itemType, $itemTypes)) {
-                // Add the item type to the itemTypes array
                 $itemTypes[] = $itemType;
             }
         }
 
-        // Return the array of unique item types
         return $itemTypes;
     }
 
@@ -44,18 +39,14 @@ class Inventory
      * Loads data for the shop page.
      *
      * This method prepares the data required for rendering the shop page.
-     * It organizes the models into categories based on their item types
-     * and sorts the items within each category by their copper values
-     * in ascending order.
      *
      * @param PlayerItem[] $playerItems The models to load data for.
      * @return array<string, list<array<string, float|int|string|null>>> The organized data for rendering the shop page.
      */
-    public function loadItemsData(array $playerItems): array {
-        // Initialize an array to store organized shop data.
+    private function prepareItemsData(array $playerItems): array
+    {
         $data = [];
 
-        // Iterate through each model and populate the data array.
         foreach ($playerItems as $playerItem) {
             $item = $playerItem->item;
             $itemType = $playerItem->item_type;
@@ -71,18 +62,31 @@ class Inventory
             ];
         }
 
-        // Iterate through each specified tab and sort the items within
-        // that tab based on their values.
+        return $data;
+    }
+
+    /**
+     * Loads data for the shop page.
+     *
+     * This method prepares the data required for rendering the shop page.
+     * It organizes the models into categories based on their item types
+     * and sorts the items within each category by their copper values
+     * in ascending order.
+     *
+     * @param PlayerItem[] $playerItems The models to load data for.
+     * @return array<string, list<array<string, float|int|string|null>>> The organized data for rendering the shop page.
+     */
+    public function loadItemsData(array $playerItems): array
+    {
+        $data = $this->prepareItemsData($playerItems);
+
         foreach ($this->getItemTypes($playerItems) as $tab) {
             if (isset($data[$tab])) {
                 $items = $data[$tab];
 
-                // Extract the 'value' column from the items and sort the items
-                // in ascending order based on values.
                 $value = array_column($items, 'name');
                 array_multisort($value, SORT_ASC, $items);
 
-                // Update the data array with the sorted items.
                 $data[$tab] = $items;
             }
         }
@@ -98,26 +102,20 @@ class Inventory
      * marked as carrying, and sums up the weights of the items being carried,
      * considering their quantities.
      *
-     * @param PlayerItem[] $playerItems An array of models, where each model contains
-     *                             an item with a weight and a quantity.
+     * @param Player $player
      * @return float The total weight of the items being carried.
      */
-    public function packWeight(array $playerItems): float {
-        // Initialize the total weight to 0
+    private function packWeight(Player $player): float
+    {
         $weight = 0;
 
-        // Iterate over each model in the provided models array
-        foreach ($playerItems as $playerItem) {
-            // Check if the model is marked as carrying the item
+        foreach ($player->playerItems as $playerItem) {
             if ($playerItem->is_carrying) {
-                // Add the weight of the item multiplied by its quantity
-                // to the total weight
                 $item = $playerItem->item;
-                $weight += $item->weight * $playerItem->quantity / $item->quantity;
+                $weight += ($item->weight ?? 0) * ($playerItem->quantity ?? 1) / ($item->quantity ?? 1);
             }
         }
 
-        // Return the total weight of the items being carried
         return $weight;
     }
 
@@ -126,7 +124,8 @@ class Inventory
      * @param Player $player
      * @return Item|null
      */
-    public function getContainer(Player $player): ?Item {
+    public function getContainer(Player $player): ?Item
+    {
         $items = $player->items;
         if (!$items) {
             return null;
@@ -159,11 +158,9 @@ class Inventory
      * @param Item $containerItem
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function addToPack(PlayerItem $playerItem, Item $containerItem): array {
-        $weight = $playerItem->item->weight;
-        if ($weight === null) {
-            return ['error' => true, 'msg' => "It is not possible to add this item to a pack. It weighs nothing."];
-        }
+    public function addToPack(PlayerItem $playerItem, Item $containerItem): array
+    {
+        $weight = $playerItem->item->weight ?? 0;
 
         if ($playerItem->is_carrying) {
             return ['error' => true, 'msg' => "Your have already packed this item"];
@@ -175,16 +172,15 @@ class Inventory
         }
 
         $maxLoad = $containerItem->max_load;
-        $playerItems = PlayerItem::findAll(['player_id' => $playerItem->player_id]);
-        $actualLoad = $this->packWeight($playerItems);
-        if ($actualLoad + $weight > $maxLoad) {
+        $packLoad = $this->packWeight($playerItem->player);
+        if ($packLoad + $weight > $maxLoad) {
             return ['error' => true, 'msg' => "You've reached the maximum weight your {$containerItem->name} can carry. You must first remove one item before adding this one."];
         }
 
         $playerItem->is_carrying = 1;
-        $save = $playerItem->save();
+        $saved = $playerItem->save();
 
-        if ($save) {
+        if ($saved) {
             return ['error' => false, 'msg' => "Your {$playerItem->item_name} has been successfully added to your {$containerItem->name}"];
         }
         return ['error' => true, 'msg' => "Internal Error. Could not add the item {$playerItem->item_name} to the {$containerItem->name}"];
@@ -196,7 +192,8 @@ class Inventory
      * @param Item $containerItem
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function removeFromPack(PlayerItem $playerItem, Item $containerItem) {
+    public function removeFromPack(PlayerItem $playerItem, Item $containerItem): array
+    {
         if (!$playerItem->is_carrying) {
             return ['error' => true, 'msg' => "Your haven't packed this item yet"];
         }
@@ -207,9 +204,9 @@ class Inventory
         }
 
         $playerItem->is_carrying = 0;
-        $save = $playerItem->save();
+        $saved = $playerItem->save();
 
-        if ($save) {
+        if ($saved) {
             return ['error' => false, 'msg' => "Your {$playerItem->item_name} has been successfully removed from your {$containerItem->name}"];
         }
         return ['error' => true, 'msg' => "Internal Error. Could not remove the item {$playerItem->item_name} from the {$containerItem->name}"];

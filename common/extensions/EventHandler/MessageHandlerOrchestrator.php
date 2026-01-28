@@ -185,7 +185,7 @@ class MessageHandlerOrchestrator implements MessageHandlerInterface
     private function handleJsonMessage(ConnectionInterface $conn, string $clientId, array $data): void {
         $this->logger->logStart("Orchestrator: handleJsonMessage for clientId=[{$clientId}]");
 
-        $sessionId = PayloadHelper::extractStringFromPayload('$sessionId', $data);
+        $sessionId = PayloadHelper::extractStringFromPayload('sessionId', $data);
         if (!$sessionId) {
             $this->logger->log("Orchestrator: Missing SessionId in JSON message from clientId=[{$clientId}]", $data, 'warning');
             $this->broadcastService->sendBack($conn, 'error', 'Missing SessionId in source message');

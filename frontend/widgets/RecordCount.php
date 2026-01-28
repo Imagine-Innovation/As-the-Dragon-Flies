@@ -14,7 +14,12 @@ class RecordCount extends Widget
     /** @var array<string, mixed>|null $actions */
     public ?array $actions = null;
 
-    public function run() {
+    /**
+     *
+     * @return string
+     */
+    public function run(): string
+    {
         return $this->render('record-count', [
                     'countLabel' => $this->setCountLabel(),
                     'actions' => $this->actions,
@@ -25,7 +30,8 @@ class RecordCount extends Widget
      *
      * @return string
      */
-    private function setCountLabel(): string {
+    private function setCountLabel(): string
+    {
         $adjective = $this->adjective ?? 'available';
 
         return match ($this->count) {

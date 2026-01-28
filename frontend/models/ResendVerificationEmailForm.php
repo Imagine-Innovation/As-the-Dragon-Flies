@@ -7,7 +7,8 @@ use common\components\AppStatus;
 use Yii;
 use yii\base\Model;
 
-class ResendVerificationEmailForm extends Model {
+class ResendVerificationEmailForm extends Model
+{
 
     /**
      * @var string
@@ -17,7 +18,8 @@ class ResendVerificationEmailForm extends Model {
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             ['email', 'trim'],
             ['email', 'required'],
@@ -35,7 +37,8 @@ class ResendVerificationEmailForm extends Model {
      *
      * @return bool whether the email was sent
      */
-    public function sendEmail() {
+    public function sendEmail(): bool
+    {
         $user = User::findOne([
             'email' => $this->email,
             'status' => AppStatus::INACTIVE->value

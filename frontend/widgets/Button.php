@@ -33,7 +33,8 @@ class Button extends Widget
      *
      * @return string
      */
-    public function run(): string {
+    public function run(): string
+    {
         if ($this->isPost) {
             return $this->postForm();
         }
@@ -44,7 +45,8 @@ class Button extends Widget
      *
      * @return string
      */
-    private function button(): string {
+    private function button(): string
+    {
 // Caution: The spaces at the beginning of the line are intentional; do not delete them.
 //
 // If the btn style is not defined by the user, default it to 'btn-seconday'
@@ -63,7 +65,8 @@ class Button extends Widget
      *
      * @return string
      */
-    private function iconButton(): string {
+    private function iconButton(): string
+    {
         $style = $this->style ?? '';
         $icon = $this->iconElement();
 
@@ -84,7 +87,8 @@ class Button extends Widget
      * @param string $AdditionalCss
      * @return string
      */
-    private function anchorTag(string $baseCss, string $AdditionalCss): string {
+    private function anchorTag(string $baseCss, string $AdditionalCss): string
+    {
         $url = $this->url ?? '#';
         $closeModal = $this->isCloseModal ? ' data-bs-dismiss="modal"' : '';
         $onclick = $this->onclick ? " onclick=\"{$this->onclick}\"" : '';
@@ -99,7 +103,8 @@ class Button extends Widget
      *
      * @return string
      */
-    private function iconElement(): string {
+    private function iconElement(): string
+    {
         $bootstropIcon = $this->icon ?? 'dnd-logo';
         return "<i class=\"bi {$bootstropIcon}\"></i>";
     }
@@ -108,7 +113,8 @@ class Button extends Widget
      *
      * @return string
      */
-    private function tooltipElement(): string {
+    private function tooltipElement(): string
+    {
 // Caution: The spaces at the beginning of the line are intentional; do not delete them.
         $tooltip = Html::encode($this->tooltip ?? '');
         return $this->tooltip ? " data-bs-toggle=\"tooltip\" title=\"{$tooltip}\" data-bs-placement=\"bottom\"" : '';
@@ -118,7 +124,8 @@ class Button extends Widget
      *
      * @return string
      */
-    private function idElement(): string {
+    private function idElement(): string
+    {
 // Caution: The spaces at the beginning of the line are intentional; do not delete them.
         return $this->id ? " id=\"{$this->id}\"" : '';
     }
@@ -127,7 +134,8 @@ class Button extends Widget
      *
      * @return string
      */
-    private function postForm(): string {
+    private function postForm(): string
+    {
         $request = Yii::$app->request;
         $html = "<form action=\"{$this->url}\" method=\"POST\">";
         $html .= "<input type=\"hidden\" name=\"{$request->csrfParam}\" value=\"{$request->csrfToken}\">";
@@ -146,7 +154,8 @@ class Button extends Widget
      *
      * @return string
      */
-    private function postButton() {
+    private function postButton(): string
+    {
         // Caution: The spaces at the beginning of the line are intentional; do not delete them.
         $style = $this->style ?? '';
         $button = $this->isCta ? "btn btn-warning {$style}" : "btn btn-secondary {$style}";

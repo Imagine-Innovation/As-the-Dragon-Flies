@@ -164,7 +164,7 @@ class PlayerBuilderController extends Controller
         if ($raceId > 0 && $classId > 0 && $gender) {
             $imageId = $request->post('imageId');
             Yii::debug("*** debug *** actionAjaxImages - imageId={$imageId}");
-            return $this->renderImages($raceId, $classId, $gender, is_int($imageId) ? $imageId : null);
+            return $this->renderImages($raceId, $classId, $gender, is_numeric($imageId) ? (int) $imageId : null);
         }
         return ['error' => true, 'msg' => 'Missing argument: '
             . ($raceId ? '' : 'race ')

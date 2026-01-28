@@ -174,7 +174,8 @@ class BuilderComponent
      * @param int|null $n defaulted to 3
      * @return array<int, string>
      */
-    public static function loadRandomNames(int $raceId, ?string $gender = 'M', ?int $n = 3): array {
+    public static function loadRandomNames(int $raceId, ?string $gender = 'M', ?int $n = 3): array
+    {
         $race = Race::findOne(['id' => $raceId]);
         //$race = FindModelHelper::findR
         if ($race === null) {
@@ -211,7 +212,8 @@ class BuilderComponent
      * @param string|null $gender
      * @return array<array<string, string>>
      */
-    private static function getEthnicNames(int $ethnicityId, string $className, ?string $gender = null): array {
+    private static function getEthnicNames(int $ethnicityId, string $className, ?string $gender = null): array
+    {
 
         $query = match ($className) {
             'FirstName' => \common\models\FirstName::find()->select('name'),
@@ -239,7 +241,8 @@ class BuilderComponent
      * @param array<array<string, string>> $names
      * @return string|null
      */
-    private static function randomize(array $names): ?string {
+    private static function randomize(array $names): ?string
+    {
         return empty($names) ? null : $names[array_rand($names)]['name'];
     }
 
@@ -258,7 +261,8 @@ class BuilderComponent
      * @param int $raceId The race internal id.
      * @return array<string, mixed> An associative array of age categories with their corresponding ages.
      */
-    public static function loadAgeTable(int $raceId): array {
+    public static function loadAgeTable(int $raceId): array
+    {
         $race = Race::findOne(['id' => $raceId]);
         if (!$race) {
             return [
@@ -299,7 +303,8 @@ class BuilderComponent
      * @param string $topic The topic of the wizard.
      * @return int|null The ID of the first question, or null if no first question is found.
      */
-    public static function getFirstQuestion(string $topic): ?int {
+    public static function getFirstQuestion(string $topic): ?int
+    {
         // Direct query to get first question IDs using a single database call
         $firstQuestions = Wizard::find()
                 ->select('wq.id')
@@ -329,7 +334,8 @@ class BuilderComponent
      * @param int|null $choice
      * @return array<string, mixed>
      */
-    public static function setEquipmentResponse(array $equipments, ?int $choice = null): array {
+    public static function setEquipmentResponse(array $equipments, ?int $choice = null): array
+    {
         $items = [];
         $categories = [];
         foreach ($equipments as $equipment) {
@@ -364,7 +370,8 @@ class BuilderComponent
      * @return void
      * @throws \Exception
      */
-    public static function initCoinage(Player $player): void {
+    public static function initCoinage(Player $player): void
+    {
         $coins = ['cp', 'sp', 'ep', 'gp', 'pp'];
 
         // Iterate over each coin type
@@ -388,7 +395,8 @@ class BuilderComponent
      * @param Player $player
      * @return int
      */
-    private static function getFundingFromBackground(Player &$player): int {
+    private static function getFundingFromBackground(Player &$player): int
+    {
         $backgroundItems = $player->background->backgroundItems;
 
         $funding = 0;
@@ -410,7 +418,8 @@ class BuilderComponent
      * @param Player $player
      * @return void
      */
-    public static function initSkills(Player &$player): void {
+    public static function initSkills(Player &$player): void
+    {
         $proficiencies = [];
 
         // Getting the liste of skills provided by the player background
@@ -423,7 +432,8 @@ class BuilderComponent
         self::initPlayerSkillTable($player, $proficiencies);
     }
 
-    public static function updateSkill(Player &$player, Skill &$skill, int $isProficient): void {
+    public static function updateSkill(Player &$player, Skill &$skill, int $isProficient): void
+    {
         $playerSkill = PlayerSkill::findOne(['player_id' => $player->id, 'skill_id' => $skill->id]);
 
         if (!$playerSkill) {
@@ -448,7 +458,8 @@ class BuilderComponent
      * @param Player $player
      * @return array<string, mixed> Array of possible skills with default proficiency
      */
-    public static function initPlayerSkills(Player &$player): array {
+    public static function initPlayerSkills(Player &$player): array
+    {
         $skillList = [
             'ClassSkills' => [],
             'BackgroundSkills' => [],
@@ -480,7 +491,8 @@ class BuilderComponent
      * @param Player $player
      * @return array<int, int>
      */
-    private static function getPlayerSkillProficiencies(Player &$player): array {
+    private static function getPlayerSkillProficiencies(Player &$player): array
+    {
         $proficiencies = [];
         if ($player->playerSkills) {
             foreach ($player->playerSkills as $playerSkill) {
@@ -496,7 +508,8 @@ class BuilderComponent
      * @param int $isProficient
      * @return array<string, mixed>
      */
-    private static function initSkillData(Skill &$skill, int $isProficient): array {
+    private static function initSkillData(Skill &$skill, int $isProficient): array
+    {
         $skillData = [
             'skill_id' => $skill->id,
             'name' => $skill->name,
@@ -513,7 +526,8 @@ class BuilderComponent
      * @return void
      * @throws \Exception
      */
-    private static function initPlayerSkillTable(Player &$player, array $proficiencies): void {
+    private static function initPlayerSkillTable(Player &$player, array $proficiencies): void
+    {
         $abilityModifiers = [];
         foreach ($player->playerAbilities as $playerAbility) {
             $abilityModifiers[$playerAbility->ability_id] = $playerAbility->modifier;
@@ -557,7 +571,8 @@ class BuilderComponent
      * @param \common\models\Player $player
      * @return void
      */
-    public static function initTraits(Player $player): void {
+    public static function initTraits(Player $player): void
+    {
         // Delete any existing values if there are any
         PlayerTrait::deleteAll(['player_id' => $player->id]);
 
@@ -605,7 +620,8 @@ class BuilderComponent
      * @return void
      * @throws \Exception
      */
-    public static function initAbilities(Player &$player): void {
+    public static function initAbilities(Player &$player): void
+    {
 
         $initAbilityArray = self::initAbilityArray();
         self::addDefaultAbilityScore($player, $initAbilityArray);
@@ -636,7 +652,8 @@ class BuilderComponent
      * @param array<int, array<string, mixed>> $initAbilityArray
      * @return array<int, array<string, mixed>>
      */
-    private static function addDefaultAbilityScore(Player $player, array &$initAbilityArray): array {
+    private static function addDefaultAbilityScore(Player $player, array &$initAbilityArray): array
+    {
 
         $defaultAbilities = AbilityDefault::findAll([
             'race_group_id' => $player->race->race_group_id,
@@ -660,7 +677,8 @@ class BuilderComponent
      * @param array<int, array<string, mixed>> $initAbilityArray
      * @return void
      */
-    private static function addRaceAbilities(Player $player, array &$initAbilityArray): void {
+    private static function addRaceAbilities(Player $player, array &$initAbilityArray): void
+    {
         // Retrieve abilities associated with the player's race
         $raceAbilities = $player->race->raceAbilities;
 
@@ -676,7 +694,8 @@ class BuilderComponent
      * @param array<int, array<string, mixed>> $initAbilityArray
      * @return void
      */
-    private static function addClassSavingThrow(Player $player, array &$initAbilityArray): void {
+    private static function addClassSavingThrow(Player $player, array &$initAbilityArray): void
+    {
         // Retrieve abilities associated with the player's class
         $classAbilities = $player->class->classAbilities;
 
@@ -692,7 +711,8 @@ class BuilderComponent
      *
      * @return array<int, array<string, mixed>>
      */
-    private static function initAbilityArray(): array {
+    private static function initAbilityArray(): array
+    {
 
         $abilities = Ability::find()->all();
 
@@ -730,7 +750,8 @@ class BuilderComponent
      * OtherLanguages: array<int, array{language_id: int, name: string}>|array{}
      * } Array of possible languages with default proficiency
      */
-    public static function initPlayerLanguages(Player &$player): array {
+    public static function initPlayerLanguages(Player &$player): array
+    {
         $languageList = ['RaceLanguages' => [], 'OtherLanguages' => []];
 
         $raceLanguages = RaceGroupLanguage::findAll(['race_group_id' => $player->race->race_group_id]);
@@ -762,7 +783,8 @@ class BuilderComponent
      * @param Language $language
      * @return array{language_id: int, name: string}
      */
-    private static function initLanguageData(Language &$language): array {
+    private static function initLanguageData(Language &$language): array
+    {
         $languageData = [
             'language_id' => $language->id,
             'name' => $language->name,

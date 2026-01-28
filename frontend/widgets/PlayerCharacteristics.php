@@ -11,7 +11,12 @@ class PlayerCharacteristics extends Widget
     public Player $player;
     public bool $embedded;
 
-    public function run() {
+    /**
+     *
+     * @return string
+     */
+    public function run(): string
+    {
         return $this->render('player-characteristics', [
                     'model' => $this->player,
                     'embedded' => $this->embedded ?? false,

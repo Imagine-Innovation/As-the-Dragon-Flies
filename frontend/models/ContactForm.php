@@ -20,7 +20,8 @@ class ContactForm extends Model
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             // name, email, subject and body are required
             [['name', 'email', 'subject', 'body'], 'required'],
@@ -34,7 +35,8 @@ class ContactForm extends Model
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'verifyCode' => 'Verification Code',
         ];
@@ -46,7 +48,8 @@ class ContactForm extends Model
      * @param string $email the target email address
      * @return bool whether the email was sent
      */
-    public function sendEmail(string $email): bool {
+    public function sendEmail(string $email): bool
+    {
         return Yii::$app->mailer->compose()
                         ->setTo($email)
                         ->setFrom([Yii::$app->params['senderEmail'] => Yii::$app->params['senderName']])

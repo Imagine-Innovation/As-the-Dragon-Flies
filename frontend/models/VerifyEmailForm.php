@@ -22,7 +22,8 @@ class VerifyEmailForm extends Model
      * @param array<string, mixed> $config name-value pairs that will be used to initialize the object properties
      * @throws InvalidArgumentException if token is empty or not valid
      */
-    public function __construct(string $token, array $config = []) {
+    public function __construct(string $token, array $config = [])
+    {
         if (trim($token) === '') {
             throw new InvalidArgumentException('Verify email token cannot be blank.');
         }
@@ -38,7 +39,8 @@ class VerifyEmailForm extends Model
      *
      * @return User|null the saved model or null if saving fails
      */
-    public function verifyEmail(): ?User {
+    public function verifyEmail(): ?User
+    {
         $user = $this->_user;
 
         if ($user === null) {

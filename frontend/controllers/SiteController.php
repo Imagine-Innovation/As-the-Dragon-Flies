@@ -34,7 +34,8 @@ class SiteController extends Controller
     /**
      * {@inheritdoc}
      */
-    public function behaviors() {
+    public function behaviors()
+    {
         return [
             'access' => [
                 'class' => AccessControl::class,
@@ -65,7 +66,8 @@ class SiteController extends Controller
     /**
      * {@inheritdoc}
      */
-    public function actions() {
+    public function actions()
+    {
         return [
             'error' => [
                 'class' => \yii\web\ErrorAction::class,
@@ -83,7 +85,8 @@ class SiteController extends Controller
      * @param int $state
      * @return Player|null
      */
-    private function getLastPlayer(array &$players, int $state): ?Player {
+    private function getLastPlayer(array &$players, int $state): ?Player
+    {
         if ($state === 1) {
             return $players[0] ?? null;
         }
@@ -97,7 +100,8 @@ class SiteController extends Controller
      * @param int|null $currentPlayerId
      * @return Player[]|null
      */
-    private function getOtherPlayers(array &$players, int $state, ?int $currentPlayerId): ?array {
+    private function getOtherPlayers(array &$players, int $state, ?int $currentPlayerId): ?array
+    {
         switch ($state) {
             case 1:
                 return array_slice($players, 1, 2);
@@ -130,7 +134,8 @@ class SiteController extends Controller
      * @param bool $inQuest
      * @return int
      */
-    private function getCurrentState(array &$players, ?Player &$player, bool $inQuest): int {
+    private function getCurrentState(array &$players, ?Player &$player, bool $inQuest): int
+    {
 
         if (count($players) === 0) {
             $state = 0;
@@ -152,7 +157,8 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionIndex(): string {
+    public function actionIndex(): string
+    {
         if (Yii::$app->user->isGuest) {
             return $this->render('guest');
         }
@@ -188,7 +194,8 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionIcons(): string {
+    public function actionIcons(): string
+    {
         ManageAccessRights::isRouteAllowed($this);
         return $this->render('icons');
     }
@@ -197,7 +204,8 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionFonts(): string {
+    public function actionFonts(): string
+    {
         ManageAccessRights::isRouteAllowed($this);
         return $this->render('fonts');
     }
@@ -206,7 +214,8 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionGame(): string {
+    public function actionGame(): string
+    {
         ManageAccessRights::isRouteAllowed($this);
         return $this->render('game');
     }
@@ -215,7 +224,8 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionColors(): string {
+    public function actionColors(): string
+    {
         ManageAccessRights::isRouteAllowed($this);
         return $this->render('colors');
     }
@@ -226,7 +236,8 @@ class SiteController extends Controller
      * @return string|Response
      * @throws \Exception
      */
-    public function actionLogin(): string|Response {
+    public function actionLogin(): string|Response
+    {
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
@@ -264,7 +275,8 @@ class SiteController extends Controller
      *
      * @return Response
      */
-    public function actionLogout(): Response {
+    public function actionLogout(): Response
+    {
         $user = Yii::$app->user->identity;
         $ipAddress = Yii::$app->getRequest()->getUserIP();
 
@@ -287,7 +299,8 @@ class SiteController extends Controller
      *
      * @return string|Response
      */
-    public function actionContact(): string|Response {
+    public function actionContact(): string|Response
+    {
         $model = new ContactForm();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if ($model->sendEmail(Yii::$app->params['adminEmail'])) {
@@ -309,7 +322,8 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionAbout(): string {
+    public function actionAbout(): string
+    {
         return $this->render('about');
     }
 
@@ -318,7 +332,8 @@ class SiteController extends Controller
      *
      * @return string|Response
      */
-    public function actionSignup(): string|Response {
+    public function actionSignup(): string|Response
+    {
         $model = new SignupForm();
         $this->layout = 'blank';
 
@@ -337,7 +352,8 @@ class SiteController extends Controller
      *
      * @return string|Response
      */
-    public function actionRequestPasswordReset(): string|Response {
+    public function actionRequestPasswordReset(): string|Response
+    {
         $model = new PasswordResetRequestForm();
         $this->layout = 'blank';
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
@@ -362,7 +378,8 @@ class SiteController extends Controller
      * @return string|Response
      * @throws BadRequestHttpException
      */
-    public function actionResetPassword($token): string|Response {
+    public function actionResetPassword($token): string|Response
+    {
         try {
             $model = new ResetPasswordForm($token);
         } catch (InvalidArgumentException $e) {
@@ -387,7 +404,8 @@ class SiteController extends Controller
      * @throws BadRequestHttpException
      * @return \yii\web\Response
      */
-    public function actionVerifyEmail($token): Response {
+    public function actionVerifyEmail($token): Response
+    {
         try {
             $model = new VerifyEmailForm($token);
         } catch (InvalidArgumentException $e) {
@@ -407,7 +425,8 @@ class SiteController extends Controller
      *
      * @return string|Response
      */
-    public function actionResendVerificationEmail(): string|Response {
+    public function actionResendVerificationEmail(): string|Response
+    {
         $model = new ResendVerificationEmailForm();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if ($model->sendEmail()) {
@@ -426,7 +445,8 @@ class SiteController extends Controller
      *
      * @return array{error: bool, msg: string, UUID?: string, content?: string}
      */
-    public function actionAjaxToast(): array {
+    public function actionAjaxToast(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -456,7 +476,8 @@ class SiteController extends Controller
      *
      * @return string|null
      */
-    public function actionImageUpload(): ?string {
+    public function actionImageUpload(): ?string
+    {
         $model = new ImageUploadForm();
 
         if ($model->load(Yii::$app->request->post())) {

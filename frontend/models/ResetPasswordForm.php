@@ -23,7 +23,8 @@ class ResetPasswordForm extends Model
      * @param array<string, mixed> $config name-value pairs that will be used to initialize the object properties
      * @throws InvalidArgumentException if token is empty or not valid
      */
-    public function __construct(string $token, $config = []) {
+    public function __construct(string $token, $config = [])
+    {
         if (trim($token) === '') {
             throw new InvalidArgumentException('Password reset token cannot be blank.');
         }
@@ -37,7 +38,8 @@ class ResetPasswordForm extends Model
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             ['password', 'required'],
             ['password', 'string', 'min' => Yii::$app->params['user.passwordMinLength']],
@@ -49,7 +51,8 @@ class ResetPasswordForm extends Model
      *
      * @return bool if password was reset.
      */
-    public function resetPassword(): bool {
+    public function resetPassword(): bool
+    {
         $user = $this->_user;
 
         // Don't allow blank password

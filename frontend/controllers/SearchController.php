@@ -108,6 +108,22 @@ class SearchController extends Controller
     }
 
     /**
+     * Resolve a short model name or FQCN to a fully-qualified class name.
+     *
+     * @template T of \yii\db\ActiveRecord
+     * @param class-string<T> $modelName The class name (e.g., Action::class or 'Action')
+     * @return class-string<T>
+     */
+    private function fullyQualifiedClassName(string $modelName): string {
+        /** @var class-string<T> $className */
+        $className = str_contains($modelName, '\\') ?
+                $modelName :
+                "\\common\\models\\{$modelName}";
+
+        return $className;
+    }
+
+    /**
      *
      * @param string $modelName
      * @param string|null $userEntry
@@ -123,9 +139,9 @@ class SearchController extends Controller
 
         $searchString = $this->normalizeSearchString($userEntry);
 
-        $fullModelName = "\\common\\models\\{$modelName}";
-        $query = $fullModelName::find()->select(['t.id', 't.name', 't.description as text'])
-                ->from(['t' => $fullModelName::tableName()]);
+        $className = $this->fullyQualifiedClassName($modelName);
+        $query = $className::find()->select(['t.id', 't.name', 't.description as text'])
+                ->from(['t' => $className::tableName()]);
 
         if ($searchString) {
             $query->where(['like', 'name', "%{$searchString}%", false]) // The 'false' parameter prevents Yii from adding extra escaping
@@ -155,8 +171,8 @@ class SearchController extends Controller
 
         $searchString = $this->normalizeSearchString($userEntry);
 
-        $fullModelName = "\\common\\models\\{$modelName}";
-        $query = $fullModelName::find()->select(['id', 'name', 'description as text']);
+        $className = $this->fullyQualifiedClassName($modelName);
+        $query = $className::find()->select(['id', 'name', 'description as text']);
 
         if ($searchString) {
             $query->where(['like', 'name', "%{$searchString}%", false]) // The 'false' parameter prevents Yii from adding extra escaping
@@ -186,8 +202,8 @@ class SearchController extends Controller
 
         $searchString = $this->normalizeSearchString($search);
 
-        $fullModelName = "\\common\\models\\{$modelName}";
-        $searchResult = $fullModelName::find()
+        $className = $this->fullyQualifiedClassName($modelName);
+        $searchResult = $className::find()
                 ->select(['id', 'text'])
                 ->where(['like', 'text', "%{$searchString}%", false]) // The 'false' parameter prevents Yii from adding extra escaping
                 ->asArray()
@@ -251,6 +267,6 @@ class SearchController extends Controller
         $parentId = (int) $request->get('parentId');
         $folder = $request->get('folder');
 
-        return $this->searchBrocker($valueType, $search, $parentId, $folder);
+        return $this->searchBrocker($valueType, $search ?? '', $parentId, $folder);
     }
 }

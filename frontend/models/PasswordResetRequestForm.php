@@ -18,7 +18,8 @@ class PasswordResetRequestForm extends Model
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             ['email', 'trim'],
             ['email', 'required'],
@@ -36,7 +37,8 @@ class PasswordResetRequestForm extends Model
      *
      * @return bool whether the email was send
      */
-    public function sendEmail(): bool {
+    public function sendEmail(): bool
+    {
         /** @var User $user */
         $user = User::findOne([
             'status' => AppStatus::ACTIVE->value,

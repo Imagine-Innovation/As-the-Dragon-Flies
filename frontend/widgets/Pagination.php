@@ -13,7 +13,12 @@ class Pagination extends Widget
     private int $firstPage = 0;
     private int $lastVisiblePage = 0;
 
-    public function run() {
+    /**
+     *
+     * @return string
+     */
+    public function run(): string
+    {
         $maxPages = 3;
         $offset = floor($maxPages / 2);
 
@@ -34,7 +39,8 @@ class Pagination extends Widget
      *
      * @return array<int>
      */
-    private function calculatePages(): array {
+    private function calculatePages(): array
+    {
         $pages = [];
         for ($i = $this->firstPage; $i <= $this->lastVisiblePage; $i++) {
             $pages[] = $i;

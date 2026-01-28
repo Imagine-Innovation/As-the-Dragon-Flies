@@ -123,7 +123,7 @@ class FindModelHelper
      * @return array<string, mixed>
      */
     private static function findOneFunctionParam(int|array $param, array $pkColumns, ?bool $withPk = true): array {
-        if (is_int($param)) {
+        if (is_numeric($param)) {
             return self::getValidPkIntParam((int) $param, $pkColumns);
         }
         return $withPk ? self::getValidPkArrayParam((array) $param, $pkColumns) : (array) $param;

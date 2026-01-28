@@ -540,7 +540,7 @@ class PlayerItemController extends Controller
         $property = $bodyProperties['property'];
         Yii::debug("*** debug *** disarmPreviousItem - bodyZone={$bodyZone}, property={$property}");
 
-        if (!$playerBody->hasProperty($property)) {
+        if (!$playerBody->hasProperty($property) || $playerBody->$property === null) {
             return;
         }
         $playerItem = $playerBody->$property;
@@ -566,7 +566,7 @@ class PlayerItemController extends Controller
         $property = $bodyProperties['property'];
         Yii::debug("*** debug *** disarmPlayer - bodyZone={$bodyZone}, property={$property}");
 
-        if (!$playerBody->hasProperty($property)) {
+        if (!$playerBody->hasProperty($property) || $playerBody->$property === null) {
             return [
                 'error' => true,
                 'msg' => "Body zone {$bodyZone} has no attached item"
