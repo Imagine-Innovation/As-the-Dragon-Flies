@@ -553,7 +553,7 @@ class QuestManager extends BaseManager
     }
 
     /**
-     * Checks if a player is a member of a specific quest.
+     * Checks if a player has ever joined a specific quest.
      *
      * @param int $questId
      * @param int $playerId
@@ -561,12 +561,37 @@ class QuestManager extends BaseManager
      * @return bool
      * @throws ForbiddenHttpException
      */
-    public static function checkQuestMembership(int $questId, int $playerId, bool $throwException = true): bool
+    public static function isPlayerQuestMember(int $questId, int $playerId, bool $throwException = true): bool
     {
         $membership = QuestPlayer::findOne(['quest_id' => $questId, 'player_id' => $playerId]);
         if ($membership === null) {
             if ($throwException) {
-                throw new ForbiddenHttpException("Player #{$playerId} is not a member of quest #{$questId}.");
+                throw new ForbiddenHttpException("Player #{$playerId} has never joined quest #{$questId}.");
+            }
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Checks if a player is currently an active member of a specific quest.
+     *
+     * @param int $questId
+     * @param int $playerId
+     * @param bool $throwException
+     * @return bool
+     * @throws ForbiddenHttpException
+     */
+    public static function isPlayerCurrentlyInQuest(int $questId, int $playerId, bool $throwException = true): bool
+    {
+        $membership = QuestPlayer::find()
+                ->where(['quest_id' => $questId, 'player_id' => $playerId])
+                ->andWhere(['<>', 'status', AppStatus::LEFT->value])
+                ->one();
+
+        if ($membership === null) {
+            if ($throwException) {
+                throw new ForbiddenHttpException("Player #{$playerId} is not currently in quest #{$questId}.");
             }
             return false;
         }

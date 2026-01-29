@@ -4,8 +4,10 @@ namespace frontend\controllers;
 
 use common\components\AppStatus;
 use common\components\ManageAccessRights;
+use common\helpers\FindModelHelper;
 use common\helpers\Status;
 use common\models\User;
+use yii\helpers\Html;
 use frontend\components\AjaxRequest;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -127,15 +129,13 @@ class UserController extends Controller
         }
 
         $request = Yii::$app->request;
-        $id = $request->post('id');
-        $model = User::findOne(['id' => $id]);
-        if (!$model) {
-            return ['error' => true, 'msg' => "User id $id not found!"];
-        }
+        $id = (int) $request->post('id');
+        $model = FindModelHelper::findModel(User::class, ['id' => $id]);
+        /** @var User $model */
 
         $role = (string) $request->post('role');
         if (!in_array($role, ['admin', 'designer', 'player'], true)) {
-            return ['error' => true, 'msg' => "Invalid role: " . \yii\helpers\Html::encode($role)];
+            return ['error' => true, 'msg' => "Invalid role: " . Html::encode($role)];
         }
 
         $status = (int) $request->post('status');
@@ -212,10 +212,8 @@ class UserController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel(int $id): User {
-        if (($model = User::findOne(['id' => $id])) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The user your are looking for does not exist.');
+        /** @var User $model */
+        $model = FindModelHelper::findModel(User::class, ['id' => $id]);
+        return $model;
     }
 }

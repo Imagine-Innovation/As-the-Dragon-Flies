@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use common\components\AppStatus;
 use common\components\ManageAccessRights;
+use common\helpers\FindModelHelper;
 use common\helpers\Status;
 use common\models\Story;
 use Yii;
@@ -183,10 +184,8 @@ class StoryController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel(int $id): Story {
-        if (($model = Story::findOne(['id' => $id])) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The story your are looking for does not exist.');
+        /** @var Story $model */
+        $model = FindModelHelper::findModel(Story::class, ['id' => $id]);
+        return $model;
     }
 }

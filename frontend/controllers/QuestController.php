@@ -33,6 +33,7 @@ use common\models\Story;
 use common\models\events\EventFactory;
 use frontend\components\AjaxRequest;
 use Yii;
+use yii\helpers\Html;
 use yii\data\ActiveDataProvider;
 use yii\db\Query;
 use yii\web\Controller;
@@ -428,7 +429,10 @@ class QuestController extends Controller
             throw new ForbiddenHttpException("You don't own this player.");
         }
 
-        $quest = $this->findModel($id);
+        $questId = (int) $id;
+        QuestManager::isPlayerCurrentlyInQuest($questId, (int) $playerId);
+
+        $quest = $this->findModel($questId);
         $reason = 'Player decided to quit the quest';
         // Process player offboarding
         $tavernManager = new TavernManager(['quest' => $quest]);
@@ -560,7 +564,7 @@ class QuestController extends Controller
 
         if (!$user->is_admin) {
             // For non-administrator users, limit access to quests in which their player participates.
-            QuestManager::checkQuestMembership($questId, $user->current_player_id ?? 0);
+            QuestManager::isPlayerQuestMember($questId, $user->current_player_id ?? 0);
         }
 
         return FindModelHelper::findQuest(['id' => $questId]);

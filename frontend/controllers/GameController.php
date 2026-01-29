@@ -70,7 +70,7 @@ class GameController extends Controller
 
         $user = Yii::$app->user->identity;
         if (!$user->is_admin) {
-            QuestManager::checkQuestMembership($id, $user->current_player_id ?? 0);
+            QuestManager::isPlayerCurrentlyInQuest($id, $user->current_player_id ?? 0);
         }
         $nbPlayers = QuestPlayer::find()
                 ->where(['quest_id' => $quest->id])

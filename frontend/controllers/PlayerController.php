@@ -9,6 +9,7 @@ use common\helpers\FindModelHelper;
 use common\helpers\Status;
 use common\models\Player;
 use common\models\User;
+use yii\helpers\Html;
 use frontend\components\AjaxRequest;
 use Yii;
 use yii\web\Controller;

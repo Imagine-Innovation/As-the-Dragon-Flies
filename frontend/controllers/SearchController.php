@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use common\helpers\FileHelper;
 use Yii;
+use yii\helpers\Html;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
@@ -64,7 +65,7 @@ class SearchController extends Controller
 
         $allowedFolders = ['img/character', 'img/item', 'img/monster', 'img/decor'];
         if ($folder === null || !in_array($folder, $allowedFolders, true)) {
-            return ['error' => true, 'msg' => "Invalid folder: " . \yii\helpers\Html::encode((string) ($folder ?? 'null'))];
+            return ['error' => true, 'msg' => "Invalid folder: " . Html::encode((string) ($folder ?? 'null'))];
         }
 
         $path = Yii::getAlias('@frontend/web/') . $folder;
