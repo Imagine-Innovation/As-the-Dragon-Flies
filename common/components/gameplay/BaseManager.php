@@ -25,10 +25,7 @@ abstract class BaseManager extends Component
      * @param string $name
      * @param \yii\base\Event|null $event
      */
-    protected function raiseEvent(string $name, $event = null): void
-    {
-        $this->trigger($name, $event);
-    }
+
 
     protected function save(\yii\db\ActiveRecord $model): bool
     {

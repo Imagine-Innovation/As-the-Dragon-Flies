@@ -120,17 +120,7 @@ enum AppStatus: int
      *
      * @return list<int|null>
      */
-    public function getActionStatusFilter(): array {
-        return match ($this) {
-            self::SUCCESS => [self::SUCCESS->value],
-            self::PARTIAL => [self::PARTIAL->value],
-            self::FAILURE => [self::FAILURE->value],
-            self::NOT_FAILED => [self::SUCCESS->value, self::PARTIAL->value],
-            self::NOT_SUCCEEDED => [self::PARTIAL->value, self::FAILURE->value],
-            self::ANY_OUTCOME => [self::SUCCESS->value, self::PARTIAL->value, self::FAILURE->value],
-            default => [self::SUCCESS->value, self::PARTIAL->value, self::FAILURE->value, null],
-        };
-    }
+
 
     /**
      *
@@ -166,7 +156,7 @@ enum AppStatus: int
      *
      * @return array<int>
      */
-    public static function getValuesForQuest(): array {
+    private static function getValuesForQuest(): array {
         return [
             self::WAITING->value,
             self::PLAYING->value,
@@ -194,7 +184,7 @@ enum AppStatus: int
      *
      * @return array<int>
      */
-    public static function getValuesForQuestPlayer(): array {
+    private static function getValuesForQuestPlayer(): array {
         return [
             self::ONLINE->value,
             self::OFFLINE->value,
@@ -206,7 +196,7 @@ enum AppStatus: int
      *
      * @return array<int>
      */
-    public static function getValuesForQuestProgress(): array {
+    private static function getValuesForQuestProgress(): array {
         return [
             self::PENDING->value,
             self::IN_PROGRESS->value,

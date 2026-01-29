@@ -151,7 +151,7 @@ class EventHandler extends Component
      * @param ServerRequestInterface $request
      * @return ResponseInterface
      */
-    public function handleBroadcastRequest(ServerRequestInterface $request): ResponseInterface {
+    private function handleBroadcastRequest(ServerRequestInterface $request): ResponseInterface {
         $this->loggerService->logStart("EventHandler: handleBroadcastRequest - Received request: {$request->getMethod()} {$request->getUri()->getPath()}");
 
         if (!$this->isValidBroadcastRequest($request)) {

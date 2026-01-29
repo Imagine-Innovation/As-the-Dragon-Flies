@@ -212,7 +212,7 @@ class Shopping
      *
      * @return bool True if the spending is successful, false otherwise.
      */
-    public function spend(array $playerCoins, int $amount, ?string $coin = self::DEFAULT_COIN): bool {
+    private function spend(array $playerCoins, int $amount, ?string $coin = self::DEFAULT_COIN): bool {
         // Check if the player has sufficient funding for the specified cost and coin type.
         $itemCopperValue = $this->getFunding($playerCoins, $amount, $coin);
         if ($itemCopperValue <= 0) {
@@ -236,7 +236,7 @@ class Shopping
      * @param string|null $coin The type of coin (e.g., 'gold', 'silver', 'copper').
      * @return bool Whether the restoration was successful.
      */
-    public function restoreFunding(array $playerCoins, int|null $amount = 0, ?string $coin = self::DEFAULT_COIN): bool {
+    private function restoreFunding(array $playerCoins, int|null $amount = 0, ?string $coin = self::DEFAULT_COIN): bool {
         $this->initPurse($playerCoins);
 
         foreach ($playerCoins as $playerCoin) {

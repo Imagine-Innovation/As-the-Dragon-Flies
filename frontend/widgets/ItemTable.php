@@ -242,7 +242,7 @@ class ItemTable extends Widget
      *
      * @return string
      */
-    public function renderTableHeader(): string {
+    private function renderTableHeader(): string {
         $html = '';
         foreach ($this->columns as $col) {
             if (in_array($this->type, $col['filter'])) {
@@ -256,7 +256,7 @@ class ItemTable extends Widget
      *
      * @return string
      */
-    public function renderTableBody(): string {
+    private function renderTableBody(): string {
         $html = '';
         foreach ($this->items as $item) {
             $html .= '<tr>';

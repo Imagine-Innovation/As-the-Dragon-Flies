@@ -28,31 +28,7 @@ class QuestSessionManager
      * @param array<string, mixed> $data Should contain 'questId'
      * @return bool True if registration was successful, false otherwise
      */
-    public function registerSessionForQuest(string $sessionId, array $data): bool
-    {
-        $this->logger->logStart("QuestSessionManager: registerSessionForQuest sessionId=[{$sessionId}]", $data);
 
-        $questId = PayloadHelper::extractIntFromPayload('questId', $data);
-        // Validate input parameters
-        if ($sessionId !== '' || !$questId) {
-            $this->logger->log("QuestSessionManager: Invalid sessionId or quest ID", ['sessionId' => $sessionId, 'questId' => $questId], 'error');
-            $this->logger->logEnd("QuestSessionManager: registerSessionForQuest");
-            return false;
-        }
-
-        try {
-            // Assuming $data might also be used by registerSession indirectly or for other logging.
-            $playerId = PayloadHelper::extractIntFromPayload('playerId', $data);
-            $clientId = PayloadHelper::extractStringFromPayload('clientId', $data);
-            $this->registerSession($sessionId, $playerId, $questId, $clientId, $data);
-            $this->logger->logEnd("QuestSessionManager: registerSessionForQuest");
-            return true;
-        } catch (\Exception $e) {
-            $this->logger->log("QuestSessionManager: Error registering session [{$sessionId}] for quest {$questId}: " . $e->getMessage(), null, 'error');
-            $this->logger->logEnd("QuestSessionManager: registerSessionForQuest");
-            return false;
-        }
-    }
 
     /**
      * Register a player with a client ID, linking them to a session.
@@ -226,7 +202,7 @@ class QuestSessionManager
      * @param QuestSession[]|null $sessions An array of QuestSession models. If null, fetches all.
      * @return void
      */
-    public function logQuestSession(?string $message = null, ?array $sessions = null): void
+    private function logQuestSession(?string $message = null, ?array $sessions = null): void
     {
         // This method now uses $this->logger
         if (!$this->logger->isDebugEnabled()) {

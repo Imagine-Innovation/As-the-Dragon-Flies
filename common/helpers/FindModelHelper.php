@@ -284,7 +284,5 @@ class FindModelHelper
      * @param int|array<string, mixed> $param
      * @return Race
      */
-    public static function findRace(int|array $param): Race {
-        return self::findModel(Race::class, $param);
-    }
+
 }

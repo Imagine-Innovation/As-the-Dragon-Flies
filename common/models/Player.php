@@ -507,7 +507,7 @@ class Player extends \yii\db\ActiveRecord
      * column gender ENUM value labels
      * @return string[]
      */
-    public static function optsGender(): array
+    private static function optsGender(): array
     {
         return [
             self::GENDER_C => 'C',
@@ -519,61 +519,40 @@ class Player extends \yii\db\ActiveRecord
     /**
      * @return string
      */
-    public function displayGender(): string
-    {
-        return self::optsGender()[$this->gender];
-    }
+
 
     /**
      * @return bool
      */
-    public function isGenderC(): bool
-    {
-        return $this->gender === self::GENDER_C;
-    }
+
 
     /**
      *
      * @return void
      */
-    public function setGenderToC(): void
-    {
-        $this->gender = self::GENDER_C;
-    }
+
 
     /**
      * @return bool
      */
-    public function isGenderF(): bool
-    {
-        return $this->gender === self::GENDER_F;
-    }
+
 
     /**
      *
      * @return void
      */
-    public function setGenderToF(): void
-    {
-        $this->gender = self::GENDER_F;
-    }
+
 
     /**
      * @return bool
      */
-    public function isGenderM(): bool
-    {
-        return $this->gender === self::GENDER_M;
-    }
+
 
     /**
      *
      * @return void
      */
-    public function setGenderToM(): void
-    {
-        $this->gender = self::GENDER_M;
-    }
+
 
     /**
      * ************************
@@ -676,16 +655,7 @@ class Player extends \yii\db\ActiveRecord
      * @param int $status The new status to set.
      * @return bool Whether the status change was successful.
      */
-    public function setStatus(int $status): bool
-    {
-        $this->status = $status;
-        // Save the changes to the model and returns whether the save operation was successful
-        $successfullySaved = $this->save();
-        if ($successfullySaved) {
-            return true;
-        }
-        throw new \Exception(implode("<br />", ArrayHelper::getColumn($this->errors, 0, false)));
-    }
+
 
     /**
      *

@@ -70,7 +70,7 @@ abstract class Event extends BaseObject
      *
      * @return array<string, mixed>
      */
-    public function toArray(): array
+    private function toArray(): array
     {
         $array = [
             'type' => $this->getType(),

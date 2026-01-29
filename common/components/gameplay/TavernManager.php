@@ -290,7 +290,7 @@ class TavernManager extends BaseManager
      *
      * @return bool
      */
-    public function areRequiredClassesPresent(): bool
+    private function areRequiredClassesPresent(): bool
     {
         // Get the missing classes
         $missingClassIds = $this->getMissingClassIds();

@@ -89,7 +89,7 @@ class PlayerComponent
      * @param string $abilityCode
      * @return int
      */
-    public static function getAbilityModifier(int $playerId, string $abilityCode): int {
+    private static function getAbilityModifier(int $playerId, string $abilityCode): int {
         $playerAbility = PlayerAbility::find()
                 ->joinWith('player')
                 ->joinWith('ability')

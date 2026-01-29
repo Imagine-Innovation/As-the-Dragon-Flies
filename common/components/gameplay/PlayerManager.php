@@ -120,7 +120,7 @@ class PlayerManager extends BaseManager
      * @param Outcome $outcome
      * @return void
      */
-    public function updatePlayerStats(Outcome &$outcome): void {
+    private function updatePlayerStats(Outcome &$outcome): void {
         Yii::debug("*** debug *** updatePlayerStats - player={$this->player?->name}, outcome=" . print_r($outcome, true));
         if ($this->player === null) {
             return;

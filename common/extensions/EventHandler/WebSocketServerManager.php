@@ -102,21 +102,7 @@ class WebSocketServerManager
      *
      * @return void
      */
-    public function shutdown(): void {
-        $this->logger->logStart("Shutting down WebSocket server..."); // Use LoggerService
-        // Close all client connections
-        foreach ($this->clients as $clientId => $client) {
-            $client->close();
-        }
-        $this->clients = []; // Use $this->clients
 
-        if ($this->socket !== null) {
-            $this->socket->close();
-        }
-
-        $this->loop->stop();
-        $this->logger->logEnd("WebSocket server shut down."); // Use LoggerService
-    }
 
     /**
      *
