@@ -16,6 +16,7 @@ use Yii;
 use yii\helpers\ArrayHelper;
 use Exception;
 use RuntimeException;
+use yii\web\ForbiddenHttpException;
 
 class QuestManager extends BaseManager
 {
@@ -549,5 +550,26 @@ class QuestManager extends BaseManager
             Yii::error("Failed to broadcast '{$eventType}' event: " . $e->getMessage());
             throw new Exception("Error: " . $e->getMessage());
         }
+    }
+
+    /**
+     * Checks if a player is a member of a specific quest.
+     *
+     * @param int $questId
+     * @param int $playerId
+     * @param bool $throwException
+     * @return bool
+     * @throws ForbiddenHttpException
+     */
+    public static function checkQuestMembership(int $questId, int $playerId, bool $throwException = true): bool
+    {
+        $membership = QuestPlayer::findOne(['quest_id' => $questId, 'player_id' => $playerId]);
+        if ($membership === null) {
+            if ($throwException) {
+                throw new ForbiddenHttpException("Player #{$playerId} is not a member of quest #{$questId}.");
+            }
+            return false;
+        }
+        return true;
     }
 }

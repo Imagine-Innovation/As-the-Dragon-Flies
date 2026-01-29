@@ -12,11 +12,12 @@ $limit = $limit ?? 10;
 $initId = $initId ?? '';
 $functionCall = $functionCall ?? null;
 ?>
+<?php use yii\helpers\Html; ?>
 <div class="d-none" id="ajaxHiddenParams">
-    <span id="limit"><?= $limit ?></span>
-    <span id="route"><?= $route ?></span>
-    <span id="container"><?= $initTab ? "ajax-" . $initTab : '' ?></span>
-    <span id="currentTab"><?= $initTab ?></span>
-    <span id="currentId"><?= $initId ?></span>
-    <span id="filter"><?= $filter ?></span>
+    <span id="limit"><?= (int) $limit ?></span>
+    <span id="route"><?= Html::encode($route) ?></span>
+    <span id="container"><?= $initTab ? "ajax-" . Html::encode((string) $initTab) : '' ?></span>
+    <span id="currentTab"><?= Html::encode((string) $initTab) ?></span>
+    <span id="currentId"><?= Html::encode((string) $initId) ?></span>
+    <span id="filter"><?= Html::encode((string) $filter) ?></span>
 </div>

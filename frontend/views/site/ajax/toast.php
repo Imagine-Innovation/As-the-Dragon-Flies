@@ -1,4 +1,7 @@
 <?php
+
+use yii\helpers\Html;
+
 /** @var yii\web\View $this */
 /** @var string $UUID */
 /** @var string $messageHeader */
@@ -15,8 +18,8 @@ $icons = [
 <div id="<?= $UUID ?>" class="toast fade show" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000" data-bs-autohide="true">
     <div class="toast-header">
         <?= $icons[$severity] ?>
-        <strong><?= \yii\helpers\Html::encode($messageHeader) ?></strong>
+        <strong><?= Html::encode($messageHeader) ?></strong>
     </div>
-    <div class="toast-body"><?= \yii\helpers\Html::encode($message) ?></div>
+    <div class="toast-body"><?= Html::encode($message) ?></div>
 </div>
 

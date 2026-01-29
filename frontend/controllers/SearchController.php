@@ -64,7 +64,7 @@ class SearchController extends Controller
 
         $allowedFolders = ['img/character', 'img/item', 'img/monster', 'img/decor'];
         if ($folder === null || !in_array($folder, $allowedFolders, true)) {
-            return ['error' => true, 'msg' => "Invalid folder: " . \yii\helpers\Html::encode($folder ?? 'null')];
+            return ['error' => true, 'msg' => "Invalid folder: " . \yii\helpers\Html::encode((string) ($folder ?? 'null'))];
         }
 
         $path = Yii::getAlias('@frontend/web/') . $folder;

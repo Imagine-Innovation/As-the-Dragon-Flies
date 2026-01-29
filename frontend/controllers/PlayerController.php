@@ -5,6 +5,7 @@ namespace frontend\controllers;
 use common\components\AppStatus;
 use common\components\ContextManager;
 use common\components\ManageAccessRights;
+use common\helpers\FindModelHelper;
 use common\helpers\Status;
 use common\models\Player;
 use common\models\User;
@@ -180,10 +181,7 @@ class PlayerController extends Controller
         $playerId = is_numeric($postPlayerId) ? (int) $postPlayerId : null;
 
         if ($playerId !== null) {
-            $player = Player::findOne(['id' => $playerId, 'user_id' => $userId]);
-            if (!$player) {
-                return ['error' => true, 'msg' => 'Player not found or does not belong to user'];
-            }
+            FindModelHelper::findPlayer(['id' => $playerId, 'user_id' => $userId]);
         }
 
         $success = User::updateAll(

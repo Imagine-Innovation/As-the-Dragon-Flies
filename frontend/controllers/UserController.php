@@ -133,7 +133,7 @@ class UserController extends Controller
             return ['error' => true, 'msg' => "User id $id not found!"];
         }
 
-        $role = $request->post('role');
+        $role = (string) $request->post('role');
         if (!in_array($role, ['admin', 'designer', 'player'], true)) {
             return ['error' => true, 'msg' => "Invalid role: " . \yii\helpers\Html::encode($role)];
         }

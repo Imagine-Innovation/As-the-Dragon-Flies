@@ -555,23 +555,15 @@ class QuestController extends Controller
      */
     protected function findModel(?int $id = null): Quest
     {
-        $questId = $id ?? Yii::$app->session->get('questId');
+        $questId = (int) ($id ?? Yii::$app->session->get('questId'));
         $user = Yii::$app->user->identity;
 
         if (!$user->is_admin) {
             // For non-administrator users, limit access to quests in which their player participates.
-            $quesPlayer = QuestPlayer::findOne(['quest_id' => $questId, 'player_id' => $user->current_player_id ?? 0]);
-            if ($quesPlayer === null) {
-                throw new NotFoundHttpException("You are not a member of this quest (id={$questId}).");
-            }
+            QuestManager::checkQuestMembership($questId, $user->current_player_id ?? 0);
         }
 
-        $model = Quest::findOne(['id' => $questId]);
-        if ($model !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException("The quest (id={$questId}) you are looking for does not exist.");
+        return FindModelHelper::findQuest(['id' => $questId]);
     }
 
     /**
@@ -583,11 +575,7 @@ class QuestController extends Controller
     protected function findValidStory(int $storyId): ?Story
     {
         if ($storyId) {
-            $story = Story::findOne(['id' => $storyId, 'status' => AppStatus::PUBLISHED->value]);
-            if (!$story) {
-                throw new NotFoundHttpException("The story #{$storyId} you are looking for does not exist.");
-            }
-            return $story;
+            return FindModelHelper::findStory(['id' => $storyId, 'status' => AppStatus::PUBLISHED->value]);
         }
         throw new NotFoundHttpException("Missing story ID");
     }

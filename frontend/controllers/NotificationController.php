@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\components\ManageAccessRights;
+use common\helpers\FindModelHelper;
 use common\models\Notification;
 use frontend\components\AjaxRequest;
 use frontend\components\QuestNotification;
@@ -121,10 +122,7 @@ class NotificationController extends Controller
         $request = Yii::$app->request;
         $playerId = (int) $request->post('playerId');
 
-        $player = \common\models\Player::findOne(['id' => $playerId, 'user_id' => Yii::$app->user->id]);
-        if (!$player) {
-             return ['error' => true, 'msg' => 'Unauthorized access to player notifications'];
-        }
+        $player = FindModelHelper::findPlayer(['id' => $playerId, 'user_id' => (int) Yii::$app->user->id]);
 
         Yii::debug("*** Debug *** actionAjaxMarkAsRead - playerId={$playerId}");
         $ret = QuestNotification::markNotificationsAsRead($playerId);
@@ -142,10 +140,8 @@ class NotificationController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel(int $id): Notification {
-        if (($model = Notification::findOne(['id' => $id])) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The notification you are looking for does not exist.');
+        /** @var Notification $model */
+        $model = FindModelHelper::findModel(Notification::class, ['id' => $id]);
+        return $model;
     }
 }

@@ -4,6 +4,7 @@ use common\models\CharacterClass;
 use frontend\widgets\Pagination;
 use frontend\widgets\RecordCount;
 use frontend\widgets\CheckBox;
+use yii\helpers\Html;
 
 /** @var yii\web\View $this */
 /** @var common\models\Image[] $models */
@@ -42,7 +43,7 @@ foreach ($models as $model) {
                     <tr>
                         <th>Thumbnails</th>
                         <?php foreach ($classes as $class): ?>
-                            <th class="text-center"><?= \yii\helpers\Html::encode($class->name) ?></th>
+                            <th class="text-center"><?= Html::encode((string) $class->name) ?></th>
                         <?php endforeach; ?>
                     </tr>
                 </thead>
@@ -50,7 +51,7 @@ foreach ($models as $model) {
                     <?php foreach ($models as $model): ?>
                         <tr>
                             <th scope="row">
-                                <img src="img/character/<?= \yii\helpers\Html::encode($model->file_name) ?>" class="image-thumbnail">
+                                <img src="img/character/<?= Html::encode((string) $model->file_name) ?>" class="image-thumbnail">
                             </th>
                             <?php foreach ($classes as $class): ?>
                                 <td class="text-center">

@@ -7,6 +7,7 @@ use common\components\ContextManager;
 use common\components\gameplay\ActionManager;
 use common\components\gameplay\QuestManager;
 use common\components\gameplay\TavernManager;
+use yii\helpers\Html;
 use common\components\ManageAccessRights;
 use common\helpers\FindModelHelper;
 use common\models\events\EventFactory;
@@ -69,10 +70,7 @@ class GameController extends Controller
 
         $user = Yii::$app->user->identity;
         if (!$user->is_admin) {
-            $membership = QuestPlayer::findOne(['quest_id' => $id, 'player_id' => $user->current_player_id ?? 0]);
-            if (!$membership) {
-                throw new ForbiddenHttpException("You are not a member of this quest.");
-            }
+            QuestManager::checkQuestMembership($id, $user->current_player_id ?? 0);
         }
         $nbPlayers = QuestPlayer::find()
                 ->where(['quest_id' => $quest->id])
@@ -107,7 +105,7 @@ class GameController extends Controller
         $player = FindModelHelper::findPlayer(['id' => $playerId]);
 
         // Same quest check
-        $currentQuestId = Yii::$app->session->get('questId');
+        $currentQuestId = (int) Yii::$app->session->get('questId');
         if ($player->quest_id !== $currentQuestId && !Yii::$app->user->identity->is_admin) {
              return ['error' => true, 'msg' => 'Unauthorized access to player data'];
         }
@@ -170,7 +168,7 @@ class GameController extends Controller
 
         // Same story check
         $currentQuest = Yii::$app->session->get('currentQuest');
-        $isAuthorized = ($currentQuest instanceof \common\models\Quest && $mission->chapter->story_id === $currentQuest->story_id);
+        $isAuthorized = ($currentQuest instanceof \common\models\Quest && (int) $mission->chapter->story_id === (int) $currentQuest->story_id);
         if (!$isAuthorized && !Yii::$app->user->identity->is_admin) {
             return ['error' => true, 'msg' => 'Unauthorized access to mission data'];
         }
@@ -256,7 +254,7 @@ class GameController extends Controller
         }
 
         $currentQuest = Yii::$app->session->get('currentQuest');
-        $isAuthorizedStory = ($currentQuest instanceof \common\models\Quest && $storyId === $currentQuest->story_id);
+        $isAuthorizedStory = ($currentQuest instanceof \common\models\Quest && (int) $storyId === (int) $currentQuest->story_id);
         if (!$isAuthorizedStory && !Yii::$app->user->identity->is_admin) {
             return ['error' => true, 'msg' => 'Unauthorized access to story data'];
         }
@@ -265,7 +263,7 @@ class GameController extends Controller
         $dialog = $reply->nextDialog;
 
         $player = FindModelHelper::findPlayer(['id' => $playerId]);
-        $isAuthorizedPlayer = ($currentQuest instanceof \common\models\Quest && $player->quest_id === $currentQuest->id);
+        $isAuthorizedPlayer = ($currentQuest instanceof \common\models\Quest && (int) $player->quest_id === (int) $currentQuest->id);
         if (!$isAuthorizedPlayer && !Yii::$app->user->identity->is_admin) {
             return ['error' => true, 'msg' => 'Unauthorized access to player data'];
         }
