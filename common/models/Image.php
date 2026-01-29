@@ -24,7 +24,8 @@ class Image extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'image';
     }
 
@@ -33,7 +34,8 @@ class Image extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['file_name', 'category'], 'required'],
             [['file_name', 'category'], 'string', 'max' => 64],
@@ -43,7 +45,8 @@ class Image extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'file_name' => 'File name of the image file with its extension. File path should not be included',
@@ -56,7 +59,8 @@ class Image extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<ClassImage>
      */
-    public function getClassImages() {
+    public function getClassImages()
+    {
         return $this->hasMany(ClassImage::class, ['image_id' => 'id']);
     }
 
@@ -65,7 +69,8 @@ class Image extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<CharacterClass>
      */
-    public function getClasses() {
+    public function getClasses()
+    {
         return $this->hasMany(CharacterClass::class, ['id' => 'class_id'])->viaTable('class_image', ['image_id' => 'id']);
     }
 
@@ -74,7 +79,8 @@ class Image extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Player>
      */
-    public function getPlayers() {
+    public function getPlayers()
+    {
         return $this->hasMany(Player::class, ['image_id' => 'id']);
     }
 
@@ -83,7 +89,8 @@ class Image extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<RaceGroupImage>
      */
-    public function getRaceGroupImages() {
+    public function getRaceGroupImages()
+    {
         return $this->hasMany(RaceGroupImage::class, ['image_id' => 'id']);
     }
 
@@ -92,7 +99,8 @@ class Image extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<RaceGroup>
      */
-    public function getRaceGroups() {
+    public function getRaceGroups()
+    {
         return $this->hasMany(RaceGroup::class, ['id' => 'race_group_id'])->viaTable('race_group_image', ['image_id' => 'id']);
     }
 
@@ -104,7 +112,8 @@ class Image extends \yii\db\ActiveRecord
      *
      * @return string
      */
-    public function getImageUrl(): string {
+    public function getImageUrl(): string
+    {
         $path = 'img/' . $this->category . '/' . $this->file_name;
         return \yii\helpers\Url::to('@web/' . $path);
     }
@@ -113,7 +122,8 @@ class Image extends \yii\db\ActiveRecord
      *
      * @return bool
      */
-    public function upload(): bool {
+    public function upload(): bool
+    {
         if ($this->image === null) {
             return false;
         }
@@ -121,14 +131,19 @@ class Image extends \yii\db\ActiveRecord
         $fullFileName = $this->uploadPath() . $fileName;
         $this->image->saveAs($fullFileName);
         $this->file_name = $fileName;
-        return $this->save();
+        $successfullySaved = $this->save();
+        if ($successfullySaved) {
+            return true;
+        }
+        throw new \Exception(implode("<br />", ArrayHelper::getColumn($this->errors, 0, false)));
     }
 
     /**
      *
      * @return string
      */
-    private function uploadPath(): string {
+    private function uploadPath(): string
+    {
         $rootPath = Url::to('@web/img/');
         if ($this->category) {
             return $rootPath . $this->category . "/";

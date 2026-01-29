@@ -99,14 +99,16 @@ class Player extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'player';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['alignment_id', 'image_id', 'quest_id', 'name', 'description', 'gender', 'age', 'speed', 'created_at', 'updated_at'], 'default', 'value' => null],
             [['level_id'], 'default', 'value' => 1],
@@ -134,7 +136,8 @@ class Player extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'class_id' => 'Foreign key to “character_class” table',
@@ -165,7 +168,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Ability>
      */
-    public function getAbilities() {
+    public function getAbilities()
+    {
         return $this->hasMany(Ability::class, ['id' => 'ability_id'])->viaTable('player_ability', ['player_id' => 'id']);
     }
 
@@ -174,7 +178,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Alignment>
      */
-    public function getAlignment() {
+    public function getAlignment()
+    {
         return $this->hasOne(Alignment::class, ['id' => 'alignment_id']);
     }
 
@@ -183,7 +188,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Background>
      */
-    public function getBackground() {
+    public function getBackground()
+    {
         return $this->hasOne(Background::class, ['id' => 'background_id']);
     }
 
@@ -192,7 +198,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<CharacterClass>
      */
-    public function getClass() {
+    public function getClass()
+    {
         return $this->hasOne(CharacterClass::class, ['id' => 'class_id']);
     }
 
@@ -201,7 +208,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Image>
      */
-    public function getImage() {
+    public function getImage()
+    {
         return $this->hasOne(Image::class, ['id' => 'image_id']);
     }
 
@@ -210,7 +218,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Item>
      */
-    public function getCartItems() {
+    public function getCartItems()
+    {
         return $this->hasMany(Item::class, ['id' => 'item_id'])->viaTable('player_cart', ['player_id' => 'id']);
     }
 
@@ -219,7 +228,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Item>
      */
-    public function getItems() {
+    public function getItems()
+    {
         return $this->hasMany(Item::class, ['id' => 'item_id'])->viaTable('player_item', ['player_id' => 'id']);
     }
 
@@ -228,7 +238,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Language>
      */
-    public function getLanguages() {
+    public function getLanguages()
+    {
         return $this->hasMany(Language::class, ['id' => 'language_id'])->viaTable('player_language', ['player_id' => 'id']);
     }
 
@@ -237,7 +248,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Level>
      */
-    public function getLevel() {
+    public function getLevel()
+    {
         return $this->hasOne(Level::class, ['id' => 'level_id']);
     }
 
@@ -246,7 +258,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<NotificationPlayer>
      */
-    public function getNotificationPlayers() {
+    public function getNotificationPlayers()
+    {
         return $this->hasMany(NotificationPlayer::class, ['player_id' => 'id']);
     }
 
@@ -255,7 +268,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Notification>
      */
-    public function getTriggeredNotifications() {
+    public function getTriggeredNotifications()
+    {
         return $this->hasMany(Notification::class, ['initiator_id' => 'id']);
     }
 
@@ -264,7 +278,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Notification>
      */
-    public function getNotifications() {
+    public function getNotifications()
+    {
         return $this->hasMany(Notification::class, ['id' => 'notification_id'])->viaTable('notification_player', ['player_id' => 'id']);
     }
 
@@ -273,7 +288,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<PlayerAbility>
      */
-    public function getPlayerAbilities() {
+    public function getPlayerAbilities()
+    {
         return $this->hasMany(PlayerAbility::class, ['player_id' => 'id']);
     }
 
@@ -282,7 +298,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<PlayerBody>
      */
-    public function getPlayerBody() {
+    public function getPlayerBody()
+    {
         return $this->hasOne(PlayerBody::class, ['player_id' => 'id']);
     }
 
@@ -291,7 +308,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<PlayerCart>
      */
-    public function getPlayerCarts() {
+    public function getPlayerCarts()
+    {
         return $this->hasMany(PlayerCart::class, ['player_id' => 'id']);
     }
 
@@ -300,7 +318,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<PlayerCoin>
      */
-    public function getPlayerCoins() {
+    public function getPlayerCoins()
+    {
         return $this->hasMany(PlayerCoin::class, ['player_id' => 'id']);
     }
 
@@ -309,7 +328,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<PlayerItem>
      */
-    public function getPlayerItems() {
+    public function getPlayerItems()
+    {
         return $this->hasMany(PlayerItem::class, ['player_id' => 'id']);
     }
 
@@ -318,7 +338,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<PlayerLanguage>
      */
-    public function getPlayerLanguages() {
+    public function getPlayerLanguages()
+    {
         return $this->hasMany(PlayerLanguage::class, ['player_id' => 'id']);
     }
 
@@ -327,7 +348,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<PlayerSkill>
      */
-    public function getPlayerSkills() {
+    public function getPlayerSkills()
+    {
         return $this->hasMany(PlayerSkill::class, ['player_id' => 'id']);
     }
 
@@ -336,7 +358,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<PlayerSpell>
      */
-    public function getPlayerSpells() {
+    public function getPlayerSpells()
+    {
         return $this->hasMany(PlayerSpell::class, ['player_id' => 'id']);
     }
 
@@ -345,7 +368,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<PlayerTrait>
      */
-    public function getPlayerTraits() {
+    public function getPlayerTraits()
+    {
         return $this->hasMany(PlayerTrait::class, ['player_id' => 'id']);
     }
 
@@ -354,7 +378,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Quest>
      */
-    public function getQuest() {
+    public function getQuest()
+    {
         return $this->hasOne(Quest::class, ['id' => 'quest_id']);
     }
 
@@ -363,7 +388,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<QuestPlayer>
      */
-    public function getQuestPlayers() {
+    public function getQuestPlayers()
+    {
         return $this->hasMany(QuestPlayer::class, ['player_id' => 'id']);
     }
 
@@ -372,7 +398,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<QuestSession>
      */
-    public function getQuestSessions() {
+    public function getQuestSessions()
+    {
         return $this->hasMany(QuestSession::class, ['player_id' => 'id']);
     }
 
@@ -381,7 +408,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<QuestTurn>
      */
-    public function getQuestTurns() {
+    public function getQuestTurns()
+    {
         return $this->hasMany(QuestTurn::class, ['player_id' => 'id']);
     }
 
@@ -390,7 +418,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Quest>
      */
-    public function getInitiatedQuests() {
+    public function getInitiatedQuests()
+    {
         return $this->hasMany(Quest::class, ['initiator_id' => 'id']);
     }
 
@@ -399,7 +428,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Quest>
      */
-    public function getQuestToPlay() {
+    public function getQuestToPlay()
+    {
         return $this->hasOne(Quest::class, ['current_player_id' => 'id']);
     }
 
@@ -408,7 +438,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Quest>
      */
-    public function getQuests() {
+    public function getQuests()
+    {
         return $this->hasMany(Quest::class, ['id' => 'quest_id'])->viaTable('quest_player', ['player_id' => 'id']);
     }
 
@@ -417,7 +448,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Race>
      */
-    public function getRace() {
+    public function getRace()
+    {
         return $this->hasOne(Race::class, ['id' => 'race_id']);
     }
 
@@ -426,7 +458,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Skill>
      */
-    public function getSkills() {
+    public function getSkills()
+    {
         return $this->hasMany(Skill::class, ['id' => 'skill_id'])->viaTable('player_skill', ['player_id' => 'id']);
     }
 
@@ -435,7 +468,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Spell>
      */
-    public function getSpells() {
+    public function getSpells()
+    {
         return $this->hasMany(Spell::class, ['id' => 'spell_id'])->viaTable('player_spell', ['player_id' => 'id']);
     }
 
@@ -444,7 +478,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<CharacterTrait>
      */
-    public function getTraits() {
+    public function getTraits()
+    {
         return $this->hasMany(CharacterTrait::class, ['id' => 'trait_id'])->viaTable('player_trait', ['player_id' => 'id']);
     }
 
@@ -453,7 +488,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<User>
      */
-    public function getUser() {
+    public function getUser()
+    {
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 
@@ -462,7 +498,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<UserLog>
      */
-    public function getUserLogs() {
+    public function getUserLogs()
+    {
         return $this->hasMany(UserLog::class, ['player_id' => 'id']);
     }
 
@@ -470,7 +507,8 @@ class Player extends \yii\db\ActiveRecord
      * column gender ENUM value labels
      * @return string[]
      */
-    public static function optsGender(): array {
+    public static function optsGender(): array
+    {
         return [
             self::GENDER_C => 'C',
             self::GENDER_F => 'F',
@@ -481,14 +519,16 @@ class Player extends \yii\db\ActiveRecord
     /**
      * @return string
      */
-    public function displayGender(): string {
+    public function displayGender(): string
+    {
         return self::optsGender()[$this->gender];
     }
 
     /**
      * @return bool
      */
-    public function isGenderC(): bool {
+    public function isGenderC(): bool
+    {
         return $this->gender === self::GENDER_C;
     }
 
@@ -496,14 +536,16 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return void
      */
-    public function setGenderToC(): void {
+    public function setGenderToC(): void
+    {
         $this->gender = self::GENDER_C;
     }
 
     /**
      * @return bool
      */
-    public function isGenderF(): bool {
+    public function isGenderF(): bool
+    {
         return $this->gender === self::GENDER_F;
     }
 
@@ -511,14 +553,16 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return void
      */
-    public function setGenderToF(): void {
+    public function setGenderToF(): void
+    {
         $this->gender = self::GENDER_F;
     }
 
     /**
      * @return bool
      */
-    public function isGenderM(): bool {
+    public function isGenderM(): bool
+    {
         return $this->gender === self::GENDER_M;
     }
 
@@ -526,7 +570,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return void
      */
-    public function setGenderToM(): void {
+    public function setGenderToM(): void
+    {
         $this->gender = self::GENDER_M;
     }
 
@@ -540,7 +585,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Weapon>
      */
-    public function getWeapons() {
+    public function getWeapons()
+    {
         return $this->hasMany(Weapon::class, ['id' => 'item_id'])->viaTable('player_item', ['player_id' => 'id']);
     }
 
@@ -548,7 +594,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return string|null
      */
-    public function getAvatar(): ?string {
+    public function getAvatar(): ?string
+    {
         if ($this->image) {
             return $this->image->file_name;
         }
@@ -578,7 +625,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return string The description of the player character.
      */
-    public function getDescription(): string {
+    public function getDescription(): string
+    {
         $gender = match ($this->gender) {
             'M' => 'male',
             'F' => 'female',
@@ -595,7 +643,8 @@ class Player extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Notification>
      */
-    public function getUnreadNotifications() {
+    public function getUnreadNotifications()
+    {
         return $this->hasMany(Notification::class, ['id' => 'notification_id'])
                         ->via('notificationPlayers', function ($query) {
                             $query->andWhere(['is_read' => 0]);
@@ -614,7 +663,8 @@ class Player extends \yii\db\ActiveRecord
      * @return bool|null Returns true if the player is proficient with the item, false if not,
      *                   or null if the player parameter is null.
      */
-    public function isProficient(int $item_id): ?bool {
+    public function isProficient(int $item_id): ?bool
+    {
         $class = $this->class;
 
         return PlayerComponent::isProficient($class->id, $item_id);
@@ -626,10 +676,15 @@ class Player extends \yii\db\ActiveRecord
      * @param int $status The new status to set.
      * @return bool Whether the status change was successful.
      */
-    public function setStatus(int $status): bool {
+    public function setStatus(int $status): bool
+    {
         $this->status = $status;
         // Save the changes to the model and returns whether the save operation was successful
-        return $this->save();
+        $successfullySaved = $this->save();
+        if ($successfullySaved) {
+            return true;
+        }
+        throw new \Exception(implode("<br />", ArrayHelper::getColumn($this->errors, 0, false)));
     }
 
     /**
@@ -637,8 +692,10 @@ class Player extends \yii\db\ActiveRecord
      * @param int|null $quantity
      * @param string $coin
      * @return bool|null
+     * @throws \Exception
      */
-    public function addCoins(?int $quantity, string $coin = 'gp'): ?bool {
+    public function addCoins(?int $quantity, string $coin = 'gp'): ?bool
+    {
         Yii::debug("*** debug *** - Player - addCoins(quantity=" . ($quantity ?? 'null') . ", coin={$coin})");
         if ($quantity === null || $quantity === 0) {
             return null;
@@ -655,7 +712,11 @@ class Player extends \yii\db\ActiveRecord
                 'coin' => $coin,
                 'quantity' => $quantity
             ]);
-            return $playerCoinGp->save();
+            $successfullySaved = $playerCoinGp->save();
+            if ($successfullySaved) {
+                return true;
+            }
+            throw new \Exception(implode("<br />", ArrayHelper::getColumn($playerCoinGp->errors, 0, false)));
         }
         return true;
     }
@@ -665,8 +726,10 @@ class Player extends \yii\db\ActiveRecord
      * @param int $itemId
      * @param int $quantity
      * @return bool|null
+     * @throws \Exception
      */
-    public function addItems(int $itemId, int $quantity = 1): ?bool {
+    public function addItems(int $itemId, int $quantity = 1): ?bool
+    {
         Yii::debug("*** debug *** - Player - addItems(itemId={$itemId}, quantity={$quantity})");
         if ($quantity === 0) {
             return null;
@@ -691,7 +754,11 @@ class Player extends \yii\db\ActiveRecord
                 'image' => $item->image,
                 'is_carrying' => 1,
             ]);
-            return $playerItem->save();
+            $successfullySaved = $playerItem->save();
+            if ($successfullySaved) {
+                return true;
+            }
+            throw new \Exception(implode("<br />", ArrayHelper::getColumn($playerItem->errors, 0, false)));
         }
         return true;
     }

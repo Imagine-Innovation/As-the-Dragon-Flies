@@ -16,7 +16,8 @@ class Status
      * @param ?int $statusCode The status code to be converted.
      * @return string The string representation of the status code.
      */
-    public static function label(?int $statusCode = null): string {
+    public static function label(?int $statusCode = null): string
+    {
         if (!$statusCode) {
             return 'Undefined';
         }
@@ -31,7 +32,8 @@ class Status
      * @param int|null $statusCode The status code for which the icon and tooltip need to be generated.
      * @return string The HTML string representing the status icon with a tooltip.
      */
-    public static function icon(?int $statusCode = null): string {
+    public static function icon(?int $statusCode = null): string
+    {
         $defaultIcon = ['icon' => 'bi-exclamation-square', 'tooltip' => 'Undefined'];
 
         $icon = $statusCode ?
@@ -54,8 +56,10 @@ class Status
      * @param \yii\db\ActiveRecord $model The model to update.
      * @param int $statusCode The new status code to be set. This should be a valid code value from AppStatus enum.
      * @return bool True if the status change was successful (model saved), false otherwise.
+     * @throws \Exception
      */
-    public static function changeStatus(\yii\db\ActiveRecord $model, int $statusCode): bool {
+    public static function changeStatus(\yii\db\ActiveRecord $model, int $statusCode): bool
+    {
         // Check if the model exists
         if ($model->isNewRecord) {
             return false;
@@ -77,7 +81,11 @@ class Status
         }
 
         $model->status = $statusCode;
-        return $model->save();
+        $successfullySaved = $model->save();
+        if ($successfullySaved) {
+            return true;
+        }
+        throw new \Exception(implode("<br />", ArrayHelper::getColumn($model->errors, 0, false)));
     }
 
     /**
@@ -95,12 +103,14 @@ class Status
      * @return string The generated HTML hyperlink or a placeholder if the model
      *                or property is invalid.
      */
-    public static function hyperlink($model, $property = 'name'): string {
+    public static function hyperlink($model, $property = 'name'): string
+    {
         $controller = Utilities::modelName($model); // Get the controller name for the model
 
         $propertyVal = $model->$property;
         $display = isset($model->$property) ?
-                Utilities::encode(empty($propertyVal) ? 'Unknown' : $propertyVal) :
+                Utilities::encode(empty($propertyVal) ? 'Unknown' : $propertyVal)
+                    :
                 '<i class="bi bi-exclamation-square"></i>';
 
         if ($controller && isset($model->id) && isset($model->status)) {

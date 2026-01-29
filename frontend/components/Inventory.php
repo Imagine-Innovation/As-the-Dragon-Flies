@@ -10,6 +10,8 @@ use Yii;
 class Inventory
 {
 
+    const IGNORE_TYPES = ['Armor', 'Weapon', 'Shield'];
+
     /**
      * Retrieves a list of unique item types from a collection of models.
      *
@@ -110,7 +112,7 @@ class Inventory
         $weight = 0;
 
         foreach ($player->playerItems as $playerItem) {
-            if ($playerItem->is_carrying) {
+            if ($playerItem->is_carrying && !in_array($playerItem->item_type, self::IGNORE_TYPES)) {
                 $item = $playerItem->item;
                 $weight += ($item->weight ?? 0) * ($playerItem->quantity ?? 1) / ($item->quantity ?? 1);
             }
@@ -162,13 +164,13 @@ class Inventory
     {
         $weight = $playerItem->item->weight ?? 0;
 
-        if ($playerItem->is_carrying) {
-            return ['error' => true, 'msg' => "Your have already packed this item"];
+        $itemType = $playerItem->item_type;
+        if (in_array($itemType, self::IGNORE_TYPES)) {
+            return ['error' => true, 'msg' => "{$itemType} items don't have to be packed"];
         }
 
-        $itemType = $playerItem->item_type;
-        if ($itemType === 'Weapon' || $itemType === 'Armor') {
-            return ['error' => true, 'msg' => "{$itemType} items don't have to be packed"];
+        if ($playerItem->is_carrying) {
+            return ['error' => true, 'msg' => "Your have already packed this item"];
         }
 
         $maxLoad = $containerItem->max_load;
@@ -194,13 +196,13 @@ class Inventory
      */
     public function removeFromPack(PlayerItem $playerItem, Item $containerItem): array
     {
-        if (!$playerItem->is_carrying) {
-            return ['error' => true, 'msg' => "Your haven't packed this item yet"];
+        $itemType = $playerItem->item_type;
+        if (in_array($itemType, self::IGNORE_TYPES)) {
+            return ['error' => true, 'msg' => "{$itemType} items cannot be unpacked"];
         }
 
-        $itemType = $playerItem->item_type;
-        if ($itemType === 'Weapon' || $itemType === 'Armor') {
-            return ['error' => true, 'msg' => "{$itemType} items cannot be unpacked"];
+        if (!$playerItem->is_carrying) {
+            return ['error' => true, 'msg' => "Your haven't packed this item yet"];
         }
 
         $playerItem->is_carrying = 0;

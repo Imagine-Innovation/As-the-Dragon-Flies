@@ -375,7 +375,8 @@ class TavernManager extends BaseManager
     private function updatePlayerQuestId(Player &$player, ?int $questId = null): array
     {
         $player->quest_id = $questId;
-        if (!$player->save()) {
+        $successfullySaved = $player->save();
+        if (!$successfullySaved) {
             return ['error' => true, 'message' => 'Could not save Player : ' . implode('\n', \yii\helpers\ArrayHelper::getColumn($player->errors, 0, false))];
         }
         ContextManager::updateQuestContext($questId);
@@ -422,8 +423,10 @@ class TavernManager extends BaseManager
         $questPlayer->left_at = $reasonWhyPlayerQuit ? time() : null;
         $questPlayer->reason = $reasonWhyPlayerQuit;
 
-        if ($questPlayer->save()) {
-            return ['error' => false, 'message' => 'Player successfully ' . ($reasonWhyPlayerQuit ? 'left' : 'joined') . ' on the quest'];
+        $successfullySaved = $questPlayer->save();
+        if ($successfullySaved) {
+            return ['error' => false, 'message' => 'Player successfully ' . ($reasonWhyPlayerQuit
+                    ? 'left' : 'joined') . ' on the quest'];
         }
         return ['error' => true, 'message' => 'Could not save QuestPlayer : ' . implode("\n", \yii\helpers\ArrayHelper::getColumn($questPlayer->errors, 0, false))];
     }
@@ -502,7 +505,8 @@ class TavernManager extends BaseManager
             'local_time' => time(),
         ]);
 
-        if (!$newTavern->save()) {
+        $successfullySaved = $newTavern->save();
+        if (!$successfullySaved) {
             throw new Exception(implode("<br />", \yii\helpers\ArrayHelper::getColumn($newTavern->errors, 0, false)));
         }
 

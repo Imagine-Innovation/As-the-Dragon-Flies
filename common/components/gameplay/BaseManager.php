@@ -25,12 +25,15 @@ abstract class BaseManager extends Component
      * @param string $name
      * @param \yii\base\Event|null $event
      */
-    protected function raiseEvent(string $name, $event = null): void {
+    protected function raiseEvent(string $name, $event = null): void
+    {
         $this->trigger($name, $event);
     }
 
-    protected function save(\yii\db\ActiveRecord $model): bool {
-        if ($model->save()) {
+    protected function save(\yii\db\ActiveRecord $model): bool
+    {
+        $successfullySaved = $model->save();
+        if ($successfullySaved) {
             return true;
         }
         throw new \Exception(implode("<br />", ArrayHelper::getColumn($model->errors, 0, false)));
@@ -45,9 +48,11 @@ abstract class BaseManager extends Component
      * @param int|null $limit optional parameter to limit the number of returned values
      * @return \common\models\Notification[]|null
      */
-    protected function getNotifications(int $questId, string $type, ?int $since = null, ?int $limit = null): ?array {
+    protected function getNotifications(int $questId, string $type, ?int $since = null, ?int $limit = null): ?array
+    {
 
-        Yii::debug("*** Debug *** getNotifications - questId={$questId}, type={$type}, since=" . ($since ? Utilities::formatDate($since) : "null") . ", limit=" . ($limit ?? "null"));
+        Yii::debug("*** Debug *** getNotifications - questId={$questId}, type={$type}, since=" . ($since
+                            ? Utilities::formatDate($since) : "null") . ", limit=" . ($limit ?? "null"));
         $query = Notification::find()
                 ->where(['quest_id' => $questId])
                 ->andWhere(['notification_type' => $type]);

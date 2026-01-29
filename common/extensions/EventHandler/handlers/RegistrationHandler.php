@@ -34,7 +34,8 @@ class RegistrationHandler implements SpecificMessageHandlerInterface
             QuestSessionManager $questSessionManager,
             BroadcastService $broadcastService,
             BroadcastMessageFactory $messageFactory
-    ) {
+    )
+    {
         $this->logger = $logger;
         $this->questSessionManager = $questSessionManager;
         $this->broadcastService = $broadcastService;
@@ -48,7 +49,9 @@ class RegistrationHandler implements SpecificMessageHandlerInterface
      * @param string $sessionId
      * @return void
      */
-    private function updateQuestPlayerStatus(?int $questId, ?int $playerId, string $sessionId): void {
+    private function updateQuestPlayerStatus(?int $questId, ?int $playerId, string $sessionId): void
+    {
+        $this->logger->logStart("RegistrationHandler: updateQuestPlayerStatus questId={$questId}, playerId={$playerId}, sessionId={$sessionId}");
         if ($questId === null || $playerId === null) {
             return;
         }
@@ -56,14 +59,21 @@ class RegistrationHandler implements SpecificMessageHandlerInterface
         $questPlayer = QuestPlayer::findOne(['quest_id' => $questId, 'player_id' => $playerId]);
 
         if (!$questPlayer) {
-            // The player is not defined int the quest yet. Stop here
+            // The player is not defined in the quest yet. Stop here
+            $this->logger->logEnd('RegistrationHandler: updateQuestPlayerStatus');
             return;
         }
         $questPlayer->status = AppStatus::ONLINE->value;
-        $questPlayer->save();
+        $successfullySaved = $questPlayer->save();
+        if (!$successfullySaved) {
+            $this->logger->log("Failed to update QuestPlayer:  Errors: " . print_r($questPlayer->getErrors(), true), null, 'error');
+            $this->logger->logEnd('RegistrationHandler: updateQuestPlayerStatus');
+            return;
+        }
 
         $NotificationDto = $this->messageFactory->createNotificationMessage("Player registered", 'info', []);
         $this->broadcastService->broadcastToQuest($questId, $NotificationDto, $sessionId);
+        $this->logger->logEnd('RegistrationHandler: updateQuestPlayerStatus');
     }
 
     /**
@@ -75,14 +85,16 @@ class RegistrationHandler implements SpecificMessageHandlerInterface
      * @param array<string, mixed> $data
      * @return void
      */
-    public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
+    public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void
+    {
         $this->logger->logStart("RegistrationHandler: handle clientId=[{$clientId}], sessionId=[{$sessionId}]", $data);
 
         $questId = PayloadHelper::extractIntFromPayload('questId', $data);
         $playerId = PayloadHelper::extractIntFromPayload('playerId', $data);
 
         $registered = $this->questSessionManager->registerSession($sessionId, $playerId, $questId, $clientId, $data);
-        $this->logger->log("RegistrationHandler: Session registration via QuestSessionManager. Result: " . ($registered ? 'Success' : 'Failure'));
+        $this->logger->log("RegistrationHandler: Session registration via QuestSessionManager. Result: " . ($registered
+                            ? 'Success' : 'Failure'));
 
         if ($registered) {
             $this->updateQuestPlayerStatus($questId, $playerId, $sessionId);

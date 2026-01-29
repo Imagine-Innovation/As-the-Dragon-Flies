@@ -15,7 +15,8 @@ class QuestSessionManager
      *
      * @param LoggerService $logger
      */
-    public function __construct(LoggerService $logger) {
+    public function __construct(LoggerService $logger)
+    {
         $this->logger = $logger;
     }
 
@@ -27,7 +28,8 @@ class QuestSessionManager
      * @param array<string, mixed> $data Should contain 'questId'
      * @return bool True if registration was successful, false otherwise
      */
-    public function registerSessionForQuest(string $sessionId, array $data): bool {
+    public function registerSessionForQuest(string $sessionId, array $data): bool
+    {
         $this->logger->logStart("QuestSessionManager: registerSessionForQuest sessionId=[{$sessionId}]", $data);
 
         $questId = PayloadHelper::extractIntFromPayload('questId', $data);
@@ -63,7 +65,8 @@ class QuestSessionManager
      * @param array<string, mixed>|null $contextData For logging purposes, original $data from message
      * @return bool
      */
-    public function registerSession(?string $sessionId, ?int $playerId, ?int $questId, ?string $clientId, array $contextData = null): bool {
+    public function registerSession(?string $sessionId, ?int $playerId, ?int $questId, ?string $clientId, array $contextData = null): bool
+    {
         $this->logger->logStart("QuestSessionManager: registerSession (sessionId=[{$sessionId}], playerId=[{$playerId}], questId=[{$questId}], clientId=[{$clientId}])", $contextData);
 
         if ($sessionId === null) {
@@ -95,7 +98,8 @@ class QuestSessionManager
      * @param string|null $clientId
      * @return bool
      */
-    private function newSession(string $sessionId, ?int $questId, ?int $playerId, ?string $clientId): bool {
+    private function newSession(string $sessionId, ?int $questId, ?int $playerId, ?string $clientId): bool
+    {
         $this->logger->logStart("QuestSessionManager: newSession sessionId=[{$sessionId}], questId=[{$questId}], playerId=[{$playerId}], clientId=[{$clientId}]");
 
         $session = new QuestSession([
@@ -108,8 +112,8 @@ class QuestSessionManager
         $this->logger->log("QuestSessionManager: Attempting to save new QuestSession", $session->getAttributes());
 
         try {
-            $saved = $session->save();
-            if ($saved) {
+            $successfullySaved = $session->save();
+            if ($successfullySaved) {
                 $this->logger->log("QuestSessionManager: Successfully saved new QuestSession: id=[{$session->id}]");
             } else {
                 $this->logger->log("QuestSessionManager: Failed to save new QuestSession: sessionId=[{$sessionId}]. Errors: " . print_r($session->getErrors(), true), null, 'error');
@@ -130,7 +134,8 @@ class QuestSessionManager
      * @param int|null $playerId
      * @return bool
      */
-    private function updatedSessionPlayerId(QuestSession &$session, ?int $playerId): bool {
+    private function updatedSessionPlayerId(QuestSession &$session, ?int $playerId): bool
+    {
         if ($playerId !== null && $session->player_id !== $playerId) {
             $this->logger->log("QuestSessionManager: Updating playerId from [{$session->player_id}] to [{$playerId}] for session [{$session->id}]");
             $session->player_id = $playerId;
@@ -146,7 +151,8 @@ class QuestSessionManager
      * @param int|null $questId
      * @return bool
      */
-    private function updatedSessionQuestId(QuestSession &$session, ?int $questId): bool {
+    private function updatedSessionQuestId(QuestSession &$session, ?int $questId): bool
+    {
         if ($questId !== null && $session->quest_id !== $questId) {
             $this->logger->log("QuestSessionManager: Updating questId from [{$session->quest_id}] to [{$questId}] for session [{$session->id}]");
             $session->quest_id = $questId;
@@ -162,7 +168,8 @@ class QuestSessionManager
      * @param string|null $clientId
      * @return bool
      */
-    private function updatedSessionClientId(QuestSession &$session, ?string $clientId): bool {
+    private function updatedSessionClientId(QuestSession &$session, ?string $clientId): bool
+    {
         if ($clientId !== null && $session->client_id !== $clientId) {
             $this->logger->log("QuestSessionManager: Updating clientId from [{$session->client_id}] to [{$clientId}] for session [{$session->id}]");
             $session->client_id = $clientId;
@@ -181,7 +188,8 @@ class QuestSessionManager
      * @param string|null $clientId
      * @return bool
      */
-    private function updateSession(QuestSession $session, ?int $questId, ?int $playerId, ?string $clientId): bool {
+    private function updateSession(QuestSession $session, ?int $questId, ?int $playerId, ?string $clientId): bool
+    {
         $this->logger->logStart("QuestSessionManager: updateSession session=[{$session->id}], newQuestId=[{$questId}], newPlayerId=[{$playerId}], newClientId=[{$clientId}]");
         $needUpdate = $this->updatedSessionPlayerId($session, $playerId) ||
                 $this->updatedSessionQuestId($session, $questId) ||
@@ -194,8 +202,8 @@ class QuestSessionManager
 
         $this->logger->log("QuestSessionManager: Attempting to update QuestSession: id=[{$session->id}]", $session->getDirtyAttributes());
         try {
-            $updated = $session->save();
-            if ($updated) {
+            $successfullySaved = $session->save();
+            if ($successfullySaved) {
                 $this->logger->log("QuestSessionManager: Successfully updated QuestSession: id=[{$session->id}]");
             } else {
                 $this->logger->log("QuestSessionManager: Failed to update QuestSession: id=[{$session->id}]. Errors: " . print_r($session->getErrors(), true), null, 'error');
@@ -206,7 +214,8 @@ class QuestSessionManager
         }
 
         $this->logQuestSession("QuestSession status after updateSession attempt for session=[{$session->id}]");
-        $this->logger->logEnd("QuestSessionManager: updateSession: " . ($updated ? "success" : "failed"));
+        $this->logger->logEnd("QuestSessionManager: updateSession: " . ($updated
+                            ? "success" : "failed"));
         return $updated;
     }
 
@@ -217,7 +226,8 @@ class QuestSessionManager
      * @param QuestSession[]|null $sessions An array of QuestSession models. If null, fetches all.
      * @return void
      */
-    public function logQuestSession(?string $message = null, ?array $sessions = null): void {
+    public function logQuestSession(?string $message = null, ?array $sessions = null): void
+    {
         // This method now uses $this->logger
         if (!$this->logger->isDebugEnabled()) {
             return;
@@ -244,7 +254,8 @@ class QuestSessionManager
      * @param string $clientId The client ID to clear.
      * @return void
      */
-    public function clearClientId(string $clientId): void {
+    public function clearClientId(string $clientId): void
+    {
         $this->logger->logStart("QuestSessionManager: clearClientId for clientId=[{$clientId}]");
 
         try {
@@ -280,7 +291,8 @@ class QuestSessionManager
      * @param int $timestamp The new timestamp.
      * @return bool True on success, false otherwise.
      */
-    public function updateLastTimestamp(string $sessionId, int $timestamp): bool {
+    public function updateLastTimestamp(string $sessionId, int $timestamp): bool
+    {
         $this->logger->logStart("QuestSessionManager: updateLastTimestamp for sessionId=[{$sessionId}] to timestamp=[{$timestamp}]");
 
         $session = QuestSession::findOne(['id' => $sessionId]);
@@ -293,7 +305,8 @@ class QuestSessionManager
         $session->last_ts = $timestamp;
 
         try {
-            if ($session->save()) {
+            $successfullySaved = $session->save();
+            if ($successfullySaved) {
                 $this->logger->log("QuestSessionManager: Successfully updated last_ts for session [{$sessionId}].");
                 $this->logger->logEnd("QuestSessionManager: updateLastTimestamp");
                 return true;

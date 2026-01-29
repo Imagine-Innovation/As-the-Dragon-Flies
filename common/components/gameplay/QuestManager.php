@@ -30,7 +30,8 @@ class QuestManager extends BaseManager
     /**
      * @param array<string, mixed> $config
      */
-    public function __construct($config = []) {
+    public function __construct($config = [])
+    {
         parent::__construct($config);
 
         if ($this->questProgress) {
@@ -46,7 +47,8 @@ class QuestManager extends BaseManager
      * @return Quest
      * @throws RuntimeException
      */
-    private function getQuest(): Quest {
+    private function getQuest(): Quest
+    {
         if ($this->quest === null) {
             throw new RuntimeException("QuestManager context error: Quest is missing.");
         }
@@ -58,7 +60,8 @@ class QuestManager extends BaseManager
      * @return QuestProgress
      * @throws RuntimeException
      */
-    private function getQuestProgress(): QuestProgress {
+    private function getQuestProgress(): QuestProgress
+    {
         if ($this->questProgress === null) {
             throw new RuntimeException("QuestManager context error: QuestProgress is missing.");
         }
@@ -70,7 +73,8 @@ class QuestManager extends BaseManager
      * @return Player
      * @throws RuntimeException
      */
-    private function getPlayer(): Player {
+    private function getPlayer(): Player
+    {
         if ($this->player === null) {
             throw new RuntimeException("QuestManager context error: Player is missing.");
         }
@@ -84,7 +88,8 @@ class QuestManager extends BaseManager
      * @param int|null $currentTurn
      * @return QuestPlayer|null
      */
-    private function getActiveQuestPlayer(?int $currentTurn = null): ?QuestPlayer {
+    private function getActiveQuestPlayer(?int $currentTurn = null): ?QuestPlayer
+    {
         $quest = $this->getQuest();
         $query = QuestPlayer::find()
                 ->where(['quest_id' => $quest->id])
@@ -102,7 +107,8 @@ class QuestManager extends BaseManager
      *
      * @return QuestPlayer|null
      */
-    private function getNextQuestPlayer(): ?QuestPlayer {
+    private function getNextQuestPlayer(): ?QuestPlayer
+    {
         $currentTurn = $this->quest?->currentQuestPlayer?->player_turn;
 
         // Find the next active player
@@ -125,7 +131,8 @@ class QuestManager extends BaseManager
      * @param int $playerId
      * @return void
      */
-    private function setQuestCurrentPlayerId(int $playerId): void {
+    private function setQuestCurrentPlayerId(int $playerId): void
+    {
         $quest = $this->getQuest();
         $progress = $this->getQuestProgress();
 
@@ -140,7 +147,8 @@ class QuestManager extends BaseManager
      *
      * @return int
      */
-    private function getLastTurnSequence(): int {
+    private function getLastTurnSequence(): int
+    {
         $progress = $this->getQuestProgress();
         $nextSequence = QuestTurn::find()
                 ->where(['quest_progress_id' => $progress->id])
@@ -154,7 +162,8 @@ class QuestManager extends BaseManager
      * @return QuestTurn|null
      * @throws Exception
      */
-    private function setNextQuestTurn(): ?QuestTurn {
+    private function setNextQuestTurn(): ?QuestTurn
+    {
         $nextQuestPlayer = $this->getNextQuestPlayer();
 
         // The quest has no more active players, no new turns can be added.
@@ -178,7 +187,8 @@ class QuestManager extends BaseManager
             'started_at' => time()
         ]);
 
-        if (!$questTurn->save()) {
+        $successfullySaved = $questTurn->save();
+        if (!$successfullySaved) {
             throw new Exception(implode("<br />", ArrayHelper::getColumn($questTurn->errors, 0, false)));
         }
         return $questTurn;
@@ -190,7 +200,8 @@ class QuestManager extends BaseManager
      * @param AppStatus $status
      * @return int
      */
-    private function endCurrentTurn(?int $questProgressId = null, AppStatus $status = AppStatus::TERMINATED): int {
+    private function endCurrentTurn(?int $questProgressId = null, AppStatus $status = AppStatus::TERMINATED): int
+    {
         return QuestTurn::updateAll(
                         ['status' => $status->value],
                         [
@@ -206,7 +217,8 @@ class QuestManager extends BaseManager
      * @param string $reason
      * @return int
      */
-    private function endQuestPlayers(int $questId, string $reason): int {
+    private function endQuestPlayers(int $questId, string $reason): int
+    {
         return QuestPlayer::updateAll(
                         [
                             'status' => AppStatus::LEFT->value,
@@ -225,7 +237,8 @@ class QuestManager extends BaseManager
      * @param int $questId
      * @return int
      */
-    private function detachPlayersFromQuest(int $questId): int {
+    private function detachPlayersFromQuest(int $questId): int
+    {
         return Player::updateAll(
                         ['quest_id' => null],
                         ['quest_id' => $questId]
@@ -237,7 +250,8 @@ class QuestManager extends BaseManager
      * @param AppStatus $status
      * @return array{error: bool, msg: string, content?: string}
      */
-    private function gameOver(AppStatus $status): array {
+    private function gameOver(AppStatus $status): array
+    {
         $quest = $this->getQuest();
         $progress = $this->getQuestProgress();
         $player = $this->getPlayer();
@@ -269,7 +283,8 @@ class QuestManager extends BaseManager
      * @return bool
      * @throws Exception
      */
-    public function addFirstQuestProgress(): bool {
+    public function addFirstQuestProgress(): bool
+    {
         $quest = $this->getQuest();
         $chapter = $quest->currentChapter;
         if ($chapter === null) {
@@ -286,7 +301,8 @@ class QuestManager extends BaseManager
      * @param AppStatus $status
      * @return void
      */
-    private function endCurrentQuestProgress(QuestProgress $questProgress, AppStatus $status = AppStatus::TERMINATED): void {
+    private function endCurrentQuestProgress(QuestProgress $questProgress, AppStatus $status = AppStatus::TERMINATED): void
+    {
         $this->endCurrentTurn($questProgress->id, $status);
 
         $questProgress->status = $status->value;
@@ -301,7 +317,8 @@ class QuestManager extends BaseManager
      * @return QuestProgress|null
      * @throws Exception
      */
-    private function addQuestProgress(int $missionId): ?QuestProgress {
+    private function addQuestProgress(int $missionId): ?QuestProgress
+    {
         $mission = Mission::findOne($missionId);
         if (!$mission) {
             throw new Exception("Mission #{$missionId} not found");
@@ -328,7 +345,8 @@ class QuestManager extends BaseManager
      * @param int $nextPlayerId
      * @return QuestProgress
      */
-    private function newQuestProgress(Mission $mission, int $nextPlayerId): QuestProgress {
+    private function newQuestProgress(Mission $mission, int $nextPlayerId): QuestProgress
+    {
         $narrative = new NarrativeComponent(['mission' => $mission]);
 
         $questProgress = new QuestProgress([
@@ -350,7 +368,8 @@ class QuestManager extends BaseManager
      *
      * @return int|null
      */
-    private function getFirstMissionIdInNextChapter(): ?int {
+    private function getFirstMissionIdInNextChapter(): ?int
+    {
         $currentProgress = $this->getQuestProgress();
         $mission = $currentProgress->mission;
 
@@ -366,7 +385,8 @@ class QuestManager extends BaseManager
      *
      * @return int|null
      */
-    private function getNextDefaultMissionId(): ?int {
+    private function getNextDefaultMissionId(): ?int
+    {
         $progress = $this->getQuestProgress();
         $nextMissionInChapter = Mission::find()
                 ->where(['>', 'id', $progress->mission_id])
@@ -396,7 +416,8 @@ class QuestManager extends BaseManager
      *       timestamp: int
      * }
      */
-    private function getNextMissionDetail(QuestProgress $currentQuestProgress, QuestProgress $nextQuestProgress): array {
+    private function getNextMissionDetail(QuestProgress $currentQuestProgress, QuestProgress $nextQuestProgress): array
+    {
         $currentMission = $currentQuestProgress->mission;
         $nextMission = $nextQuestProgress->mission;
         $currentPlayer = $currentQuestProgress->currentPlayer;
@@ -423,7 +444,8 @@ class QuestManager extends BaseManager
      * @return array{error: bool, msg: string, content?: string}
      * @throws Exception
      */
-    private function setNextMission(Quest $quest, int $nextMissionId): array {
+    private function setNextMission(Quest $quest, int $nextMissionId): array
+    {
         $currentQuestProgress = $this->getQuestProgress();
         $currentPlayer = $quest->currentPlayer;
 
@@ -450,8 +472,10 @@ class QuestManager extends BaseManager
      * @param int|null $nextMissionId
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function moveToNextMission(?int $nextMissionId = null): array {
-        Yii::debug("*** debug *** moveToNextMission nextMissionId=" . ($nextMissionId ? $nextMissionId : 'null'));
+    public function moveToNextMission(?int $nextMissionId = null): array
+    {
+        Yii::debug("*** debug *** moveToNextMission nextMissionId=" . ($nextMissionId
+                            ? $nextMissionId : 'null'));
 
         if ($nextMissionId) {
             return $this->setNextMission($this->getQuest(), $nextMissionId);
@@ -469,7 +493,8 @@ class QuestManager extends BaseManager
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function nextPlayer(): array {
+    public function nextPlayer(): array
+    {
         $this->endCurrentTurn();
         $oldPlayer = $this->getPlayer();
         $questTurn = $this->setNextQuestTurn();
@@ -503,7 +528,8 @@ class QuestManager extends BaseManager
      * @return bool
      * @throws Exception
      */
-    private function createQuestEvent(string $eventType, string $eventDescription, ?Player $initiator, array $detail = []): bool {
+    private function createQuestEvent(string $eventType, string $eventDescription, ?Player $initiator, array $detail = []): bool
+    {
         Yii::debug("*** debug *** createQuestEvent - initiator={$initiator?->name}");
 
         try {

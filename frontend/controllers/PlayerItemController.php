@@ -660,6 +660,9 @@ class PlayerItemController extends Controller
         }
         $inventory = new Inventory();
         $container = $inventory->getContainer($player);
+        if (!$container) {
+            return ['error' => true, 'msg' => 'You cannot pack anything. Buy a container before you pack.'];
+        }
 
         if (!($playerItem = $checkAjax['playerItem'] ?? null)) {
             return ['error' => true, 'msg' => 'Missing PlayerItem'];
@@ -667,10 +670,7 @@ class PlayerItemController extends Controller
 
         $status = $checkAjax['status'] ?? 0;
 
-        if (!$container) {
-            return ['error' => true, 'msg' => 'You cannot pack anything. Buy a container before you pack.'];
-        }
-
+        Yii::debug("*** debug *** - actionAjaxToggle - status={$status}");
         if ($status === 1) {
             return $inventory->addToPack($playerItem, $container);
         } else {

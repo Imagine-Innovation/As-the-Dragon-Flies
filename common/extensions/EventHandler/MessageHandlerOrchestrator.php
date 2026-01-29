@@ -33,7 +33,8 @@ class MessageHandlerOrchestrator implements MessageHandlerInterface
             BroadcastService $broadcastService,
             NotificationService $notificationService,
             array $specificHandlers = [] // Added
-    ) {
+    )
+    {
         $this->logger = $logger;
         $this->specificHandlers = $specificHandlers;
         $this->broadcastService = $broadcastService;
@@ -47,7 +48,8 @@ class MessageHandlerOrchestrator implements MessageHandlerInterface
      * @param string $message
      * @return void
      */
-    public function handle(ConnectionInterface $conn, string $clientId, string $message): void {
+    public function handle(ConnectionInterface $conn, string $clientId, string $message): void
+    {
         $this->logger->logStart("Orchestrator: handle message from clientId=[{$clientId}]", $message);
         try {
             $data = JsonHelper::decode($message);
@@ -72,7 +74,8 @@ class MessageHandlerOrchestrator implements MessageHandlerInterface
      * @param string $clientId
      * @return void
      */
-    public function open(ConnectionInterface $conn, string $clientId): void {
+    public function open(ConnectionInterface $conn, string $clientId): void
+    {
         $this->logger->log("Orchestrator: New connection opened for clientId=[{$clientId}]", ['remoteAddress' => $conn->remoteAddress]);
         // Future on-open logic here
     }
@@ -82,8 +85,9 @@ class MessageHandlerOrchestrator implements MessageHandlerInterface
      * @param string $clientId
      * @return void
      */
-    public function close(string $clientId): void {
-        $this->logger->log("Orchestrator: Connection closed for clientId=[{$clientId}]");
+    public function close(string $clientId): void
+    {
+        $this->logger->logStart("Orchestrator: Connection closed for clientId=[{$clientId}]");
 
         $session = QuestSession::findOne(['client_id' => $clientId]);
 
@@ -115,7 +119,12 @@ class MessageHandlerOrchestrator implements MessageHandlerInterface
                 return;
             }
             $questPlayer->status = AppStatus::OFFLINE->value;
-            $questPlayer->save();
+            $successfullySaved = $questPlayer->save();
+            if (!$successfullySaved) {
+                $this->logger->log("Failed to update QuestPlayer:  Errors: " . print_r($questPlayer->getErrors(), true), null, 'error');
+                $this->logger->logEnd('Orchestrator: close');
+                return;
+            }
 
             $this->notificationService->broadcast(
                     (int) $session->quest_id,
@@ -133,8 +142,8 @@ class MessageHandlerOrchestrator implements MessageHandlerInterface
                     $session->id, // Exclude current session
                     $session->player_id
             );
-            $this->logger->logEnd("Orchestrator: close");
         }
+        $this->logger->logEnd("Orchestrator: close");
     }
 
     /**
@@ -144,7 +153,8 @@ class MessageHandlerOrchestrator implements MessageHandlerInterface
      * @param \Exception $e
      * @return void
      */
-    public function error(ConnectionInterface $conn, string $clientId, \Exception $e): void {
+    public function error(ConnectionInterface $conn, string $clientId, \Exception $e): void
+    {
         $this->logger->log("Orchestrator: Error for clientId=[{$clientId}]: " . $e->getMessage(), [
             'exception_class' => get_class($e),
             'trace' => $e->getTraceAsString()
@@ -162,7 +172,8 @@ class MessageHandlerOrchestrator implements MessageHandlerInterface
      * @param array<string, mixed> $data
      * @return void
      */
-    private function handleTypedMessage(string $type, ConnectionInterface $conn, string $clientId, string $sessionId, array $data): void {
+    private function handleTypedMessage(string $type, ConnectionInterface $conn, string $clientId, string $sessionId, array $data): void
+    {
         if (
                 isset($this->specificHandlers[$type]) &&
                 $this->specificHandlers[$type] instanceof SpecificMessageHandlerInterface
@@ -182,7 +193,8 @@ class MessageHandlerOrchestrator implements MessageHandlerInterface
      * @param string $clientId
      * @param array<string, mixed> $data
      */
-    private function handleJsonMessage(ConnectionInterface $conn, string $clientId, array $data): void {
+    private function handleJsonMessage(ConnectionInterface $conn, string $clientId, array $data): void
+    {
         $this->logger->logStart("Orchestrator: handleJsonMessage for clientId=[{$clientId}]");
 
         $sessionId = PayloadHelper::extractStringFromPayload('sessionId', $data);
@@ -213,7 +225,8 @@ class MessageHandlerOrchestrator implements MessageHandlerInterface
      * @param string $sessionId
      * @param array<string, mixed> $data
      */
-    private function handleGenericJsonMessage(ConnectionInterface $conn, string $clientId, string $sessionId, array $data): void {
+    private function handleGenericJsonMessage(ConnectionInterface $conn, string $clientId, string $sessionId, array $data): void
+    {
         $this->logger->logStart("Orchestrator: handleGenericJsonMessage for clientId=[{$clientId}], sessionId=[{$sessionId}]");
 
 // Use BroadcastService to send echo back
@@ -228,7 +241,8 @@ class MessageHandlerOrchestrator implements MessageHandlerInterface
      * @param string $clientId
      * @param string $message
      */
-    private function handleTextMessage(ConnectionInterface $conn, string $clientId, string $message): void {
+    private function handleTextMessage(ConnectionInterface $conn, string $clientId, string $message): void
+    {
         $this->logger->logStart("Orchestrator: handleTextMessage for clientId=[{$clientId}]", ['message' => $message]);
 
         // Use BroadcastService to send echo back
@@ -246,7 +260,8 @@ class MessageHandlerOrchestrator implements MessageHandlerInterface
      * @param string $type
      * @param array<string, mixed> $data
      */
-    private function handleUnknownType(ConnectionInterface $from, string $clientId, string $sessionId, string $type, array $data): void {
+    private function handleUnknownType(ConnectionInterface $from, string $clientId, string $sessionId, string $type, array $data): void
+    {
         $this->logger->logStart("Orchestrator: handleUnknownType for clientId=[{$clientId}], sessionId=[{$sessionId}]", ['type' => $type, 'data' => $data]);
         $this->logger->log("Orchestrator: Unknown message type '{$type}' from session [{$sessionId}]", $data, 'warning');
 
