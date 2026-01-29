@@ -169,9 +169,22 @@ class PlayerController extends Controller
 
         $request = Yii::$app->request;
 
-        $userId = $request->post('userId');
+        $userId = (int) $request->post('userId');
+        $currentUser = Yii::$app->user->identity;
+
+        if (!$currentUser->is_admin && $userId !== (int) $currentUser->id) {
+            return ['error' => true, 'msg' => 'Unauthorized access'];
+        }
+
         $postPlayerId = $request->post('playerId');
         $playerId = is_numeric($postPlayerId) ? (int) $postPlayerId : null;
+
+        if ($playerId !== null) {
+            $player = Player::findOne(['id' => $playerId, 'user_id' => $userId]);
+            if (!$player) {
+                return ['error' => true, 'msg' => 'Player not found or does not belong to user'];
+            }
+        }
 
         $success = User::updateAll(
                 ['current_player_id' => $playerId],

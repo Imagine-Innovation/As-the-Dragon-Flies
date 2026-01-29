@@ -145,7 +145,7 @@ class VirtualTableTop {
 
         const nextPlayer = (playerId === nextPlayerId) ? 'your' : `${nextPlayerName}'s`;
         const message = `It's ${nextPlayer} turn to play`;
-        $(target).html(message);
+        $(target).text(message);
     }
 
     static _updateActions(playerId, currentPlayerId, questProgressId) {
@@ -172,7 +172,7 @@ class VirtualTableTop {
                     $(target).html(content);
                 } else {
                     const content = response.msg;
-                    $(target).html(content);
+                    $(target).text(content);
                 }
             }
         });
@@ -198,7 +198,7 @@ class VirtualTableTop {
     talk(actionId, replyId) {
         Logger.log(1, 'talk', `actionId=${actionId}, replyId=${replyId}`);
         const target = `#actionFeedback`;
-        $(target).html(`Talk: actionId=${actionId}, replyId=${replyId}`);
+        $(target).text(`Talk: actionId=${actionId}, replyId=${replyId}`);
         this._showModal('#gameModal');
         // Store the current action in the context
         this.context.actionId = actionId;
@@ -208,7 +208,7 @@ class VirtualTableTop {
     reply(replyId) {
         Logger.log(1, 'reply', `replyId=${replyId}`);
         const target = `#actionFeedback`;
-        $(target).html(`Reply: replyId=${replyId}`);
+        $(target).text(`Reply: replyId=${replyId}`);
         this._dialog(replyId);
     }
 
@@ -291,7 +291,7 @@ class VirtualTableTop {
     makeAction(actionId) {
         Logger.log(1, 'makeAction', `actionId=${actionId}`);
         const target = `#actionFeedback`;
-        $(target).html(`Action: actionId=${actionId}`);
+        $(target).text(`Action: actionId=${actionId}`);
     }
 
     moveToNextPlayer(questProgressId, nextMissionId) {

@@ -119,7 +119,13 @@ class NotificationController extends Controller
         }
 
         $request = Yii::$app->request;
-        $playerId = $request->post('playerId');
+        $playerId = (int) $request->post('playerId');
+
+        $player = \common\models\Player::findOne(['id' => $playerId, 'user_id' => Yii::$app->user->id]);
+        if (!$player) {
+             return ['error' => true, 'msg' => 'Unauthorized access to player notifications'];
+        }
+
         Yii::debug("*** Debug *** actionAjaxMarkAsRead - playerId={$playerId}");
         $ret = QuestNotification::markNotificationsAsRead($playerId);
         if ($ret) {

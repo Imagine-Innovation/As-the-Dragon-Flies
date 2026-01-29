@@ -55,6 +55,7 @@ class UserController extends Controller
                         'actions' => [
                             'delete' => ['POST'],
                             'ajax' => ['POST'],
+                            'ajax-set-role' => ['POST'],
                         ],
                     ],
                     [
@@ -133,7 +134,11 @@ class UserController extends Controller
         }
 
         $role = $request->post('role');
-        $status = $request->post('status');
+        if (!in_array($role, ['admin', 'designer', 'player'], true)) {
+            return ['error' => true, 'msg' => "Invalid role: " . \yii\helpers\Html::encode($role)];
+        }
+
+        $status = (int) $request->post('status');
         $property = "is_{$role}";
         $model->$property = $status;
 

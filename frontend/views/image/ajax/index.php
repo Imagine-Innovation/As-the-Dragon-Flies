@@ -42,7 +42,7 @@ foreach ($models as $model) {
                     <tr>
                         <th>Thumbnails</th>
                         <?php foreach ($classes as $class): ?>
-                            <th class="text-center"><?= $class->name ?></th>
+                            <th class="text-center"><?= \yii\helpers\Html::encode($class->name) ?></th>
                         <?php endforeach; ?>
                     </tr>
                 </thead>
@@ -50,14 +50,14 @@ foreach ($models as $model) {
                     <?php foreach ($models as $model): ?>
                         <tr>
                             <th scope="row">
-                                <img src="img/character/<?= $model->file_name ?>" class="image-thumbnail">
+                                <img src="img/character/<?= \yii\helpers\Html::encode($model->file_name) ?>" class="image-thumbnail">
                             </th>
                             <?php foreach ($classes as $class): ?>
                                 <td class="text-center">
                                     <?=
                                     CheckBox::widget([
                                         'id' => "image-{$model->id}-{$class->id}",
-                                        'onclick' => "ImageManager.setClass({$model->id}, {$class->id}, '{$class->name}');",
+                                        'onclick' => "ImageManager.setClass(" . (int) $model->id . ", " . (int) $class->id . ", " . json_encode($class->name) . ");",
                                         'checked' => $checked[$model->id][$class->id] ? "checked" : '',
                                         'title' => $class->name
                                     ])

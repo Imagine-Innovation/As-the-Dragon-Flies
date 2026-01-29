@@ -16,6 +16,7 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\ForbiddenHttpException;
 use yii\web\Request;
 use yii\web\Response;
 
@@ -65,6 +66,14 @@ class GameController extends Controller
         $this->layout = 'game';
 
         $quest = FindModelHelper::findQuest(['id' => $id]);
+
+        $user = Yii::$app->user->identity;
+        if (!$user->is_admin) {
+            $membership = QuestPlayer::findOne(['quest_id' => $id, 'player_id' => $user->current_player_id ?? 0]);
+            if (!$membership) {
+                throw new ForbiddenHttpException("You are not a member of this quest.");
+            }
+        }
         $nbPlayers = QuestPlayer::find()
                 ->where(['quest_id' => $quest->id])
                 ->andWhere(['<>', 'status', AppStatus::LEFT->value])
@@ -96,6 +105,12 @@ class GameController extends Controller
         $playerId = $id ?? Yii::$app->session->get('playerId');
 
         $player = FindModelHelper::findPlayer(['id' => $playerId]);
+
+        // Same quest check
+        $currentQuestId = Yii::$app->session->get('questId');
+        if ($player->quest_id !== $currentQuestId && !Yii::$app->user->identity->is_admin) {
+             return ['error' => true, 'msg' => 'Unauthorized access to player data'];
+        }
         $render = $this->renderPartial('ajax/player', ['player' => $player]);
         return ['error' => false, 'msg' => '', 'content' => $render];
     }
@@ -152,6 +167,14 @@ class GameController extends Controller
         }
 
         $mission = FindModelHelper::findMission(['id' => $missionId]);
+
+        // Same story check
+        $currentQuest = Yii::$app->session->get('currentQuest');
+        $isAuthorized = ($currentQuest instanceof \common\models\Quest && $mission->chapter->story_id === $currentQuest->story_id);
+        if (!$isAuthorized && !Yii::$app->user->identity->is_admin) {
+            return ['error' => true, 'msg' => 'Unauthorized access to mission data'];
+        }
+
         $render = $this->renderPartial('ajax/mission', ['mission' => $mission]);
         return ['error' => false, 'msg' => '', 'content' => $render, 'title' => $mission->name];
     }
@@ -232,10 +255,20 @@ class GameController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
         }
 
+        $currentQuest = Yii::$app->session->get('currentQuest');
+        $isAuthorizedStory = ($currentQuest instanceof \common\models\Quest && $storyId === $currentQuest->story_id);
+        if (!$isAuthorizedStory && !Yii::$app->user->identity->is_admin) {
+            return ['error' => true, 'msg' => 'Unauthorized access to story data'];
+        }
+
         $reply = FindModelHelper::findReply(['id' => $replyId]);
         $dialog = $reply->nextDialog;
 
         $player = FindModelHelper::findPlayer(['id' => $playerId]);
+        $isAuthorizedPlayer = ($currentQuest instanceof \common\models\Quest && $player->quest_id === $currentQuest->id);
+        if (!$isAuthorizedPlayer && !Yii::$app->user->identity->is_admin) {
+            return ['error' => true, 'msg' => 'Unauthorized access to player data'];
+        }
 
         $content = $this->renderPartial('ajax/dialog', [
             'storyId' => $storyId,

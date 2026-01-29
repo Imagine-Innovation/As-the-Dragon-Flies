@@ -45,9 +45,9 @@ $categories = ['Misc', 'Image', 'Item', 'Monster'];
                 <?php foreach ($raceGroups as $raceGroup): ?>
                     <li class="nav-item">
                         <a class="nav-link<?= ($raceGroup->name === $initTab) ? " active" : '' ?>"
-                           data-bs-toggle="tab" href="#tab-<?= $raceGroup->name ?>" role="tab"
-                           onclick='ImageManager.loadTab("<?= $raceGroup->name ?>", <?= $raceGroup->id ?>);return false;'>
-                               <?= $raceGroup->name ?>
+                           data-bs-toggle="tab" href="#tab-<?= Html::encode($raceGroup->name) ?>" role="tab"
+                           onclick='ImageManager.loadTab(<?= json_encode($raceGroup->name) ?>, <?= (int) $raceGroup->id ?>);return false;'>
+                               <?= Html::encode($raceGroup->name) ?>
                         </a>
                     </li>
                 <?php endforeach; ?>
@@ -56,7 +56,7 @@ $categories = ['Misc', 'Image', 'Item', 'Monster'];
             <div class="tab-content">
                 <?php foreach ($raceGroups as $raceGroup): ?>
                     <div class="tab-pane <?= ($raceGroup->name === $initTab) ? "active fade show" : "fade" ?>"
-                         id="tab-<?= $raceGroup->name ?>" role="tabpanel">
+                         id="tab-<?= Html::encode($raceGroup->name) ?>" role="tabpanel">
                              <?= AjaxContainer::widget(['name' => 'ajax-' . $raceGroup->name]) ?>
                     </div>
                 <?php endforeach; ?>
@@ -84,8 +84,8 @@ $this->renderFile('@app/views/layouts/snippets/ajax-params.php', [
                 <p class="form-label">Category</p>
                 <?php foreach ($categories as $category): ?>
                     <div class="custom-control custom-radio custom-control-inline mb-2">
-                        <input type="radio" id="uploadRadio-<?= $category ?>" value="<?= $category ?>" name="image-upload-category" class="custom-control-input" <?= ($category === 'Misc') ? 'checked' : '' ?>>
-                        <label class="custom-control-label" for="uploadRadio-<?= $category ?>"><?= $category ?></label>
+                        <input type="radio" id="uploadRadio-<?= Html::encode($category) ?>" value="<?= Html::encode($category) ?>" name="image-upload-category" class="custom-control-input" <?= ($category === 'Misc') ? 'checked' : '' ?>>
+                        <label class="custom-control-label" for="uploadRadio-<?= Html::encode($category) ?>"><?= Html::encode($category) ?></label>
                     </div>
                 <?php endforeach; ?>
                 <br>

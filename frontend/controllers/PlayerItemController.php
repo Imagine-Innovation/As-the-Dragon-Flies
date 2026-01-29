@@ -670,7 +670,7 @@ class PlayerItemController extends Controller
 
         $status = $checkAjax['status'] ?? 0;
 
-        Yii::debug("*** debug *** - actionAjaxToggle - status={$status}");
+        Yii::debug("*** debug *** - actionAjaxToggle - status=" . (is_scalar($status) ? (string) $status : 'non-scalar'));
         if ($status === 1) {
             return $inventory->addToPack($playerItem, $container);
         } else {

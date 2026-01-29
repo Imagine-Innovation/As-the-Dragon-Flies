@@ -21,13 +21,13 @@ $isCurrentPlayer = ($currentQuestProgress->current_player_id === $playerId);
 ?>
 <div class="d-none">
     Hidden div to embeb utility tags for PHP/JS communication
-    <span id="hiddenStoryId"><?= $story->id ?></span>
-    <span id="hiddenQuestId"><?= $currentQuestProgress->quest_id ?></span>
-    <span id="hiddenQuestProgressId"><?= $currentQuestProgress->id ?></span>
-    <span id="hiddenQuestMissionId"><?= $currentQuestProgress->mission_id ?></span>
-    <span id="hiddenCurrentPlayerId"><?= $currentPlayer->id ?></span>
-    <span id="hiddenCurrentPlayerName"><?= $currentPlayer->name ?></span>
-    <span id="hiddenPlayerId"><?= $playerId ?></span>
+    <span id="hiddenStoryId"><?= (int) $story->id ?></span>
+    <span id="hiddenQuestId"><?= (int) $currentQuestProgress->quest_id ?></span>
+    <span id="hiddenQuestProgressId"><?= (int) $currentQuestProgress->id ?></span>
+    <span id="hiddenQuestMissionId"><?= (int) $currentQuestProgress->mission_id ?></span>
+    <span id="hiddenCurrentPlayerId"><?= (int) $currentPlayer->id ?></span>
+    <span id="hiddenCurrentPlayerName"><?= Html::encode($currentPlayer->name ?? '') ?></span>
+    <span id="hiddenPlayerId"><?= (int) $playerId ?></span>
 </div>
 
 <main class="row" style="height: calc(100dvh - 120px);">

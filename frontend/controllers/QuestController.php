@@ -37,6 +37,7 @@ use yii\data\ActiveDataProvider;
 use yii\db\Query;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\ForbiddenHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\web\Response;
@@ -162,6 +163,10 @@ class QuestController extends Controller
         $tavernManager = new TavernManager(['story' => $story]);
         $tavern = $tavernManager->findTavern();
         $player = FindModelHelper::findPlayer(['id' => $playerId]);
+
+        if ($player->user_id !== (int) Yii::$app->user->id) {
+            throw new ForbiddenHttpException("You don't own this player.");
+        }
 
         // Validate player eligibility
         $canJoin = $tavernManager->canPlayerJoinQuest($player);
@@ -419,6 +424,10 @@ class QuestController extends Controller
     {
 
         $player = FindModelHelper::findPlayer(['id' => $playerId]);
+        if ($player->user_id !== (int) Yii::$app->user->id) {
+            throw new ForbiddenHttpException("You don't own this player.");
+        }
+
         $quest = $this->findModel($id);
         $reason = 'Player decided to quit the quest';
         // Process player offboarding
@@ -497,6 +506,10 @@ class QuestController extends Controller
     public function actionUpdate(int $id): string|Response
     {
         $model = $this->findModel($id);
+        $user = Yii::$app->user->identity;
+        if (!$user->is_admin && $model->initiator_id !== $user->current_player_id) {
+            throw new ForbiddenHttpException("Only the quest initiator can update it.");
+        }
 
         // Process form submission
         $post = (array) $this->request->post();
@@ -521,7 +534,12 @@ class QuestController extends Controller
      */
     public function actionDelete(int $id): Response
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        $user = Yii::$app->user->identity;
+        if (!$user->is_admin && $model->initiator_id !== $user->current_player_id) {
+            throw new ForbiddenHttpException("Only the quest initiator can delete it.");
+        }
+        $model->delete();
         return $this->redirect(['index']);
     }
 

@@ -15,8 +15,8 @@ $icons = [
 <div id="<?= $UUID ?>" class="toast fade show" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000" data-bs-autohide="true">
     <div class="toast-header">
         <?= $icons[$severity] ?>
-        <strong><?= $messageHeader ?></strong>
+        <strong><?= \yii\helpers\Html::encode($messageHeader) ?></strong>
     </div>
-    <div class="toast-body"><?= $message ?></div>
+    <div class="toast-body"><?= \yii\helpers\Html::encode($message) ?></div>
 </div>
 

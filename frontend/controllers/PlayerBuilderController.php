@@ -241,7 +241,9 @@ class PlayerBuilderController extends Controller
         }
 
         $request = Yii::$app->request;
-        $playerId = $request->post('playerId');
+        $playerId = (int) $request->post('playerId');
+        $this->findModel($playerId); // Verify ownership
+
         $languageId = $request->post('languageId');
         $selected = $request->post('selected');
         Yii::debug("*** debug *** actionAjaxUpdateLanguage - playerId={$playerId}, languageId=[$languageId}, selected={$selected}");

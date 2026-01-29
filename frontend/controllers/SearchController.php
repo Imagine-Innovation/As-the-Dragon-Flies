@@ -62,7 +62,12 @@ class SearchController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
         }
 
-        $path = Yii::getAlias('@frontend/web/') . ($folder ?? 'invalid');
+        $allowedFolders = ['img/character', 'img/item', 'img/monster', 'img/decor'];
+        if ($folder === null || !in_array($folder, $allowedFolders, true)) {
+            return ['error' => true, 'msg' => "Invalid folder: " . \yii\helpers\Html::encode($folder ?? 'null')];
+        }
+
+        $path = Yii::getAlias('@frontend/web/') . $folder;
         $results = [];
 
         if (!is_dir($path)) {
@@ -151,8 +156,8 @@ class SearchController extends Controller
                 ->from(['t' => $className::tableName()]);
 
         if ($searchString) {
-            $query->where(['like', 'name', "%{$searchString}%", false]) // The 'false' parameter prevents Yii from adding extra escaping
-                    ->orWhere(['like', 'description', "%{$searchString}%", false]);
+            $query->where(['like', 'name', $searchString])
+                    ->orWhere(['like', 'description', $searchString]);
         }
         $query->innerJoin('decor', 't.decor_id = decor.id')
                 ->where(['decor.mission_id' => $missionId]);
@@ -183,8 +188,8 @@ class SearchController extends Controller
         $query = $className::find()->select(['id', 'name', 'description as text']);
 
         if ($searchString) {
-            $query->where(['like', 'name', "%{$searchString}%", false]) // The 'false' parameter prevents Yii from adding extra escaping
-                    ->orWhere(['like', 'description', "%{$searchString}%", false]);
+            $query->where(['like', 'name', $searchString])
+                    ->orWhere(['like', 'description', $searchString]);
         }
         if ($filter) {
             $query->where($filter);
@@ -214,7 +219,7 @@ class SearchController extends Controller
         $className = $this->fullyQualifiedClassName($modelName);
         $searchResult = $className::find()
                 ->select(['id', 'text'])
-                ->where(['like', 'text', "%{$searchString}%", false]) // The 'false' parameter prevents Yii from adding extra escaping
+                ->where(['like', 'text', $searchString])
                 ->asArray()
                 ->all();
 
