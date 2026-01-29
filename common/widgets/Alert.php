@@ -3,6 +3,7 @@
 namespace common\widgets;
 
 use Yii;
+use yii\helpers\Html;
 
 class Alert extends \yii\bootstrap5\Widget
 {
@@ -43,7 +44,7 @@ class Alert extends \yii\bootstrap5\Widget
 
             foreach ((array) $flash as $i => $message) {
                 echo \yii\bootstrap5\Alert::widget([
-                    'body' => $message,
+                    'body' => Html::encode($message),
                     'closeButton' => $this->closeButton,
                     'options' => array_merge($this->options, [
                         'id' => $this->getId() . '-' . $type . '-' . $i,

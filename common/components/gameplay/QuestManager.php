@@ -14,6 +14,7 @@ use common\models\QuestProgress;
 use common\models\QuestTurn;
 use Yii;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
 use Exception;
 use RuntimeException;
 
@@ -189,7 +190,10 @@ class QuestManager extends BaseManager
 
         $successfullySaved = $questTurn->save();
         if (!$successfullySaved) {
-            throw new Exception(implode("<br />", ArrayHelper::getColumn($questTurn->errors, 0, false)));
+            $errors = ArrayHelper::getColumn($questTurn->errors, 0, false);
+            /** @var string[] $errors */
+            $encodedErrors = array_map([Html::class, 'encode'], $errors);
+            throw new Exception(implode("<br />", $encodedErrors));
         }
         return $questTurn;
     }
@@ -260,7 +264,7 @@ class QuestManager extends BaseManager
         $quest->completed_at = time();
         $this->save($quest);
 
-        $message = "The quest {$quest->name} is over with status {$status->getLabel()}!!!";
+        $message = "The quest " . Html::encode($quest->name) . " is over with status " . Html::encode($status->getLabel()) . "!!!";
 
         $this->endCurrentQuestProgress($progress, $status);
         $this->endQuestPlayers($quest->id, $message);
@@ -461,7 +465,7 @@ class QuestManager extends BaseManager
         }
 
         $detail = $this->getNextMissionDetail($currentQuestProgress, $nextQuestProgress);
-        $message = "The mission '{$detail['currentMissionName']}' is over, let's move to '{$detail['nextMissionName']}'!!!";
+        $message = "The mission '" . Html::encode((string) $detail['currentMissionName']) . "' is over, let's move to '" . Html::encode((string) $detail['nextMissionName']) . "'!!!";
 
         $this->createQuestEvent('next-mission', $message, $currentPlayer, $detail);
         return ['error' => false, 'msg' => $message];

@@ -7,6 +7,7 @@ use common\models\NotificationPlayer;
 use common\models\Player;
 use common\models\Quest;
 use Yii;
+use yii\helpers\Html;
 use yii\base\BaseObject;
 use yii\helpers\ArrayHelper;
 
@@ -141,9 +142,13 @@ abstract class Event extends BaseObject
         ]);
 
         $successfullySaved = $notificationPlayer->save();
-        if (!$successfullySaved) {
-            throw new \Exception(implode("<br />", ArrayHelper::getColumn($notificationPlayer->errors, 0, false)));
+        if ($successfullySaved) {
+            return;
         }
+        $errors = ArrayHelper::getColumn($notificationPlayer->errors, 0, false);
+        /** @var string[] $errors */
+        $encodedErrors = array_map([Html::class, 'encode'], $errors);
+        throw new \Exception(implode("<br />", $encodedErrors));
     }
 
     /**
@@ -183,11 +188,14 @@ abstract class Event extends BaseObject
         $notification = new Notification($notificationData);
 
         $successfullySaved = $notification->save();
-        if (!$successfullySaved) {
+        if ($successfullySaved) {
             $this->notificationId = $notification->id;
             return $notification;
         }
 
-        throw new \Exception(implode("<br />", ArrayHelper::getColumn($notification->errors, 0, false)));
+        $errors = ArrayHelper::getColumn($notification->errors, 0, false);
+        /** @var string[] $errors */
+        $encodedErrors = array_map([Html::class, 'encode'], $errors);
+        throw new \Exception(implode("<br />", $encodedErrors));
     }
 }

@@ -111,8 +111,10 @@ class QuestSessionManager
         ]);
         $this->logger->log("QuestSessionManager: Attempting to save new QuestSession", $session->getAttributes());
 
+        $saved = false;
         try {
             $successfullySaved = $session->save();
+            $saved = $successfullySaved;
             if ($successfullySaved) {
                 $this->logger->log("QuestSessionManager: Successfully saved new QuestSession: id=[{$session->id}]");
             } else {
@@ -201,8 +203,10 @@ class QuestSessionManager
         }
 
         $this->logger->log("QuestSessionManager: Attempting to update QuestSession: id=[{$session->id}]", $session->getDirtyAttributes());
+        $updated = false;
         try {
             $successfullySaved = $session->save();
+            $updated = $successfullySaved;
             if ($successfullySaved) {
                 $this->logger->log("QuestSessionManager: Successfully updated QuestSession: id=[{$session->id}]");
             } else {

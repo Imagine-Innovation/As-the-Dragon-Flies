@@ -3,6 +3,7 @@
 namespace common\components;
 
 use common\models\Mission;
+use yii\helpers\Html;
 use Yii;
 use yii\base\Component;
 
@@ -30,7 +31,7 @@ class NarrativeComponent extends Component
             return ['The mission has not been found, even by the most learned magicians'];
         }
 
-        $narrative = ["Mission: {$this->mission->name}"];
+        $narrative = ["Mission: " . Html::encode($this->mission->name)];
         if ($this->mission->description) {
             $narrative[] = nl2br($this->mission->description);
         }
@@ -66,7 +67,7 @@ class NarrativeComponent extends Component
         $narrative = [];
         $detailList = $this->mission->$details;
         foreach ($detailList as $detail) {
-            $narrative[] = $detail->description ? nl2br($detail->description) : $detail->name;
+            $narrative[] = $detail->description ? nl2br($detail->description) : Html::encode($detail->name);
         }
         return $narrative;
     }

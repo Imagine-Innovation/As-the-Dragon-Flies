@@ -43,7 +43,7 @@ class Notification extends \yii\db\ActiveRecord
             [['is_private'], 'default', 'value' => 0],
             [['initiator_id', 'notification_type', 'message'], 'required'],
             [['initiator_id', 'quest_id', 'created_at', 'expires_at', 'is_private'], 'integer'],
-            [['message'], 'string'],
+            [['message'], 'string', 'max' => 4096],
             [['payload'], 'safe'],
             [['notification_type'], 'string', 'max' => 64],
             [['title'], 'string', 'max' => 4096],

@@ -117,6 +117,7 @@ class Player extends \yii\db\ActiveRecord
             [['experience_points'], 'default', 'value' => 0],
             [['armor_class'], 'default', 'value' => 10],
             [['class_id', 'user_id', 'race_id', 'background_id'], 'required'],
+            ['age', 'integer', 'min' => 1, 'max' => 2000],
             [['class_id', 'level_id', 'user_id', 'race_id', 'background_id', 'alignment_id', 'image_id', 'quest_id', 'status', 'age', 'experience_points', 'hit_points', 'max_hit_points', 'armor_class', 'speed', 'created_at', 'updated_at'], 'integer'],
             [['description', 'gender'], 'string'],
             [['name'], 'string', 'max' => 64],
@@ -701,8 +702,9 @@ class Player extends \yii\db\ActiveRecord
             return null;
         }
 
+        $increase = (int) $quantity;
         $updatedRows = PlayerCoin::updateAll(
-                ['quantity' => new \yii\db\Expression("quantity+{$quantity}")],
+                ['quantity' => new \yii\db\Expression('quantity + :quantity', [':quantity' => $increase])],
                 ['player_id' => $this->id, 'coin' => $coin]
         );
 
@@ -735,8 +737,9 @@ class Player extends \yii\db\ActiveRecord
             return null;
         }
 
+        $increase = (int) $quantity;
         $updatedRows = PlayerItem::updateAll(
-                ['quantity' => new \yii\db\Expression("quantity+{$quantity}")],
+                ['quantity' => new \yii\db\Expression('quantity + :quantity', [':quantity' => $increase])],
                 ['player_id' => $this->id, 'item_id' => $itemId]
         );
 

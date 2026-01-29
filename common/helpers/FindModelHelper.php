@@ -18,8 +18,10 @@ use common\models\Race;
 use common\models\Skill;
 use common\models\Story;
 use Yii;
+use yii\helpers\Html;
 use yii\web\NotFoundHttpException;
 use InvalidArgumentException;
+use yii\web\ForbiddenHttpException;
 
 class FindModelHelper
 {
@@ -67,7 +69,7 @@ class FindModelHelper
     private static function invalidArgumentException(array $param, array $pkColumns): void {
         $colums = empty($pkColumns) ? 'int' : implode(', ', $pkColumns);
         $dumpedParam = print_r($param, true);
-        $errorMessage = "Expected [{$colums}] as primary key, {$dumpedParam} provided";
+        $errorMessage = "Expected [{$colums}] as primary key, " . Html::encode($dumpedParam) . " provided";
         throw new InvalidArgumentException($errorMessage);
     }
 
@@ -195,7 +197,15 @@ class FindModelHelper
      * @return Player
      */
     public static function findPlayer(int|array $param): Player {
-        return self::findModel(Player::class, $param);
+        $model = self::findModel(Player::class, $param);
+        $identity = Yii::$app->has('user') ? Yii::$app->user->identity : null;
+        /** @var \common\models\User|null $identity */
+        if ($identity && !$identity->is_admin) {
+            if ($model->user_id !== $identity->id) {
+                throw new ForbiddenHttpException("You are not allowed to access this player.");
+            }
+        }
+        return $model;
     }
 
     /**
@@ -204,7 +214,16 @@ class FindModelHelper
      * @return Quest
      */
     public static function findQuest(int|array $param): Quest {
-        return self::findModel(Quest::class, $param);
+        $model = self::findModel(Quest::class, $param);
+        $identity = Yii::$app->has('user') ? Yii::$app->user->identity : null;
+        /** @var \common\models\User|null $identity */
+        if ($identity && !$identity->is_admin) {
+            $currentPlayerId = (int) Yii::$app->session->get('playerId');
+            if (!$model->getQuestPlayers()->where(['player_id' => $currentPlayerId])->exists()) {
+                throw new ForbiddenHttpException("You are not a member of this quest.");
+            }
+        }
+        return $model;
     }
 
     /**

@@ -10,6 +10,8 @@ use common\models\QuestPlayer;
 use common\models\Player;
 use common\models\Story;
 use common\models\StoryClass;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
 use Yii;
 use yii\web\NotFoundHttpException;
 use Exception;
@@ -185,7 +187,7 @@ class TavernManager extends BaseManager
         }
 
         if (!$this->isPlayerLevelValid($player)) {
-            return ['denied' => true, 'reason' => "canPlayerJoinQuest->Player {$player->name}'s level ({$player->level->name}) is not within story requirements ({$story?->min_level} to {$story?->max_level})"];
+            return ['denied' => true, 'reason' => "canPlayerJoinQuest->Player " . Html::encode((string) $player->name) . "'s level (" . Html::encode((string) $player->level->name) . ") is not within story requirements ({$story?->min_level} to {$story?->max_level})"];
         }
 
         $playerCount = $quest?->getCurrentPlayers()->count();
@@ -194,10 +196,10 @@ class TavernManager extends BaseManager
         }
 
         if (!$this->isPlayerClassValid($player)) {
-            return ['denied' => true, 'reason' => "canPlayerJoinQuest->Cannot welcome more players of class {$player->class->name}"];
+            return ['denied' => true, 'reason' => "canPlayerJoinQuest->Cannot welcome more players of class " . Html::encode((string) $player->class->name)];
         }
 
-        return ['denied' => false, 'reason' => "canPlayerJoinQuest->Player {$player->name} can join the quest"];
+        return ['denied' => false, 'reason' => "canPlayerJoinQuest->Player " . Html::encode((string) $player->name) . " can join the quest"];
     }
 
     /**
@@ -231,14 +233,14 @@ class TavernManager extends BaseManager
         if ($this->quest === null) {
             if ($player->quest_id) {
                 Yii::debug("*** Debug *** isPlayerValid - quest is null and player->quest_id is {$player->quest_id}");
-                return ['error' => true, 'denied' => true, 'reason' => "isPlayerValid->Player {$player->name} is already involved in another quest"];
+                return ['error' => true, 'denied' => true, 'reason' => "isPlayerValid->Player " . Html::encode((string) $player->name) . " is already involved in another quest"];
             }
         } elseif ($player->quest_id && $player->quest_id !== $this->quest->id) {
             Yii::debug("*** Debug *** isPlayerValid - quest is not null but player->quest_id is {$player->quest_id} <> quest->id {$this->quest->id}");
-            return ['error' => true, 'denied' => true, 'reason' => "isPlayerValid->Player {$player->name} is already involved in another quest"];
+            return ['error' => true, 'denied' => true, 'reason' => "isPlayerValid->Player " . Html::encode((string) $player->name) . " is already involved in another quest"];
         }
 
-        return ['error' => false, 'denied' => false, 'reason' => "isPlayerValid->Player {$player->name} is eligible to join a quest"];
+        return ['error' => false, 'denied' => false, 'reason' => "isPlayerValid->Player " . Html::encode((string) $player->name) . " is eligible to join a quest"];
     }
 
     /**
@@ -377,10 +379,13 @@ class TavernManager extends BaseManager
         $player->quest_id = $questId;
         $successfullySaved = $player->save();
         if (!$successfullySaved) {
-            return ['error' => true, 'message' => 'Could not save Player : ' . implode('\n', \yii\helpers\ArrayHelper::getColumn($player->errors, 0, false))];
+            $errors = ArrayHelper::getColumn($player->errors, 0, false);
+            /** @var string[] $errors */
+            $encodedErrors = array_map([Html::class, 'encode'], $errors);
+            return ['error' => true, 'message' => 'Could not save Player : ' . implode('\n', $encodedErrors)];
         }
         ContextManager::updateQuestContext($questId);
-        return ['error' => false, 'message' => "Player's quest_id updated to {$questId}"];
+        return ['error' => false, 'message' => "Player's quest_id updated to " . Html::encode((string) $questId)];
     }
 
     /**
@@ -428,7 +433,10 @@ class TavernManager extends BaseManager
             return ['error' => false, 'message' => 'Player successfully ' . ($reasonWhyPlayerQuit
                     ? 'left' : 'joined') . ' on the quest'];
         }
-        return ['error' => true, 'message' => 'Could not save QuestPlayer : ' . implode("\n", \yii\helpers\ArrayHelper::getColumn($questPlayer->errors, 0, false))];
+        $errors = ArrayHelper::getColumn($questPlayer->errors, 0, false);
+        /** @var string[] $errors */
+        $encodedErrors = array_map([Html::class, 'encode'], $errors);
+        return ['error' => true, 'message' => 'Could not save QuestPlayer : ' . implode("\n", $encodedErrors)];
     }
 
     /**
@@ -474,7 +482,7 @@ class TavernManager extends BaseManager
 
         // Player is already onboarded on a different quest => error
         if ($player->quest_id === null || $player->quest_id !== $quest->id) {
-            return ['error' => true, 'message' => "player {$player->name} (id {$player->id}) is not in quest={$quest->id}, player->quest_id=" . ($player->quest_id ?? "null")];
+            return ['error' => true, 'message' => "player " . Html::encode((string) $player->name) . " (id {$player->id}) is not in quest={$quest->id}, player->quest_id=" . ($player->quest_id ?? "null")];
         }
 
         $playerUpdate = $this->updatePlayerQuestId($player, null);
@@ -507,7 +515,10 @@ class TavernManager extends BaseManager
 
         $successfullySaved = $newTavern->save();
         if (!$successfullySaved) {
-            throw new Exception(implode("<br />", \yii\helpers\ArrayHelper::getColumn($newTavern->errors, 0, false)));
+            $errors = ArrayHelper::getColumn($newTavern->errors, 0, false);
+            /** @var string[] $errors */
+            $encodedErrors = array_map([Html::class, 'encode'], $errors);
+            throw new Exception(implode("<br />", $encodedErrors));
         }
 
         return $newTavern;
@@ -549,7 +560,7 @@ class TavernManager extends BaseManager
         }
 
         if ($quest->status !== AppStatus::WAITING->value) {
-            return ['canStart' => false, 'msg' => "Quest {$quest->name} is not in wating state."];
+            return ['canStart' => false, 'msg' => "Quest " . Html::encode((string) $quest->name) . " is not in wating state."];
         }
 
         $playersCount = $this->getCurrentPlayerCount();

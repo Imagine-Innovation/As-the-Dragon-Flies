@@ -5,6 +5,8 @@ namespace common\helpers;
 use common\components\AppStatus;
 use common\helpers\Utilities;
 use Yii;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
 use yii\helpers\Url;
 
 class Status
@@ -85,7 +87,10 @@ class Status
         if ($successfullySaved) {
             return true;
         }
-        throw new \Exception(implode("<br />", ArrayHelper::getColumn($model->errors, 0, false)));
+        $errors = ArrayHelper::getColumn($model->errors, 0, false);
+        /** @var string[] $errors */
+        $encodedErrors = array_map([Html::class, 'encode'], $errors);
+        throw new \Exception(implode("<br />", $encodedErrors));
     }
 
     /**

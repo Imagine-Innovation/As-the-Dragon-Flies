@@ -70,9 +70,9 @@ class ChatManager extends BaseManager
         Yii::debug($chatNotification->payload);
         Yii::debug($payload);
         $roundedTime = PayloadHelper::extractIntFromPayload('roundedTime', $payload) ?? $this->roundedTime();
-        $sender = PayloadHelper::extractStringFromPayload('playerName', $payload);
-        $message = PayloadHelper::extractStringFromPayload('message', $payload, '');
-        $avatar = PayloadHelper::extractStringFromPayload('avatar', $payload, self::DEFAULT_AVATAR);
+        $sender = Utilities::encode(PayloadHelper::extractStringFromPayload('playerName', $payload));
+        $message = Utilities::encode(PayloadHelper::extractStringFromPayload('message', $payload, ''));
+        $avatar = Utilities::encode(PayloadHelper::extractStringFromPayload('avatar', $payload, self::DEFAULT_AVATAR));
         return [
             'isAuthor' => ($chatNotification->initiator_id === $playerId), // defines is the current player is the one who initiate the chat message
             'displayedDateTime' => Utilities::formatDate($roundedTime),
