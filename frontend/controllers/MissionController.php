@@ -281,14 +281,17 @@ class MissionController extends Controller
      *
      * @param string $jsonParams
      * @param string $type
-     * @param class-string<\yii\db\ActiveRecord> $className
+     * @param string $className
      * @param string $snippet
      * @return string|Response
      */
     private function editMissionChild(string $jsonParams, string $type, string $className, string $snippet): string|Response {
         $searchParams = JsonHelper::decode($jsonParams);
 
-        $model = FindModelHelper::findModel($className, $searchParams, false);
+        /** @var class-string<\yii\db\ActiveRecord> $fullClassName */
+        $fullClassName = str_contains($className, '\\') ? $className : "\\common\\models\\{$className}";
+        $model = FindModelHelper::findModel($fullClassName, $searchParams, false);
+        /** @phpstan-ignore-next-line */
         $mission = $model->mission;
 
         return $this->updateDetailModel($model, $mission, $type, $snippet);
@@ -298,14 +301,17 @@ class MissionController extends Controller
      *
      * @param string $jsonParams
      * @param string $type
-     * @param class-string<\yii\db\ActiveRecord> $className
+     * @param string $className
      * @param string $snippet
      * @return string|Response
      */
     private function editDecorChild(string $jsonParams, string $type, string $className, string $snippet): string|Response {
         $searchParams = JsonHelper::decode($jsonParams);
 
-        $model = FindModelHelper::findModel($className, $searchParams, false);
+        /** @var class-string<\yii\db\ActiveRecord> $fullClassName */
+        $fullClassName = str_contains($className, '\\') ? $className : "\\common\\models\\{$className}";
+        $model = FindModelHelper::findModel($fullClassName, $searchParams, false);
+        /** @phpstan-ignore-next-line */
         $decor = $model->decor;
         $mission = $decor->mission;
 
@@ -316,14 +322,16 @@ class MissionController extends Controller
      *
      * @param string $jsonParams
      * @param string $type
-     * @param class-string<\yii\db\ActiveRecord> $className
+     * @param string $className
      * @param string $snippet
      * @return string|Response
      */
     private function editActionChild(string $jsonParams, string $type, string $className, string $snippet): string|Response {
         $searchParams = JsonHelper::decode($jsonParams);
 
-        $model = FindModelHelper::findModel($className, $searchParams, false);
+        /** @var class-string<\yii\db\ActiveRecord> $fullClassName */
+        $fullClassName = str_contains($className, '\\') ? $className : "\\common\\models\\{$className}";
+        $model = FindModelHelper::findModel($fullClassName, $searchParams, false);
         if ($type === 'Prerequisite') {
             $action = $model->nextAction;
         } elseif ($type === "Trigger") {

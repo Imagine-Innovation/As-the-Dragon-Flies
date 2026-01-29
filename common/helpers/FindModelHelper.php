@@ -195,7 +195,11 @@ class FindModelHelper
      * @return Player
      */
     public static function findPlayer(int|array $param): Player {
-        return self::findModel(Player::class, $param);
+        $model = self::findModel(Player::class, $param);
+        if ($model->user_id !== (int) Yii::$app->user->id && !Yii::$app->user->can('admin')) {
+            throw new \yii\web\ForbiddenHttpException("You do not have permission to access this player.");
+        }
+        return $model;
     }
 
     /**
@@ -204,7 +208,12 @@ class FindModelHelper
      * @return Quest
      */
     public static function findQuest(int|array $param): Quest {
-        return self::findModel(Quest::class, $param);
+        $model = self::findModel(Quest::class, $param);
+        $playerId = Yii::$app->session->get('playerId');
+        if ($playerId && !Yii::$app->user->can('admin')) {
+            \common\components\gameplay\QuestManager::isPlayerQuestMember($model->id, (int) $playerId);
+        }
+        return $model;
     }
 
     /**

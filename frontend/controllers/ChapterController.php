@@ -124,10 +124,8 @@ class ChapterController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel(int $id): Chapter {
-        if (($model = Chapter::findOne(['id' => $id])) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The requested chapter does not exist.');
+        /** @var Chapter $model */
+        $model = FindModelHelper::findModel(Chapter::class, ['id' => $id]);
+        return $model;
     }
 }

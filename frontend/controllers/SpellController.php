@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\components\ManageAccessRights;
+use common\helpers\FindModelHelper;
 use common\models\Spell;
 use frontend\components\AjaxRequest;
 use Yii;
@@ -110,10 +111,8 @@ class SpellController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel(int $id): Spell {
-        if (($model = Spell::findOne(['id' => $id])) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The spell your are looking for does not exist.');
+        /** @var Spell $model */
+        $model = FindModelHelper::findModel(Spell::class, ['id' => $id]);
+        return $model;
     }
 }

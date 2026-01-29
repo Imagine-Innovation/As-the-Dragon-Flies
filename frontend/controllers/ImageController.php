@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use common\models\Image;
 use common\models\ClassImage;
+use common\helpers\FindModelHelper;
 use frontend\components\AjaxRequest;
 use common\components\ManageAccessRights;
 use Yii;
@@ -14,6 +15,7 @@ use yii\web\UploadedFile;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\web\Response;
+use yii\helpers\Html;
 
 /**
  * ImageController implements the CRUD actions for Image model.
@@ -114,10 +116,10 @@ class ImageController extends Controller
         }
 
         $request = Yii::$app->request;
-        $imageId = $request->post('imageId');
-        $classId = $request->post('classId');
-        $className = $request->post('className');
-        $status = $request->post('status');
+        $imageId = (int) $request->post('imageId');
+        $classId = (int) $request->post('classId');
+        $className = (string) $request->post('className');
+        $status = (int) $request->post('status');
 
         $model = ClassImage::findOne(['image_id' => $imageId, 'class_id' => $classId]);
 
@@ -131,10 +133,11 @@ class ImageController extends Controller
             }
         }
 
+        $encodedClassName = Html::encode($className);
         if ($success) {
-            return ['error' => false, 'msg' => "Class $className has been " . (($status === 1) ? "added" : "removed") . " to the image."];
+            return ['error' => false, 'msg' => "Class $encodedClassName has been " . (($status === 1) ? "added" : "removed") . " to the image."];
         }
-        return ['error' => true, 'msg' => "Unable to " . (($status === 1) ? "add" : "remove") . " class $className to the image!"];
+        return ['error' => true, 'msg' => "Unable to " . (($status === 1) ? "add" : "remove") . " class $encodedClassName to the image!"];
     }
 
     /**
@@ -145,7 +148,7 @@ class ImageController extends Controller
      */
     public function actionView(int $id): string {
         return $this->render('view', [
-                    'model' => $this->findModel($id),
+                    'model' => FindModelHelper::findModel(Image::class, $id),
         ]);
     }
 
@@ -179,7 +182,8 @@ class ImageController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionUpdate(int $id): string|Response {
-        $model = $this->findModel($id);
+        /** @var Image $model */
+        $model = FindModelHelper::findModel(Image::class, $id);
 
         $post = (array) $this->request->post();
         if ($this->request->isPost && $model->load($post) && $model->save()) {
@@ -199,7 +203,7 @@ class ImageController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionDelete(int $id): Response {
-        $this->findModel($id)->delete();
+        FindModelHelper::findModel(Image::class, $id)->delete();
 
         return $this->redirect(['index']);
     }
@@ -216,9 +220,10 @@ class ImageController extends Controller
         }
 
         $request = Yii::$app->request;
-        $id = $request->post('id');
+        $id = (int) $request->post('id');
 
-        $model = $this->findModel($id);
+        /** @var Image $model */
+        $model = FindModelHelper::findModel(Image::class, $id);
 
         $model->image = UploadedFile::getInstance($model, 'image');
         if ($model->upload()) {
@@ -226,20 +231,5 @@ class ImageController extends Controller
         }
 
         return ['error' => true, 'msg' => 'Error encountered'];
-    }
-
-    /**
-     * Finds the Image model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id Primary key
-     * @return Image the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel(int $id): Image {
-        if (($model = Image::findOne(['id' => $id])) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The image you are looking for does not exist.');
     }
 }

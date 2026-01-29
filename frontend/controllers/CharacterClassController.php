@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\components\ManageAccessRights;
+use common\helpers\FindModelHelper;
 use common\models\CharacterClass;
 use common\models\ClassFeature;
 use common\models\Feature;
@@ -294,10 +295,8 @@ class CharacterClassController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel(int $id): CharacterClass {
-        if (($model = CharacterClass::findOne(['id' => $id])) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The character class you are looking for does not exist.');
+        /** @var CharacterClass $model */
+        $model = FindModelHelper::findModel(CharacterClass::class, (int) $id);
+        return $model;
     }
 }

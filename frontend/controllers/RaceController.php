@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\components\ManageAccessRights;
+use common\helpers\FindModelHelper;
 use common\models\Race;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -109,10 +110,8 @@ class RaceController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel(int $id): Race {
-        if (($model = Race::findOne(['id' => $id])) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The race your are looking for does not exist.');
+        /** @var Race $model */
+        $model = FindModelHelper::findModel(Race::class, (int) $id);
+        return $model;
     }
 }

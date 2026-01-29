@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\components\ManageAccessRights;
+use common\helpers\FindModelHelper;
 use common\models\AccessRight;
 use frontend\components\AjaxRequest;
 use Yii;
@@ -115,10 +116,8 @@ class AccessRightController extends Controller
 
         $request = Yii::$app->request;
         $id = (int) $request->post('id');
-        $model = AccessRight::findOne(['id' => $id]);
-        if (!$model) {
-            return ['error' => true, 'msg' => "Access right id {$id} not found!"];
-        }
+        /** @var AccessRight $model */
+        $model = FindModelHelper::findModel(AccessRight::class, ['id' => $id]);
 
         $access = $request->post('access');
         $status = $request->post('status') ? 1 : 0; // Ensure status is boolean (0 or 1)
@@ -209,10 +208,8 @@ class AccessRightController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel(int $id): AccessRight {
-        if (($model = AccessRight::findOne(['id' => $id])) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The access right you are looking for does not exist.');
+        /** @var AccessRight $model */
+        $model = FindModelHelper::findModel(AccessRight::class, ['id' => $id]);
+        return $model;
     }
 }

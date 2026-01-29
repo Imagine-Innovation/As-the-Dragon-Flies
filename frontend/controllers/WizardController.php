@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\components\ManageAccessRights;
+use common\helpers\FindModelHelper;
 use common\models\Wizard;
 use common\models\WizardQuestion;
 use Yii;
@@ -121,11 +122,9 @@ class WizardController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel(int $id): Wizard {
-        if (($model = Wizard::findOne(['id' => $id])) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The requested wizard does not exist.');
+        /** @var Wizard $model */
+        $model = FindModelHelper::findModel(Wizard::class, ['id' => $id]);
+        return $model;
     }
 
     /**
@@ -137,10 +136,8 @@ class WizardController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findQuestion(int $id): WizardQuestion {
-        if (($model = WizardQuestion::findOne(['id' => $id])) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The requested question does not exist.');
+        /** @var WizardQuestion $model */
+        $model = FindModelHelper::findModel(WizardQuestion::class, ['id' => $id]);
+        return $model;
     }
 }

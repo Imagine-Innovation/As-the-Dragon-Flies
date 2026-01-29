@@ -182,7 +182,7 @@ class PlayerController extends Controller
         $playerId = is_numeric($postPlayerId) ? (int) $postPlayerId : null;
 
         if ($playerId !== null) {
-            FindModelHelper::findPlayer(['id' => $playerId, 'user_id' => $userId]);
+            FindModelHelper::findPlayer(['id' => $playerId]);
         }
 
         $success = User::updateAll(
@@ -297,20 +297,6 @@ class PlayerController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel(int $id): Player {
-
-        $query = Player::find()
-                ->with(['race', 'class', 'background', 'playerAbilities', 'playerSkills', 'playerTraits'])
-                ->where(['id' => $id]);
-
-        $user = Yii::$app->user->identity;
-        if (!$user->is_admin) {
-            $query->andWhere(['user_id' => $user->id]);
-        }
-
-        if (($model = $query->one()) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The player you are looking for does not exist.');
+        return FindModelHelper::findPlayer(['id' => $id]);
     }
 }

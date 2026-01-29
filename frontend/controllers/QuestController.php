@@ -165,10 +165,6 @@ class QuestController extends Controller
         $tavern = $tavernManager->findTavern();
         $player = FindModelHelper::findPlayer(['id' => $playerId]);
 
-        if ($player->user_id !== (int) Yii::$app->user->id) {
-            throw new ForbiddenHttpException("You don't own this player.");
-        }
-
         // Validate player eligibility
         $canJoin = $tavernManager->canPlayerJoinQuest($player);
         if ($canJoin['denied']) {
@@ -425,9 +421,6 @@ class QuestController extends Controller
     {
 
         $player = FindModelHelper::findPlayer(['id' => $playerId]);
-        if ($player->user_id !== (int) Yii::$app->user->id) {
-            throw new ForbiddenHttpException("You don't own this player.");
-        }
 
         $questId = (int) $id;
         QuestManager::isPlayerCurrentlyInQuest($questId, (int) $playerId);
@@ -560,13 +553,6 @@ class QuestController extends Controller
     protected function findModel(?int $id = null): Quest
     {
         $questId = (int) ($id ?? Yii::$app->session->get('questId'));
-        $user = Yii::$app->user->identity;
-
-        if (!$user->is_admin) {
-            // For non-administrator users, limit access to quests in which their player participates.
-            QuestManager::isPlayerQuestMember($questId, $user->current_player_id ?? 0);
-        }
-
         return FindModelHelper::findQuest(['id' => $questId]);
     }
 

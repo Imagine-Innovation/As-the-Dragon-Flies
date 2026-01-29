@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\components\ManageAccessRights;
+use common\helpers\FindModelHelper;
 use common\models\Alignment;
 use Yii;
 use yii\web\Controller;
@@ -86,10 +87,8 @@ class AlignmentController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel(int $id): Alignment {
-        if (($model = Alignment::findOne(['id' => $id])) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The alignement you are looking for does not exist.');
+        /** @var Alignment $model */
+        $model = FindModelHelper::findModel(Alignment::class, ['id' => $id]);
+        return $model;
     }
 }

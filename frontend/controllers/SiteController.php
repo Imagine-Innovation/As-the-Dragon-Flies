@@ -165,10 +165,15 @@ class SiteController extends Controller
         ContextManager::initContext();
 
         // Get players sorted by creation date
+        /** @var \common\models\User|null $user */
         $user = Yii::$app->user->identity;
 
-        if ($user->is_admin) {
+        if ($user && $user->is_admin) {
             return $this->render('admin');
+        }
+
+        if (!$user) {
+            return $this->render('guest');
         }
 
         $playersQuery = $user->getPlayers()->orderBy(['created_at' => SORT_DESC]);

@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\components\ManageAccessRights;
+use common\helpers\FindModelHelper;
 use common\models\UserLogin;
 use frontend\components\AjaxRequest;
 use Yii;
@@ -113,14 +114,13 @@ class UserLoginController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel(int $userId, string $application, int $loginAt): UserLogin {
-        if (($model = UserLogin::findOne([
+        $param = [
             'user_id' => $userId,
             'application' => $application,
             'login_at' => $loginAt
-                ])) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The login event you are looking for does not exist.');
+        ];
+        /** @var UserLogin $model */
+        $model = FindModelHelper::findModel(UserLogin::class, $param);
+        return $model;
     }
 }

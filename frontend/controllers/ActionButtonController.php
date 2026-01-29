@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\models\ActionButton;
+use common\helpers\FindModelHelper;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\Response;
@@ -132,11 +133,9 @@ class ActionButtonController extends Controller
      * @return ActionButton the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel(int $id) {
-        if (($model = ActionButton::findOne(['id' => $id])) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The requested page does not exist.');
+    protected function findModel(int $id): ActionButton {
+        /** @var ActionButton $model */
+        $model = FindModelHelper::findModel(ActionButton::class, ['id' => $id]);
+        return $model;
     }
 }

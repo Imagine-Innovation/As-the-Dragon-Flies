@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\components\ManageAccessRights;
+use common\helpers\FindModelHelper;
 use common\models\Item;
 use frontend\components\AjaxRequest;
 use Yii;
@@ -50,7 +51,9 @@ class ItemController extends Controller
      * @return string
      */
     public function actionIndex(): string {
-        if (Yii::$app->user->identity->is_designer) {
+        /** @var \common\models\User|null $user */
+        $user = Yii::$app->user->identity;
+        if ($user && $user->is_designer) {
             return $this->render('index');
         }
         throw new UnauthorizedHttpException('Only designer users can see this page');
@@ -151,10 +154,8 @@ class ItemController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel(int $id): Item {
-        if (($model = Item::findOne(['id' => $id])) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The item you are looking for does not exist.');
+        /** @var Item $model */
+        $model = FindModelHelper::findModel(Item::class, (int) $id);
+        return $model;
     }
 }

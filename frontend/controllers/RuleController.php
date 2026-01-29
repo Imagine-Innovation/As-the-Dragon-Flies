@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use common\components\AppStatus;
 use common\components\ManageAccessRights;
+use common\helpers\FindModelHelper;
 use common\helpers\Status;
 use common\models\Rule;
 use common\models\RuleExpression;
@@ -214,10 +215,8 @@ class RuleController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel(int $id): Rule {
-        if (($model = Rule::findOne(['id' => $id])) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The rule your are looking for does not exist.');
+        /** @var Rule $model */
+        $model = FindModelHelper::findModel(Rule::class, ['id' => $id]);
+        return $model;
     }
 }
