@@ -2,25 +2,25 @@
 
 namespace common\extensions\EventHandler;
 
-use common\extensions\EventHandler\handlers\RegistrationHandler;
-use common\extensions\EventHandler\handlers\SendingMessageHandler;
+use common\extensions\EventHandler\factories\BroadcastMessageFactory;
 use common\extensions\EventHandler\handlers\GameActionHandler;
+use common\extensions\EventHandler\handlers\GameOverHandler;
+use common\extensions\EventHandler\handlers\NextMissionHandler;
+use common\extensions\EventHandler\handlers\NextTurnHandler;
 use common\extensions\EventHandler\handlers\PlayerJoiningHandler;
 use common\extensions\EventHandler\handlers\PlayerQuittingHandler;
 use common\extensions\EventHandler\handlers\QuestStartingHandler;
-use common\extensions\EventHandler\handlers\NextTurnHandler;
-use common\extensions\EventHandler\handlers\NextMissionHandler;
-use common\extensions\EventHandler\handlers\GameOverHandler;
-use common\extensions\EventHandler\factories\BroadcastMessageFactory;
+use common\extensions\EventHandler\handlers\RegistrationHandler;
+use common\extensions\EventHandler\handlers\SendingMessageHandler;
 use common\helpers\JsonHelper;
 use common\helpers\PayloadHelper;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use React\EventLoop\Loop;
 use React\EventLoop\LoopInterface;
-use React\Http\Server as HttpServer;
 use React\Http\Message\Response;
+use React\Http\Server as HttpServer;
 use React\Socket\SocketServer;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
 use Yii;
 use yii\base\Component;
 

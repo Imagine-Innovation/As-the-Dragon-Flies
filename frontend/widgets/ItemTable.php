@@ -5,9 +5,9 @@ namespace frontend\widgets;
 use common\models\Item;
 use Yii;
 use yii\base\Widget;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
-use yii\helpers\ArrayHelper;
 
 class ItemTable extends Widget
 {

@@ -4,9 +4,9 @@
 
 /** @var \frontend\models\PasswordResetRequestForm $model */
 use frontend\helpers\Caligraphy;
-use yii\helpers\Url;
-use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
+use yii\bootstrap5\Html;
+use yii\helpers\Url;
 
 $this->title = 'Request password reset';
 $this->params['breadcrumbs'][] = $this->title;

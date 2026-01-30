@@ -2,12 +2,12 @@
 
 namespace common\components\gameplay;
 
+use common\helpers\DiceRoller;
 use common\models\Item;
 use common\models\Outcome;
 use common\models\Player;
 use common\models\Quest;
 use common\models\QuestPlayer;
-use common\helpers\DiceRoller;
 use Yii;
 
 class PlayerManager extends BaseManager

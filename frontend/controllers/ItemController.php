@@ -6,11 +6,11 @@ use common\components\ManageAccessRights;
 use common\models\Item;
 use frontend\components\AjaxRequest;
 use Yii;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UnauthorizedHttpException;
-use yii\filters\AccessControl;
 use yii\web\Response;
+use yii\web\UnauthorizedHttpException;
 
 /**
  * ItemController implements the CRUD actions for Item model.

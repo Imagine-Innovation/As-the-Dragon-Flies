@@ -1,9 +1,9 @@
 <?php
 
-use yii\helpers\Url;
 use frontend\components\Shopping;
-use frontend\widgets\CurrentPlayer;
 use frontend\widgets\Button;
+use frontend\widgets\CurrentPlayer;
+use yii\helpers\Url;
 
 /** @var yii\web\View $this */
 /** @var common\models\Item[] $items */

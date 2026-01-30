@@ -1,9 +1,9 @@
 <?php
 
 use common\components\AppStatus;
-use yii\helpers\Url;
 use frontend\widgets\Button;
 use frontend\widgets\PlayerCharacteristics;
+use yii\helpers\Url;
 
 /** @var yii\web\View $this */
 /** @var common\models\Player $player */

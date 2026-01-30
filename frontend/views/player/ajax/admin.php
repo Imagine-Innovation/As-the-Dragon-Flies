@@ -1,11 +1,11 @@
 <?php
 
-use common\helpers\Utilities;
 use common\helpers\Status;
-use yii\helpers\Url;
+use common\helpers\Utilities;
+use frontend\widgets\ActionButtons;
 use frontend\widgets\Pagination;
 use frontend\widgets\RecordCount;
-use frontend\widgets\ActionButtons;
+use yii\helpers\Url;
 
 /** @var yii\web\View $this */
 /** @var frontend\models\PlayerBuilder[] $models */

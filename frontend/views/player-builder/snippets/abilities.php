@@ -1,8 +1,8 @@
 <?php
 
+use common\helpers\Utilities;
 use frontend\widgets\AbilityChart;
 use frontend\widgets\Button;
-use common\helpers\Utilities;
 
 /** @var yii\web\View $this */
 /** @var frontend\models\PlayerBuilder $model */

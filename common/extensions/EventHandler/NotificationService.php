@@ -6,9 +6,9 @@ use common\extensions\EventHandler\contracts\BroadcastServiceInterface;
 use common\extensions\EventHandler\dtos\NewMessageDto;
 use common\extensions\EventHandler\factories\BroadcastMessageFactory;
 use common\extensions\EventHandler\LoggerService;
-use common\models\Notification;
 use common\helpers\JsonHelper;
 use common\helpers\PayloadHelper;
+use common\models\Notification;
 
 class NotificationService
 {

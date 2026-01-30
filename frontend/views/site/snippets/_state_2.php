@@ -1,6 +1,5 @@
 <?php
 
-use frontend\widgets\Button;
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */

@@ -2,11 +2,11 @@
 
 namespace common\extensions\EventHandler;
 
-use Ratchet\MessageComponentInterface;
-use Ratchet\ConnectionInterface;
 use common\extensions\EventHandler\contracts\MessageHandlerInterface;
 use common\extensions\EventHandler\LoggerService;
 use common\extensions\EventHandler\WebSocketServerManager;
+use Ratchet\ConnectionInterface;
+use Ratchet\MessageComponentInterface;
 
 class WebSocketHandler implements MessageComponentInterface
 {

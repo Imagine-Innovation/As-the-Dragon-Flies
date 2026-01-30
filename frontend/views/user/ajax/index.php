@@ -1,10 +1,10 @@
 <?php
 
-use common\helpers\Status;
 use common\helpers\SpecialCheckBox;
+use common\helpers\Status;
+use frontend\widgets\ActionButtons;
 use frontend\widgets\Pagination;
 use frontend\widgets\RecordCount;
-use frontend\widgets\ActionButtons;
 
 /** @var yii\web\View $this */
 /** @var common\models\User[] $models */

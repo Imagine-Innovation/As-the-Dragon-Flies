@@ -1,9 +1,9 @@
 <?php
 
-use yii\helpers\Html;
-use yii\helpers\Url;
 use frontend\widgets\Pagination;
 use frontend\widgets\RecordCount;
+use yii\helpers\Html;
+use yii\helpers\Url;
 
 /** @var yii\web\View $this */
 /** @var common\models\Spell[] $models */

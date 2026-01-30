@@ -3,10 +3,10 @@
 namespace common\components\gameplay;
 
 use common\components\ContextManager;
-use common\models\Notification;
 use common\helpers\JsonHelper;
 use common\helpers\PayloadHelper;
 use common\helpers\Utilities;
+use common\models\Notification;
 use Yii;
 
 class ChatManager extends BaseManager

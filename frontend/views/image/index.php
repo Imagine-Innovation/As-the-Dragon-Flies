@@ -1,9 +1,9 @@
 <?php
 
 use common\models\RaceGroup;
-use yii\helpers\Html;
 use frontend\widgets\AjaxContainer;
 use frontend\widgets\Button;
+use yii\helpers\Html;
 
 /** @var yii\web\View $this */
 /** @var yii\data\ActiveDataProvider $dataProvider */

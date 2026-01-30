@@ -2,17 +2,17 @@
 
 namespace common\extensions\EventHandler\factories;
 
+use common\extensions\EventHandler\contracts\BroadcastMessageInterface;
+use common\extensions\EventHandler\dtos\ErrorDto;
+use common\extensions\EventHandler\dtos\GameActionDto;
+use common\extensions\EventHandler\dtos\GameOverDto;
 use common\extensions\EventHandler\dtos\NewMessageDto;
+use common\extensions\EventHandler\dtos\NextMissionDto;
+use common\extensions\EventHandler\dtos\NextTurnDto;
+use common\extensions\EventHandler\dtos\NotificationDto;
 use common\extensions\EventHandler\dtos\PlayerJoinedDto;
 use common\extensions\EventHandler\dtos\PlayerQuitDto;
 use common\extensions\EventHandler\dtos\QuestStartedDto;
-use common\extensions\EventHandler\dtos\GameActionDto;
-use common\extensions\EventHandler\dtos\NextTurnDto;
-use common\extensions\EventHandler\dtos\NextMissionDto;
-use common\extensions\EventHandler\dtos\GameOverDto;
-use common\extensions\EventHandler\dtos\NotificationDto;
-use common\extensions\EventHandler\dtos\ErrorDto;
-use common\extensions\EventHandler\contracts\BroadcastMessageInterface;
 use common\extensions\EventHandler\LoggerService;
 use Yii;
 

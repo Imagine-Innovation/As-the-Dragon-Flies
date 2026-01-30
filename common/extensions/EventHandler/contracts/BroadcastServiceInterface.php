@@ -2,8 +2,8 @@
 
 namespace common\extensions\EventHandler\contracts;
 
-use Ratchet\ConnectionInterface;
 use common\models\QuestSession;
+use Ratchet\ConnectionInterface;
 
 interface BroadcastServiceInterface {
     public function sendToConnection(ConnectionInterface $connection, string $jsonData): void;

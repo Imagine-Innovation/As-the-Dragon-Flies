@@ -2,16 +2,16 @@
 
 namespace common\extensions\EventHandler;
 
-use Ratchet\Server\IoServer;
-use Ratchet\Http\HttpServer;
-use Ratchet\WebSocket\WsServer;
-use React\EventLoop\LoopInterface;
-use React\Socket\SocketServer;
 use common\extensions\EventHandler\contracts\MessageHandlerInterface;
 use common\extensions\EventHandler\LoggerService;
 use common\extensions\EventHandler\QuestSessionManager;
 use common\extensions\EventHandler\WebSocketHandler;
 use Ratchet\ConnectionInterface;
+use Ratchet\Http\HttpServer;
+use Ratchet\Server\IoServer;
+use Ratchet\WebSocket\WsServer;
+use React\EventLoop\LoopInterface;
+use React\Socket\SocketServer;
 
 class WebSocketServerManager
 {

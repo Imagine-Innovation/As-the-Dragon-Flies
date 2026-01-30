@@ -4,10 +4,10 @@ namespace frontend\controllers;
 
 use common\models\ActionButton;
 use yii\data\ActiveDataProvider;
-use yii\web\Controller;
-use yii\web\Response;
-use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Controller;
+use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
  * ActionButtonController implements the CRUD actions for ActionButton model.

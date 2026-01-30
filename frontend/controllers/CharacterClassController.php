@@ -6,16 +6,14 @@ use common\components\ManageAccessRights;
 use common\models\CharacterClass;
 use common\models\ClassFeature;
 use common\models\Feature;
-use common\models\ClassProficiency;
 use common\models\Level;
 use common\models\Proficiency;
 use Yii;
 use yii\data\ActiveDataProvider;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UnauthorizedHttpException;
-use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
 use yii\web\Response;
 
 /**

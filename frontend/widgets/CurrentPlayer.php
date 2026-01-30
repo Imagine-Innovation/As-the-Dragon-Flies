@@ -2,10 +2,10 @@
 
 namespace frontend\widgets;
 
-use yii\base\Widget;
 use common\components\AppStatus;
 use common\models\Player;
 use common\models\User;
+use yii\base\Widget;
 
 class CurrentPlayer extends Widget
 {

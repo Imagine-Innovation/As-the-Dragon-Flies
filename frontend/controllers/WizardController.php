@@ -7,10 +7,10 @@ use common\models\Wizard;
 use common\models\WizardQuestion;
 use Yii;
 use yii\data\ActiveDataProvider;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
 use yii\web\Response;
 
 /**

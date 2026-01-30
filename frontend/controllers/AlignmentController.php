@@ -5,9 +5,9 @@ namespace frontend\controllers;
 use common\components\ManageAccessRights;
 use common\models\Alignment;
 use Yii;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\AccessControl;
 use yii\web\Response;
 
 /**

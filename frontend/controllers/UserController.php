@@ -8,15 +8,14 @@ use common\helpers\Status;
 use common\models\User;
 use frontend\components\AjaxRequest;
 use Yii;
+use yii\behaviors\AttributeBehavior;
 use yii\data\ActiveDataProvider;
+use yii\db\ActiveRecord;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UnauthorizedHttpException;
-use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
 use yii\web\Response;
-use yii\db\ActiveRecord;
-use yii\behaviors\AttributeBehavior;
 
 /**
  * UserController implements the CRUD actions for User model.

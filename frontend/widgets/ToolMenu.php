@@ -2,8 +2,8 @@
 
 namespace frontend\widgets;
 
-use common\models\Menu;
 use common\components\ManageAccessRights;
+use common\models\Menu;
 use Yii;
 use yii\base\Widget;
 

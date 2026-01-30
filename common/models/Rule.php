@@ -6,10 +6,10 @@ use common\components\AppStatus;
 use common\components\RuleNode;
 use common\components\RuleParser;
 use common\components\RuleValidator;
+use common\helpers\ModelHelper;
 use common\models\RuleCondition;
 use common\models\RuleExpression;
 use common\models\RuleModel;
-use common\helpers\ModelHelper;
 use Yii;
 
 /**

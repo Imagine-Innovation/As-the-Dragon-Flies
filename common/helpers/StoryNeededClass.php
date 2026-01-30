@@ -19,9 +19,9 @@
 
 namespace common\helpers;
 
-use frontend\widgets\CheckBox;
 use common\models\CharacterClass;
 use common\models\Story;
+use frontend\widgets\CheckBox;
 
 class StoryNeededClass {
 

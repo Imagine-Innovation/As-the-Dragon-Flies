@@ -4,9 +4,9 @@
 
 /** @var \frontend\models\SignupForm $model */
 use frontend\helpers\Caligraphy;
-use yii\helpers\Url;
-use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
+use yii\bootstrap5\Html;
+use yii\helpers\Url;
 
 $this->title = 'Signup';
 $this->params['breadcrumbs'][] = $this->title;

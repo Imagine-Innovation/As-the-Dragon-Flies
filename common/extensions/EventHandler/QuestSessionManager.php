@@ -2,9 +2,9 @@
 
 namespace common\extensions\EventHandler;
 
-use common\models\QuestSession; // Required for QuestSession model usage
-use common\extensions\EventHandler\LoggerService; // Will be injected
+use common\extensions\EventHandler\LoggerService;
 use common\helpers\PayloadHelper;
+use common\models\QuestSession;
 
 class QuestSessionManager
 {

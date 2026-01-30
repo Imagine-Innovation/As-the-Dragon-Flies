@@ -7,11 +7,11 @@ use common\models\Notification;
 use frontend\components\AjaxRequest;
 use frontend\components\QuestNotification;
 use Yii;
-use yii\web\Controller;
-use yii\web\NotFoundHttpException;
-use yii\web\ForbiddenHttpException;
-use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
+use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
+use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 /**

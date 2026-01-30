@@ -2,9 +2,9 @@
 
 namespace common\models\events;
 
+use common\models\events\SendingMessageEvent;
 use common\models\Player;
 use common\models\Quest;
-use common\models\events\SendingMessageEvent;
 use Yii;
 
 class PlayerJoiningEvent extends Event

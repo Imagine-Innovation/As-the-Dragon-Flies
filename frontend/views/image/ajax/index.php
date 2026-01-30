@@ -1,9 +1,9 @@
 <?php
 
 use common\models\CharacterClass;
+use frontend\widgets\CheckBox;
 use frontend\widgets\Pagination;
 use frontend\widgets\RecordCount;
-use frontend\widgets\CheckBox;
 
 /** @var yii\web\View $this */
 /** @var common\models\Image[] $models */

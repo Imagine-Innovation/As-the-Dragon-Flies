@@ -1,8 +1,8 @@
 <?php
 
 use frontend\assets\AppAsset;
-use yii\helpers\Url;
 use frontend\widgets\ToolMenu;
+use yii\helpers\Url;
 
 /** @var \yii\web\View $this */
 $currentUser = Yii::$app->user->identity;

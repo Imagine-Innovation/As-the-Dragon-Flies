@@ -2,18 +2,18 @@
 
 namespace frontend\controllers;
 
-use common\models\Image;
-use common\models\ClassImage;
-use frontend\components\AjaxRequest;
 use common\components\ManageAccessRights;
+use common\models\ClassImage;
+use common\models\Image;
+use frontend\components\AjaxRequest;
 use Yii;
 use yii\data\ActiveDataProvider;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UploadedFile;
-use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
 use yii\web\Response;
+use yii\web\UploadedFile;
 
 /**
  * ImageController implements the CRUD actions for Image model.

@@ -9,13 +9,13 @@ use common\models\Rule;
 use common\models\RuleExpression;
 use frontend\components\AjaxRequest;
 use Yii;
+use yii\behaviors\AttributeBehavior;
+use yii\db\ActiveRecord;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
-use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
-use yii\db\ActiveRecord;
-use yii\behaviors\AttributeBehavior;
 
 /**
  * RuleController implements the CRUD actions for Rule model.

@@ -2,8 +2,8 @@
 
 namespace frontend\models;
 
-use common\models\User;
 use common\components\AppStatus;
+use common\models\User;
 use Yii;
 use yii\base\Model;
 

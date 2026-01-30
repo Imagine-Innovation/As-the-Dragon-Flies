@@ -1,8 +1,8 @@
 <?php
 
 use common\models\ItemType;
-use yii\helpers\Html;
 use frontend\widgets\AjaxContainer;
+use yii\helpers\Html;
 
 /** @var yii\web\View $this */
 /** @var int $count: total number of records retrived by the query */

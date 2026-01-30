@@ -12,16 +12,15 @@ use common\models\Item;
 use common\models\Player;
 use common\models\PlayerItem;
 use common\models\PlayerLanguage;
-use common\models\Skill;
 use frontend\components\AjaxRequest;
 use frontend\components\BuilderComponent;
 use frontend\components\PlayerComponent;
 use frontend\models\PlayerBuilder;
 use Yii;
+use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\AccessControl;
 use yii\web\Response;
 
 //use yii\behaviors\AttributeBehavior;

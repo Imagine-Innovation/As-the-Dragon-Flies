@@ -5,7 +5,6 @@ namespace frontend\controllers;
 use common\components\ManageAccessRights;
 use common\helpers\FindModelHelper;
 use common\models\Chapter;
-use common\models\Story;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;

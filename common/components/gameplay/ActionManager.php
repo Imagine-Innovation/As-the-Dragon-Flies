@@ -8,11 +8,11 @@ use common\helpers\DiceRoller;
 use common\models\Action;
 use common\models\ActionFlow;
 use common\models\ActionTypeSkill;
+use common\models\Outcome;
 use common\models\Player;
 use common\models\PlayerSkill;
 use common\models\QuestAction;
 use common\models\QuestProgress;
-use common\models\Outcome;
 use Yii;
 
 class ActionManager extends BaseManager

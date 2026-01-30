@@ -2,10 +2,10 @@
 
 namespace frontend\widgets;
 
-use Yii;
-use yii\base\Widget;
 use common\models\RuleCondition;
 use common\models\RuleExpression;
+use Yii;
+use yii\base\Widget;
 
 class RuleParsingTree extends Widget
 {

@@ -10,11 +10,11 @@ use common\models\PlayerBody;
 use common\models\PlayerItem;
 use frontend\components\Inventory;
 use Yii;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
-use yii\helpers\ArrayHelper;
 use yii\web\Response;
 
 /**
