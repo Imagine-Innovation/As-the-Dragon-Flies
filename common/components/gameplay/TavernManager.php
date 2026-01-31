@@ -545,7 +545,7 @@ class TavernManager extends BaseManager
         $quest = $this->getQuest();
         Yii::debug("*** debug *** - questCanStart - questId={$quest->id}, initiatorId={$quest->initiator_id}, playerId={$playerId}");
         if ($playerId !== $quest->initiator_id) {
-            return ['canStart' => false, 'msg' => "Your are the quest initiator"];
+            return ['canStart' => false, 'msg' => "Your are not the quest initiator"];
         }
 
         if ($quest->status !== AppStatus::WAITING->value) {
