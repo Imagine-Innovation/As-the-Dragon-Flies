@@ -1,13 +1,15 @@
 <?php
 
 use common\helpers\Utilities;
+use common\models\History;
+use frontend\models\PlayerBuilder;
 use frontend\widgets\ModalDesc;
 
 /** @var yii\web\View $this */
-/** @var frontend\models\PlayerBuilder $model */
+/** @var PlayerBuilder $model */
 /** @var string[] $paragraphs */
 $field_name = 'description';
-$histories = common\models\History::find()->all();
+$histories = History::find()->all();
 ?>
 <!-- Character Builder - <?= $field_name ?> BuilderTab Widget -->
 <?= Utilities::formatMultiLine($paragraphs) ?>
@@ -20,7 +22,7 @@ $histories = common\models\History::find()->all();
                     <div class="card-body">
                         <div class="custom-control custom-radio card-title">
                             <input type="radio" id="<?= $field_name ?><?= $history->id ?>" name="<?= $field_name ?>" class="custom-control-input"
-                                   onchange="PlayerBuilder.setProperty('description', `<?= Utilities::encode($history->description ?? '') ?>`);">
+                                   onchange="PlayerBuilder.setProperty('history', `<?= Utilities::encode($history->description ?? '') ?>`);">
                             <label class="custom-control-label text-decoration" for="<?= $field_name ?><?= $history->id ?>"><?= $history->name ?></label>
                         </div>
                         <h6 class="card-subtitle text-muted">

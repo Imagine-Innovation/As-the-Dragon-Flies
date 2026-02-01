@@ -3,12 +3,14 @@
 namespace common\extensions\EventHandler\handlers;
 
 use common\components\AppStatus;
+use common\models\QuestPlayer;
 use common\extensions\EventHandler\BroadcastService;
 use common\extensions\EventHandler\contracts\SpecificMessageHandlerInterface;
 use common\extensions\EventHandler\factories\BroadcastMessageFactory;
 use common\extensions\EventHandler\LoggerService;
 use common\extensions\EventHandler\QuestSessionManager;
 use common\helpers\PayloadHelper;
+use Ratchet\ConnectionInterface;
 
 class RegistrationHandler implements SpecificMessageHandlerInterface
 {

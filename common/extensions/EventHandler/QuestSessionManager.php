@@ -111,21 +111,21 @@ class QuestSessionManager
         ]);
         $this->logger->log("QuestSessionManager: Attempting to save new QuestSession", $session->getAttributes());
 
+        $successfullySaved = false;
         try {
             $successfullySaved = $session->save();
-            if ($successfullySaved) {
-                $this->logger->log("QuestSessionManager: Successfully saved new QuestSession: id=[{$session->id}]");
-            } else {
-                $this->logger->log("QuestSessionManager: Failed to save new QuestSession: sessionId=[{$sessionId}]. Errors: " . print_r($session->getErrors(), true), null, 'error');
-            }
         } catch (\Exception $e) {
-            $saved = false;
             $this->logger->log("QuestSessionManager: Exception while saving new QuestSession: sessionId=[{$sessionId}]. Error: " . $e->getMessage(), $e->getTraceAsString(), 'error');
         }
 
+        if ($successfullySaved) {
+            $this->logger->log("QuestSessionManager: Successfully saved new QuestSession: id=[{$session->id}]");
+        } else {
+            $this->logger->log("QuestSessionManager: Failed to save new QuestSession: sessionId=[{$sessionId}]. Errors: " . print_r($session->getErrors(), true), null, 'error');
+        }
         $this->logQuestSession("QuestSession status after newSession attempt for sessionId=[{$sessionId}]");
         $this->logger->logEnd("QuestSessionManager: newSession");
-        return $saved;
+        return $successfullySaved;
     }
 
     /**
@@ -201,22 +201,23 @@ class QuestSessionManager
         }
 
         $this->logger->log("QuestSessionManager: Attempting to update QuestSession: id=[{$session->id}]", $session->getDirtyAttributes());
+
+        $successfullySaved = false;
         try {
             $successfullySaved = $session->save();
-            if ($successfullySaved) {
-                $this->logger->log("QuestSessionManager: Successfully updated QuestSession: id=[{$session->id}]");
-            } else {
-                $this->logger->log("QuestSessionManager: Failed to update QuestSession: id=[{$session->id}]. Errors: " . print_r($session->getErrors(), true), null, 'error');
-            }
         } catch (\Exception $e) {
             $this->logger->log("QuestSessionManager: Exception while updating QuestSession: id=[{$session->id}]. Error: " . $e->getMessage(), $e->getTraceAsString(), 'error');
-            $updated = false;
         }
 
+        if ($successfullySaved) {
+            $this->logger->log("QuestSessionManager: Successfully updated QuestSession: id=[{$session->id}]");
+        } else {
+            $this->logger->log("QuestSessionManager: Failed to update QuestSession: id=[{$session->id}]. Errors: " . print_r($session->getErrors(), true), null, 'error');
+        }
         $this->logQuestSession("QuestSession status after updateSession attempt for session=[{$session->id}]");
-        $this->logger->logEnd("QuestSessionManager: updateSession: " . ($updated
+        $this->logger->logEnd('QuestSessionManager: updateSession: ' . ($successfullySaved
                             ? "success" : "failed"));
-        return $updated;
+        return $successfullySaved;
     }
 
     /**

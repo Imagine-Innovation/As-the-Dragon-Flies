@@ -625,7 +625,7 @@ class PlayerItemController extends Controller
     /**
      *
      * @param \yii\web\Request $request
-     * @return array{error: bool, msg: string, player?: Player, playerItem?: PlayerItem, status?: int|mixed}
+     * @return array{error: bool, msg: string, player?: Player, playerItem?: PlayerItem, status?: int}
      */
     private function prepareAjax(\yii\web\Request $request): array
     {
@@ -636,7 +636,8 @@ class PlayerItemController extends Controller
         $playerId = Yii::$app->session->get('playerId');
         $player = FindModelHelper::findPlayer(['id' => $playerId]);
         $itemId = $request->post('item_id');
-        $status = $request->post('status', 0);
+        $postStatus = $request->post('status', 0);
+        $status = is_numeric($postStatus) ? (int) $postStatus : 0;
         $playerItem = FindModelHelper::findPlayerItem(['player_id' => $playerId, 'item_id' => $itemId]);
         return ['error' => false, 'msg' => '', 'player' => $player, 'playerItem' => $playerItem, 'status' => $status];
     }

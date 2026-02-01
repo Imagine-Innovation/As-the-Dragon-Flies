@@ -23,7 +23,7 @@ use Yii;
  * @property int|null $image_id Foreign key to “image” table. May be empty if no avatar is chosen.
  * @property int|null $quest_id Optional foreign key to “quest” table
  * @property string|null $name Character name
- * @property string|null $description Player description
+ * @property string|null $history Player's history
  * @property int|null $status Status of the player (Deleted=0, Inactive=9, Active=10)
  * @property string|null $gender Gender: C=Child, F=Femelle, M=Male
  * @property int|null $age Age of the player. Validated regarding the actual race
@@ -111,7 +111,7 @@ class Player extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['alignment_id', 'image_id', 'quest_id', 'name', 'description', 'gender', 'age', 'speed', 'created_at', 'updated_at'], 'default', 'value' => null],
+            [['alignment_id', 'image_id', 'quest_id', 'name', 'history', 'gender', 'age', 'speed', 'created_at', 'updated_at'], 'default', 'value' => null],
             [['level_id'], 'default', 'value' => 1],
             [['status'], 'default', 'value' => AppStatus::INACTIVE->value],
             [['status'], 'in', 'range' => AppStatus::getValuesForPlayer()],
@@ -119,8 +119,8 @@ class Player extends \yii\db\ActiveRecord
             [['armor_class'], 'default', 'value' => 10],
             [['class_id', 'user_id', 'race_id', 'background_id'], 'required'],
             [['class_id', 'level_id', 'user_id', 'race_id', 'background_id', 'alignment_id', 'image_id', 'quest_id', 'status', 'age', 'experience_points', 'hit_points', 'max_hit_points', 'armor_class', 'speed', 'created_at', 'updated_at'], 'integer'],
-            [['description', 'gender'], 'string'],
-            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
+            [['history', 'gender'], 'string'],
+            [['history'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name'], 'string', 'max' => 64],
             ['name', 'match', 'pattern' => '/^[\p{L}\p{N}\s\'-]+$/u', 'message' => 'Name can only contain letters, numbers, spaces, hyphens, and apostrophes.'],
             ['gender', 'in', 'range' => array_keys(self::optsGender())],
@@ -151,7 +151,7 @@ class Player extends \yii\db\ActiveRecord
             'image_id' => 'Foreign key to “image” table. May be empty if no avatar is chosen.',
             'quest_id' => 'Optional foreign key to “quest” table',
             'name' => 'Character name',
-            'description' => 'Player description',
+            'history' => 'Player\' history',
             'status' => 'Status of the player (Deleted=0, Inactive=9, Active=10)',
             'gender' => 'Gender: C=Child, F=Femelle, M=Male',
             'age' => 'Age of the player. Validated regarding the actual race',
