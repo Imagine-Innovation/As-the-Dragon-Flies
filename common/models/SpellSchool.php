@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\helpers\RichTextHelper;
 use Yii;
 
 /**
@@ -19,18 +20,21 @@ class SpellSchool extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'spell_school';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['description'], 'default', 'value' => null],
             [['name'], 'required'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name'], 'string', 'max' => 64],
             [['name'], 'unique'],
         ];
@@ -39,7 +43,8 @@ class SpellSchool extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'name' => 'Spell school',
@@ -52,7 +57,8 @@ class SpellSchool extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Spell>
      */
-    public function getSpells() {
+    public function getSpells()
+    {
         return $this->hasMany(Spell::class, ['school_id' => 'id']);
     }
 }

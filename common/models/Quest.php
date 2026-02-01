@@ -3,6 +3,7 @@
 namespace common\models;
 
 use common\components\AppStatus;
+use common\helpers\RichTextHelper;
 use Yii;
 
 /**
@@ -47,14 +48,16 @@ class Quest extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'quest';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['current_chapter_id', 'current_player_id', 'initiator_id', 'description', 'image', 'started_at', 'completed_at'], 'default', 'value' => null],
             [['status'], 'default', 'value' => AppStatus::WAITING->value],
@@ -62,6 +65,7 @@ class Quest extends \yii\db\ActiveRecord
             [['story_id', 'name'], 'required'],
             [['story_id', 'current_chapter_id', 'current_player_id', 'initiator_id', 'status', 'created_at', 'started_at', 'completed_at', 'local_time', 'elapsed_time'], 'integer'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name', 'image'], 'string', 'max' => 64],
             [['story_id'], 'exist', 'skipOnError' => true, 'targetClass' => Story::class, 'targetAttribute' => ['story_id' => 'id']],
             [['current_chapter_id'], 'exist', 'skipOnError' => true, 'targetClass' => Chapter::class, 'targetAttribute' => ['current_chapter_id' => 'id']],
@@ -73,7 +77,8 @@ class Quest extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'story_id' => 'Foreign key to “story” table',
@@ -97,7 +102,8 @@ class Quest extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Chapter>|null
      */
-    public function getCurrentChapter() {
+    public function getCurrentChapter()
+    {
         return $this->hasOne(Chapter::class, ['id' => 'current_chapter_id']);
     }
 
@@ -106,7 +112,8 @@ class Quest extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Player>|null
      */
-    public function getCurrentPlayer() {
+    public function getCurrentPlayer()
+    {
         return $this->hasOne(Player::class, ['id' => 'current_player_id']);
     }
 
@@ -115,7 +122,8 @@ class Quest extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Player>
      */
-    public function getInitiator() {
+    public function getInitiator()
+    {
         return $this->hasOne(Player::class, ['id' => 'initiator_id']);
     }
 
@@ -124,7 +132,8 @@ class Quest extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Notification>
      */
-    public function getNotifications() {
+    public function getNotifications()
+    {
         return $this->hasMany(Notification::class, ['quest_id' => 'id']);
     }
 
@@ -133,7 +142,8 @@ class Quest extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Player>
      */
-    public function getCurrentPlayers() {
+    public function getCurrentPlayers()
+    {
         return $this->hasMany(Player::class, ['quest_id' => 'id']);
     }
 
@@ -142,7 +152,8 @@ class Quest extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Player>
      */
-    public function getAllPlayers() {
+    public function getAllPlayers()
+    {
         return $this->hasMany(Player::class, ['id' => 'player_id'])->viaTable('quest_player', ['quest_id' => 'id']);
     }
 
@@ -151,7 +162,8 @@ class Quest extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<QuestPlayer>
      */
-    public function getQuestPlayers() {
+    public function getQuestPlayers()
+    {
         return $this->hasMany(QuestPlayer::class, ['quest_id' => 'id']);
     }
 
@@ -160,7 +172,8 @@ class Quest extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<QuestProgress>
      */
-    public function getQuestProgresses() {
+    public function getQuestProgresses()
+    {
         return $this->hasMany(QuestProgress::class, ['quest_id' => 'id']);
     }
 
@@ -169,7 +182,8 @@ class Quest extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<QuestSession>
      */
-    public function getQuestSessions() {
+    public function getQuestSessions()
+    {
         return $this->hasMany(QuestSession::class, ['quest_id' => 'id']);
     }
 
@@ -178,7 +192,8 @@ class Quest extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Story>
      */
-    public function getStory() {
+    public function getStory()
+    {
         return $this->hasOne(Story::class, ['id' => 'story_id']);
     }
 
@@ -187,7 +202,8 @@ class Quest extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<UserLog>
      */
-    public function getUserLogs() {
+    public function getUserLogs()
+    {
         return $this->hasMany(UserLog::class, ['quest_id' => 'id']);
     }
 
@@ -200,7 +216,8 @@ class Quest extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<QuestPlayer>
      */
-    public function getCurrentQuestPlayer() {
+    public function getCurrentQuestPlayer()
+    {
         return $this->hasOne(QuestPlayer::class, ['quest_id' => 'id', 'player_id' => 'current_player_id']);
     }
 
@@ -209,7 +226,8 @@ class Quest extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<QuestProgress>
      */
-    public function getCurrentQuestProgress() {
+    public function getCurrentQuestProgress()
+    {
         return $this->hasOne(QuestProgress::class, ['quest_id' => 'id'])
                         ->andWhere(['status' => AppStatus::IN_PROGRESS->value]);
     }

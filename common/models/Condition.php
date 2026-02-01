@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\helpers\RichTextHelper;
 use Yii;
 
 /**
@@ -22,18 +23,21 @@ class Condition extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'condition';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['description'], 'default', 'value' => null],
             [['name'], 'required'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name'], 'string', 'max' => 64],
         ];
     }
@@ -41,7 +45,8 @@ class Condition extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'name' => 'Condition name',
@@ -54,7 +59,8 @@ class Condition extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<CreatureImmunization>
      */
-    public function getCreatureImmunizations() {
+    public function getCreatureImmunizations()
+    {
         return $this->hasMany(CreatureImmunization::class, ['condition_id' => 'id']);
     }
 
@@ -63,7 +69,8 @@ class Condition extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Creature>
      */
-    public function getCreatures() {
+    public function getCreatures()
+    {
         return $this->hasMany(Creature::class, ['id' => 'creature_id'])->viaTable('creature_immunization', ['condition_id' => 'id']);
     }
 
@@ -72,7 +79,8 @@ class Condition extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<QuestPlayerCondition>
      */
-    public function getQuestPlayerConditions() {
+    public function getQuestPlayerConditions()
+    {
         return $this->hasMany(QuestPlayerCondition::class, ['condition_id' => 'id']);
     }
 
@@ -81,7 +89,8 @@ class Condition extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<QuestPlayer>
      */
-    public function getQuests() {
+    public function getQuests()
+    {
         return $this->hasMany(QuestPlayer::class, ['quest_id' => 'quest_id', 'player_id' => 'player_id'])->viaTable('quest_player_condition', ['condition_id' => 'id']);
     }
 }

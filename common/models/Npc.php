@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\helpers\RichTextHelper;
 use Yii;
 
 /**
@@ -29,14 +30,16 @@ class Npc extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'npc';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['description', 'image', 'first_dialog_id'], 'default', 'value' => null],
             [['npc_type_id'], 'default', 'value' => 7],
@@ -44,6 +47,7 @@ class Npc extends \yii\db\ActiveRecord
             [['mission_id', 'name'], 'required'],
             [['mission_id', 'npc_type_id', 'language_id', 'first_dialog_id'], 'integer'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name', 'image'], 'string', 'max' => 64],
             [['npc_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => NpcType::class, 'targetAttribute' => ['npc_type_id' => 'id']],
             [['mission_id'], 'exist', 'skipOnError' => true, 'targetClass' => Mission::class, 'targetAttribute' => ['mission_id' => 'id']],
@@ -55,7 +59,8 @@ class Npc extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'mission_id' => 'Foreign key to “mission” table',
@@ -73,7 +78,8 @@ class Npc extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Action>
      */
-    public function getActions() {
+    public function getActions()
+    {
         return $this->hasMany(Action::class, ['npc_id' => 'id']);
     }
 
@@ -82,7 +88,8 @@ class Npc extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Dialog>
      */
-    public function getDialogs() {
+    public function getDialogs()
+    {
         return $this->hasMany(Dialog::class, ['npc_id' => 'id']);
     }
 
@@ -91,7 +98,8 @@ class Npc extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Dialog>
      */
-    public function getFirstDialog() {
+    public function getFirstDialog()
+    {
         return $this->hasOne(Dialog::class, ['id' => 'first_dialog_id']);
     }
 
@@ -100,7 +108,8 @@ class Npc extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Language>
      */
-    public function getLanguage() {
+    public function getLanguage()
+    {
         return $this->hasOne(Language::class, ['id' => 'language_id']);
     }
 
@@ -109,7 +118,8 @@ class Npc extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Mission>
      */
-    public function getMission() {
+    public function getMission()
+    {
         return $this->hasOne(Mission::class, ['id' => 'mission_id']);
     }
 
@@ -118,7 +128,8 @@ class Npc extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<NpcType>
      */
-    public function getNpcType() {
+    public function getNpcType()
+    {
         return $this->hasOne(NpcType::class, ['id' => 'npc_type_id']);
     }
 }

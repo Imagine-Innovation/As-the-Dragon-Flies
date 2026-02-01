@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\helpers\RichTextHelper;
 use Yii;
 
 /**
@@ -20,22 +21,24 @@ use Yii;
 class Category extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'category';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['description'], 'default', 'value' => null],
             [['name'], 'required'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name'], 'string', 'max' => 64],
         ];
     }
@@ -43,7 +46,8 @@ class Category extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'name' => 'Category',
@@ -56,7 +60,8 @@ class Category extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<BackgroundItem>
      */
-    public function getBackgroundItems() {
+    public function getBackgroundItems()
+    {
         return $this->hasMany(BackgroundItem::class, ['category_id' => 'id']);
     }
 
@@ -65,7 +70,8 @@ class Category extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<ClassEquipment>
      */
-    public function getClassEquipments() {
+    public function getClassEquipments()
+    {
         return $this->hasMany(ClassEquipment::class, ['category_id' => 'id']);
     }
 
@@ -74,7 +80,8 @@ class Category extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<ClassItemProficiency>
      */
-    public function getClassItemProficiencies() {
+    public function getClassItemProficiencies()
+    {
         return $this->hasMany(ClassItemProficiency::class, ['category_id' => 'id']);
     }
 
@@ -83,7 +90,8 @@ class Category extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<ItemCategory>
      */
-    public function getItemCategories() {
+    public function getItemCategories()
+    {
         return $this->hasMany(ItemCategory::class, ['category_id' => 'id']);
     }
 
@@ -92,8 +100,8 @@ class Category extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Item>
      */
-    public function getItems() {
+    public function getItems()
+    {
         return $this->hasMany(Item::class, ['id' => 'item_id'])->viaTable('item_category', ['category_id' => 'id']);
     }
-
 }

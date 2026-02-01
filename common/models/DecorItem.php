@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\helpers\RichTextHelper;
 use Yii;
 
 /**
@@ -26,14 +27,16 @@ class DecorItem extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'decor_item';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['description', 'image'], 'default', 'value' => null],
             [['found'], 'default', 'value' => 25],
@@ -41,6 +44,7 @@ class DecorItem extends \yii\db\ActiveRecord
             [['decor_id', 'item_id', 'name'], 'required'],
             [['decor_id', 'item_id', 'found', 'identified'], 'integer'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name', 'image'], 'string', 'max' => 64],
             [['item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['item_id' => 'id']],
             [['decor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Decor::class, 'targetAttribute' => ['decor_id' => 'id']],
@@ -50,7 +54,8 @@ class DecorItem extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'decor_id' => 'Foreign key to “decor” table',
@@ -68,7 +73,8 @@ class DecorItem extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Action>
      */
-    public function getActions() {
+    public function getActions()
+    {
         return $this->hasMany(Action::class, ['decor_item_id' => 'id']);
     }
 
@@ -77,7 +83,8 @@ class DecorItem extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Decor>
      */
-    public function getDecor() {
+    public function getDecor()
+    {
         return $this->hasOne(Decor::class, ['id' => 'decor_id']);
     }
 
@@ -86,7 +93,8 @@ class DecorItem extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Item>
      */
-    public function getItem() {
+    public function getItem()
+    {
         return $this->hasOne(Item::class, ['id' => 'item_id']);
     }
 }

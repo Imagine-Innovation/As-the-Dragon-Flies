@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\helpers\RichTextHelper;
 use Yii;
 
 /**
@@ -31,20 +32,23 @@ class ShapeAttack extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'shape_attack';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['description', 'damage_dice', 'additional_damage_dice', 'reach', 'range_min', 'range_max'], 'default', 'value' => null],
             [['damage'], 'default', 'value' => 0],
             [['id', 'weapon_id', 'shape_id', 'damage_type_id', 'name'], 'required'],
             [['id', 'weapon_id', 'shape_id', 'damage_type_id', 'bonus', 'damage', 'reach', 'range_min', 'range_max'], 'integer'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name'], 'string', 'max' => 64],
             [['damage_dice', 'additional_damage_dice'], 'string', 'max' => 8],
             [['id'], 'unique'],
@@ -57,7 +61,8 @@ class ShapeAttack extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'weapon_id' => 'Foreign key to “weapon” table',
@@ -80,7 +85,8 @@ class ShapeAttack extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<DamageType>
      */
-    public function getDamageType() {
+    public function getDamageType()
+    {
         return $this->hasOne(DamageType::class, ['id' => 'damage_type_id']);
     }
 
@@ -89,7 +95,8 @@ class ShapeAttack extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Shape>
      */
-    public function getShape() {
+    public function getShape()
+    {
         return $this->hasOne(Shape::class, ['id' => 'shape_id']);
     }
 
@@ -98,7 +105,8 @@ class ShapeAttack extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Weapon>
      */
-    public function getWeapon() {
+    public function getWeapon()
+    {
         return $this->hasOne(Weapon::class, ['item_id' => 'weapon_id']);
     }
 }

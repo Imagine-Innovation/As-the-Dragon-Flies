@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\helpers\RichTextHelper;
 use Yii;
 
 /**
@@ -20,19 +21,22 @@ class ItemType extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'item_type';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['description'], 'default', 'value' => null],
             [['sort_order'], 'default', 'value' => 100],
             [['name'], 'required'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['sort_order'], 'integer'],
             [['name'], 'string', 'max' => 64],
         ];
@@ -41,7 +45,8 @@ class ItemType extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'name' => 'Item type',
@@ -55,7 +60,8 @@ class ItemType extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Item>
      */
-    public function getItems() {
+    public function getItems()
+    {
         return $this->hasMany(Item::class, ['item_type_id' => 'id']);
     }
 }

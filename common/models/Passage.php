@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\helpers\RichTextHelper;
 use Yii;
 
 /**
@@ -23,20 +24,23 @@ class Passage extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'passage';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['description', 'image'], 'default', 'value' => null],
             [['found'], 'default', 'value' => 25],
             [['mission_id', 'name'], 'required'],
             [['mission_id', 'found'], 'integer'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name', 'image'], 'string', 'max' => 64],
             [['mission_id'], 'exist', 'skipOnError' => true, 'targetClass' => Mission::class, 'targetAttribute' => ['mission_id' => 'id']],
         ];
@@ -45,7 +49,8 @@ class Passage extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'mission_id' => 'Foreign key to “mission” table',
@@ -61,7 +66,8 @@ class Passage extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Action>
      */
-    public function getActions() {
+    public function getActions()
+    {
         return $this->hasMany(Action::class, ['passage_id' => 'id']);
     }
 
@@ -70,7 +76,8 @@ class Passage extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Mission>
      */
-    public function getMission() {
+    public function getMission()
+    {
         return $this->hasOne(Mission::class, ['id' => 'mission_id']);
     }
 }

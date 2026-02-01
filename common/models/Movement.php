@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\helpers\RichTextHelper;
 use Yii;
 
 /**
@@ -20,18 +21,21 @@ class Movement extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'movement';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['description'], 'default', 'value' => null],
             [['name'], 'required'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name'], 'string', 'max' => 64],
         ];
     }
@@ -39,7 +43,8 @@ class Movement extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'name' => 'Movement',
@@ -52,7 +57,8 @@ class Movement extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<ShapeMovement>
      */
-    public function getShapeMovements() {
+    public function getShapeMovements()
+    {
         return $this->hasMany(ShapeMovement::class, ['movement_id' => 'id']);
     }
 
@@ -61,7 +67,8 @@ class Movement extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Shape>
      */
-    public function getShapes() {
+    public function getShapes()
+    {
         return $this->hasMany(Shape::class, ['id' => 'shape_id'])->viaTable('shape_movement', ['movement_id' => 'id']);
     }
 }

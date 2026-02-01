@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\helpers\RichTextHelper;
 use Yii;
 
 /**
@@ -24,20 +25,23 @@ class NpcType extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'npc_type';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['description', 'hp', 'hit_dice'], 'default', 'value' => null],
             [['cr'], 'default', 'value' => 0.000],
             [['xp'], 'default', 'value' => 0],
             [['name'], 'required'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['hp', 'bonus', 'xp'], 'integer'],
             [['cr'], 'number'],
             [['name'], 'string', 'max' => 64],
@@ -49,7 +53,8 @@ class NpcType extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'name' => 'NPC type',
@@ -67,7 +72,8 @@ class NpcType extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Npc>
      */
-    public function getNpcs() {
+    public function getNpcs()
+    {
         return $this->hasMany(Npc::class, ['npc_type_id' => 'id']);
     }
 }

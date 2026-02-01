@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\helpers\RichTextHelper;
 use Yii;
 
 /**
@@ -24,19 +25,22 @@ class Decor extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'decor';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['description', 'image'], 'default', 'value' => null],
             [['mission_id', 'name'], 'required'],
             [['mission_id'], 'integer'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name', 'image'], 'string', 'max' => 64],
             [['mission_id'], 'exist', 'skipOnError' => true, 'targetClass' => Mission::class, 'targetAttribute' => ['mission_id' => 'id']],
         ];
@@ -45,7 +49,8 @@ class Decor extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'mission_id' => 'Foreign key to “mission” table',
@@ -60,7 +65,8 @@ class Decor extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Action>
      */
-    public function getActions() {
+    public function getActions()
+    {
         return $this->hasMany(Action::class, ['decor_id' => 'id']);
     }
 
@@ -69,7 +75,8 @@ class Decor extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<DecorItem>
      */
-    public function getDecorItems() {
+    public function getDecorItems()
+    {
         return $this->hasMany(DecorItem::class, ['decor_id' => 'id']);
     }
 
@@ -78,7 +85,8 @@ class Decor extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Mission>
      */
-    public function getMission() {
+    public function getMission()
+    {
         return $this->hasOne(Mission::class, ['id' => 'mission_id']);
     }
 
@@ -87,7 +95,8 @@ class Decor extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Trap>
      */
-    public function getTraps() {
+    public function getTraps()
+    {
         return $this->hasMany(Trap::class, ['decor_id' => 'id']);
     }
 }

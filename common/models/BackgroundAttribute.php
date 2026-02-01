@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\helpers\RichTextHelper;
 use Yii;
 
 /**
@@ -18,23 +19,25 @@ use Yii;
 class BackgroundAttribute extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'background_attribute';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['name', 'description'], 'default', 'value' => null],
             [['background_id', 'attribute_type'], 'required'],
             [['background_id'], 'integer'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['attribute_type', 'name'], 'string', 'max' => 64],
             [['background_id'], 'exist', 'skipOnError' => true, 'targetClass' => Background::class, 'targetAttribute' => ['background_id' => 'id']],
         ];
@@ -43,7 +46,8 @@ class BackgroundAttribute extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'background_id' => 'Foreign key to “background” table',
@@ -58,8 +62,8 @@ class BackgroundAttribute extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Background>
      */
-    public function getBackground() {
+    public function getBackground()
+    {
         return $this->hasOne(Background::class, ['id' => 'background_id']);
     }
-
 }

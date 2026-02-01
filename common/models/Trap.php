@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\helpers\RichTextHelper;
 use Yii;
 
 /**
@@ -27,14 +28,16 @@ class Trap extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'trap';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['description', 'image'], 'default', 'value' => null],
             [['is_team_trap'], 'default', 'value' => 0],
@@ -42,6 +45,7 @@ class Trap extends \yii\db\ActiveRecord
             [['decor_id', 'damage_type_id', 'name', 'damage'], 'required'],
             [['decor_id', 'damage_type_id', 'is_team_trap', 'found'], 'integer'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name', 'image'], 'string', 'max' => 64],
             [['damage'], 'string', 'max' => 8],
             [['damage_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => DamageType::class, 'targetAttribute' => ['damage_type_id' => 'id']],
@@ -52,7 +56,8 @@ class Trap extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'decor_id' => 'Decor ID',
@@ -71,7 +76,8 @@ class Trap extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Action>
      */
-    public function getActions() {
+    public function getActions()
+    {
         return $this->hasMany(Action::class, ['trap_id' => 'id']);
     }
 
@@ -80,7 +86,8 @@ class Trap extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<DamageType>
      */
-    public function getDamageType() {
+    public function getDamageType()
+    {
         return $this->hasOne(DamageType::class, ['id' => 'damage_type_id']);
     }
 
@@ -89,7 +96,8 @@ class Trap extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Decor>
      */
-    public function getDecor() {
+    public function getDecor()
+    {
         return $this->hasOne(Decor::class, ['id' => 'decor_id']);
     }
 }

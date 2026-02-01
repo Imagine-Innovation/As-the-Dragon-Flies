@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\helpers\RichTextHelper;
 use Yii;
 
 /**
@@ -26,18 +27,21 @@ class Background extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'background';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['description', 'initial_equipment', 'languages'], 'default', 'value' => null],
             [['name'], 'required'],
             [['description', 'initial_equipment'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['languages'], 'integer'],
             [['name'], 'string', 'max' => 64],
             [['name'], 'unique'],
@@ -47,7 +51,8 @@ class Background extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'name' => 'Background',
@@ -62,7 +67,8 @@ class Background extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<BackgroundAttribute>
      */
-    public function getBackgroundAttributes() {
+    public function getBackgroundAttributes()
+    {
         return $this->hasMany(BackgroundAttribute::class, ['background_id' => 'id']);
     }
 
@@ -71,7 +77,8 @@ class Background extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<BackgroundItem>
      */
-    public function getBackgroundItems() {
+    public function getBackgroundItems()
+    {
         return $this->hasMany(BackgroundItem::class, ['background_id' => 'id']);
     }
 
@@ -80,7 +87,8 @@ class Background extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<BackgroundSkill>
      */
-    public function getBackgroundSkills() {
+    public function getBackgroundSkills()
+    {
         return $this->hasMany(BackgroundSkill::class, ['background_id' => 'id']);
     }
 
@@ -89,7 +97,8 @@ class Background extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<BackgroundTrait>
      */
-    public function getBackgroundTraits() {
+    public function getBackgroundTraits()
+    {
         return $this->hasMany(BackgroundTrait::class, ['background_id' => 'id']);
     }
 
@@ -98,7 +107,8 @@ class Background extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Player>
      */
-    public function getPlayers() {
+    public function getPlayers()
+    {
         return $this->hasMany(Player::class, ['background_id' => 'id']);
     }
 
@@ -107,7 +117,8 @@ class Background extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Skill>
      */
-    public function getSkills() {
+    public function getSkills()
+    {
         return $this->hasMany(Skill::class, ['id' => 'skill_id'])->viaTable('background_skill', ['background_id' => 'id']);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\helpers\RichTextHelper;
 use Yii;
 
 /**
@@ -37,14 +38,16 @@ class Race extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'race';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['description', 'base_height', 'height_modifier', 'base_weight', 'weight_modifier'], 'default', 'value' => null],
             [['adult_age'], 'default', 'value' => 20],
@@ -54,6 +57,7 @@ class Race extends \yii\db\ActiveRecord
             [['race_group_id', 'name', 'size'], 'required'],
             [['race_group_id', 'adult_age', 'lifespan', 'speed', 'darkvision'], 'integer'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name'], 'string', 'max' => 64],
             [['size'], 'string', 'max' => 1],
             [['base_height', 'height_modifier', 'base_weight', 'weight_modifier'], 'string', 'max' => 8],
@@ -65,7 +69,8 @@ class Race extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'race_group_id' => 'Foreign key to “race_group” table',
@@ -88,7 +93,8 @@ class Race extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Ability>
      */
-    public function getAbilities() {
+    public function getAbilities()
+    {
         return $this->hasMany(Ability::class, ['id' => 'ability_id'])->viaTable('race_ability', ['race_id' => 'id']);
     }
 
@@ -97,7 +103,8 @@ class Race extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Player>
      */
-    public function getPlayers() {
+    public function getPlayers()
+    {
         return $this->hasMany(Player::class, ['race_id' => 'id']);
     }
 
@@ -106,7 +113,8 @@ class Race extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<RaceAbility>
      */
-    public function getRaceAbilities() {
+    public function getRaceAbilities()
+    {
         return $this->hasMany(RaceAbility::class, ['race_id' => 'id']);
     }
 
@@ -115,7 +123,8 @@ class Race extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<RaceGroup>
      */
-    public function getRaceGroup() {
+    public function getRaceGroup()
+    {
         return $this->hasOne(RaceGroup::class, ['id' => 'race_group_id']);
     }
 
@@ -124,7 +133,8 @@ class Race extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<WizardAnswer>
      */
-    public function getWizardAnswers() {
+    public function getWizardAnswers()
+    {
         return $this->hasMany(WizardAnswer::class, ['race_id' => 'id']);
     }
 
@@ -137,7 +147,8 @@ class Race extends \yii\db\ActiveRecord
      *
      * @return string
      */
-    public function getRandomImage() {
+    public function getRandomImage()
+    {
         $raceGroup = $this->raceGroup;
         return $raceGroup->randomImage;
     }

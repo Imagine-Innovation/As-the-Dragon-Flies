@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\helpers\RichTextHelper;
 use Yii;
 
 /**
@@ -26,18 +27,21 @@ class Language extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'language';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['description'], 'default', 'value' => null],
             [['name'], 'required'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name'], 'string', 'max' => 64],
             [['name'], 'unique'],
         ];
@@ -46,7 +50,8 @@ class Language extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'name' => 'Language',
@@ -59,7 +64,8 @@ class Language extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Npc>
      */
-    public function getNpcs() {
+    public function getNpcs()
+    {
         return $this->hasMany(Npc::class, ['language_id' => 'id']);
     }
 
@@ -68,7 +74,8 @@ class Language extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<PlayerLanguage>
      */
-    public function getPlayerLanguages() {
+    public function getPlayerLanguages()
+    {
         return $this->hasMany(PlayerLanguage::class, ['language_id' => 'id']);
     }
 
@@ -77,7 +84,8 @@ class Language extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Player>
      */
-    public function getPlayers() {
+    public function getPlayers()
+    {
         return $this->hasMany(Player::class, ['id' => 'player_id'])->viaTable('player_language', ['language_id' => 'id']);
     }
 
@@ -86,7 +94,8 @@ class Language extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<RaceGroupLanguage>
      */
-    public function getRaceGroupLanguages() {
+    public function getRaceGroupLanguages()
+    {
         return $this->hasMany(RaceGroupLanguage::class, ['language_id' => 'id']);
     }
 
@@ -95,7 +104,8 @@ class Language extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<RaceGroup>
      */
-    public function getRaceGroups() {
+    public function getRaceGroups()
+    {
         return $this->hasMany(RaceGroup::class, ['id' => 'race_group_id'])->viaTable('race_group_language', ['language_id' => 'id']);
     }
 
@@ -104,7 +114,8 @@ class Language extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Scroll>
      */
-    public function getScrolls() {
+    public function getScrolls()
+    {
         return $this->hasMany(Scroll::class, ['language_id' => 'id']);
     }
 
@@ -113,7 +124,8 @@ class Language extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<ShapeLanguage>
      */
-    public function getShapeLanguages() {
+    public function getShapeLanguages()
+    {
         return $this->hasMany(ShapeLanguage::class, ['language_id' => 'id']);
     }
 
@@ -122,7 +134,8 @@ class Language extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Shape>
      */
-    public function getShapes() {
+    public function getShapes()
+    {
         return $this->hasMany(Shape::class, ['id' => 'shape_id'])->viaTable('shape_language', ['language_id' => 'id']);
     }
 }

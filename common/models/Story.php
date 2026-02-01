@@ -3,6 +3,7 @@
 namespace common\models;
 
 use common\components\AppStatus;
+use common\helpers\RichTextHelper;
 use common\models\Quest;
 use Yii;
 
@@ -40,14 +41,16 @@ class Story extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'story';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['description', 'image'], 'default', 'value' => null],
             [['status'], 'default', 'value' => AppStatus::DRAFT->value],
@@ -57,6 +60,7 @@ class Story extends \yii\db\ActiveRecord
             [['language'], 'default', 'value' => 'en'],
             [['name'], 'required'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['status', 'min_level', 'max_level', 'min_players', 'max_players'], 'integer'],
             [['name', 'image'], 'string', 'max' => 64],
             [['language'], 'string', 'max' => 8],
@@ -67,7 +71,8 @@ class Story extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'name' => 'Story title',
@@ -87,7 +92,8 @@ class Story extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Chapter>
      */
-    public function getChapters() {
+    public function getChapters()
+    {
         return $this->hasMany(Chapter::class, ['story_id' => 'id'])
                         ->orderBy(['chapter_number' => SORT_ASC]);
     }
@@ -97,7 +103,8 @@ class Story extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<CharacterClass>
      */
-    public function getClasses() {
+    public function getClasses()
+    {
         return $this->hasMany(CharacterClass::class, ['id' => 'class_id'])->viaTable('story_class', ['story_id' => 'id']);
     }
 
@@ -106,7 +113,8 @@ class Story extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Quest>
      */
-    public function getQuests() {
+    public function getQuests()
+    {
         return $this->hasMany(Quest::class, ['story_id' => 'id']);
     }
 
@@ -115,7 +123,8 @@ class Story extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<StoryClass>
      */
-    public function getStoryClasses() {
+    public function getStoryClasses()
+    {
         return $this->hasMany(StoryClass::class, ['story_id' => 'id']);
     }
 
@@ -124,7 +133,8 @@ class Story extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<StoryTag>
      */
-    public function getStoryTags() {
+    public function getStoryTags()
+    {
         return $this->hasMany(StoryTag::class, ['story_id' => 'id']);
     }
 
@@ -133,7 +143,8 @@ class Story extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Tag>
      */
-    public function getTags() {
+    public function getTags()
+    {
         return $this->hasMany(Tag::class, ['id' => 'tag_id'])->viaTable('story_tag', ['story_id' => 'id']);
     }
 
@@ -146,7 +157,8 @@ class Story extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Chapter>
      */
-    public function getFirstChapter(): \yii\db\ActiveQuery {
+    public function getFirstChapter(): \yii\db\ActiveQuery
+    {
         return $this->hasOne(Chapter::class, ['story_id' => 'id'])
                         ->andWhere(['chapter_number' => 1]);
     }
@@ -156,7 +168,8 @@ class Story extends \yii\db\ActiveRecord
      *
      * @return \common\models\Quest|null
      */
-    public function getTavern(): ?Quest {
+    public function getTavern(): ?Quest
+    {
         $quest = Quest::findOne([
             'story_id' => $this->id,
             'status' => AppStatus::WAITING->value
@@ -169,7 +182,8 @@ class Story extends \yii\db\ActiveRecord
      *
      * @return string
      */
-    public function getRequiredLevels(): string {
+    public function getRequiredLevels(): string
+    {
         $max = $this->max_level ?? 0;
         $min = $this->min_level ?? 0;
         if (($min + $max) === 0) {
@@ -192,7 +206,8 @@ class Story extends \yii\db\ActiveRecord
      *
      * @return string
      */
-    public function getCompanySize(): string {
+    public function getCompanySize(): string
+    {
         $max = $this->max_players ?? 0;
         $min = $this->min_players ?? 0;
         if (($min + $max) === 0) {

@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\helpers\RichTextHelper;
 use Yii;
 
 /**
@@ -20,18 +21,21 @@ class Tag extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'tag';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['description'], 'default', 'value' => null],
             [['name'], 'required'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name'], 'string', 'max' => 64],
             [['name'], 'unique'],
         ];
@@ -40,7 +44,8 @@ class Tag extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'name' => 'Tag',
@@ -53,7 +58,8 @@ class Tag extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Story>
      */
-    public function getStories() {
+    public function getStories()
+    {
         return $this->hasMany(Story::class, ['id' => 'story_id'])->viaTable('story_tag', ['tag_id' => 'id']);
     }
 
@@ -62,7 +68,8 @@ class Tag extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<StoryTag>
      */
-    public function getStoryTags() {
+    public function getStoryTags()
+    {
         return $this->hasMany(StoryTag::class, ['tag_id' => 'id']);
     }
 }

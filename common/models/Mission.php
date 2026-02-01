@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\helpers\RichTextHelper;
 use Yii;
 
 /**
@@ -29,19 +30,22 @@ class Mission extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'mission';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['description', 'image'], 'default', 'value' => null],
             [['chapter_id', 'name'], 'required'],
             [['chapter_id'], 'integer'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name', 'image'], 'string', 'max' => 64],
             [['chapter_id'], 'exist', 'skipOnError' => true, 'targetClass' => Chapter::class, 'targetAttribute' => ['chapter_id' => 'id']],
         ];
@@ -50,7 +54,8 @@ class Mission extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'chapter_id' => 'Foreign key to “chapter” table',
@@ -65,7 +70,8 @@ class Mission extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Action>
      */
-    public function getActions() {
+    public function getActions()
+    {
         return $this->hasMany(Action::class, ['mission_id' => 'id']);
     }
 
@@ -74,7 +80,8 @@ class Mission extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Chapter>
      */
-    public function getChapter() {
+    public function getChapter()
+    {
         return $this->hasOne(Chapter::class, ['id' => 'chapter_id']);
     }
 
@@ -83,7 +90,8 @@ class Mission extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Chapter>
      */
-    public function getChapters() {
+    public function getChapters()
+    {
         return $this->hasMany(Chapter::class, ['first_mission_id' => 'id']);
     }
 
@@ -92,7 +100,8 @@ class Mission extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Decor>
      */
-    public function getDecors() {
+    public function getDecors()
+    {
         return $this->hasMany(Decor::class, ['mission_id' => 'id']);
     }
 
@@ -101,7 +110,8 @@ class Mission extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Monster>
      */
-    public function getMonsters() {
+    public function getMonsters()
+    {
         return $this->hasMany(Monster::class, ['mission_id' => 'id']);
     }
 
@@ -110,7 +120,8 @@ class Mission extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Npc>
      */
-    public function getNpcs() {
+    public function getNpcs()
+    {
         return $this->hasMany(Npc::class, ['mission_id' => 'id']);
     }
 
@@ -119,7 +130,8 @@ class Mission extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Outcome>
      */
-    public function getOutcomes() {
+    public function getOutcomes()
+    {
         return $this->hasMany(Outcome::class, ['next_mission_id' => 'id']);
     }
 
@@ -128,7 +140,8 @@ class Mission extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Passage>
      */
-    public function getPassages() {
+    public function getPassages()
+    {
         return $this->hasMany(Passage::class, ['mission_id' => 'id']);
     }
 
@@ -137,7 +150,8 @@ class Mission extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<QuestProgress>
      */
-    public function getQuestProgresses() {
+    public function getQuestProgresses()
+    {
         return $this->hasMany(QuestProgress::class, ['mission_id' => 'id']);
     }
 }

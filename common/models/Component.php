@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\helpers\RichTextHelper;
 use Yii;
 
 /**
@@ -21,18 +22,21 @@ class Component extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'component';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['code', 'description'], 'default', 'value' => null],
             [['name'], 'required'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['code'], 'string', 'max' => 4],
             [['name'], 'string', 'max' => 64],
             [['name'], 'unique'],
@@ -43,7 +47,8 @@ class Component extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'code' => 'Code',
@@ -57,7 +62,8 @@ class Component extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<SpellComponent>
      */
-    public function getSpellComponents() {
+    public function getSpellComponents()
+    {
         return $this->hasMany(SpellComponent::class, ['component_id' => 'id']);
     }
 
@@ -66,7 +72,8 @@ class Component extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Spell>
      */
-    public function getSpells() {
+    public function getSpells()
+    {
         return $this->hasMany(Spell::class, ['id' => 'spell_id'])->viaTable('spell_component', ['component_id' => 'id']);
     }
 }

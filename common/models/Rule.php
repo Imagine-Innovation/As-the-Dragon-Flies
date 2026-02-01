@@ -7,6 +7,7 @@ use common\components\RuleNode;
 use common\components\RuleParser;
 use common\components\RuleValidator;
 use common\helpers\ModelHelper;
+use common\helpers\RichTextHelper;
 use common\models\RuleCondition;
 use common\models\RuleExpression;
 use common\models\RuleModel;
@@ -51,6 +52,7 @@ class Rule extends \yii\db\ActiveRecord
             [['description', 'created_at', 'updated_at'], 'default', 'value' => null],
             [['name', 'definition'], 'required'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['status', 'created_at', 'updated_at'], 'integer'],
             [['name'], 'string', 'max' => 64],
             [['definition'], 'string', 'max' => 256],

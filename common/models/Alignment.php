@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\helpers\RichTextHelper;
 use Yii;
 
 /**
@@ -25,18 +26,21 @@ class Alignment extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'alignment';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['description'], 'default', 'value' => null],
             [['code', 'name'], 'required'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['code'], 'string', 'max' => 4],
             [['name'], 'string', 'max' => 64],
             [['code'], 'unique'],
@@ -46,7 +50,8 @@ class Alignment extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'code' => 'Alignment code (“LG” for “Lawful Goog”...)',
@@ -60,7 +65,8 @@ class Alignment extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<CreatureAlignment>
      */
-    public function getCreatureAlignments() {
+    public function getCreatureAlignments()
+    {
         return $this->hasMany(CreatureAlignment::class, ['alignment_id' => 'id']);
     }
 
@@ -69,7 +75,8 @@ class Alignment extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Creature>
      */
-    public function getCreatures() {
+    public function getCreatures()
+    {
         return $this->hasMany(Creature::class, ['id' => 'creature_id'])->viaTable('creature_alignment', ['alignment_id' => 'id']);
     }
 
@@ -78,7 +85,8 @@ class Alignment extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Player>
      */
-    public function getPlayers() {
+    public function getPlayers()
+    {
         return $this->hasMany(Player::class, ['alignment_id' => 'id']);
     }
 
@@ -87,7 +95,8 @@ class Alignment extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<RaceGroupAlignment>
      */
-    public function getRaceGroupAlignments() {
+    public function getRaceGroupAlignments()
+    {
         return $this->hasMany(RaceGroupAlignment::class, ['alignment_id' => 'id']);
     }
 
@@ -96,7 +105,8 @@ class Alignment extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<RaceGroup>
      */
-    public function getRaceGroups() {
+    public function getRaceGroups()
+    {
         return $this->hasMany(RaceGroup::class, ['id' => 'race_group_id'])->viaTable('race_group_alignment', ['alignment_id' => 'id']);
     }
 
@@ -105,7 +115,8 @@ class Alignment extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<WizardAnswer>
      */
-    public function getWizardAnswers() {
+    public function getWizardAnswers()
+    {
         return $this->hasMany(WizardAnswer::class, ['alignment_id' => 'id']);
     }
 }

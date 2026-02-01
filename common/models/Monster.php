@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\helpers\RichTextHelper;
 use Yii;
 
 /**
@@ -25,14 +26,16 @@ class Monster extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'monster';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['description', 'image'], 'default', 'value' => null],
             [['found'], 'default', 'value' => 25],
@@ -40,6 +43,7 @@ class Monster extends \yii\db\ActiveRecord
             [['mission_id', 'creature_id', 'name'], 'required'],
             [['mission_id', 'creature_id', 'found', 'identified'], 'integer'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name', 'image'], 'string', 'max' => 64],
             [['creature_id'], 'exist', 'skipOnError' => true, 'targetClass' => Creature::class, 'targetAttribute' => ['creature_id' => 'id']],
             [['mission_id'], 'exist', 'skipOnError' => true, 'targetClass' => Mission::class, 'targetAttribute' => ['mission_id' => 'id']],
@@ -49,7 +53,8 @@ class Monster extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'mission_id' => 'Foreign key to “mission” table',
@@ -67,7 +72,8 @@ class Monster extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Creature>
      */
-    public function getCreature() {
+    public function getCreature()
+    {
         return $this->hasOne(Creature::class, ['id' => 'creature_id']);
     }
 
@@ -76,7 +82,8 @@ class Monster extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Mission>
      */
-    public function getMission() {
+    public function getMission()
+    {
         return $this->hasOne(Mission::class, ['id' => 'mission_id']);
     }
 }

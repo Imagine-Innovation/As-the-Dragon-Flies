@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\helpers\RichTextHelper;
 use Yii;
 
 /**
@@ -22,19 +23,22 @@ class RuleAction extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'rule_action';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['description'], 'default', 'value' => null],
             [['model_id', 'rule_id', 'name'], 'required'],
             [['model_id', 'rule_id'], 'integer'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name'], 'string', 'max' => 64],
             [['rule_id'], 'exist', 'skipOnError' => true, 'targetClass' => Rule::class, 'targetAttribute' => ['rule_id' => 'id']],
             [['model_id'], 'exist', 'skipOnError' => true, 'targetClass' => RuleModel::class, 'targetAttribute' => ['model_id' => 'id']],
@@ -44,7 +48,8 @@ class RuleAction extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key.',
             'model_id' => 'Foreign key to “rule_component” table.',
@@ -59,7 +64,8 @@ class RuleAction extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<RuleModel>
      */
-    public function getModel() {
+    public function getModel()
+    {
         return $this->hasOne(RuleModel::class, ['id' => 'model_id']);
     }
 
@@ -68,7 +74,8 @@ class RuleAction extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Rule>
      */
-    public function getRule() {
+    public function getRule()
+    {
         return $this->hasOne(Rule::class, ['id' => 'rule_id']);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\helpers\RichTextHelper;
 use Yii;
 
 /**
@@ -23,24 +24,26 @@ use Yii;
 class Chapter extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'chapter';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['description', 'image', 'first_mission_id'], 'default', 'value' => null],
             [['chapter_number'], 'default', 'value' => 1],
             [['story_id', 'name'], 'required'],
             [['story_id', 'chapter_number', 'first_mission_id'], 'integer'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name', 'image'], 'string', 'max' => 64],
             [['story_id', 'chapter_number'], 'unique', 'targetAttribute' => ['story_id', 'chapter_number']],
             [['story_id'], 'exist', 'skipOnError' => true, 'targetClass' => Story::class, 'targetAttribute' => ['story_id' => 'id']],
@@ -51,7 +54,8 @@ class Chapter extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'story_id' => 'Foreign key to “story” table',
@@ -68,7 +72,8 @@ class Chapter extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Mission>
      */
-    public function getFirstMission() {
+    public function getFirstMission()
+    {
         return $this->hasOne(Mission::class, ['id' => 'first_mission_id']);
     }
 
@@ -77,7 +82,8 @@ class Chapter extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Mission>
      */
-    public function getMissions() {
+    public function getMissions()
+    {
         return $this->hasMany(Mission::class, ['chapter_id' => 'id']);
     }
 
@@ -86,7 +92,8 @@ class Chapter extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Quest>
      */
-    public function getQuests() {
+    public function getQuests()
+    {
         return $this->hasMany(Quest::class, ['current_chapter_id' => 'id']);
     }
 
@@ -95,8 +102,8 @@ class Chapter extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Story>
      */
-    public function getStory() {
+    public function getStory()
+    {
         return $this->hasOne(Story::class, ['id' => 'story_id']);
     }
-
 }

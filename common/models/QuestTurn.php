@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\helpers\RichTextHelper;
 use Yii;
 
 /**
@@ -25,19 +26,22 @@ class QuestTurn extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'quest_turn';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['ended_at', 'description'], 'default', 'value' => null],
             [['player_id', 'quest_progress_id', 'sequence', 'status', 'started_at'], 'required'],
             [['player_id', 'quest_progress_id', 'sequence', 'status', 'started_at', 'ended_at'], 'integer'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['quest_progress_id'], 'exist', 'skipOnError' => true, 'targetClass' => QuestProgress::class, 'targetAttribute' => ['quest_progress_id' => 'id']],
             [['player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['player_id' => 'id']],
         ];
@@ -46,7 +50,8 @@ class QuestTurn extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'player_id' => 'Foreign key to “player” table',
@@ -64,7 +69,8 @@ class QuestTurn extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Player>
      */
-    public function getPlayer() {
+    public function getPlayer()
+    {
         return $this->hasOne(Player::class, ['id' => 'player_id']);
     }
 
@@ -73,7 +79,8 @@ class QuestTurn extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<QuestProgress>
      */
-    public function getQuestProgress() {
+    public function getQuestProgress()
+    {
         return $this->hasOne(QuestProgress::class, ['id' => 'quest_progress_id']);
     }
 }

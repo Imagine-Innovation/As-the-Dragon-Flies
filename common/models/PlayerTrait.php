@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\helpers\RichTextHelper;
 use Yii;
 
 /**
@@ -20,18 +21,21 @@ class PlayerTrait extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'player_trait';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['player_id', 'trait_id', 'description'], 'required'],
             [['player_id', 'trait_id'], 'integer'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['player_id', 'trait_id'], 'unique', 'targetAttribute' => ['player_id', 'trait_id']],
             [['player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['player_id' => 'id']],
             [['trait_id'], 'exist', 'skipOnError' => true, 'targetClass' => CharacterTrait::class, 'targetAttribute' => ['trait_id' => 'id']],
@@ -41,7 +45,8 @@ class PlayerTrait extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'player_id' => 'Foreign key to “player” table',
             'trait_id' => 'Foreign key to “character_trait” table',
@@ -54,7 +59,8 @@ class PlayerTrait extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Player>
      */
-    public function getPlayer() {
+    public function getPlayer()
+    {
         return $this->hasOne(Player::class, ['id' => 'player_id']);
     }
 
@@ -63,7 +69,8 @@ class PlayerTrait extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<CharacterTrait>
      */
-    public function getTrait() {
+    public function getTrait()
+    {
         return $this->hasOne(CharacterTrait::class, ['id' => 'trait_id']);
     }
 }

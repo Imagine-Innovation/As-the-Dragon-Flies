@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\helpers\RichTextHelper;
 use Yii;
 
 /**
@@ -22,18 +23,21 @@ class ActionType extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'action_type';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['description', 'icon'], 'default', 'value' => null],
             [['name'], 'required'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name', 'icon'], 'string', 'max' => 64],
         ];
     }
@@ -41,7 +45,8 @@ class ActionType extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'name' => 'Action type',
@@ -55,7 +60,8 @@ class ActionType extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<ActionTypeSkill>
      */
-    public function getActionTypeSkills() {
+    public function getActionTypeSkills()
+    {
         return $this->hasMany(ActionTypeSkill::class, ['action_type_id' => 'id']);
     }
 
@@ -64,7 +70,8 @@ class ActionType extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Action>
      */
-    public function getActions() {
+    public function getActions()
+    {
         return $this->hasMany(Action::class, ['action_type_id' => 'id']);
     }
 
@@ -73,7 +80,8 @@ class ActionType extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Skill>
      */
-    public function getSkills() {
+    public function getSkills()
+    {
         return $this->hasMany(Skill::class, ['id' => 'skill_id'])->viaTable('action_type_skill', ['action_type_id' => 'id']);
     }
 }

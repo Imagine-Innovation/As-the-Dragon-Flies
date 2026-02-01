@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\helpers\RichTextHelper;
 use Yii;
 
 /**
@@ -19,21 +20,23 @@ use Yii;
 class CharacterTrait extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'character_trait';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['name', 'description', 'dice'], 'required'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name'], 'string', 'max' => 64],
             [['dice'], 'string', 'max' => 8],
         ];
@@ -42,7 +45,8 @@ class CharacterTrait extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'name' => 'Character trait',
@@ -56,7 +60,8 @@ class CharacterTrait extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<BackgroundTrait>
      */
-    public function getBackgroundTraits() {
+    public function getBackgroundTraits()
+    {
         return $this->hasMany(BackgroundTrait::class, ['trait_id' => 'id']);
     }
 
@@ -65,7 +70,8 @@ class CharacterTrait extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<PlayerTrait>
      */
-    public function getPlayerTraits() {
+    public function getPlayerTraits()
+    {
         return $this->hasMany(PlayerTrait::class, ['trait_id' => 'id']);
     }
 
@@ -74,8 +80,8 @@ class CharacterTrait extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Player>
      */
-    public function getPlayers() {
+    public function getPlayers()
+    {
         return $this->hasMany(Player::class, ['id' => 'player_id'])->viaTable('player_trait', ['trait_id' => 'id']);
     }
-
 }

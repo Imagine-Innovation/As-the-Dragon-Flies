@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\helpers\RichTextHelper;
 use Yii;
 
 /**
@@ -20,19 +21,22 @@ class Proficiency extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'proficiency';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['description'], 'default', 'value' => null],
             [['name', 'sort_order'], 'required'],
             [['sort_order'], 'integer'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name'], 'string', 'max' => 64],
             [['name'], 'unique'],
         ];
@@ -41,7 +45,8 @@ class Proficiency extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'name' => 'Proficiency',
@@ -55,7 +60,8 @@ class Proficiency extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<ClassProficiency>
      */
-    public function getClassProficiencies() {
+    public function getClassProficiencies()
+    {
         return $this->hasMany(ClassProficiency::class, ['proficiency_id' => 'id']);
     }
 }

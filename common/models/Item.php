@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\helpers\RichTextHelper;
 use frontend\components\Shopping;
 use Yii;
 
@@ -65,14 +66,16 @@ class Item extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'item';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['description', 'image', 'cost', 'coin', 'weight', 'max_load', 'max_volume'], 'default', 'value' => null],
             [['is_purchasable'], 'default', 'value' => 1],
@@ -80,6 +83,7 @@ class Item extends \yii\db\ActiveRecord
             [['item_type_id', 'name'], 'required'],
             [['item_type_id', 'sort_order', 'cost', 'quantity', 'is_packable', 'is_wearable', 'is_purchasable'], 'integer'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['weight', 'max_load', 'max_volume'], 'number'],
             [['name', 'image'], 'string', 'max' => 64],
             [['coin'], 'string', 'max' => 2],
@@ -91,7 +95,8 @@ class Item extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'item_type_id' => 'Foreign key to “item_type” table',
@@ -116,7 +121,8 @@ class Item extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Action>
      */
-    public function getActions() {
+    public function getActions()
+    {
         return $this->hasMany(Action::class, ['required_item_id' => 'id']);
     }
 
@@ -125,7 +131,8 @@ class Item extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Armor>|null
      */
-    public function getArmor() {
+    public function getArmor()
+    {
         return $this->hasOne(Armor::class, ['item_id' => 'id']);
     }
 
@@ -134,7 +141,8 @@ class Item extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<BackgroundItem>
      */
-    public function getBackgroundItems() {
+    public function getBackgroundItems()
+    {
         return $this->hasMany(BackgroundItem::class, ['item_id' => 'id']);
     }
 
@@ -143,7 +151,8 @@ class Item extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Category>
      */
-    public function getCategories() {
+    public function getCategories()
+    {
         return $this->hasMany(Category::class, ['id' => 'category_id'])->viaTable('item_category', ['item_id' => 'id']);
     }
 
@@ -152,7 +161,8 @@ class Item extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<ClassEquipment>
      */
-    public function getClassEquipments() {
+    public function getClassEquipments()
+    {
         return $this->hasMany(ClassEquipment::class, ['item_id' => 'id']);
     }
 
@@ -161,7 +171,8 @@ class Item extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<ClassItemProficiency>
      */
-    public function getClassItemProficiencies() {
+    public function getClassItemProficiencies()
+    {
         return $this->hasMany(ClassItemProficiency::class, ['item_id' => 'id']);
     }
 
@@ -170,7 +181,8 @@ class Item extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<DecorItem>
      */
-    public function getDecorItems() {
+    public function getDecorItems()
+    {
         return $this->hasMany(DecorItem::class, ['item_id' => 'id']);
     }
 
@@ -179,7 +191,8 @@ class Item extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<ItemCategory>
      */
-    public function getItemCategories() {
+    public function getItemCategories()
+    {
         return $this->hasMany(ItemCategory::class, ['item_id' => 'id']);
     }
 
@@ -188,7 +201,8 @@ class Item extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<ItemType>
      */
-    public function getItemType() {
+    public function getItemType()
+    {
         return $this->hasOne(ItemType::class, ['id' => 'item_type_id']);
     }
 
@@ -197,7 +211,8 @@ class Item extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Item>
      */
-    public function getItems() {
+    public function getItems()
+    {
         return $this->hasMany(Item::class, ['id' => 'item_id'])->viaTable('pack', ['parent_item_id' => 'id']);
     }
 
@@ -206,7 +221,8 @@ class Item extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Outcome>
      */
-    public function getOutcomes() {
+    public function getOutcomes()
+    {
         return $this->hasMany(Outcome::class, ['item_id' => 'id']);
     }
 
@@ -215,7 +231,8 @@ class Item extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Pack>
      */
-    public function getPacks() {
+    public function getPacks()
+    {
         return $this->hasMany(Pack::class, ['item_id' => 'id']);
     }
 
@@ -224,7 +241,8 @@ class Item extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Pack>
      */
-    public function getPacks0() {
+    public function getPacks0()
+    {
         return $this->hasMany(Pack::class, ['parent_item_id' => 'id']);
     }
 
@@ -233,7 +251,8 @@ class Item extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Item>
      */
-    public function getPackItems() {
+    public function getPackItems()
+    {
         return $this->hasMany(Item::class, ['id' => 'item_id'])->viaTable('pack', ['item_id' => 'id']);
     }
 
@@ -242,7 +261,8 @@ class Item extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Item>
      */
-    public function getParentItems() {
+    public function getParentItems()
+    {
         return $this->hasMany(Item::class, ['id' => 'parent_item_id'])->viaTable('pack', ['item_id' => 'id']);
     }
 
@@ -251,7 +271,8 @@ class Item extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<PlayerCart>
      */
-    public function getPlayerCarts() {
+    public function getPlayerCarts()
+    {
         return $this->hasMany(PlayerCart::class, ['item_id' => 'id']);
     }
 
@@ -260,7 +281,8 @@ class Item extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<PlayerItem>
      */
-    public function getPlayerItems() {
+    public function getPlayerItems()
+    {
         return $this->hasMany(PlayerItem::class, ['item_id' => 'id']);
     }
 
@@ -269,7 +291,8 @@ class Item extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Player>
      */
-    public function getPlayers() {
+    public function getPlayers()
+    {
         return $this->hasMany(Player::class, ['id' => 'player_id'])->viaTable('player_cart', ['item_id' => 'id']);
     }
 
@@ -278,7 +301,8 @@ class Item extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Player>
      */
-    public function getPlayers0() {
+    public function getPlayers0()
+    {
         return $this->hasMany(Player::class, ['id' => 'player_id'])->viaTable('player_item', ['item_id' => 'id']);
     }
 
@@ -287,7 +311,8 @@ class Item extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Poison>|null
      */
-    public function getPoison() {
+    public function getPoison()
+    {
         return $this->hasOne(Poison::class, ['item_id' => 'id']);
     }
 
@@ -296,7 +321,8 @@ class Item extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Scroll>|null
      */
-    public function getScroll() {
+    public function getScroll()
+    {
         return $this->hasOne(Scroll::class, ['item_id' => 'id']);
     }
 
@@ -305,7 +331,8 @@ class Item extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Weapon>|null
      */
-    public function getWeapon() {
+    public function getWeapon()
+    {
         return $this->hasOne(Weapon::class, ['item_id' => 'id']);
     }
 
@@ -314,7 +341,8 @@ class Item extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Weapon>
      */
-    public function getWeapons() {
+    public function getWeapons()
+    {
         return $this->hasMany(Weapon::class, ['amunition_id' => 'id']);
     }
 
@@ -328,7 +356,8 @@ class Item extends \yii\db\ActiveRecord
      *
      * @return string
      */
-    public function getCategory(): string {
+    public function getCategory(): string
+    {
         $mainCategory = Category::find()
                 ->joinWith('itemCategories')
                 ->joinWith('itemCategories.item')
@@ -345,7 +374,8 @@ class Item extends \yii\db\ActiveRecord
      * @return string The formatted weight string in the format "X lb. (Y kg)" or
      *                an empty string if the weight is zero.
      */
-    public function getTotalWeight(): string {
+    public function getTotalWeight(): string
+    {
         // Initialize the weight variable to zero.
         $weight = 0;
 
@@ -380,7 +410,8 @@ class Item extends \yii\db\ActiveRecord
      *
      * @return string The formatted price string or "free" if the item is free of charge.
      */
-    public function getPrice(): string {
+    public function getPrice(): string
+    {
         // Check if the model has a non-zero cost value.
         if ($this->cost && $this->cost > 0) {
             // Format the cost to two decimal places and append the coin type.
@@ -397,7 +428,8 @@ class Item extends \yii\db\ActiveRecord
      * @return int The equivalent value in copper coins based on the provided
      *             item's cost and coin type.
      */
-    public function getCopperValue(): int {
+    public function getCopperValue(): int
+    {
         $shopping = new Shopping();
 
         // Call the 'copperValue' method of the Shopping class to convert the
@@ -411,7 +443,8 @@ class Item extends \yii\db\ActiveRecord
      * @return string The formatted armor class string indicating base armor class,
      *                DEX modifier, max modifier, and armor bonus.
      */
-    public function getArmorClass(): string {
+    public function getArmorClass(): string
+    {
         return $this->armor?->armorClass ? $this->armor->armorClass : '';
     }
 
@@ -420,7 +453,8 @@ class Item extends \yii\db\ActiveRecord
      *
      * @return int The required strength for wearing the armor.
      */
-    public function getArmorStrength(): int {
+    public function getArmorStrength(): int
+    {
         return $this->armor?->strength ? $this->armor->strength : 0;
     }
 
@@ -431,7 +465,8 @@ class Item extends \yii\db\ActiveRecord
      * @return string The CSS class 'bi-check-lg' if disadvantage is imposed,
      *                otherwise an empty string.
      */
-    public function getArmorDisadvantage(): string {
+    public function getArmorDisadvantage(): string
+    {
         return $this->armor?->is_disadvantage ? 'bi-check-lg' : '';
     }
 
@@ -444,7 +479,8 @@ class Item extends \yii\db\ActiveRecord
      *
      * @return string The formatted string listing weapon properties, separated by commas.
      */
-    public function getWeaponProperties(): string {
+    public function getWeaponProperties(): string
+    {
         return $this->weapon?->properties ? $this->weapon->properties : '';
     }
 
@@ -453,7 +489,8 @@ class Item extends \yii\db\ActiveRecord
      *
      * @return string|null The damage dice string of the weapon.
      */
-    public function getDamageDice(): ?string {
+    public function getDamageDice(): ?string
+    {
         return $this->weapon?->damage_dice ? $this->weapon->damage_dice : '';
     }
 
@@ -462,7 +499,8 @@ class Item extends \yii\db\ActiveRecord
      *
      * @return string The poison type of the specified poison.
      */
-    public function getPoisonType(): string {
+    public function getPoisonType(): string
+    {
         return $this->poison?->poison_type ? $this->poison->poison_type : '';
     }
 }

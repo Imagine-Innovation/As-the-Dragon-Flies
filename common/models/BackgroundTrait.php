@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\helpers\RichTextHelper;
 use Yii;
 
 /**
@@ -18,23 +19,25 @@ use Yii;
 class BackgroundTrait extends \yii\db\ActiveRecord
 {
 
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'background_trait';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['description'], 'default', 'value' => null],
             [['background_id', 'trait_id', 'score'], 'required'],
             [['background_id', 'trait_id', 'score'], 'integer'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['background_id', 'trait_id', 'score'], 'unique', 'targetAttribute' => ['background_id', 'trait_id', 'score']],
             [['background_id'], 'exist', 'skipOnError' => true, 'targetClass' => Background::class, 'targetAttribute' => ['background_id' => 'id']],
             [['trait_id'], 'exist', 'skipOnError' => true, 'targetClass' => CharacterTrait::class, 'targetAttribute' => ['trait_id' => 'id']],
@@ -44,7 +47,8 @@ class BackgroundTrait extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'background_id' => 'Foreign key to “background” table',
             'trait_id' => 'Foreign key to “character_trait” table',
@@ -58,7 +62,8 @@ class BackgroundTrait extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Background>
      */
-    public function getBackground() {
+    public function getBackground()
+    {
         return $this->hasOne(Background::class, ['id' => 'background_id']);
     }
 
@@ -67,8 +72,8 @@ class BackgroundTrait extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<CharacterTrait>
      */
-    public function getTrait() {
+    public function getTrait()
+    {
         return $this->hasOne(CharacterTrait::class, ['id' => 'trait_id']);
     }
-
 }

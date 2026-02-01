@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\helpers\RichTextHelper;
 use Yii;
 
 /**
@@ -32,18 +33,21 @@ class Ability extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'ability';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['description'], 'default', 'value' => null],
             [['code', 'name'], 'required'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['code'], 'string', 'max' => 4],
             [['name'], 'string', 'max' => 64],
             [['name'], 'unique'],
@@ -54,7 +58,8 @@ class Ability extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'code' => 'Ability code (CHA, CON, DEX...)',
@@ -68,7 +73,8 @@ class Ability extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<AbilityDefault>
      */
-    public function getAbilityDefaults() {
+    public function getAbilityDefaults()
+    {
         return $this->hasMany(AbilityDefault::class, ['ability_id' => 'id']);
     }
 
@@ -77,7 +83,8 @@ class Ability extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<ClassAbility>
      */
-    public function getClassAbilities() {
+    public function getClassAbilities()
+    {
         return $this->hasMany(ClassAbility::class, ['ability_id' => 'id']);
     }
 
@@ -86,7 +93,8 @@ class Ability extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<CharacterClass>
      */
-    public function getClasses() {
+    public function getClasses()
+    {
         return $this->hasMany(CharacterClass::class, ['id' => 'class_id'])->viaTable('class_ability', ['ability_id' => 'id']);
     }
 
@@ -95,7 +103,8 @@ class Ability extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<CreatureAbility>
      */
-    public function getCreatureAbilities() {
+    public function getCreatureAbilities()
+    {
         return $this->hasMany(CreatureAbility::class, ['ability_id' => 'id']);
     }
 
@@ -104,7 +113,8 @@ class Ability extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<CreatureSavingThrow>
      */
-    public function getCreatureSavingThrows() {
+    public function getCreatureSavingThrows()
+    {
         return $this->hasMany(CreatureSavingThrow::class, ['ability_id' => 'id']);
     }
 
@@ -113,7 +123,8 @@ class Ability extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Creature>
      */
-    public function getCreatures() {
+    public function getCreatures()
+    {
         return $this->hasMany(Creature::class, ['id' => 'creature_id'])->viaTable('creature_ability', ['ability_id' => 'id']);
     }
 
@@ -122,7 +133,8 @@ class Ability extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Creature>
      */
-    public function getCreatures0() {
+    public function getCreatures0()
+    {
         return $this->hasMany(Creature::class, ['id' => 'creature_id'])->viaTable('creature_saving_throw', ['ability_id' => 'id']);
     }
 
@@ -131,7 +143,8 @@ class Ability extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<PlayerAbility>
      */
-    public function getPlayerAbilities() {
+    public function getPlayerAbilities()
+    {
         return $this->hasMany(PlayerAbility::class, ['ability_id' => 'id']);
     }
 
@@ -140,7 +153,8 @@ class Ability extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Player>
      */
-    public function getPlayers() {
+    public function getPlayers()
+    {
         return $this->hasMany(Player::class, ['id' => 'player_id'])->viaTable('player_ability', ['ability_id' => 'id']);
     }
 
@@ -149,7 +163,8 @@ class Ability extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Poison>
      */
-    public function getPoisons() {
+    public function getPoisons()
+    {
         return $this->hasMany(Poison::class, ['ability_id' => 'id']);
     }
 
@@ -158,7 +173,8 @@ class Ability extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<RaceAbility>
      */
-    public function getRaceAbilities() {
+    public function getRaceAbilities()
+    {
         return $this->hasMany(RaceAbility::class, ['ability_id' => 'id']);
     }
 
@@ -167,7 +183,8 @@ class Ability extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Race>
      */
-    public function getRaces() {
+    public function getRaces()
+    {
         return $this->hasMany(Race::class, ['id' => 'race_id'])->viaTable('race_ability', ['ability_id' => 'id']);
     }
 
@@ -176,7 +193,8 @@ class Ability extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Skill>
      */
-    public function getSkills() {
+    public function getSkills()
+    {
         return $this->hasMany(Skill::class, ['ability_id' => 'id']);
     }
 }

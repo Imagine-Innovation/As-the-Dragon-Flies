@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\helpers\RichTextHelper;
 use Yii;
 use yii\db\ActiveQuery;
 
@@ -31,20 +32,23 @@ class Outcome extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'outcome';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['next_mission_id', 'item_id', 'description'], 'default', 'value' => null],
             [['can_replay'], 'default', 'value' => 0],
             [['action_id', 'status', 'name'], 'required'],
             [['action_id', 'next_mission_id', 'item_id', 'status', 'gained_gp', 'gained_xp', 'can_replay'], 'integer'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name'], 'string', 'max' => 64],
             [['hp_loss_dice'], 'string', 'max' => 8],
             [['action_id'], 'exist', 'skipOnError' => true, 'targetClass' => Action::class, 'targetAttribute' => ['action_id' => 'id']],
@@ -56,7 +60,8 @@ class Outcome extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'action_id' => 'Foreign key to “action” table',
@@ -77,7 +82,8 @@ class Outcome extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Action>|null
      */
-    public function getAction(): ?ActiveQuery {
+    public function getAction(): ?ActiveQuery
+    {
         return $this->hasOne(Action::class, ['id' => 'action_id']);
     }
 
@@ -86,7 +92,8 @@ class Outcome extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Dialog>
      */
-    public function getDialogs() {
+    public function getDialogs()
+    {
         return $this->hasMany(Dialog::class, ['outcome_id' => 'id']);
     }
 
@@ -95,7 +102,8 @@ class Outcome extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Item>|null
      */
-    public function getItem(): ?ActiveQuery {
+    public function getItem(): ?ActiveQuery
+    {
         return $this->hasOne(Item::class, ['id' => 'item_id']);
     }
 
@@ -104,7 +112,8 @@ class Outcome extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Mission>|null
      */
-    public function getNextMission(): ?ActiveQuery {
+    public function getNextMission(): ?ActiveQuery
+    {
         return $this->hasOne(Mission::class, ['id' => 'next_mission_id']);
     }
 }

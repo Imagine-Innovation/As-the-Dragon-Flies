@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\helpers\RichTextHelper;
 use Yii;
 
 /**
@@ -37,19 +38,22 @@ class Spell extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'spell';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['description'], 'default', 'value' => null],
             [['is_ritual'], 'default', 'value' => 0],
             [['name', 'school_id', 'range_id', 'casting_time_id', 'duration_id'], 'required'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['spell_level', 'school_id', 'range_id', 'casting_time_id', 'duration_id', 'is_ritual'], 'integer'],
             [['name'], 'string', 'max' => 64],
             [['name'], 'unique'],
@@ -63,7 +67,8 @@ class Spell extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'name' => 'Spell',
@@ -82,7 +87,8 @@ class Spell extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<SpellCastingTime>
      */
-    public function getCastingTime() {
+    public function getCastingTime()
+    {
         return $this->hasOne(SpellCastingTime::class, ['id' => 'casting_time_id']);
     }
 
@@ -91,7 +97,8 @@ class Spell extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<ClassSpell>
      */
-    public function getClassSpells() {
+    public function getClassSpells()
+    {
         return $this->hasMany(ClassSpell::class, ['spell_id' => 'id']);
     }
 
@@ -100,7 +107,8 @@ class Spell extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<CharacterClass>
      */
-    public function getClasses() {
+    public function getClasses()
+    {
         return $this->hasMany(CharacterClass::class, ['id' => 'class_id'])->viaTable('class_spell', ['spell_id' => 'id']);
     }
 
@@ -109,7 +117,8 @@ class Spell extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Component>
      */
-    public function getComponents() {
+    public function getComponents()
+    {
         return $this->hasMany(Component::class, ['id' => 'component_id'])->viaTable('spell_component', ['spell_id' => 'id']);
     }
 
@@ -118,7 +127,8 @@ class Spell extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<DamageType>
      */
-    public function getDamageTypes() {
+    public function getDamageTypes()
+    {
         return $this->hasMany(DamageType::class, ['id' => 'damage_type_id'])->viaTable('spell_damage_type', ['spell_id' => 'id']);
     }
 
@@ -127,7 +137,8 @@ class Spell extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<SpellDuration>
      */
-    public function getDuration() {
+    public function getDuration()
+    {
         return $this->hasOne(SpellDuration::class, ['id' => 'duration_id']);
     }
 
@@ -136,7 +147,8 @@ class Spell extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<PlayerSpell>
      */
-    public function getPlayerSpells() {
+    public function getPlayerSpells()
+    {
         return $this->hasMany(PlayerSpell::class, ['spell_id' => 'id']);
     }
 
@@ -145,7 +157,8 @@ class Spell extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Player>
      */
-    public function getPlayers() {
+    public function getPlayers()
+    {
         return $this->hasMany(Player::class, ['id' => 'player_id'])->viaTable('player_spell', ['spell_id' => 'id']);
     }
 
@@ -154,7 +167,8 @@ class Spell extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<SpellRange>
      */
-    public function getRange() {
+    public function getRange()
+    {
         return $this->hasOne(SpellRange::class, ['id' => 'range_id']);
     }
 
@@ -163,7 +177,8 @@ class Spell extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<SpellSchool>
      */
-    public function getSchool() {
+    public function getSchool()
+    {
         return $this->hasOne(SpellSchool::class, ['id' => 'school_id']);
     }
 
@@ -172,7 +187,8 @@ class Spell extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<SpellComponent>
      */
-    public function getSpellComponents() {
+    public function getSpellComponents()
+    {
         return $this->hasMany(SpellComponent::class, ['spell_id' => 'id']);
     }
 
@@ -181,7 +197,8 @@ class Spell extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<SpellDamageType>
      */
-    public function getSpellDamageTypes() {
+    public function getSpellDamageTypes()
+    {
         return $this->hasMany(SpellDamageType::class, ['spell_id' => 'id']);
     }
 
@@ -190,7 +207,8 @@ class Spell extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<SpellDoc>
      */
-    public function getSpellDocs() {
+    public function getSpellDocs()
+    {
         return $this->hasMany(SpellDoc::class, ['spell_id' => 'id']);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\helpers\RichTextHelper;
 use Yii;
 
 /**
@@ -27,14 +28,16 @@ class Menu extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'menu';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['card_title', 'subtitle', 'description', 'button_label', 'image'], 'default', 'value' => null],
             [['is_context'], 'default', 'value' => 0],
@@ -42,6 +45,7 @@ class Menu extends \yii\db\ActiveRecord
             [['access_right_id', 'label', 'icon', 'tooltip'], 'required'],
             [['access_right_id', 'is_context', 'sort_order'], 'integer'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['label', 'icon', 'image'], 'string', 'max' => 64],
             [['tooltip', 'card_title', 'subtitle', 'button_label'], 'string', 'max' => 255],
             [['access_right_id'], 'unique'],
@@ -52,7 +56,8 @@ class Menu extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'access_right_id' => 'Foreign key to “access_right” table',
             'label' => 'Label',
@@ -73,7 +78,8 @@ class Menu extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<AccessRight>
      */
-    public function getAccessRight() {
+    public function getAccessRight()
+    {
         return $this->hasOne(AccessRight::class, ['id' => 'access_right_id']);
     }
 }

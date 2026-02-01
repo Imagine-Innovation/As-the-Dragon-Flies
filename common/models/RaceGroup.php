@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\helpers\RichTextHelper;
 use Yii;
 
 /**
@@ -31,18 +32,21 @@ class RaceGroup extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'race_group';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['description'], 'default', 'value' => null],
             [['name'], 'required'],
             [['description'], 'string'],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name'], 'string', 'max' => 64],
         ];
     }
@@ -50,7 +54,8 @@ class RaceGroup extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'name' => 'Race group',
@@ -63,7 +68,8 @@ class RaceGroup extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<AbilityDefault>
      */
-    public function getAbilityDefaults() {
+    public function getAbilityDefaults()
+    {
         return $this->hasMany(AbilityDefault::class, ['race_group_id' => 'id']);
     }
 
@@ -72,7 +78,8 @@ class RaceGroup extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Alignment>
      */
-    public function getAlignments() {
+    public function getAlignments()
+    {
         return $this->hasMany(Alignment::class, ['id' => 'alignment_id'])->viaTable('race_group_alignment', ['race_group_id' => 'id']);
     }
 
@@ -81,7 +88,8 @@ class RaceGroup extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Ethnicity>
      */
-    public function getEthnicities() {
+    public function getEthnicities()
+    {
         return $this->hasMany(Ethnicity::class, ['race_group_id' => 'id']);
     }
 
@@ -90,7 +98,8 @@ class RaceGroup extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Image>
      */
-    public function getImages() {
+    public function getImages()
+    {
         return $this->hasMany(Image::class, ['id' => 'image_id'])->viaTable('race_group_image', ['race_group_id' => 'id']);
     }
 
@@ -99,7 +108,8 @@ class RaceGroup extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Language>
      */
-    public function getLanguages() {
+    public function getLanguages()
+    {
         return $this->hasMany(Language::class, ['id' => 'language_id'])->viaTable('race_group_language', ['race_group_id' => 'id']);
     }
 
@@ -108,7 +118,8 @@ class RaceGroup extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<RaceGroupAlignment>
      */
-    public function getRaceGroupAlignments() {
+    public function getRaceGroupAlignments()
+    {
         return $this->hasMany(RaceGroupAlignment::class, ['race_group_id' => 'id']);
     }
 
@@ -117,7 +128,8 @@ class RaceGroup extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<RaceGroupImage>
      */
-    public function getRaceGroupImages() {
+    public function getRaceGroupImages()
+    {
         return $this->hasMany(RaceGroupImage::class, ['race_group_id' => 'id']);
     }
 
@@ -126,7 +138,8 @@ class RaceGroup extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<RaceGroupLanguage>
      */
-    public function getRaceGroupLanguages() {
+    public function getRaceGroupLanguages()
+    {
         return $this->hasMany(RaceGroupLanguage::class, ['race_group_id' => 'id']);
     }
 
@@ -135,7 +148,8 @@ class RaceGroup extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Race>
      */
-    public function getRaces() {
+    public function getRaces()
+    {
         return $this->hasMany(Race::class, ['race_group_id' => 'id']);
     }
 
@@ -148,7 +162,8 @@ class RaceGroup extends \yii\db\ActiveRecord
      *
      * @return string
      */
-    public function getRandomImage(): string {
+    public function getRandomImage(): string
+    {
         $images = $this->images;
         if ($images) {
             $count = count($images);
