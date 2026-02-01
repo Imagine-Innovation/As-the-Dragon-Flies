@@ -4,10 +4,10 @@ namespace frontend\controllers;
 
 use common\models\ActionButton;
 use yii\data\ActiveDataProvider;
-use yii\web\Controller;
-use yii\web\Response;
-use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Controller;
+use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
  * ActionButtonController implements the CRUD actions for ActionButton model.
@@ -18,7 +18,8 @@ class ActionButtonController extends Controller
     /**
      * @inheritDoc
      */
-    public function behaviors() {
+    public function behaviors()
+    {
         /** @phpstan-ignore-next-line */
         return array_merge(
                 parent::behaviors(),
@@ -38,7 +39,8 @@ class ActionButtonController extends Controller
      *
      * @return string
      */
-    public function actionIndex(): string {
+    public function actionIndex(): string
+    {
         $dataProvider = new ActiveDataProvider([
             'query' => ActionButton::find(),
                 /*
@@ -64,7 +66,8 @@ class ActionButtonController extends Controller
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView(int $id): string {
+    public function actionView(int $id): string
+    {
         return $this->render('view', [
                     'model' => $this->findModel($id),
         ]);
@@ -75,7 +78,8 @@ class ActionButtonController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate(): string|Response {
+    public function actionCreate(): string|Response
+    {
         $model = new ActionButton();
 
         if ($this->request->isPost) {
@@ -99,7 +103,8 @@ class ActionButtonController extends Controller
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate(int $id): string|Response {
+    public function actionUpdate(int $id): string|Response
+    {
         $model = $this->findModel($id);
 
         $post = (array) $this->request->post();
@@ -119,7 +124,8 @@ class ActionButtonController extends Controller
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete(int $id): Response {
+    public function actionDelete(int $id): Response
+    {
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
@@ -132,7 +138,8 @@ class ActionButtonController extends Controller
      * @return ActionButton the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel(int $id) {
+    protected function findModel(int $id)
+    {
         if (($model = ActionButton::findOne(['id' => $id])) !== null) {
             return $model;
         }

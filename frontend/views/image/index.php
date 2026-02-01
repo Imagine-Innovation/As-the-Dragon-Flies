@@ -1,9 +1,9 @@
 <?php
 
 use common\models\RaceGroup;
-use yii\helpers\Html;
 use frontend\widgets\AjaxContainer;
 use frontend\widgets\Button;
+use yii\helpers\Html;
 
 /** @var yii\web\View $this */
 /** @var yii\data\ActiveDataProvider $dataProvider */
@@ -44,22 +44,24 @@ $categories = ['Misc', 'Image', 'Item', 'Monster'];
             <ul class="nav nav-tabs" role="tablist">
                 <?php foreach ($raceGroups as $raceGroup): ?>
                     <li class="nav-item">
-                        <a class="nav-link<?= ($raceGroup->name === $initTab) ? " active" : '' ?>"
+                        <a class="nav-link<?= ($raceGroup->name === $initTab) ? " active"
+                            : '' ?>"
                            data-bs-toggle="tab" href="#tab-<?= $raceGroup->name ?>" role="tab"
                            onclick='ImageManager.loadTab("<?= $raceGroup->name ?>", <?= $raceGroup->id ?>);return false;'>
-                               <?= $raceGroup->name ?>
+    <?= $raceGroup->name ?>
                         </a>
                     </li>
-                <?php endforeach; ?>
+<?php endforeach; ?>
             </ul>
 
             <div class="tab-content">
-                <?php foreach ($raceGroups as $raceGroup): ?>
-                    <div class="tab-pane <?= ($raceGroup->name === $initTab) ? "active fade show" : "fade" ?>"
+<?php foreach ($raceGroups as $raceGroup): ?>
+                    <div class="tab-pane <?= ($raceGroup->name === $initTab) ? "active fade show"
+                : "fade" ?>"
                          id="tab-<?= $raceGroup->name ?>" role="tabpanel">
-                             <?= AjaxContainer::widget(['name' => 'ajax-' . $raceGroup->name]) ?>
+                    <?= AjaxContainer::widget(['name' => 'ajax-' . $raceGroup->name]) ?>
                     </div>
-                <?php endforeach; ?>
+<?php endforeach; ?>
             </div>
         </div>
     </div>
@@ -82,12 +84,13 @@ $this->renderFile('@app/views/layouts/snippets/ajax-params.php', [
             </div>
             <div class="modal-body">
                 <p class="form-label">Category</p>
-                <?php foreach ($categories as $category): ?>
+<?php foreach ($categories as $category): ?>
                     <div class="custom-control custom-radio custom-control-inline mb-2">
-                        <input type="radio" id="uploadRadio-<?= $category ?>" value="<?= $category ?>" name="image-upload-category" class="custom-control-input" <?= ($category === 'Misc') ? 'checked' : '' ?>>
+                        <input type="radio" id="uploadRadio-<?= $category ?>" value="<?= $category ?>" name="image-upload-category" class="custom-control-input" <?= ($category === 'Misc')
+                ? 'checked' : '' ?>>
                         <label class="custom-control-label" for="uploadRadio-<?= $category ?>"><?= $category ?></label>
                     </div>
-                <?php endforeach; ?>
+<?php endforeach; ?>
                 <br>
                 <br>
                 <br>

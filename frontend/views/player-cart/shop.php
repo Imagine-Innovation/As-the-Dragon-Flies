@@ -1,9 +1,9 @@
 <?php
 
-use yii\helpers\Url;
 use frontend\components\Shopping;
-use frontend\widgets\CurrentPlayer;
 use frontend\widgets\Button;
+use frontend\widgets\CurrentPlayer;
+use yii\helpers\Url;
 
 /** @var yii\web\View $this */
 /** @var common\models\Item[] $items */
@@ -45,7 +45,9 @@ $firstType = $itemTypes[0];
                 <ul class="nav nav-tabs" role="tablist">
                     <?php foreach ($itemTypes as $itemType): ?>
                         <li class="nav-item">
-                            <a class="nav-link<?= ($itemType === $firstType) ? " active" : '' ?>"
+                            <a class="nav-link<?=
+                            ($itemType === $firstType) ? " active" : ''
+                            ?>"
                                data-bs-toggle="tab" href="#tab-<?= $itemType ?>" role="tab" href="#">
                                    <?= $itemType ?>
                             </a>
@@ -55,7 +57,9 @@ $firstType = $itemTypes[0];
 
                 <div class="tab-content">
                     <?php foreach ($itemTypes as $itemType): ?>
-                        <div class="tab-pane <?= ($itemType === $firstType) ? "active fade show" : "fade" ?>"
+                        <div class="tab-pane <?=
+                        ($itemType === $firstType) ? "active fade show" : "fade"
+                        ?>"
                              id="tab-<?= $itemType ?>" role="tabpanel">
                                  <?=
                                  $this->render('snippets/shop-items', [

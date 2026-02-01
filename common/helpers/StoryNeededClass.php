@@ -19,11 +19,12 @@
 
 namespace common\helpers;
 
-use frontend\widgets\CheckBox;
 use common\models\CharacterClass;
 use common\models\Story;
+use frontend\widgets\CheckBox;
 
-class StoryNeededClass {
+class StoryNeededClass
+{
 
     /**
      * Generates HTML markup for character classes if the story object contains them.
@@ -37,7 +38,8 @@ class StoryNeededClass {
      * @return string        HTML markup with checkboxes for each class in the story,
      *                       or an empty string if no classes are present.
      */
-    public static function classList(Story $story): string {
+    public static function classList(Story $story): string
+    {
         if (!$story->classes) {
             return '';
         }
@@ -66,7 +68,8 @@ class StoryNeededClass {
      * @return string        Returns " checked" if the class is found in the tavern's players;
      *                       otherwise, returns an empty string.
      */
-    private static function checked(Story $story, CharacterClass $class): string {
+    private static function checked(Story $story, CharacterClass $class): string
+    {
         $tavern = $story->tavern;
 
         if ($tavern) {

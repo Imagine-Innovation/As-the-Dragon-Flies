@@ -1,7 +1,6 @@
 <?php
 
 use yii\bootstrap5\Html;
-use yii\helpers\Url;
 
 /** @var yii\web\View $this */
 /** @var array $players */
@@ -28,7 +27,10 @@ foreach ($players as $player) {
                     <div class="custom-control custom-radio mb-2">
                         <input type="radio" class="custom-control-input"
                                id="selectPlayerModal-<?= $player['id'] ?>" name="selectPlayerModal"
-                               <?= ($player['id'] === $selectedPlayerId) ? "checked" : '' ?>
+                               <?=
+                               ($player['id'] === $selectedPlayerId) ? "checked"
+                                           : ''
+                               ?>
                                onclick="PlayerSelector.select(<?= $userId ?>, <?= $player['id'] ?>); $('#CloseSelectPlayerModal-button').click();">
                         <label class="custom-control-label" for="selectPlayerModal-<?= $player['id'] ?>">
                             <span data-bs-toggle="tooltip" title="<?= ucfirst($player['tooltip']) ?>" data-placement="bottom">

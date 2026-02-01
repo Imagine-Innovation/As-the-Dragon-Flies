@@ -1,7 +1,7 @@
 <?php
 
-use yii\helpers\Url;
 use common\components\ManageAccessRights;
+use yii\helpers\Url;
 
 /** @var yii\web\View $this */
 /** @var common\model $model */

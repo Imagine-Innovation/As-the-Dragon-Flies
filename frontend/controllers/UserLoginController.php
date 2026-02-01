@@ -7,10 +7,10 @@ use common\models\UserLogin;
 use frontend\components\AjaxRequest;
 use Yii;
 use yii\data\ActiveDataProvider;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
 use yii\web\Response;
 
 /**
@@ -22,7 +22,8 @@ class UserLoginController extends Controller
     /**
      * @inheritDoc
      */
-    public function behaviors() {
+    public function behaviors()
+    {
         /** @phpstan-ignore-next-line */
         return array_merge(
                 parent::behaviors(),
@@ -60,7 +61,8 @@ class UserLoginController extends Controller
      *
      * @return string
      */
-    public function actionIndex(): string {
+    public function actionIndex(): string
+    {
         $dataProvider = new ActiveDataProvider([
             'query' => UserLogin::find(),
             'sort' => [
@@ -80,7 +82,8 @@ class UserLoginController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjax(): array {
+    public function actionAjax(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -112,7 +115,8 @@ class UserLoginController extends Controller
      * @return UserLogin the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel(int $userId, string $application, int $loginAt): UserLogin {
+    protected function findModel(int $userId, string $application, int $loginAt): UserLogin
+    {
         if (($model = UserLogin::findOne([
             'user_id' => $userId,
             'application' => $application,

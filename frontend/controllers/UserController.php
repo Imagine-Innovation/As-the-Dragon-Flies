@@ -8,15 +8,14 @@ use common\helpers\Status;
 use common\models\User;
 use frontend\components\AjaxRequest;
 use Yii;
+use yii\behaviors\AttributeBehavior;
 use yii\data\ActiveDataProvider;
+use yii\db\ActiveRecord;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UnauthorizedHttpException;
-use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
 use yii\web\Response;
-use yii\db\ActiveRecord;
-use yii\behaviors\AttributeBehavior;
 
 /**
  * UserController implements the CRUD actions for User model.
@@ -27,7 +26,8 @@ class UserController extends Controller
     /**
      * @inheritDoc
      */
-    public function behaviors() {
+    public function behaviors()
+    {
         /** @phpstan-ignore-next-line */
         return array_merge(
                 parent::behaviors(),
@@ -76,7 +76,8 @@ class UserController extends Controller
      *
      * @return string
      */
-    public function actionIndex(): string {
+    public function actionIndex(): string
+    {
         $dataProvider = new ActiveDataProvider([
             'query' => User::find(),
             'sort' => [
@@ -95,7 +96,8 @@ class UserController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjax(): array {
+    public function actionAjax(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -118,7 +120,8 @@ class UserController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxSetRole(): array {
+    public function actionAjaxSetRole(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -138,9 +141,11 @@ class UserController extends Controller
         $model->$property = $status;
 
         if ($model->save()) {
-            return ['error' => false, 'msg' => "Role $role has been " . (($status === 1) ? "granted" : "revoked") . " to user $model->username"];
+            return ['error' => false, 'msg' => "Role $role has been " . (($status === 1)
+                    ? "granted" : "revoked") . " to user $model->username"];
         }
-        return ['error' => true, 'msg' => "Unable to " . (($status === 1) ? "grant" : "revoke") . " role $role to user $model->username"];
+        return ['error' => true, 'msg' => "Unable to " . (($status === 1) ? "grant"
+                : "revoke") . " role $role to user $model->username"];
     }
 
     /**
@@ -150,7 +155,8 @@ class UserController extends Controller
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView(int $id): string {
+    public function actionView(int $id): string
+    {
         return $this->render('view', [
                     'model' => $this->findModel($id),
         ]);
@@ -162,7 +168,8 @@ class UserController extends Controller
      * @return Response
      * @throws NotFoundHttpException
      */
-    public function actionDelete(int $id): Response {
+    public function actionDelete(int $id): Response
+    {
         $model = $this->findModel($id);
         if (Status::changeStatus($model, AppStatus::DELETED->value)) {
             return $this->redirect(['index']);
@@ -176,7 +183,8 @@ class UserController extends Controller
      * @return Response
      * @throws NotFoundHttpException
      */
-    public function actionValidate(int $id): Response {
+    public function actionValidate(int $id): Response
+    {
         $model = $this->findModel($id);
         if (Status::changeStatus($model, AppStatus::ACTIVE->value)) {
             return $this->redirect(['index']);
@@ -190,7 +198,8 @@ class UserController extends Controller
      * @return Response
      * @throws NotFoundHttpException
      */
-    public function actionRestore(int $id): Response {
+    public function actionRestore(int $id): Response
+    {
         $model = $this->findModel($id);
         if (Status::changeStatus($model, AppStatus::INACTIVE->value)) {
             return $this->redirect(['index']);
@@ -206,7 +215,8 @@ class UserController extends Controller
      * @return User the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel(int $id): User {
+    protected function findModel(int $id): User
+    {
         if (($model = User::findOne(['id' => $id])) !== null) {
             return $model;
         }

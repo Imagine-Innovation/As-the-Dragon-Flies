@@ -6,11 +6,11 @@ use common\components\ManageAccessRights;
 use common\models\Item;
 use frontend\components\AjaxRequest;
 use Yii;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UnauthorizedHttpException;
-use yii\filters\AccessControl;
 use yii\web\Response;
+use yii\web\UnauthorizedHttpException;
 
 /**
  * ItemController implements the CRUD actions for Item model.
@@ -21,7 +21,8 @@ class ItemController extends Controller
     /**
      * @inheritDoc
      */
-    public function behaviors() {
+    public function behaviors()
+    {
         return array_merge(
                 parent::behaviors(),
                 [
@@ -49,7 +50,8 @@ class ItemController extends Controller
      *
      * @return string
      */
-    public function actionIndex(): string {
+    public function actionIndex(): string
+    {
         if (Yii::$app->user->identity->is_designer) {
             return $this->render('index');
         }
@@ -61,7 +63,8 @@ class ItemController extends Controller
      *
      * @return string
      */
-    public function actionShop(): string {
+    public function actionShop(): string
+    {
         $query = Item::find()->where(['>', 'cost', 0]);
 
         $models = $query->orderBy([
@@ -78,7 +81,8 @@ class ItemController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjax(): array {
+    public function actionAjax(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -109,7 +113,8 @@ class ItemController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxImages(): array {
+    public function actionAjaxImages(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -137,7 +142,8 @@ class ItemController extends Controller
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView(int $id): string {
+    public function actionView(int $id): string
+    {
         return $this->render('view', [
                     'model' => $this->findModel($id),
         ]);
@@ -150,7 +156,8 @@ class ItemController extends Controller
      * @return Item the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel(int $id): Item {
+    protected function findModel(int $id): Item
+    {
         if (($model = Item::findOne(['id' => $id])) !== null) {
             return $model;
         }

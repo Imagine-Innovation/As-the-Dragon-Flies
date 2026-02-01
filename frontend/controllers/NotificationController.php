@@ -7,11 +7,11 @@ use common\models\Notification;
 use frontend\components\AjaxRequest;
 use frontend\components\QuestNotification;
 use Yii;
-use yii\web\Controller;
-use yii\web\NotFoundHttpException;
-use yii\web\ForbiddenHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
+use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 /**
@@ -23,7 +23,8 @@ class NotificationController extends Controller
     /**
      * @inheritDoc
      */
-    public function behaviors() {
+    public function behaviors()
+    {
         /** @phpstan-ignore-next-line */
         return array_merge(
                 parent::behaviors(),
@@ -61,7 +62,8 @@ class NotificationController extends Controller
      *
      * @return string
      */
-    public function actionIndex(): string {
+    public function actionIndex(): string
+    {
         $user = Yii::$app->user->identity;
         if ($user->is_admin) {
             return $this->render('index');
@@ -75,7 +77,8 @@ class NotificationController extends Controller
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView(int $id): string {
+    public function actionView(int $id): string
+    {
         $user = Yii::$app->user->identity;
         if ($user->is_admin) {
             return $this->render('view', [
@@ -89,7 +92,8 @@ class NotificationController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjax(): array {
+    public function actionAjax(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -111,7 +115,8 @@ class NotificationController extends Controller
      *
      * @return array{error: bool, msg: string, content?: int}
      */
-    public function actionAjaxMarkAsRead(): array {
+    public function actionAjaxMarkAsRead(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -135,7 +140,8 @@ class NotificationController extends Controller
      * @return Notification the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel(int $id): Notification {
+    protected function findModel(int $id): Notification
+    {
         if (($model = Notification::findOne(['id' => $id])) !== null) {
             return $model;
         }

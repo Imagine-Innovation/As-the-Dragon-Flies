@@ -7,10 +7,10 @@ use common\models\AccessRight;
 use frontend\components\AjaxRequest;
 use Yii;
 use yii\data\ActiveDataProvider;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
 use yii\web\Response;
 
 /**
@@ -22,7 +22,8 @@ class AccessRightController extends Controller
     /**
      * @inheritDoc
      */
-    public function behaviors() {
+    public function behaviors()
+    {
         /** @phpstan-ignore-next-line */
         return array_merge(
                 parent::behaviors(),
@@ -60,7 +61,8 @@ class AccessRightController extends Controller
      *
      * @return string
      */
-    public function actionIndex(): string {
+    public function actionIndex(): string
+    {
         $dataProvider = new ActiveDataProvider([
             'query' => AccessRight::find(),
                 /*
@@ -84,7 +86,8 @@ class AccessRightController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjax(): array {
+    public function actionAjax(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -106,7 +109,8 @@ class AccessRightController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxSetAccessRight(): array {
+    public function actionAjaxSetAccessRight(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -129,9 +133,11 @@ class AccessRightController extends Controller
         $model->$access = $status;
 
         if ($model->save()) {
-            return ['error' => false, 'msg' => "Access right {$access} has been " . (($status === 1) ? "granted" : "revoked") . " to route {$model->route}"];
+            return ['error' => false, 'msg' => "Access right {$access} has been " . (($status === 1)
+                    ? "granted" : "revoked") . " to route {$model->route}"];
         }
-        return ['error' => true, 'msg' => "Unable to " . (($status === 1) ? "grant" : "revoke") . " Access right {$access} to route {$model->route}"];
+        return ['error' => true, 'msg' => "Unable to " . (($status === 1) ? "grant"
+                : "revoke") . " Access right {$access} to route {$model->route}"];
     }
 
     /**
@@ -140,7 +146,8 @@ class AccessRightController extends Controller
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView(int $id): string {
+    public function actionView(int $id): string
+    {
         return $this->render('view', [
                     'model' => $this->findModel($id),
         ]);
@@ -151,7 +158,8 @@ class AccessRightController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate(): string|Response {
+    public function actionCreate(): string|Response
+    {
         $model = new AccessRight();
 
         if ($this->request->isPost) {
@@ -175,7 +183,8 @@ class AccessRightController extends Controller
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate(int $id): string|Response {
+    public function actionUpdate(int $id): string|Response
+    {
         $model = $this->findModel($id);
 
         $post = (array) $this->request->post();
@@ -195,7 +204,8 @@ class AccessRightController extends Controller
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete(int $id): Response {
+    public function actionDelete(int $id): Response
+    {
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
@@ -208,7 +218,8 @@ class AccessRightController extends Controller
      * @return AccessRight the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel(int $id): AccessRight {
+    protected function findModel(int $id): AccessRight
+    {
         if (($model = AccessRight::findOne(['id' => $id])) !== null) {
             return $model;
         }

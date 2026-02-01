@@ -2,18 +2,18 @@
 
 namespace frontend\controllers;
 
-use common\models\Image;
-use common\models\ClassImage;
-use frontend\components\AjaxRequest;
 use common\components\ManageAccessRights;
+use common\models\ClassImage;
+use common\models\Image;
+use frontend\components\AjaxRequest;
 use Yii;
 use yii\data\ActiveDataProvider;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UploadedFile;
-use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
 use yii\web\Response;
+use yii\web\UploadedFile;
 
 /**
  * ImageController implements the CRUD actions for Image model.
@@ -24,7 +24,8 @@ class ImageController extends Controller
     /**
      * @inheritDoc
      */
-    public function behaviors() {
+    public function behaviors()
+    {
         /** @phpstan-ignore-next-line */
         return array_merge(
                 parent::behaviors(),
@@ -61,7 +62,8 @@ class ImageController extends Controller
      *
      * @return string
      */
-    public function actionIndex(): string {
+    public function actionIndex(): string
+    {
         $dataProvider = new ActiveDataProvider([
             'query' => Image::find(),
         ]);
@@ -75,7 +77,8 @@ class ImageController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjax(): array {
+    public function actionAjax(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -92,7 +95,8 @@ class ImageController extends Controller
             'innerJoin' => [
                 ['table' => 'race_group_image', 'clause' => 'image.id = race_group_image.image_id']
             ],
-            'filter' => $gender ? ['race_group_image.race_group_id' => $raceGroupId, 'race_group_image.gender' => $gender] : ['race_group_image.race_group_id' => $raceGroupId],
+            'filter' => $gender ? ['race_group_image.race_group_id' => $raceGroupId, 'race_group_image.gender' => $gender]
+                : ['race_group_image.race_group_id' => $raceGroupId],
         ];
         $ajaxRequest = new AjaxRequest($param);
 
@@ -106,7 +110,8 @@ class ImageController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxSetClass(): array {
+    public function actionAjaxSetClass(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -132,9 +137,11 @@ class ImageController extends Controller
         }
 
         if ($success) {
-            return ['error' => false, 'msg' => "Class $className has been " . (($status === 1) ? "added" : "removed") . " to the image."];
+            return ['error' => false, 'msg' => "Class $className has been " . (($status === 1)
+                    ? "added" : "removed") . " to the image."];
         }
-        return ['error' => true, 'msg' => "Unable to " . (($status === 1) ? "add" : "remove") . " class $className to the image!"];
+        return ['error' => true, 'msg' => "Unable to " . (($status === 1) ? "add"
+                : "remove") . " class $className to the image!"];
     }
 
     /**
@@ -143,7 +150,8 @@ class ImageController extends Controller
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView(int $id): string {
+    public function actionView(int $id): string
+    {
         return $this->render('view', [
                     'model' => $this->findModel($id),
         ]);
@@ -154,7 +162,8 @@ class ImageController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate(): string|Response {
+    public function actionCreate(): string|Response
+    {
         $model = new Image();
 
         if ($this->request->isPost) {
@@ -178,7 +187,8 @@ class ImageController extends Controller
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate(int $id): string|Response {
+    public function actionUpdate(int $id): string|Response
+    {
         $model = $this->findModel($id);
 
         $post = (array) $this->request->post();
@@ -198,7 +208,8 @@ class ImageController extends Controller
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete(int $id): Response {
+    public function actionDelete(int $id): Response
+    {
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
@@ -208,7 +219,8 @@ class ImageController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxUpload(): array {
+    public function actionAjaxUpload(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -235,7 +247,8 @@ class ImageController extends Controller
      * @return Image the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel(int $id): Image {
+    protected function findModel(int $id): Image
+    {
         if (($model = Image::findOne(['id' => $id])) !== null) {
             return $model;
         }

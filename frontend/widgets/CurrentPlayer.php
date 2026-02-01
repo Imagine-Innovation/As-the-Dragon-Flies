@@ -2,10 +2,10 @@
 
 namespace frontend\widgets;
 
-use yii\base\Widget;
 use common\components\AppStatus;
 use common\models\Player;
 use common\models\User;
+use yii\base\Widget;
 
 class CurrentPlayer extends Widget
 {
@@ -17,7 +17,8 @@ class CurrentPlayer extends Widget
      *
      * @return string
      */
-    public function run(): string {
+    public function run(): string
+    {
         $currentUser = $this->user;
         $displayMode = $this->mode ?? 'navbar';
         $render = ($displayMode === 'navbar') ? 'current-player-navbar' : 'current-player-modal';
@@ -42,7 +43,8 @@ class CurrentPlayer extends Widget
      * @param int $userId
      * @return array<int, array<string, int|string|null>>
      */
-    private function loadPlayers(int $userId): array {
+    private function loadPlayers(int $userId): array
+    {
         $players = $this->getPlayers($userId);
         $data = [];
         foreach ($players as $player) {
@@ -68,7 +70,8 @@ class CurrentPlayer extends Widget
      * @param Player $player
      * @return string
      */
-    private function setTooltip(Player &$player): string {
+    private function setTooltip(Player &$player): string
+    {
         $gender = match ($player->gender) {
             'F' => 'female',
             'M' => 'male',
@@ -86,7 +89,8 @@ class CurrentPlayer extends Widget
      * @param int $userId
      * @return Player[]
      */
-    private function getPlayers(int $userId): array {
+    private function getPlayers(int $userId): array
+    {
         return Player::find()
                         ->with(['class', 'race'])
                         ->where([

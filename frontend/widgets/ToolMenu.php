@@ -2,8 +2,8 @@
 
 namespace frontend\widgets;
 
-use common\models\Menu;
 use common\components\ManageAccessRights;
+use common\models\Menu;
 use Yii;
 use yii\base\Widget;
 
@@ -17,7 +17,8 @@ class ToolMenu extends Widget
      *
      * @return string
      */
-    public function run(): string {
+    public function run(): string
+    {
         if ($this->isAdmin) {
             $render = ($this->mode === 'nav') ? 'tool-menu-nav' : 'tool-menu-admin';
         } elseif ($this->mode === 'nav') {
@@ -36,7 +37,8 @@ class ToolMenu extends Widget
      *
      * @return Menu[]
      */
-    private function getMenus(): array {
+    private function getMenus(): array
+    {
         $user = Yii::$app->user->identity;
 
         $hasPlayerSelected = false;

@@ -2,10 +2,10 @@
 
 namespace frontend\widgets;
 
-use Yii;
-use yii\base\Widget;
 use common\models\RuleCondition;
 use common\models\RuleExpression;
+use Yii;
+use yii\base\Widget;
 
 class RuleParsingTree extends Widget
 {
@@ -16,7 +16,8 @@ class RuleParsingTree extends Widget
      *
      * @return string
      */
-    public function run(): string {
+    public function run(): string
+    {
         if (!$this->id) {
             return '';
         }
@@ -31,7 +32,8 @@ class RuleParsingTree extends Widget
      * @param RuleExpression $expression
      * @return string
      */
-    private function digParsingTree(RuleExpression $expression): string {
+    private function digParsingTree(RuleExpression $expression): string
+    {
         $tree = [];
         if ($expression->op) {
             return $this->digOpParsingTree($expression);
@@ -44,7 +46,8 @@ class RuleParsingTree extends Widget
      * @param RuleExpression $expression
      * @return string
      */
-    private function digOpParsingTree(RuleExpression &$expression): string {
+    private function digOpParsingTree(RuleExpression &$expression): string
+    {
         $tree = [];
         if ($expression->ruleConditions) {
             foreach ($expression->ruleConditions as $cond) {
@@ -70,7 +73,8 @@ class RuleParsingTree extends Widget
      * @param RuleExpression $expression
      * @return string
      */
-    private function digNonOpParsingTree(RuleExpression &$expression): string {
+    private function digNonOpParsingTree(RuleExpression &$expression): string
+    {
         if ($expression->ruleExpressions) {
             $tree = [];
             foreach ($expression->ruleExpressions as $expr) {
@@ -93,7 +97,8 @@ class RuleParsingTree extends Widget
      * @param RuleCondition $cond
      * @return string
      */
-    private function renderCondition(RuleCondition $cond): string {
+    private function renderCondition(RuleCondition $cond): string
+    {
         $ruleModel = $cond->model;
         $attribute = $ruleModel->is_method ? "{$ruleModel->attribute}()" : $ruleModel->attribute;
         $left = "{$ruleModel->name}->{$attribute}";

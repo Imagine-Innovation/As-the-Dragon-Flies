@@ -3,10 +3,10 @@
 namespace common\components\gameplay;
 
 use common\components\ContextManager;
-use common\models\Notification;
 use common\helpers\JsonHelper;
 use common\helpers\PayloadHelper;
 use common\helpers\Utilities;
+use common\models\Notification;
 use Yii;
 
 class ChatManager extends BaseManager
@@ -26,7 +26,8 @@ class ChatManager extends BaseManager
      * @param array<string, mixed> $config
      * @throws \Exception
      */
-    public function __construct($config = []) {
+    public function __construct($config = [])
+    {
         parent::__construct($config);
 
         $missingParam = [];
@@ -48,7 +49,8 @@ class ChatManager extends BaseManager
      * @param int|null $time
      * @return int
      */
-    private function roundedTime(?int $time = null): int {
+    private function roundedTime(?int $time = null): int
+    {
         $timestamp = $time ?? time();
         return intval(floor($timestamp / self::ROUNDED_SECONDS) * self::ROUNDED_SECONDS);
     }
@@ -60,7 +62,8 @@ class ChatManager extends BaseManager
      * @param int $playerId
      * @return array<string, mixed>
      */
-    private function newChatEntry(Notification $chatNotification, int $playerId): array {
+    private function newChatEntry(Notification $chatNotification, int $playerId): array
+    {
         if ($chatNotification->notification_type !== self::CHAT_NOTIFICATION_TYPE) {
             return [];
         }
@@ -89,7 +92,8 @@ class ChatManager extends BaseManager
      * @param int|null $limit
      * @return non-empty-array<'message'|int<0, max>, string>|array{}
      */
-    public function getLastMessages(?int $since = null, ?int $limit = null): array {
+    public function getLastMessages(?int $since = null, ?int $limit = null): array
+    {
 
         $chatNotifications = $this->getNotifications((int) $this->questId, self::CHAT_NOTIFICATION_TYPE, $since, $limit);
 

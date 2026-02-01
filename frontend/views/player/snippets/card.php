@@ -1,9 +1,9 @@
 <?php
 
 use common\components\AppStatus;
-use yii\helpers\Url;
 use frontend\widgets\Button;
 use frontend\widgets\PlayerCharacteristics;
+use yii\helpers\Url;
 
 /** @var yii\web\View $this */
 /** @var common\models\Player $player */
@@ -30,14 +30,21 @@ $route = ($player->status === AppStatus::ACTIVE->value) ? 'player/view' : 'playe
     <div class="card-body">
         <h4 class="card-title"><?= $player->name ?? "Unkown yet" ?></h4>
         <?php if ($player->age): ?>
-            <h4 class="card-subtitle"><?= $player->age ?>-year-old <?= ($player->gender === 'M') ? 'male' : 'female' ?> <?= $player->race_id ? $player->race->name : "Undefined" ?></h4>
+            <h4 class="card-subtitle"><?= $player->age ?>-year-old <?=
+                ($player->gender === 'M') ? 'male' : 'female'
+                ?> <?= $player->race_id ? $player->race->name : "Undefined"
+                ?></h4>
         <?php endif; ?>
 
         <div>
             <p>
                 <span class="badge badge-warning"><?= $player->level->name ?></span>
-                <span class="badge badge-warning"><?= $player->alignment_id ? $player->alignment?->name : "Undefined" ?></span>
-                <span class="badge badge-warning"><?= $player->class_id ? $player->class->name : "Undefined" ?></span>
+                <span class="badge badge-warning"><?=
+                    $player->alignment_id ? $player->alignment?->name : "Undefined"
+                    ?></span>
+                <span class="badge badge-warning"><?=
+                    $player->class_id ? $player->class->name : "Undefined"
+                    ?></span>
             </p>
         </div>
 

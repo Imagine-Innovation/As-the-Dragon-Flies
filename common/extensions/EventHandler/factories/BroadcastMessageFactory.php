@@ -2,17 +2,17 @@
 
 namespace common\extensions\EventHandler\factories;
 
+use common\extensions\EventHandler\contracts\BroadcastMessageInterface;
+use common\extensions\EventHandler\dtos\ErrorDto;
+use common\extensions\EventHandler\dtos\GameActionDto;
+use common\extensions\EventHandler\dtos\GameOverDto;
 use common\extensions\EventHandler\dtos\NewMessageDto;
+use common\extensions\EventHandler\dtos\NextMissionDto;
+use common\extensions\EventHandler\dtos\NextTurnDto;
+use common\extensions\EventHandler\dtos\NotificationDto;
 use common\extensions\EventHandler\dtos\PlayerJoinedDto;
 use common\extensions\EventHandler\dtos\PlayerQuitDto;
 use common\extensions\EventHandler\dtos\QuestStartedDto;
-use common\extensions\EventHandler\dtos\GameActionDto;
-use common\extensions\EventHandler\dtos\NextTurnDto;
-use common\extensions\EventHandler\dtos\NextMissionDto;
-use common\extensions\EventHandler\dtos\GameOverDto;
-use common\extensions\EventHandler\dtos\NotificationDto;
-use common\extensions\EventHandler\dtos\ErrorDto;
-use common\extensions\EventHandler\contracts\BroadcastMessageInterface;
 use common\extensions\EventHandler\LoggerService;
 use Yii;
 
@@ -30,7 +30,8 @@ class BroadcastMessageFactory
      * @param string|null $recipient
      * @return NewMessageDto
      */
-    public function createNewMessage(string $message, string $sender, ?string $recipient = null): NewMessageDto {
+    public function createNewMessage(string $message, string $sender, ?string $recipient = null): NewMessageDto
+    {
         return new NewMessageDto($message, $sender, $recipient);
     }
 
@@ -41,7 +42,8 @@ class BroadcastMessageFactory
      * @param string $questName
      * @return PlayerJoinedDto
      */
-    public function createPlayerJoinedMessage(string $playerName, string $sessionId, string $questName): PlayerJoinedDto {
+    public function createPlayerJoinedMessage(string $playerName, string $sessionId, string $questName): PlayerJoinedDto
+    {
         return new PlayerJoinedDto($playerName, $sessionId, $questName);
     }
 
@@ -53,7 +55,8 @@ class BroadcastMessageFactory
      * @param string $reason
      * @return PlayerQuitDto
      */
-    public function createPlayerQuitMessage(string $playerName, string $sessionId, string $questName, string $reason): PlayerQuitDto {
+    public function createPlayerQuitMessage(string $playerName, string $sessionId, string $questName, string $reason): PlayerQuitDto
+    {
         return new PlayerQuitDto($playerName, $sessionId, $questName, $reason);
     }
 
@@ -64,7 +67,8 @@ class BroadcastMessageFactory
      * @param string $questName
      * @return QuestStartedDto
      */
-    public function createQuestStartedMessage(string $sessionId, int $questId, string $questName): QuestStartedDto {
+    public function createQuestStartedMessage(string $sessionId, int $questId, string $questName): QuestStartedDto
+    {
         return new QuestStartedDto($sessionId, $questId, $questName);
     }
 
@@ -75,7 +79,8 @@ class BroadcastMessageFactory
      * @param array<string, mixed> $detail
      * @return GameActionDto
      */
-    public function createGameActionMessage(string $playerName, string $action, array $detail): GameActionDto {
+    public function createGameActionMessage(string $playerName, string $action, array $detail): GameActionDto
+    {
         return new GameActionDto($playerName, $action, $detail);
     }
 
@@ -84,7 +89,8 @@ class BroadcastMessageFactory
      * @param array<string, mixed> $detail
      * @return NextTurnDto
      */
-    public function createNextTurnMessage(array $detail): NextTurnDto {
+    public function createNextTurnMessage(array $detail): NextTurnDto
+    {
         return new NextTurnDto($detail);
     }
 
@@ -93,7 +99,8 @@ class BroadcastMessageFactory
      * @param array<string, mixed> $detail
      * @return NextMissionDto
      */
-    public function createNextMissionMessage(array $detail): NextMissionDto {
+    public function createNextMissionMessage(array $detail): NextMissionDto
+    {
         return new NextMissionDto($detail);
     }
 
@@ -102,7 +109,8 @@ class BroadcastMessageFactory
      * @param array<string, mixed> $detail
      * @return GameOverDto
      */
-    public function createGameOverMessage(array $detail): GameOverDto {
+    public function createGameOverMessage(array $detail): GameOverDto
+    {
         return new GameOverDto($detail);
     }
 
@@ -113,7 +121,8 @@ class BroadcastMessageFactory
      * @param array<string, mixed>|null $details
      * @return NotificationDto
      */
-    public function createNotificationMessage(string $message, string $level = 'info', ?array $details = null): NotificationDto {
+    public function createNotificationMessage(string $message, string $level = 'info', ?array $details = null): NotificationDto
+    {
         return new NotificationDto($message, $level, $details);
     }
 
@@ -124,7 +133,8 @@ class BroadcastMessageFactory
      * @param array<string, mixed>|null $details
      * @return ErrorDto
      */
-    public function createErrorMessage(string $errorMessage, ?int $errorCode = null, ?array $details = null): ErrorDto {
+    public function createErrorMessage(string $errorMessage, ?int $errorCode = null, ?array $details = null): ErrorDto
+    {
         return new ErrorDto($errorMessage, $errorCode, $details);
     }
 
@@ -135,7 +145,8 @@ class BroadcastMessageFactory
      * @param array<string> $requiredKeys
      * @return bool
      */
-    private function validatePayload(array $payload, array $requiredKeys): bool {
+    private function validatePayload(array $payload, array $requiredKeys): bool
+    {
         foreach ($requiredKeys as $key) {
             if (!array_key_exists($key, $payload)) {
                 return false;
@@ -154,7 +165,8 @@ class BroadcastMessageFactory
      * @param array<string> $optionalKeys
      * @return BroadcastMessageInterface|null
      */
-    private function newDto(string $dtoClass, string $type, array $payload, array $requiredKeys, array $optionalKeys = []): ?BroadcastMessageInterface {
+    private function newDto(string $dtoClass, string $type, array $payload, array $requiredKeys, array $optionalKeys = []): ?BroadcastMessageInterface
+    {
         if ($this->validatePayload($payload, $requiredKeys)) {
             $args = [];
             foreach ($requiredKeys as $key) {
@@ -175,7 +187,8 @@ class BroadcastMessageFactory
      * @param string $type
      * @return void
      */
-    private function handleUnknownType(string $type): void {
+    private function handleUnknownType(string $type): void
+    {
         $this->loggerService->log("BroadcastMessageFactory - createMessage - unhandled type=[{$type}]", null, 'warning');
         return;
     }
@@ -187,7 +200,8 @@ class BroadcastMessageFactory
      * @param array<string, mixed> $payload
      * @return BroadcastMessageInterface|null
      */
-    public function createMessage(string $type, array $payload): ?BroadcastMessageInterface {
+    public function createMessage(string $type, array $payload): ?BroadcastMessageInterface
+    {
         $this->loggerService = new LoggerService(self::LOG_FILE_PATH, true);
         $this->loggerService->logStart("BroadcastMessageFactory - createMessage - type={$type}, payload=", $payload);
 

@@ -3,9 +3,9 @@
 namespace frontend\components;
 
 use Yii;
-use yii\web\Request;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
+use yii\web\Request;
 
 class AjaxRequest
 {

@@ -1,12 +1,13 @@
 <?php
 
-use yii\helpers\Html;
-use yii\helpers\Url;
+use common\models\Spell;
 use frontend\widgets\Pagination;
 use frontend\widgets\RecordCount;
+use yii\helpers\Html;
+use yii\helpers\Url;
 
 /** @var yii\web\View $this */
-/** @var common\models\Spell[] $models */
+/** @var Spell[] $models */
 /** @var int $count: total number of records retrived by the query */
 /** @var int $page: current page number */
 /** @var int $pageCount: nomber of pages regarding the limit of the query */

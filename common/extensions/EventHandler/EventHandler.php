@@ -2,25 +2,25 @@
 
 namespace common\extensions\EventHandler;
 
-use common\extensions\EventHandler\handlers\RegistrationHandler;
-use common\extensions\EventHandler\handlers\SendingMessageHandler;
+use common\extensions\EventHandler\factories\BroadcastMessageFactory;
 use common\extensions\EventHandler\handlers\GameActionHandler;
+use common\extensions\EventHandler\handlers\GameOverHandler;
+use common\extensions\EventHandler\handlers\NextMissionHandler;
+use common\extensions\EventHandler\handlers\NextTurnHandler;
 use common\extensions\EventHandler\handlers\PlayerJoiningHandler;
 use common\extensions\EventHandler\handlers\PlayerQuittingHandler;
 use common\extensions\EventHandler\handlers\QuestStartingHandler;
-use common\extensions\EventHandler\handlers\NextTurnHandler;
-use common\extensions\EventHandler\handlers\NextMissionHandler;
-use common\extensions\EventHandler\handlers\GameOverHandler;
-use common\extensions\EventHandler\factories\BroadcastMessageFactory;
+use common\extensions\EventHandler\handlers\RegistrationHandler;
+use common\extensions\EventHandler\handlers\SendingMessageHandler;
 use common\helpers\JsonHelper;
 use common\helpers\PayloadHelper;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use React\EventLoop\Loop;
 use React\EventLoop\LoopInterface;
-use React\Http\Server as HttpServer;
 use React\Http\Message\Response;
+use React\Http\Server as HttpServer;
 use React\Socket\SocketServer;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
 use Yii;
 use yii\base\Component;
 
@@ -44,7 +44,8 @@ class EventHandler extends Component
      *
      * @return void
      */
-    public function init(): void {
+    public function init(): void
+    {
         parent::init();
 
         echo "Init starting\n";
@@ -64,7 +65,8 @@ class EventHandler extends Component
      *
      * @return void
      */
-    protected function initializeServices(): void {
+    protected function initializeServices(): void
+    {
         $actualLogFilePath = $this->logFilePath;
         $this->loggerService = new LoggerService($actualLogFilePath, $this->debug);
         $this->questSessionManager = new QuestSessionManager($this->loggerService);
@@ -87,7 +89,8 @@ class EventHandler extends Component
      *
      * @return void
      */
-    protected function initializeMessageHandlers(): void {
+    protected function initializeMessageHandlers(): void
+    {
         $specificHandlers = [
             'register' => new RegistrationHandler($this->loggerService, $this->questSessionManager, $this->broadcastService, new BroadcastMessageFactory()),
             'sending-message' => new SendingMessageHandler($this->loggerService, $this->broadcastService, new BroadcastMessageFactory()),
@@ -111,7 +114,8 @@ class EventHandler extends Component
      *
      * @return void
      */
-    public function run(): void {
+    public function run(): void
+    {
         $this->suppressDeprecationWarnings();
         $this->setupWebSocketServer();
         $this->setupInternalHttpServer();
@@ -122,7 +126,8 @@ class EventHandler extends Component
      *
      * @return void
      */
-    protected function suppressDeprecationWarnings(): void {
+    protected function suppressDeprecationWarnings(): void
+    {
         error_reporting(error_reporting() & ~E_DEPRECATED);
     }
 
@@ -130,7 +135,8 @@ class EventHandler extends Component
      *
      * @return void
      */
-    protected function setupWebSocketServer(): void {
+    protected function setupWebSocketServer(): void
+    {
         $this->webSocketServerManager->setup($this->messageHandlerOrchestrator, $this->host, $this->port);
         $this->loggerService->log("EventHandler: WebSocket server configured to run at {$this->host}:{$this->port}");
     }
@@ -139,7 +145,8 @@ class EventHandler extends Component
      *
      * @return void
      */
-    protected function setupInternalHttpServer(): void {
+    protected function setupInternalHttpServer(): void
+    {
         $http = new HttpServer($this->loop, [$this, 'handleBroadcastRequest']);
         $socket = new SocketServer("{$this->host}:{$this->internalPort}", [], $this->loop);
         $http->listen($socket);
@@ -151,7 +158,8 @@ class EventHandler extends Component
      * @param ServerRequestInterface $request
      * @return ResponseInterface
      */
-    public function handleBroadcastRequest(ServerRequestInterface $request): ResponseInterface {
+    public function handleBroadcastRequest(ServerRequestInterface $request): ResponseInterface
+    {
         $this->loggerService->logStart("EventHandler: handleBroadcastRequest - Received request: {$request->getMethod()} {$request->getUri()->getPath()}");
 
         if (!$this->isValidBroadcastRequest($request)) {
@@ -182,7 +190,8 @@ class EventHandler extends Component
      * @param ServerRequestInterface $request
      * @return bool
      */
-    protected function isValidBroadcastRequest(ServerRequestInterface $request): bool {
+    protected function isValidBroadcastRequest(ServerRequestInterface $request): bool
+    {
         return $request->getMethod() === 'POST' && $request->getUri()->getPath() === '/broadcast';
     }
 
@@ -191,7 +200,8 @@ class EventHandler extends Component
      * @param ServerRequestInterface $request
      * @return array<string, mixed>|null
      */
-    protected function parseRequestBody(ServerRequestInterface $request): ?array {
+    protected function parseRequestBody(ServerRequestInterface $request): ?array
+    {
         $body = $request->getBody()->getContents();
 
         $data = JsonHelper::decode($body);
@@ -204,7 +214,8 @@ class EventHandler extends Component
      * @param array<string, mixed> $data
      * @return ResponseInterface
      */
-    protected function processBroadcastRequest(array $data): ResponseInterface {
+    protected function processBroadcastRequest(array $data): ResponseInterface
+    {
         $questId = PayloadHelper::extractIntFromPayload('questId', $data);
         $message = PayloadHelper::extractArrayFromPayload('message', $data);
         $excludeSessionId = PayloadHelper::extractStringFromPayload('excludeSessionId', $data);
@@ -226,7 +237,8 @@ class EventHandler extends Component
      *
      * @return void
      */
-    protected function startEventLoop(): void {
+    protected function startEventLoop(): void
+    {
         $this->loggerService->logStart("EventHandler: Starting event loop...");
         $this->loop->run();
         $this->loggerService->logEnd("EventHandler: Event loop stopped.");
@@ -239,7 +251,8 @@ class EventHandler extends Component
      * @param string|null $excludeSessionId
      * @return void
      */
-    public function broadcastToQuest(int $questId, array $message, ?string $excludeSessionId = null): void {
+    public function broadcastToQuest(int $questId, array $message, ?string $excludeSessionId = null): void
+    {
         $this->loggerService->logStart("EventHandler: broadcastToQuest questId={$questId}, excludeSessionId={$excludeSessionId}, message:", $message);
 
         try {

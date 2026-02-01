@@ -6,9 +6,9 @@ use common\extensions\EventHandler\contracts\BroadcastServiceInterface;
 use common\extensions\EventHandler\dtos\NewMessageDto;
 use common\extensions\EventHandler\factories\BroadcastMessageFactory;
 use common\extensions\EventHandler\LoggerService;
-use common\models\Notification;
 use common\helpers\JsonHelper;
 use common\helpers\PayloadHelper;
+use common\models\Notification;
 
 class NotificationService
 {
@@ -27,7 +27,8 @@ class NotificationService
             LoggerService $logger,
             BroadcastServiceInterface $broadcastService,
             BroadcastMessageFactory $messageFactory
-    ) {
+    )
+    {
         $this->logger = $logger;
         $this->broadcastService = $broadcastService;
         $this->messageFactory = $messageFactory;
@@ -41,7 +42,8 @@ class NotificationService
      * @param int|null $userId
      * @return void
      */
-    public function broadcast(int $questId, array $data, ?string $excludeSessionId = null, ?int $userId = null): void {
+    public function broadcast(int $questId, array $data, ?string $excludeSessionId = null, ?int $userId = null): void
+    {
         $this->logger->logStart("NotificationService: broadcast questId=[{$questId}], excludeSessionId=[{$excludeSessionId}], userId=[{$userId}]");
 
         // Assuming $userId is equivalent to player_id for the notification
@@ -85,7 +87,8 @@ class NotificationService
      * @param int $since
      * @return Notification[]
      */
-    public function getNotifications(int $questId, string $type, int $since): array {
+    public function getNotifications(int $questId, string $type, int $since): array
+    {
         $this->logger->logStart("NotificationService: getNotifications for questId=[{$questId}], type=[{$type}], since=[{$since}]");
 
         try {
@@ -117,7 +120,8 @@ class NotificationService
      * @param string $sessionId
      * @return NewMessageDto
      */
-    public function prepareNewMessageDto(Notification $notification, string $sessionId): NewMessageDto {
+    public function prepareNewMessageDto(Notification $notification, string $sessionId): NewMessageDto
+    {
         $this->logger->log("NotificationService: Preparing NewMessageDto for Notification ID: {$notification->id}, Session ID: {$sessionId}");
 
         $payload = JsonHelper::decode($notification->payload);

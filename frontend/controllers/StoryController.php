@@ -10,7 +10,6 @@ use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
@@ -24,7 +23,8 @@ class StoryController extends Controller
     /**
      * @inheritDoc
      */
-    public function behaviors() {
+    public function behaviors()
+    {
         /** @phpstan-ignore-next-line */
         return array_merge(
                 parent::behaviors(),
@@ -62,7 +62,8 @@ class StoryController extends Controller
      *
      * @return string
      */
-    public function actionIndex(): string {
+    public function actionIndex(): string
+    {
         $user = Yii::$app->user->identity;
 
         $query = Story::find();
@@ -83,7 +84,8 @@ class StoryController extends Controller
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView(int $id): string {
+    public function actionView(int $id): string
+    {
         return $this->render('view', [
                     'model' => $this->findModel($id),
         ]);
@@ -94,7 +96,8 @@ class StoryController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate(): string|Response {
+    public function actionCreate(): string|Response
+    {
         $model = new Story();
 
         if ($this->request->isPost) {
@@ -118,7 +121,8 @@ class StoryController extends Controller
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate(int $id): string|Response {
+    public function actionUpdate(int $id): string|Response
+    {
         $model = $this->findModel($id);
 
         $post = (array) $this->request->post();
@@ -138,7 +142,8 @@ class StoryController extends Controller
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete(int $id): Response {
+    public function actionDelete(int $id): Response
+    {
         $model = $this->findModel($id);
         if (Status::changeStatus($model, AppStatus::ARCHIVED->value)) {
             return $this->redirect(['index']);
@@ -152,7 +157,8 @@ class StoryController extends Controller
      * @return Response
      * @throws NotFoundHttpException
      */
-    public function actionValidate(int $id): Response {
+    public function actionValidate(int $id): Response
+    {
         $model = $this->findModel($id);
         if (Status::changeStatus($model, AppStatus::PUBLISHED->value)) {
             return $this->redirect(['index']);
@@ -166,7 +172,8 @@ class StoryController extends Controller
      * @return Response
      * @throws NotFoundHttpException
      */
-    public function actionRestore(int $id): Response {
+    public function actionRestore(int $id): Response
+    {
         $model = $this->findModel($id);
         if (Status::changeStatus($model, AppStatus::DRAFT->value)) {
             return $this->redirect(['index']);
@@ -182,7 +189,8 @@ class StoryController extends Controller
      * @return Story the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel(int $id): Story {
+    protected function findModel(int $id): Story
+    {
         if (($model = Story::findOne(['id' => $id])) !== null) {
             return $model;
         }

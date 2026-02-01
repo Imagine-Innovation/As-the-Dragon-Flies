@@ -12,16 +12,15 @@ use common\models\Item;
 use common\models\Player;
 use common\models\PlayerItem;
 use common\models\PlayerLanguage;
-use common\models\Skill;
 use frontend\components\AjaxRequest;
 use frontend\components\BuilderComponent;
 use frontend\components\PlayerComponent;
 use frontend\models\PlayerBuilder;
 use Yii;
+use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\AccessControl;
 use yii\web\Response;
 
 //use yii\behaviors\AttributeBehavior;
@@ -36,7 +35,8 @@ class PlayerBuilderController extends Controller
     /**
      * @inheritDoc
      */
-    public function behaviors() {
+    public function behaviors()
+    {
         return array_merge(
                 parent::behaviors(),
                 [
@@ -69,7 +69,8 @@ class PlayerBuilderController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string, ageTable?: mixed}
      */
-    public function actionAjaxAge(): array {
+    public function actionAjaxAge(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -99,7 +100,8 @@ class PlayerBuilderController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxNames(): array {
+    public function actionAjaxNames(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -127,7 +129,8 @@ class PlayerBuilderController extends Controller
      * @param int|null $imageId
      * @return array{error: bool, msg: string, content?: string}
      */
-    private function renderImages(int $raceId, int $classId, string $gender, ?int $imageId = null): array {
+    private function renderImages(int $raceId, int $classId, string $gender, ?int $imageId = null): array
+    {
         $images = Image::find()
                 ->select('image.*')
                 ->innerJoin('class_image', 'image.id = class_image.image_id')
@@ -148,7 +151,8 @@ class PlayerBuilderController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxImages(): array {
+    public function actionAjaxImages(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -164,7 +168,8 @@ class PlayerBuilderController extends Controller
         if ($raceId > 0 && $classId > 0 && $gender) {
             $imageId = $request->post('imageId');
             Yii::debug("*** debug *** actionAjaxImages - imageId={$imageId}");
-            return $this->renderImages($raceId, $classId, $gender, is_numeric($imageId) ? (int) $imageId : null);
+            return $this->renderImages($raceId, $classId, $gender, is_numeric($imageId)
+                                ? (int) $imageId : null);
         }
         return ['error' => true, 'msg' => 'Missing argument: '
             . ($raceId ? '' : 'race ')
@@ -176,7 +181,8 @@ class PlayerBuilderController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxSkills(): array {
+    public function actionAjaxSkills(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -204,7 +210,8 @@ class PlayerBuilderController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxLanguages(): array {
+    public function actionAjaxLanguages(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -233,7 +240,8 @@ class PlayerBuilderController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxUpdateLanguage(): array {
+    public function actionAjaxUpdateLanguage(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -263,7 +271,8 @@ class PlayerBuilderController extends Controller
      * @param array<int, array{language_id: int, name: string}>|array{} $languages
      * @return void
      */
-    private function saveLanguages(int $playerId, array $languages): void {
+    private function saveLanguages(int $playerId, array $languages): void
+    {
         Yii::debug("*** debug *** saveLanguages - playerId={$playerId}, languageId=" . print_r($languages, true));
         foreach ($languages as $lang) {
             $this->addLanguage($playerId, $lang['language_id']);
@@ -277,7 +286,8 @@ class PlayerBuilderController extends Controller
      * @return void
      * @throws \Exception
      */
-    private function addLanguage(int $playerId, int $languageId): void {
+    private function addLanguage(int $playerId, int $languageId): void
+    {
         Yii::debug("*** debug *** addLanguage - playerId={$playerId}, languageId=[$languageId}");
         $playerLanguage = PlayerLanguage::findOne([
             'player_id' => $playerId,
@@ -302,7 +312,8 @@ class PlayerBuilderController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxTraits(): array {
+    public function actionAjaxTraits(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -326,7 +337,8 @@ class PlayerBuilderController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxEndowment(): array {
+    public function actionAjaxEndowment(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -356,7 +368,8 @@ class PlayerBuilderController extends Controller
      *
      * @return array{error: bool, msg: string, content?: mixed}
      */
-    public function actionAjaxBackgroundEquipment(): array {
+    public function actionAjaxBackgroundEquipment(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -378,7 +391,8 @@ class PlayerBuilderController extends Controller
      *
      * @return array{error: bool, msg: string, content?: mixed}
      */
-    public function actionAjaxEquipment(): array {
+    public function actionAjaxEquipment(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -403,7 +417,8 @@ class PlayerBuilderController extends Controller
      * @param string[] $itemIds
      * @return list<array{itemId: int, quantity: int}> Associative array with the following structure ['itemId' => 123, 'quantity' => 1]
      */
-    private function getItemQuantityFromJson(array $itemIds): array {
+    private function getItemQuantityFromJson(array $itemIds): array
+    {
         $itemQuantity = [];
         foreach ($itemIds as $itemId) {
             $selections = explode(',', $itemId);
@@ -427,7 +442,8 @@ class PlayerBuilderController extends Controller
      * @return void
      * @throws \Exception
      */
-    private function addItem(Player &$player, int $itemId, int $quantity): void {
+    private function addItem(Player &$player, int $itemId, int $quantity): void
+    {
 
         $item = Item::findOne(['id' => $itemId]);
         if ($item === null) {
@@ -465,9 +481,12 @@ class PlayerBuilderController extends Controller
      * @param int $quantity
      * @return PlayerItem
      */
-    private function newPlayerItem(Player &$player, Item &$item, int $quantity): PlayerItem {
-        $isProficient = PlayerComponent::isProficient($player->class_id, $item->id) ? 1 : 0;
-        $proficiencyModifier = $isProficient ? $player->level->proficiency_bonus : 0;
+    private function newPlayerItem(Player &$player, Item &$item, int $quantity): PlayerItem
+    {
+        $isProficient = PlayerComponent::isProficient($player->class_id, $item->id)
+                    ? 1 : 0;
+        $proficiencyModifier = $isProficient ? $player->level->proficiency_bonus
+                    : 0;
 
         $weaponProperties = PlayerComponent::getPlayerWeaponProperties($player->id, $item->id, $proficiencyModifier);
         $itemType = $item->itemType->name;
@@ -494,7 +513,8 @@ class PlayerBuilderController extends Controller
      * @param int $quantity
      * @return void
      */
-    private function unpack(Player &$player, Item &$pack, int $quantity): void {
+    private function unpack(Player &$player, Item &$pack, int $quantity): void
+    {
         $packItems = $pack->packItems;
         foreach ($packItems as $item) {
             $this->addItem($player, $item->id, $quantity);
@@ -505,7 +525,8 @@ class PlayerBuilderController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxSaveEquipment(): array {
+    public function actionAjaxSaveEquipment(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -540,7 +561,8 @@ class PlayerBuilderController extends Controller
      * @param \yii\web\Request $request
      * @return AjaxRequest
      */
-    private function getItemsCategory(\yii\web\Request $request): AjaxRequest {
+    private function getItemsCategory(\yii\web\Request $request): AjaxRequest
+    {
         // First split by comma to get each pair
         $idsPost = $request->post('categoryIds');
         $idsString = is_string($idsPost) ? (string) $idsPost : '';
@@ -572,7 +594,8 @@ class PlayerBuilderController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxItemCategory(): array {
+    public function actionAjaxItemCategory(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -592,7 +615,8 @@ class PlayerBuilderController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxUpdateSkill(): array {
+    public function actionAjaxUpdateSkill(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -617,7 +641,8 @@ class PlayerBuilderController extends Controller
      * @return array{error: bool, msg: string, content?: string}
      * @throws \Exception
      */
-    public function actionAjaxSaveAbilities(): array {
+    public function actionAjaxSaveAbilities(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -647,7 +672,8 @@ class PlayerBuilderController extends Controller
      *
      * @return string|\yii\web\Response
      */
-    public function actionCreate(): string|Response {
+    public function actionCreate(): string|Response
+    {
         $playerBuilder = new PlayerBuilder();
 
         if ($this->request->isPost) {
@@ -673,7 +699,8 @@ class PlayerBuilderController extends Controller
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate(int $id): string|Response {
+    public function actionUpdate(int $id): string|Response
+    {
         $model = $this->findModel($id);
 
         if ($model->status === AppStatus::ACTIVE->value) {
@@ -697,7 +724,8 @@ class PlayerBuilderController extends Controller
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView(int $id): Response {
+    public function actionView(int $id): Response
+    {
         return $this->redirect(['player/view', 'id' => $id]);
     }
 
@@ -708,7 +736,8 @@ class PlayerBuilderController extends Controller
      * @return PlayerBuilder the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel(int $id): PlayerBuilder {
+    protected function findModel(int $id): PlayerBuilder
+    {
 
         $query = PlayerBuilder::find()
                 ->with(['race', 'class', 'background', 'playerAbilities', 'playerSkills', 'playerTraits'])

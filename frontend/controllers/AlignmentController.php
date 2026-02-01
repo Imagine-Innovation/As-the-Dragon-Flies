@@ -5,9 +5,9 @@ namespace frontend\controllers;
 use common\components\ManageAccessRights;
 use common\models\Alignment;
 use Yii;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\AccessControl;
 use yii\web\Response;
 
 /**
@@ -19,7 +19,8 @@ class AlignmentController extends Controller
     /**
      * @inheritDoc
      */
-    public function behaviors() {
+    public function behaviors()
+    {
         return array_merge(
                 parent::behaviors(),
                 [
@@ -48,7 +49,8 @@ class AlignmentController extends Controller
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView(int $id): string {
+    public function actionView(int $id): string
+    {
         return $this->render('view', [
                     'model' => $this->findModel($id),
         ]);
@@ -59,7 +61,8 @@ class AlignmentController extends Controller
      * @return array{error: bool, msg: string, content?: string}
      * }
      */
-    public function actionAjaxWizard(): array {
+    public function actionAjaxWizard(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -85,7 +88,8 @@ class AlignmentController extends Controller
      * @return Alignment the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel(int $id): Alignment {
+    protected function findModel(int $id): Alignment
+    {
         if (($model = Alignment::findOne(['id' => $id])) !== null) {
             return $model;
         }

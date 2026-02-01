@@ -1,10 +1,11 @@
 <?php
 
+use common\models\Player;
 use frontend\widgets\Button;
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */
-/** @var common\models\Player $player  */
+/** @var Player $player  */
 ?>
 
 <h4 class="text-decoration text-yellow">Equip <?= $player->name ?> for the next adventure and relive previous ones</h4>

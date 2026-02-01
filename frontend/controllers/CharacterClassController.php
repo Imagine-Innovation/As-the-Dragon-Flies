@@ -6,16 +6,14 @@ use common\components\ManageAccessRights;
 use common\models\CharacterClass;
 use common\models\ClassFeature;
 use common\models\Feature;
-use common\models\ClassProficiency;
 use common\models\Level;
 use common\models\Proficiency;
 use Yii;
 use yii\data\ActiveDataProvider;
-use yii\web\Controller;
-use yii\web\NotFoundHttpException;
-use yii\web\UnauthorizedHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use yii\web\Controller;
+use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 /**
@@ -27,7 +25,8 @@ class CharacterClassController extends Controller
     /**
      * @inheritDoc
      */
-    public function behaviors() {
+    public function behaviors()
+    {
         /** @phpstan-ignore-next-line */
         return array_merge(
                 parent::behaviors(),
@@ -62,7 +61,8 @@ class CharacterClassController extends Controller
      *
      * @return string
      */
-    public function actionIndex(): string {
+    public function actionIndex(): string
+    {
         $dataProvider = new ActiveDataProvider([
             'query' => CharacterClass::find(),
         ]);
@@ -76,7 +76,8 @@ class CharacterClassController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxWizard() {
+    public function actionAjaxWizard()
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -100,7 +101,8 @@ class CharacterClassController extends Controller
      * @param CharacterClass $model
      * @return bool
      */
-    private function hasSpell(CharacterClass $model): bool {
+    private function hasSpell(CharacterClass $model): bool
+    {
         // Find proficiency ID for Spell to avoid nested sub query
         // in the "foreach" statement
         $spellProficieny = Proficiency::find()
@@ -127,7 +129,8 @@ class CharacterClassController extends Controller
      * @param int $id ID
      * @return string
      */
-    public function actionView(int $id): string {
+    public function actionView(int $id): string
+    {
         $model = $this->findModel($id);
         /** @var Level[] $levels */
         $levels = Level::find()->all();
@@ -157,7 +160,8 @@ class CharacterClassController extends Controller
      * @param CharacterClass $model
      * @return array<int, string>
      */
-    private function prepareProficiencyHeaders(CharacterClass $model): array {
+    private function prepareProficiencyHeaders(CharacterClass $model): array
+    {
         /** @var array<int, string> $headers */
         $headers = ['Level', 'Proficiency Bonus', 'Features'];
 
@@ -166,7 +170,8 @@ class CharacterClassController extends Controller
             $colId = 2 + (int) $proficiency->sort_order;
             if (!isset($headers[$colId])) {
                 $name = $proficiency->proficiency->name;
-                $headers[$colId] = ($name === 'Spell') ? "Spell L{$proficiency->spell_level}" : $name;
+                $headers[$colId] = ($name === 'Spell') ? "Spell L{$proficiency->spell_level}"
+                            : $name;
             }
         }
 
@@ -179,7 +184,8 @@ class CharacterClassController extends Controller
      * @param array<int, string> $headers
      * @return array<int, array<int, array{value: string, is_header: bool}>>
      */
-    private function initializeProficiencyLevels(array $levels, array $headers): array {
+    private function initializeProficiencyLevels(array $levels, array $headers): array
+    {
         $proficiencies = [];
         foreach ($levels as $level) {
             $levelId = (int) $level->id;
@@ -199,7 +205,8 @@ class CharacterClassController extends Controller
      * @param int $colId
      * @return string
      */
-    private function getStaticCellValue(Level $level, int $colId): string {
+    private function getStaticCellValue(Level $level, int $colId): string
+    {
         return match ($colId) {
             0 => (string) ($level->name ?? ''),
             1 => '+' . ($level->proficiency_bonus ?? 0),
@@ -212,7 +219,8 @@ class CharacterClassController extends Controller
      * @param CharacterClass $model
      * @return array<int, array<int, array{value: string, is_header: bool}>>
      */
-    private function populateProficiencies(array &$proficiencies, CharacterClass $model): array {
+    private function populateProficiencies(array &$proficiencies, CharacterClass $model): array
+    {
         // Features
         foreach ($model->classFeatures as $feature) {
             $rowId = (int) $feature->level_id;
@@ -238,7 +246,8 @@ class CharacterClassController extends Controller
      * @param ClassFeature $feature
      * @return string
      */
-    private function formatFeature(ClassFeature $feature): string {
+    private function formatFeature(ClassFeature $feature): string
+    {
         $details = [];
         if ($feature->cr > 0) {
             $details[] = "CR " . $feature->cr;
@@ -267,7 +276,8 @@ class CharacterClassController extends Controller
      * @param CharacterClass $model
      * @return array<int, array<int, array{id: int|string, name: string}>>
      */
-    private function getGroupedSpells(CharacterClass $model): array {
+    private function getGroupedSpells(CharacterClass $model): array
+    {
         $grouped = [];
 
         foreach ($model->spells as $spell) {
@@ -293,7 +303,8 @@ class CharacterClassController extends Controller
      * @return CharacterClass the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel(int $id): CharacterClass {
+    protected function findModel(int $id): CharacterClass
+    {
         if (($model = CharacterClass::findOne(['id' => $id])) !== null) {
             return $model;
         }

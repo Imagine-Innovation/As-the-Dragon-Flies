@@ -20,25 +20,25 @@ namespace frontend\controllers;
  */
 use common\components\AppStatus;
 use common\components\ContextManager;
-use common\components\ManageAccessRights;
 use common\components\gameplay\ChatManager;
 use common\components\gameplay\QuestManager;
 use common\components\gameplay\TavernManager;
+use common\components\ManageAccessRights;
 use common\helpers\FindModelHelper;
 use common\helpers\UserErrorMessage;
+use common\models\events\EventFactory;
 use common\models\Player;
 use common\models\Quest;
 use common\models\QuestPlayer;
 use common\models\Story;
-use common\models\events\EventFactory;
 use frontend\components\AjaxRequest;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\db\Query;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
 use yii\web\Response;
 
 /**

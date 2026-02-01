@@ -3,10 +3,10 @@
 namespace common\components;
 
 use common\components\AppStatus;
+use common\helpers\Utilities;
 use common\models\Player;
 use common\models\Quest;
 use common\models\User;
-use common\helpers\Utilities;
 use Yii;
 use yii\base\Component;
 
@@ -17,7 +17,8 @@ class ContextManager extends Component
      *
      * @return User
      */
-    private static function getUser(): User {
+    private static function getUser(): User
+    {
         return Yii::$app->user->identity;
     }
 
@@ -25,7 +26,8 @@ class ContextManager extends Component
      *
      * @return void
      */
-    public static function initContext(): void {
+    public static function initContext(): void
+    {
         if (Yii::$app->user->isGuest) {
             return;
         }
@@ -42,7 +44,8 @@ class ContextManager extends Component
      *
      * @return void
      */
-    private static function setSessionId(): void {
+    private static function setSessionId(): void
+    {
         if (Yii::$app->session->get('sessionId') === null) {
             $sessionId = Utilities::newUUID();
             Yii::$app->session->set('sessionId', $sessionId);
@@ -54,7 +57,8 @@ class ContextManager extends Component
      * @param int|null $playerId
      * @return void
      */
-    public static function updatePlayerContext(?int $playerId = null): void {
+    public static function updatePlayerContext(?int $playerId = null): void
+    {
         if (Yii::$app->user->isGuest) {
             return;
         }
@@ -86,7 +90,8 @@ class ContextManager extends Component
      * @param int|null $questId
      * @return void
      */
-    public static function updateQuestContext(?int $questId = null): void {
+    public static function updateQuestContext(?int $questId = null): void
+    {
         if (Yii::$app->user->isGuest) {
             return;
         }
@@ -115,7 +120,8 @@ class ContextManager extends Component
      *
      * @return array<string, mixed>
      */
-    public static function getContext(): array {
+    public static function getContext(): array
+    {
         $user = self::getUser();
         return [
             'isGuest' => Yii::$app->user->isGuest,

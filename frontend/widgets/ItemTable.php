@@ -4,10 +4,10 @@ namespace frontend\widgets;
 
 use common\models\Item;
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\base\Widget;
 use yii\helpers\Html;
 use yii\helpers\Url;
-use yii\helpers\ArrayHelper;
 
 class ItemTable extends Widget
 {
@@ -159,7 +159,8 @@ class ItemTable extends Widget
     /**
      * {@inheritdoc}
      */
-    public function init(): void {
+    public function init(): void
+    {
         Yii::debug("*** Debug ***  ItemTable Widget - init()", __METHOD__);
         parent::init();
 
@@ -170,7 +171,8 @@ class ItemTable extends Widget
      *
      * @return string
      */
-    public function run(): string {
+    public function run(): string
+    {
         Yii::debug("*** Debug ***  ItemTable Widget - run(), itemTypeId={$this->itemTypeId}");
         $this->previousContent = '';
         $this->type = self::LUT_TYPE[$this->itemTypeId - 1];
@@ -196,11 +198,13 @@ class ItemTable extends Widget
      * @return string The HTML content for the table cell, including any necessary
      *                tags and formatting.
      */
-    private function renderTableCell(array $col, Item $item, int $colIndex): string {
+    private function renderTableCell(array $col, Item $item, int $colIndex): string
+    {
         Yii::debug("*** Debug ***  ItemTable Widget - renderTableCell() - colIndex={$colIndex}, col['property']={$col['property']}");
         // Retrieve the content for the table cell using the model's property.
         $property = ($col['property'] === 'categories') ?
-                implode(", ", ArrayHelper::getColumn($item->categories, 'name')) :
+                implode(", ", ArrayHelper::getColumn($item->categories, 'name'))
+                    :
                 $item[$col['property']];
 
         $cellContent = is_string($property) ? $property : '';
@@ -231,7 +235,8 @@ class ItemTable extends Widget
 
         // Check if the column requires a link and construct the HTML accordingly.
         $innerHtml = $col['is-link'] ?
-                '<a href="' . Url::toRoute(['item/view', 'id' => $item->id]) . '">' . $display . '</a>' :
+                '<a href="' . Url::toRoute(['item/view', 'id' => $item->id]) . '">' . $display . '</a>'
+                    :
                 $display;
 
         // Return the final HTML content for the table cell.
@@ -242,7 +247,8 @@ class ItemTable extends Widget
      *
      * @return string
      */
-    public function renderTableHeader(): string {
+    public function renderTableHeader(): string
+    {
         $html = '';
         foreach ($this->columns as $col) {
             if (in_array($this->type, $col['filter'])) {
@@ -256,7 +262,8 @@ class ItemTable extends Widget
      *
      * @return string
      */
-    public function renderTableBody(): string {
+    public function renderTableBody(): string
+    {
         $html = '';
         foreach ($this->items as $item) {
             $html .= '<tr>';

@@ -12,10 +12,10 @@ use common\models\Quest;
 use common\models\QuestPlayer;
 use common\models\QuestProgress;
 use common\models\QuestTurn;
-use Yii;
-use yii\helpers\ArrayHelper;
 use Exception;
 use RuntimeException;
+use Yii;
+use yii\helpers\ArrayHelper;
 
 class QuestManager extends BaseManager
 {

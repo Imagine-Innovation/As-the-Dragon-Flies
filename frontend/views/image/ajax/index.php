@@ -1,9 +1,9 @@
 <?php
 
 use common\models\CharacterClass;
+use frontend\widgets\CheckBox;
 use frontend\widgets\Pagination;
 use frontend\widgets\RecordCount;
-use frontend\widgets\CheckBox;
 
 /** @var yii\web\View $this */
 /** @var common\models\Image[] $models */
@@ -58,14 +58,15 @@ foreach ($models as $model) {
                                     CheckBox::widget([
                                         'id' => "image-{$model->id}-{$class->id}",
                                         'onclick' => "ImageManager.setClass({$model->id}, {$class->id}, '{$class->name}');",
-                                        'checked' => $checked[$model->id][$class->id] ? "checked" : '',
+                                        'checked' => $checked[$model->id][$class->id]
+                                                    ? "checked" : '',
                                         'title' => $class->name
                                     ])
                                     ?>
                                 </td>
-                            <?php endforeach; ?>
+                        <?php endforeach; ?>
                         </tr>
-                    <?php endforeach; ?>
+<?php endforeach; ?>
                 </tbody>
             </table>
         </div>

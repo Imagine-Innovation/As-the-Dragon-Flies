@@ -2,9 +2,9 @@
 
 namespace common\models\events;
 
+use common\models\events\SendingMessageEvent;
 use common\models\Player;
 use common\models\Quest;
-use common\models\events\SendingMessageEvent;
 use Yii;
 
 class PlayerJoiningEvent extends Event
@@ -17,7 +17,8 @@ class PlayerJoiningEvent extends Event
      * @param Quest $quest
      * @param array<string, mixed> $config
      */
-    public function __construct(string $sessionId, Player $player, Quest $quest, array $config = []) {
+    public function __construct(string $sessionId, Player $player, Quest $quest, array $config = [])
+    {
         parent::__construct($sessionId, $player, $quest, $config);
     }
 
@@ -26,7 +27,8 @@ class PlayerJoiningEvent extends Event
      *
      * @return string
      */
-    public function getType(): string {
+    public function getType(): string
+    {
         return 'player-joined';
     }
 
@@ -35,7 +37,8 @@ class PlayerJoiningEvent extends Event
      *
      * @return string
      */
-    public function getTitle(): string {
+    public function getTitle(): string
+    {
         return 'Player Joined';
     }
 
@@ -44,7 +47,8 @@ class PlayerJoiningEvent extends Event
      *
      * @return string
      */
-    public function getMessage(): string {
+    public function getMessage(): string
+    {
         return "{$this->player->name} is joining the quest";
     }
 
@@ -53,7 +57,8 @@ class PlayerJoiningEvent extends Event
      *
      * @return array<string, mixed>
      */
-    public function getPayload(): array {
+    public function getPayload(): array
+    {
         return [
             'playerName' => $this->player->name,
             'playerId' => $this->player->id,
@@ -68,7 +73,8 @@ class PlayerJoiningEvent extends Event
      *
      * @return void
      */
-    public function process(): void {
+    public function process(): void
+    {
         Yii::debug("*** Debug *** PlayerJoiningEvent - process");
         $notification = $this->createNotification();
 

@@ -5,7 +5,6 @@ namespace frontend\controllers;
 use common\components\ManageAccessRights;
 use common\helpers\FindModelHelper;
 use common\models\Chapter;
-use common\models\Story;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -22,7 +21,8 @@ class ChapterController extends Controller
     /**
      * @inheritDoc
      */
-    public function behaviors() {
+    public function behaviors()
+    {
         /** @phpstan-ignore-next-line */
         return array_merge(
                 parent::behaviors(),
@@ -61,7 +61,8 @@ class ChapterController extends Controller
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView(int $id): string {
+    public function actionView(int $id): string
+    {
         return $this->render('view', [
                     'model' => $this->findModel($id),
         ]);
@@ -74,7 +75,8 @@ class ChapterController extends Controller
      * @param int $storyId
      * @return string|\yii\web\Response
      */
-    public function actionCreate(int $storyId): string|Response {
+    public function actionCreate(int $storyId): string|Response
+    {
         // Check if $id is a valid Story ID
         $story = FindModelHelper::findStory(['id' => $storyId]);
         $model = new Chapter();
@@ -102,7 +104,8 @@ class ChapterController extends Controller
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate(int $id): string|Response {
+    public function actionUpdate(int $id): string|Response
+    {
         $model = $this->findModel($id);
 
         $post = (array) $this->request->post();
@@ -123,7 +126,8 @@ class ChapterController extends Controller
      * @return Chapter the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel(int $id): Chapter {
+    protected function findModel(int $id): Chapter
+    {
         if (($model = Chapter::findOne(['id' => $id])) !== null) {
             return $model;
         }

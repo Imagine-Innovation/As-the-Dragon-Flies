@@ -2,7 +2,6 @@
 
 use frontend\widgets\AjaxContainer;
 use frontend\widgets\Button;
-use yii\helpers\Html;
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */
@@ -129,13 +128,14 @@ $isCurrentPlayer = ($currentQuestProgress->current_player_id === $playerId);
                             <br />
                             <?= AjaxContainer::widget(['tag' => 'div', 'name' => 'turnDescription', 'options' => ['class' => 'text-warning text-decoration']]) ?>
                             <br />
-                            <div id="actionList" class="<?= $isCurrentPlayer ? '' : 'd-none' ?>"></div>
+                            <div id="actionList" class="<?= $isCurrentPlayer ? ''
+                                        : 'd-none' ?>"></div>
                             <div id="actionFeedback"></div>
                         </article>
                     </div>
                 </div>
             </div>
-            <?php if ($nbPlayers > 1): ?>
+<?php if ($nbPlayers > 1): ?>
                 <!-- Chat System -->
                 <div class="col-12 col-xl-5 col-3xl-3">
                     <div class="h-100 d-flex flex-column">
@@ -147,7 +147,7 @@ $isCurrentPlayer = ($currentQuestProgress->current_player_id === $playerId);
                         ?>
                     </div>
                 </div>
-            <?php endif; ?>
+<?php endif; ?>
         </div>
     </section>
 </main>

@@ -1,11 +1,11 @@
 <?php
 
-use common\helpers\Utilities;
 use common\helpers\Status;
-use yii\helpers\Url;
+use common\helpers\Utilities;
+use frontend\widgets\ActionButtons;
 use frontend\widgets\Pagination;
 use frontend\widgets\RecordCount;
-use frontend\widgets\ActionButtons;
+use yii\helpers\Url;
 
 /** @var yii\web\View $this */
 /** @var frontend\models\PlayerBuilder[] $models */
@@ -69,16 +69,17 @@ if (Yii::$app->user->identity->is_player) {
                                 <?php if ($isOwner): ?>
                                     <?= Status::hyperlink($model) ?>
                                 <?php else: ?>
-                                    <?= Utilities::encode(empty($model->name) ? 'Unknown' : $model->name) ?>
-                                <?php endif; ?><br>
+                                    <?= Utilities::encode(empty($model->name)
+                                                        ? 'Unknown' : $model->name) ?>
+                            <?php endif; ?><br>
                             </td>
-                            <?php if ($isAdmin): ?>
+    <?php if ($isAdmin): ?>
                                 <td>
                                     <a href="<?= Url::toRoute(['user/view', 'id' => $model->user->id]) ?>">
-                                        <?= Utilities::encode($model->user->username) ?>
+        <?= Utilities::encode($model->user->username) ?>
                                     </a>
                                 </td>
-                            <?php endif; ?>
+    <?php endif; ?>
                             <td class="text-center"><?= Status::icon($model->status) ?></td>
                             <td><?= $model->level->name ?></td>
                             <td><?= $model->race->name ?></td>
@@ -95,7 +96,7 @@ if (Yii::$app->user->identity->is_player) {
                                 ?>
                             </td>
                         </tr>
-                    <?php endforeach; ?>
+<?php endforeach; ?>
                 </tbody>
             </table>
         </div>

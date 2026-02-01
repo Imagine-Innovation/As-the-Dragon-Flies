@@ -10,10 +10,10 @@ use common\models\Player;
 use common\models\User;
 use frontend\components\AjaxRequest;
 use Yii;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
 use yii\web\Response;
 
 /**
@@ -25,7 +25,8 @@ class PlayerController extends Controller
     /**
      * @inheritDoc
      */
-    public function behaviors() {
+    public function behaviors()
+    {
         /** @phpstan-ignore-next-line */
         return array_merge(
                 parent::behaviors(),
@@ -65,7 +66,8 @@ class PlayerController extends Controller
      *
      * @return string
      */
-    public function actionIndex(): string {
+    public function actionIndex(): string
+    {
         $user = Yii::$app->user->identity;
         $players = Player::find()
                 ->where(['user_id' => $user->id])
@@ -79,7 +81,8 @@ class PlayerController extends Controller
      *
      * @return string
      */
-    public function actionAdmin(): string {
+    public function actionAdmin(): string
+    {
         return $this->render('admin');
     }
 
@@ -87,7 +90,8 @@ class PlayerController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjax(): array {
+    public function actionAjax(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -110,7 +114,8 @@ class PlayerController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxAdmin(): array {
+    public function actionAjaxAdmin(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -133,7 +138,8 @@ class PlayerController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxLite(): array {
+    public function actionAjaxLite(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -160,7 +166,8 @@ class PlayerController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxSetContext(): array {
+    public function actionAjaxSetContext(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -191,7 +198,8 @@ class PlayerController extends Controller
      * @param int $id
      * @return Response
      */
-    public function actionSetCurrent(int $id): Response {
+    public function actionSetCurrent(int $id): Response
+    {
         $player = $this->findModel($id); // findModel already checks for ownership
         $user = Yii::$app->user->identity;
         $user->current_player_id = $player->id;
@@ -205,7 +213,8 @@ class PlayerController extends Controller
      *
      * @return string
      */
-    public function actionHistory(): string {
+    public function actionHistory(): string
+    {
         // For now, just render a simple view
         return $this->render('history');
     }
@@ -216,7 +225,8 @@ class PlayerController extends Controller
      * @param int $id ID
      * @return string
      */
-    public function actionView(int $id): string {
+    public function actionView(int $id): string
+    {
         return $this->render('view', [
                     'model' => $this->findModel($id),
         ]);
@@ -229,7 +239,8 @@ class PlayerController extends Controller
      * @param int $id ID
      * @return string|\yii\web\Response
      */
-    public function actionUpdate(int $id): string|Response {
+    public function actionUpdate(int $id): string|Response
+    {
         return $this->redirect(['player-builder/update', 'id' => $id]);
     }
 
@@ -240,7 +251,8 @@ class PlayerController extends Controller
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete(int $id): Response {
+    public function actionDelete(int $id): Response
+    {
         $model = $this->findModel($id);
         if (Status::changeStatus($model, AppStatus::DELETED->value)) {
             return $this->redirect(['admin']);
@@ -254,7 +266,8 @@ class PlayerController extends Controller
      * @return Response
      * @throws NotFoundHttpException
      */
-    public function actionValidate(int $id): Response {
+    public function actionValidate(int $id): Response
+    {
         $model = $this->findModel($id);
         if (Status::changeStatus($model, AppStatus::ACTIVE->value)) {
             $viewName = $this->request->isPost ? ['admin'] : ['index'];
@@ -269,7 +282,8 @@ class PlayerController extends Controller
      * @return Response
      * @throws NotFoundHttpException
      */
-    public function actionRestore(int $id): Response {
+    public function actionRestore(int $id): Response
+    {
         $model = $this->findModel($id);
         if (Status::changeStatus($model, AppStatus::INACTIVE->value)) {
             return $this->redirect(['admin']);
@@ -284,7 +298,8 @@ class PlayerController extends Controller
      * @return Player the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel(int $id): Player {
+    protected function findModel(int $id): Player
+    {
 
         $query = Player::find()
                 ->with(['race', 'class', 'background', 'playerAbilities', 'playerSkills', 'playerTraits'])

@@ -9,13 +9,13 @@ use common\models\Rule;
 use common\models\RuleExpression;
 use frontend\components\AjaxRequest;
 use Yii;
+use yii\behaviors\AttributeBehavior;
+use yii\db\ActiveRecord;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
-use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
-use yii\db\ActiveRecord;
-use yii\behaviors\AttributeBehavior;
 
 /**
  * RuleController implements the CRUD actions for Rule model.
@@ -26,7 +26,8 @@ class RuleController extends Controller
     /**
      * @inheritDoc
      */
-    public function behaviors() {
+    public function behaviors()
+    {
         /** @phpstan-ignore-next-line */
         return array_merge(
                 parent::behaviors(),
@@ -76,7 +77,8 @@ class RuleController extends Controller
      *
      * @return string
      */
-    public function actionIndex(): string {
+    public function actionIndex(): string
+    {
         return $this->render('index');
     }
 
@@ -84,7 +86,8 @@ class RuleController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjax(): array {
+    public function actionAjax(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -108,7 +111,8 @@ class RuleController extends Controller
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView(int $id): string {
+    public function actionView(int $id): string
+    {
         return $this->render('view', [
                     'model' => $this->findModel($id)
         ]);
@@ -120,7 +124,8 @@ class RuleController extends Controller
      *
      * @return string|\yii\web\Response
      */
-    public function actionCreate(): string|Response {
+    public function actionCreate(): string|Response
+    {
         $model = new Rule();
 
         if ($this->request->isPost) {
@@ -146,7 +151,8 @@ class RuleController extends Controller
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate(int $id): string|Response {
+    public function actionUpdate(int $id): string|Response
+    {
         $model = $this->findModel($id);
 
         $post = (array) $this->request->post();
@@ -169,7 +175,8 @@ class RuleController extends Controller
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete(int $id): Response {
+    public function actionDelete(int $id): Response
+    {
         $model = $this->findModel($id);
         if (Status::changeStatus($model, AppStatus::DELETED->value)) {
             return $this->redirect(['index']);
@@ -183,7 +190,8 @@ class RuleController extends Controller
      * @return Response
      * @throws NotFoundHttpException
      */
-    public function actionValidate(int $id): Response {
+    public function actionValidate(int $id): Response
+    {
         $model = $this->findModel($id);
         if (Status::changeStatus($model, AppStatus::ACTIVE->value)) {
             return $this->redirect(['index']);
@@ -197,7 +205,8 @@ class RuleController extends Controller
      * @return Response
      * @throws NotFoundHttpException
      */
-    public function actionRestore(int $id): Response {
+    public function actionRestore(int $id): Response
+    {
         $model = $this->findModel($id);
         if (Status::changeStatus($model, AppStatus::INACTIVE->value)) {
             return $this->redirect(['index']);
@@ -213,7 +222,8 @@ class RuleController extends Controller
      * @return Rule the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel(int $id): Rule {
+    protected function findModel(int $id): Rule
+    {
         if (($model = Rule::findOne(['id' => $id])) !== null) {
             return $model;
         }

@@ -13,13 +13,13 @@ use common\models\PlayerItem;
 use common\models\Quest;
 use common\models\QuestAction;
 use common\models\QuestProgress;
-use common\models\Reply;
 use common\models\Race;
+use common\models\Reply;
 use common\models\Skill;
 use common\models\Story;
+use InvalidArgumentException;
 use Yii;
 use yii\web\NotFoundHttpException;
-use InvalidArgumentException;
 
 class FindModelHelper
 {
@@ -31,7 +31,8 @@ class FindModelHelper
      * @param class-string<T> $modelName The class name (e.g., Action::class or 'Action')
      * @return class-string<T>
      */
-    private static function fullyQualifiedClassName(string $modelName): string {
+    private static function fullyQualifiedClassName(string $modelName): string
+    {
         /** @var class-string<T> $className */
         $className = str_contains($modelName, '\\') ?
                 $modelName :
@@ -48,7 +49,8 @@ class FindModelHelper
      * @return array<string>
      * @throws InvalidArgumentException when primaryKey() returns empty
      */
-    private static function getPrimaryKeyColumns(string $className): array {
+    private static function getPrimaryKeyColumns(string $className): array
+    {
         /** @var array<string> $pkColumns */
         $pkColumns = $className::primaryKey();
         if (empty($pkColumns)) {
@@ -64,7 +66,8 @@ class FindModelHelper
      * @return void
      * @throws InvalidArgumentException
      */
-    private static function invalidArgumentException(array $param, array $pkColumns): void {
+    private static function invalidArgumentException(array $param, array $pkColumns): void
+    {
         $colums = empty($pkColumns) ? 'int' : implode(', ', $pkColumns);
         $dumpedParam = print_r($param, true);
         $errorMessage = "Expected [{$colums}] as primary key, {$dumpedParam} provided";
@@ -77,7 +80,8 @@ class FindModelHelper
      * @param array<string> $pkColumns
      * @return array<string, mixed>
      */
-    private static function getValidPkIntParam(int $param, array $pkColumns): array {
+    private static function getValidPkIntParam(int $param, array $pkColumns): array
+    {
         $intParam = ['id' => $param];
         if (count($pkColumns) !== 1 || $pkColumns[0] !== 'id') {
             self::invalidArgumentException($intParam, $pkColumns);
@@ -91,7 +95,8 @@ class FindModelHelper
      * @param array<string> $pkColumns
      * @return array<string, mixed>
      */
-    private static function getValidPkArrayParam(array $param, array $pkColumns): array {
+    private static function getValidPkArrayParam(array $param, array $pkColumns): array
+    {
         if (empty($pkColumns)) {
             // If there is no PK to check, return the parameter as is
             return $param;
@@ -122,7 +127,8 @@ class FindModelHelper
      * @param bool|null $withPk
      * @return array<string, mixed>
      */
-    private static function findOneFunctionParam(int|array $param, array $pkColumns, ?bool $withPk = true): array {
+    private static function findOneFunctionParam(int|array $param, array $pkColumns, ?bool $withPk = true): array
+    {
         if (is_numeric($param)) {
             return self::getValidPkIntParam((int) $param, $pkColumns);
         }
@@ -137,7 +143,8 @@ class FindModelHelper
      * @return T
      * @throws NotFoundHttpException
      */
-    public static function findModel(string $modelName, int|array $param, ?bool $withPk = true): \yii\db\ActiveRecord {
+    public static function findModel(string $modelName, int|array $param, ?bool $withPk = true): \yii\db\ActiveRecord
+    {
         /** @var class-string<T> $className */
         $className = self::fullyQualifiedClassName($modelName);
         $pkColumns = $withPk ? self::getPrimaryKeyColumns($className) : [];
@@ -158,7 +165,8 @@ class FindModelHelper
      * @param int|array<string, mixed> $param
      * @return Action
      */
-    public static function findAction(int|array $param): Action {
+    public static function findAction(int|array $param): Action
+    {
         return self::findModel(Action::class, $param);
     }
 
@@ -167,7 +175,8 @@ class FindModelHelper
      * @param int|array<string, mixed> $param
      * @return Chapter
      */
-    public static function findChapter(int|array $param): Chapter {
+    public static function findChapter(int|array $param): Chapter
+    {
         return self::findModel(Chapter::class, $param);
     }
 
@@ -176,7 +185,8 @@ class FindModelHelper
      * @param int|array<string, mixed> $param
      * @return Decor
      */
-    public static function findDecor(int|array $param): Decor {
+    public static function findDecor(int|array $param): Decor
+    {
         return self::findModel(Decor::class, $param);
     }
 
@@ -185,7 +195,8 @@ class FindModelHelper
      * @param int|array<string, mixed> $param
      * @return Mission
      */
-    public static function findMission(int|array $param): Mission {
+    public static function findMission(int|array $param): Mission
+    {
         return self::findModel(Mission::class, $param);
     }
 
@@ -194,7 +205,8 @@ class FindModelHelper
      * @param int|array<string, mixed> $param
      * @return Player
      */
-    public static function findPlayer(int|array $param): Player {
+    public static function findPlayer(int|array $param): Player
+    {
         return self::findModel(Player::class, $param);
     }
 
@@ -203,7 +215,8 @@ class FindModelHelper
      * @param int|array<string, mixed> $param
      * @return Quest
      */
-    public static function findQuest(int|array $param): Quest {
+    public static function findQuest(int|array $param): Quest
+    {
         return self::findModel(Quest::class, $param);
     }
 
@@ -212,7 +225,8 @@ class FindModelHelper
      * @param int|array<string, mixed> $param
      * @return QuestAction
      */
-    public static function findQuestAction(int|array $param): QuestAction {
+    public static function findQuestAction(int|array $param): QuestAction
+    {
         return self::findModel(QuestAction::class, $param);
     }
 
@@ -221,7 +235,8 @@ class FindModelHelper
      * @param int|array<string, mixed> $param
      * @return QuestProgress
      */
-    public static function findQuestProgress(int|array $param): QuestProgress {
+    public static function findQuestProgress(int|array $param): QuestProgress
+    {
         return self::findModel(QuestProgress::class, $param);
     }
 
@@ -230,7 +245,8 @@ class FindModelHelper
      * @param int|array<string, mixed> $param
      * @return Reply
      */
-    public static function findReply(int|array $param): Reply {
+    public static function findReply(int|array $param): Reply
+    {
         return self::findModel(Reply::class, $param);
     }
 
@@ -239,7 +255,8 @@ class FindModelHelper
      * @param int|array<string, mixed> $param
      * @return Story
      */
-    public static function findStory(int|array $param): Story {
+    public static function findStory(int|array $param): Story
+    {
         return self::findModel(Story::class, $param);
     }
 
@@ -248,7 +265,8 @@ class FindModelHelper
      * @param int|array<string, mixed> $param
      * @return Skill
      */
-    public static function findSkill(int|array $param): Skill {
+    public static function findSkill(int|array $param): Skill
+    {
         return self::findModel(Skill::class, $param);
     }
 
@@ -257,7 +275,8 @@ class FindModelHelper
      * @param int|array<string, mixed> $param
      * @return Item
      */
-    public static function findItem(int|array $param): Item {
+    public static function findItem(int|array $param): Item
+    {
         return self::findModel(Item::class, $param);
     }
 
@@ -266,7 +285,8 @@ class FindModelHelper
      * @param int|array<string, mixed> $param
      * @return PlayerItem
      */
-    public static function findPlayerItem(int|array $param): PlayerItem {
+    public static function findPlayerItem(int|array $param): PlayerItem
+    {
         return self::findModel(PlayerItem::class, $param);
     }
 
@@ -275,7 +295,8 @@ class FindModelHelper
      * @param int|array<string, mixed> $param
      * @return PlayerBody
      */
-    public static function findPlayerBody(int|array $param): PlayerBody {
+    public static function findPlayerBody(int|array $param): PlayerBody
+    {
         return self::findModel(PlayerBody::class, $param);
     }
 
@@ -284,7 +305,8 @@ class FindModelHelper
      * @param int|array<string, mixed> $param
      * @return Race
      */
-    public static function findRace(int|array $param): Race {
+    public static function findRace(int|array $param): Race
+    {
         return self::findModel(Race::class, $param);
     }
 }

@@ -1,10 +1,10 @@
 <?php
 
-use frontend\widgets\Button;
+use common\models\Player;
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */
-/** @var common\models\Player $player  */
+/** @var Player $player  */
 /** @var Player[] $otherPlayers */
 /** @var string $row */
 /** @var string $col */

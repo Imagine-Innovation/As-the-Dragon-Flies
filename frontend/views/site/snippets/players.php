@@ -1,11 +1,12 @@
 <?php
 
+use common\models\Player;
 use frontend\widgets\Button;
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */
-/** @var common\models\Player|null $currentPlayer  */
-/** @var common\models\Player[] $otherPlayers */
+/** @var Player|null $currentPlayer  */
+/** @var Player[] $otherPlayers */
 /** @var int|null $nbCards */
 $maxCard = min($nbCards ?? 2, 6);
 

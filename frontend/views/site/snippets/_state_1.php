@@ -1,10 +1,11 @@
 <?php
 
+use common\models\Player;
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */
-/** @var common\models\Player $lastPlayer  */
-/** @var common\models\Player[] $otherPlayers */
+/** @var Player $lastPlayer  */
+/** @var Player[] $otherPlayers */
 /** @var string $row */
 /** @var string $col */
 ?>

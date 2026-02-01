@@ -3,7 +3,6 @@
 namespace frontend\components;
 
 use common\helpers\DiceRoller;
-use common\helpers\FindModelHelper;
 use common\models\Ability;
 use common\models\AbilityDefault;
 use common\models\BackgroundItem;
@@ -198,7 +197,8 @@ class BuilderComponent
                 $attempts++;
             } while (in_array($name, $names) && $attempts < $maxAttempts);
 
-            $names[$i] = in_array($name, $names) ? "The {$ethnicity->name} #{$i}" : $name;
+            $names[$i] = in_array($name, $names) ? "The {$ethnicity->name} #{$i}"
+                        : $name;
         }
 
         return $names;
@@ -380,7 +380,8 @@ class BuilderComponent
             $playerCoin = new PlayerCoin([
                 'player_id' => $player->id,
                 'coin' => $coin,
-                'quantity' => ($coin === 'gp') ? self::getFundingFromBackground($player) : 0
+                'quantity' => ($coin === 'gp') ? self::getFundingFromBackground($player)
+                    : 0
             ]);
 
             // Save the player coin and track success status

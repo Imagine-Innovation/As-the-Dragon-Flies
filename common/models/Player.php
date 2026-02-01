@@ -3,10 +3,10 @@
 namespace common\models;
 
 use common\components\AppStatus;
-use frontend\components\PlayerComponent;
 use common\models\Image;
 use common\models\PlayerCoin;
 use common\models\Weapon;
+use frontend\components\PlayerComponent;
 use Yii;
 
 /**

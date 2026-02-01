@@ -1,7 +1,7 @@
 <?php
 
-use common\models\Alignment;
 use common\helpers\Utilities;
+use common\models\Alignment;
 use frontend\widgets\Button;
 
 /** @var yii\web\View $this */

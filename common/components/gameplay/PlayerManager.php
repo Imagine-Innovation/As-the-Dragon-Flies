@@ -2,12 +2,12 @@
 
 namespace common\components\gameplay;
 
+use common\helpers\DiceRoller;
 use common\models\Item;
 use common\models\Outcome;
 use common\models\Player;
 use common\models\Quest;
 use common\models\QuestPlayer;
-use common\helpers\DiceRoller;
 use Yii;
 
 class PlayerManager extends BaseManager
@@ -34,7 +34,8 @@ class PlayerManager extends BaseManager
      *
      * @param array<string, mixed> $config
      */
-    public function __construct($config = []) {
+    public function __construct($config = [])
+    {
         // Call the parent's constructor
         parent::__construct($config);
 
@@ -50,7 +51,8 @@ class PlayerManager extends BaseManager
      *
      * @return void
      */
-    private function initStats(): void {
+    private function initStats(): void
+    {
         $this->stats = [
             'hpLoss' => 0,
             'gainedXp' => 0,
@@ -64,7 +66,8 @@ class PlayerManager extends BaseManager
      * @param int $xp
      * @return int
      */
-    private function getLevelId(int $xp): int {
+    private function getLevelId(int $xp): int
+    {
         Yii::debug("*** debug *** getLevelId - xp={$xp}");
         $level = \common\models\Level::find()
                 ->where(['<=', 'xp_min', $xp])
@@ -79,7 +82,8 @@ class PlayerManager extends BaseManager
      * @param int|null $gainedXp
      * @return array<string, int>
      */
-    private function updateXp(Player &$player, ?int $gainedXp = 0): array {
+    private function updateXp(Player &$player, ?int $gainedXp = 0): array
+    {
         Yii::debug("*** debug *** updateXp - gainedXp={$gainedXp}");
         $updateSetStatement = [];
 
@@ -103,7 +107,8 @@ class PlayerManager extends BaseManager
      * @param string $hpLossDice
      * @return array<string, int>
      */
-    private function updateHp(Player &$player, string $hpLossDice): array {
+    private function updateHp(Player &$player, string $hpLossDice): array
+    {
         Yii::debug("*** debug *** updateHp - hpLossDice={$hpLossDice}");
         $hpLoss = DiceRoller::roll($hpLossDice);
 
@@ -120,7 +125,8 @@ class PlayerManager extends BaseManager
      * @param Outcome $outcome
      * @return void
      */
-    public function updatePlayerStats(Outcome &$outcome): void {
+    public function updatePlayerStats(Outcome &$outcome): void
+    {
         Yii::debug("*** debug *** updatePlayerStats - player={$this->player?->name}, outcome=" . print_r($outcome, true));
         if ($this->player === null) {
             return;
@@ -152,7 +158,8 @@ class PlayerManager extends BaseManager
      * @param Outcome[] $outcomes
      * @return void
      */
-    public function registerGainsAndLosses(array &$outcomes): void {
+    public function registerGainsAndLosses(array &$outcomes): void
+    {
         Yii::debug("*** debug *** registerGainsAndLosses - outcomes=" . count($outcomes));
 
         if (empty($outcomes) || $this->player === null) {

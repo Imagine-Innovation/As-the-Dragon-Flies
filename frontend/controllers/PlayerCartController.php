@@ -4,15 +4,15 @@ namespace frontend\controllers;
 
 use common\components\ManageAccessRights;
 use common\helpers\FindModelHelper;
-use common\models\PlayerCart;
-use common\models\Player;
 use common\models\Item;
+use common\models\Player;
+use common\models\PlayerCart;
 use frontend\components\Shopping;
 use Yii;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
 use yii\web\Response;
 
 /**
@@ -24,7 +24,8 @@ class PlayerCartController extends Controller
     /**
      * @inheritDoc
      */
-    public function behaviors() {
+    public function behaviors()
+    {
         /** @phpstan-ignore-next-line */
         return array_merge(
                 parent::behaviors(),
@@ -65,7 +66,8 @@ class PlayerCartController extends Controller
      *
      * @return string The rendered shop view.
      */
-    public function actionShop(): string {
+    public function actionShop(): string
+    {
         // Query items with cost greater than 0
         // Fetch models and order them by item type and name
         $items = Item::find()
@@ -89,7 +91,8 @@ class PlayerCartController extends Controller
      *
      * @return string The rendered cart view.
      */
-    public function actionCart(): string {
+    public function actionCart(): string
+    {
         $playerCarts = $this->findPlayerCartContent();
 
         return $this->render('cart', [
@@ -102,7 +105,8 @@ class PlayerCartController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string} The response in JSON format
      */
-    public function actionAjaxAdd(): array {
+    public function actionAjaxAdd(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -137,7 +141,8 @@ class PlayerCartController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string} The JSON response indicating the success or failure of the cart validation.
      */
-    public function actionAjaxValidate(): array {
+    public function actionAjaxValidate(): array
+    {
 
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -167,7 +172,8 @@ class PlayerCartController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string} The response in JSON format
      */
-    public function actionAjaxRemove(): array {
+    public function actionAjaxRemove(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -192,7 +198,8 @@ class PlayerCartController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxDelete(): array {
+    public function actionAjaxDelete(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -224,7 +231,8 @@ class PlayerCartController extends Controller
      * The JSON response containing the total count of items in the player's cart,
      * the cart string, and the purse string.
      */
-    public function actionAjaxInfo(): array {
+    public function actionAjaxInfo(): array
+    {
 
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -248,7 +256,8 @@ class PlayerCartController extends Controller
 
         return [
             'error' => false, 'msg' => '', 'count' => $count,
-            'cartString' => "You have " . ($count > 0 ? $count : "no") . " article" . ($count > 1 ? "s" : '') . " in your cart",
+            'cartString' => "You have " . ($count > 0 ? $count : "no") . " article" . ($count > 1
+                ? "s" : '') . " in your cart",
             'cartValueString' => $shopping->getCartValueString($this->findPlayerCartContent()),
             'purseString' => $purseMsg,
         ];
@@ -259,7 +268,8 @@ class PlayerCartController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string, count?: int}
      */
-    public function actionAjaxItemCount(): array {
+    public function actionAjaxItemCount(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -276,7 +286,8 @@ class PlayerCartController extends Controller
         $model = PlayerCart::findOne(['player_id' => $player->id, 'item_id' => $itemId]);
 
         // Construct the response containing the count of the item and return it
-        return ['error' => false, 'msg' => '', 'count' => $model ? $model->quantity : 0];
+        return ['error' => false, 'msg' => '', 'count' => $model ? $model->quantity
+                : 0];
     }
 
     /**
@@ -285,7 +296,8 @@ class PlayerCartController extends Controller
      * @return PlayerCart[] The player's carts
      * @throws NotFoundHttpException if no player is selected
      */
-    protected function findPlayerCartContent(): array {
+    protected function findPlayerCartContent(): array
+    {
         $playerId = Yii::$app->session->get('playerId');
 
         if ($playerId) {
