@@ -12,6 +12,7 @@ use yii\helpers\ArrayHelper;
 
 abstract class Event extends BaseObject
 {
+
     public string $sessionId;
     public Player $player;
     public Quest $quest;
@@ -107,12 +108,12 @@ abstract class Event extends BaseObject
         $data = $this->requestData();
         try {
             $response = $client
-                ->createRequest()
-                ->setMethod('POST')
-                ->setUrl('http://127.0.0.1:8083/broadcast')
-                ->setData($data)
-                ->setFormat(\yii\httpclient\Client::FORMAT_JSON)
-                ->send();
+                    ->createRequest()
+                    ->setMethod('POST')
+                    ->setUrl('http://127.0.0.1:8083/broadcast')
+                    ->setData($data)
+                    ->setFormat(\yii\httpclient\Client::FORMAT_JSON)
+                    ->send();
 
             if ($response->isOk) {
                 Yii::info('Successfully sent event to event server.', 'eventhandler');
@@ -134,7 +135,7 @@ abstract class Event extends BaseObject
     protected function newPlayerNotification(int $notificationId, int $playerId): void
     {
         Yii::debug(
-            "*** Debug *** Event - newPlayerNotification - notificationId={$notificationId}, player->id={$playerId}",
+                "*** Debug *** Event - newPlayerNotification - notificationId={$notificationId}, player->id={$playerId}",
         );
         $notificationPlayer = new NotificationPlayer([
             'notification_id' => $notificationId,
@@ -185,7 +186,7 @@ abstract class Event extends BaseObject
         $notification = new Notification($notificationData);
 
         $successfullySaved = $notification->save();
-        if (!$successfullySaved) {
+        if ($successfullySaved) {
             $this->notificationId = $notification->id;
             return $notification;
         }
