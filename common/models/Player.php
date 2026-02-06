@@ -87,6 +87,7 @@ use Yii;
  */
 class Player extends \yii\db\ActiveRecord
 {
+
     /**
      * ENUM field values
      */
@@ -160,8 +161,8 @@ class Player extends \yii\db\ActiveRecord
             [
                 'name',
                 'match',
-                'pattern' => '/^[\p{L}\p{N}\s\'-]+$/u',
-                'message' => 'Name can only contain letters, numbers, spaces, hyphens, and apostrophes.',
+                'pattern' => '/^[\p{L}\p{N}\s\'\(\)-]+$/u',
+                'message' => 'Name can only contain letters, numbers, spaces, hyphens, apostrophes, and parentheses.',
             ],
             ['gender', 'in', 'range' => array_keys(self::optsGender())],
             [
@@ -261,7 +262,7 @@ class Player extends \yii\db\ActiveRecord
     public function getAbilities()
     {
         return $this->hasMany(Ability::class, ['id' => 'ability_id'])->viaTable('player_ability', [
-            'player_id' => 'id',
+                    'player_id' => 'id',
         ]);
     }
 
@@ -333,7 +334,7 @@ class Player extends \yii\db\ActiveRecord
     public function getLanguages()
     {
         return $this->hasMany(Language::class, ['id' => 'language_id'])->viaTable('player_language', [
-            'player_id' => 'id',
+                    'player_id' => 'id',
         ]);
     }
 
@@ -375,7 +376,7 @@ class Player extends \yii\db\ActiveRecord
     public function getNotifications()
     {
         return $this->hasMany(Notification::class, ['id' => 'notification_id'])->viaTable('notification_player', [
-            'player_id' => 'id',
+                    'player_id' => 'id',
         ]);
     }
 
@@ -577,7 +578,7 @@ class Player extends \yii\db\ActiveRecord
     public function getTraits()
     {
         return $this->hasMany(CharacterTrait::class, ['id' => 'trait_id'])->viaTable('player_trait', [
-            'player_id' => 'id',
+                    'player_id' => 'id',
         ]);
     }
 
@@ -699,11 +700,11 @@ class Player extends \yii\db\ActiveRecord
         }
 
         $query = Image::find()
-            ->select(['image.file_name'])
-            ->alias('image')
-            ->innerJoin(['class_image' => 'class_image'], 'class_image.image_id = image.id')
-            ->innerJoin(['race_group_image' => 'race_group_image'], 'image.id = race_group_image.image_id')
-            ->innerJoin(['race' => 'race'], 'race_group_image.race_group_id = race.race_group_id');
+                ->select(['image.file_name'])
+                ->alias('image')
+                ->innerJoin(['class_image' => 'class_image'], 'class_image.image_id = image.id')
+                ->innerJoin(['race_group_image' => 'race_group_image'], 'image.id = race_group_image.image_id')
+                ->innerJoin(['race' => 'race'], 'race_group_image.race_group_id = race.race_group_id');
         if ($this->race_id) {
             $query->andWhere(['race.id' => $this->race_id]);
         }
@@ -744,10 +745,10 @@ class Player extends \yii\db\ActiveRecord
     public function getUnreadNotifications()
     {
         return $this->hasMany(Notification::class, [
-            'id' => 'notification_id',
-        ])->via('notificationPlayers', function ($query) {
-            $query->andWhere(['is_read' => 0]);
-        });
+                    'id' => 'notification_id',
+                ])->via('notificationPlayers', function ($query) {
+                    $query->andWhere(['is_read' => 0]);
+                });
     }
 
     /**
