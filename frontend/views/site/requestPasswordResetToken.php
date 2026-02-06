@@ -2,9 +2,9 @@
 
 use frontend\helpers\Caligraphy;
 use frontend\models\PasswordResetRequestForm;
-use yii\helpers\Url;
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
+use yii\helpers\Url;
 
 /** @var yii\web\View $this */
 /** @var ActiveForm $form */
@@ -28,23 +28,23 @@ $this->params['breadcrumbs'][] = $this->title;
                             <?php $form = ActiveForm::begin(['id' => 'request-password-reset-form']); ?>
                             <div class="form-group first">
                                 <?=
-                                        $form->field($model, 'email',
-                                                ['inputOptions' => [
-                                                        'autofocus' => 'autofocus',
-                                                        'class' => 'form-control',
-                                                    ]
-                                                ])->textInput(['placeholder' => 'Your email',])
-                                        ->label('Email')
-                                ?>
+    $form
+        ->field($model, 'email', ['inputOptions' => [
+            'autofocus' => 'autofocus',
+            'class' => 'form-control',
+        ]])
+        ->textInput(['placeholder' => 'Your email'])
+        ->label('Email')
+?>
                             </div>
 
                             <div class="form-group">
                                 <?=
-                                Html::submitButton('<img src="img/Dragonfly.svg" style="height:32px;" alt=""> Send request', [
-                                    'class' => 'form-control btn btn-lg btn-warning text-decoration',
-                                    'name' => 'Send'
-                                ])
-                                ?>
+    Html::submitButton('<img src="img/Dragonfly.svg" style="height:32px;" alt=""> Send request', [
+        'class' => 'form-control btn btn-lg btn-warning text-decoration',
+        'name' => 'Send',
+    ])
+?>
                             </div>
                             <p class="mb-0">
                                 Back to <a class="fw-bold" href="<?= Url::toRoute(['site/login']) ?>">Login</a>

@@ -19,7 +19,9 @@ use frontend\widgets\ModalDesc;
                             <div class="form-group">
                                 <div class="toggle-switch">
                                     <span data-bs-toggle="tooltip" title="Add or remove from pack" data-placement="bottom">
-                                        <input type="checkbox" class="toggle-switch__checkbox" id="pack-<?= $item['id'] ?>" <?= $item['is_carrying'] ? 'checked' : '' ?>
+                                        <input type="checkbox" class="toggle-switch__checkbox" id="pack-<?= $item['id'] ?>" <?=
+            $item['is_carrying'] ? 'checked' : ''
+        ?>
                                                onchange="ItemManager.togglePack(<?= $item['id'] ?>);">
                                         <i class="toggle-switch__helper"></i>
                                     </span>
@@ -36,14 +38,14 @@ use frontend\widgets\ModalDesc;
                         </h4>
                         <h6 class="card-subtitle text-muted">
                             <?=
-                            ModalDesc::widget([
-                                'name' => $item['name'],
-                                'description' => $item['description'],
-                                'maxLength' => 180,
-                                'type' => $item['type'],
-                                'id' => $item['id'],
-                            ])
-                            ?>
+            ModalDesc::widget([
+                'name' => $item['name'],
+                'description' => $item['description'],
+                'maxLength' => 180,
+                'type' => $item['type'],
+                'id' => $item['id'],
+            ])
+        ?>
                         </h6>
                     </div>
                 </div>

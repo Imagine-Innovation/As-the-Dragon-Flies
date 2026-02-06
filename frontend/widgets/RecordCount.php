@@ -6,7 +6,6 @@ use yii\base\Widget;
 
 class RecordCount extends Widget
 {
-
     public string $model;
     public int $count;
     public string $adjective;
@@ -21,8 +20,8 @@ class RecordCount extends Widget
     public function run(): string
     {
         return $this->render('record-count', [
-                    'countLabel' => $this->setCountLabel(),
-                    'actions' => $this->actions,
+            'countLabel' => $this->setCountLabel(),
+            'actions' => $this->actions,
         ]);
     }
 
@@ -37,7 +36,7 @@ class RecordCount extends Widget
         return match ($this->count) {
             0 => "There is no {$adjective} {$this->model} in the game",
             1 => "There is only one {$adjective} {$this->model} in the game",
-            default => "List of the {$this->count} {$adjective} {$this->model}'s in the game"
+            default => "List of the {$this->count} {$adjective} {$this->model}'s in the game",
         };
     }
 }

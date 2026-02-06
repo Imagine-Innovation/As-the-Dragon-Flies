@@ -17,7 +17,7 @@ if ($properties) {
 }
 
 $url = Url::toRoute(['mission/add-detail', 'parentId' => $parentId, 'type' => $type]);
-$aOrAn = strtoupper(substr($type, 0, 1)) === 'A' ? "an" : "a";
+$aOrAn = strtoupper(substr($type, 0, 1)) === 'A' ? 'an' : 'a';
 ?>
 <div class="<?= $class ?? 'col' ?>">
     <article class="card mb-3 h-100" id="Mission<?= $type ?>">
@@ -26,20 +26,20 @@ $aOrAn = strtoupper(substr($type, 0, 1)) === 'A' ? "an" : "a";
         </div>
         <div class="card-body">
             <?=
-            MissionElement::widget([
-                'properties' => $properties,
-                'propertyNames' => $propertyNames,
-                'type' => $type,
-            ])
-            ?>
+    MissionElement::widget([
+        'properties' => $properties,
+        'propertyNames' => $propertyNames,
+        'type' => $type,
+    ])
+?>
             <?=
-            Button::widget([
-                'url' => $url,
-                'icon' => 'bi-plus-square',
-                'title' => "Add {$aOrAn} “{$type}”",
-                'isCta' => true,
-            ])
-            ?>
+    Button::widget([
+        'url' => $url,
+        'icon' => 'bi-plus-square',
+        'title' => "Add {$aOrAn} “{$type}”",
+        'isCta' => true,
+    ])
+?>
         </div>
     </article>
 </div>

@@ -6,7 +6,6 @@ use common\extensions\EventHandler\contracts\BroadcastMessageInterface;
 
 class PlayerQuitDto implements BroadcastMessageInterface
 {
-
     private string $type = 'player-quit';
 
     /** @var array<string, mixed> $payload */
@@ -19,7 +18,8 @@ class PlayerQuitDto implements BroadcastMessageInterface
      * @param string $questName
      * @param string $reason
      */
-    public function __construct(string $playerName, string $sessionId, string $questName, string $reason) {
+    public function __construct(string $playerName, string $sessionId, string $questName, string $reason)
+    {
         $this->payload = [
             'playerName' => $playerName,
             'sessionId' => $sessionId,
@@ -33,7 +33,8 @@ class PlayerQuitDto implements BroadcastMessageInterface
      *
      * @return string
      */
-    public function getType(): string {
+    public function getType(): string
+    {
         return $this->type;
     }
 
@@ -41,7 +42,8 @@ class PlayerQuitDto implements BroadcastMessageInterface
      *
      * @return array<string, mixed>
      */
-    public function getPayload(): array {
+    public function getPayload(): array
+    {
         return $this->payload;
     }
 
@@ -49,7 +51,8 @@ class PlayerQuitDto implements BroadcastMessageInterface
      *
      * @return string|false
      */
-    public function toJson(): string|false {
+    public function toJson(): string|false
+    {
         return json_encode(['type' => $this->type, 'payload' => $this->payload]);
     }
 }

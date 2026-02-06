@@ -8,7 +8,6 @@ use frontend\widgets\CheckBox;
 
 class SpecialCheckBox
 {
-
     /**
      * Generates an HTML checkbox for a given role on a model.
      *
@@ -21,19 +20,20 @@ class SpecialCheckBox
      * @return string The generated HTML for the checkbox, or an empty string
      *                if the role property is not set on the model.
      */
-    public static function setUserRole(AccessRight|User $model, string $role): string {
+    public static function setUserRole(AccessRight|User $model, string $role): string
+    {
         // Construct the property name for the role (e.g., 'is_admin' for the 'admin' role)
         $property = 'is_' . $role;
 
         // Check if the model has the role property
         if (isset($model->$property)) {
             // Determine if the checkbox should be checked based on the model's role property
-            $checked = $model->$property ? "checked" : '';
+            $checked = $model->$property ? 'checked' : '';
 
             $html = CheckBox::widget([
                 'id' => "user-{$role}-{$model->id}",
                 'onclick' => "UserManager.setRole({$model->id}, '{$role}');",
-                'checked' => $checked
+                'checked' => $checked,
             ]);
         } else {
             // If the role property is not set on the model, return an empty string
@@ -56,15 +56,16 @@ class SpecialCheckBox
      * @return string The generated HTML for the checkbox, or an empty string
      *                if the access right property is not set on the model.
      */
-    public static function setAccessRight(AccessRight|User $model, string $access): string {
+    public static function setAccessRight(AccessRight|User $model, string $access): string
+    {
         // Check if the model has the role property
         if (isset($model->$access)) {
             // Determine if the checkbox should be checked based on the model's role property
-            $checked = $model->$access ? "checked" : '';
+            $checked = $model->$access ? 'checked' : '';
             $html = CheckBox::widget([
                 'id' => "access-right-{$access}-{$model->id}",
                 'onclick' => "UserManager.setAccessRight({$model->id}, '{$access}');",
-                'checked' => $checked
+                'checked' => $checked,
             ]);
         } else {
             // If the role property is not set on the model, return an empty string

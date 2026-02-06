@@ -18,7 +18,6 @@ use Yii;
  */
 class Component extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
@@ -74,6 +73,8 @@ class Component extends \yii\db\ActiveRecord
      */
     public function getSpells()
     {
-        return $this->hasMany(Spell::class, ['id' => 'spell_id'])->viaTable('spell_component', ['component_id' => 'id']);
+        return $this->hasMany(Spell::class, ['id' => 'spell_id'])->viaTable('spell_component', [
+            'component_id' => 'id',
+        ]);
     }
 }

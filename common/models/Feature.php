@@ -16,7 +16,6 @@ use Yii;
  */
 class Feature extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */

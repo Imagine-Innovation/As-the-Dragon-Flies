@@ -7,8 +7,8 @@ use common\models\Notification;
 use frontend\components\AjaxRequest;
 use frontend\components\QuestNotification;
 use Yii;
-use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
@@ -19,42 +19,40 @@ use yii\web\Response;
  */
 class NotificationController extends Controller
 {
-
     /**
      * @inheritDoc
      */
     public function behaviors()
     {
         /** @phpstan-ignore-next-line */
-        return array_merge(
-                parent::behaviors(),
-                [
-                    'access' => [
-                        'class' => AccessControl::class,
-                        'rules' => [
-                            [
-                                'actions' => ['*'],
-                                'allow' => false,
-                                'roles' => ['?'],
-                            ],
-                            [
-                                'actions' => [
-                                    'index', 'view',
-                                    'ajax', 'ajax-mark-as-read'
-                                ],
-                                'allow' => ManageAccessRights::isRouteAllowed($this),
-                                'roles' => ['@'],
-                            ],
-                        ],
+        return array_merge(parent::behaviors(), [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['*'],
+                        'allow' => false,
+                        'roles' => ['?'],
                     ],
-                    'verbs' => [
-                        'class' => VerbFilter::className(),
+                    [
                         'actions' => [
-                            'delete' => ['POST'],
+                            'index',
+                            'view',
+                            'ajax',
+                            'ajax-mark-as-read',
                         ],
+                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'roles' => ['@'],
                     ],
-                ]
-        );
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['POST'],
+                ],
+            ],
+        ]);
     }
 
     /**
@@ -82,7 +80,7 @@ class NotificationController extends Controller
         $user = Yii::$app->user->identity;
         if ($user->is_admin) {
             return $this->render('view', [
-                        'model' => $this->findModel($id),
+                'model' => $this->findModel($id),
             ]);
         }
         throw new ForbiddenHttpException('You are not allowed to see the notifications');
@@ -101,7 +99,7 @@ class NotificationController extends Controller
         }
 
         $param = [
-            'modelName' => 'Notification'
+            'modelName' => 'Notification',
         ];
         $ajaxRequest = new AjaxRequest($param);
 

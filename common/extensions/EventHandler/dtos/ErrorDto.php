@@ -6,7 +6,6 @@ use common\extensions\EventHandler\contracts\BroadcastMessageInterface;
 
 class ErrorDto implements BroadcastMessageInterface
 {
-
     private string $type = 'error';
 
     /** @var array<string, mixed> $payload */
@@ -18,10 +17,11 @@ class ErrorDto implements BroadcastMessageInterface
      * @param int|null $errorCode
      * @param array<string, mixed>|null $details
      */
-    public function __construct(string $errorMessage, ?int $errorCode = null, ?array $details = null) {
+    public function __construct(string $errorMessage, ?int $errorCode = null, ?array $details = null)
+    {
         $this->payload = [
             'message' => $errorMessage,
-            'timestamp' => time()
+            'timestamp' => time(),
         ];
         if ($errorCode !== null) {
             $this->payload['code'] = $errorCode;
@@ -35,7 +35,8 @@ class ErrorDto implements BroadcastMessageInterface
      *
      * @return string
      */
-    public function getType(): string {
+    public function getType(): string
+    {
         return $this->type;
     }
 
@@ -43,7 +44,8 @@ class ErrorDto implements BroadcastMessageInterface
      *
      * @return array<string, mixed>
      */
-    public function getPayload(): array {
+    public function getPayload(): array
+    {
         return $this->payload;
     }
 
@@ -51,7 +53,8 @@ class ErrorDto implements BroadcastMessageInterface
      *
      * @return string|false
      */
-    public function toJson(): string|false {
+    public function toJson(): string|false
+    {
         return json_encode(['type' => $this->type, 'payload' => $this->payload]);
     }
 }

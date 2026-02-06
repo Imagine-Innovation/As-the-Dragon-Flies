@@ -21,44 +21,51 @@ use yii\web\Response;
  */
 class PlayerController extends Controller
 {
-
     /**
      * @inheritDoc
      */
     public function behaviors()
     {
         /** @phpstan-ignore-next-line */
-        return array_merge(
-                parent::behaviors(),
-                [
-                    'access' => [
-                        'class' => AccessControl::class,
-                        'rules' => [
-                            [
-                                'actions' => ['*'],
-                                'allow' => false,
-                                'roles' => ['?'],
-                            ],
-                            [
-                                'actions' => [
-                                    'admin', 'delete', 'index', 'restore', 'update', 'validate', 'view',
-                                    'ajax', 'ajax-admin', 'ajax-lite', 'ajax-set-context', 'set-current', 'history'
-                                ],
-                                'allow' => ManageAccessRights::isRouteAllowed($this),
-                                'roles' => ['@'],
-                            ],
-                        ],
+        return array_merge(parent::behaviors(), [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['*'],
+                        'allow' => false,
+                        'roles' => ['?'],
                     ],
-                    'verbs' => [
-                        'class' => VerbFilter::className(),
+                    [
                         'actions' => [
-                            'delete' => ['POST'],
-                            'restore' => ['POST'],
-                            'validate' => ['POST'],
+                            'admin',
+                            'delete',
+                            'index',
+                            'restore',
+                            'update',
+                            'validate',
+                            'view',
+                            'ajax',
+                            'ajax-admin',
+                            'ajax-lite',
+                            'ajax-set-context',
+                            'set-current',
+                            'history',
                         ],
+                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'roles' => ['@'],
                     ],
-                ]
-        );
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['POST'],
+                    'restore' => ['POST'],
+                    'validate' => ['POST'],
+                ],
+            ],
+        ]);
     }
 
     /**
@@ -70,9 +77,9 @@ class PlayerController extends Controller
     {
         $user = Yii::$app->user->identity;
         $players = Player::find()
-                ->where(['user_id' => $user->id])
-                ->andWhere(['status' => [AppStatus::ACTIVE->value, AppStatus::INACTIVE->value]])
-                ->all();
+            ->where(['user_id' => $user->id])
+            ->andWhere(['status' => [AppStatus::ACTIVE->value, AppStatus::INACTIVE->value]])
+            ->all();
 
         return $this->render('index', ['players' => $players]);
     }
@@ -100,7 +107,7 @@ class PlayerController extends Controller
 
         $param = [
             'modelName' => 'Player',
-            'filter' => ['user_id' => Yii::$app->user->identity->id]
+            'filter' => ['user_id' => Yii::$app->user->identity->id],
         ];
         $ajaxRequest = new AjaxRequest($param);
 
@@ -152,7 +159,7 @@ class PlayerController extends Controller
         $param = [
             'modelName' => 'Player',
             'render' => 'lite',
-            'filter' => ['user_id' => $userId]
+            'filter' => ['user_id' => $userId],
         ];
         $ajaxRequest = new AjaxRequest($param);
 
@@ -180,16 +187,13 @@ class PlayerController extends Controller
         $postPlayerId = $request->post('playerId');
         $playerId = is_numeric($postPlayerId) ? (int) $postPlayerId : null;
 
-        $success = User::updateAll(
-                ['current_player_id' => $playerId],
-                ['id' => $userId]
-        );
+        $success = User::updateAll(['current_player_id' => $playerId], ['id' => $userId]);
 
         ContextManager::updatePlayerContext($playerId);
 
         return [
             'error' => !$success,
-            'msg' => $success ? 'Context is saved' : 'Could not save context'
+            'msg' => $success ? 'Context is saved' : 'Could not save context',
         ];
     }
 
@@ -228,7 +232,7 @@ class PlayerController extends Controller
     public function actionView(int $id): string
     {
         return $this->render('view', [
-                    'model' => $this->findModel($id),
+            'model' => $this->findModel($id),
         ]);
     }
 
@@ -300,10 +304,9 @@ class PlayerController extends Controller
      */
     protected function findModel(int $id): Player
     {
-
         $query = Player::find()
-                ->with(['race', 'class', 'background', 'playerAbilities', 'playerSkills', 'playerTraits'])
-                ->where(['id' => $id]);
+            ->with(['race', 'class', 'background', 'playerAbilities', 'playerSkills', 'playerTraits'])
+            ->where(['id' => $id]);
 
         $user = Yii::$app->user->identity;
         if (!$user->is_admin) {

@@ -14,7 +14,8 @@ use frontend\helpers\ItemHelper;
     <div class="card-body">
         <?php foreach ($model->playerItems as $playerItem): ?>
             <?php
-            if ($playerItem->item_type === "Weapon"):
+
+            if ($playerItem->item_type === 'Weapon'):
                 $weapon = $playerItem->weapon;
                 $properties = ItemHelper::getLiteWeaponProperties($weapon);
                 $remaining = ItemHelper::getRemainingAmunitions($playerItem);
@@ -25,7 +26,9 @@ use frontend\helpers\ItemHelper;
                             <h6 class="mb-0 fw-bold"><?= $weapon->item->name ?></h6>
                             <span class="badge btn-fantasy"><?= $playerItem->attack_modifier ?> to hit</span>
                         </div>
-                        <small class="text-muted"><?= $playerItem->damage ?> <?= $weapon->damageType->name ?><?= $properties ? ", {$properties}" : '' ?></small>
+                        <small class="text-muted"><?= $playerItem->damage ?> <?= $weapon->damageType->name ?><?=
+                    $properties ? ", {$properties}" : ''
+                ?></small>
                         <?php if ($remaining): ?>
                             <br><small class="text-muted"><?= $remaining ?></small>
                         <?php endif; ?>

@@ -21,7 +21,6 @@ use Yii;
  */
 class NpcType extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */

@@ -22,53 +22,55 @@ use yii\web\Response;
  */
 class UserController extends Controller
 {
-
     /**
      * @inheritDoc
      */
     public function behaviors()
     {
         /** @phpstan-ignore-next-line */
-        return array_merge(
-                parent::behaviors(),
-                [
-                    'access' => [
-                        'class' => AccessControl::class,
-                        'rules' => [
-                            [
-                                'actions' => ['*'],
-                                'allow' => false,
-                                'roles' => ['?'],
-                            ],
-                            [
-                                'actions' => [
-                                    'index', 'view', 'update', 'delete', 'validate', 'restore',
-                                    'ajax', 'ajax-set-role',
-                                ],
-                                'allow' => ManageAccessRights::isRouteAllowed($this),
-                                'roles' => ['@'],
-                            ],
-                        ],
-                    ],
-                    'verbs' => [
-                        'class' => VerbFilter::className(),
-                        'actions' => [
-                            'delete' => ['POST'],
-                            'ajax' => ['POST'],
-                        ],
+        return array_merge(parent::behaviors(), [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['*'],
+                        'allow' => false,
+                        'roles' => ['?'],
                     ],
                     [
-                        'class' => AttributeBehavior::class,
-                        'attributes' => [
-                            ActiveRecord::EVENT_BEFORE_INSERT => 'created_at',
-                            ActiveRecord::EVENT_BEFORE_UPDATE => 'updated_at',
+                        'actions' => [
+                            'index',
+                            'view',
+                            'update',
+                            'delete',
+                            'validate',
+                            'restore',
+                            'ajax',
+                            'ajax-set-role',
                         ],
-                        'value' => function ($event) {
-                            return time();
-                        },
+                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'roles' => ['@'],
                     ],
-                ]
-        );
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['POST'],
+                    'ajax' => ['POST'],
+                ],
+            ],
+            [
+                'class' => AttributeBehavior::class,
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => 'created_at',
+                    ActiveRecord::EVENT_BEFORE_UPDATE => 'updated_at',
+                ],
+                'value' => function ($event) {
+                    return time();
+                },
+            ],
+        ]);
     }
 
     /**
@@ -83,12 +85,12 @@ class UserController extends Controller
             'sort' => [
                 'defaultOrder' => [
                     'username' => SORT_DESC,
-                ]
+                ],
             ],
         ]);
 
         return $this->render('index', [
-                    'dataProvider' => $dataProvider,
+            'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -106,7 +108,7 @@ class UserController extends Controller
 
         $param = [
             'modelName' => 'User',
-            'sortOrder' => ['created_at' => SORT_DESC]
+            'sortOrder' => ['created_at' => SORT_DESC],
         ];
         $ajaxRequest = new AjaxRequest($param);
 
@@ -141,11 +143,15 @@ class UserController extends Controller
         $model->$property = $status;
 
         if ($model->save()) {
-            return ['error' => false, 'msg' => "Role $role has been " . (($status === 1)
-                    ? "granted" : "revoked") . " to user $model->username"];
+            return [
+                'error' => false,
+                'msg' => "Role $role has been " . ($status === 1 ? 'granted' : 'revoked') . " to user $model->username",
+            ];
         }
-        return ['error' => true, 'msg' => "Unable to " . (($status === 1) ? "grant"
-                : "revoke") . " role $role to user $model->username"];
+        return [
+            'error' => true,
+            'msg' => 'Unable to ' . ($status === 1 ? 'grant' : 'revoke') . " role $role to user $model->username",
+        ];
     }
 
     /**
@@ -158,7 +164,7 @@ class UserController extends Controller
     public function actionView(int $id): string
     {
         return $this->render('view', [
-                    'model' => $this->findModel($id),
+            'model' => $this->findModel($id),
         ]);
     }
 

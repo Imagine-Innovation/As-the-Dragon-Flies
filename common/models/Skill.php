@@ -27,7 +27,6 @@ use Yii;
  */
 class Skill extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
@@ -49,7 +48,13 @@ class Skill extends \yii\db\ActiveRecord
             [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name'], 'string', 'max' => 64],
             [['name'], 'unique'],
-            [['ability_id'], 'exist', 'skipOnError' => true, 'targetClass' => Ability::class, 'targetAttribute' => ['ability_id' => 'id']],
+            [
+                ['ability_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Ability::class,
+                'targetAttribute' => ['ability_id' => 'id'],
+            ],
         ];
     }
 
@@ -93,7 +98,9 @@ class Skill extends \yii\db\ActiveRecord
      */
     public function getActionTypes()
     {
-        return $this->hasMany(ActionType::class, ['id' => 'action_type_id'])->viaTable('action_type_skill', ['skill_id' => 'id']);
+        return $this->hasMany(ActionType::class, ['id' => 'action_type_id'])->viaTable('action_type_skill', [
+            'skill_id' => 'id',
+        ]);
     }
 
     /**
@@ -113,7 +120,9 @@ class Skill extends \yii\db\ActiveRecord
      */
     public function getBackgrounds()
     {
-        return $this->hasMany(Background::class, ['id' => 'background_id'])->viaTable('background_skill', ['skill_id' => 'id']);
+        return $this->hasMany(Background::class, ['id' => 'background_id'])->viaTable('background_skill', [
+            'skill_id' => 'id',
+        ]);
     }
 
     /**
@@ -133,7 +142,9 @@ class Skill extends \yii\db\ActiveRecord
      */
     public function getClasses()
     {
-        return $this->hasMany(CharacterClass::class, ['id' => 'class_id'])->viaTable('class_skill', ['skill_id' => 'id']);
+        return $this->hasMany(CharacterClass::class, ['id' => 'class_id'])->viaTable('class_skill', [
+            'skill_id' => 'id',
+        ]);
     }
 
     /**
@@ -153,7 +164,9 @@ class Skill extends \yii\db\ActiveRecord
      */
     public function getCreatures()
     {
-        return $this->hasMany(Creature::class, ['id' => 'creature_id'])->viaTable('creature_skill', ['skill_id' => 'id']);
+        return $this->hasMany(Creature::class, ['id' => 'creature_id'])->viaTable('creature_skill', [
+            'skill_id' => 'id',
+        ]);
     }
 
     /**

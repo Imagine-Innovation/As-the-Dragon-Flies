@@ -16,31 +16,49 @@ use Yii;
  */
 class AccessRightActionButton extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'access_right_action_button';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['access_right_id', 'action_button_id', 'status'], 'required'],
             [['access_right_id', 'action_button_id', 'status'], 'integer'],
-            [['access_right_id', 'action_button_id', 'status'], 'unique', 'targetAttribute' => ['access_right_id', 'action_button_id', 'status']],
-            [['access_right_id'], 'exist', 'skipOnError' => true, 'targetClass' => AccessRight::class, 'targetAttribute' => ['access_right_id' => 'id']],
-            [['action_button_id'], 'exist', 'skipOnError' => true, 'targetClass' => ActionButton::class, 'targetAttribute' => ['action_button_id' => 'id']],
+            [
+                ['access_right_id', 'action_button_id', 'status'],
+                'unique',
+                'targetAttribute' => ['access_right_id', 'action_button_id', 'status'],
+            ],
+            [
+                ['access_right_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => AccessRight::class,
+                'targetAttribute' => ['access_right_id' => 'id'],
+            ],
+            [
+                ['action_button_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => ActionButton::class,
+                'targetAttribute' => ['action_button_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'access_right_id' => 'Foreign key to “access_right” table',
             'action_button_id' => 'Foreign key to “action_button” table',
@@ -53,7 +71,8 @@ class AccessRightActionButton extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<AccessRight>
      */
-    public function getAccessRight() {
+    public function getAccessRight()
+    {
         return $this->hasOne(AccessRight::class, ['id' => 'access_right_id']);
     }
 
@@ -62,7 +81,8 @@ class AccessRightActionButton extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<ActionButton>
      */
-    public function getActionButton() {
+    public function getActionButton()
+    {
         return $this->hasOne(ActionButton::class, ['id' => 'action_button_id']);
     }
 }

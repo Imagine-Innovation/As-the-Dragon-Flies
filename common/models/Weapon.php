@@ -39,37 +39,85 @@ use Yii;
  */
 class Weapon extends Item
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'weapon';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         // Define or override validation rules specific to Weapon
         return array_merge(parent::rules(), [
-            [['amunition_id', 'damage_type_id', 'damage_dice', 'range_min', 'range_max', 'versatile_dice'], 'default', 'value' => null],
+            [
+                ['amunition_id', 'damage_type_id', 'damage_dice', 'range_min', 'range_max', 'versatile_dice'],
+                'default',
+                'value' => null,
+            ],
             [['is_simple'], 'default', 'value' => 1],
             [['is_versatile'], 'default', 'value' => 0],
             [['item_id'], 'required'],
-            [['item_id', 'amunition_id', 'damage_type_id', 'is_melee', 'is_ranged', 'is_simple', 'is_martial', 'need_ammunition', 'is_finesse', 'is_heavy', 'is_light', 'is_loading', 'is_range', 'range_min', 'range_max', 'is_reach', 'is_special', 'is_thrown', 'is_two_handed', 'is_versatile'], 'integer'],
+            [
+                [
+                    'item_id',
+                    'amunition_id',
+                    'damage_type_id',
+                    'is_melee',
+                    'is_ranged',
+                    'is_simple',
+                    'is_martial',
+                    'need_ammunition',
+                    'is_finesse',
+                    'is_heavy',
+                    'is_light',
+                    'is_loading',
+                    'is_range',
+                    'range_min',
+                    'range_max',
+                    'is_reach',
+                    'is_special',
+                    'is_thrown',
+                    'is_two_handed',
+                    'is_versatile',
+                ],
+                'integer',
+            ],
             [['damage_dice', 'versatile_dice'], 'string', 'max' => 8],
             [['item_id'], 'unique'],
-            [['item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['item_id' => 'id']],
-            [['amunition_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['amunition_id' => 'id']],
-            [['damage_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => DamageType::class, 'targetAttribute' => ['damage_type_id' => 'id']],
+            [
+                ['item_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Item::class,
+                'targetAttribute' => ['item_id' => 'id'],
+            ],
+            [
+                ['amunition_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Item::class,
+                'targetAttribute' => ['amunition_id' => 'id'],
+            ],
+            [
+                ['damage_type_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => DamageType::class,
+                'targetAttribute' => ['damage_type_id' => 'id'],
+            ],
         ]);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         // Define or override validation rules specific to Weapon
         return array_merge(parent::attributeLabels(), [
             'item_id' => 'Primary key synchronized 1:1 with the “item” table',
@@ -102,7 +150,8 @@ class Weapon extends Item
      *
      * @return \yii\db\ActiveQuery<Item>
      */
-    public function getAmunition() {
+    public function getAmunition()
+    {
         return $this->hasOne(Item::class, ['id' => 'amunition_id']);
     }
 
@@ -111,7 +160,8 @@ class Weapon extends Item
      *
      * @return \yii\db\ActiveQuery<DamageType>
      */
-    public function getDamageType() {
+    public function getDamageType()
+    {
         return $this->hasOne(DamageType::class, ['id' => 'damage_type_id']);
     }
 
@@ -120,7 +170,8 @@ class Weapon extends Item
      *
      * @return \yii\db\ActiveQuery<Item>
      */
-    public function getItem() {
+    public function getItem()
+    {
         return $this->hasOne(Item::class, ['id' => 'item_id']);
     }
 
@@ -129,7 +180,8 @@ class Weapon extends Item
      *
      * @return \yii\db\ActiveQuery<ShapeAttack>
      */
-    public function getShapeAttacks() {
+    public function getShapeAttacks()
+    {
         return $this->hasMany(ShapeAttack::class, ['weapon_id' => 'item_id']);
     }
 
@@ -146,7 +198,8 @@ class Weapon extends Item
      *
      * @return string The formatted string listing weapon properties, separated by commas.
      */
-    public function getProperties(): string {
+    public function getProperties(): string
+    {
         return ItemHelper::getFullWeaponProperties($this);
     }
 }

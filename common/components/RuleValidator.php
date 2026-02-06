@@ -7,13 +7,13 @@ use yii\validators\Validator;
 
 class RuleValidator extends Validator
 {
-
     /**
      * @param mixed $model
      * @param mixed $attribute
      * @return void
      */
-    public function validateAttribute(mixed $model, mixed $attribute): void {
+    public function validateAttribute(mixed $model, mixed $attribute): void
+    {
         if (!$model instanceof Rule || !is_string($attribute)) {
             return;
         }

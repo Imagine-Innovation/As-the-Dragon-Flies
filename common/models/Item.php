@@ -62,7 +62,6 @@ use Yii;
  */
 class Item extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
@@ -81,14 +80,23 @@ class Item extends \yii\db\ActiveRecord
             [['is_purchasable'], 'default', 'value' => 1],
             [['is_wearable'], 'default', 'value' => 0],
             [['item_type_id', 'name'], 'required'],
-            [['item_type_id', 'sort_order', 'cost', 'quantity', 'is_packable', 'is_wearable', 'is_purchasable'], 'integer'],
+            [
+                ['item_type_id', 'sort_order', 'cost', 'quantity', 'is_packable', 'is_wearable', 'is_purchasable'],
+                'integer',
+            ],
             [['description'], 'string'],
             [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['weight', 'max_load', 'max_volume'], 'number'],
             [['name', 'image'], 'string', 'max' => 64],
             [['coin'], 'string', 'max' => 2],
             [['name'], 'unique'],
-            [['item_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => ItemType::class, 'targetAttribute' => ['item_type_id' => 'id']],
+            [
+                ['item_type_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => ItemType::class,
+                'targetAttribute' => ['item_type_id' => 'id'],
+            ],
         ];
     }
 
@@ -359,12 +367,12 @@ class Item extends \yii\db\ActiveRecord
     public function getCategory(): string
     {
         $mainCategory = Category::find()
-                ->joinWith('itemCategories')
-                ->joinWith('itemCategories.item')
-                ->where(['item_category.is_main' => 1, 'item_category.item_id' => $this->id])
-                ->one();
+            ->joinWith('itemCategories')
+            ->joinWith('itemCategories.item')
+            ->where(['item_category.is_main' => 1, 'item_category.item_id' => $this->id])
+            ->one();
 
-        return $mainCategory ? $mainCategory->name : "Undefined";
+        return $mainCategory ? $mainCategory->name : 'Undefined';
     }
 
     /**
@@ -380,7 +388,7 @@ class Item extends \yii\db\ActiveRecord
         $weight = 0;
 
         // Check if the item type is a "Pack".
-        if ($this->itemType->name === "Pack") {
+        if ($this->itemType->name === 'Pack') {
             // Retrieve the pack items associated with the pack.
             $packItems = $this->packItems;
 
@@ -419,7 +427,7 @@ class Item extends \yii\db\ActiveRecord
         }
 
         // Return "free" if the item or service is free of charge (cost is zero or not set).
-        return "free";
+        return 'free';
     }
 
     /**

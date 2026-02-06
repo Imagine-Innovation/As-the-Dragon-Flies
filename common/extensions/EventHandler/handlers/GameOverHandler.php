@@ -11,7 +11,6 @@ use Ratchet\ConnectionInterface;
 
 class GameOverHandler implements SpecificMessageHandlerInterface
 {
-
     private LoggerService $logger;
     private BroadcastServiceInterface $broadcastService;
     private BroadcastMessageFactory $messageFactory;
@@ -23,9 +22,9 @@ class GameOverHandler implements SpecificMessageHandlerInterface
      * @param BroadcastMessageFactory $messageFactory
      */
     public function __construct(
-            LoggerService $logger,
-            BroadcastServiceInterface $broadcastService,
-            BroadcastMessageFactory $messageFactory
+        LoggerService $logger,
+        BroadcastServiceInterface $broadcastService,
+        BroadcastMessageFactory $messageFactory,
     ) {
         $this->logger = $logger;
         $this->broadcastService = $broadcastService;
@@ -41,7 +40,8 @@ class GameOverHandler implements SpecificMessageHandlerInterface
      * @param array<string, mixed> $data
      * @return void
      */
-    public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
+    public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void
+    {
         $this->logger->logStart("GameOverHandler: handle from clientId={$clientId}, sessionId={$sessionId}", $data);
 
         $payload = PayloadHelper::extractPayloadFromData($data);
@@ -49,10 +49,10 @@ class GameOverHandler implements SpecificMessageHandlerInterface
         $detail = PayloadHelper::extractArrayFromPayload('detail', $payload);
 
         if ($questId === null || empty($detail)) {
-            $this->logger->log("GameOverHandler: Missing required data (questId, detail).", $data, 'warning');
-            $errorDto = $this->messageFactory->createErrorMessage("Invalid game over data provided.");
+            $this->logger->log('GameOverHandler: Missing required data (questId, detail).', $data, 'warning');
+            $errorDto = $this->messageFactory->createErrorMessage('Invalid game over data provided.');
             $this->broadcastService->sendToClient($clientId, $errorDto, false, $sessionId);
-            $this->logger->logEnd("GameOverHandler: handle");
+            $this->logger->logEnd('GameOverHandler: handle');
             return;
         }
 
@@ -60,9 +60,9 @@ class GameOverHandler implements SpecificMessageHandlerInterface
 
         $this->broadcastService->broadcastToQuest($questId, $gameOverDto, $sessionId);
 
-        $this->logger->log("GameOverHandler: GameOverDto broadcasted", ['quest_id' => $questId, 'payload' => $payload]);
+        $this->logger->log('GameOverHandler: GameOverDto broadcasted', ['quest_id' => $questId, 'payload' => $payload]);
         $this->broadcastService->sendBack($from, 'ack', ['type' => 'game-over_processed', 'detail' => $detail]);
 
-        $this->logger->logEnd("GameOverHandler: handle");
+        $this->logger->logEnd('GameOverHandler: handle');
     }
 }

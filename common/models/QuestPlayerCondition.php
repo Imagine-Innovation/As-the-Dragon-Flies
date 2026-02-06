@@ -17,32 +17,50 @@ use Yii;
  */
 class QuestPlayerCondition extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'quest_player_condition';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['rounds_left'], 'default', 'value' => null],
             [['quest_id', 'player_id', 'condition_id'], 'required'],
             [['quest_id', 'player_id', 'condition_id', 'rounds_left'], 'integer'],
-            [['quest_id', 'player_id', 'condition_id'], 'unique', 'targetAttribute' => ['quest_id', 'player_id', 'condition_id']],
-            [['quest_id', 'player_id'], 'exist', 'skipOnError' => true, 'targetClass' => QuestPlayer::class, 'targetAttribute' => ['quest_id' => 'quest_id', 'player_id' => 'player_id']],
-            [['condition_id'], 'exist', 'skipOnError' => true, 'targetClass' => Condition::class, 'targetAttribute' => ['condition_id' => 'id']],
+            [
+                ['quest_id', 'player_id', 'condition_id'],
+                'unique',
+                'targetAttribute' => ['quest_id', 'player_id', 'condition_id'],
+            ],
+            [
+                ['quest_id', 'player_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => QuestPlayer::class,
+                'targetAttribute' => ['quest_id' => 'quest_id', 'player_id' => 'player_id'],
+            ],
+            [
+                ['condition_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Condition::class,
+                'targetAttribute' => ['condition_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'quest_id' => 'Foreign key to “quest” table',
             'player_id' => 'Foreign key to “player” table',
@@ -56,7 +74,8 @@ class QuestPlayerCondition extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Condition>
      */
-    public function getCondition() {
+    public function getCondition()
+    {
         return $this->hasOne(Condition::class, ['id' => 'condition_id']);
     }
 
@@ -65,7 +84,8 @@ class QuestPlayerCondition extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<QuestPlayer>
      */
-    public function getQuest() {
+    public function getQuest()
+    {
         return $this->hasOne(QuestPlayer::class, ['quest_id' => 'quest_id', 'player_id' => 'player_id']);
     }
 }

@@ -24,7 +24,6 @@ use Yii;
  */
 class Menu extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
@@ -49,7 +48,13 @@ class Menu extends \yii\db\ActiveRecord
             [['label', 'icon', 'image'], 'string', 'max' => 64],
             [['tooltip', 'card_title', 'subtitle', 'button_label'], 'string', 'max' => 255],
             [['access_right_id'], 'unique'],
-            [['access_right_id'], 'exist', 'skipOnError' => true, 'targetClass' => AccessRight::class, 'targetAttribute' => ['access_right_id' => 'id']],
+            [
+                ['access_right_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => AccessRight::class,
+                'targetAttribute' => ['access_right_id' => 'id'],
+            ],
         ];
     }
 

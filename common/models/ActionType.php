@@ -19,7 +19,6 @@ use Yii;
  */
 class ActionType extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
@@ -82,6 +81,8 @@ class ActionType extends \yii\db\ActiveRecord
      */
     public function getSkills()
     {
-        return $this->hasMany(Skill::class, ['id' => 'skill_id'])->viaTable('action_type_skill', ['action_type_id' => 'id']);
+        return $this->hasMany(Skill::class, ['id' => 'skill_id'])->viaTable('action_type_skill', [
+            'action_type_id' => 'id',
+        ]);
     }
 }

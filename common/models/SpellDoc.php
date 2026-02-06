@@ -18,7 +18,6 @@ use Yii;
  */
 class SpellDoc extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
@@ -39,7 +38,13 @@ class SpellDoc extends \yii\db\ActiveRecord
             [['description'], 'string'],
             [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name'], 'string', 'max' => 64],
-            [['spell_id'], 'exist', 'skipOnError' => true, 'targetClass' => Spell::class, 'targetAttribute' => ['spell_id' => 'id']],
+            [
+                ['spell_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Spell::class,
+                'targetAttribute' => ['spell_id' => 'id'],
+            ],
         ];
     }
 

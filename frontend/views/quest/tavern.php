@@ -6,10 +6,10 @@ use frontend\widgets\AjaxContainer;
 /** @var yii\web\View $this */
 /** @var common\models\Quest $model */
 /*
-  $player = Yii::$app->session->get('currentPlayer');
-  $playerId = $player->id;
-  $playerName = $player->name;
-  $avatar = $player->image->file_name;
+ $player = Yii::$app->session->get('currentPlayer');
+ $playerId = $player->id;
+ $playerName = $player->name;
+ $avatar = $player->image->file_name;
  */
 $playerId = Yii::$app->session->get('playerId');
 $playerName = Yii::$app->session->get('playerName');
@@ -32,7 +32,9 @@ $messages = $chatManager->getLastMessages();
             </div>
             <div class="card-body">
                 <p class="text-decoration mb-3"><?= $model->description ?></p>
-                <p class="mb-3">This quest allows <?= $model->story->companySize ?> <?= strtolower($model->story->requiredLevels) ?> to take part in the game.</p>
+                <p class="mb-3">This quest allows <?= $model->story->companySize ?> <?=
+    strtolower($model->story->requiredLevels)
+?> to take part in the game.</p>
                 <p class="mb-3" id="tavernMissingPlayers"></p>
                 <p class="mb-0" id="tavernMissingClasses"></p>
             </div>

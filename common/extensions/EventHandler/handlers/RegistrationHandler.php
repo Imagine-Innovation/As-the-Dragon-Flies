@@ -3,18 +3,17 @@
 namespace common\extensions\EventHandler\handlers;
 
 use common\components\AppStatus;
-use common\models\QuestPlayer;
 use common\extensions\EventHandler\BroadcastService;
 use common\extensions\EventHandler\contracts\SpecificMessageHandlerInterface;
 use common\extensions\EventHandler\factories\BroadcastMessageFactory;
 use common\extensions\EventHandler\LoggerService;
 use common\extensions\EventHandler\QuestSessionManager;
 use common\helpers\PayloadHelper;
+use common\models\QuestPlayer;
 use Ratchet\ConnectionInterface;
 
 class RegistrationHandler implements SpecificMessageHandlerInterface
 {
-
     private LoggerService $logger;
     private QuestSessionManager $questSessionManager;
     private BroadcastService $broadcastService;
@@ -28,12 +27,11 @@ class RegistrationHandler implements SpecificMessageHandlerInterface
      * @param BroadcastMessageFactory $messageFactory
      */
     public function __construct(
-            LoggerService $logger,
-            QuestSessionManager $questSessionManager,
-            BroadcastService $broadcastService,
-            BroadcastMessageFactory $messageFactory
-    )
-    {
+        LoggerService $logger,
+        QuestSessionManager $questSessionManager,
+        BroadcastService $broadcastService,
+        BroadcastMessageFactory $messageFactory,
+    ) {
         $this->logger = $logger;
         $this->questSessionManager = $questSessionManager;
         $this->broadcastService = $broadcastService;
@@ -49,7 +47,9 @@ class RegistrationHandler implements SpecificMessageHandlerInterface
      */
     private function updateQuestPlayerStatus(?int $questId, ?int $playerId, string $sessionId): void
     {
-        $this->logger->logStart("RegistrationHandler: updateQuestPlayerStatus questId={$questId}, playerId={$playerId}, sessionId={$sessionId}");
+        $this->logger->logStart(
+            "RegistrationHandler: updateQuestPlayerStatus questId={$questId}, playerId={$playerId}, sessionId={$sessionId}",
+        );
         if ($questId === null || $playerId === null) {
             return;
         }
@@ -64,12 +64,16 @@ class RegistrationHandler implements SpecificMessageHandlerInterface
         $questPlayer->status = AppStatus::ONLINE->value;
         $successfullySaved = $questPlayer->save();
         if (!$successfullySaved) {
-            $this->logger->log("Failed to update QuestPlayer:  Errors: " . print_r($questPlayer->getErrors(), true), null, 'error');
+            $this->logger->log(
+                'Failed to update QuestPlayer:  Errors: ' . print_r($questPlayer->getErrors(), true),
+                null,
+                'error',
+            );
             $this->logger->logEnd('RegistrationHandler: updateQuestPlayerStatus');
             return;
         }
 
-        $NotificationDto = $this->messageFactory->createNotificationMessage("Player registered", 'info', []);
+        $NotificationDto = $this->messageFactory->createNotificationMessage('Player registered', 'info', []);
         $this->broadcastService->broadcastToQuest($questId, $NotificationDto, $sessionId);
         $this->logger->logEnd('RegistrationHandler: updateQuestPlayerStatus');
     }
@@ -91,14 +95,24 @@ class RegistrationHandler implements SpecificMessageHandlerInterface
         $playerId = PayloadHelper::extractIntFromPayload('playerId', $data);
 
         $registered = $this->questSessionManager->registerSession($sessionId, $playerId, $questId, $clientId, $data);
-        $this->logger->log("RegistrationHandler: Session registration via QuestSessionManager. Result: " . ($registered
-                            ? 'Success' : 'Failure'));
+        $this->logger->log(
+            'RegistrationHandler: Session registration via QuestSessionManager. Result: '
+            . ($registered ? 'Success' : 'Failure'),
+        );
 
         if ($registered) {
             $this->updateQuestPlayerStatus($questId, $playerId, $sessionId);
-            $this->broadcastService->sendBack($from, 'connected', "Client ID [{$clientId}] attached to session [{$sessionId}]");
+            $this->broadcastService->sendBack(
+                $from,
+                'connected',
+                "Client ID [{$clientId}] attached to session [{$sessionId}]",
+            );
         } else {
-            $this->logger->log("RegistrationHandler: Unable to register/find session Id [{$sessionId}] for clientId=[{$clientId}]", $data, 'warning');
+            $this->logger->log(
+                "RegistrationHandler: Unable to register/find session Id [{$sessionId}] for clientId=[{$clientId}]",
+                $data,
+                'warning',
+            );
             $this->broadcastService->sendBack($from, 'error', "Unable to find session Id [{$sessionId}]");
         }
 

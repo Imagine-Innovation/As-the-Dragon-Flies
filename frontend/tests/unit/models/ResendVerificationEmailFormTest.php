@@ -2,7 +2,6 @@
 
 namespace frontend\tests\unit\models;
 
-
 use Codeception\Test\Unit;
 use common\fixtures\UserFixture;
 use frontend\models\ResendVerificationEmailForm;
@@ -14,14 +13,13 @@ class ResendVerificationEmailFormTest extends Unit
      */
     protected $tester;
 
-
     public function _before()
     {
         $this->tester->haveFixtures([
             'user' => [
                 'class' => UserFixture::class,
-                'dataFile' => codecept_data_dir() . 'user.php'
-            ]
+                'dataFile' => codecept_data_dir() . 'user.php',
+            ],
         ]);
     }
 
@@ -29,7 +27,7 @@ class ResendVerificationEmailFormTest extends Unit
     {
         $model = new ResendVerificationEmailForm();
         $model->attributes = [
-            'email' => 'aaa@bbb.cc'
+            'email' => 'aaa@bbb.cc',
         ];
 
         verify($model->validate())->false();
@@ -41,7 +39,7 @@ class ResendVerificationEmailFormTest extends Unit
     {
         $model = new ResendVerificationEmailForm();
         $model->attributes = [
-            'email' => ''
+            'email' => '',
         ];
 
         verify($model->validate())->false();
@@ -53,7 +51,7 @@ class ResendVerificationEmailFormTest extends Unit
     {
         $model = new ResendVerificationEmailForm();
         $model->attributes = [
-            'email' => 'test2@mail.com'
+            'email' => 'test2@mail.com',
         ];
 
         verify($model->validate())->false();
@@ -65,7 +63,7 @@ class ResendVerificationEmailFormTest extends Unit
     {
         $model = new ResendVerificationEmailForm();
         $model->attributes = [
-            'email' => 'test@mail.com'
+            'email' => 'test@mail.com',
         ];
 
         verify($model->validate())->true();

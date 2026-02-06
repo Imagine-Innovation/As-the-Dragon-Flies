@@ -9,7 +9,7 @@ use yii\helpers\Html;
 /** @var yii\base\Exception $exception */
 //$previousException = $exception->getPrevious();
 
-$this->title = "Oups, something went wrong";
+$this->title = 'Oups, something went wrong';
 ?>
 <?php if ($exception->statusCode === 404): ?>
     <section class="error">
@@ -28,4 +28,4 @@ $this->title = "Oups, something went wrong";
             <p><?= Html::encode($message) ?></p>
         </div>
     </section>
-<?php endif; ?>
+<?php endif;

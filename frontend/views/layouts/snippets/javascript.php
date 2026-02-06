@@ -1,4 +1,5 @@
 <?php
+
 /** @var \yii\web\View $this */
 // Specific javascript libraries to load according to controller name
 $controllerCustomJavascriptLib = [
@@ -20,7 +21,7 @@ if (array_key_exists($controllerId, $controllerCustomJavascriptLib)) {
     $javascriptLibraries = $controllerCustomJavascriptLib[$controllerId];
 
     foreach ($javascriptLibraries as $javascriptLibrary) {
-        echo('<script src="js/' . $javascriptLibrary . '.js"></script>' . PHP_EOL);
+        echo '<script src="js/' . $javascriptLibrary . '.js"></script>' . PHP_EOL;
     }
 }
 
@@ -44,6 +45,9 @@ $jsSnippet = match ($controllerId) {
     }
 
 
-<?= $jsSnippet ? $this->renderFile("@app/views/layouts/snippets/js/{$jsSnippet}.php", ['controllerId' => $controllerId, 'actionId' => $actionId]) : '' ?>
+<?= $jsSnippet ? $this->renderFile("@app/views/layouts/snippets/js/{$jsSnippet}.php", [
+        'controllerId' => $controllerId,
+        'actionId' => $actionId,
+    ]) : '' ?>
 
 </script>

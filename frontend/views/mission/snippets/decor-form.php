@@ -34,18 +34,19 @@ use yii\widgets\ActiveForm;
         <?php endif; ?>
 
         <?=
-                $form->field($model, 'image')
-                ->dropdownList(
-                        $model->image ? [$model->image => $model->image] : [],
-                        [
-                            'class' => 'select2-container w-100',
-                            'data-minimum-results-for-search' => -1,
-                            'data-placeholder' => "Select an image",
-                            'maxlength' => true,
-                        ]
-                )
-                ->label('Decor image')
-        ?>
+    $form
+        ->field($model, 'image')
+        ->dropdownList(
+            $model->image ? [$model->image => $model->image] : [],
+            [
+                'class' => 'select2-container w-100',
+                'data-minimum-results-for-search' => -1,
+                'data-placeholder' => 'Select an image',
+                'maxlength' => true,
+            ],
+        )
+        ->label('Decor image')
+?>
 
         <?php if ($model->image): ?>
         </div>
@@ -60,7 +61,19 @@ use yii\widgets\ActiveForm;
 
 <?php if ($model->id): ?>
     <div class="row row-cols-1 row-cols-lg-2 g-4">
-        <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->decorItems, 'parentId' => $model->id, 'type' => 'Item']) ?>
-        <?= $this->renderFile('@app/views/mission/snippets/card.php', ['properties' => $model->traps, 'parentId' => $model->id, 'type' => 'Trap']) ?>
+        <?=
+    $this->renderFile('@app/views/mission/snippets/card.php', [
+        'properties' => $model->decorItems,
+        'parentId' => $model->id,
+        'type' => 'Item',
+    ])
+?>
+        <?=
+    $this->renderFile('@app/views/mission/snippets/card.php', [
+        'properties' => $model->traps,
+        'parentId' => $model->id,
+        'type' => 'Trap',
+    ])
+?>
     </div>
-<?php endif; ?>
+<?php endif;

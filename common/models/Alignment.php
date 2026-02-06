@@ -22,7 +22,6 @@ use Yii;
  */
 class Alignment extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
@@ -77,7 +76,9 @@ class Alignment extends \yii\db\ActiveRecord
      */
     public function getCreatures()
     {
-        return $this->hasMany(Creature::class, ['id' => 'creature_id'])->viaTable('creature_alignment', ['alignment_id' => 'id']);
+        return $this->hasMany(Creature::class, ['id' => 'creature_id'])->viaTable('creature_alignment', [
+            'alignment_id' => 'id',
+        ]);
     }
 
     /**
@@ -107,7 +108,9 @@ class Alignment extends \yii\db\ActiveRecord
      */
     public function getRaceGroups()
     {
-        return $this->hasMany(RaceGroup::class, ['id' => 'race_group_id'])->viaTable('race_group_alignment', ['alignment_id' => 'id']);
+        return $this->hasMany(RaceGroup::class, ['id' => 'race_group_id'])->viaTable('race_group_alignment', [
+            'alignment_id' => 'id',
+        ]);
     }
 
     /**

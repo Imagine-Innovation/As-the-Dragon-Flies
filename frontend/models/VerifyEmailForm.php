@@ -9,7 +9,6 @@ use yii\base\Model;
 
 class VerifyEmailForm extends Model
 {
-
     public string $token;
 
     /** @var User|null $_user */

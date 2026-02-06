@@ -13,24 +13,20 @@ use yii\web\Response;
  */
 class SearchController extends Controller
 {
-
     /**
      * @inheritDoc
      */
     public function behaviors()
     {
-        return array_merge(
-                parent::behaviors(),
-                [
-                    'access' => [
-                        'class' => AccessControl::class,
-                        'rules' => [
-                            ['actions' => ['*'], 'allow' => false, 'roles' => ['?']],
-                            ['actions' => ['values'], 'allow' => true, 'roles' => ['@']],
-                        ],
-                    ],
-                ]
-        );
+        return array_merge(parent::behaviors(), [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    ['actions' => ['*'], 'allow' => false, 'roles' => ['?']],
+                    ['actions' => ['values'], 'allow' => true, 'roles' => ['@']],
+                ],
+            ],
+        ]);
     }
 
     /**
@@ -98,15 +94,15 @@ class SearchController extends Controller
         }
 
         $normalizedString = str_replace(
-                [
-                    "'", // Single quote
-                    '’', // Right single quotation mark
-                    '‘', // Left single quotation mark
-                    '´', // Acute accent
-                    '`', // Grave accent
-                ],
-                "_", // single character SQL wildcard
-                $inputString
+            [
+                "'", // Single quote
+                '’', // Right single quotation mark
+                '‘', // Left single quotation mark
+                '´', // Acute accent
+                '`', // Grave accent
+            ],
+            '_', // single character SQL wildcard
+            $inputString,
         );
         return $normalizedString;
     }
@@ -119,9 +115,7 @@ class SearchController extends Controller
      */
     private function fullyQualifiedClassName(string $modelName): string
     {
-        $className = str_contains($modelName, '\\') ?
-                $modelName :
-                "\\common\\models\\{$modelName}";
+        $className = str_contains($modelName, '\\') ? $modelName : "\\common\\models\\{$modelName}";
 
         if (!class_exists($className) || !is_subclass_of($className, \yii\db\ActiveRecord::class)) {
             throw new \InvalidArgumentException("Class {$className} does not exist or is not an ActiveRecord.");
@@ -147,15 +141,14 @@ class SearchController extends Controller
         $searchString = $this->normalizeSearchString($userEntry);
 
         $className = $this->fullyQualifiedClassName($modelName);
-        $query = $className::find()->select(['t.id', 't.name', 't.description as text'])
-                ->from(['t' => $className::tableName()]);
+        $query = $className::find()
+            ->select(['t.id', 't.name', 't.description as text'])
+            ->from(['t' => $className::tableName()]);
 
         if ($searchString) {
-            $query->where(['like', 'name', "%{$searchString}%", false]) // The 'false' parameter prevents Yii from adding extra escaping
-                    ->orWhere(['like', 'description', "%{$searchString}%", false]);
+            $query->where(['like', 'name', "%{$searchString}%", false])->orWhere(['like', 'description', "%{$searchString}%", false]); // The 'false' parameter prevents Yii from adding extra escaping
         }
-        $query->innerJoin('decor', 't.decor_id = decor.id')
-                ->where(['decor.mission_id' => $missionId]);
+        $query->innerJoin('decor', 't.decor_id = decor.id')->where(['decor.mission_id' => $missionId]);
 
         $searchResult = $query->asArray()->all();
 
@@ -183,8 +176,7 @@ class SearchController extends Controller
         $query = $className::find()->select(['id', 'name', 'description as text']);
 
         if ($searchString) {
-            $query->where(['like', 'name', "%{$searchString}%", false]) // The 'false' parameter prevents Yii from adding extra escaping
-                    ->orWhere(['like', 'description', "%{$searchString}%", false]);
+            $query->where(['like', 'name', "%{$searchString}%", false])->orWhere(['like', 'description', "%{$searchString}%", false]); // The 'false' parameter prevents Yii from adding extra escaping
         }
         if ($filter) {
             $query->where($filter);
@@ -213,10 +205,10 @@ class SearchController extends Controller
 
         $className = $this->fullyQualifiedClassName($modelName);
         $searchResult = $className::find()
-                ->select(['id', 'text'])
-                ->where(['like', 'text', "%{$searchString}%", false]) // The 'false' parameter prevents Yii from adding extra escaping
-                ->asArray()
-                ->all();
+            ->select(['id', 'text'])
+            ->where(['like', 'text', "%{$searchString}%", false]) // The 'false' parameter prevents Yii from adding extra escaping
+            ->asArray()
+            ->all();
 
         return ['error' => false, 'msg' => '', 'results' => $searchResult];
     }
@@ -231,7 +223,9 @@ class SearchController extends Controller
      */
     private function searchBrocker(string $valueType, string $search, ?int $parentId, ?string $folder): array
     {
-        Yii::debug("*** Debug *** searchBrocker(valueType={$valueType}, search={$search}, parentId={$parentId}, folder={$folder})");
+        Yii::debug(
+            "*** Debug *** searchBrocker(valueType={$valueType}, search={$search}, parentId={$parentId}, folder={$folder})",
+        );
         return match ($valueType) {
             'image' => $this->imageSearch($search, $folder),
             // Search in a global repository

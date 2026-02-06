@@ -9,8 +9,8 @@ use frontend\widgets\Button;
 /** @var string[] $paragraphs */
 $alignments = Alignment::find()->all();
 /*
-  $alignmentCol = ['Lawful', 'Neutral', 'Chaotic'];
-  $alignmentRow = ['Good', 'Neutral', 'Evil'];
+ * $alignmentCol = ['Lawful', 'Neutral', 'Chaotic'];
+ * $alignmentRow = ['Good', 'Neutral', 'Evil'];
  *
  */
 $alignmentCol = ['L', 'N', 'C'];
@@ -19,9 +19,9 @@ $alignmentIds = [];
 
 foreach ($alignments as $alignment) {
     $code = $alignment->code;
-    if ($code === "N") {
-        $col = "N";
-        $row = "N";
+    if ($code === 'N') {
+        $col = 'N';
+        $row = 'N';
     } else {
         $col = substr($code, 0, 1);
         $row = substr($code, -1);
@@ -64,7 +64,9 @@ foreach ($alignments as $alignment) {
             <div class="card">
                 <div class="card-body" id="ajaxLanguageSelection">
                     <h4 class="card-title text-decoration">Languages</h4>
-                    <h6 class="card-subtitle">Choose the languages that your race (<?= $model->race->name ?>) and background (<?= $model->background->name ?>) allow you to speak.</h6>
+                    <h6 class="card-subtitle">Choose the languages that your race (<?= $model->race->name ?>) and background (<?=
+    $model->background->name
+?>) allow you to speak.</h6>
                 </div>
             </div>
         </div>
@@ -74,13 +76,13 @@ foreach ($alignments as $alignment) {
             <div class="card">
                 <div class="actions">
                     <?=
-                    Button::widget([
-                        'mode' => 'icon',
-                        'id' => 'generateNewNamesButton',
-                        'icon' => 'bi-arrow-repeat',
-                        'tooltip' => 'New random names'
-                    ])
-                    ?>
+    Button::widget([
+        'mode' => 'icon',
+        'id' => 'generateNewNamesButton',
+        'icon' => 'bi-arrow-repeat',
+        'tooltip' => 'New random names',
+    ])
+?>
                 </div>
                 <div class="card-body" id="ajaxNameSelection">
                     <h4 class="card-title text-decoration">Name</h4>
@@ -98,13 +100,13 @@ foreach ($alignments as $alignment) {
             <div class="card">
                 <div class="actions">
                     <?=
-                    Button::widget([
-                        'mode' => 'icon',
-                        'icon' => 'bi-magic',
-                        'tooltip' => 'Alignment wizard',
-                        'modal' => 'builderWizardModal'
-                    ])
-                    ?>
+    Button::widget([
+        'mode' => 'icon',
+        'icon' => 'bi-magic',
+        'tooltip' => 'Alignment wizard',
+        'modal' => 'builderWizardModal',
+    ])
+?>
                 </div>
                 <div class="card-body">
                     <h4 class="card-title text-decoration">Alignment</h4>
@@ -126,8 +128,12 @@ foreach ($alignments as $alignment) {
                                             <td class="text-center">
                                                 <div class="custom-control custom-radio mb-2">
                                                     <input type="radio" id="alignment<?= $alignmentIds[$col][$row] ?>" name="alignment" class="custom-control-input"
-                                                           onchange='PlayerBuilder.setProperty("alignment_id", <?= $alignmentIds[$col][$row] ?>);'>
-                                                    <label class="custom-control-label" for="alignment<?= $alignmentIds[$col][$row] ?>"> </label>
+                                                           onchange='PlayerBuilder.setProperty("alignment_id", <?=
+                                            $alignmentIds[$col][$row]
+                                        ?>);'>
+                                                    <label class="custom-control-label" for="alignment<?=
+                                            $alignmentIds[$col][$row]
+                                        ?>"> </label>
                                                 </div>
                                             </td>
                                         <?php endforeach; ?>

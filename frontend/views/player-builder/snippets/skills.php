@@ -16,13 +16,13 @@ use frontend\widgets\Button;
             <div class="card h-100">
                 <div class="actions">
                     <?=
-                    Button::widget([
-                        'mode' => 'icon',
-                        'id' => 'generateNewTraitsButton',
-                        'icon' => 'bi-arrow-repeat',
-                        'tooltip' => 'New random traits'
-                    ])
-                    ?>
+    Button::widget([
+        'mode' => 'icon',
+        'id' => 'generateNewTraitsButton',
+        'icon' => 'bi-arrow-repeat',
+        'tooltip' => 'New random traits',
+    ])
+?>
                 </div>
                 <div class="card-body" id="ajaxTraits">
                     <?= $this->renderFile('@app/views/player-builder/ajax/traits.php', ['player' => $model]) ?>

@@ -16,7 +16,6 @@ use Yii;
  */
 class SpellSchool extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */

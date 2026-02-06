@@ -1,4 +1,5 @@
 <?php
+
 /** @var yii\web\View $this */
 /** @var array $viewParameters */
 /** @var int $state */
@@ -9,8 +10,8 @@ $player = $viewParameters['player'];
 
 $snippet = "snippets/_state_{$state}";
 
-$row = "row d-flex justify-content-center g-3";
-$col = "col-12 col-lg-9 col-xl-8 col-xxl-7";
+$row = 'row d-flex justify-content-center g-3';
+$col = 'col-12 col-lg-9 col-xl-8 col-xxl-7';
 $viewParameters['row'] = $row;
 $viewParameters['col'] = $col;
 ?>
@@ -21,9 +22,9 @@ $viewParameters['col'] = $col;
     <div class="<?= $row ?>">
         <div class="<?= $col ?>">
             <header class="content__title h3 text-decoration">
-                Welcome back <?= $state < 2 ? ($user->fullname ?? $user->username) : $player->name ?>
+                Welcome back <?= $state < 2 ? $user->fullname ?? $user->username : $player->name ?>
             </header>
         </div>
         <?= $this->render($snippet, $viewParameters) ?>
     </div>
-<?php endif; ?>
+<?php endif;

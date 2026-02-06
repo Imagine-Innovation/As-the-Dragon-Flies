@@ -41,14 +41,12 @@ $this->params['breadcrumbs'] = $breadcrumbs;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <?=
-    $this->render("snippets/{$snippet}", [
-        'model' => $model,
-        'storyId' => $story->id,
-        'chapterId' => $chapter->id,
-        'missionId' => $mission->id,
-        'parentId' => $parentId,
-    ])
-    ?>
+    <?= $this->render("snippets/{$snippet}", [
+    'model' => $model,
+    'storyId' => $story->id,
+    'chapterId' => $chapter->id,
+    'missionId' => $mission->id,
+    'parentId' => $parentId,
+]) ?>
 
 </div>

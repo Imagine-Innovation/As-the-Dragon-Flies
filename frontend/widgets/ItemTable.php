@@ -4,14 +4,13 @@ namespace frontend\widgets;
 
 use common\models\Item;
 use Yii;
-use yii\helpers\ArrayHelper;
 use yii\base\Widget;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
 class ItemTable extends Widget
 {
-
     /**
      *  Define constant for column configurations.
      *      column-header   Column header caption
@@ -161,7 +160,7 @@ class ItemTable extends Widget
      */
     public function init(): void
     {
-        Yii::debug("*** Debug ***  ItemTable Widget - init()", __METHOD__);
+        Yii::debug('*** Debug ***  ItemTable Widget - init()', __METHOD__);
         parent::init();
 
         $this->columns = self::COLS;
@@ -178,8 +177,8 @@ class ItemTable extends Widget
         $this->type = self::LUT_TYPE[$this->itemTypeId - 1];
 
         return $this->render('item-table', [
-                    'tableHeader' => $this->renderTableHeader(),
-                    'tableBody' => $this->renderTableBody(),
+            'tableHeader' => $this->renderTableHeader(),
+            'tableBody' => $this->renderTableBody(),
         ]);
     }
 
@@ -200,12 +199,13 @@ class ItemTable extends Widget
      */
     private function renderTableCell(array $col, Item $item, int $colIndex): string
     {
-        Yii::debug("*** Debug ***  ItemTable Widget - renderTableCell() - colIndex={$colIndex}, col['property']={$col['property']}");
+        Yii::debug(
+            "*** Debug ***  ItemTable Widget - renderTableCell() - colIndex={$colIndex}, col['property']={$col['property']}",
+        );
         // Retrieve the content for the table cell using the model's property.
-        $property = ($col['property'] === 'categories') ?
-                implode(", ", ArrayHelper::getColumn($item->categories, 'name'))
-                    :
-                $item[$col['property']];
+        $property = $col['property'] === 'categories'
+            ? implode(', ', ArrayHelper::getColumn($item->categories, 'name'))
+            : $item[$col['property']];
 
         $cellContent = is_string($property) ? $property : '';
         Yii::debug("*** Debug ***  ItemTable Widget - renderTableCell() - cellContent={$cellContent}");
@@ -215,29 +215,28 @@ class ItemTable extends Widget
         $display = match ($col['iconography']) {
             'icon' => "<i class=\"bi {$cellContent}\"></i>",
             'image' => "<img src=\"img/item/{$cellContent}\" class=\"image-thumbnail\">",
-            default => Html::encode($cellContent)
+            default => Html::encode($cellContent),
         };
 
         Yii::debug("*** Debug ***  ItemTable Widget - renderTableCell() - display={$display}");
 
         // Define the HTML tag properties, for the first column.
-        $tagName = ($colIndex === 0) ? 'th' : 'td';
+        $tagName = $colIndex === 0 ? 'th' : 'td';
 
         // Start building the HTML content for the table cell.
-        $scope = ($colIndex === 0) ? ' scope="row"' : '';
+        $scope = $colIndex === 0 ? ' scope="row"' : '';
         $element = "<{$tagName}{$scope} class=\"{$col['class']}\">";
 
         // Handle unique content display based on the 'is-repeated' configuration.
         if ($col['is-repeated'] === false) {
-            $display = ($cellContent === $this->previousContent) ? '&nbsp;' : $cellContent;
+            $display = $cellContent === $this->previousContent ? '&nbsp;' : $cellContent;
             $this->previousContent = $cellContent;
         }
 
         // Check if the column requires a link and construct the HTML accordingly.
-        $innerHtml = $col['is-link'] ?
-                '<a href="' . Url::toRoute(['item/view', 'id' => $item->id]) . '">' . $display . '</a>'
-                    :
-                $display;
+        $innerHtml = $col['is-link']
+            ? '<a href="' . Url::toRoute(['item/view', 'id' => $item->id]) . '">' . $display . '</a>'
+            : $display;
 
         // Return the final HTML content for the table cell.
         return $element . $innerHtml . "</{$tagName}>";
@@ -273,7 +272,7 @@ class ItemTable extends Widget
                     $html .= $this->renderTableCell($col, $item, $i++);
                 }
             }
-            $html .= "</tr>";
+            $html .= '</tr>';
         }
         return $html;
     }

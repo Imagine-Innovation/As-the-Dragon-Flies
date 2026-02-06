@@ -10,8 +10,8 @@ use common\models\Level;
 use common\models\Proficiency;
 use Yii;
 use yii\data\ActiveDataProvider;
-use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
@@ -21,39 +21,35 @@ use yii\web\Response;
  */
 class CharacterClassController extends Controller
 {
-
     /**
      * @inheritDoc
      */
     public function behaviors()
     {
         /** @phpstan-ignore-next-line */
-        return array_merge(
-                parent::behaviors(),
-                [
-                    'access' => [
-                        'class' => AccessControl::class,
-                        'rules' => [
-                            [
-                                'actions' => ['*'],
-                                'allow' => false,
-                                'roles' => ['?'],
-                            ],
-                            [
-                                'actions' => ['index', 'ajax-wizard', 'view'],
-                                'allow' => ManageAccessRights::isRouteAllowed($this),
-                                'roles' => ['@'],
-                            ],
-                        ],
+        return array_merge(parent::behaviors(), [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['*'],
+                        'allow' => false,
+                        'roles' => ['?'],
                     ],
-                    'verbs' => [
-                        'class' => VerbFilter::className(),
-                        'actions' => [
-                            'delete' => ['POST'],
-                        ],
+                    [
+                        'actions' => ['index', 'ajax-wizard', 'view'],
+                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'roles' => ['@'],
                     ],
-                ]
-        );
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['POST'],
+                ],
+            ],
+        ]);
     }
 
     /**
@@ -68,7 +64,7 @@ class CharacterClassController extends Controller
         ]);
 
         return $this->render('index', [
-                    'dataProvider' => $dataProvider,
+            'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -106,9 +102,9 @@ class CharacterClassController extends Controller
         // Find proficiency ID for Spell to avoid nested sub query
         // in the "foreach" statement
         $spellProficieny = Proficiency::find()
-                ->select('id')
-                ->where(['name' => 'Spell'])
-                ->one();
+            ->select('id')
+            ->where(['name' => 'Spell'])
+            ->one();
 
         if (!$spellProficieny) {
             // Spell proficiency not found
@@ -147,11 +143,11 @@ class CharacterClassController extends Controller
         }
 
         return $this->render('view', [
-                    'model' => $model,
-                    'hasSpell' => $hasSpell,
-                    'proficiencyHeaders' => $proficiencyHeaders,
-                    'proficiencies' => $proficiencies,
-                    'spellsByLevel' => $spellsByLevel,
+            'model' => $model,
+            'hasSpell' => $hasSpell,
+            'proficiencyHeaders' => $proficiencyHeaders,
+            'proficiencies' => $proficiencies,
+            'spellsByLevel' => $spellsByLevel,
         ]);
     }
 
@@ -170,8 +166,7 @@ class CharacterClassController extends Controller
             $colId = 2 + (int) $proficiency->sort_order;
             if (!isset($headers[$colId])) {
                 $name = $proficiency->proficiency->name;
-                $headers[$colId] = ($name === 'Spell') ? "Spell L{$proficiency->spell_level}"
-                            : $name;
+                $headers[$colId] = $name === 'Spell' ? "Spell L{$proficiency->spell_level}" : $name;
             }
         }
 
@@ -192,7 +187,7 @@ class CharacterClassController extends Controller
             foreach ($headers as $colId => $colName) {
                 $proficiencies[$levelId][$colId] = [
                     'value' => $this->getStaticCellValue($level, $colId),
-                    'is_header' => ($colId === 0)
+                    'is_header' => $colId === 0,
                 ];
             }
         }
@@ -234,7 +229,8 @@ class CharacterClassController extends Controller
             $rowId = (int) $proficiency->level_id;
             $colId = 2 + (int) $proficiency->sort_order;
             if (isset($proficiencies[$rowId][$colId])) {
-                $proficiencies[$rowId][$colId]['value'] = (string) $proficiency->bonus . (string) $proficiency->dice . (string) $proficiency->spell_slot;
+                $proficiencies[$rowId][$colId]['value'] =
+                    (string) $proficiency->bonus . (string) $proficiency->dice . (string) $proficiency->spell_slot;
             }
         }
 
@@ -250,7 +246,7 @@ class CharacterClassController extends Controller
     {
         $details = [];
         if ($feature->cr > 0) {
-            $details[] = "CR " . $feature->cr;
+            $details[] = 'CR ' . $feature->cr;
         }
         if (!empty($feature->dice)) {
             $details[] = (string) $feature->dice;

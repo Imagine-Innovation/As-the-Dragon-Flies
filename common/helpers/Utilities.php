@@ -20,7 +20,6 @@ use yii\helpers\Inflector;
 
 class Utilities extends Html
 {
-
     /**
      * Trims the input string to a specified maximum length, adding ellipsis
      * if necessary.
@@ -35,7 +34,8 @@ class Utilities extends Html
      *                       default is 250 characters.
      * @return string The trimmed string with ellipsis if it was truncated.
      */
-    public static function trim($inputString, $maxLength = 250) {
+    public static function trim($inputString, $maxLength = 250)
+    {
         // If the input string is empty, return an empty string
         if (!$inputString) {
             return '';
@@ -48,7 +48,7 @@ class Utilities extends Html
         }
 
         // Find the position of the first space in the input string
-        $firstSpace = mb_strpos($inputString, " ");
+        $firstSpace = mb_strpos($inputString, ' ');
         if ($firstSpace > $maxLength) {
             // If the first space is beyond the maximum length, cut the string
             // from the first space and add ellipsis
@@ -88,21 +88,25 @@ class Utilities extends Html
      *
      * @return string The generated UUID.
      */
-    public static function newUUID() {
+    public static function newUUID()
+    {
         return sprintf(
-                '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-                // 32 bits for "time_low"
-                mt_rand(0, 0xffff), mt_rand(0, 0xffff),
-                // 16 bits for "time_mid"
-                mt_rand(0, 0xffff),
-                // 16 bits for "time_hi_and_version"
-                // (the most significant bits set to 0100 for version 4)
-                mt_rand(0, 0x0fff) | 0x4000,
-                // 16 bits for "clk_seq_hi_res" and "clk_seq_low"
-                // (the most significant bits set to 10 for variant DCE1.1)
-                mt_rand(0, 0x3fff) | 0x8000,
-                // 48 bits for "node"
-                mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
+            '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+            // 32 bits for "time_low"
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            // 16 bits for "time_mid"
+            mt_rand(0, 0xffff),
+            // 16 bits for "time_hi_and_version"
+            // (the most significant bits set to 0100 for version 4)
+            mt_rand(0, 0x0fff) | 0x4000,
+            // 16 bits for "clk_seq_hi_res" and "clk_seq_low"
+            // (the most significant bits set to 10 for variant DCE1.1)
+            mt_rand(0, 0x3fff) | 0x8000,
+            // 48 bits for "node"
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
         );
     }
 
@@ -115,7 +119,8 @@ class Utilities extends Html
      * @param mixed $dateTime The datetime value to format
      * @return string Formatted datetime string in 'short' format
      */
-    public static function formatDate($dateTime) {
+    public static function formatDate($dateTime)
+    {
         // Get browser language preference (supports en-US or fr-FR)
         $browserLanguage = Yii::$app->request->getPreferredLanguage(['en-US', 'fr-FR']);
 
@@ -130,8 +135,9 @@ class Utilities extends Html
      * @param string[] $paragraphs
      * @return string
      */
-    public static function formatMultiLine(array $paragraphs): string {
-        $lines = array_map(fn($p) => "<p class='text-muted'>" . Html::encode($p) . "</p>", $paragraphs);
+    public static function formatMultiLine(array $paragraphs): string
+    {
+        $lines = array_map(fn($p) => "<p class='text-muted'>" . Html::encode($p) . '</p>', $paragraphs);
         return implode("\n", $lines);
     }
 
@@ -145,7 +151,8 @@ class Utilities extends Html
      * @param bool $isContext Whether to consider quest context
      * @return string Path to the image file
      */
-    public static function toolImage(?string $imageFile, bool $isContext): string {
+    public static function toolImage(?string $imageFile, bool $isContext): string
+    {
         $questId = Yii::$app->session->get('questId');
 
         // Handle context-specific story images
@@ -173,7 +180,8 @@ class Utilities extends Html
      * @return string|null The lowercase class name of the object, or null
      *                     if the parameter is not an object.
      */
-    public static function modelName(mixed $object): ?string {
+    public static function getController(mixed $object): ?string
+    {
         // Check if the provided model is an instance of a class
         if (is_object($object)) {
             // Extract the full class name of the model including its namespace
@@ -193,7 +201,8 @@ class Utilities extends Html
      * @param array<string, mixed>|null $attributes
      * @return string
      */
-    public static function formatAttributes(?array $attributes): string {
+    public static function formatAttributes(?array $attributes): string
+    {
         if (!$attributes) {
             return '';
         }
@@ -206,6 +215,7 @@ class Utilities extends Html
                 $strValue = Html::encode((string) $value);
                 $params[] = "{$attribute}=\"{$strValue}\"";
             }
+
             // otherwise, ignore this attribute
         }
         return implode(' ', $params);

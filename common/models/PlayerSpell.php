@@ -15,31 +15,45 @@ use Yii;
  */
 class PlayerSpell extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'player_spell';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['player_id', 'spell_id'], 'required'],
             [['player_id', 'spell_id'], 'integer'],
             [['player_id', 'spell_id'], 'unique', 'targetAttribute' => ['player_id', 'spell_id']],
-            [['player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['player_id' => 'id']],
-            [['spell_id'], 'exist', 'skipOnError' => true, 'targetClass' => Spell::class, 'targetAttribute' => ['spell_id' => 'id']],
+            [
+                ['player_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Player::class,
+                'targetAttribute' => ['player_id' => 'id'],
+            ],
+            [
+                ['spell_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Spell::class,
+                'targetAttribute' => ['spell_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'player_id' => 'Foreign key to “player” table',
             'spell_id' => 'Foreign key to “spell” table',
@@ -51,7 +65,8 @@ class PlayerSpell extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Player>
      */
-    public function getPlayer() {
+    public function getPlayer()
+    {
         return $this->hasOne(Player::class, ['id' => 'player_id']);
     }
 
@@ -60,7 +75,8 @@ class PlayerSpell extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Spell>
      */
-    public function getSpell() {
+    public function getSpell()
+    {
         return $this->hasOne(Spell::class, ['id' => 'spell_id']);
     }
 }

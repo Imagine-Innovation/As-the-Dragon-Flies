@@ -19,13 +19,13 @@ use frontend\widgets\ModalDesc;
                     <div class="card-body">
                         <div class="actions">
                             <?=
-                            Button::widget([
-                                'mode' => 'icon',
-                                'id' => "cartButton-add-{$item['id']}",
-                                'icon' => 'bi-cart-plus h2',
-                                'tooltip' => "Add a {$item['name']} to cart"
-                            ])
-                            ?>
+            Button::widget([
+                'mode' => 'icon',
+                'id' => "cartButton-add-{$item['id']}",
+                'icon' => 'bi-cart-plus h2',
+                'tooltip' => "Add a {$item['name']} to cart",
+            ])
+        ?>
                         </div>
                         <h4 class="card-title text-center">
                             <?= $item['name'] ?>
@@ -41,14 +41,14 @@ use frontend\widgets\ModalDesc;
                         <h4 class="card-subtitle text-center"><?= $item['price'] ?></h4>
                         <h6 class="card-subtitle text-muted">
                             <?=
-                            ModalDesc::widget([
-                                'name' => $item['name'],
-                                'description' => $item['description'],
-                                'maxLength' => 180,
-                                'type' => $item['type'],
-                                'id' => $item['id'],
-                            ])
-                            ?>
+            ModalDesc::widget([
+                'name' => $item['name'],
+                'description' => $item['description'],
+                'maxLength' => 180,
+                'type' => $item['type'],
+                'id' => $item['id'],
+            ])
+        ?>
                         </h6>
                     </div>
                     <?php if ($active): ?>

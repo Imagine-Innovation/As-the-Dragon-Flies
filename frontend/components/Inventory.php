@@ -9,7 +9,6 @@ use Yii;
 
 class Inventory
 {
-
     const IGNORE_TYPES = ['Armor', 'Weapon', 'Shield'];
 
     /**
@@ -57,7 +56,7 @@ class Inventory
                 'type' => $itemType,
                 'name' => $item->name,
                 'description' => $item->description,
-                'weight' => $item->weight * $playerItem->quantity / $item->quantity,
+                'weight' => ($item->weight * $playerItem->quantity) / $item->quantity,
                 'quantity' => $playerItem->quantity,
                 'image' => $playerItem->image,
                 'is_carrying' => $playerItem->is_carrying,
@@ -114,7 +113,7 @@ class Inventory
         foreach ($player->playerItems as $playerItem) {
             if ($playerItem->is_carrying && !in_array($playerItem->item_type, self::IGNORE_TYPES)) {
                 $item = $playerItem->item;
-                $weight += ($item->weight ?? 0) * ($playerItem->quantity ?? 1) / ($item->quantity ?? 1);
+                $weight += (($item->weight ?? 0) * ($playerItem->quantity ?? 1)) / ($item->quantity ?? 1);
             }
         }
 
@@ -137,7 +136,7 @@ class Inventory
         $containerItems = [];
         foreach ($items as $item) {
             $categories = $item->categories;
-            if (in_array("Container", array_column($categories, 'name'))) {
+            if (in_array('Container', array_column($categories, 'name'))) {
                 $containerItems[] = $item;
             }
         }
@@ -170,22 +169,31 @@ class Inventory
         }
 
         if ($playerItem->is_carrying) {
-            return ['error' => true, 'msg' => "Your have already packed this item"];
+            return ['error' => true, 'msg' => 'Your have already packed this item'];
         }
 
         $maxLoad = $containerItem->max_load;
         $packLoad = $this->packWeight($playerItem->player);
-        if ($packLoad + $weight > $maxLoad) {
-            return ['error' => true, 'msg' => "You've reached the maximum weight your {$containerItem->name} can carry. You must first remove one item before adding this one."];
+        if (($packLoad + $weight) > $maxLoad) {
+            return [
+                'error' => true,
+                'msg' => "You've reached the maximum weight your {$containerItem->name} can carry. You must first remove one item before adding this one.",
+            ];
         }
 
         $playerItem->is_carrying = 1;
         $saved = $playerItem->save();
 
         if ($saved) {
-            return ['error' => false, 'msg' => "Your {$playerItem->item_name} has been successfully added to your {$containerItem->name}"];
+            return [
+                'error' => false,
+                'msg' => "Your {$playerItem->item_name} has been successfully added to your {$containerItem->name}",
+            ];
         }
-        return ['error' => true, 'msg' => "Internal Error. Could not add the item {$playerItem->item_name} to the {$containerItem->name}"];
+        return [
+            'error' => true,
+            'msg' => "Internal Error. Could not add the item {$playerItem->item_name} to the {$containerItem->name}",
+        ];
     }
 
     /**
@@ -209,8 +217,14 @@ class Inventory
         $saved = $playerItem->save();
 
         if ($saved) {
-            return ['error' => false, 'msg' => "Your {$playerItem->item_name} has been successfully removed from your {$containerItem->name}"];
+            return [
+                'error' => false,
+                'msg' => "Your {$playerItem->item_name} has been successfully removed from your {$containerItem->name}",
+            ];
         }
-        return ['error' => true, 'msg' => "Internal Error. Could not remove the item {$playerItem->item_name} from the {$containerItem->name}"];
+        return [
+            'error' => true,
+            'msg' => "Internal Error. Could not remove the item {$playerItem->item_name} from the {$containerItem->name}",
+        ];
     }
 }

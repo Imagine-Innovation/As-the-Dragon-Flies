@@ -27,12 +27,12 @@ foreach ($players as $player) {
 
             <div class="actions">
                 <?=
-                Button::widget([
-                    'mode' => 'icon',
-                    'url' => Url::toRoute(['site/index']),
-                    'icon' => 'bi-file-earmark-person',
-                ])
-                ?>
+    Button::widget([
+        'mode' => 'icon',
+        'url' => Url::toRoute(['site/index']),
+        'icon' => 'bi-file-earmark-person',
+    ])
+?>
             </div>
         </div>
 
@@ -44,7 +44,7 @@ foreach ($players as $player) {
                         <div class="custom-control custom-radio mb-2">
                             <input type="radio" class="custom-control-input"
                                    id="playerNav-<?= $player['id'] ?>" name="playerNav"
-                                   <?= ($player['id'] === $selectedPlayerId) ? "checked" : '' ?>
+                                   <?= $player['id'] === $selectedPlayerId ? 'checked' : '' ?>
                                    onclick="PlayerSelector.select(<?= $userId ?>, <?= $player['id'] ?>);">
                             <label class="custom-control-label" for="playerNav-<?= $player['id'] ?>">
                                 <span data-bs-toggle="tooltip" title="<?= ucfirst($player['tooltip']) ?>" data-placement="bottom">
@@ -55,15 +55,15 @@ foreach ($players as $player) {
                     <div class="custom-control custom-radio mb-2">
                         <input type="radio" class="custom-control-input"
                                id="playerNav-void" name="playerNav"
-                               <?= $selectedPlayerId ? '' : "checked" ?>
+                               <?= $selectedPlayerId ? '' : 'checked' ?>
                                onclick="PlayerSelector.select(<?= $userId ?>, null);">
                         <label class="custom-control-label" for="playerNav-void">Select no player</label>
                     </div>
                     <div class="d-none">
                         <span id="hiddenSelectedPlayerId"><?= $selectedPlayerId ?></span>
-                        <span id="ids"><?= implode(";", $ids) ?></span>
-                        <span id="initials"><?= implode(";", $initials) ?></span>
-                        <span id="tooltips"><?= implode(";", $tooltips) ?></span>
+                        <span id="ids"><?= implode(';', $ids) ?></span>
+                        <span id="initials"><?= implode(';', $initials) ?></span>
+                        <span id="tooltips"><?= implode(';', $tooltips) ?></span>
                     </div>
                 </div>
             </div>

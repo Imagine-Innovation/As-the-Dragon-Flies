@@ -4,7 +4,6 @@ namespace common\helpers;
 
 class ModelHelper
 {
-
     const SCANNING_PATHS = [
         "common\\models",
         "common\\components",
@@ -22,7 +21,8 @@ class ModelHelper
      * @param string $className The class name to check.
      * @return bool True if the class name corresponds to an existing class, false otherwise.
      */
-    public static function exists(string $className): bool {
+    public static function exists(string $className): bool
+    {
         $match = false;
 
         foreach (self::SCANNING_PATHS as $path) {
@@ -39,7 +39,8 @@ class ModelHelper
      * @param string $className
      * @return string|null
      */
-    public static function path(string $className): ?string {
+    public static function path(string $className): ?string
+    {
         foreach (self::SCANNING_PATHS as $path) {
             // Check if either model or component class exists
             if (class_exists($path . '\\' . $className)) {

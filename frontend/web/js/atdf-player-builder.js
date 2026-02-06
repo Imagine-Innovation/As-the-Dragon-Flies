@@ -73,7 +73,7 @@ class PlayerBuilder {
         // Define required properties for completion
         const playerId = $('#hiddenPlayerId').html();
         const properties = (playerId === '') ?
-                ['race_id', 'class_id', 'background_id', 'description'] :
+                ['race_id', 'class_id', 'background_id', 'history'] :
                 ['alignment_id', 'image_id', 'name', 'gender', 'age', 'languages', 'abilities', 'skills', 'items'];
 
         // Count completed properties

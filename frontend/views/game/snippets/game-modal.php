@@ -1,4 +1,5 @@
 <?php
+
 /** @var yii\web\View $this */
 ?>
 <div class="modal fade" id="gameModal" tabindex="-1">

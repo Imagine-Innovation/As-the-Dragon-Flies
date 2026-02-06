@@ -14,7 +14,6 @@ use Yii;
  */
 class History extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */

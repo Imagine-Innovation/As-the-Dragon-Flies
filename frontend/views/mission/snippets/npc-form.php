@@ -34,59 +34,69 @@ use yii\widgets\ActiveForm;
         <?php endif; ?>
 
         <?=
-                $form->field($model, 'npc_type_id')
-                ->dropdownList(
-                        $model->npc_type_id ? [$model->npc_type_id => $model->npcType->name] : [],
-                        [
-                            'class' => 'select2-container w-100',
-                            'data-minimum-results-for-search' => -1,
-                            'data-placeholder' => "Select the type of NPC",
-                        ]
-                )
-                ->label('NPC type')
-        ?>
+    $form
+        ->field($model, 'npc_type_id')
+        ->dropdownList(
+            $model->npc_type_id ? [$model->npc_type_id => $model->npcType->name] : [],
+            [
+                'class' => 'select2-container w-100',
+                'data-minimum-results-for-search' => -1,
+                'data-placeholder' => 'Select the type of NPC',
+            ],
+        )
+        ->label('NPC type')
+?>
 
         <?=
-                $form->field($model, 'image')
-                ->dropdownList(
-                        $model->image ? [$model->image => $model->image] : [],
+    $form
+        ->field($model, 'image')
+        ->dropdownList(
+            $model->image ? [$model->image => $model->image] : [],
+            [
+                'class' => 'select2-container w-100',
+                'data-minimum-results-for-search' => -1,
+                'data-placeholder' => 'Select an image',
+                'maxlength' => true,
+            ],
+        )
+        ->label('NPC image')
+?>
+
+        <?php
+
+        if ($model->id) {
+            echo
+                $form
+                    ->field($model, 'first_dialog_id')
+                    ->dropdownList(
+                        $model->first_dialog_id ? [$model->first_dialog_id => $model->firstDialog->text] : [],
                         [
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
-                            'data-placeholder' => "Select an image",
-                            'maxlength' => true,
-                        ]
-                )
-                ->label('NPC image')
-        ?>
-
-        <?php
-        if ($model->id) {
-            echo $form->field($model, 'first_dialog_id')
-                    ->dropdownList(
-                            $model->first_dialog_id ? [$model->first_dialog_id => $model->firstDialog->text] : [],
-                            [
-                                'class' => 'select2-container w-100',
-                                'data-minimum-results-for-search' => -1,
-                                'data-placeholder' => "Select the first dialog of the NPC",
-                            ]
+                            'data-placeholder' => 'Select the first dialog of the NPC',
+                        ],
                     )
-                    ->label('First dialog');
+                    ->label('First dialog')
+            ;
         }
         ?>
 
         <?php
+
         if ($model->id) {
-            echo $form->field($model, 'language_id')
+            echo
+                $form
+                    ->field($model, 'language_id')
                     ->dropdownList(
-                            $model->language_id ? [$model->language_id => $model->language->name] : [],
-                            [
-                                'class' => 'select2-container w-100',
-                                'data-minimum-results-for-search' => -1,
-                                'data-placeholder' => "Select a language",
-                            ]
+                        $model->language_id ? [$model->language_id => $model->language->name] : [],
+                        [
+                            'class' => 'select2-container w-100',
+                            'data-minimum-results-for-search' => -1,
+                            'data-placeholder' => 'Select a language',
+                        ],
                     )
-                    ->label('Language spoken');
+                    ->label('Language spoken')
+            ;
         }
         ?>
 
@@ -111,4 +121,4 @@ use yii\widgets\ActiveForm;
             <?= $this->renderFile('@app/views/mission/snippets/dialog.php', ['dialog' => $model->firstDialog]) ?>
         </div>
     </section>
-<?php endif; ?>
+<?php endif;

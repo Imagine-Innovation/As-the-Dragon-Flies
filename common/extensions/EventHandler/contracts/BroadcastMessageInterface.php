@@ -4,7 +4,6 @@ namespace common\extensions\EventHandler\contracts;
 
 interface BroadcastMessageInterface
 {
-
     /**
      *
      * @return string

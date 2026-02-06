@@ -13,7 +13,6 @@ use Yii;
  */
 class PlayerBuilder extends Player
 {
-
     /**
      * {@inheritdoc}
      * Saves the advanced properties of the Player model.
@@ -29,7 +28,8 @@ class PlayerBuilder extends Player
      * @param array<string, mixed>|null $attributeNames
      * @return bool Returns true if all player's advanced properties are successfully saved, false otherwise.
      */
-    public function save($runValidation = true, $attributeNames = null): bool {
+    public function save($runValidation = true, $attributeNames = null): bool
+    {
         $ts = time();
 
         if (!$this->id) {
@@ -62,7 +62,8 @@ class PlayerBuilder extends Player
      *
      * @return array<int, non-empty-array<int, array{id: int, name: string|null}>>
      */
-    public function getInitialEndowment(): array {
+    public function getInitialEndowment(): array
+    {
         $endowments = $this->class->classEndowments;
         $endowmentTable = [];
         foreach ($endowments as $endowment) {

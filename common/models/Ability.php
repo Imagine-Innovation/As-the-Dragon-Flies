@@ -29,7 +29,6 @@ use Yii;
  */
 class Ability extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
@@ -95,7 +94,9 @@ class Ability extends \yii\db\ActiveRecord
      */
     public function getClasses()
     {
-        return $this->hasMany(CharacterClass::class, ['id' => 'class_id'])->viaTable('class_ability', ['ability_id' => 'id']);
+        return $this->hasMany(CharacterClass::class, ['id' => 'class_id'])->viaTable('class_ability', [
+            'ability_id' => 'id',
+        ]);
     }
 
     /**
@@ -125,7 +126,9 @@ class Ability extends \yii\db\ActiveRecord
      */
     public function getCreatures()
     {
-        return $this->hasMany(Creature::class, ['id' => 'creature_id'])->viaTable('creature_ability', ['ability_id' => 'id']);
+        return $this->hasMany(Creature::class, ['id' => 'creature_id'])->viaTable('creature_ability', [
+            'ability_id' => 'id',
+        ]);
     }
 
     /**
@@ -135,7 +138,9 @@ class Ability extends \yii\db\ActiveRecord
      */
     public function getCreatures0()
     {
-        return $this->hasMany(Creature::class, ['id' => 'creature_id'])->viaTable('creature_saving_throw', ['ability_id' => 'id']);
+        return $this->hasMany(Creature::class, ['id' => 'creature_id'])->viaTable('creature_saving_throw', [
+            'ability_id' => 'id',
+        ]);
     }
 
     /**

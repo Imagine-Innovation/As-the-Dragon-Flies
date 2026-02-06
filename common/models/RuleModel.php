@@ -18,18 +18,19 @@ use Yii;
  */
 class RuleModel extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'rule_model';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['path'], 'default', 'value' => 'appmodels'],
             [['is_method'], 'default', 'value' => 0],
@@ -43,7 +44,8 @@ class RuleModel extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key.',
             'path' => 'Full path to the model as a starting point. Can be “app\\models”, “app\\components”...',
@@ -58,7 +60,8 @@ class RuleModel extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<RuleAction>
      */
-    public function getRuleActions() {
+    public function getRuleActions()
+    {
         return $this->hasMany(RuleAction::class, ['model_id' => 'id']);
     }
 
@@ -67,7 +70,8 @@ class RuleModel extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<RuleCondition>
      */
-    public function getRuleConditions() {
+    public function getRuleConditions()
+    {
         return $this->hasMany(RuleCondition::class, ['model_id' => 'id']);
     }
 }

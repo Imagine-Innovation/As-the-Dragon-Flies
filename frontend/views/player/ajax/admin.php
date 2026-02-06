@@ -27,7 +27,7 @@ if (Yii::$app->user->identity->is_player) {
                 'icon' => 'bi-person-add',
                 'tooltip' => 'Create a new player',
             ],
-        ]
+        ],
     ]);
 } else {
     $recordCountWidget = RecordCount::widget([
@@ -60,7 +60,7 @@ if (Yii::$app->user->identity->is_player) {
                 </thead>
                 <tbody>
                     <?php foreach ($models as $model): ?>
-                        <?php $isOwner = ($model->user->id === $currentUserId); ?>
+                        <?php $isOwner = $model->user->id === $currentUserId; ?>
                         <tr>
                             <th scope="row">
                                 <img src="img/character/<?= $model->avatar ?>" class="image-thumbnail">
@@ -69,8 +69,7 @@ if (Yii::$app->user->identity->is_player) {
                                 <?php if ($isOwner): ?>
                                     <?= Status::hyperlink($model) ?>
                                 <?php else: ?>
-                                    <?= Utilities::encode(empty($model->name)
-                                                        ? 'Unknown' : $model->name) ?>
+                                    <?= Utilities::encode(empty($model->name) ? 'Unknown' : $model->name) ?>
                             <?php endif; ?><br>
                             </td>
     <?php if ($isAdmin): ?>
@@ -88,12 +87,12 @@ if (Yii::$app->user->identity->is_player) {
                             <td><?= $model->alignment->name ?? 'Unkown' ?></td>
                             <td>
                                 <?=
-                                ActionButtons::widget([
-                                    'model' => $model,
-                                    'mode' => 'table',
-                                    'isOwner' => $isOwner
-                                ])
-                                ?>
+                        ActionButtons::widget([
+                            'model' => $model,
+                            'mode' => 'table',
+                            'isOwner' => $isOwner,
+                        ])
+                    ?>
                             </td>
                         </tr>
 <?php endforeach; ?>
@@ -102,12 +101,12 @@ if (Yii::$app->user->identity->is_player) {
         </div>
         <!-- Pagination -->
         <?=
-        Pagination::widget([
-            'page' => $page,
-            'pageCount' => $pageCount,
-            'limit' => $limit,
-        ])
-        ?>
+    Pagination::widget([
+        'page' => $page,
+        'pageCount' => $pageCount,
+        'limit' => $limit,
+    ])
+?>
         <!-- End Pagination -->
     </div>
 </div>

@@ -25,7 +25,6 @@ use Yii;
  */
 class DamageType extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
@@ -46,7 +45,13 @@ class DamageType extends \yii\db\ActiveRecord
             [['description'], 'string'],
             [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name'], 'string', 'max' => 64],
-            [['group_id'], 'exist', 'skipOnError' => true, 'targetClass' => DamageGroup::class, 'targetAttribute' => ['group_id' => 'id']],
+            [
+                ['group_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => DamageGroup::class,
+                'targetAttribute' => ['group_id' => 'id'],
+            ],
         ];
     }
 
@@ -80,7 +85,9 @@ class DamageType extends \yii\db\ActiveRecord
      */
     public function getCreatures()
     {
-        return $this->hasMany(Creature::class, ['id' => 'creature_id'])->viaTable('creature_damage_type', ['damage_type_id' => 'id']);
+        return $this->hasMany(Creature::class, ['id' => 'creature_id'])->viaTable('creature_damage_type', [
+            'damage_type_id' => 'id',
+        ]);
     }
 
     /**
@@ -130,7 +137,9 @@ class DamageType extends \yii\db\ActiveRecord
      */
     public function getSpells()
     {
-        return $this->hasMany(Spell::class, ['id' => 'spell_id'])->viaTable('spell_damage_type', ['damage_type_id' => 'id']);
+        return $this->hasMany(Spell::class, ['id' => 'spell_id'])->viaTable('spell_damage_type', [
+            'damage_type_id' => 'id',
+        ]);
     }
 
     /**

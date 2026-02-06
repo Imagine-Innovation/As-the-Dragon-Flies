@@ -12,7 +12,6 @@ use yii\helpers\ArrayHelper;
 
 abstract class Event extends BaseObject
 {
-
     public string $sessionId;
     public Player $player;
     public Quest $quest;
@@ -79,7 +78,7 @@ abstract class Event extends BaseObject
             'playerId' => $this->player->id,
             'questId' => $this->quest->id,
             'timestamp' => $this->timestamp,
-            'payload' => $this->getPayload()
+            'payload' => $this->getPayload(),
         ];
         Yii::debug($array);
         return $array;
@@ -107,21 +106,22 @@ abstract class Event extends BaseObject
         $client = new \yii\httpclient\Client();
         $data = $this->requestData();
         try {
-            $response = $client->createRequest()
-                    ->setMethod('POST')
-                    ->setUrl('http://127.0.0.1:8083/broadcast')
-                    ->setData($data)
-                    ->setFormat(\yii\httpclient\Client::FORMAT_JSON)
-                    ->send();
+            $response = $client
+                ->createRequest()
+                ->setMethod('POST')
+                ->setUrl('http://127.0.0.1:8083/broadcast')
+                ->setData($data)
+                ->setFormat(\yii\httpclient\Client::FORMAT_JSON)
+                ->send();
 
             if ($response->isOk) {
-                Yii::info("Successfully sent event to event server.", 'eventhandler');
+                Yii::info('Successfully sent event to event server.', 'eventhandler');
             } else {
-                Yii::error("Failed to broadcast event. HTTP status: " . $response->getStatusCode());
-                Yii::error("Response body: " . $response->getContent());
+                Yii::error('Failed to broadcast event. HTTP status: ' . $response->getStatusCode());
+                Yii::error('Response body: ' . $response->getContent());
             }
         } catch (\yii\httpclient\Exception $e) {
-            Yii::error("Exception while trying to broadcast event: " . $e->getMessage());
+            Yii::error('Exception while trying to broadcast event: ' . $e->getMessage());
         }
     }
 
@@ -133,16 +133,18 @@ abstract class Event extends BaseObject
      */
     protected function newPlayerNotification(int $notificationId, int $playerId): void
     {
-        Yii::debug("*** Debug *** Event - newPlayerNotification - notificationId={$notificationId}, player->id={$playerId}");
+        Yii::debug(
+            "*** Debug *** Event - newPlayerNotification - notificationId={$notificationId}, player->id={$playerId}",
+        );
         $notificationPlayer = new NotificationPlayer([
             'notification_id' => $notificationId,
             'player_id' => $playerId,
-            'is_read' => 0
+            'is_read' => 0,
         ]);
 
         $successfullySaved = $notificationPlayer->save();
         if (!$successfullySaved) {
-            throw new \Exception(implode("<br />", ArrayHelper::getColumn($notificationPlayer->errors, 0, false)));
+            throw new \Exception(implode('<br />', ArrayHelper::getColumn($notificationPlayer->errors, 0, false)));
         }
     }
 
@@ -168,7 +170,7 @@ abstract class Event extends BaseObject
      */
     protected function createNotification(): Notification
     {
-        $notificationData = ([
+        $notificationData = [
             'initiator_id' => $this->player->id,
             'quest_id' => $this->quest->id,
             'notification_type' => $this->getType(),
@@ -177,8 +179,8 @@ abstract class Event extends BaseObject
             'created_at' => time(),
             'payload' => json_encode($this->getPayload()),
             'is_private' => 0,
-        ]);
-        Yii::debug("*** debug *** Event - createNotification");
+        ];
+        Yii::debug('*** debug *** Event - createNotification');
         Yii::debug($notificationData);
         $notification = new Notification($notificationData);
 
@@ -188,6 +190,6 @@ abstract class Event extends BaseObject
             return $notification;
         }
 
-        throw new \Exception(implode("<br />", ArrayHelper::getColumn($notification->errors, 0, false)));
+        throw new \Exception(implode('<br />', ArrayHelper::getColumn($notification->errors, 0, false)));
     }
 }

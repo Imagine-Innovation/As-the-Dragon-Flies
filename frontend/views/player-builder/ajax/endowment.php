@@ -1,10 +1,12 @@
 <?php
+
 /** @var yii\web\View $this */
 /** @var array $endowments */
 /** @var integer $choices */
 $choiceLabels = ['', '(a)', '(b)', '(c)', '(d)', '(e)'];
 ?>
 <?php
+
 for ($choice = 1; $choice <= $choices; $choice++):
     $endowment = $endowments[$choice];
     /** @phpstan-ignore-next-line */
@@ -35,4 +37,4 @@ for ($choice = 1; $choice <= $choices; $choice++):
         </div>
     <?php endfor; ?>
     </p>
-<?php endfor; ?>
+<?php endfor;

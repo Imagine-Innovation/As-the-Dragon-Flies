@@ -1,4 +1,5 @@
 <?php
+
 /** @var yii\web\View $this */
 /** @var string $tableHeader */
 /** @var string $tableBody */

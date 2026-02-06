@@ -15,31 +15,45 @@ use Yii;
  */
 class StoryTag extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'story_tag';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['story_id', 'tag_id'], 'required'],
             [['story_id', 'tag_id'], 'integer'],
             [['story_id', 'tag_id'], 'unique', 'targetAttribute' => ['story_id', 'tag_id']],
-            [['story_id'], 'exist', 'skipOnError' => true, 'targetClass' => Story::class, 'targetAttribute' => ['story_id' => 'id']],
-            [['tag_id'], 'exist', 'skipOnError' => true, 'targetClass' => Tag::class, 'targetAttribute' => ['tag_id' => 'id']],
+            [
+                ['story_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Story::class,
+                'targetAttribute' => ['story_id' => 'id'],
+            ],
+            [
+                ['tag_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Tag::class,
+                'targetAttribute' => ['tag_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'story_id' => 'Foreign key to “story” table',
             'tag_id' => 'Foreign key to “tag” table',
@@ -51,7 +65,8 @@ class StoryTag extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Story>
      */
-    public function getStory() {
+    public function getStory()
+    {
         return $this->hasOne(Story::class, ['id' => 'story_id']);
     }
 
@@ -60,7 +75,8 @@ class StoryTag extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Tag>
      */
-    public function getTag() {
+    public function getTag()
+    {
         return $this->hasOne(Tag::class, ['id' => 'tag_id']);
     }
 }

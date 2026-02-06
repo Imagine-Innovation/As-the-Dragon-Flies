@@ -15,31 +15,45 @@ use Yii;
  */
 class RaceGroupAlignment extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'race_group_alignment';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['race_group_id', 'alignment_id'], 'required'],
             [['race_group_id', 'alignment_id'], 'integer'],
             [['race_group_id', 'alignment_id'], 'unique', 'targetAttribute' => ['race_group_id', 'alignment_id']],
-            [['race_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => RaceGroup::class, 'targetAttribute' => ['race_group_id' => 'id']],
-            [['alignment_id'], 'exist', 'skipOnError' => true, 'targetClass' => Alignment::class, 'targetAttribute' => ['alignment_id' => 'id']],
+            [
+                ['race_group_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => RaceGroup::class,
+                'targetAttribute' => ['race_group_id' => 'id'],
+            ],
+            [
+                ['alignment_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Alignment::class,
+                'targetAttribute' => ['alignment_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'race_group_id' => 'Foreign key to “race_group” table',
             'alignment_id' => 'Foreign key to “alignment” table',
@@ -51,7 +65,8 @@ class RaceGroupAlignment extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Alignment>
      */
-    public function getAlignment() {
+    public function getAlignment()
+    {
         return $this->hasOne(Alignment::class, ['id' => 'alignment_id']);
     }
 
@@ -60,7 +75,8 @@ class RaceGroupAlignment extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<RaceGroup>
      */
-    public function getRaceGroup() {
+    public function getRaceGroup()
+    {
         return $this->hasOne(RaceGroup::class, ['id' => 'race_group_id']);
     }
 }

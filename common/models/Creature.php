@@ -37,7 +37,6 @@ use Yii;
  */
 class Creature extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
@@ -62,7 +61,13 @@ class Creature extends \yii\db\ActiveRecord
             [['cr'], 'number'],
             [['name'], 'string', 'max' => 64],
             [['hit_dice'], 'string', 'max' => 16],
-            [['type_id'], 'exist', 'skipOnError' => true, 'targetClass' => CreatureType::class, 'targetAttribute' => ['type_id' => 'id']],
+            [
+                ['type_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => CreatureType::class,
+                'targetAttribute' => ['type_id' => 'id'],
+            ],
         ];
     }
 
@@ -92,7 +97,9 @@ class Creature extends \yii\db\ActiveRecord
      */
     public function getAbilities()
     {
-        return $this->hasMany(Ability::class, ['id' => 'ability_id'])->viaTable('creature_ability', ['creature_id' => 'id']);
+        return $this->hasMany(Ability::class, ['id' => 'ability_id'])->viaTable('creature_ability', [
+            'creature_id' => 'id',
+        ]);
     }
 
     /**
@@ -102,7 +109,9 @@ class Creature extends \yii\db\ActiveRecord
      */
     public function getAbilities0()
     {
-        return $this->hasMany(Ability::class, ['id' => 'ability_id'])->viaTable('creature_saving_throw', ['creature_id' => 'id']);
+        return $this->hasMany(Ability::class, ['id' => 'ability_id'])->viaTable('creature_saving_throw', [
+            'creature_id' => 'id',
+        ]);
     }
 
     /**
@@ -112,7 +121,9 @@ class Creature extends \yii\db\ActiveRecord
      */
     public function getAlignments()
     {
-        return $this->hasMany(Alignment::class, ['id' => 'alignment_id'])->viaTable('creature_alignment', ['creature_id' => 'id']);
+        return $this->hasMany(Alignment::class, ['id' => 'alignment_id'])->viaTable('creature_alignment', [
+            'creature_id' => 'id',
+        ]);
     }
 
     /**
@@ -122,7 +133,9 @@ class Creature extends \yii\db\ActiveRecord
      */
     public function getConditions()
     {
-        return $this->hasMany(Condition::class, ['id' => 'condition_id'])->viaTable('creature_immunization', ['creature_id' => 'id']);
+        return $this->hasMany(Condition::class, ['id' => 'condition_id'])->viaTable('creature_immunization', [
+            'creature_id' => 'id',
+        ]);
     }
 
     /**
@@ -192,7 +205,9 @@ class Creature extends \yii\db\ActiveRecord
      */
     public function getDamageTypes()
     {
-        return $this->hasMany(DamageType::class, ['id' => 'damage_type_id'])->viaTable('creature_damage_type', ['creature_id' => 'id']);
+        return $this->hasMany(DamageType::class, ['id' => 'damage_type_id'])->viaTable('creature_damage_type', [
+            'creature_id' => 'id',
+        ]);
     }
 
     /**

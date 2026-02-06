@@ -13,4 +13,4 @@ use yii\helpers\Html;
             <p><?= Html::encode($model->message) ?></p>
         </div>
     </a>
-<?php endforeach; ?>
+<?php endforeach;

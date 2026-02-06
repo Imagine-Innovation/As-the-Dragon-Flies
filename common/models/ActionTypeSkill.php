@@ -15,31 +15,45 @@ use Yii;
  */
 class ActionTypeSkill extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'action_type_skill';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['action_type_id', 'skill_id'], 'required'],
             [['action_type_id', 'skill_id'], 'integer'],
             [['action_type_id', 'skill_id'], 'unique', 'targetAttribute' => ['action_type_id', 'skill_id']],
-            [['skill_id'], 'exist', 'skipOnError' => true, 'targetClass' => Skill::class, 'targetAttribute' => ['skill_id' => 'id']],
-            [['action_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => ActionType::class, 'targetAttribute' => ['action_type_id' => 'id']],
+            [
+                ['skill_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Skill::class,
+                'targetAttribute' => ['skill_id' => 'id'],
+            ],
+            [
+                ['action_type_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => ActionType::class,
+                'targetAttribute' => ['action_type_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'action_type_id' => 'Action Type ID',
             'skill_id' => 'Skill ID',
@@ -51,7 +65,8 @@ class ActionTypeSkill extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<ActionType>
      */
-    public function getActionType() {
+    public function getActionType()
+    {
         return $this->hasOne(ActionType::class, ['id' => 'action_type_id']);
     }
 
@@ -60,7 +75,8 @@ class ActionTypeSkill extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Skill>
      */
-    public function getSkill() {
+    public function getSkill()
+    {
         return $this->hasOne(Skill::class, ['id' => 'skill_id']);
     }
 }

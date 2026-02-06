@@ -6,7 +6,6 @@ use common\extensions\EventHandler\contracts\BroadcastMessageInterface;
 
 class PlayerJoinedDto implements BroadcastMessageInterface
 {
-
     private string $type = 'player-joined';
 
     /** @var array<string, mixed> $payload */
@@ -18,12 +17,13 @@ class PlayerJoinedDto implements BroadcastMessageInterface
      * @param string $sessionId
      * @param string $questName
      */
-    public function __construct(string $playerName, string $sessionId, string $questName) {
+    public function __construct(string $playerName, string $sessionId, string $questName)
+    {
         $this->payload = [
             'playerName' => $playerName,
             'sessionId' => $sessionId,
             'questName' => $questName,
-            'timestamp' => time()
+            'timestamp' => time(),
         ];
     }
 
@@ -31,7 +31,8 @@ class PlayerJoinedDto implements BroadcastMessageInterface
      *
      * @return string
      */
-    public function getType(): string {
+    public function getType(): string
+    {
         return $this->type;
     }
 
@@ -39,7 +40,8 @@ class PlayerJoinedDto implements BroadcastMessageInterface
      *
      * @return array<string, mixed>
      */
-    public function getPayload(): array {
+    public function getPayload(): array
+    {
         return $this->payload;
     }
 
@@ -47,7 +49,8 @@ class PlayerJoinedDto implements BroadcastMessageInterface
      *
      * @return string|false
      */
-    public function toJson(): string|false {
+    public function toJson(): string|false
+    {
         return json_encode(['type' => $this->type, 'payload' => $this->payload]);
     }
 }

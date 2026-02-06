@@ -28,7 +28,6 @@ use yii\db\ActiveQuery;
  */
 class Outcome extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
@@ -51,9 +50,27 @@ class Outcome extends \yii\db\ActiveRecord
             [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name'], 'string', 'max' => 64],
             [['hp_loss_dice'], 'string', 'max' => 8],
-            [['action_id'], 'exist', 'skipOnError' => true, 'targetClass' => Action::class, 'targetAttribute' => ['action_id' => 'id']],
-            [['next_mission_id'], 'exist', 'skipOnError' => true, 'targetClass' => Mission::class, 'targetAttribute' => ['next_mission_id' => 'id']],
-            [['item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['item_id' => 'id']],
+            [
+                ['action_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Action::class,
+                'targetAttribute' => ['action_id' => 'id'],
+            ],
+            [
+                ['next_mission_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Mission::class,
+                'targetAttribute' => ['next_mission_id' => 'id'],
+            ],
+            [
+                ['item_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Item::class,
+                'targetAttribute' => ['item_id' => 'id'],
+            ],
         ];
     }
 

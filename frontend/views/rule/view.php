@@ -1,9 +1,9 @@
 <?php
 
-use common\helpers\Utilities;
 use common\helpers\Status;
-use frontend\widgets\RuleParsingTree;
+use common\helpers\Utilities;
 use frontend\widgets\ActionButtons;
+use frontend\widgets\RuleParsingTree;
 
 /** @var yii\web\View $this */
 /** @var common\models\Rule $model */
@@ -36,4 +36,3 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 </div>
-

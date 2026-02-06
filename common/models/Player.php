@@ -87,7 +87,6 @@ use Yii;
  */
 class Player extends \yii\db\ActiveRecord
 {
-
     /**
      * ENUM field values
      */
@@ -111,27 +110,116 @@ class Player extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['alignment_id', 'image_id', 'quest_id', 'name', 'history', 'gender', 'age', 'speed', 'created_at', 'updated_at'], 'default', 'value' => null],
+            [
+                [
+                    'alignment_id',
+                    'image_id',
+                    'quest_id',
+                    'name',
+                    'history',
+                    'gender',
+                    'age',
+                    'speed',
+                    'created_at',
+                    'updated_at',
+                ],
+                'default',
+                'value' => null,
+            ],
             [['level_id'], 'default', 'value' => 1],
             [['status'], 'default', 'value' => AppStatus::INACTIVE->value],
             [['status'], 'in', 'range' => AppStatus::getValuesForPlayer()],
             [['experience_points'], 'default', 'value' => 0],
             [['armor_class'], 'default', 'value' => 10],
             [['class_id', 'user_id', 'race_id', 'background_id'], 'required'],
-            [['class_id', 'level_id', 'user_id', 'race_id', 'background_id', 'alignment_id', 'image_id', 'quest_id', 'status', 'age', 'experience_points', 'hit_points', 'max_hit_points', 'armor_class', 'speed', 'created_at', 'updated_at'], 'integer'],
+            [
+                [
+                    'class_id',
+                    'level_id',
+                    'user_id',
+                    'race_id',
+                    'background_id',
+                    'alignment_id',
+                    'image_id',
+                    'quest_id',
+                    'status',
+                    'age',
+                    'experience_points',
+                    'hit_points',
+                    'max_hit_points',
+                    'armor_class',
+                    'speed',
+                    'created_at',
+                    'updated_at',
+                ],
+                'integer',
+            ],
             [['history', 'gender'], 'string'],
             [['history'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name'], 'string', 'max' => 64],
-            ['name', 'match', 'pattern' => '/^[\p{L}\p{N}\s\'-]+$/u', 'message' => 'Name can only contain letters, numbers, spaces, hyphens, and apostrophes.'],
+            [
+                'name',
+                'match',
+                'pattern' => '/^[\p{L}\p{N}\s\'-]+$/u',
+                'message' => 'Name can only contain letters, numbers, spaces, hyphens, and apostrophes.',
+            ],
             ['gender', 'in', 'range' => array_keys(self::optsGender())],
-            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
-            [['race_id'], 'exist', 'skipOnError' => true, 'targetClass' => Race::class, 'targetAttribute' => ['race_id' => 'id']],
-            [['class_id'], 'exist', 'skipOnError' => true, 'targetClass' => CharacterClass::class, 'targetAttribute' => ['class_id' => 'id']],
-            [['alignment_id'], 'exist', 'skipOnError' => true, 'targetClass' => Alignment::class, 'targetAttribute' => ['alignment_id' => 'id']],
-            [['background_id'], 'exist', 'skipOnError' => true, 'targetClass' => Background::class, 'targetAttribute' => ['background_id' => 'id']],
-            [['level_id'], 'exist', 'skipOnError' => true, 'targetClass' => Level::class, 'targetAttribute' => ['level_id' => 'id']],
-            [['image_id'], 'exist', 'skipOnError' => true, 'targetClass' => Image::class, 'targetAttribute' => ['image_id' => 'id']],
-            [['quest_id'], 'exist', 'skipOnError' => true, 'targetClass' => Quest::class, 'targetAttribute' => ['quest_id' => 'id']],
+            [
+                ['user_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => User::class,
+                'targetAttribute' => ['user_id' => 'id'],
+            ],
+            [
+                ['race_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Race::class,
+                'targetAttribute' => ['race_id' => 'id'],
+            ],
+            [
+                ['class_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => CharacterClass::class,
+                'targetAttribute' => ['class_id' => 'id'],
+            ],
+            [
+                ['alignment_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Alignment::class,
+                'targetAttribute' => ['alignment_id' => 'id'],
+            ],
+            [
+                ['background_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Background::class,
+                'targetAttribute' => ['background_id' => 'id'],
+            ],
+            [
+                ['level_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Level::class,
+                'targetAttribute' => ['level_id' => 'id'],
+            ],
+            [
+                ['image_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Image::class,
+                'targetAttribute' => ['image_id' => 'id'],
+            ],
+            [
+                ['quest_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Quest::class,
+                'targetAttribute' => ['quest_id' => 'id'],
+            ],
         ];
     }
 
@@ -172,7 +260,9 @@ class Player extends \yii\db\ActiveRecord
      */
     public function getAbilities()
     {
-        return $this->hasMany(Ability::class, ['id' => 'ability_id'])->viaTable('player_ability', ['player_id' => 'id']);
+        return $this->hasMany(Ability::class, ['id' => 'ability_id'])->viaTable('player_ability', [
+            'player_id' => 'id',
+        ]);
     }
 
     /**
@@ -242,7 +332,9 @@ class Player extends \yii\db\ActiveRecord
      */
     public function getLanguages()
     {
-        return $this->hasMany(Language::class, ['id' => 'language_id'])->viaTable('player_language', ['player_id' => 'id']);
+        return $this->hasMany(Language::class, ['id' => 'language_id'])->viaTable('player_language', [
+            'player_id' => 'id',
+        ]);
     }
 
     /**
@@ -282,7 +374,9 @@ class Player extends \yii\db\ActiveRecord
      */
     public function getNotifications()
     {
-        return $this->hasMany(Notification::class, ['id' => 'notification_id'])->viaTable('notification_player', ['player_id' => 'id']);
+        return $this->hasMany(Notification::class, ['id' => 'notification_id'])->viaTable('notification_player', [
+            'player_id' => 'id',
+        ]);
     }
 
     /**
@@ -482,7 +576,9 @@ class Player extends \yii\db\ActiveRecord
      */
     public function getTraits()
     {
-        return $this->hasMany(CharacterTrait::class, ['id' => 'trait_id'])->viaTable('player_trait', ['player_id' => 'id']);
+        return $this->hasMany(CharacterTrait::class, ['id' => 'trait_id'])->viaTable('player_trait', [
+            'player_id' => 'id',
+        ]);
     }
 
     /**
@@ -603,11 +699,11 @@ class Player extends \yii\db\ActiveRecord
         }
 
         $query = Image::find()
-                ->select(['image.file_name'])
-                ->alias('image')
-                ->innerJoin(['class_image' => 'class_image'], 'class_image.image_id = image.id')
-                ->innerJoin(['race_group_image' => 'race_group_image'], 'image.id = race_group_image.image_id')
-                ->innerJoin(['race' => 'race'], 'race_group_image.race_group_id = race.race_group_id');
+            ->select(['image.file_name'])
+            ->alias('image')
+            ->innerJoin(['class_image' => 'class_image'], 'class_image.image_id = image.id')
+            ->innerJoin(['race_group_image' => 'race_group_image'], 'image.id = race_group_image.image_id')
+            ->innerJoin(['race' => 'race'], 'race_group_image.race_group_id = race.race_group_id');
         if ($this->race_id) {
             $query->andWhere(['race.id' => $this->race_id]);
         }
@@ -647,10 +743,11 @@ class Player extends \yii\db\ActiveRecord
      */
     public function getUnreadNotifications()
     {
-        return $this->hasMany(Notification::class, ['id' => 'notification_id'])
-                        ->via('notificationPlayers', function ($query) {
-                            $query->andWhere(['is_read' => 0]);
-                        });
+        return $this->hasMany(Notification::class, [
+            'id' => 'notification_id',
+        ])->via('notificationPlayers', function ($query) {
+            $query->andWhere(['is_read' => 0]);
+        });
     }
 
     /**
@@ -686,7 +783,7 @@ class Player extends \yii\db\ActiveRecord
         if ($successfullySaved) {
             return true;
         }
-        throw new \Exception(implode("<br />", ArrayHelper::getColumn($this->errors, 0, false)));
+        throw new \Exception(implode('<br />', ArrayHelper::getColumn($this->errors, 0, false)));
     }
 
     /**
@@ -698,27 +795,27 @@ class Player extends \yii\db\ActiveRecord
      */
     public function addCoins(?int $quantity, string $coin = 'gp'): ?bool
     {
-        Yii::debug("*** debug *** - Player - addCoins(quantity=" . ($quantity ?? 'null') . ", coin={$coin})");
+        Yii::debug('*** debug *** - Player - addCoins(quantity=' . ($quantity ?? 'null') . ", coin={$coin})");
         if ($quantity === null || $quantity === 0) {
             return null;
         }
 
-        $updatedRows = PlayerCoin::updateAll(
-                ['quantity' => new \yii\db\Expression("quantity+{$quantity}")],
-                ['player_id' => $this->id, 'coin' => $coin]
-        );
+        $updatedRows = PlayerCoin::updateAll(['quantity' => new \yii\db\Expression("quantity+{$quantity}")], [
+            'player_id' => $this->id,
+            'coin' => $coin,
+        ]);
 
         if ($updatedRows === 0) {
             $playerCoinGp = new PlayerCoin([
                 'player_id' => $this->id,
                 'coin' => $coin,
-                'quantity' => $quantity
+                'quantity' => $quantity,
             ]);
             $successfullySaved = $playerCoinGp->save();
             if ($successfullySaved) {
                 return true;
             }
-            throw new \Exception(implode("<br />", ArrayHelper::getColumn($playerCoinGp->errors, 0, false)));
+            throw new \Exception(implode('<br />', ArrayHelper::getColumn($playerCoinGp->errors, 0, false)));
         }
         return true;
     }
@@ -737,10 +834,10 @@ class Player extends \yii\db\ActiveRecord
             return null;
         }
 
-        $updatedRows = PlayerItem::updateAll(
-                ['quantity' => new \yii\db\Expression("quantity+{$quantity}")],
-                ['player_id' => $this->id, 'item_id' => $itemId]
-        );
+        $updatedRows = PlayerItem::updateAll(['quantity' => new \yii\db\Expression("quantity+{$quantity}")], [
+            'player_id' => $this->id,
+            'item_id' => $itemId,
+        ]);
 
         if ($updatedRows === 0) {
             $item = Item::findOne($itemId);
@@ -760,7 +857,7 @@ class Player extends \yii\db\ActiveRecord
             if ($successfullySaved) {
                 return true;
             }
-            throw new \Exception(implode("<br />", ArrayHelper::getColumn($playerItem->errors, 0, false)));
+            throw new \Exception(implode('<br />', ArrayHelper::getColumn($playerItem->errors, 0, false)));
         }
         return true;
     }

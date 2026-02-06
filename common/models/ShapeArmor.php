@@ -15,31 +15,45 @@ use Yii;
  */
 class ShapeArmor extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'shape_armor';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['shape_id', 'armor_id'], 'required'],
             [['shape_id', 'armor_id'], 'integer'],
             [['shape_id', 'armor_id'], 'unique', 'targetAttribute' => ['shape_id', 'armor_id']],
-            [['shape_id'], 'exist', 'skipOnError' => true, 'targetClass' => Shape::class, 'targetAttribute' => ['shape_id' => 'id']],
-            [['armor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Armor::class, 'targetAttribute' => ['armor_id' => 'item_id']],
+            [
+                ['shape_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Shape::class,
+                'targetAttribute' => ['shape_id' => 'id'],
+            ],
+            [
+                ['armor_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Armor::class,
+                'targetAttribute' => ['armor_id' => 'item_id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'shape_id' => 'Foreign key to “shape” table',
             'armor_id' => 'Foreign key to “armor” table',
@@ -51,7 +65,8 @@ class ShapeArmor extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Armor>
      */
-    public function getArmor() {
+    public function getArmor()
+    {
         return $this->hasOne(Armor::class, ['item_id' => 'armor_id']);
     }
 
@@ -60,7 +75,8 @@ class ShapeArmor extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Shape>
      */
-    public function getShape() {
+    public function getShape()
+    {
         return $this->hasOne(Shape::class, ['id' => 'shape_id']);
     }
 }

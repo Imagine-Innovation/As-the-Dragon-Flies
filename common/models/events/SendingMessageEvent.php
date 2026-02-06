@@ -8,7 +8,6 @@ use Yii;
 
 class SendingMessageEvent extends Event
 {
-
     public string $message;
 
     /**
@@ -19,7 +18,8 @@ class SendingMessageEvent extends Event
      * @param string $message
      * @param array<string, mixed> $config
      */
-    public function __construct(string $sessionId, Player $player, Quest $quest, string $message, array $config = []) {
+    public function __construct(string $sessionId, Player $player, Quest $quest, string $message, array $config = [])
+    {
         parent::__construct($sessionId, $player, $quest, $config);
         $this->message = $message;
     }
@@ -29,7 +29,8 @@ class SendingMessageEvent extends Event
      *
      * @return string
      */
-    public function getType(): string {
+    public function getType(): string
+    {
         return 'new-message';
     }
 
@@ -38,7 +39,8 @@ class SendingMessageEvent extends Event
      *
      * @return string
      */
-    public function getTitle(): string {
+    public function getTitle(): string
+    {
         return 'Sending new message';
     }
 
@@ -47,7 +49,8 @@ class SendingMessageEvent extends Event
      *
      * @return string
      */
-    public function getMessage(): string {
+    public function getMessage(): string
+    {
         return $this->message;
     }
 
@@ -56,13 +59,14 @@ class SendingMessageEvent extends Event
      *
      * @return array<string, mixed>
      */
-    public function getPayload(): array {
+    public function getPayload(): array
+    {
         return [
             'playerName' => $this->player->name,
             'playerId' => $this->player->id,
             'questId' => $this->quest->id,
             'message' => $this->message,
-            'sentAt' => date('Y-m-d H:i:s', $this->timestamp)
+            'sentAt' => date('Y-m-d H:i:s', $this->timestamp),
         ];
     }
 
@@ -71,8 +75,9 @@ class SendingMessageEvent extends Event
      *
      * @return void
      */
-    public function process(): void {
-        Yii::debug("*** Debug *** SendingMessageEvent - process");
+    public function process(): void
+    {
+        Yii::debug('*** Debug *** SendingMessageEvent - process');
         $notification = $this->createNotification();
 
         $this->savePlayerNotifications($notification->id);

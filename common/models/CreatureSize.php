@@ -16,7 +16,6 @@ use Yii;
  */
 class CreatureSize extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */

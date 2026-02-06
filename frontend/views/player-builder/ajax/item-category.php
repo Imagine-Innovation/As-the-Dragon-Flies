@@ -1,4 +1,5 @@
 <?php
+
 /** @var yii\web\View $this */
 /** @var common\models\ItemCategory[] $models */
 /** @var number $choice */
@@ -9,6 +10,7 @@
 <div class="container-fluid">
     <div class="row g-4">
         <?php
+
         foreach ($models as $itemCategory):
             $item = $itemCategory->item;
             ?>
@@ -21,7 +23,9 @@
                         <div class="custom-control custom-radio mb-2">
                             <input type="radio" class="custom-control-input"
                                    id="selectItemRadio-<?= $item->id ?>" name="initialEquipmentRadio"
-                                   value="<?= $choice ?>,<?= $item->id ?>|<?= $quantity ?><?= $alreadySelectedItems ? ",$alreadySelectedItems" : '' ?>">
+                                   value="<?= $choice ?>,<?= $item->id ?>|<?= $quantity ?><?=
+                $alreadySelectedItems ? ",$alreadySelectedItems" : ''
+            ?>">
                             <label class="custom-control-label" for="selectItemRadio-<?= $item->id ?>"><?= $item->name ?></label>
                         </div>
                     </div>

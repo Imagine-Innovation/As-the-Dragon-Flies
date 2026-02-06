@@ -12,7 +12,6 @@ use Yii;
  */
 class GameActionEvent extends Event
 {
-
     /** @var string The action type */
     public $action;
 
@@ -27,7 +26,8 @@ class GameActionEvent extends Event
      * @param string $action The action type
      * @param array<string, mixed> $detail Additional action data
      */
-    public function __construct(string $sessionId, Player $player, Quest $quest, string $action, array $detail = []) {
+    public function __construct(string $sessionId, Player $player, Quest $quest, string $action, array $detail = [])
+    {
         parent::__construct($sessionId, $player, $quest);
         $this->action = $action;
         $this->detail = $detail;
@@ -38,7 +38,8 @@ class GameActionEvent extends Event
      *
      * @return string
      */
-    public function getType(): string {
+    public function getType(): string
+    {
         return 'game-action';
     }
 
@@ -47,7 +48,8 @@ class GameActionEvent extends Event
      *
      * @return string
      */
-    public function getTitle(): string {
+    public function getTitle(): string
+    {
         return 'New action';
     }
 
@@ -56,7 +58,8 @@ class GameActionEvent extends Event
      *
      * @return string
      */
-    public function getMessage(): string {
+    public function getMessage(): string
+    {
         /** @var AppStatus */
         $status = $this->detail['status'];
         Yii::debug("*** debug *** GameActionEvent->getMessage status={$status->getLabel()}");
@@ -73,7 +76,8 @@ class GameActionEvent extends Event
      *
      * @return array<string, mixed>
      */
-    public function getPayload(): array {
+    public function getPayload(): array
+    {
         return [
             'playerId' => $this->player->id,
             'playerName' => $this->player->name,
@@ -82,7 +86,7 @@ class GameActionEvent extends Event
             'questName' => $this->quest->name,
             'detail' => $this->detail,
             //'timestamp' => date('Y-m-d H:i:s', $this->timestamp)
-            'timestamp' => $this->timestamp
+            'timestamp' => $this->timestamp,
         ];
     }
 
@@ -91,8 +95,9 @@ class GameActionEvent extends Event
      *
      * @return void
      */
-    public function process(): void {
-        Yii::debug("*** Debug *** GameActionEvent - process");
+    public function process(): void
+    {
+        Yii::debug('*** Debug *** GameActionEvent - process');
         $notification = $this->createNotification();
 
         $this->savePlayerNotifications($notification->id);

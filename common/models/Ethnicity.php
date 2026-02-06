@@ -17,31 +17,39 @@ use Yii;
  */
 class Ethnicity extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'ethnicity';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['race_group_id', 'name'], 'required'],
             [['race_group_id'], 'integer'],
             [['name'], 'string', 'max' => 64],
             [['name'], 'unique'],
-            [['race_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => RaceGroup::class, 'targetAttribute' => ['race_group_id' => 'id']],
+            [
+                ['race_group_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => RaceGroup::class,
+                'targetAttribute' => ['race_group_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'race_group_id' => 'Foreign key to “race_group” table',
@@ -54,7 +62,8 @@ class Ethnicity extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<FirstName>
      */
-    public function getFirstNames() {
+    public function getFirstNames()
+    {
         return $this->hasMany(FirstName::class, ['ethnicity_id' => 'id']);
     }
 
@@ -63,7 +72,8 @@ class Ethnicity extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<LastName>
      */
-    public function getLastNames() {
+    public function getLastNames()
+    {
         return $this->hasMany(LastName::class, ['ethnicity_id' => 'id']);
     }
 
@@ -72,7 +82,8 @@ class Ethnicity extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<RaceGroup>
      */
-    public function getRaceGroup() {
+    public function getRaceGroup()
+    {
         return $this->hasOne(RaceGroup::class, ['id' => 'race_group_id']);
     }
 }

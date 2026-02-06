@@ -26,7 +26,6 @@ use Yii;
  */
 class Npc extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
@@ -49,10 +48,34 @@ class Npc extends \yii\db\ActiveRecord
             [['description'], 'string'],
             [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name', 'image'], 'string', 'max' => 64],
-            [['npc_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => NpcType::class, 'targetAttribute' => ['npc_type_id' => 'id']],
-            [['mission_id'], 'exist', 'skipOnError' => true, 'targetClass' => Mission::class, 'targetAttribute' => ['mission_id' => 'id']],
-            [['language_id'], 'exist', 'skipOnError' => true, 'targetClass' => Language::class, 'targetAttribute' => ['language_id' => 'id']],
-            [['first_dialog_id'], 'exist', 'skipOnError' => true, 'targetClass' => Dialog::class, 'targetAttribute' => ['first_dialog_id' => 'id']],
+            [
+                ['npc_type_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => NpcType::class,
+                'targetAttribute' => ['npc_type_id' => 'id'],
+            ],
+            [
+                ['mission_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Mission::class,
+                'targetAttribute' => ['mission_id' => 'id'],
+            ],
+            [
+                ['language_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Language::class,
+                'targetAttribute' => ['language_id' => 'id'],
+            ],
+            [
+                ['first_dialog_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Dialog::class,
+                'targetAttribute' => ['first_dialog_id' => 'id'],
+            ],
         ];
     }
 

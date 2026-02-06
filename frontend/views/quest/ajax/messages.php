@@ -1,4 +1,5 @@
 <?php
+
 /** @var yii\web\View $this */
 /** @var array<'message'|int<0, max>, string> $messages[] */
 ?>
@@ -8,10 +9,12 @@
     </div>
 <?php else: ?>
     <?php
-    foreach ($messages as $chatMessage):
-        /** @var array{isAuthor: int, roundedTime: int, messages: array<string>, displayedDateTime: string, sender: string} $chatMessage */
-        ?>
-        <div class="messages__item<?= ($chatMessage['isAuthor']) ? ' messages__item--right' : '' ?>" id="quest-chat-<?= $chatMessage['roundedTime'] ?>">
+
+    foreach ($messages as $chatMessage): /** @var array{isAuthor: int, roundedTime: int, messages: array<string>, displayedDateTime: string, sender: string} $chatMessage */
+    ?>
+        <div class="messages__item<?= $chatMessage['isAuthor'] ? ' messages__item--right' : '' ?>" id="quest-chat-<?=
+        $chatMessage['roundedTime']
+    ?>">
             <div class="messages__details">
                 <?php foreach ($chatMessage['messages'] as $chat): ?>
                     <p><?= $chat ?></p>
@@ -20,4 +23,4 @@
             </div>
         </div>
     <?php endforeach; ?>
-<?php endif; ?>
+<?php endif;

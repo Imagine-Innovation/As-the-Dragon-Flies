@@ -1,4 +1,5 @@
 <?php
+
 /** @var yii\web\View $this */
 /** @var common\models\Player|null $player */
 /** @var array $raceLanguages */
@@ -19,16 +20,18 @@ foreach ($raceLanguages as $raceLanguage) {
         <?php foreach ($raceLanguages as $raceLanguage): ?>
             <div class="custom-control custom-checkbox mb-2">
                 <input type="checkbox" id="languageCheckbox-<?= $raceLanguage['language_id'] ?>" name="playerLanguages" class="custom-control-input" checked disabled>
-                <label class="custom-control-label" for="languageCheckbox-<?= $raceLanguage['language_id'] ?>"><?= $raceLanguage['name'] ?></label>
+                <label class="custom-control-label" for="languageCheckbox-<?= $raceLanguage['language_id'] ?>"><?=
+            $raceLanguage['name']
+        ?></label>
             </div>
         <?php endforeach; ?>
         <br>
     <?php endif; ?>
     <?php if ($n > 0): ?>
         <?php if ($n > 1): ?>
-            <p class="text-muted">You can select a maximum of <?= $n ?> <?= $raceLanguages ? "additional " : '' ?>languages</p>
+            <p class="text-muted">You can select a maximum of <?= $n ?> <?= $raceLanguages ? 'additional ' : '' ?>languages</p>
         <?php else: ?>
-            <p class="text-muted">You can select only one <?= $raceLanguages ? "additional " : '' ?>language</p>
+            <p class="text-muted">You can select only one <?= $raceLanguages ? 'additional ' : '' ?>language</p>
         <?php endif; ?>
         <br>
         <?php foreach ($otherLanguages as $otherLanguage): ?>
@@ -36,11 +39,13 @@ foreach ($raceLanguages as $raceLanguage) {
                 <div class="custom-control custom-checkbox mb-2">
                     <input type="checkbox" id="languageCheckbox-<?= $otherLanguage['language_id'] ?>" name="playerLanguages" class="custom-control-input"
                            onclick='PlayerBuilder.validateLanguages(<?= $otherLanguage['language_id'] ?>, <?= $max ?>);'>
-                    <label class="custom-control-label" for="languageCheckbox-<?= $otherLanguage['language_id'] ?>"><?= $otherLanguage['name'] ?></label>
+                    <label class="custom-control-label" for="languageCheckbox-<?= $otherLanguage['language_id'] ?>"><?=
+                $otherLanguage['name']
+            ?></label>
                 </div>
             <?php endif; ?>
         <?php endforeach; ?>
     <?php endif; ?>
 <?php else: ?>
     <p class="text-muted">Your player is not properly saved yet!!</p>
-<?php endif; ?>
+<?php endif;

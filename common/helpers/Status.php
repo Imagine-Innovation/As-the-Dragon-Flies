@@ -6,11 +6,11 @@ use common\components\AppStatus;
 use common\helpers\Utilities;
 use Yii;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
 use yii\helpers\Url;
 
 class Status
 {
-
     /**
      * Returns the string representation of a status code.
      *
@@ -37,17 +37,15 @@ class Status
     {
         $defaultIcon = ['icon' => 'bi-exclamation-square', 'tooltip' => 'Undefined'];
 
-        $icon = $statusCode ?
-                (AppStatus::tryFrom($statusCode)?->getIcon() ?? $defaultIcon) :
-                $defaultIcon;
+        $icon = $statusCode ? AppStatus::tryFrom($statusCode)?->getIcon() ?? $defaultIcon : $defaultIcon;
 
         $iconClass = $icon['icon'];
         $tooltip = $icon['tooltip'];
 
         return sprintf(
-                '<a title="%s" data-bs-toggle="tooltip" data-placement="top"><i class="bi %s h5"></i></a>',
-                Utilities::encode($tooltip),
-                Utilities::encode($iconClass)
+            '<a title="%s" data-bs-toggle="tooltip" data-placement="top"><i class="bi %s h5"></i></a>',
+            Html::encode((string) $tooltip),
+            Html::encode((string) $iconClass),
         );
     }
 
@@ -86,7 +84,7 @@ class Status
         if ($successfullySaved) {
             return true;
         }
-        throw new \Exception(implode("<br />", ArrayHelper::getColumn($model->errors, 0, false)));
+        throw new \Exception(implode('<br />', ArrayHelper::getColumn($model->errors, 0, false)));
     }
 
     /**
@@ -104,15 +102,14 @@ class Status
      * @return string The generated HTML hyperlink or a placeholder if the model
      *                or property is invalid.
      */
-    public static function hyperlink($model, $property = 'name'): string
+    public static function hyperlink($model, string $property = 'name'): string
     {
-        $controller = Utilities::modelName($model); // Get the controller name for the model
+        $controller = Utilities::getController($model); // Get the controller name for the model
 
         $propertyVal = $model->$property;
-        $display = isset($model->$property) ?
-                Utilities::encode(empty($propertyVal) ? 'Unknown' : $propertyVal)
-                    :
-                '<i class="bi bi-exclamation-square"></i>';
+        $display = isset($model->$property)
+            ? Html::encode(empty($propertyVal) ? 'Unknown' : (string) $propertyVal)
+            : '<i class="bi bi-exclamation-square"></i>';
 
         if ($controller && isset($model->id) && isset($model->status)) {
             $route = "{$controller}/view";

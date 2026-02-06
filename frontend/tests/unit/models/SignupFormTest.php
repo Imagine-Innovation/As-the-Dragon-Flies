@@ -5,23 +5,25 @@ namespace frontend\tests\unit\models;
 use common\fixtures\UserFixture;
 use frontend\models\SignupForm;
 
-class SignupFormTest extends \Codeception\Test\Unit {
-
+class SignupFormTest extends \Codeception\Test\Unit
+{
     /**
      * @var \frontend\tests\UnitTester
      */
     protected $tester;
 
-    public function _before() {
+    public function _before()
+    {
         $this->tester->haveFixtures([
             'user' => [
                 'class' => UserFixture::class,
-                'dataFile' => codecept_data_dir() . 'user.php'
-            ]
+                'dataFile' => codecept_data_dir() . 'user.php',
+            ],
         ]);
     }
 
-    public function testCorrectSignup() {
+    public function testCorrectSignup()
+    {
         $model = new SignupForm([
             'username' => 'some_username',
             'email' => 'some_email@example.com',
@@ -35,7 +37,7 @@ class SignupFormTest extends \Codeception\Test\Unit {
         $user = $this->tester->grabRecord('common\models\User', [
             'username' => 'some_username',
             'email' => 'some_email@example.com',
-            'status' => \common\components\AppStatus::INACTIVE->value
+            'status' => \common\components\AppStatus::INACTIVE->value,
         ]);
 
         $this->tester->seeEmailIsSent();
@@ -49,7 +51,8 @@ class SignupFormTest extends \Codeception\Test\Unit {
         verify($mail->toString())->stringContainsString($user->verification_token);
     }
 
-    public function testNotCorrectSignup() {
+    public function testNotCorrectSignup()
+    {
         $model = new SignupForm([
             'username' => 'troy.becker',
             'email' => 'nicolas.dianna@hotmail.com',
@@ -60,9 +63,7 @@ class SignupFormTest extends \Codeception\Test\Unit {
         verify($model->getErrors('username'))->notEmpty();
         verify($model->getErrors('email'))->notEmpty();
 
-        verify($model->getFirstError('username'))
-                ->equals('This username has already been taken.');
-        verify($model->getFirstError('email'))
-                ->equals('This email address has already been taken.');
+        verify($model->getFirstError('username'))->equals('This username has already been taken.');
+        verify($model->getFirstError('email'))->equals('This email address has already been taken.');
     }
 }

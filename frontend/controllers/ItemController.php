@@ -17,32 +17,28 @@ use yii\web\UnauthorizedHttpException;
  */
 class ItemController extends Controller
 {
-
     /**
      * @inheritDoc
      */
     public function behaviors()
     {
-        return array_merge(
-                parent::behaviors(),
-                [
-                    'access' => [
-                        'class' => AccessControl::class,
-                        'rules' => [
-                            [
-                                'actions' => ['*'],
-                                'allow' => false,
-                                'roles' => ['?'],
-                            ],
-                            [
-                                'actions' => ['index', 'shop', 'ajax', 'ajax-images', 'view'],
-                                'allow' => ManageAccessRights::isRouteAllowed($this),
-                                'roles' => ['@'],
-                            ],
-                        ],
+        return array_merge(parent::behaviors(), [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['*'],
+                        'allow' => false,
+                        'roles' => ['?'],
                     ],
-                ]
-        );
+                    [
+                        'actions' => ['index', 'shop', 'ajax', 'ajax-images', 'view'],
+                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+        ]);
     }
 
     /**
@@ -68,12 +64,12 @@ class ItemController extends Controller
         $query = Item::find()->where(['>', 'cost', 0]);
 
         $models = $query->orderBy([
-                    'item_type_id' => SORT_ASC,
-                    'name' => SORT_ASC,
-                ])->all();
+            'item_type_id' => SORT_ASC,
+            'name' => SORT_ASC,
+        ])->all();
 
         return $this->render('shop', [
-                    'models' => $models,
+            'models' => $models,
         ]);
     }
 
@@ -145,7 +141,7 @@ class ItemController extends Controller
     public function actionView(int $id): string
     {
         return $this->render('view', [
-                    'model' => $this->findModel($id),
+            'model' => $this->findModel($id),
         ]);
     }
 

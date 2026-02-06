@@ -20,15 +20,16 @@ use yii\helpers\Url;
                     <p>Here's everything your player owns.</p>
                     <p>It's up to you to choose what to take with you on your next adventure.</p>
                     <?=
-                    Button::widget([
-                        'url' => Url::toRoute(['player-item/index']),
-                        'icon' => 'dnd-chest',
-                        'style' => 'btn-primary justify-content-center mt-auto',
-                        'tooltip' => null,
-                        'title' => 'Equip',
-                        'isCta' => false,
-                    ]);
-                    ?>
+    Button::widget([
+        'url' => Url::toRoute(['player-item/index']),
+        'icon' => 'dnd-chest',
+        'style' => 'btn-primary justify-content-center mt-auto',
+        'tooltip' => null,
+        'title' => 'Equip',
+        'isCta' => false,
+    ])
+;
+?>
                 </div>
             </div>
         </div>
@@ -40,15 +41,16 @@ use yii\helpers\Url;
                     <h4 class="card-title text-yellow">Go shopping</h4>
                     <p>A shop were you can buy armors, weapon and other stuff</p>
                     <?=
-                    Button::widget([
-                        'url' => Url::toRoute(['player-cart/shop']),
-                        'icon' => 'bi-shop',
-                        'style' => 'btn-primary justify-content-center mt-auto',
-                        'tooltip' => null,
-                        'title' => 'Visit the shop',
-                        'isCta' => false,
-                    ]);
-                    ?>
+    Button::widget([
+        'url' => Url::toRoute(['player-cart/shop']),
+        'icon' => 'bi-shop',
+        'style' => 'btn-primary justify-content-center mt-auto',
+        'tooltip' => null,
+        'title' => 'Visit the shop',
+        'isCta' => false,
+    ])
+;
+?>
                 </div>
             </div>
         </div>
@@ -60,15 +62,16 @@ use yii\helpers\Url;
                     <h4 class="card-title text-yellow">Quest history</h4>
                     <p>Relive the best moments of your past quests</p>
                     <?=
-                    Button::widget([
-                        'url' => Url::toRoute(['player/history']),
-                        'icon' => 'dnd-spell-book',
-                        'style' => 'btn-primary justify-content-center mt-auto',
-                        'tooltip' => null,
-                        'title' => 'View history',
-                        'isCta' => false,
-                    ]);
-                    ?>
+    Button::widget([
+        'url' => Url::toRoute(['player/history']),
+        'icon' => 'dnd-spell-book',
+        'style' => 'btn-primary justify-content-center mt-auto',
+        'tooltip' => null,
+        'title' => 'View history',
+        'isCta' => false,
+    ])
+;
+?>
                 </div>
             </div>
         </div>

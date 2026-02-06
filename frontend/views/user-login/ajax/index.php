@@ -1,9 +1,9 @@
 <?php
 
-use yii\helpers\Html;
-use yii\helpers\Url;
 use frontend\widgets\Pagination;
 use frontend\widgets\RecordCount;
+use yii\helpers\Html;
+use yii\helpers\Url;
 
 /** @var yii\web\View $this */
 /** @var common\models\UserLogin[] $models */
@@ -15,12 +15,12 @@ use frontend\widgets\RecordCount;
 <div class="card">
     <div class="card-body">
         <?=
-        RecordCount::widget([
-            'count' => $count,
-            'model' => 'login',
-            'adjective' => 'logged',
-        ])
-        ?>
+    RecordCount::widget([
+        'count' => $count,
+        'model' => 'login',
+        'adjective' => 'logged',
+    ])
+?>
         <div class="table-responsive">
             <table class="table table-dark table-hover mb-0">
                 <thead>
@@ -51,12 +51,12 @@ use frontend\widgets\RecordCount;
         </div>
         <!-- Pagination -->
         <?=
-        Pagination::widget([
-            'page' => $page,
-            'pageCount' => $pageCount,
-            'limit' => $limit,
-        ])
-        ?>
+    Pagination::widget([
+        'page' => $page,
+        'pageCount' => $pageCount,
+        'limit' => $limit,
+    ])
+?>
         <!-- End Pagination -->
     </div>
 </div>

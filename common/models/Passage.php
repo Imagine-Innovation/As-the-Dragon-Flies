@@ -20,7 +20,6 @@ use Yii;
  */
 class Passage extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
@@ -42,7 +41,13 @@ class Passage extends \yii\db\ActiveRecord
             [['description'], 'string'],
             [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name', 'image'], 'string', 'max' => 64],
-            [['mission_id'], 'exist', 'skipOnError' => true, 'targetClass' => Mission::class, 'targetAttribute' => ['mission_id' => 'id']],
+            [
+                ['mission_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Mission::class,
+                'targetAttribute' => ['mission_id' => 'id'],
+            ],
         ];
     }
 

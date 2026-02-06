@@ -17,39 +17,35 @@ use yii\web\Response;
  */
 class RaceController extends Controller
 {
-
     /**
      * @inheritDoc
      */
     public function behaviors()
     {
         /** @phpstan-ignore-next-line */
-        return array_merge(
-                parent::behaviors(),
-                [
-                    'access' => [
-                        'class' => AccessControl::class,
-                        'rules' => [
-                            [
-                                'actions' => ['*'],
-                                'allow' => false,
-                                'roles' => ['?'],
-                            ],
-                            [
-                                'actions' => ['index', 'ajax-wizard', 'view'],
-                                'allow' => ManageAccessRights::isRouteAllowed($this),
-                                'roles' => ['@'],
-                            ],
-                        ],
+        return array_merge(parent::behaviors(), [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['*'],
+                        'allow' => false,
+                        'roles' => ['?'],
                     ],
-                    'verbs' => [
-                        'class' => VerbFilter::className(),
-                        'actions' => [
-                            'delete' => ['POST'],
-                        ],
+                    [
+                        'actions' => ['index', 'ajax-wizard', 'view'],
+                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'roles' => ['@'],
                     ],
-                ]
-        );
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['POST'],
+                ],
+            ],
+        ]);
     }
 
     /**
@@ -64,7 +60,7 @@ class RaceController extends Controller
         ]);
 
         return $this->render('index', [
-                    'dataProvider' => $dataProvider,
+            'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -78,7 +74,7 @@ class RaceController extends Controller
     public function actionView(int $id): string
     {
         return $this->render('view', [
-                    'model' => $this->findModel($id),
+            'model' => $this->findModel($id),
         ]);
     }
 

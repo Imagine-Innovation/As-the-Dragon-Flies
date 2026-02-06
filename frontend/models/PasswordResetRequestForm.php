@@ -12,7 +12,6 @@ use yii\base\Model;
  */
 class PasswordResetRequestForm extends Model
 {
-
     public ?string $email = null;
 
     /**
@@ -24,10 +23,12 @@ class PasswordResetRequestForm extends Model
             ['email', 'trim'],
             ['email', 'required'],
             ['email', 'email'],
-            ['email', 'exist',
+            [
+                'email',
+                'exist',
                 'targetClass' => '\common\models\User',
                 'filter' => ['status' => AppStatus::ACTIVE->value],
-                'message' => 'There is no user with this email address.'
+                'message' => 'There is no user with this email address.',
             ],
         ];
     }
@@ -57,14 +58,11 @@ class PasswordResetRequestForm extends Model
         }
 
         return Yii::$app
-                        ->mailer
-                        ->compose(
-                                ['html' => 'passwordResetToken-html', 'text' => 'passwordResetToken-text'],
-                                ['user' => $user]
-                        )
-                        ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name . ' robot'])
-                        ->setTo($this->email)
-                        ->setSubject('Password reset for ' . Yii::$app->name)
-                        ->send();
+            ->mailer
+            ->compose(['html' => 'passwordResetToken-html', 'text' => 'passwordResetToken-text'], ['user' => $user])
+            ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name . ' robot'])
+            ->setTo($this->email)
+            ->setSubject('Password reset for ' . Yii::$app->name)
+            ->send();
     }
 }

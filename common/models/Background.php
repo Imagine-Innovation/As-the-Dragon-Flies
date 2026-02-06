@@ -23,7 +23,6 @@ use Yii;
  */
 class Background extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
@@ -119,6 +118,8 @@ class Background extends \yii\db\ActiveRecord
      */
     public function getSkills()
     {
-        return $this->hasMany(Skill::class, ['id' => 'skill_id'])->viaTable('background_skill', ['background_id' => 'id']);
+        return $this->hasMany(Skill::class, ['id' => 'skill_id'])->viaTable('background_skill', [
+            'background_id' => 'id',
+        ]);
     }
 }

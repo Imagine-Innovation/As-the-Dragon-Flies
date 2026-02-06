@@ -15,32 +15,28 @@ use yii\web\Response;
  */
 class AlignmentController extends Controller
 {
-
     /**
      * @inheritDoc
      */
     public function behaviors()
     {
-        return array_merge(
-                parent::behaviors(),
-                [
-                    'access' => [
-                        'class' => AccessControl::class,
-                        'rules' => [
-                            [
-                                'actions' => ['*'],
-                                'allow' => false,
-                                'roles' => ['?'],
-                            ],
-                            [
-                                'actions' => ['ajax-wizard', 'view'],
-                                'allow' => ManageAccessRights::isRouteAllowed($this),
-                                'roles' => ['@'],
-                            ],
-                        ],
+        return array_merge(parent::behaviors(), [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['*'],
+                        'allow' => false,
+                        'roles' => ['?'],
                     ],
-                ]
-        );
+                    [
+                        'actions' => ['ajax-wizard', 'view'],
+                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+        ]);
     }
 
     /**
@@ -52,7 +48,7 @@ class AlignmentController extends Controller
     public function actionView(int $id): string
     {
         return $this->render('view', [
-                    'model' => $this->findModel($id),
+            'model' => $this->findModel($id),
         ]);
     }
 

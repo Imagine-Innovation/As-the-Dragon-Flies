@@ -7,12 +7,12 @@ use yii\helpers\Html;
 
 class Caligraphy
 {
-
     /**
      *
      * @return string
      */
-    public static function appName(): string {
+    public static function appName(): string
+    {
         return '<span class="text-decoration">' . Yii::$app->name . '</span>';
     }
 
@@ -22,8 +22,8 @@ class Caligraphy
      * @param string $textClassName
      * @return string
      */
-    public static function illuminate(array $paragraphs, string $textClassName = ''): string {
-
+    public static function illuminate(array $paragraphs, string $textClassName = ''): string
+    {
         $formatedParagraphs = [];
         foreach ($paragraphs as $paragraph) {
             $formatedParagraphs[] = "<p class='" . Html::encode($textClassName) . " illuminate'>$paragraph</p>";

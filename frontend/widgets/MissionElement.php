@@ -10,7 +10,6 @@ use yii\helpers\Url;
 
 class MissionElement extends Widget
 {
-
     /** @var \yii\db\ActiveRecord[] $properties: list of properties associated to a mission */
     public array $properties = [];
 
@@ -20,7 +19,8 @@ class MissionElement extends Widget
     /** @var array<string> $propertyNames array of every attributes defines within the property */
     public array $propertyNames = [];
 
-    public function run() {
+    public function run()
+    {
         if ($this->properties) {
             return $this->listContent($this->properties);
         }
@@ -32,7 +32,8 @@ class MissionElement extends Widget
      * @param array<ActiveRecord> $properties
      * @return string
      */
-    private function listContent(array $properties): string {
+    private function listContent(array $properties): string
+    {
         $liElements = '';
         foreach ($properties as $property) {
             $liElements .= $this->liElement($property, $this->propertyNames);
@@ -46,7 +47,8 @@ class MissionElement extends Widget
      * @param ActiveRecord $property
      * @return string
      */
-    private function getPropertyStatusLabel(ActiveRecord $property): string {
+    private function getPropertyStatusLabel(ActiveRecord $property): string
+    {
         if (!$property->hasAttribute('status') || $property->status === null) {
             return '';
         }
@@ -65,7 +67,8 @@ class MissionElement extends Widget
      * @param ActiveRecord $property
      * @return string
      */
-    private function displayName(ActiveRecord $property): string {
+    private function displayName(ActiveRecord $property): string
+    {
         $status = strtolower($this->getPropertyStatusLabel($property));
         return match ($this->type) {
             'Prerequisite' => "\"{$property->previousAction->name}\" if {$status}",
@@ -81,7 +84,8 @@ class MissionElement extends Widget
      * @param array<string> $propertyNames
      * @return string
      */
-    private function liElement(ActiveRecord $property, array $propertyNames): string {
+    private function liElement(ActiveRecord $property, array $propertyNames): string
+    {
         $attribute1 = $propertyNames[0];
         $attribute2 = $propertyNames[1];
         $attribute3 = $propertyNames[2];

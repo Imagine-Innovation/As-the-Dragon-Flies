@@ -11,7 +11,6 @@ use Ratchet\ConnectionInterface;
 
 class NextTurnHandler implements SpecificMessageHandlerInterface
 {
-
     private LoggerService $logger;
     private BroadcastServiceInterface $broadcastService;
     private BroadcastMessageFactory $messageFactory;
@@ -23,9 +22,9 @@ class NextTurnHandler implements SpecificMessageHandlerInterface
      * @param BroadcastMessageFactory $messageFactory
      */
     public function __construct(
-            LoggerService $logger,
-            BroadcastServiceInterface $broadcastService,
-            BroadcastMessageFactory $messageFactory
+        LoggerService $logger,
+        BroadcastServiceInterface $broadcastService,
+        BroadcastMessageFactory $messageFactory,
     ) {
         $this->logger = $logger;
         $this->broadcastService = $broadcastService;
@@ -41,7 +40,8 @@ class NextTurnHandler implements SpecificMessageHandlerInterface
      * @param array<string, mixed> $data
      * @return void
      */
-    public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
+    public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void
+    {
         $this->logger->logStart("NextTurnHandler: handle from clientId={$clientId}, sessionId={$sessionId}", $data);
 
         $payload = PayloadHelper::extractPayloadFromData($data);
@@ -49,10 +49,10 @@ class NextTurnHandler implements SpecificMessageHandlerInterface
         $detail = PayloadHelper::extractArrayFromPayload('detail', $payload);
 
         if ($questId === null || empty($detail)) {
-            $this->logger->log("NextTurnHandler: Missing required data (questId, detail).", $data, 'warning');
-            $errorDto = $this->messageFactory->createErrorMessage("Invalid next turn data provided.");
+            $this->logger->log('NextTurnHandler: Missing required data (questId, detail).', $data, 'warning');
+            $errorDto = $this->messageFactory->createErrorMessage('Invalid next turn data provided.');
             $this->broadcastService->sendToClient($clientId, $errorDto, false, $sessionId);
-            $this->logger->logEnd("NextTurnHandler: handle");
+            $this->logger->logEnd('NextTurnHandler: handle');
             return;
         }
 
@@ -60,9 +60,9 @@ class NextTurnHandler implements SpecificMessageHandlerInterface
 
         $this->broadcastService->broadcastToQuest($questId, $nextTurnDto, $sessionId);
 
-        $this->logger->log("NextTurnHandler: NextTurnDto broadcasted", ['quest_id' => $questId, 'payload' => $payload]);
+        $this->logger->log('NextTurnHandler: NextTurnDto broadcasted', ['quest_id' => $questId, 'payload' => $payload]);
         $this->broadcastService->sendBack($from, 'ack', ['type' => 'next-turn_processed', 'detail' => $detail]);
 
-        $this->logger->logEnd("NextTurnHandler: handle");
+        $this->logger->logEnd('NextTurnHandler: handle');
     }
 }

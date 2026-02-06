@@ -43,7 +43,6 @@ use Yii;
  */
 class CharacterClass extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */

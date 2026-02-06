@@ -1,4 +1,5 @@
 <?php
+
 /** @var yii\web\View $this */
 /** @var array $playerBodyData */
 /** @var bool $withId */
@@ -67,16 +68,32 @@ foreach ($playerBodyData as $zone => $playerBody) {
 }
 ?>
 <div class="card-body svg-container">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 900" preserveAspectRatio="xMidYMid meet" <?= $withId ? 'id="equipmentSvg"' : 'style="max-height: 30vh;"' ?>>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 900" preserveAspectRatio="xMidYMid meet" <?=
+    $withId ? 'id="equipmentSvg"' : 'style="max-height: 30vh;"'
+?>>
         <?php foreach ($playerBodyData as $zone => $playerBody): ?>
             <?php
+
+
+
             // Ensure the zone exists in our SVG coordinate map
+
             if (!empty($playerBody['itemId']) && isset($circles[$zone])):
-                $circle = $circles[$zone];
-                ?>
+    
+            $circle = $circles[$zone];
+    
+            ?>
                 <defs>
-                    <pattern id="pattern-<?= $zone ?><?= $suffix ?>" patternUnits="userSpaceOnUse" width="<?= $circle['size'] ?>" height="<?= $circle['size'] ?>" x="<?= $circle['x'] ?>" y="<?= $circle['y'] ?>">
-                        <image href="/frontend/web/img/item/<?= $playerBody['image'] ?>" width="<?= $circle['size'] ?>" height="<?= $circle['size'] ?>"/>
+                    <pattern id="pattern-<?= $zone ?><?= $suffix ?>" patternUnits="userSpaceOnUse" width="<?=
+        
+            $circle['size']
+    
+            ?>" height="<?= $circle['size'] ?>" x="<?= $circle['x'] ?>" y="<?= $circle['y'] ?>">
+                        <image href="/frontend/web/img/item/<?= $playerBody['image'] ?>" width="<?= $circle['size'] ?>" height="<?=
+        
+            $circle['size']
+    
+            ?>"/>
                     </pattern>
                 </defs>
             <?php endif; ?>
@@ -86,11 +103,19 @@ foreach ($playerBodyData as $zone => $playerBody) {
 
         <?php if ($withId): ?>
             <?php foreach ($circles as $zone => $circle): ?>
-                <circle id="<?= $zone ?>" cx="<?= $circle['cx'] ?>" cy="<?= $circle['cy'] ?>" r="<?= $circle['r'] ?>" fill="<?= $circle['fill'] ?>" fill-opacity="<?= $circle['opacity'] ?>" style="cursor: pointer;"/>
+                <circle id="<?= $zone ?>" cx="<?= $circle['cx'] ?>" cy="<?= $circle['cy'] ?>" r="<?= $circle['r'] ?>" fill="<?=
+    
+            $circle['fill']
+
+            ?>" fill-opacity="<?= $circle['opacity'] ?>" style="cursor: pointer;"/>
             <?php endforeach; ?>
         <?php else: ?>
             <?php foreach ($circles as $zone => $circle): ?>
-                <circle cx="<?= $circle['cx'] ?>" cy="<?= $circle['cy'] ?>" r="<?= $circle['r'] ?>" fill="<?= $circle['fill'] ?>" fill-opacity="<?= $circle['opacity'] ?>" />
+                <circle cx="<?= $circle['cx'] ?>" cy="<?= $circle['cy'] ?>" r="<?= $circle['r'] ?>" fill="<?=
+    
+            $circle['fill']
+
+            ?>" fill-opacity="<?= $circle['opacity'] ?>" />
             <?php endforeach; ?>
         <?php endif; ?>
     </svg>

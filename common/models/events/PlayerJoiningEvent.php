@@ -9,7 +9,6 @@ use Yii;
 
 class PlayerJoiningEvent extends Event
 {
-
     /**
      *
      * @param string $sessionId
@@ -64,7 +63,7 @@ class PlayerJoiningEvent extends Event
             'playerId' => $this->player->id,
             'questName' => $this->quest->name,
             'questId' => $this->quest->id,
-            'joinedAt' => date('Y-m-d H:i:s', $this->timestamp)
+            'joinedAt' => date('Y-m-d H:i:s', $this->timestamp),
         ];
     }
 
@@ -75,7 +74,7 @@ class PlayerJoiningEvent extends Event
      */
     public function process(): void
     {
-        Yii::debug("*** Debug *** PlayerJoiningEvent - process");
+        Yii::debug('*** Debug *** PlayerJoiningEvent - process');
         $notification = $this->createNotification();
 
         $this->savePlayerNotifications($notification->id);

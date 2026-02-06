@@ -16,18 +16,18 @@ $this->params['breadcrumbs'][] = $this->title;
             <h4 class="card-title">List of the players you have already defined</h4>
             <div class="actions">
                 <?=
-                Button::widget([
-                    'mode' => 'icon',
-                    'url' => Url::toRoute(['player-builder/create']),
-                    'icon' => 'bi-dpad',
-                    'tooltip' => 'Create a new player'
-                ])
-                ?>
+    Button::widget([
+        'mode' => 'icon',
+        'url' => Url::toRoute(['player-builder/create']),
+        'icon' => 'bi-dpad',
+        'tooltip' => 'Create a new player',
+    ])
+?>
             </div>
             <div class="row g-4">
                 <?php foreach ($players as $player): ?>
                     <div class="col-12 col-md-6 col-lg-4">
-                        <?= $this->renderFile('@app/views/player/snippets/card.php', ['player' => $player,]) ?>
+                        <?= $this->renderFile('@app/views/player/snippets/card.php', ['player' => $player]) ?>
                     </div>
                 <?php endforeach; ?>
             </div>

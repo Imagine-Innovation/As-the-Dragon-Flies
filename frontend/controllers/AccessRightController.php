@@ -18,42 +18,42 @@ use yii\web\Response;
  */
 class AccessRightController extends Controller
 {
-
     /**
      * @inheritDoc
      */
     public function behaviors()
     {
         /** @phpstan-ignore-next-line */
-        return array_merge(
-                parent::behaviors(),
-                [
-                    'access' => [
-                        'class' => AccessControl::class,
-                        'rules' => [
-                            [
-                                'actions' => ['*'],
-                                'allow' => false,
-                                'roles' => ['?'],
-                            ],
-                            [
-                                'actions' => [
-                                    'index', 'create', 'view', 'update',
-                                    'ajax', 'ajax-set-access-right',
-                                ],
-                                'allow' => ManageAccessRights::isRouteAllowed($this),
-                                'roles' => ['@'],
-                            ],
-                        ],
+        return array_merge(parent::behaviors(), [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['*'],
+                        'allow' => false,
+                        'roles' => ['?'],
                     ],
-                    'verbs' => [
-                        'class' => VerbFilter::className(),
+                    [
                         'actions' => [
-                            'delete' => ['POST'],
+                            'index',
+                            'create',
+                            'view',
+                            'update',
+                            'ajax',
+                            'ajax-set-access-right',
                         ],
+                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'roles' => ['@'],
                     ],
-                ]
-        );
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['POST'],
+                ],
+            ],
+        ]);
     }
 
     /**
@@ -65,20 +65,20 @@ class AccessRightController extends Controller
     {
         $dataProvider = new ActiveDataProvider([
             'query' => AccessRight::find(),
-                /*
-                  'pagination' => [
-                  'pageSize' => 50
-                  ],
-                  'sort' => [
-                  'defaultOrder' => [
-                  'id' => SORT_DESC,
-                  ]
-                  ],
-                 */
+            /*
+             * 'pagination' => [
+             * 'pageSize' => 50
+             * ],
+             * 'sort' => [
+             * 'defaultOrder' => [
+             * 'id' => SORT_DESC,
+             * ]
+             * ],
+             */
         ]);
 
         return $this->render('index', [
-                    'dataProvider' => $dataProvider,
+            'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -95,7 +95,7 @@ class AccessRightController extends Controller
         }
 
         $param = [
-            'modelName' => 'AccessRight'
+            'modelName' => 'AccessRight',
         ];
         $ajaxRequest = new AjaxRequest($param);
 
@@ -133,11 +133,21 @@ class AccessRightController extends Controller
         $model->$access = $status;
 
         if ($model->save()) {
-            return ['error' => false, 'msg' => "Access right {$access} has been " . (($status === 1)
-                    ? "granted" : "revoked") . " to route {$model->route}"];
+            return [
+                'error' => false,
+                'msg' =>
+                    "Access right {$access} has been "
+                        . ($status === 1 ? 'granted' : 'revoked')
+                        . " to route {$model->route}",
+            ];
         }
-        return ['error' => true, 'msg' => "Unable to " . (($status === 1) ? "grant"
-                : "revoke") . " Access right {$access} to route {$model->route}"];
+        return [
+            'error' => true,
+            'msg' =>
+                'Unable to '
+                    . ($status === 1 ? 'grant' : 'revoke')
+                    . " Access right {$access} to route {$model->route}",
+        ];
     }
 
     /**
@@ -149,7 +159,7 @@ class AccessRightController extends Controller
     public function actionView(int $id): string
     {
         return $this->render('view', [
-                    'model' => $this->findModel($id),
+            'model' => $this->findModel($id),
         ]);
     }
 
@@ -172,7 +182,7 @@ class AccessRightController extends Controller
         }
 
         return $this->render('create', [
-                    'model' => $model,
+            'model' => $model,
         ]);
     }
 
@@ -193,7 +203,7 @@ class AccessRightController extends Controller
         }
 
         return $this->render('update', [
-                    'model' => $model,
+            'model' => $model,
         ]);
     }
 

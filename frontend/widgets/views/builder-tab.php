@@ -20,18 +20,20 @@ use frontend\widgets\ModalDesc;
                         <div class="custom-control custom-radio card-title">
                             <input type="radio" id="<?= $field_name ?><?= $model->id ?>" name="<?= $field_name ?>" class="custom-control-input"
                                    onchange="PlayerBuilder.setProperty('<?= $field_name ?>_id', <?= $model->id ?>);">
-                            <label class="custom-control-label text-decoration" for="<?= $field_name ?><?= $model->id ?>"><?= $model->name ?></label>
+                            <label class="custom-control-label text-decoration" for="<?= $field_name ?><?= $model->id ?>"><?=
+            $model->name
+        ?></label>
                         </div>
                         <h6 class="card-subtitle text-muted">
                             <?=
-                            ModalDesc::widget([
-                                'name' => $model->name,
-                                'description' => $model->description,
-                                'maxLength' => 200,
-                                'type' => $field_name,
-                                'id' => $model->id,
-                            ])
-                            ?>
+            ModalDesc::widget([
+                'name' => $model->name,
+                'description' => $model->description,
+                'maxLength' => 200,
+                'type' => $field_name,
+                'id' => $model->id,
+            ])
+        ?>
                         </h6>
                     </div>
                 </div>

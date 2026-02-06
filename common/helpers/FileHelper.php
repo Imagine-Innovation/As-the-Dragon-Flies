@@ -4,14 +4,14 @@ namespace common\helpers;
 
 class FileHelper
 {
-
     /**
      * Removes the last extension from a filename.
      *
      * @param string $filename The input filename.
      * @return string The filename without the last extension.
      */
-    public static function removeExtension($filename) {
+    public static function removeExtension($filename)
+    {
         $lastDotPosition = strrpos($filename, '.');
 
         if ($lastDotPosition === false) {

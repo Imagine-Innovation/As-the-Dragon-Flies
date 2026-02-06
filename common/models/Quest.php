@@ -44,7 +44,6 @@ use Yii;
  */
 class Quest extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
@@ -59,18 +58,68 @@ class Quest extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['current_chapter_id', 'current_player_id', 'initiator_id', 'description', 'image', 'started_at', 'completed_at'], 'default', 'value' => null],
+            [
+                [
+                    'current_chapter_id',
+                    'current_player_id',
+                    'initiator_id',
+                    'description',
+                    'image',
+                    'started_at',
+                    'completed_at',
+                ],
+                'default',
+                'value' => null,
+            ],
             [['status'], 'default', 'value' => AppStatus::WAITING->value],
             [['elapsed_time'], 'default', 'value' => 0],
             [['story_id', 'name'], 'required'],
-            [['story_id', 'current_chapter_id', 'current_player_id', 'initiator_id', 'status', 'created_at', 'started_at', 'completed_at', 'local_time', 'elapsed_time'], 'integer'],
+            [
+                [
+                    'story_id',
+                    'current_chapter_id',
+                    'current_player_id',
+                    'initiator_id',
+                    'status',
+                    'created_at',
+                    'started_at',
+                    'completed_at',
+                    'local_time',
+                    'elapsed_time',
+                ],
+                'integer',
+            ],
             [['description'], 'string'],
             [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name', 'image'], 'string', 'max' => 64],
-            [['story_id'], 'exist', 'skipOnError' => true, 'targetClass' => Story::class, 'targetAttribute' => ['story_id' => 'id']],
-            [['current_chapter_id'], 'exist', 'skipOnError' => true, 'targetClass' => Chapter::class, 'targetAttribute' => ['current_chapter_id' => 'id']],
-            [['current_player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['current_player_id' => 'id']],
-            [['initiator_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['initiator_id' => 'id']],
+            [
+                ['story_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Story::class,
+                'targetAttribute' => ['story_id' => 'id'],
+            ],
+            [
+                ['current_chapter_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Chapter::class,
+                'targetAttribute' => ['current_chapter_id' => 'id'],
+            ],
+            [
+                ['current_player_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Player::class,
+                'targetAttribute' => ['current_player_id' => 'id'],
+            ],
+            [
+                ['initiator_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Player::class,
+                'targetAttribute' => ['initiator_id' => 'id'],
+            ],
         ];
     }
 
@@ -228,7 +277,8 @@ class Quest extends \yii\db\ActiveRecord
      */
     public function getCurrentQuestProgress()
     {
-        return $this->hasOne(QuestProgress::class, ['quest_id' => 'id'])
-                        ->andWhere(['status' => AppStatus::IN_PROGRESS->value]);
+        return $this->hasOne(QuestProgress::class, ['quest_id' => 'id'])->andWhere([
+            'status' => AppStatus::IN_PROGRESS->value,
+        ]);
     }
 }

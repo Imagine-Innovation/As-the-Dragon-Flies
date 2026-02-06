@@ -33,6 +33,6 @@ $this->params['breadcrumbs'] = $breadcrumbs;
         'storyId' => $story->id,
         'chapterId' => $chapter->id,
     ])
-    ?>
+?>
 
 </div>

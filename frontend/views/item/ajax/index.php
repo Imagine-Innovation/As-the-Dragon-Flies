@@ -16,6 +16,6 @@ use frontend\widgets\RecordCount;
     <div class="card-body">
         <?= RecordCount::widget(['count' => $count, 'model' => $itemTypeId, 'adjective' => 'available']) ?>
         <?= ItemTable::widget(['items' => $models, 'itemTypeId' => $itemTypeId]) ?>
-        <?= Pagination::widget(['page' => $page, 'pageCount' => $pageCount, 'limit' => $limit,]) ?>
+        <?= Pagination::widget(['page' => $page, 'pageCount' => $pageCount, 'limit' => $limit]) ?>
     </div>
 </div>

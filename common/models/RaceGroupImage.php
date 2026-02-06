@@ -16,32 +16,46 @@ use Yii;
  */
 class RaceGroupImage extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'race_group_image';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['race_group_id', 'image_id', 'gender'], 'required'],
             [['race_group_id', 'image_id'], 'integer'],
             [['gender'], 'string', 'max' => 1],
             [['race_group_id', 'image_id'], 'unique', 'targetAttribute' => ['race_group_id', 'image_id']],
-            [['race_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => RaceGroup::class, 'targetAttribute' => ['race_group_id' => 'id']],
-            [['image_id'], 'exist', 'skipOnError' => true, 'targetClass' => Image::class, 'targetAttribute' => ['image_id' => 'id']],
+            [
+                ['race_group_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => RaceGroup::class,
+                'targetAttribute' => ['race_group_id' => 'id'],
+            ],
+            [
+                ['image_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Image::class,
+                'targetAttribute' => ['image_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'race_group_id' => 'Foreign key to “race” table',
             'image_id' => 'Foreign key to “image” table',
@@ -54,7 +68,8 @@ class RaceGroupImage extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Image>
      */
-    public function getImage() {
+    public function getImage()
+    {
         return $this->hasOne(Image::class, ['id' => 'image_id']);
     }
 
@@ -63,7 +78,8 @@ class RaceGroupImage extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<RaceGroup>
      */
-    public function getRaceGroup() {
+    public function getRaceGroup()
+    {
         return $this->hasOne(RaceGroup::class, ['id' => 'race_group_id']);
     }
 }

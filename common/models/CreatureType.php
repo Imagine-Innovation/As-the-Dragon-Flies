@@ -16,7 +16,6 @@ use Yii;
  */
 class CreatureType extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */

@@ -17,32 +17,52 @@ use Yii;
  */
 class ClassItemProficiency extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'class_item_proficiency';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['category_id', 'item_id'], 'default', 'value' => null],
             [['class_id'], 'required'],
             [['class_id', 'category_id', 'item_id'], 'integer'],
-            [['class_id'], 'exist', 'skipOnError' => true, 'targetClass' => CharacterClass::class, 'targetAttribute' => ['class_id' => 'id']],
-            [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::class, 'targetAttribute' => ['category_id' => 'id']],
-            [['item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['item_id' => 'id']],
+            [
+                ['class_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => CharacterClass::class,
+                'targetAttribute' => ['class_id' => 'id'],
+            ],
+            [
+                ['category_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Category::class,
+                'targetAttribute' => ['category_id' => 'id'],
+            ],
+            [
+                ['item_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Item::class,
+                'targetAttribute' => ['item_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'class_id' => 'Foreign key to “character_class” table',
             'category_id' => 'Optional foreign key to “category” table',
@@ -55,7 +75,8 @@ class ClassItemProficiency extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Category>
      */
-    public function getCategory() {
+    public function getCategory()
+    {
         return $this->hasOne(Category::class, ['id' => 'category_id']);
     }
 
@@ -64,7 +85,8 @@ class ClassItemProficiency extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<CharacterClass>
      */
-    public function getClass() {
+    public function getClass()
+    {
         return $this->hasOne(CharacterClass::class, ['id' => 'class_id']);
     }
 
@@ -73,7 +95,8 @@ class ClassItemProficiency extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Item>
      */
-    public function getItem() {
+    public function getItem()
+    {
         return $this->hasOne(Item::class, ['id' => 'item_id']);
     }
 }

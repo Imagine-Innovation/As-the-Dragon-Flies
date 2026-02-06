@@ -24,18 +24,19 @@ use Yii;
  */
 class QuestPlayer extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'quest_player';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['left_at', 'reason'], 'default', 'value' => null],
             [['onboarded_at'], 'default', 'value' => 0],
@@ -44,15 +45,28 @@ class QuestPlayer extends \yii\db\ActiveRecord
             [['quest_id', 'player_id', 'player_turn', 'onboarded_at', 'status', 'left_at'], 'integer'],
             [['reason'], 'string', 'max' => 256],
             [['quest_id', 'player_id'], 'unique', 'targetAttribute' => ['quest_id', 'player_id']],
-            [['player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['player_id' => 'id']],
-            [['quest_id'], 'exist', 'skipOnError' => true, 'targetClass' => Quest::class, 'targetAttribute' => ['quest_id' => 'id']],
+            [
+                ['player_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Player::class,
+                'targetAttribute' => ['player_id' => 'id'],
+            ],
+            [
+                ['quest_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Quest::class,
+                'targetAttribute' => ['quest_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'quest_id' => 'Foreign key to “quest” table',
             'player_id' => 'Foreign key to “player” table',
@@ -69,8 +83,12 @@ class QuestPlayer extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Condition>
      */
-    public function getConditions() {
-        return $this->hasMany(Condition::class, ['id' => 'condition_id'])->viaTable('quest_player_condition', ['quest_id' => 'quest_id', 'player_id' => 'player_id']);
+    public function getConditions()
+    {
+        return $this->hasMany(Condition::class, ['id' => 'condition_id'])->viaTable('quest_player_condition', [
+            'quest_id' => 'quest_id',
+            'player_id' => 'player_id',
+        ]);
     }
 
     /**
@@ -78,7 +96,8 @@ class QuestPlayer extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Player>
      */
-    public function getPlayer() {
+    public function getPlayer()
+    {
         return $this->hasOne(Player::class, ['id' => 'player_id']);
     }
 
@@ -87,7 +106,8 @@ class QuestPlayer extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Quest>
      */
-    public function getQuest() {
+    public function getQuest()
+    {
         return $this->hasOne(Quest::class, ['id' => 'quest_id']);
     }
 
@@ -96,7 +116,8 @@ class QuestPlayer extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<QuestPlayerCondition>
      */
-    public function getQuestPlayerConditions() {
+    public function getQuestPlayerConditions()
+    {
         return $this->hasMany(QuestPlayerCondition::class, ['quest_id' => 'quest_id', 'player_id' => 'player_id']);
     }
 
@@ -105,7 +126,8 @@ class QuestPlayer extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<QuestProgress>
      */
-    public function getQuestProgresses() {
+    public function getQuestProgresses()
+    {
         return $this->hasMany(QuestProgress::class, ['quest_id' => 'quest_id', 'current_player_id' => 'player_id']);
     }
 }

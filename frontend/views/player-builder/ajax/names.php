@@ -1,4 +1,5 @@
 <?php
+
 /** @var yii\web\View $this */
 /** @var string[] $names */
 $i = 0;
@@ -14,4 +15,4 @@ $i = 0;
                onchange='PlayerBuilder.setProperty("name", "<?= $name ?>");$("#tmpName").val("<?= $name ?>")';'>
         <label class="custom-control-label" for="name<?= $i++ ?>"><?= $name ?></label>
     </div>
-<?php endforeach; ?>
+<?php endforeach;

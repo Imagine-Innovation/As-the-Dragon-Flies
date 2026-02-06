@@ -8,7 +8,6 @@ use yii\web\NotFoundHttpException;
 
 class UserErrorMessage
 {
-
     /**
      *
      * @param Controller $controller
@@ -18,7 +17,12 @@ class UserErrorMessage
      * @return void
      * @throws NotFoundHttpException
      */
-    public static function throw(Controller $controller, string $errorLevel, string $message, ?string $redirectRoute = null): void {
+    public static function throw(
+        Controller $controller,
+        string $errorLevel,
+        string $message,
+        ?string $redirectRoute = null,
+    ): void {
         if ($errorLevel === 'fatal') {
             throw new NotFoundHttpException($message);
         } else {

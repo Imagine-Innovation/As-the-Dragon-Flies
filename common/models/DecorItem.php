@@ -23,7 +23,6 @@ use Yii;
  */
 class DecorItem extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
@@ -46,8 +45,20 @@ class DecorItem extends \yii\db\ActiveRecord
             [['description'], 'string'],
             [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name', 'image'], 'string', 'max' => 64],
-            [['item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['item_id' => 'id']],
-            [['decor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Decor::class, 'targetAttribute' => ['decor_id' => 'id']],
+            [
+                ['item_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Item::class,
+                'targetAttribute' => ['item_id' => 'id'],
+            ],
+            [
+                ['decor_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Decor::class,
+                'targetAttribute' => ['decor_id' => 'id'],
+            ],
         ];
     }
 

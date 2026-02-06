@@ -1,4 +1,5 @@
 <?php
+
 /** @var yii\web\View $this */
 /** @var string $UUID */
 /** @var string $messageHeader */
@@ -19,4 +20,3 @@ $icons = [
     </div>
     <div class="toast-body"><?= $message ?></div>
 </div>
-

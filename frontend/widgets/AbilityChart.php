@@ -6,7 +6,6 @@ use yii\base\Widget;
 
 class AbilityChart extends Widget
 {
-
     public int $id;
     public int $score;
     public string $code;
@@ -23,11 +22,11 @@ class AbilityChart extends Widget
         $modifier = $tmp >= 0 ? floor($tmp) : ceil($tmp);
 
         return $this->render('ability-chart', [
-                    'id' => $this->id,
-                    'score' => $this->score,
-                    'bonus' => $this->bonus,
-                    'code' => $this->code,
-                    'modifier' => $modifier,
+            'id' => $this->id,
+            'score' => $this->score,
+            'bonus' => $this->bonus,
+            'code' => $this->code,
+            'modifier' => $modifier,
         ]);
     }
 }

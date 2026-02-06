@@ -11,7 +11,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <h3><?= Html::encode($this->title) ?></h3>
 <?= AjaxContainer::widget(['name' => 'ajaxContainer']) ?>
 <?=
-$this->renderFile('@app/views/layouts/snippets/ajax-params.php', [
-    'route' => 'rule/ajax',
-])
+    $this->renderFile('@app/views/layouts/snippets/ajax-params.php', [
+        'route' => 'rule/ajax',
+    ])
 ?>

@@ -21,14 +21,22 @@ $raceGroups = RaceGroup::find()->all();
                         <h4 class="card-title text-decoration"><?= $raceGroup->name ?></h4>
                         <h6 class="card-subtitle text-muted">
                             <?=
-                            ModalDesc::widget([
-                                'name' => $raceGroup->name,
-                                'description' => $raceGroup->description,
-                                'maxLength' => 200,
-                                'type' => 'race-group',
-                                'id' => $raceGroup->id,
-                            ])
-                            ?>
+    
+        ModalDesc::widget([
+        
+        'name' => $raceGroup->name,
+        
+        'description' => $raceGroup->description,
+        
+        'maxLength' => 200,
+        
+        'type' => 'race-group',
+        
+        'id' => $raceGroup->id,
+    
+        ])
+
+        ?>
                         </h6>
 
                         <?php foreach ($raceGroup->races as $race): ?>

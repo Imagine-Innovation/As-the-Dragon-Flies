@@ -20,7 +20,6 @@ use yii\web\UploadedFile;
  */
 class Image extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
@@ -39,7 +38,8 @@ class Image extends \yii\db\ActiveRecord
         return [
             [['file_name', 'category'], 'required'],
             [['file_name', 'category'], 'string', 'max' => 64],
-            [['image'], 'file', 'skipOnEmpty' => false, 'extensions' => 'png, jpg'],];
+            [['image'], 'file', 'skipOnEmpty' => false, 'extensions' => 'png, jpg'],
+        ];
     }
 
     /**
@@ -71,7 +71,9 @@ class Image extends \yii\db\ActiveRecord
      */
     public function getClasses()
     {
-        return $this->hasMany(CharacterClass::class, ['id' => 'class_id'])->viaTable('class_image', ['image_id' => 'id']);
+        return $this->hasMany(CharacterClass::class, ['id' => 'class_id'])->viaTable('class_image', [
+            'image_id' => 'id',
+        ]);
     }
 
     /**
@@ -101,7 +103,9 @@ class Image extends \yii\db\ActiveRecord
      */
     public function getRaceGroups()
     {
-        return $this->hasMany(RaceGroup::class, ['id' => 'race_group_id'])->viaTable('race_group_image', ['image_id' => 'id']);
+        return $this->hasMany(RaceGroup::class, ['id' => 'race_group_id'])->viaTable('race_group_image', [
+            'image_id' => 'id',
+        ]);
     }
 
     /**
@@ -127,7 +131,7 @@ class Image extends \yii\db\ActiveRecord
         if ($this->image === null) {
             return false;
         }
-        $fileName = $this->id . "." . $this->image->extension;
+        $fileName = $this->id . '.' . $this->image->extension;
         $fullFileName = $this->uploadPath() . $fileName;
         $this->image->saveAs($fullFileName);
         $this->file_name = $fileName;
@@ -135,7 +139,7 @@ class Image extends \yii\db\ActiveRecord
         if ($successfullySaved) {
             return true;
         }
-        throw new \Exception(implode("<br />", ArrayHelper::getColumn($this->errors, 0, false)));
+        throw new \Exception(implode('<br />', ArrayHelper::getColumn($this->errors, 0, false)));
     }
 
     /**
@@ -146,7 +150,7 @@ class Image extends \yii\db\ActiveRecord
     {
         $rootPath = Url::to('@web/img/');
         if ($this->category) {
-            return $rootPath . $this->category . "/";
+            return $rootPath . $this->category . '/';
         }
         return $rootPath;
     }

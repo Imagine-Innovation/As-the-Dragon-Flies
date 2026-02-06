@@ -18,32 +18,46 @@ use Yii;
  */
 class CreatureDamageType extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'creature_damage_type';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['is_vulnerable'], 'default', 'value' => 0],
             [['creature_id', 'damage_type_id'], 'required'],
             [['creature_id', 'damage_type_id', 'is_immune', 'is_resistant', 'is_vulnerable'], 'integer'],
             [['creature_id', 'damage_type_id'], 'unique', 'targetAttribute' => ['creature_id', 'damage_type_id']],
-            [['creature_id'], 'exist', 'skipOnError' => true, 'targetClass' => Creature::class, 'targetAttribute' => ['creature_id' => 'id']],
-            [['damage_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => DamageType::class, 'targetAttribute' => ['damage_type_id' => 'id']],
+            [
+                ['creature_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Creature::class,
+                'targetAttribute' => ['creature_id' => 'id'],
+            ],
+            [
+                ['damage_type_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => DamageType::class,
+                'targetAttribute' => ['damage_type_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'creature_id' => 'Foreign key to “creature” table',
             'damage_type_id' => 'Foreign key to “damage_type” table',
@@ -58,7 +72,8 @@ class CreatureDamageType extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Creature>
      */
-    public function getCreature() {
+    public function getCreature()
+    {
         return $this->hasOne(Creature::class, ['id' => 'creature_id']);
     }
 
@@ -67,7 +82,8 @@ class CreatureDamageType extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<DamageType>
      */
-    public function getDamageType() {
+    public function getDamageType()
+    {
         return $this->hasOne(DamageType::class, ['id' => 'damage_type_id']);
     }
 }

@@ -6,7 +6,6 @@ use common\extensions\EventHandler\contracts\BroadcastMessageInterface;
 
 class QuestStartedDto implements BroadcastMessageInterface
 {
-
     public string $type = 'quest-started';
 
     /** @var array<string, mixed> $payload */
@@ -18,7 +17,8 @@ class QuestStartedDto implements BroadcastMessageInterface
      * @param int $questId
      * @param string $questName
      */
-    public function __construct(string $sessionId, int $questId, string $questName) {
+    public function __construct(string $sessionId, int $questId, string $questName)
+    {
         $this->payload = [
             'sessionId' => $sessionId,
             'questId' => $questId,
@@ -26,7 +26,7 @@ class QuestStartedDto implements BroadcastMessageInterface
             'message' => "Quest '{$questName}' has started!",
             'redirectUrl' => '/frontend/web/index.php?r=game/view&id=' . $questId,
             'timestamp' => time(),
-            'startedAt' => date('Y-m-d H:i:s', time())
+            'startedAt' => date('Y-m-d H:i:s', time()),
         ];
     }
 
@@ -34,7 +34,8 @@ class QuestStartedDto implements BroadcastMessageInterface
      *
      * @return string
      */
-    public function getType(): string {
+    public function getType(): string
+    {
         return $this->type;
     }
 
@@ -42,7 +43,8 @@ class QuestStartedDto implements BroadcastMessageInterface
      *
      * @return array<string, mixed>
      */
-    public function getPayload(): array {
+    public function getPayload(): array
+    {
         return $this->payload;
     }
 
@@ -50,7 +52,8 @@ class QuestStartedDto implements BroadcastMessageInterface
      *
      * @return string|false
      */
-    public function toJson(): string|false {
+    public function toJson(): string|false
+    {
         return json_encode(['type' => $this->type, 'payload' => $this->payload]);
     }
 }

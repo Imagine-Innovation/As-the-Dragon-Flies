@@ -11,7 +11,6 @@ use Ratchet\ConnectionInterface;
 
 class GameActionHandler implements SpecificMessageHandlerInterface
 {
-
     private LoggerService $logger;
     private BroadcastServiceInterface $broadcastService;
     private BroadcastMessageFactory $messageFactory;
@@ -23,9 +22,9 @@ class GameActionHandler implements SpecificMessageHandlerInterface
      * @param BroadcastMessageFactory $messageFactory
      */
     public function __construct(
-            LoggerService $logger,
-            BroadcastServiceInterface $broadcastService,
-            BroadcastMessageFactory $messageFactory
+        LoggerService $logger,
+        BroadcastServiceInterface $broadcastService,
+        BroadcastMessageFactory $messageFactory,
     ) {
         $this->logger = $logger;
         $this->broadcastService = $broadcastService;
@@ -41,7 +40,8 @@ class GameActionHandler implements SpecificMessageHandlerInterface
      * @param array<string, mixed> $data
      * @return void
      */
-    public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
+    public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void
+    {
         $this->logger->logStart("GameActionHandler: handle from clientId={$clientId}, sessionId={$sessionId}", $data);
 
         $payload = PayloadHelper::extractPayloadFromData($data);
@@ -53,10 +53,14 @@ class GameActionHandler implements SpecificMessageHandlerInterface
         $detail = PayloadHelper::extractArrayFromPayload('detail', $payload);
 
         if ($questId === null || $action === 'Unknown') {
-            $this->logger->log("GameActionHandler: Missing required data (questId, playerName, action).", $data, 'warning');
-            $errorDto = $this->messageFactory->createErrorMessage("Invalid game action data provided.");
+            $this->logger->log(
+                'GameActionHandler: Missing required data (questId, playerName, action).',
+                $data,
+                'warning',
+            );
+            $errorDto = $this->messageFactory->createErrorMessage('Invalid game action data provided.');
             $this->broadcastService->sendToClient($clientId, $errorDto, false, $sessionId);
-            $this->logger->logEnd("GameActionHandler: handle");
+            $this->logger->logEnd('GameActionHandler: handle');
             return;
         }
 
@@ -64,9 +68,17 @@ class GameActionHandler implements SpecificMessageHandlerInterface
 
         $this->broadcastService->broadcastToQuest($questId, $gameActionDto, $sessionId);
 
-        $this->logger->log("GameActionHandler: GameActionDto broadcasted", ['quest_id' => $questId, 'payload' => $payload]);
-        $this->broadcastService->sendBack($from, 'ack', ['type' => 'game-action_processed', 'playerName' => $playerName, 'action' => $action, 'detail' => $detail]);
+        $this->logger->log('GameActionHandler: GameActionDto broadcasted', [
+            'quest_id' => $questId,
+            'payload' => $payload,
+        ]);
+        $this->broadcastService->sendBack($from, 'ack', [
+            'type' => 'game-action_processed',
+            'playerName' => $playerName,
+            'action' => $action,
+            'detail' => $detail,
+        ]);
 
-        $this->logger->logEnd("GameActionHandler: handle");
+        $this->logger->logEnd('GameActionHandler: handle');
     }
 }

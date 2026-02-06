@@ -15,32 +15,40 @@ use Yii;
  */
 class PlayerCoin extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'player_coin';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['quantity'], 'default', 'value' => 0],
             [['player_id', 'coin'], 'required'],
             [['player_id', 'quantity'], 'integer'],
             [['coin'], 'string', 'max' => 2],
             [['player_id', 'coin'], 'unique', 'targetAttribute' => ['player_id', 'coin']],
-            [['player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['player_id' => 'id']],
+            [
+                ['player_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Player::class,
+                'targetAttribute' => ['player_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'player_id' => 'Foreign key to “player” table',
             'coin' => 'Currency',
@@ -53,7 +61,8 @@ class PlayerCoin extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Player>
      */
-    public function getPlayer() {
+    public function getPlayer()
+    {
         return $this->hasOne(Player::class, ['id' => 'player_id']);
     }
 }

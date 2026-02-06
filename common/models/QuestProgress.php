@@ -33,7 +33,6 @@ use Yii;
  */
 class QuestProgress extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
@@ -53,9 +52,27 @@ class QuestProgress extends \yii\db\ActiveRecord
             [['mission_id', 'quest_id', 'current_player_id', 'status', 'started_at', 'completed_at'], 'integer'],
             [['description'], 'string'],
             [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
-            [['quest_id'], 'exist', 'skipOnError' => true, 'targetClass' => Quest::class, 'targetAttribute' => ['quest_id' => 'id']],
-            [['mission_id'], 'exist', 'skipOnError' => true, 'targetClass' => Mission::class, 'targetAttribute' => ['mission_id' => 'id']],
-            [['quest_id', 'current_player_id'], 'exist', 'skipOnError' => true, 'targetClass' => QuestPlayer::class, 'targetAttribute' => ['quest_id' => 'quest_id', 'current_player_id' => 'player_id']],
+            [
+                ['quest_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Quest::class,
+                'targetAttribute' => ['quest_id' => 'id'],
+            ],
+            [
+                ['mission_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Mission::class,
+                'targetAttribute' => ['mission_id' => 'id'],
+            ],
+            [
+                ['quest_id', 'current_player_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => QuestPlayer::class,
+                'targetAttribute' => ['quest_id' => 'quest_id', 'current_player_id' => 'player_id'],
+            ],
         ];
     }
 
@@ -83,7 +100,9 @@ class QuestProgress extends \yii\db\ActiveRecord
      */
     public function getActions()
     {
-        return $this->hasMany(Action::class, ['id' => 'action_id'])->viaTable('quest_action', ['quest_progress_id' => 'id']);
+        return $this->hasMany(Action::class, ['id' => 'action_id'])->viaTable('quest_action', [
+            'quest_progress_id' => 'id',
+        ]);
     }
 
     /**
@@ -158,9 +177,9 @@ class QuestProgress extends \yii\db\ActiveRecord
     public function getCurrentQuestTurn(): ?QuestTurn
     {
         $questTurn = QuestTurn::find()
-                ->where(['quest_progress_id' => $this->id, 'player_id' => $this->current_player_id])
-                ->orderBy('sequence DESC')
-                ->one();
+            ->where(['quest_progress_id' => $this->id, 'player_id' => $this->current_player_id])
+            ->orderBy('sequence DESC')
+            ->one();
         return $questTurn;
     }
 
@@ -171,7 +190,6 @@ class QuestProgress extends \yii\db\ActiveRecord
      */
     public function getRemainingActions(): \yii\db\ActiveQuery
     {
-        return $this->hasMany(QuestAction::class, ['quest_progress_id' => 'id'])
-                        ->andWhere(['eligible' => 1]);
+        return $this->hasMany(QuestAction::class, ['quest_progress_id' => 'id'])->andWhere(['eligible' => 1]);
     }
 }

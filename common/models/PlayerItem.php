@@ -38,7 +38,6 @@ use Yii;
  */
 class PlayerItem extends \yii\db\ActiveRecord
 {
-
     const BODY_HEAD_ZONE = 'equipmentHeadZone';
     const BODY_CHEST_ZONE = 'equipmentChestZone';
     const BODY_RIGHT_HAND_ZONE = 'equipmentRightHandZone';
@@ -50,13 +49,13 @@ class PlayerItem extends \yii\db\ActiveRecord
             'otherHandProperty' => 'leftHand',
             'otherHandItemIdField' => 'left_hand_item_id',
             'otherHandBodyZone' => self::BODY_LEFT_HAND_ZONE,
-            'itemIdField' => 'right_hand_item_id'
+            'itemIdField' => 'right_hand_item_id',
         ],
         self::BODY_LEFT_HAND_ZONE => [
             'otherHandProperty' => 'rightHand',
             'otherHandItemIdField' => 'right_hand_item_id',
             'otherHandBodyZone' => self::BODY_RIGHT_HAND_ZONE,
-            'itemIdField' => 'left_hand_item_id'
+            'itemIdField' => 'left_hand_item_id',
         ],
     ];
     // Match the properties of the PlayerBody object to the image area
@@ -71,54 +70,80 @@ class PlayerItem extends \yii\db\ActiveRecord
     const BODY_PROPERTIES = [
         self::BODY_HEAD_ZONE => [
             'itemIdField' => 'head_item_id',
-            'property' => 'head'
+            'property' => 'head',
         ],
         self::BODY_CHEST_ZONE => [
             'itemIdField' => 'chest_item_id',
-            'property' => 'chest'
+            'property' => 'chest',
         ],
         self::BODY_RIGHT_HAND_ZONE => [
             'itemIdField' => 'right_hand_item_id',
-            'property' => 'rightHand'
+            'property' => 'rightHand',
         ],
         self::BODY_LEFT_HAND_ZONE => [
             'itemIdField' => 'left_hand_item_id',
-            'property' => 'leftHand'
+            'property' => 'leftHand',
         ],
         self::BODY_BACK_ZONE => [
             'itemIdField' => 'back_item_id',
-            'property' => 'back'
+            'property' => 'back',
         ],
     ];
 
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'player_item';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['image', 'attack_modifier', 'damage'], 'default', 'value' => null],
             [['quantity'], 'default', 'value' => 1],
             [['is_proficient', 'is_two_handed'], 'default', 'value' => 0],
             [['player_id', 'item_id', 'item_name', 'item_type'], 'required'],
-            [['player_id', 'item_id', 'quantity', 'is_carrying', 'is_proficient', 'is_two_handed', 'attack_modifier'], 'integer'],
+            [
+                [
+                    'player_id',
+                    'item_id',
+                    'quantity',
+                    'is_carrying',
+                    'is_proficient',
+                    'is_two_handed',
+                    'attack_modifier',
+                ],
+                'integer',
+            ],
             [['item_name', 'item_type', 'image', 'damage'], 'string', 'max' => 64],
             [['player_id', 'item_id'], 'unique', 'targetAttribute' => ['player_id', 'item_id']],
-            [['player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['player_id' => 'id']],
-            [['item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['item_id' => 'id']],
+            [
+                ['player_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Player::class,
+                'targetAttribute' => ['player_id' => 'id'],
+            ],
+            [
+                ['item_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Item::class,
+                'targetAttribute' => ['item_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'player_id' => 'Foreign key to “player” table',
             'item_id' => 'Foreign key to “item” table',
@@ -139,7 +164,8 @@ class PlayerItem extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Item>
      */
-    public function getItem() {
+    public function getItem()
+    {
         return $this->hasOne(Item::class, ['id' => 'item_id']);
     }
 
@@ -148,7 +174,8 @@ class PlayerItem extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Player>
      */
-    public function getPlayer() {
+    public function getPlayer()
+    {
         return $this->hasOne(Player::class, ['id' => 'player_id']);
     }
 
@@ -157,7 +184,8 @@ class PlayerItem extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<PlayerBody>
      */
-    public function getPlayerBody() {
+    public function getPlayerBody()
+    {
         return $this->hasOne(PlayerBody::class, ['player_id' => 'player_id']);
     }
 
@@ -166,7 +194,8 @@ class PlayerItem extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<PlayerBody>
      */
-    public function getPlayerHead() {
+    public function getPlayerHead()
+    {
         return $this->hasOne(PlayerBody::class, ['player_id' => 'player_id', 'head_item_id' => 'item_id']);
     }
 
@@ -175,7 +204,8 @@ class PlayerItem extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<PlayerBody>
      */
-    public function getPlayerChest() {
+    public function getPlayerChest()
+    {
         return $this->hasOne(PlayerBody::class, ['player_id' => 'player_id', 'chest_item_id' => 'item_id']);
     }
 
@@ -184,7 +214,8 @@ class PlayerItem extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<PlayerBody>
      */
-    public function getPlayerRightHand() {
+    public function getPlayerRightHand()
+    {
         return $this->hasOne(PlayerBody::class, ['player_id' => 'player_id', 'right_hand_item_id' => 'item_id']);
     }
 
@@ -193,7 +224,8 @@ class PlayerItem extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<PlayerBody>
      */
-    public function getPlayerLeftHand() {
+    public function getPlayerLeftHand()
+    {
         return $this->hasOne(PlayerBody::class, ['player_id' => 'player_id', 'left_hand_item_id' => 'item_id']);
     }
 
@@ -202,7 +234,8 @@ class PlayerItem extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<PlayerBody>
      */
-    public function getPlayerBack() {
+    public function getPlayerBack()
+    {
         return $this->hasOne(PlayerBody::class, ['player_id' => 'player_id', 'back_item_id' => 'item_id']);
     }
 
@@ -215,7 +248,8 @@ class PlayerItem extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Armor>
      */
-    public function getArmor() {
+    public function getArmor()
+    {
         return $this->hasOne(Armor::class, ['item_id' => 'item_id']);
     }
 
@@ -224,7 +258,8 @@ class PlayerItem extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Pack>
      */
-    public function getPack() {
+    public function getPack()
+    {
         return $this->hasOne(Pack::class, ['parent_item_id' => 'item_id']);
     }
 
@@ -233,7 +268,8 @@ class PlayerItem extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Poison>
      */
-    public function getPoison() {
+    public function getPoison()
+    {
         return $this->hasOne(Poison::class, ['item_id' => 'item_id']);
     }
 
@@ -242,7 +278,8 @@ class PlayerItem extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Weapon>
      */
-    public function getWeapon() {
+    public function getWeapon()
+    {
         return $this->hasOne(Weapon::class, ['item_id' => 'item_id']);
     }
 }

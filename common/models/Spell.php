@@ -34,7 +34,6 @@ use Yii;
  */
 class Spell extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
@@ -57,10 +56,34 @@ class Spell extends \yii\db\ActiveRecord
             [['spell_level', 'school_id', 'range_id', 'casting_time_id', 'duration_id', 'is_ritual'], 'integer'],
             [['name'], 'string', 'max' => 64],
             [['name'], 'unique'],
-            [['school_id'], 'exist', 'skipOnError' => true, 'targetClass' => SpellSchool::class, 'targetAttribute' => ['school_id' => 'id']],
-            [['range_id'], 'exist', 'skipOnError' => true, 'targetClass' => SpellRange::class, 'targetAttribute' => ['range_id' => 'id']],
-            [['casting_time_id'], 'exist', 'skipOnError' => true, 'targetClass' => SpellCastingTime::class, 'targetAttribute' => ['casting_time_id' => 'id']],
-            [['duration_id'], 'exist', 'skipOnError' => true, 'targetClass' => SpellDuration::class, 'targetAttribute' => ['duration_id' => 'id']],
+            [
+                ['school_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => SpellSchool::class,
+                'targetAttribute' => ['school_id' => 'id'],
+            ],
+            [
+                ['range_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => SpellRange::class,
+                'targetAttribute' => ['range_id' => 'id'],
+            ],
+            [
+                ['casting_time_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => SpellCastingTime::class,
+                'targetAttribute' => ['casting_time_id' => 'id'],
+            ],
+            [
+                ['duration_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => SpellDuration::class,
+                'targetAttribute' => ['duration_id' => 'id'],
+            ],
         ];
     }
 
@@ -109,7 +132,9 @@ class Spell extends \yii\db\ActiveRecord
      */
     public function getClasses()
     {
-        return $this->hasMany(CharacterClass::class, ['id' => 'class_id'])->viaTable('class_spell', ['spell_id' => 'id']);
+        return $this->hasMany(CharacterClass::class, ['id' => 'class_id'])->viaTable('class_spell', [
+            'spell_id' => 'id',
+        ]);
     }
 
     /**
@@ -119,7 +144,9 @@ class Spell extends \yii\db\ActiveRecord
      */
     public function getComponents()
     {
-        return $this->hasMany(Component::class, ['id' => 'component_id'])->viaTable('spell_component', ['spell_id' => 'id']);
+        return $this->hasMany(Component::class, ['id' => 'component_id'])->viaTable('spell_component', [
+            'spell_id' => 'id',
+        ]);
     }
 
     /**
@@ -129,7 +156,9 @@ class Spell extends \yii\db\ActiveRecord
      */
     public function getDamageTypes()
     {
-        return $this->hasMany(DamageType::class, ['id' => 'damage_type_id'])->viaTable('spell_damage_type', ['spell_id' => 'id']);
+        return $this->hasMany(DamageType::class, ['id' => 'damage_type_id'])->viaTable('spell_damage_type', [
+            'spell_id' => 'id',
+        ]);
     }
 
     /**

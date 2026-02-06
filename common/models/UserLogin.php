@@ -17,33 +17,45 @@ use Yii;
  */
 class UserLogin extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'user_login';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['logout_at', 'ip_address'], 'default', 'value' => null],
             [['user_id', 'application', 'login_at'], 'required'],
             [['user_id', 'login_at', 'logout_at'], 'integer'],
             [['application'], 'string', 'max' => 255],
             [['ip_address'], 'string', 'max' => 64],
-            [['user_id', 'application', 'login_at'], 'unique', 'targetAttribute' => ['user_id', 'application', 'login_at']],
-            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
+            [
+                ['user_id', 'application', 'login_at'],
+                'unique',
+                'targetAttribute' => ['user_id', 'application', 'login_at'],
+            ],
+            [
+                ['user_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => User::class,
+                'targetAttribute' => ['user_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'user_id' => 'Primary Key and Foreign Key to the [User] entity',
             'application' => 'Application logged to',
@@ -58,7 +70,8 @@ class UserLogin extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<User>
      */
-    public function getUser() {
+    public function getUser()
+    {
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 }

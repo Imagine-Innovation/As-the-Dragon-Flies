@@ -13,12 +13,12 @@ use frontend\widgets\RecordCount;
 <div class="card">
     <div class="card-body">
         <?=
-        RecordCount::widget([
-            'count' => $count,
-            'model' => 'notification',
-            'adjective' => 'raised',
-        ])
-        ?>
+    RecordCount::widget([
+        'count' => $count,
+        'model' => 'notification',
+        'adjective' => 'raised',
+    ])
+?>
         <div class="table-responsive">
             <table class="table table-dark table-hover mb-0">
                 <thead>
@@ -34,7 +34,9 @@ use frontend\widgets\RecordCount;
                         <tr>
                             <th scope="row"><?= $model->quest->name ?></th>
                             <td><?= $model->initiator->name ?></td>
-                            <td class="text-center"><?= Yii::$app->formatter->asDateTime($model->created_at, 'dd/MM/yyyy HH:mm') ?></td>
+                            <td class="text-center"><?=
+                        Yii::$app->formatter->asDateTime($model->created_at, 'dd/MM/yyyy HH:mm')
+                    ?></td>
                             <td><?= $model->message ?></td>
                         </tr>
                     <?php endforeach; ?>
@@ -43,12 +45,12 @@ use frontend\widgets\RecordCount;
         </div>
         <!-- Pagination -->
         <?=
-        Pagination::widget([
-            'page' => $page,
-            'pageCount' => $pageCount,
-            'limit' => $limit,
-        ])
-        ?>
+    Pagination::widget([
+        'page' => $page,
+        'pageCount' => $pageCount,
+        'limit' => $limit,
+    ])
+?>
         <!-- End Pagination -->
     </div>
 </div>

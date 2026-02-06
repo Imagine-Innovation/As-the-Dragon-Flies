@@ -1,4 +1,5 @@
 <?php
+
 /** @var int $id */
 /** @var int $score */
 /** @var int $bonus */

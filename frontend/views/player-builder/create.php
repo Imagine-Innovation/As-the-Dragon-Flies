@@ -18,21 +18,21 @@ $firstRaceQuestion = BuilderComponent::getFirstQuestion('race');
 $tabs = BuilderComponent::CREATE_TABS;
 $firstTab = array_key_first($tabs);
 
-$isAdmin = (Yii::$app->user->identity->is_admin === 1);
+$isAdmin = Yii::$app->user->identity->is_admin === 1;
 ?>
 <div class="card" id="playerBuilder-create">
     <div class="card-body">
         <h4 class="card-title text-decoration"><?= Html::encode($this->title) ?></h4>
         <div class="actions">
             <?=
-            Button::widget([
-                'mode' => 'icon',
-                'id' => 'showBuilderWizardModal-button',
-                'icon' => 'bi-magic',
-                'tooltip' => 'Character builder wizard',
-                'modal' => 'builderWizardModal'
-            ])
-            ?>
+    Button::widget([
+        'mode' => 'icon',
+        'id' => 'showBuilderWizardModal-button',
+        'icon' => 'bi-magic',
+        'tooltip' => 'Character builder wizard',
+        'modal' => 'builderWizardModal',
+    ])
+?>
         </div>
         <h6 class="card-subtitle">
             A step-by-step wizard to help you create your player
@@ -56,9 +56,9 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
         <div class="tab-container">
             <ul class="nav nav-tabs" role="tablist">
                 <?php foreach ($tabs as $tab): ?>
-                    <?php if (($isAdmin && $tab['admin']) || !$tab['admin']): ?>
+                    <?php if ($isAdmin && $tab['admin'] || !$tab['admin']): ?>
                         <li class="nav-item">
-                            <a role="tab" class="nav-link<?= ($tab['anchor'] === $firstTab) ? " active" : '' ?>"
+                            <a role="tab" class="nav-link<?= $tab['anchor'] === $firstTab ? ' active' : '' ?>"
                                id="builderTab-<?= $tab['anchor'] ?>-<?= $tab['wizard'] ?>"
                                data-bs-toggle="tab" href="#<?= $tab['anchor'] ?>-tabContent">
                                    <?= $tab['name'] ?>
@@ -71,13 +71,13 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
             <div class="tab-content">
                 <?php foreach ($tabs as $tab): ?>
                     <div role="tabpanel" id="<?= $tab['anchor'] ?>-tabContent"
-                         class="tab-pane <?= ($tab['anchor'] === $firstTab) ? " active show" : '' ?> fade">
+                         class="tab-pane <?= $tab['anchor'] === $firstTab ? ' active show' : '' ?> fade">
                              <?=
-                             BuilderTab::widget([
-                                 'player' => $model,
-                                 'tabContent' => $tab,
-                             ])
-                             ?>
+                    BuilderTab::widget([
+                        'player' => $model,
+                        'tabContent' => $tab,
+                    ])
+                ?>
                     </div>
                 <?php endforeach; ?>
             </div>
@@ -93,13 +93,13 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
                 <h6 class="modal-title">Answer these questions to help you find the right player</h6>
             </div>
             <?=
-            AjaxContainer::widget([
-                'name' => 'ajaxBuilderWizardQA',
-                'options' => [
-                    'class' => 'modal-body',
-                ],
-            ])
-            ?>
+    AjaxContainer::widget([
+        'name' => 'ajaxBuilderWizardQA',
+        'options' => [
+            'class' => 'modal-body',
+        ],
+    ])
+?>
             <div class="modal-footer">
                 <button class="btn btn-warning btn-sm mt-2 w-25" id="nextQuestionButton" type="button"
                         onclick="PlayerBuilder.nextQuestion(); return false;">
@@ -124,14 +124,14 @@ $isAdmin = (Yii::$app->user->identity->is_admin === 1);
             </div>
             <div class="modal-footer">
                 <?=
-                Button::widget([
-                    'icon' => 'bi-floppy',
-                    'title' => 'Save and continue',
-                    'id' => 'playerBuilderSaveButton',
-                    'isCta' => true,
-                    'style' => 'btn-sm mt-2 w-50',
-                ])
-                ?>
+    Button::widget([
+        'icon' => 'bi-floppy',
+        'title' => 'Save and continue',
+        'id' => 'playerBuilderSaveButton',
+        'isCta' => true,
+        'style' => 'btn-sm mt-2 w-50',
+    ])
+?>
             </div>
         </div>
     </div>

@@ -22,7 +22,6 @@ use Yii;
  */
 class QuestTurn extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
@@ -42,8 +41,20 @@ class QuestTurn extends \yii\db\ActiveRecord
             [['player_id', 'quest_progress_id', 'sequence', 'status', 'started_at', 'ended_at'], 'integer'],
             [['description'], 'string'],
             [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
-            [['quest_progress_id'], 'exist', 'skipOnError' => true, 'targetClass' => QuestProgress::class, 'targetAttribute' => ['quest_progress_id' => 'id']],
-            [['player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['player_id' => 'id']],
+            [
+                ['quest_progress_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => QuestProgress::class,
+                'targetAttribute' => ['quest_progress_id' => 'id'],
+            ],
+            [
+                ['player_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Player::class,
+                'targetAttribute' => ['player_id' => 'id'],
+            ],
         ];
     }
 

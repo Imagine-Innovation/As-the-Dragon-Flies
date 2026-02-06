@@ -15,7 +15,7 @@ $className = $model->class->name;
 
 $paragraphs = [
     "Your class '{$className}' and your background '{$backgroundName}' offers you the following options for building your starting equipment",
-    "Select one option on each line:"
+    'Select one option on each line:',
 ];
 
 $items = [];

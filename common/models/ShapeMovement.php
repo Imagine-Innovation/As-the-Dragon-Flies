@@ -17,32 +17,46 @@ use Yii;
  */
 class ShapeMovement extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'shape_movement';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['can_hover'], 'default', 'value' => 0],
             [['shape_id', 'movement_id'], 'required'],
             [['shape_id', 'movement_id', 'speed', 'can_hover'], 'integer'],
             [['shape_id', 'movement_id'], 'unique', 'targetAttribute' => ['shape_id', 'movement_id']],
-            [['shape_id'], 'exist', 'skipOnError' => true, 'targetClass' => Shape::class, 'targetAttribute' => ['shape_id' => 'id']],
-            [['movement_id'], 'exist', 'skipOnError' => true, 'targetClass' => Movement::class, 'targetAttribute' => ['movement_id' => 'id']],
+            [
+                ['shape_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Shape::class,
+                'targetAttribute' => ['shape_id' => 'id'],
+            ],
+            [
+                ['movement_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Movement::class,
+                'targetAttribute' => ['movement_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'shape_id' => 'Foreign key to “shape” table',
             'movement_id' => 'Foreign key to “movement” table',
@@ -56,7 +70,8 @@ class ShapeMovement extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Movement>
      */
-    public function getMovement() {
+    public function getMovement()
+    {
         return $this->hasOne(Movement::class, ['id' => 'movement_id']);
     }
 
@@ -65,7 +80,8 @@ class ShapeMovement extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Shape>
      */
-    public function getShape() {
+    public function getShape()
+    {
         return $this->hasOne(Shape::class, ['id' => 'shape_id']);
     }
 }

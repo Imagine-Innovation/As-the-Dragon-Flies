@@ -17,9 +17,7 @@ use yii\helpers\Url;
 $tavernManager = new TavernManager(['quest' => $quest]);
 $canJoin = $tavernManager->canPlayerJoinQuest($player);
 
-$image = $story->image ?
-        "resources/story-{$story->id}/img/{$story->image}" :
-        "img/sm/" . mt_rand(1, 8) . ".jpg";
+$image = $story->image ? "resources/story-{$story->id}/img/{$story->image}" : 'img/sm/' . mt_rand(1, 8) . '.jpg';
 ?>
 
 <div class="card h-100">
@@ -29,21 +27,21 @@ $image = $story->image ?
     <?php if ($user->is_designer): ?>
         <div class="actions">
             <?=
-            Button::widget([
-                'mode' => 'icon',
-                'url' => Url::toRoute(['story/view', 'id' => $story->id]),
-                'icon' => 'bi-journal',
-                'tooltip' => "View story details"
-            ])
-            ?>
+        Button::widget([
+            'mode' => 'icon',
+            'url' => Url::toRoute(['story/view', 'id' => $story->id]),
+            'icon' => 'bi-journal',
+            'tooltip' => 'View story details',
+        ])
+    ?>
             <?=
-            Button::widget([
-                'mode' => 'icon',
-                'url' => Url::toRoute(['story/update', 'id' => $story->id]),
-                'icon' => 'bi-journal-code',
-                'tooltip' => "Edit story"
-            ])
-            ?>
+        Button::widget([
+            'mode' => 'icon',
+            'url' => Url::toRoute(['story/update', 'id' => $story->id]),
+            'icon' => 'bi-journal-code',
+            'tooltip' => 'Edit story',
+        ])
+    ?>
         </div>
     <?php endif; ?>
 
@@ -53,15 +51,15 @@ $image = $story->image ?
         <?php if (!$canJoin['denied']): ?>
             <p>
                 <?=
-                Button::widget([
-                    'isPost' => true,
-                    'url' => Url::toRoute(['quest/join', 'storyId' => $story->id, 'playerId' => $player?->id]),
-                    'icon' => 'dnd-tower',
-                    'title' => 'Join the quest',
-                    'style' => 'text-decoration',
-                    'isCta' => true
-                ])
-                ?>
+            Button::widget([
+                'isPost' => true,
+                'url' => Url::toRoute(['quest/join', 'storyId' => $story->id, 'playerId' => $player?->id]),
+                'icon' => 'dnd-tower',
+                'title' => 'Join the quest',
+                'style' => 'text-decoration',
+                'isCta' => true,
+            ])
+        ?>
             </p>
         <?php endif; ?>
 
@@ -81,13 +79,13 @@ $image = $story->image ?
 
         <p class="text-muted">
             <?=
-            ModalDesc::widget([
-                'name' => $story->name,
-                'description' => $story->description,
-                'maxLength' => 300,
-                'id' => $story->id,
-            ])
-            ?>
+    ModalDesc::widget([
+        'name' => $story->name,
+        'description' => $story->description,
+        'maxLength' => 300,
+        'id' => $story->id,
+    ])
+?>
         </p>
 
         <?php if ($story->tags): ?>

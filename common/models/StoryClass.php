@@ -15,31 +15,45 @@ use Yii;
  */
 class StoryClass extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'story_class';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['story_id', 'class_id'], 'required'],
             [['story_id', 'class_id'], 'integer'],
             [['story_id', 'class_id'], 'unique', 'targetAttribute' => ['story_id', 'class_id']],
-            [['story_id'], 'exist', 'skipOnError' => true, 'targetClass' => Story::class, 'targetAttribute' => ['story_id' => 'id']],
-            [['class_id'], 'exist', 'skipOnError' => true, 'targetClass' => CharacterClass::class, 'targetAttribute' => ['class_id' => 'id']],
+            [
+                ['story_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Story::class,
+                'targetAttribute' => ['story_id' => 'id'],
+            ],
+            [
+                ['class_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => CharacterClass::class,
+                'targetAttribute' => ['class_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'story_id' => 'Foreign key to “story” table',
             'class_id' => 'Foreign key to “character_class” table',
@@ -51,7 +65,8 @@ class StoryClass extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<CharacterClass>
      */
-    public function getClass() {
+    public function getClass()
+    {
         return $this->hasOne(CharacterClass::class, ['id' => 'class_id']);
     }
 
@@ -60,7 +75,8 @@ class StoryClass extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Story>
      */
-    public function getStory() {
+    public function getStory()
+    {
         return $this->hasOne(Story::class, ['id' => 'story_id']);
     }
 }

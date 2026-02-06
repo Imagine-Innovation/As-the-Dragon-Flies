@@ -43,7 +43,6 @@ use Yii;
  */
 class Action extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
@@ -58,23 +57,108 @@ class Action extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['action_type_id', 'passage_id', 'decor_id', 'decor_item_id', 'npc_id', 'reply_id', 'trap_id', 'required_item_id', 'description', 'partial_dc'], 'default', 'value' => null],
+            [
+                [
+                    'action_type_id',
+                    'passage_id',
+                    'decor_id',
+                    'decor_item_id',
+                    'npc_id',
+                    'reply_id',
+                    'trap_id',
+                    'required_item_id',
+                    'description',
+                    'partial_dc',
+                ],
+                'default',
+                'value' => null,
+            ],
             [['dc'], 'default', 'value' => 10],
             [['is_free'], 'default', 'value' => 0],
             [['mission_id', 'name'], 'required'],
-            [['mission_id', 'action_type_id', 'passage_id', 'decor_id', 'decor_item_id', 'npc_id', 'reply_id', 'trap_id', 'required_item_id', 'dc', 'partial_dc', 'is_free'], 'integer'],
+            [
+                [
+                    'mission_id',
+                    'action_type_id',
+                    'passage_id',
+                    'decor_id',
+                    'decor_item_id',
+                    'npc_id',
+                    'reply_id',
+                    'trap_id',
+                    'required_item_id',
+                    'dc',
+                    'partial_dc',
+                    'is_free',
+                ],
+                'integer',
+            ],
             [['description'], 'string'],
             [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name'], 'string', 'max' => 64],
-            [['mission_id'], 'exist', 'skipOnError' => true, 'targetClass' => Mission::class, 'targetAttribute' => ['mission_id' => 'id']],
-            [['passage_id'], 'exist', 'skipOnError' => true, 'targetClass' => Passage::class, 'targetAttribute' => ['passage_id' => 'id']],
-            [['reply_id'], 'exist', 'skipOnError' => true, 'targetClass' => Reply::class, 'targetAttribute' => ['reply_id' => 'id']],
-            [['npc_id'], 'exist', 'skipOnError' => true, 'targetClass' => Npc::class, 'targetAttribute' => ['npc_id' => 'id']],
-            [['required_item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['required_item_id' => 'id']],
-            [['trap_id'], 'exist', 'skipOnError' => true, 'targetClass' => Trap::class, 'targetAttribute' => ['trap_id' => 'id']],
-            [['decor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Decor::class, 'targetAttribute' => ['decor_id' => 'id']],
-            [['decor_item_id'], 'exist', 'skipOnError' => true, 'targetClass' => DecorItem::class, 'targetAttribute' => ['decor_item_id' => 'id']],
-            [['action_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => ActionType::class, 'targetAttribute' => ['action_type_id' => 'id']],
+            [
+                ['mission_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Mission::class,
+                'targetAttribute' => ['mission_id' => 'id'],
+            ],
+            [
+                ['passage_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Passage::class,
+                'targetAttribute' => ['passage_id' => 'id'],
+            ],
+            [
+                ['reply_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Reply::class,
+                'targetAttribute' => ['reply_id' => 'id'],
+            ],
+            [
+                ['npc_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Npc::class,
+                'targetAttribute' => ['npc_id' => 'id'],
+            ],
+            [
+                ['required_item_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Item::class,
+                'targetAttribute' => ['required_item_id' => 'id'],
+            ],
+            [
+                ['trap_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Trap::class,
+                'targetAttribute' => ['trap_id' => 'id'],
+            ],
+            [
+                ['decor_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Decor::class,
+                'targetAttribute' => ['decor_id' => 'id'],
+            ],
+            [
+                ['decor_item_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => DecorItem::class,
+                'targetAttribute' => ['decor_item_id' => 'id'],
+            ],
+            [
+                ['action_type_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => ActionType::class,
+                'targetAttribute' => ['action_type_id' => 'id'],
+            ],
         ];
     }
 
@@ -169,7 +253,9 @@ class Action extends \yii\db\ActiveRecord
      */
     public function getNextActions()
     {
-        return $this->hasMany(Action::class, ['id' => 'next_action_id'])->viaTable('action_flow', ['previous_action_id' => 'id']);
+        return $this->hasMany(Action::class, ['id' => 'next_action_id'])->viaTable('action_flow', [
+            'previous_action_id' => 'id',
+        ]);
     }
 
     /**
@@ -209,7 +295,9 @@ class Action extends \yii\db\ActiveRecord
      */
     public function getPreviousActions()
     {
-        return $this->hasMany(Action::class, ['id' => 'previous_action_id'])->viaTable('action_flow', ['next_action_id' => 'id']);
+        return $this->hasMany(Action::class, ['id' => 'previous_action_id'])->viaTable('action_flow', [
+            'next_action_id' => 'id',
+        ]);
     }
 
     /**
@@ -229,7 +317,9 @@ class Action extends \yii\db\ActiveRecord
      */
     public function getQuestProgresses()
     {
-        return $this->hasMany(QuestProgress::class, ['id' => 'quest_progress_id'])->viaTable('quest_action', ['action_id' => 'id']);
+        return $this->hasMany(QuestProgress::class, ['id' => 'quest_progress_id'])->viaTable('quest_action', [
+            'action_id' => 'id',
+        ]);
     }
 
     /**

@@ -19,32 +19,46 @@ use Yii;
  */
 class RuleExpression extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'rule_expression';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['parent_id', 'op'], 'default', 'value' => null],
             [['rule_id'], 'required'],
             [['rule_id', 'parent_id'], 'integer'],
             [['op'], 'string', 'max' => 3],
-            [['rule_id'], 'exist', 'skipOnError' => true, 'targetClass' => Rule::class, 'targetAttribute' => ['rule_id' => 'id']],
-            [['parent_id'], 'exist', 'skipOnError' => true, 'targetClass' => RuleExpression::class, 'targetAttribute' => ['parent_id' => 'id']],
+            [
+                ['rule_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Rule::class,
+                'targetAttribute' => ['rule_id' => 'id'],
+            ],
+            [
+                ['parent_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => RuleExpression::class,
+                'targetAttribute' => ['parent_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key.',
             'rule_id' => 'Foreign key to “rule” table',
@@ -58,7 +72,8 @@ class RuleExpression extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<RuleExpression>
      */
-    public function getParent() {
+    public function getParent()
+    {
         return $this->hasOne(RuleExpression::class, ['id' => 'parent_id']);
     }
 
@@ -67,7 +82,8 @@ class RuleExpression extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Rule>
      */
-    public function getRule() {
+    public function getRule()
+    {
         return $this->hasOne(Rule::class, ['id' => 'rule_id']);
     }
 
@@ -76,7 +92,8 @@ class RuleExpression extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<RuleCondition>
      */
-    public function getRuleConditions() {
+    public function getRuleConditions()
+    {
         return $this->hasMany(RuleCondition::class, ['expression_id' => 'id']);
     }
 
@@ -85,7 +102,8 @@ class RuleExpression extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<RuleExpression>
      */
-    public function getRuleExpressions() {
+    public function getRuleExpressions()
+    {
         return $this->hasMany(RuleExpression::class, ['parent_id' => 'id']);
     }
 }

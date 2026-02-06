@@ -24,31 +24,34 @@ use yii\web\Response;
  */
 class GameController extends Controller
 {
-
     /**
      * @inheritDoc
      */
-    public function behaviors() {
-        return array_merge(
-                parent::behaviors(),
-                [
-                    'access' => [
-                        'class' => AccessControl::class,
-                        'rules' => [
-                            ['actions' => ['*'], 'allow' => false, 'roles' => ['?']],
-                            [
-                                'actions' => [
-                                    'view',
-                                    'ajax-actions', 'ajax-dialog', 'ajax-evaluate', 'ajax-mission', 'ajax-next-turn',
-                                    'ajax-player', 'ajax-quit', 'ajax-turn',
-                                ],
-                                'allow' => ManageAccessRights::isRouteAllowed($this),
-                                'roles' => ['@'],
-                            ],
+    public function behaviors()
+    {
+        return array_merge(parent::behaviors(), [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    ['actions' => ['*'], 'allow' => false, 'roles' => ['?']],
+                    [
+                        'actions' => [
+                            'view',
+                            'ajax-actions',
+                            'ajax-dialog',
+                            'ajax-evaluate',
+                            'ajax-mission',
+                            'ajax-next-turn',
+                            'ajax-player',
+                            'ajax-quit',
+                            'ajax-turn',
                         ],
+                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'roles' => ['@'],
                     ],
-                ]
-        );
+                ],
+            ],
+        ]);
     }
 
     /**
@@ -61,18 +64,19 @@ class GameController extends Controller
      * @return string Rendered view page
      * @throws NotFoundHttpException if quest not found
      */
-    public function actionView(int $id): string {
+    public function actionView(int $id): string
+    {
         $this->layout = 'game';
 
         $quest = FindModelHelper::findQuest(['id' => $id]);
         $nbPlayers = QuestPlayer::find()
-                ->where(['quest_id' => $quest->id])
-                ->andWhere(['<>', 'status', AppStatus::LEFT->value])
-                ->count();
+            ->where(['quest_id' => $quest->id])
+            ->andWhere(['<>', 'status', AppStatus::LEFT->value])
+            ->count();
 
         return $this->render('view', [
-                    'quest' => $quest,
-                    'nbPlayers' => $nbPlayers,
+            'quest' => $quest,
+            'nbPlayers' => $nbPlayers,
         ]);
     }
 
@@ -84,7 +88,8 @@ class GameController extends Controller
      *   - msg: string message for client
      *   - content: HTML content for tavern update
      */
-    public function actionAjaxPlayer(?int $id): array {
+    public function actionAjaxPlayer(?int $id): array
+    {
         // Configure JSON response format
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -106,7 +111,8 @@ class GameController extends Controller
      * @param string $reason
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxQuit(string $reason): array {
+    public function actionAjaxQuit(string $reason): array
+    {
         // Configure response format
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -142,7 +148,8 @@ class GameController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxMission(int $missionId): array {
+    public function actionAjaxMission(int $missionId): array
+    {
         // Configure JSON response format
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -161,7 +168,8 @@ class GameController extends Controller
      *
      * @return  array{error: bool, msg: string, content?: mixed}
      */
-    public function actionAjaxTurn(): array {
+    public function actionAjaxTurn(): array
+    {
         // Configure JSON response format
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -170,9 +178,10 @@ class GameController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
         }
 
-        $questTurn = QuestTurn::find()
-                ->where(['status' => AppStatus::IN_PROGRESS->value, 'quest_progress_id' => Yii::$app->request->get('questProgressId')])
-                ->one();
+        $questTurn = QuestTurn::find()->where([
+            'status' => AppStatus::IN_PROGRESS->value,
+            'quest_progress_id' => Yii::$app->request->get('questProgressId'),
+        ])->one();
 
         if ($questTurn) {
             $content = [
@@ -190,7 +199,8 @@ class GameController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxActions(int $questProgressId): array {
+    public function actionAjaxActions(int $questProgressId): array
+    {
         // Configure JSON response format
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -225,7 +235,8 @@ class GameController extends Controller
      * @param int $storyId
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxDialog(int $replyId, int $playerId, int $storyId): array {
+    public function actionAjaxDialog(int $replyId, int $playerId, int $storyId): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isGet || !$this->request->isAjax) {
@@ -245,8 +256,11 @@ class GameController extends Controller
         ]);
 
         return [
-            'error' => false, 'msg' => '', 'content' => $content,
-            'text' => $dialog->text, 'audio' => $dialog->audio
+            'error' => false,
+            'msg' => '',
+            'content' => $content,
+            'text' => $dialog->text,
+            'audio' => $dialog->audio,
         ];
     }
 
@@ -256,10 +270,11 @@ class GameController extends Controller
      * @param Request $postRequest
      * @return array<string, mixed> An associative array that contains what should be displayed
      */
-    protected function getOutcome(Request $postRequest): array {
+    protected function getOutcome(Request $postRequest): array
+    {
         $param = [
             'quest_progress_id' => $postRequest->post('questProgressId'),
-            'action_id' => $postRequest->post('actionId')
+            'action_id' => $postRequest->post('actionId'),
         ];
         $questAction = FindModelHelper::findQuestAction($param);
         $actionManager = new ActionManager(['questAction' => $questAction]);
@@ -275,7 +290,8 @@ class GameController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string} Json encoded associative array with error status, internal message, and content to display
      */
-    public function actionAjaxEvaluate(): array {
+    public function actionAjaxEvaluate(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -293,7 +309,8 @@ class GameController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string} Json encoded associative array with error status, internal message, and content to display
      */
-    public function actionAjaxNextTurn(): array {
+    public function actionAjaxNextTurn(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -310,7 +327,10 @@ class GameController extends Controller
         $currentMissionId = (int) $request->post('missionId');
         $remainingActions = $questProgress->remainingActions;
 
-        Yii::debug("*** debug *** actionAjaxNextTurn - currentMissionId={$currentMissionId}, nextMissionId={$nextMissionId}, remainingAction=" . count($remainingActions));
+        Yii::debug(
+            "*** debug *** actionAjaxNextTurn - currentMissionId={$currentMissionId}, nextMissionId={$nextMissionId}, remainingAction="
+                . count($remainingActions),
+        );
 
         if ($remainingActions) {
             if ($nextMissionId && $nextMissionId !== $currentMissionId) {
@@ -334,7 +354,12 @@ class GameController extends Controller
      * @return bool
      * @throws \Exception
      */
-    protected function createEvent(string $eventType, Request $postRequest, string $actionName, array $outcome = []): bool {
+    protected function createEvent(
+        string $eventType,
+        Request $postRequest,
+        string $actionName,
+        array $outcome = [],
+    ): bool {
         $sessionId = Yii::$app->session->get('sessionId');
         try {
             $playerId = $postRequest->post('playerId');
@@ -353,7 +378,7 @@ class GameController extends Controller
             return true;
         } catch (\Exception $e) {
             Yii::error("Failed to broadcast '{$eventType}' event: " . $e->getMessage());
-            $errorMessage = "Error: " . $e->getMessage() . "<br />Stack Trace:<br />" . nl2br($e->getTraceAsString());
+            $errorMessage = 'Error: ' . $e->getMessage() . '<br />Stack Trace:<br />' . nl2br($e->getTraceAsString());
             throw new \Exception($errorMessage);
         }
     }

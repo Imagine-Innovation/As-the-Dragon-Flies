@@ -4,7 +4,6 @@ namespace common\extensions\EventHandler;
 
 class LoggerService
 {
-
     private string $logFilePath;
     private bool $debug;
     private int $nestedLevel = 0;
@@ -14,7 +13,8 @@ class LoggerService
      * @param string $logFilePath
      * @param bool $debug
      */
-    public function __construct(string $logFilePath, bool $debug = true) {
+    public function __construct(string $logFilePath, bool $debug = true)
+    {
         $this->logFilePath = $logFilePath;
         $this->debug = $debug;
     }
@@ -26,19 +26,20 @@ class LoggerService
      * @param string $level
      * @return void
      */
-    public function log(string $message, mixed $dump = null, string $level = 'info'): void {
+    public function log(string $message, mixed $dump = null, string $level = 'info'): void
+    {
         if (!$this->debug) {
             return;
         }
         // Use $this->logFilePath instead of hardcoded path
-        $myfile = fopen($this->logFilePath, "a");
+        $myfile = fopen($this->logFilePath, 'a');
         if (!$myfile) {
             // Optionally, handle error if file cannot be opened, e.g., log to stderr or throw an exception
             error_log("Unable to open log file: {$this->logFilePath}");
             return;
         }
 
-        $offset = str_repeat("    ", max($this->nestedLevel, 0));
+        $offset = str_repeat('    ', max($this->nestedLevel, 0));
         $date = date('Y-m-d H:i:s');
         $txt = "{$date} {$level}: {$this->nestedLevel}.{$offset}{$message}\n";
         fwrite($myfile, $txt);
@@ -63,7 +64,8 @@ class LoggerService
      * @param string $level
      * @return void
      */
-    public function logStart(string $message, mixed $dump = null, string $level = 'info'): void {
+    public function logStart(string $message, mixed $dump = null, string $level = 'info'): void
+    {
         $this->nestedLevel++;
         $this->log("----------> start {$message}", $dump, $level);
     }
@@ -75,7 +77,8 @@ class LoggerService
      * @param string $level
      * @return void
      */
-    public function logEnd(string $message, mixed $dump = null, string $level = 'info'): void {
+    public function logEnd(string $message, mixed $dump = null, string $level = 'info'): void
+    {
         $this->log("----------< end {$message}\n", $dump, $level);
         $this->nestedLevel--;
     }
@@ -86,7 +89,8 @@ class LoggerService
      *
      * @return bool
      */
-    public function isDebugEnabled(): bool {
+    public function isDebugEnabled(): bool
+    {
         return $this->debug;
     }
 }

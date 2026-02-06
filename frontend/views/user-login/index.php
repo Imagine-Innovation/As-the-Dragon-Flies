@@ -12,7 +12,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <?= AjaxContainer::widget(['name' => 'ajaxContainer']) ?>
 
 <?=
-$this->renderFile('@app/views/layouts/snippets/ajax-params.php', [
-    'route' => 'user-login/ajax',
-])
+    $this->renderFile('@app/views/layouts/snippets/ajax-params.php', [
+        'route' => 'user-login/ajax',
+    ])
 ?>

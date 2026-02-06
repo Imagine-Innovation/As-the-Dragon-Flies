@@ -15,31 +15,45 @@ use Yii;
  */
 class RaceGroupLanguage extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'race_group_language';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['race_group_id', 'language_id'], 'required'],
             [['race_group_id', 'language_id'], 'integer'],
             [['race_group_id', 'language_id'], 'unique', 'targetAttribute' => ['race_group_id', 'language_id']],
-            [['race_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => RaceGroup::class, 'targetAttribute' => ['race_group_id' => 'id']],
-            [['language_id'], 'exist', 'skipOnError' => true, 'targetClass' => Language::class, 'targetAttribute' => ['language_id' => 'id']],
+            [
+                ['race_group_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => RaceGroup::class,
+                'targetAttribute' => ['race_group_id' => 'id'],
+            ],
+            [
+                ['language_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Language::class,
+                'targetAttribute' => ['language_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'race_group_id' => 'Foreign key to “race_group” table',
             'language_id' => 'Foreign key to “language” table',
@@ -51,7 +65,8 @@ class RaceGroupLanguage extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Language>
      */
-    public function getLanguage() {
+    public function getLanguage()
+    {
         return $this->hasOne(Language::class, ['id' => 'language_id']);
     }
 
@@ -60,7 +75,8 @@ class RaceGroupLanguage extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<RaceGroup>
      */
-    public function getRaceGroup() {
+    public function getRaceGroup()
+    {
         return $this->hasOne(RaceGroup::class, ['id' => 'race_group_id']);
     }
 }

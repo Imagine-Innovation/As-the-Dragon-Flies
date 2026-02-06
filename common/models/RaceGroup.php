@@ -28,7 +28,6 @@ use Yii;
  */
 class RaceGroup extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
@@ -80,7 +79,9 @@ class RaceGroup extends \yii\db\ActiveRecord
      */
     public function getAlignments()
     {
-        return $this->hasMany(Alignment::class, ['id' => 'alignment_id'])->viaTable('race_group_alignment', ['race_group_id' => 'id']);
+        return $this->hasMany(Alignment::class, ['id' => 'alignment_id'])->viaTable('race_group_alignment', [
+            'race_group_id' => 'id',
+        ]);
     }
 
     /**
@@ -100,7 +101,9 @@ class RaceGroup extends \yii\db\ActiveRecord
      */
     public function getImages()
     {
-        return $this->hasMany(Image::class, ['id' => 'image_id'])->viaTable('race_group_image', ['race_group_id' => 'id']);
+        return $this->hasMany(Image::class, ['id' => 'image_id'])->viaTable('race_group_image', [
+            'race_group_id' => 'id',
+        ]);
     }
 
     /**
@@ -110,7 +113,9 @@ class RaceGroup extends \yii\db\ActiveRecord
      */
     public function getLanguages()
     {
-        return $this->hasMany(Language::class, ['id' => 'language_id'])->viaTable('race_group_language', ['race_group_id' => 'id']);
+        return $this->hasMany(Language::class, ['id' => 'language_id'])->viaTable('race_group_language', [
+            'race_group_id' => 'id',
+        ]);
     }
 
     /**

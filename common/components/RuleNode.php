@@ -9,7 +9,6 @@ use yii\base\Component;
  */
 class RuleNode extends Component
 {
-
     /** @var string The node type (e.g., 'condition', 'negate', 'booleanExpression') */
     public string $type;
 

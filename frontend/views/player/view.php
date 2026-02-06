@@ -1,4 +1,5 @@
 <?php
+
 /** @var yii\web\View $this */
 /** @var common\models\Player $model */
 $this->title = $model->name ?? 'New player';
@@ -26,7 +27,8 @@ $proficiencyBonus = $model->level->proficiency_bonus;
     <!-- Main Content -->
     <div class="row">
         <?php
-        $cardHeaderClass = "card-header bg-purple text-decoration fw-bold h-100 py-2";
+
+        $cardHeaderClass = 'card-header bg-purple text-decoration fw-bold h-100 py-2';
         $div = '<div class="col-12 col-md-6">';
 
         foreach ($cards as $card) {
@@ -35,9 +37,9 @@ $proficiencyBonus = $model->level->proficiency_bonus;
                 'cardHeaderClass' => $cardHeaderClass,
                 'proficiencyBonus' => $proficiencyBonus,
             ]);
-            echo($div . PHP_EOL);
-            echo($cardContent . PHP_EOL);
-            echo("</div>" . PHP_EOL);
+            echo $div . PHP_EOL;
+            echo $cardContent . PHP_EOL;
+            echo '</div>' . PHP_EOL;
         }
         ?>
     </div>

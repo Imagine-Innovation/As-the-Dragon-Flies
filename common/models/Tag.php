@@ -17,7 +17,6 @@ use Yii;
  */
 class Tag extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */

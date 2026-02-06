@@ -6,7 +6,6 @@ use Yii;
 
 class Alert extends \yii\bootstrap5\Widget
 {
-
     /**
      * @var array<string, string> the alert types configuration for the flash messages.
      * This array is setup as $key => $value, where:
@@ -18,7 +17,7 @@ class Alert extends \yii\bootstrap5\Widget
         'danger' => 'alert-danger',
         'success' => 'alert-success',
         'info' => 'alert-info',
-        'warning' => 'alert-warning'
+        'warning' => 'alert-warning',
     ];
 
     /**
@@ -31,7 +30,8 @@ class Alert extends \yii\bootstrap5\Widget
     /**
      * {@inheritdoc}
      */
-    public function run() {
+    public function run()
+    {
         $session = Yii::$app->session;
         $flashes = $session->getAllFlashes();
         $appendClass = isset($this->options['class']) ? ' ' . $this->options['class'] : '';
@@ -42,14 +42,16 @@ class Alert extends \yii\bootstrap5\Widget
             }
 
             foreach ((array) $flash as $i => $message) {
-                echo \yii\bootstrap5\Alert::widget([
-                    'body' => $message,
-                    'closeButton' => $this->closeButton,
-                    'options' => array_merge($this->options, [
-                        'id' => $this->getId() . '-' . $type . '-' . $i,
-                        'class' => $this->alertTypes[$type] . $appendClass,
-                    ]),
-                ]);
+                echo
+                    \yii\bootstrap5\Alert::widget([
+                        'body' => $message,
+                        'closeButton' => $this->closeButton,
+                        'options' => array_merge($this->options, [
+                            'id' => $this->getId() . '-' . $type . '-' . $i,
+                            'class' => $this->alertTypes[$type] . $appendClass,
+                        ]),
+                    ])
+                ;
             }
 
             $session->removeFlash($type);

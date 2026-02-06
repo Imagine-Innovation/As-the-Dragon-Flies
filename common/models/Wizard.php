@@ -15,18 +15,19 @@ use Yii;
  */
 class Wizard extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'wizard';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['name', 'topic'], 'required'],
             [['name', 'topic'], 'string', 'max' => 64],
@@ -37,7 +38,8 @@ class Wizard extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'name' => 'Wizard',
@@ -50,7 +52,8 @@ class Wizard extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<WizardQuestion>
      */
-    public function getWizardQuestions() {
+    public function getWizardQuestions()
+    {
         return $this->hasMany(WizardQuestion::class, ['wizard_id' => 'id']);
     }
 }

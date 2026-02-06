@@ -15,5 +15,5 @@ $this->params['breadcrumbs'][] = $this->title;
     $this->renderFile('@app/views/layouts/snippets/ajax-params.php', [
         'route' => 'user/ajax',
     ])
-    ?>
+?>
 </div>

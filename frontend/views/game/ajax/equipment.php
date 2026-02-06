@@ -20,7 +20,7 @@ foreach (PlayerItem::BODY_ZONE as $property => $zone) {
         ];
     }
 }
-$lastItemType = "none";
+$lastItemType = 'none';
 ?>
 <!-- Equipement -->
 <div class="actions">
@@ -30,9 +30,9 @@ $lastItemType = "none";
         'mode' => 'icon',
         'icon' => 'dnd-equipment',
         'tooltip' => "Player's equipement",
-        'modal' => 'equipmentModal'
+        'modal' => 'equipmentModal',
     ])
-    ?>
+?>
 </div>
 <div class="m-3">
     <h6 class="text-warning">Equipment</h6>
@@ -40,6 +40,7 @@ $lastItemType = "none";
     <?php foreach ($itemTypes as $itemType): ?>
         <?php if (array_key_exists($itemType, $playerItems) && !empty($playerItems[$itemType])): ?>
             <?php
+
             if ($lastItemType !== $itemType):
                 $lastItemType = $itemType;
                 ?>

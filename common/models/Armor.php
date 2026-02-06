@@ -26,32 +26,65 @@ use Yii;
  */
 class Armor extends Item
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'armor';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return array_merge(parent::rules(), [
             [['is_disadvantage'], 'default', 'value' => 0],
-            [['item_id', 'armor_class', 'dex_modifier', 'max_modifier', 'strength', 'don_delay', 'doff_delay', 'delay_unit'], 'required'],
-            [['item_id', 'armor_class', 'armor_bonus', 'dex_modifier', 'max_modifier', 'strength', 'is_disadvantage', 'don_delay', 'doff_delay'], 'integer'],
+            [
+                [
+                    'item_id',
+                    'armor_class',
+                    'dex_modifier',
+                    'max_modifier',
+                    'strength',
+                    'don_delay',
+                    'doff_delay',
+                    'delay_unit',
+                ],
+                'required',
+            ],
+            [
+                [
+                    'item_id',
+                    'armor_class',
+                    'armor_bonus',
+                    'dex_modifier',
+                    'max_modifier',
+                    'strength',
+                    'is_disadvantage',
+                    'don_delay',
+                    'doff_delay',
+                ],
+                'integer',
+            ],
             [['delay_unit'], 'string', 'max' => 8],
             [['item_id'], 'unique'],
-            [['item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['item_id' => 'id']],
+            [
+                ['item_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Item::class,
+                'targetAttribute' => ['item_id' => 'id'],
+            ],
         ]);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return array_merge(parent::attributeLabels(), [
             'item_id' => 'Primary key synchronized 1:1 with the “item” table',
             'armor_class' => 'Armor protects its wearer from attacks. The armor (and shield) you wear determines your base Armor Class.',
@@ -71,7 +104,8 @@ class Armor extends Item
      *
      * @return \yii\db\ActiveQuery<Item>
      */
-    public function getItem() {
+    public function getItem()
+    {
         return $this->hasOne(Item::class, ['id' => 'item_id']);
     }
 
@@ -80,7 +114,8 @@ class Armor extends Item
      *
      * @return \yii\db\ActiveQuery<ShapeArmor>
      */
-    public function getShapeArmors() {
+    public function getShapeArmors()
+    {
         return $this->hasMany(ShapeArmor::class, ['armor_id' => 'item_id']);
     }
 
@@ -89,7 +124,8 @@ class Armor extends Item
      *
      * @return \yii\db\ActiveQuery<Shape>
      */
-    public function getShapes() {
+    public function getShapes()
+    {
         return $this->hasMany(Shape::class, ['id' => 'shape_id'])->viaTable('shape_armor', ['armor_id' => 'item_id']);
     }
 
@@ -103,20 +139,21 @@ class Armor extends Item
      * @return string The formatted armor class string indicating base armor class,
      *                DEX modifier, max modifier, and armor bonus.
      */
-    public function getArmorClass(): string {
+    public function getArmorClass(): string
+    {
         $armorClass = '';
 
         // Append base armor class if greater than zero.
         $armorClass .= $this->armor_class > 0 ? $this->armor_class : '';
 
         // Append DEX modifier if present.
-        $armorClass .= $this->dex_modifier ? " +DEX" : '';
+        $armorClass .= $this->dex_modifier ? ' +DEX' : '';
 
         // Append max modifier if greater than zero.
-        $armorClass .= $this->max_modifier > 0 ? " (max " . $this->max_modifier . ")" : '';
+        $armorClass .= $this->max_modifier > 0 ? ' (max ' . $this->max_modifier . ')' : '';
 
         // Append armor bonus if greater than zero.
-        $armorClass .= $this->armor_bonus > 0 ? " +" . $this->armor_bonus : '';
+        $armorClass .= $this->armor_bonus > 0 ? ' +' . $this->armor_bonus : '';
 
         return trim($armorClass);
     }

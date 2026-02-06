@@ -23,7 +23,6 @@ use Yii;
  */
 class Language extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
@@ -86,7 +85,9 @@ class Language extends \yii\db\ActiveRecord
      */
     public function getPlayers()
     {
-        return $this->hasMany(Player::class, ['id' => 'player_id'])->viaTable('player_language', ['language_id' => 'id']);
+        return $this->hasMany(Player::class, ['id' => 'player_id'])->viaTable('player_language', [
+            'language_id' => 'id',
+        ]);
     }
 
     /**
@@ -106,7 +107,9 @@ class Language extends \yii\db\ActiveRecord
      */
     public function getRaceGroups()
     {
-        return $this->hasMany(RaceGroup::class, ['id' => 'race_group_id'])->viaTable('race_group_language', ['language_id' => 'id']);
+        return $this->hasMany(RaceGroup::class, ['id' => 'race_group_id'])->viaTable('race_group_language', [
+            'language_id' => 'id',
+        ]);
     }
 
     /**

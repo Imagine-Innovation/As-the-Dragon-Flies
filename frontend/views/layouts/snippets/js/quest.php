@@ -1,4 +1,5 @@
 <?php
+
 /** @var \yii\web\View $this */
 /** @var string $controllerId */
 /** @var string $actionId */
@@ -24,15 +25,15 @@ const notificationClient = new NotificationClient(url, sessionId, playerId, play
 notificationClient.init();
 
 <?php
+
 /**
  * Game specific local script
  */
-if ($controllerId === "game"):
-    ?>
+if ($controllerId === 'game'): ?>
     const equipmentHandler = new EquipmentHandler();
     const svg = document.getElementById('equipmentSvg');
     equipmentHandler.init(playerId, svg);
 
     const vtt = new VirtualTableTop();
     vtt.init();
-<?php endif; ?>
+<?php endif;

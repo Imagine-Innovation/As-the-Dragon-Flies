@@ -19,7 +19,6 @@ use Yii;
  */
 class Condition extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
@@ -71,7 +70,9 @@ class Condition extends \yii\db\ActiveRecord
      */
     public function getCreatures()
     {
-        return $this->hasMany(Creature::class, ['id' => 'creature_id'])->viaTable('creature_immunization', ['condition_id' => 'id']);
+        return $this->hasMany(Creature::class, ['id' => 'creature_id'])->viaTable('creature_immunization', [
+            'condition_id' => 'id',
+        ]);
     }
 
     /**
@@ -91,6 +92,9 @@ class Condition extends \yii\db\ActiveRecord
      */
     public function getQuests()
     {
-        return $this->hasMany(QuestPlayer::class, ['quest_id' => 'quest_id', 'player_id' => 'player_id'])->viaTable('quest_player_condition', ['condition_id' => 'id']);
+        return $this->hasMany(QuestPlayer::class, [
+            'quest_id' => 'quest_id',
+            'player_id' => 'player_id',
+        ])->viaTable('quest_player_condition', ['condition_id' => 'id']);
     }
 }

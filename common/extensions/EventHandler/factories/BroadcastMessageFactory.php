@@ -18,7 +18,6 @@ use Yii;
 
 class BroadcastMessageFactory
 {
-
     const LOG_FILE_PATH = 'c:/temp/BroadcastMessage.log';
 
     private LoggerService $loggerService;
@@ -55,8 +54,12 @@ class BroadcastMessageFactory
      * @param string $reason
      * @return PlayerQuitDto
      */
-    public function createPlayerQuitMessage(string $playerName, string $sessionId, string $questName, string $reason): PlayerQuitDto
-    {
+    public function createPlayerQuitMessage(
+        string $playerName,
+        string $sessionId,
+        string $questName,
+        string $reason,
+    ): PlayerQuitDto {
         return new PlayerQuitDto($playerName, $sessionId, $questName, $reason);
     }
 
@@ -121,8 +124,11 @@ class BroadcastMessageFactory
      * @param array<string, mixed>|null $details
      * @return NotificationDto
      */
-    public function createNotificationMessage(string $message, string $level = 'info', ?array $details = null): NotificationDto
-    {
+    public function createNotificationMessage(
+        string $message,
+        string $level = 'info',
+        ?array $details = null,
+    ): NotificationDto {
         return new NotificationDto($message, $level, $details);
     }
 
@@ -165,8 +171,13 @@ class BroadcastMessageFactory
      * @param array<string> $optionalKeys
      * @return BroadcastMessageInterface|null
      */
-    private function newDto(string $dtoClass, string $type, array $payload, array $requiredKeys, array $optionalKeys = []): ?BroadcastMessageInterface
-    {
+    private function newDto(
+        string $dtoClass,
+        string $type,
+        array $payload,
+        array $requiredKeys,
+        array $optionalKeys = [],
+    ): ?BroadcastMessageInterface {
         if ($this->validatePayload($payload, $requiredKeys)) {
             $args = [];
             foreach ($requiredKeys as $key) {
@@ -178,7 +189,9 @@ class BroadcastMessageFactory
             return new $dtoClass(...$args);
         }
         $requiredKeysLabel = implode(', ', $requiredKeys);
-        $this->loggerService->log("BroadcastMessageFactory - createMessage - type={$type}, invalid payload, expected payload attributes: {$requiredKeysLabel}");
+        $this->loggerService->log(
+            "BroadcastMessageFactory - createMessage - type={$type}, invalid payload, expected payload attributes: {$requiredKeysLabel}",
+        );
         return null;
     }
 
@@ -189,7 +202,11 @@ class BroadcastMessageFactory
      */
     private function handleUnknownType(string $type): void
     {
-        $this->loggerService->log("BroadcastMessageFactory - createMessage - unhandled type=[{$type}]", null, 'warning');
+        $this->loggerService->log(
+            "BroadcastMessageFactory - createMessage - unhandled type=[{$type}]",
+            null,
+            'warning',
+        );
         return;
     }
 
@@ -207,9 +224,24 @@ class BroadcastMessageFactory
 
         $dto = match ($type) {
             'new-message' => $this->newDto(NewMessageDto::class, $type, $payload, ['message', 'sender'], ['recipient']),
-            'player-joined' => $this->newDto(PlayerJoinedDto::class, $type, $payload, ['playerName', 'sessionId', 'questName']),
-            'player-quit' => $this->newDto(PlayerQuitDto::class, $type, $payload, ['playerName', 'sessionId', 'questName', 'reason']),
-            'quest-started' => $this->newDto(QuestStartedDto::class, $type, $payload, ['sessionId', 'questId', 'questName']),
+            'player-joined' => $this->newDto(
+                PlayerJoinedDto::class,
+                $type,
+                $payload,
+                ['playerName', 'sessionId', 'questName'],
+            ),
+            'player-quit' => $this->newDto(PlayerQuitDto::class, $type, $payload, [
+                'playerName',
+                'sessionId',
+                'questName',
+                'reason',
+            ]),
+            'quest-started' => $this->newDto(
+                QuestStartedDto::class,
+                $type,
+                $payload,
+                ['sessionId', 'questId', 'questName'],
+            ),
             'game-action' => $this->newDto(GameActionDto::class, $type, $payload, ['playerName', 'action', 'detail']),
             'next-turn' => $this->newDto(NextTurnDto::class, $type, $payload, ['detail']),
             'next-mission' => $this->newDto(NextMissionDto::class, $type, $payload, ['detail']),

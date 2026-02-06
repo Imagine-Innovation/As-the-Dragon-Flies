@@ -12,7 +12,11 @@ use yii\helpers\Url;
     <div class="dropdown-menu dropdown-menu-right dropdown-menu--block" role="menu">
         <div class="row app-shortcuts">
             <?php foreach ($menus as $menu): ?>
-                <a class="col-3 app-shortcuts__item" href="<?= Url::toRoute($menu->accessRight->route . '/' . $menu->accessRight->action) ?>">
+                <a class="col-3 app-shortcuts__item" href="<?=
+    
+            Url::toRoute($menu->accessRight->route . '/' . $menu->accessRight->action)
+
+            ?>">
                     <i class="bi <?= $menu->icon ?>"></i>
                     <small><?= $menu->label ?></small>
                 </a>

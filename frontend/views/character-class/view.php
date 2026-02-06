@@ -45,7 +45,7 @@ $first_anchor = 'presentation';
             <ul class="nav nav-tabs" role="tablist">
                 <?php foreach ($tabs as $tab): ?>
                     <li class="nav-item">
-                        <a class="nav-link<?= ($tab['anchor'] === $first_anchor) ? ' active' : '' ?>"
+                        <a class="nav-link<?= $tab['anchor'] === $first_anchor ? ' active' : '' ?>"
                            data-bs-toggle="tab" href="#<?= $tab['anchor'] ?>" role="tab">
                                <?= $tab['name'] ?>
                         </a>
@@ -55,16 +55,18 @@ $first_anchor = 'presentation';
 
             <div class="tab-content">
                 <?php foreach ($tabs as $tab): ?>
-                    <div class="tab-pane <?= ($tab['anchor'] === $first_anchor) ? 'active fade show' : 'fade' ?>" id="<?= $tab['anchor'] ?>" role="tabpanel">
+                    <div class="tab-pane <?= $tab['anchor'] === $first_anchor ? 'active fade show' : 'fade' ?>" id="<?=
+                    $tab['anchor']
+                ?>" role="tabpanel">
                         <?=
-                        $this->renderFile('@app/views/character-class/snippets/' . $tab['snippet'] . '.php', [
-                            'model' => $model,
-                            'hasSpell' => $hasSpell,
-                            'proficiencyHeaders' => $proficiencyHeaders,
-                            'proficiencies' => $proficiencies,
-                            'spellsByLevel' => $spellsByLevel,
-                        ])
-                        ?>
+                    $this->renderFile('@app/views/character-class/snippets/' . $tab['snippet'] . '.php', [
+                        'model' => $model,
+                        'hasSpell' => $hasSpell,
+                        'proficiencyHeaders' => $proficiencyHeaders,
+                        'proficiencies' => $proficiencies,
+                        'spellsByLevel' => $spellsByLevel,
+                    ])
+                ?>
                     </div>
                 <?php endforeach; ?>
             </div>

@@ -15,19 +15,19 @@ use yii\helpers\Url;
 <div class="card">
     <div class="card-body">
         <?=
-        RecordCount::widget([
-            'count' => $count,
-            'model' => 'access right',
-            'adjective' => 'defined',
-            'actions' => [
-                [
-                    'url' => Url::toRoute(['access-right/create']),
-                    'icon' => 'bi-shield-plus',
-                    'tooltip' => 'Add a new access right',
-                ],
-            ]
-        ])
-        ?>
+    RecordCount::widget([
+        'count' => $count,
+        'model' => 'access right',
+        'adjective' => 'defined',
+        'actions' => [
+            [
+                'url' => Url::toRoute(['access-right/create']),
+                'icon' => 'bi-shield-plus',
+                'tooltip' => 'Add a new access right',
+            ],
+        ],
+    ])
+?>
         <div class="table-responsive">
             <table class="table table-dark table-hover mb-0">
                 <thead>
@@ -60,12 +60,12 @@ use yii\helpers\Url;
         </div>
         <!-- Pagination -->
         <?=
-        Pagination::widget([
-            'page' => $page,
-            'pageCount' => $pageCount,
-            'limit' => $limit,
-        ])
-        ?>
+    Pagination::widget([
+        'page' => $page,
+        'pageCount' => $pageCount,
+        'limit' => $limit,
+    ])
+?>
         <!-- End Pagination -->
     </div>
 </div>

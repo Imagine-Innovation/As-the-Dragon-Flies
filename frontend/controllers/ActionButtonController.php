@@ -14,24 +14,20 @@ use yii\web\Response;
  */
 class ActionButtonController extends Controller
 {
-
     /**
      * @inheritDoc
      */
     public function behaviors()
     {
         /** @phpstan-ignore-next-line */
-        return array_merge(
-                parent::behaviors(),
-                [
-                    'verbs' => [
-                        'class' => VerbFilter::className(),
-                        'actions' => [
-                            'delete' => ['POST'],
-                        ],
-                    ],
-                ]
-        );
+        return array_merge(parent::behaviors(), [
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['POST'],
+                ],
+            ],
+        ]);
     }
 
     /**
@@ -43,20 +39,20 @@ class ActionButtonController extends Controller
     {
         $dataProvider = new ActiveDataProvider([
             'query' => ActionButton::find(),
-                /*
-                  'pagination' => [
-                  'pageSize' => 50
-                  ],
-                  'sort' => [
-                  'defaultOrder' => [
-                  'id' => SORT_DESC,
-                  ]
-                  ],
-                 */
+            /*
+             * 'pagination' => [
+             * 'pageSize' => 50
+             * ],
+             * 'sort' => [
+             * 'defaultOrder' => [
+             * 'id' => SORT_DESC,
+             * ]
+             * ],
+             */
         ]);
 
         return $this->render('index', [
-                    'dataProvider' => $dataProvider,
+            'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -69,7 +65,7 @@ class ActionButtonController extends Controller
     public function actionView(int $id): string
     {
         return $this->render('view', [
-                    'model' => $this->findModel($id),
+            'model' => $this->findModel($id),
         ]);
     }
 
@@ -92,7 +88,7 @@ class ActionButtonController extends Controller
         }
 
         return $this->render('create', [
-                    'model' => $model,
+            'model' => $model,
         ]);
     }
 
@@ -113,7 +109,7 @@ class ActionButtonController extends Controller
         }
 
         return $this->render('update', [
-                    'model' => $model,
+            'model' => $model,
         ]);
     }
 

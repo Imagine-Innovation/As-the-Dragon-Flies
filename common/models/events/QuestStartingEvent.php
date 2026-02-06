@@ -8,7 +8,6 @@ use Yii;
 
 class QuestStartingEvent extends Event
 {
-
     /**
      *
      * @param string $sessionId
@@ -16,7 +15,8 @@ class QuestStartingEvent extends Event
      * @param Quest $quest
      * @param array<string, mixed> $config
      */
-    public function __construct(string $sessionId, Player $player, Quest $quest, array $config = []) {
+    public function __construct(string $sessionId, Player $player, Quest $quest, array $config = [])
+    {
         parent::__construct($sessionId, $player, $quest, $config);
     }
 
@@ -25,7 +25,8 @@ class QuestStartingEvent extends Event
      *
      * @return string
      */
-    public function getType(): string {
+    public function getType(): string
+    {
         return 'quest-started';
     }
 
@@ -34,7 +35,8 @@ class QuestStartingEvent extends Event
      *
      * @return string
      */
-    public function getTitle(): string {
+    public function getTitle(): string
+    {
         return 'Quest Starting';
     }
 
@@ -43,7 +45,8 @@ class QuestStartingEvent extends Event
      *
      * @return string
      */
-    public function getMessage(): string {
+    public function getMessage(): string
+    {
         return "The quest {$this->quest->name} is starting";
     }
 
@@ -52,11 +55,12 @@ class QuestStartingEvent extends Event
      *
      * @return array<string, mixed>
      */
-    public function getPayload(): array {
+    public function getPayload(): array
+    {
         return [
             'questName' => $this->quest->name,
             'questId' => $this->quest->id,
-            'startedAt' => date('Y-m-d H:i:s', $this->timestamp)
+            'startedAt' => date('Y-m-d H:i:s', $this->timestamp),
         ];
     }
 
@@ -65,8 +69,9 @@ class QuestStartingEvent extends Event
      *
      * @return void
      */
-    public function process(): void {
-        Yii::debug("*** Debug *** QuestStartingEvent - process");
+    public function process(): void
+    {
+        Yii::debug('*** Debug *** QuestStartingEvent - process');
         $notification = $this->createNotification();
 
         $this->savePlayerNotifications($notification->id);

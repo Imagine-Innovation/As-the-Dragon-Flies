@@ -8,7 +8,6 @@ use yii\base\Component;
 
 class NarrativeComponent extends Component
 {
-
     const DETAILS = ['decors', 'npcs', 'passages', 'monsters'];
 
     public ?Mission $mission = null;
@@ -17,7 +16,8 @@ class NarrativeComponent extends Component
      *
      * @param array<string, mixed> $config
      */
-    public function __construct($config = []) {
+    public function __construct($config = [])
+    {
         parent::__construct($config);
     }
 
@@ -25,7 +25,8 @@ class NarrativeComponent extends Component
      *
      * @return array<string>
      */
-    public function missionDecription(): array {
+    public function missionDecription(): array
+    {
         if ($this->mission === null) {
             return ['The mission has not been found, even by the most learned magicians'];
         }
@@ -46,12 +47,13 @@ class NarrativeComponent extends Component
      *
      * @return string
      */
-    public function renderDescription(): string {
+    public function renderDescription(): string
+    {
         $descriptions = $this->missionDecription();
         $text = '';
         $i = 0;
         foreach ($descriptions as $description) {
-            $tag = ($i++ === 0) ? "h3" : "p";
+            $tag = $i++ === 0 ? 'h3' : 'p';
             $text .= "<{$tag} class=\"card-text\">{$description}</{$tag}>";
         }
         return $text;
@@ -62,7 +64,8 @@ class NarrativeComponent extends Component
      * @param string $details
      * @return array<string>
      */
-    private function describeDetail(string $details): array {
+    private function describeDetail(string $details): array
+    {
         $narrative = [];
         $detailList = $this->mission->$details;
         foreach ($detailList as $detail) {

@@ -9,7 +9,6 @@ use yii\base\Widget;
 /** @template T of \yii\db\ActiveRecord */
 class ActionButtons extends Widget
 {
-
     /** @var T */
     public \yii\db\ActiveRecord $model;
     public ?bool $isOwner = null;
@@ -19,19 +18,21 @@ class ActionButtons extends Widget
      *
      * @return string
      */
-    public function run(): string {
+    public function run(): string
+    {
         // Narrow the type of status if it's not strictly an int or string in ActiveRecord
-        $status = $this->model->getAttribute('status');
-        $modelName = Utilities::modelName($this->model) ?? 'Unknown';
-        $actions = ActionButtonsConfig::getActions($modelName, is_numeric($status) ? (int) $status : 0);
+        $statusProperty = $this->model->getAttribute('status');
+        $status = is_numeric($statusProperty) ? (int) $statusProperty : 0;
+        $controller = Utilities::getController($this->model) ?? 'Unknown';
+        $actions = ActionButtonsConfig::getActions($controller, $status);
 
-        $widgetView = ($this->mode === 'table') ? 'action-buttons-table' : 'action-buttons-icon';
+        $widgetView = $this->mode === 'table' ? 'action-buttons-table' : 'action-buttons-icon';
 
         return $this->render($widgetView, [
-                    'model' => $this->model,
-                    'modelName' => $modelName,
-                    'actions' => $actions,
-                    'isOwner' => $this->isOwner ?? true,
+            'model' => $this->model,
+            'controller' => $controller,
+            'actions' => $actions,
+            'isOwner' => $this->isOwner ?? true,
         ]);
     }
 }

@@ -22,18 +22,19 @@ use Yii;
  */
 class ClassFeature extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'class_feature';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['cr', 'dice', 'weapon_dice', 'spell_level'], 'default', 'value' => null],
             [['times_used'], 'default', 'value' => 1],
@@ -41,17 +42,40 @@ class ClassFeature extends \yii\db\ActiveRecord
             [['class_id', 'feature_id', 'level_id', 'weapon_dice', 'times_used', 'spell_level'], 'integer'],
             [['cr'], 'number'],
             [['dice'], 'string', 'max' => 8],
-            [['class_id', 'feature_id', 'level_id'], 'unique', 'targetAttribute' => ['class_id', 'feature_id', 'level_id']],
-            [['class_id'], 'exist', 'skipOnError' => true, 'targetClass' => CharacterClass::class, 'targetAttribute' => ['class_id' => 'id']],
-            [['level_id'], 'exist', 'skipOnError' => true, 'targetClass' => Level::class, 'targetAttribute' => ['level_id' => 'id']],
-            [['feature_id'], 'exist', 'skipOnError' => true, 'targetClass' => Feature::class, 'targetAttribute' => ['feature_id' => 'id']],
+            [
+                ['class_id', 'feature_id', 'level_id'],
+                'unique',
+                'targetAttribute' => ['class_id', 'feature_id', 'level_id'],
+            ],
+            [
+                ['class_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => CharacterClass::class,
+                'targetAttribute' => ['class_id' => 'id'],
+            ],
+            [
+                ['level_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Level::class,
+                'targetAttribute' => ['level_id' => 'id'],
+            ],
+            [
+                ['feature_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Feature::class,
+                'targetAttribute' => ['feature_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'class_id' => 'Foreign key to “character_class” table',
             'feature_id' => 'Foreign key to “feature” table',
@@ -69,7 +93,8 @@ class ClassFeature extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<CharacterClass>
      */
-    public function getClass() {
+    public function getClass()
+    {
         return $this->hasOne(CharacterClass::class, ['id' => 'class_id']);
     }
 
@@ -78,7 +103,8 @@ class ClassFeature extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Feature>
      */
-    public function getFeature() {
+    public function getFeature()
+    {
         return $this->hasOne(Feature::class, ['id' => 'feature_id']);
     }
 
@@ -87,7 +113,8 @@ class ClassFeature extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Level>
      */
-    public function getLevel() {
+    public function getLevel()
+    {
         return $this->hasOne(Level::class, ['id' => 'level_id']);
     }
 }

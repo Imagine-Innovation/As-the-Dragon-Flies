@@ -16,32 +16,46 @@ use Yii;
  */
 class CreatureAlignment extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'creature_alignment';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['random'], 'default', 'value' => 100],
             [['creature_id', 'alignment_id'], 'required'],
             [['creature_id', 'alignment_id', 'random'], 'integer'],
             [['creature_id', 'alignment_id'], 'unique', 'targetAttribute' => ['creature_id', 'alignment_id']],
-            [['creature_id'], 'exist', 'skipOnError' => true, 'targetClass' => Creature::class, 'targetAttribute' => ['creature_id' => 'id']],
-            [['alignment_id'], 'exist', 'skipOnError' => true, 'targetClass' => Alignment::class, 'targetAttribute' => ['alignment_id' => 'id']],
+            [
+                ['creature_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Creature::class,
+                'targetAttribute' => ['creature_id' => 'id'],
+            ],
+            [
+                ['alignment_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Alignment::class,
+                'targetAttribute' => ['alignment_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'creature_id' => 'Foreign key to “creature” table',
             'alignment_id' => 'Foreign key to “alignment” table',
@@ -54,7 +68,8 @@ class CreatureAlignment extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Alignment>
      */
-    public function getAlignment() {
+    public function getAlignment()
+    {
         return $this->hasOne(Alignment::class, ['id' => 'alignment_id']);
     }
 
@@ -63,7 +78,8 @@ class CreatureAlignment extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Creature>
      */
-    public function getCreature() {
+    public function getCreature()
+    {
         return $this->hasOne(Creature::class, ['id' => 'creature_id']);
     }
 }

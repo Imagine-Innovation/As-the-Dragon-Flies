@@ -22,54 +22,55 @@ use yii\web\Response;
  */
 class RuleController extends Controller
 {
-
     /**
      * @inheritDoc
      */
     public function behaviors()
     {
         /** @phpstan-ignore-next-line */
-        return array_merge(
-                parent::behaviors(),
-                [
-                    'access' => [
-                        'class' => AccessControl::class,
-                        'rules' => [
-                            [
-                                'actions' => ['*'],
-                                'allow' => false,
-                                'roles' => ['?'],
-                            ],
-                            [
-                                'actions' => [
-                                    'index', 'create', 'update', 'view', 'delete',
-                                    'validate', 'restore',
-                                    'ajax',
-                                ],
-                                'allow' => ManageAccessRights::isRouteAllowed($this),
-                                'roles' => ['@'],
-                            ],
-                        ],
-                    ],
-                    'verbs' => [
-                        'class' => VerbFilter::className(),
-                        'actions' => [
-                            'delete' => ['POST'],
-                            'validate' => ['POST'],
-                        ],
+        return array_merge(parent::behaviors(), [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['*'],
+                        'allow' => false,
+                        'roles' => ['?'],
                     ],
                     [
-                        'class' => AttributeBehavior::class,
-                        'attributes' => [
-                            ActiveRecord::EVENT_BEFORE_INSERT => 'created_at',
-                            ActiveRecord::EVENT_BEFORE_UPDATE => 'updated_at',
+                        'actions' => [
+                            'index',
+                            'create',
+                            'update',
+                            'view',
+                            'delete',
+                            'validate',
+                            'restore',
+                            'ajax',
                         ],
-                        'value' => function ($event) {
-                            return time();
-                        },
+                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'roles' => ['@'],
                     ],
-                ]
-        );
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['POST'],
+                    'validate' => ['POST'],
+                ],
+            ],
+            [
+                'class' => AttributeBehavior::class,
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => 'created_at',
+                    ActiveRecord::EVENT_BEFORE_UPDATE => 'updated_at',
+                ],
+                'value' => function ($event) {
+                    return time();
+                },
+            ],
+        ]);
     }
 
     /**
@@ -95,7 +96,7 @@ class RuleController extends Controller
         }
 
         $param = [
-            'modelName' => 'Rule'
+            'modelName' => 'Rule',
         ];
         $ajaxRequest = new AjaxRequest($param);
 
@@ -114,7 +115,7 @@ class RuleController extends Controller
     public function actionView(int $id): string
     {
         return $this->render('view', [
-                    'model' => $this->findModel($id)
+            'model' => $this->findModel($id),
         ]);
     }
 
@@ -139,7 +140,7 @@ class RuleController extends Controller
         }
 
         return $this->render('create', [
-                    'model' => $model,
+            'model' => $model,
         ]);
     }
 
@@ -163,7 +164,7 @@ class RuleController extends Controller
         }
 
         return $this->render('update', [
-                    'model' => $model,
+            'model' => $model,
         ]);
     }
 

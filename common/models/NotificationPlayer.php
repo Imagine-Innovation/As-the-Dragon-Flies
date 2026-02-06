@@ -19,33 +19,47 @@ use Yii;
  */
 class NotificationPlayer extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'notification_player';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['read_at', 'dismissed_at'], 'default', 'value' => null],
             [['is_dismissed'], 'default', 'value' => 0],
             [['notification_id', 'player_id'], 'required'],
             [['notification_id', 'player_id', 'is_read', 'read_at', 'is_dismissed', 'dismissed_at'], 'integer'],
             [['notification_id', 'player_id'], 'unique', 'targetAttribute' => ['notification_id', 'player_id']],
-            [['notification_id'], 'exist', 'skipOnError' => true, 'targetClass' => Notification::class, 'targetAttribute' => ['notification_id' => 'id']],
-            [['player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['player_id' => 'id']],
+            [
+                ['notification_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Notification::class,
+                'targetAttribute' => ['notification_id' => 'id'],
+            ],
+            [
+                ['player_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Player::class,
+                'targetAttribute' => ['player_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'notification_id' => 'Foreign key to “notification” table',
             'player_id' => 'Foreign key to “player” table',
@@ -61,7 +75,8 @@ class NotificationPlayer extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Notification>
      */
-    public function getNotification() {
+    public function getNotification()
+    {
         return $this->hasOne(Notification::class, ['id' => 'notification_id']);
     }
 
@@ -70,7 +85,8 @@ class NotificationPlayer extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Player>
      */
-    public function getPlayer() {
+    public function getPlayer()
+    {
         return $this->hasOne(Player::class, ['id' => 'player_id']);
     }
 }

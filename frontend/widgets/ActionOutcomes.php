@@ -9,7 +9,6 @@ use yii\base\Widget;
 
 class ActionOutcomes extends Widget
 {
-
     const HR = '<hr class="border border-warning border-1 opacity-50 w-50"><hr>';
 
     /** @var array<Outcome> $outcomes */
@@ -27,7 +26,6 @@ class ActionOutcomes extends Widget
      */
     public function run(): string
     {
-
         $canReplay = false;
         $status = $this->status ?? AppStatus::SUCCESS;
         $html = "<p>{$this->diceRoll}: the action {$status->getActionAdjective()}</p>" . PHP_EOL;
@@ -48,14 +46,14 @@ class ActionOutcomes extends Widget
         if ($this->isFree) {
             $button = Button::widget([
                 'icon' => 'bi-arrow-repeat',
-                'title' => "Try another action",
+                'title' => 'Try another action',
                 'isCta' => true,
                 'ariaParams' => ['data-bs-dismiss' => 'modal'],
             ]);
         } else {
             $button = Button::widget([
                 'icon' => 'bi-escape',
-                'title' => "Finish your turn",
+                'title' => 'Finish your turn',
                 'isCta' => true,
                 'onclick' => "vtt.moveToNextPlayer({$this->questProgressId}, {$this->nextMissionId}); return false;",
                 'ariaParams' => ['data-bs-dismiss' => 'modal'],

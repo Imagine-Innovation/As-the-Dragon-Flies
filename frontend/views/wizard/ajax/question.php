@@ -9,10 +9,11 @@ use yii\helpers\Html;
 ?>
 <p><?= Html::encode($model->question) ?></p>
 <?php
+
 foreach ($model->wizardAnswers as $a):
-    $onclick = $a->next_question_id ?
-            "PlayerBuilder.setNextStep('question', {$a->next_question_id})" :
-            "PlayerBuilder.setNextStep('{$topic}', {$a->$property})";
+    $onclick = $a->next_question_id
+        ? "PlayerBuilder.setNextStep('question', {$a->next_question_id})"
+        : "PlayerBuilder.setNextStep('{$topic}', {$a->$property})";
     ?>
     <div class="custom-control custom-radio mb-2">
         <input type="radio" id="answer<?= $a->id ?>" name="answers<?= $model->id ?>" class="custom-control-input"
@@ -21,4 +22,4 @@ foreach ($model->wizardAnswers as $a):
             <?= Html::encode($a->answer) ?>
         </label>
     </div>
-<?php endforeach; ?>
+<?php endforeach;

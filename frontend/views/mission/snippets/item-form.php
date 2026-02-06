@@ -27,36 +27,40 @@ use yii\widgets\ActiveForm;
 <?php if ($model->item_id): ?>
     <div class="row">
         <div class="col-2">
-            <img src="<?= $model->image ? "resources/story-{$storyId}/img/{$model->image}" : "img/item/{$model->item->image}" ?>" alt="<?= $model->name ?>" class="w-100 h-100" style="object-fit: cover;" />
+            <img src="<?=
+    $model->image ? "resources/story-{$storyId}/img/{$model->image}" : "img/item/{$model->item->image}"
+?>" alt="<?= $model->name ?>" class="w-100 h-100" style="object-fit: cover;" />
         </div>
         <div class="col-10">
         <?php endif; ?>
 
         <?=
-                $form->field($model, 'item_id')
-                ->dropdownList(
-                        $model->item_id ? [$model->item_id => $model->item->name] : [],
-                        [
-                            'class' => 'select2-container w-100',
-                            'data-minimum-results-for-search' => -1,
-                            'data-placeholder' => "Select an item",
-                        ]
-                )
-                ->label('Item present in the decor')
-        ?>
+    $form
+        ->field($model, 'item_id')
+        ->dropdownList(
+            $model->item_id ? [$model->item_id => $model->item->name] : [],
+            [
+                'class' => 'select2-container w-100',
+                'data-minimum-results-for-search' => -1,
+                'data-placeholder' => 'Select an item',
+            ],
+        )
+        ->label('Item present in the decor')
+?>
         <?=
-                $form->field($model, 'image')
-                ->dropdownList(
-                        $model->image ? [$model->image => $model->image] : [],
-                        [
-                            'class' => 'select2-container w-100',
-                            'data-minimum-results-for-search' => -1,
-                            'data-placeholder' => "Select an image",
-                            'maxlength' => true,
-                        ]
-                )
-                ->label('Item image')
-        ?>
+    $form
+        ->field($model, 'image')
+        ->dropdownList(
+            $model->image ? [$model->image => $model->image] : [],
+            [
+                'class' => 'select2-container w-100',
+                'data-minimum-results-for-search' => -1,
+                'data-placeholder' => 'Select an image',
+                'maxlength' => true,
+            ],
+        )
+        ->label('Item image')
+?>
 
         <?= $form->field($model, 'found')->textInput() ?>
 
@@ -71,4 +75,4 @@ use yii\widgets\ActiveForm;
     <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
 </div>
 
-<?php ActiveForm::end(); ?>
+<?php ActiveForm::end();

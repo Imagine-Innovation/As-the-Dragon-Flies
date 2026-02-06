@@ -8,7 +8,6 @@ use yii\base\Widget;
 
 class AjaxContainer extends Widget
 {
-
     public string $tag = 'div';
     public string $name = 'defaultAjaxContainer';
 
@@ -19,12 +18,15 @@ class AjaxContainer extends Widget
      *
      * @return string
      */
-    public function run(): string {
-        Yii::debug("*** AjaxContainer - run() - tag={$this->tag}, name={$this->name}, param=" . ($this->param ?? "null"));
+    public function run(): string
+    {
+        Yii::debug(
+            "*** AjaxContainer - run() - tag={$this->tag}, name={$this->name}, param=" . ($this->param ?? 'null'),
+        );
         return $this->render('ajax-container', [
-                    'tag' => $this->tag,
-                    'name' => $this->name,
-                    'param' => Utilities::formatAttributes($this->options),
+            'tag' => $this->tag,
+            'name' => $this->name,
+            'param' => Utilities::formatAttributes($this->options),
         ]);
     }
 }

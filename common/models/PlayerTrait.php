@@ -17,7 +17,6 @@ use Yii;
  */
 class PlayerTrait extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
@@ -37,8 +36,20 @@ class PlayerTrait extends \yii\db\ActiveRecord
             [['description'], 'string'],
             [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['player_id', 'trait_id'], 'unique', 'targetAttribute' => ['player_id', 'trait_id']],
-            [['player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['player_id' => 'id']],
-            [['trait_id'], 'exist', 'skipOnError' => true, 'targetClass' => CharacterTrait::class, 'targetAttribute' => ['trait_id' => 'id']],
+            [
+                ['player_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Player::class,
+                'targetAttribute' => ['player_id' => 'id'],
+            ],
+            [
+                ['trait_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => CharacterTrait::class,
+                'targetAttribute' => ['trait_id' => 'id'],
+            ],
         ];
     }
 

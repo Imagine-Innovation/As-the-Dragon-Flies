@@ -19,33 +19,53 @@ use Yii;
  */
 class Poison extends Item
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'poison';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return array_merge(parent::rules(), [
             [['item_id', 'damage_type_id', 'ability_id', 'poison_type'], 'required'],
             [['item_id', 'damage_type_id', 'ability_id', 'dc'], 'integer'],
             [['poison_type'], 'string', 'max' => 64],
             [['item_id'], 'unique'],
-            [['item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['item_id' => 'id']],
-            [['ability_id'], 'exist', 'skipOnError' => true, 'targetClass' => Ability::class, 'targetAttribute' => ['ability_id' => 'id']],
-            [['damage_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => DamageType::class, 'targetAttribute' => ['damage_type_id' => 'id']],
+            [
+                ['item_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Item::class,
+                'targetAttribute' => ['item_id' => 'id'],
+            ],
+            [
+                ['ability_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Ability::class,
+                'targetAttribute' => ['ability_id' => 'id'],
+            ],
+            [
+                ['damage_type_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => DamageType::class,
+                'targetAttribute' => ['damage_type_id' => 'id'],
+            ],
         ]);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return array_merge(parent::attributeLabels(), [
             'item_id' => 'Foreign key to “item” table',
             'damage_type_id' => 'Foreign key to “damage_type” table',
@@ -60,7 +80,8 @@ class Poison extends Item
      *
      * @return \yii\db\ActiveQuery<Ability>
      */
-    public function getAbility() {
+    public function getAbility()
+    {
         return $this->hasOne(Ability::class, ['id' => 'ability_id']);
     }
 
@@ -69,7 +90,8 @@ class Poison extends Item
      *
      * @return \yii\db\ActiveQuery<DamageType>
      */
-    public function getDamageType() {
+    public function getDamageType()
+    {
         return $this->hasOne(DamageType::class, ['id' => 'damage_type_id']);
     }
 
@@ -78,7 +100,8 @@ class Poison extends Item
      *
      * @return \yii\db\ActiveQuery<Item>
      */
-    public function getItem() {
+    public function getItem()
+    {
         return $this->hasOne(Item::class, ['id' => 'item_id']);
     }
 }

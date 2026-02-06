@@ -17,33 +17,51 @@ use Yii;
  */
 class ActionFlow extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'action_flow';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['status'], 'default', 'value' => AppStatus::SUCCESS->value],
             [['status'], 'in', 'range' => AppStatus::getValuesForAction()],
             [['previous_action_id', 'next_action_id'], 'required'],
             [['previous_action_id', 'next_action_id', 'status'], 'integer'],
-            [['previous_action_id', 'next_action_id'], 'unique', 'targetAttribute' => ['previous_action_id', 'next_action_id']],
-            [['next_action_id'], 'exist', 'skipOnError' => true, 'targetClass' => Action::class, 'targetAttribute' => ['next_action_id' => 'id']],
-            [['previous_action_id'], 'exist', 'skipOnError' => true, 'targetClass' => Action::class, 'targetAttribute' => ['previous_action_id' => 'id']],
+            [
+                ['previous_action_id', 'next_action_id'],
+                'unique',
+                'targetAttribute' => ['previous_action_id', 'next_action_id'],
+            ],
+            [
+                ['next_action_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Action::class,
+                'targetAttribute' => ['next_action_id' => 'id'],
+            ],
+            [
+                ['previous_action_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Action::class,
+                'targetAttribute' => ['previous_action_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'previous_action_id' => 'Foreign key to “action”  table for the previous action',
             'next_action_id' => 'Foreign key to “action”  table for the next action',
@@ -56,7 +74,8 @@ class ActionFlow extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Action>
      */
-    public function getNextAction() {
+    public function getNextAction()
+    {
         return $this->hasOne(Action::class, ['id' => 'next_action_id']);
     }
 
@@ -65,7 +84,8 @@ class ActionFlow extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Action>
      */
-    public function getPreviousAction() {
+    public function getPreviousAction()
+    {
         return $this->hasOne(Action::class, ['id' => 'previous_action_id']);
     }
 }

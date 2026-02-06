@@ -20,33 +20,50 @@ use Yii;
  */
 class PlayerAbility extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'player_ability';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['score'], 'default', 'value' => 10],
             [['is_saving_throw'], 'default', 'value' => 0],
             [['player_id', 'ability_id'], 'required'],
-            [['player_id', 'ability_id', 'score', 'bonus', 'modifier', 'is_primary_ability', 'is_saving_throw'], 'integer'],
+            [
+                ['player_id', 'ability_id', 'score', 'bonus', 'modifier', 'is_primary_ability', 'is_saving_throw'],
+                'integer',
+            ],
             [['player_id', 'ability_id'], 'unique', 'targetAttribute' => ['player_id', 'ability_id']],
-            [['player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['player_id' => 'id']],
-            [['ability_id'], 'exist', 'skipOnError' => true, 'targetClass' => Ability::class, 'targetAttribute' => ['ability_id' => 'id']],
+            [
+                ['player_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Player::class,
+                'targetAttribute' => ['player_id' => 'id'],
+            ],
+            [
+                ['ability_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Ability::class,
+                'targetAttribute' => ['ability_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'player_id' => 'Foreign key to “player” table',
             'ability_id' => 'Foreign key to “ability” table',
@@ -63,7 +80,8 @@ class PlayerAbility extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Ability>
      */
-    public function getAbility() {
+    public function getAbility()
+    {
         return $this->hasOne(Ability::class, ['id' => 'ability_id']);
     }
 
@@ -72,7 +90,8 @@ class PlayerAbility extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Player>
      */
-    public function getPlayer() {
+    public function getPlayer()
+    {
         return $this->hasOne(Player::class, ['id' => 'player_id']);
     }
 }

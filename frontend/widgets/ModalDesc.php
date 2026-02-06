@@ -7,7 +7,6 @@ use yii\base\Widget;
 
 class ModalDesc extends Widget
 {
-
     const MAX_LENGTH = 250;
 
     public string $name;
@@ -16,7 +15,8 @@ class ModalDesc extends Widget
     public ?string $type = null;
     public ?int $id = null;
 
-    public function run() {
+    public function run()
+    {
         if (!$this->description) {
             return '';
         }
@@ -25,17 +25,17 @@ class ModalDesc extends Widget
 
         if (mb_strlen($this->description) <= $maxLength) {
             return $this->render('modal-desc-raw', [
-                        'description' => $this->description,
+                'description' => $this->description,
             ]);
         }
 
         $id = $this->id ?? Utilities::newUUID();
 
         return $this->render('modal-desc', [
-                    'UUID' => ($this->type ?? '') . $id,
-                    'description' => $this->description,
-                    'maxLength' => $maxLength,
-                    'name' => $this->name,
+            'UUID' => ($this->type ?? '') . $id,
+            'description' => $this->description,
+            'maxLength' => $maxLength,
+            'name' => $this->name,
         ]);
     }
 }

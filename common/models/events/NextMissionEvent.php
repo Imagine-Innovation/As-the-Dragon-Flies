@@ -11,7 +11,6 @@ use Yii;
  */
 class NextMissionEvent extends Event
 {
-
     /** @var string|null The action type */
     public ?string $action = null;
 
@@ -26,7 +25,8 @@ class NextMissionEvent extends Event
      * @param string|null $action The action type
      * @param array<string, mixed> $detail Additional action data
      */
-    public function __construct(string $sessionId, Player $player, Quest $quest, ?string $action, array $detail = []) {
+    public function __construct(string $sessionId, Player $player, Quest $quest, ?string $action, array $detail = [])
+    {
         parent::__construct($sessionId, $player, $quest);
         $this->action = $action;
         $this->detail = $detail;
@@ -37,7 +37,8 @@ class NextMissionEvent extends Event
      *
      * @return string
      */
-    public function getType(): string {
+    public function getType(): string
+    {
         return 'next-mission';
     }
 
@@ -46,7 +47,8 @@ class NextMissionEvent extends Event
      *
      * @return string
      */
-    public function getTitle(): string {
+    public function getTitle(): string
+    {
         return $this->action ?? 'Next mission';
     }
 
@@ -55,12 +57,15 @@ class NextMissionEvent extends Event
      *
      * @return string
      */
-    public function getMessage(): string {
+    public function getMessage(): string
+    {
         /** @var array{currentPlayerName: string, currentMissionName: string, nextPlayerName: string, nextMissionName: string} */
         $detail = $this->detail;
 
-        return "{$detail['currentPlayerName']} has completed mission “{$detail['currentMissionName']}”.\n"
-                . "Now it's {$detail['nextPlayerName']}'s turn to start mission “{$detail['nextMissionName']}”.";
+        return (
+            "{$detail['currentPlayerName']} has completed mission “{$detail['currentMissionName']}”.\n"
+            . "Now it's {$detail['nextPlayerName']}'s turn to start mission “{$detail['nextMissionName']}”."
+        );
     }
 
     /**
@@ -68,10 +73,11 @@ class NextMissionEvent extends Event
      *
      * @return array<string, mixed>
      */
-    public function getPayload(): array {
+    public function getPayload(): array
+    {
         return [
             'detail' => $this->detail,
-            'timestamp' => $this->timestamp
+            'timestamp' => $this->timestamp,
         ];
     }
 
@@ -80,8 +86,9 @@ class NextMissionEvent extends Event
      *
      * @return void
      */
-    public function process(): void {
-        Yii::debug("*** Debug *** NextMissionEvent - process");
+    public function process(): void
+    {
+        Yii::debug('*** Debug *** NextMissionEvent - process');
         $notification = $this->createNotification();
 
         $this->savePlayerNotifications($notification->id);

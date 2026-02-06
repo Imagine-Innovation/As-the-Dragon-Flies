@@ -1,4 +1,5 @@
 <?php
+
 /** @var yii\web\View $this */
 /** @var common\models\Race $model */
 ?>
@@ -7,7 +8,9 @@
         <h4 class="card-title">Congratulation, you are a <?= $model->name ?></h4>
         <?php if ($model->randomImage): ?>
             <div class="clearfix">
-                <img class="col-md-6 float-md-end mb-3 ms-md-3" src="img/character/<?= $model->randomImage ?>" alt="<?= $model->name ?>" style="max-width: 150px;">
+                <img class="col-md-6 float-md-end mb-3 ms-md-3" src="img/character/<?= $model->randomImage ?>" alt="<?=
+            $model->name
+        ?>" style="max-width: 150px;">
                 <p class="text-muted"><?= $model->description ?></p>
             </div>
         <?php else: ?>

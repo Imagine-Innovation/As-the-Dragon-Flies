@@ -9,7 +9,6 @@ use yii\base\Widget;
 
 class RuleParsingTree extends Widget
 {
-
     public int $id;
 
     /**

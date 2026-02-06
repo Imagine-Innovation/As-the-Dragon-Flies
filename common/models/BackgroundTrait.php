@@ -18,7 +18,6 @@ use Yii;
  */
 class BackgroundTrait extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
@@ -38,9 +37,25 @@ class BackgroundTrait extends \yii\db\ActiveRecord
             [['background_id', 'trait_id', 'score'], 'integer'],
             [['description'], 'string'],
             [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
-            [['background_id', 'trait_id', 'score'], 'unique', 'targetAttribute' => ['background_id', 'trait_id', 'score']],
-            [['background_id'], 'exist', 'skipOnError' => true, 'targetClass' => Background::class, 'targetAttribute' => ['background_id' => 'id']],
-            [['trait_id'], 'exist', 'skipOnError' => true, 'targetClass' => CharacterTrait::class, 'targetAttribute' => ['trait_id' => 'id']],
+            [
+                ['background_id', 'trait_id', 'score'],
+                'unique',
+                'targetAttribute' => ['background_id', 'trait_id', 'score'],
+            ],
+            [
+                ['background_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Background::class,
+                'targetAttribute' => ['background_id' => 'id'],
+            ],
+            [
+                ['trait_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => CharacterTrait::class,
+                'targetAttribute' => ['trait_id' => 'id'],
+            ],
         ];
     }
 

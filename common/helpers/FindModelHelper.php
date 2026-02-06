@@ -23,7 +23,6 @@ use yii\web\NotFoundHttpException;
 
 class FindModelHelper
 {
-
     /**
      * Resolve a short model name or FQCN to a fully-qualified class name.
      *
@@ -34,9 +33,7 @@ class FindModelHelper
     private static function fullyQualifiedClassName(string $modelName): string
     {
         /** @var class-string<T> $className */
-        $className = str_contains($modelName, '\\') ?
-                $modelName :
-                "\\common\\models\\{$modelName}";
+        $className = str_contains($modelName, '\\') ? $modelName : "\\common\\models\\{$modelName}";
 
         return $className;
     }
@@ -54,7 +51,9 @@ class FindModelHelper
         /** @var array<string> $pkColumns */
         $pkColumns = $className::primaryKey();
         if (empty($pkColumns)) {
-            throw new InvalidArgumentException("Model {$className} does not declare primary key columns via primaryKey().");
+            throw new InvalidArgumentException(
+                "Model {$className} does not declare primary key columns via primaryKey().",
+            );
         }
         return $pkColumns;
     }

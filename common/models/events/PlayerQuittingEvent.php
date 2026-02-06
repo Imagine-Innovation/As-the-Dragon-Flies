@@ -8,7 +8,6 @@ use Yii;
 
 class PlayerQuittingEvent extends Event
 {
-
     public string $reason;
 
     /**
@@ -19,7 +18,8 @@ class PlayerQuittingEvent extends Event
      * @param string $reason
      * @param array<string, mixed> $config
      */
-    public function __construct(string $sessionId, Player $player, Quest $quest, string $reason, array $config = []) {
+    public function __construct(string $sessionId, Player $player, Quest $quest, string $reason, array $config = [])
+    {
         parent::__construct($sessionId, $player, $quest, $config);
         $this->reason = $reason;
     }
@@ -29,7 +29,8 @@ class PlayerQuittingEvent extends Event
      *
      * @return string
      */
-    public function getType(): string {
+    public function getType(): string
+    {
         return 'player-quit';
     }
 
@@ -38,7 +39,8 @@ class PlayerQuittingEvent extends Event
      *
      * @return string
      */
-    public function getTitle(): string {
+    public function getTitle(): string
+    {
         return 'Player quitting';
     }
 
@@ -47,7 +49,8 @@ class PlayerQuittingEvent extends Event
      *
      * @return string
      */
-    public function getMessage(): string {
+    public function getMessage(): string
+    {
         return "{$this->player->name} is quitting the quest";
     }
 
@@ -56,7 +59,8 @@ class PlayerQuittingEvent extends Event
      *
      * @return array<string, mixed>
      */
-    public function getPayload(): array {
+    public function getPayload(): array
+    {
         return [
             'playerName' => $this->player->name,
             'playerId' => $this->player->id,
@@ -72,14 +76,15 @@ class PlayerQuittingEvent extends Event
      *
      * @return void
      */
-    public function process(): void {
-        Yii::debug("*** Debug *** PlayerQuittingEvent - process");
+    public function process(): void
+    {
+        Yii::debug('*** Debug *** PlayerQuittingEvent - process');
         $notification = $this->createNotification();
 
         $this->savePlayerNotifications($notification->id);
 
         $this->broadcast();
-        Yii::debug("*** Debug *** PlayerJoiningEvent - process");
+        Yii::debug('*** Debug *** PlayerJoiningEvent - process');
 
         // Dungeon master says hello
         $dungeonMaster = Player::findOne(1);

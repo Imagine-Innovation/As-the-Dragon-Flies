@@ -1,4 +1,5 @@
 <?php
+
 /** @var \yii\web\View $this */
 
 /** @var string $content */
@@ -18,7 +19,7 @@ AppAsset::register($this);
     <body>
         <?php $this->beginBody(); ?>
 
-        <?= $this->renderFile("@app/views/layouts/contents/game.php", ['content' => $content]) ?>
+        <?= $this->renderFile('@app/views/layouts/contents/game.php', ['content' => $content]) ?>
 
         <script type="text/javascript">
             console.log('loading game layout');

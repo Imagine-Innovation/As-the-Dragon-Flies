@@ -18,22 +18,29 @@ $itemTypes = ['Armor', 'Helmet', 'Shield', 'Weapon', 'Tool'];
                                 <?= $item['name'] ?> <?= $item['quantity'] > 1 ? "(x{$item['quantity']})" : '' ?>
                             </div>
                             <?php
+
                             if ($itemType === 'Weapon') {
-                                echo Button::widget([
-                                    'icon' => ($item['isTwoHanded'] ? 'dnd-action-fight' : 'dnd-weapon-sword'),
-                                    'tooltip' => ($item['isTwoHanded'] ? 'To use this weapon, you need both hands.' : 'You only need one hand to use this weapon'),
-                                    'title' => 'Equip',
-                                    'id' => $item['buttonId'],
-                                    'isCta' => true,
-                                    'style' => 'btn-sm mt-2',
-                                ]);
+                                echo
+                                    Button::widget([
+                                        'icon' => $item['isTwoHanded'] ? 'dnd-action-fight' : 'dnd-weapon-sword',
+                                        'tooltip' => $item['isTwoHanded']
+                                            ? 'To use this weapon, you need both hands.'
+                                            : 'You only need one hand to use this weapon',
+                                        'title' => 'Equip',
+                                        'id' => $item['buttonId'],
+                                        'isCta' => true,
+                                        'style' => 'btn-sm mt-2',
+                                    ])
+                                ;
                             } else {
-                                echo Button::widget([
-                                    'title' => 'Equip',
-                                    'id' => $item['buttonId'],
-                                    'isCta' => true,
-                                    'style' => 'btn-sm mt-2',
-                                ]);
+                                echo
+                                    Button::widget([
+                                        'title' => 'Equip',
+                                        'id' => $item['buttonId'],
+                                        'isCta' => true,
+                                        'style' => 'btn-sm mt-2',
+                                    ])
+                                ;
                             }
                             ?>
                         </div>

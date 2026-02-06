@@ -20,18 +20,19 @@ use Yii;
  */
 class ActionButton extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'action_button';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['route', 'tooltip'], 'default', 'value' => null],
             [['in_view'], 'default', 'value' => 1],
@@ -46,7 +47,8 @@ class ActionButton extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'route' => 'Route',
@@ -64,7 +66,8 @@ class ActionButton extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<AccessRightActionButton>
      */
-    public function getAccessRightActionButtons() {
+    public function getAccessRightActionButtons()
+    {
         return $this->hasMany(AccessRightActionButton::class, ['action_button_id' => 'id']);
     }
 }

@@ -22,19 +22,23 @@ $histories = History::find()->all();
                     <div class="card-body">
                         <div class="custom-control custom-radio card-title">
                             <input type="radio" id="<?= $field_name ?><?= $history->id ?>" name="<?= $field_name ?>" class="custom-control-input"
-                                   onchange="PlayerBuilder.setProperty('history', `<?= Utilities::encode($history->description ?? '') ?>`);">
-                            <label class="custom-control-label text-decoration" for="<?= $field_name ?><?= $history->id ?>"><?= $history->name ?></label>
+                                   onchange="PlayerBuilder.setProperty('history', `<?=
+            Utilities::encode($history->description ?? '')
+        ?>`);">
+                            <label class="custom-control-label text-decoration" for="<?= $field_name ?><?= $history->id ?>"><?=
+            $history->name
+        ?></label>
                         </div>
                         <h6 class="card-subtitle text-muted">
                             <?=
-                            ModalDesc::widget([
-                                'name' => $history->name,
-                                'description' => $history->description,
-                                'maxLength' => 200,
-                                'type' => $field_name,
-                                'id' => $history->id,
-                            ])
-                            ?>
+            ModalDesc::widget([
+                'name' => $history->name,
+                'description' => $history->description,
+                'maxLength' => 200,
+                'type' => $field_name,
+                'id' => $history->id,
+            ])
+        ?>
                         </h6>
                     </div>
                 </div>

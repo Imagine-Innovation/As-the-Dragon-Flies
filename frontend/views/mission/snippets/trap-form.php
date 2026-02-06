@@ -34,40 +34,42 @@ use yii\widgets\ActiveForm;
         <?php endif; ?>
 
         <?=
-                $form->field($model, 'image')
-                ->dropdownList(
-                        $model->image ? [$model->image => $model->image] : [],
-                        [
-                            'class' => 'select2-container w-100',
-                            'data-minimum-results-for-search' => -1,
-                            'data-placeholder' => "Select an image",
-                        //'maxlength' => true,
-                        ]
-                )
-                ->label('Trap image')
-        ?>
+    $form
+        ->field($model, 'image')
+        ->dropdownList(
+            $model->image ? [$model->image => $model->image] : [],
+            [
+                'class' => 'select2-container w-100',
+                'data-minimum-results-for-search' => -1,
+                'data-placeholder' => 'Select an image',
+                //'maxlength' => true,
+            ],
+        )
+        ->label('Trap image')
+?>
 
         <?=
-                $form->field($model, 'damage_type_id')
-                ->dropdownList(
-                        $model->damage_type_id ? [$model->damage_type_id => $model->damageType->name] : [],
-                        [
-                            'class' => 'select2-container w-100',
-                            'data-minimum-results-for-search' => -1,
-                            'data-placeholder' => "Select a damage type",
-                        ]
-                )
-                ->label('Damage type')
-        ?>
+    $form
+        ->field($model, 'damage_type_id')
+        ->dropdownList(
+            $model->damage_type_id ? [$model->damage_type_id => $model->damageType->name] : [],
+            [
+                'class' => 'select2-container w-100',
+                'data-minimum-results-for-search' => -1,
+                'data-placeholder' => 'Select a damage type',
+            ],
+        )
+        ->label('Damage type')
+?>
 
         <?= $form->field($model, 'damage')->textInput(['maxlength' => true]) ?>
 
         <?=
-        $form->field($model, 'is_team_trap')->radioList([
-            0 => 'Only the player is trapped',
-            1 => 'The whole team is trapped'
-        ])
-        ?>
+    $form->field($model, 'is_team_trap')->radioList([
+        0 => 'Only the player is trapped',
+        1 => 'The whole team is trapped',
+    ])
+?>
 
         <?php if ($model->image): ?>
         </div>
@@ -78,4 +80,4 @@ use yii\widgets\ActiveForm;
     <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
 </div>
 
-<?php ActiveForm::end(); ?>
+<?php ActiveForm::end();

@@ -34,7 +34,6 @@ use Yii;
  */
 class Race extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
@@ -49,7 +48,11 @@ class Race extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['description', 'base_height', 'height_modifier', 'base_weight', 'weight_modifier'], 'default', 'value' => null],
+            [
+                ['description', 'base_height', 'height_modifier', 'base_weight', 'weight_modifier'],
+                'default',
+                'value' => null,
+            ],
             [['adult_age'], 'default', 'value' => 20],
             [['lifespan'], 'default', 'value' => 80],
             [['speed'], 'default', 'value' => 1],
@@ -62,7 +65,13 @@ class Race extends \yii\db\ActiveRecord
             [['size'], 'string', 'max' => 1],
             [['base_height', 'height_modifier', 'base_weight', 'weight_modifier'], 'string', 'max' => 8],
             [['name'], 'unique'],
-            [['race_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => RaceGroup::class, 'targetAttribute' => ['race_group_id' => 'id']],
+            [
+                ['race_group_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => RaceGroup::class,
+                'targetAttribute' => ['race_group_id' => 'id'],
+            ],
         ];
     }
 

@@ -25,7 +25,6 @@ use frontend\widgets\CheckBox;
 
 class StoryNeededClass
 {
-
     /**
      * Generates HTML markup for character classes if the story object contains them.
      * Each character class is represented as a disabled checkbox, and the checkbox is
@@ -50,7 +49,7 @@ class StoryNeededClass
                 'id' => "story{$story->id}-{$class->id}",
                 'checked' => self::checked($story, $class),
                 'disabled' => 'disabled',
-                'label' => $class->name
+                'label' => $class->name,
             ]);
         }
 
@@ -76,7 +75,7 @@ class StoryNeededClass
             foreach ($tavern->currentPlayers as $player) {
                 // Check if the player's class ID matches the specified class ID
                 if ($player->class->id === $class->id) {
-                    return "checked";
+                    return 'checked';
                 }
             }
         }

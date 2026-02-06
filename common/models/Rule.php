@@ -31,7 +31,6 @@ use Yii;
  */
 class Rule extends \yii\db\ActiveRecord
 {
-
     private ?RuleNode $parsingTree = null;
     public string $errorMessage;
 
@@ -202,7 +201,6 @@ class Rule extends \yii\db\ActiveRecord
      */
     private function saveParsingTree(?RuleNode $expression = null, ?int $ruleId = null, ?int $parentId = null): bool
     {
-
         if ($expression === null || $ruleId === null) {
             return false;
         }
@@ -216,7 +214,7 @@ class Rule extends \yii\db\ActiveRecord
             'booleanExpression' => $this->saveRuleBoolExpression($expression, $ruleId, $parentId),
             'expression' => $this->saveRuleExpression($expression, $ruleId, $parentId),
             'negate' => $this->saveNegativeExpression($expression->node, $ruleId, $parentId),
-            default => false
+            default => false,
         };
     }
 
@@ -248,14 +246,14 @@ class Rule extends \yii\db\ActiveRecord
             'expression_id' => $parentId,
             'model_id' => $ruleModel->id,
             'comparator' => $condition->comparator,
-            'val' => $condition->value
+            'val' => $condition->value,
         ]);
 
         $successfullySaved = $cond->save();
         if ($successfullySaved) {
             return true;
         }
-        throw new \Exception(implode("<br />", ArrayHelper::getColumn($cond->errors, 0, false)));
+        throw new \Exception(implode('<br />', ArrayHelper::getColumn($cond->errors, 0, false)));
     }
 
     /**
@@ -276,14 +274,14 @@ class Rule extends \yii\db\ActiveRecord
         $expr = new RuleExpression([
             'rule_id' => $ruleId,
             'parent_id' => $parentId,
-            'op' => $op
+            'op' => $op,
         ]);
 
         $successfullySaved = $expr->save();
         if ($successfullySaved) {
             return $expr->id;
         }
-        throw new \Exception(implode("<br />", ArrayHelper::getColumn($expr->errors, 0, false)));
+        throw new \Exception(implode('<br />', ArrayHelper::getColumn($expr->errors, 0, false)));
     }
 
     /**
@@ -358,8 +356,11 @@ class Rule extends \yii\db\ActiveRecord
      * @param int|null $parentId The ID of the parent node in the parsing tree (optional).
      * @return bool Whether the save operation is successful (true) or not.
      */
-    private function saveRuleBoolExpression(?RuleNode $expression = null, ?int $ruleId = null, ?int $parentId = null): bool
-    {
+    private function saveRuleBoolExpression(
+        ?RuleNode $expression = null,
+        ?int $ruleId = null,
+        ?int $parentId = null,
+    ): bool {
         if ($expression === null || $ruleId === null) {
             return false;
         }
@@ -407,7 +408,7 @@ class Rule extends \yii\db\ActiveRecord
         if (isset($parts[1])) {
             // Check if the attribute part is a method (ends with '()')
             $parenthesis = strpos($parts[1], '(');
-            $isMethod = ($parenthesis !== false);
+            $isMethod = $parenthesis !== false;
             // Remove '()' from the attribute part if it's a method
             $modelAttribute = $isMethod ? substr($parts[1], 0, $parenthesis) : $parts[1];
         }
@@ -424,7 +425,7 @@ class Rule extends \yii\db\ActiveRecord
                 'path' => $path,
                 'name' => $modelName,
                 'attribute' => $modelAttribute,
-                'is_method' => ($isMethod ? 1 : 0)
+                'is_method' => $isMethod ? 1 : 0,
             ];
 
             Yii::debug($data);
@@ -434,7 +435,7 @@ class Rule extends \yii\db\ActiveRecord
             // Save the new RuleModel instance in the database
             $successfullySaved = $model->save();
             if (!$successfullySaved) {
-                throw new \Exception(implode("<br />", ArrayHelper::getColumn($model->errors, 0, false)));
+                throw new \Exception(implode('<br />', ArrayHelper::getColumn($model->errors, 0, false)));
             }
         }
 

@@ -15,31 +15,45 @@ use Yii;
  */
 class ClassImage extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'class_image';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['class_id', 'image_id'], 'required'],
             [['class_id', 'image_id'], 'integer'],
             [['class_id', 'image_id'], 'unique', 'targetAttribute' => ['class_id', 'image_id']],
-            [['image_id'], 'exist', 'skipOnError' => true, 'targetClass' => Image::class, 'targetAttribute' => ['image_id' => 'id']],
-            [['class_id'], 'exist', 'skipOnError' => true, 'targetClass' => CharacterClass::class, 'targetAttribute' => ['class_id' => 'id']],
+            [
+                ['image_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Image::class,
+                'targetAttribute' => ['image_id' => 'id'],
+            ],
+            [
+                ['class_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => CharacterClass::class,
+                'targetAttribute' => ['class_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'class_id' => 'Foreign key to “character_class” table',
             'image_id' => 'Foreign key to “image” table',
@@ -51,7 +65,8 @@ class ClassImage extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<CharacterClass>
      */
-    public function getClass() {
+    public function getClass()
+    {
         return $this->hasOne(CharacterClass::class, ['id' => 'class_id']);
     }
 
@@ -60,7 +75,8 @@ class ClassImage extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Image>
      */
-    public function getImage() {
+    public function getImage()
+    {
         return $this->hasOne(Image::class, ['id' => 'image_id']);
     }
 }

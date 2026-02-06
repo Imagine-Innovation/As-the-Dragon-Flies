@@ -12,7 +12,7 @@ $playerAbilities = PlayerComponent::getAbilitiesAndSavingThrow($model->playerAbi
 
 $combatStat = [
     ['label' => 'AC', 'value' => $model->armor_class],
-    ['label' => 'Speed', 'value' => ($model->speed ?? $model->race->speed) . " ft"],
+    ['label' => 'Speed', 'value' => ($model->speed ?? $model->race->speed) . ' ft'],
     ['label' => 'Prof. Bonus', 'value' => "+{$proficiencyBonus}"],
     ['label' => 'Hit Dice', 'value' => $model->class->hit_die],
 ];
@@ -38,7 +38,11 @@ $combatStat = [
                     <td class="text-center">
                         <?php if ($playerAbility['modifier']): ?>
                             <span class="badge bg-danger w-75">
-                                <?= $playerAbility['modifier'] >= 0 ? "+{$playerAbility['modifier']}" : $playerAbility['modifier'] ?>
+                                <?=
+                            $playerAbility['modifier'] >= 0
+                                ? "+{$playerAbility['modifier']}"
+                                : $playerAbility['modifier']
+                        ?>
                             </span>
                         <?php else: ?>
                             &nbsp;
@@ -46,7 +50,9 @@ $combatStat = [
                     </td>
                     <td class="text-center">
                         <span class="badge bg-secondary w-75">
-                            <?= $playerAbility['savingThrow'] >= 0 ? "+{$playerAbility['savingThrow']}" : $playerAbility['savingThrow'] ?>
+                            <?=
+                $playerAbility['savingThrow'] >= 0 ? "+{$playerAbility['savingThrow']}" : $playerAbility['savingThrow']
+            ?>
                         </span>
                     </td>
                 </tr>

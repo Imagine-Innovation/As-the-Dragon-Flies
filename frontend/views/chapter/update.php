@@ -17,6 +17,6 @@ $this->params['breadcrumbs'][] = 'Update';
     $this->render('snippets/_form', [
         'model' => $model,
     ])
-    ?>
+?>
 
 </div>

@@ -19,18 +19,19 @@ use Yii;
  */
 class SpellDuration extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'spell_duration';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['is_concentration'], 'default', 'value' => 0],
             [['name', 'duration', 'unit', 'minutes'], 'required'],
@@ -44,7 +45,8 @@ class SpellDuration extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'name' => 'Label of the duration (e.g. “Concentration, up to 1 day”)',
@@ -61,7 +63,8 @@ class SpellDuration extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Spell>
      */
-    public function getSpells() {
+    public function getSpells()
+    {
         return $this->hasMany(Spell::class, ['duration_id' => 'id']);
     }
 }

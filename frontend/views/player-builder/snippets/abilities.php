@@ -1,8 +1,8 @@
 <?php
 
+use common\helpers\Utilities;
 use frontend\widgets\AbilityChart;
 use frontend\widgets\Button;
-use common\helpers\Utilities;
 
 /** @var yii\web\View $this */
 /** @var frontend\models\PlayerBuilder $model */
@@ -16,13 +16,13 @@ $abilityValues = [15, 14, 13, 12, 10, 8];
     <div class="card h-100">
         <div class="actions">
             <?=
-            Button::widget([
-                'mode' => 'icon',
-                'icon' => 'bi-eraser',
-                'tooltip' => 'Reset abilities',
-                'id' => 'clearAbilitiesButton',
-            ])
-            ?>
+    Button::widget([
+        'mode' => 'icon',
+        'icon' => 'bi-eraser',
+        'tooltip' => 'Reset abilities',
+        'id' => 'clearAbilitiesButton',
+    ])
+?>
         </div>
         <div class="card-body">
             <table class="table table-dark mb-0">
@@ -32,13 +32,14 @@ $abilityValues = [15, 14, 13, 12, 10, 8];
                         <?php foreach ($playerAbilities as $playerAbility): ?>
                             <th class="text-center">
                                 <?=
-                                AbilityChart::widget([
-                                    'id' => $playerAbility->ability_id,
-                                    'score' => $playerAbility->score,
-                                    'code' => $playerAbility->ability->code,
-                                    'bonus' => $playerAbility->bonus,
-                                ]);
-                                ?>
+                            AbilityChart::widget([
+                                'id' => $playerAbility->ability_id,
+                                'score' => $playerAbility->score,
+                                'code' => $playerAbility->ability->code,
+                                'bonus' => $playerAbility->bonus,
+                            ])
+                        ;
+                        ?>
                             </th>
                         <?php endforeach; ?>
                     </tr>
@@ -48,15 +49,18 @@ $abilityValues = [15, 14, 13, 12, 10, 8];
                         <tr>
                             <th scope="row" class="text-center"><?= $val ?></th>
                             <?php
+
                             foreach ($playerAbilities as $playerAbility):
                                 $id = $playerAbility->ability_id;
                                 $score = $playerAbility->score;
                                 ?>
                                 <td class="text-center">
                                     <div class="custom-control custom-radio">
-                                        <input type="radio" id="abilityRadio-<?= $id ?>-<?= $val ?>" name="ability-<?= $id ?>"
+                                        <input type="radio" id="abilityRadio-<?= $id ?>-<?= $val ?>" name="ability-<?=
+                                    $id
+                                ?>"
                                                value="<?= $val ?>" class="custom-control-input score<?= $val ?>"
-                                               <?= ($score === $val) ? "checked" : '' ?>
+                                               <?= $score === $val ? 'checked' : '' ?>
                                                onclick='PlayerBuilder.checkAbility(<?= $id ?>, <?= $val ?>);'>
                                         <label class="custom-control-label" for="abilityRadio-<?= $id ?>-<?= $val ?>"></label>
                                     </div>
@@ -70,7 +74,7 @@ $abilityValues = [15, 14, 13, 12, 10, 8];
                         <th scope="row" class="text-center">Bonus</th>
                         <?php foreach ($playerAbilities as $playerAbility): ?>
                             <td class="text-center">
-                                <?= $playerAbility->bonus > 0 ? "+" . $playerAbility->bonus : "&nbsp;" ?>
+                                <?= $playerAbility->bonus > 0 ? '+' . $playerAbility->bonus : '&nbsp;' ?>
                             </td>
                         <?php endforeach; ?>
                     </tr>

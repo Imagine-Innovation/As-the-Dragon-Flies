@@ -16,7 +16,6 @@ use yii\helpers\ArrayHelper;
  */
 abstract class BaseManager extends Component
 {
-
     const DEFAULT_LIMIT = 20;
 
     /**
@@ -36,7 +35,7 @@ abstract class BaseManager extends Component
         if ($successfullySaved) {
             return true;
         }
-        throw new \Exception(implode("<br />", ArrayHelper::getColumn($model->errors, 0, false)));
+        throw new \Exception(implode('<br />', ArrayHelper::getColumn($model->errors, 0, false)));
     }
 
     /**
@@ -50,20 +49,19 @@ abstract class BaseManager extends Component
      */
     protected function getNotifications(int $questId, string $type, ?int $since = null, ?int $limit = null): ?array
     {
-
-        Yii::debug("*** Debug *** getNotifications - questId={$questId}, type={$type}, since=" . ($since
-                            ? Utilities::formatDate($since) : "null") . ", limit=" . ($limit ?? "null"));
-        $query = Notification::find()
-                ->where(['quest_id' => $questId])
-                ->andWhere(['notification_type' => $type]);
+        Yii::debug(
+            "*** Debug *** getNotifications - questId={$questId}, type={$type}, since="
+            . ($since ? Utilities::formatDate($since) : 'null')
+            . ', limit='
+            . ($limit ?? 'null'),
+        );
+        $query = Notification::find()->where(['quest_id' => $questId])->andWhere(['notification_type' => $type]);
 
         if ($since) {
             $query->andWhere(['>=', 'created_at', $since]);
         }
 
-        $notifications = $query->orderBy(['created_at' => SORT_DESC])
-                ->limit($limit ?? self::DEFAULT_LIMIT)
-                ->all();
+        $notifications = $query->orderBy(['created_at' => SORT_DESC])->limit($limit ?? self::DEFAULT_LIMIT)->all();
 
         $n = count($notifications);
         Yii::debug("*** Debug *** getNotifications - returns {$n} records");

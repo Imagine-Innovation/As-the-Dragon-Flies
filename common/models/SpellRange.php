@@ -18,18 +18,19 @@ use Yii;
  */
 class SpellRange extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'spell_range';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['range', 'area_of_effect', 'special'], 'default', 'value' => null],
             [['is_self'], 'default', 'value' => 0],
@@ -43,7 +44,8 @@ class SpellRange extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'name' => 'Spell range',
@@ -59,7 +61,8 @@ class SpellRange extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Spell>
      */
-    public function getSpells() {
+    public function getSpells()
+    {
         return $this->hasMany(Spell::class, ['range_id' => 'id']);
     }
 }

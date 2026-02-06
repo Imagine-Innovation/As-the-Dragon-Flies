@@ -19,7 +19,6 @@ use Yii;
  */
 class CharacterTrait extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */

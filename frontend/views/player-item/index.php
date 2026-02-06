@@ -12,7 +12,10 @@ $user = Yii::$app->session->get('user');
 $currentPlayer = Yii::$app->session->get('currentPlayer');
 
 $this->title = 'Possessions';
-$this->params['breadcrumbs'][] = ['label' => $currentPlayer->name, 'url' => ['player/view', 'id' => $currentPlayer->id]];
+$this->params['breadcrumbs'][] = [
+    'label' => $currentPlayer->name,
+    'url' => ['player/view', 'id' => $currentPlayer->id],
+];
 $this->params['breadcrumbs'][] = $this->title;
 
 $inventory = new Inventory();
@@ -26,21 +29,21 @@ $firstType = $itemTypes[0] ?? '';
             <p id="purseContent"></p>
             <div class="actions">
                 <?=
-                Button::widget([
-                    'mode' => 'icon',
-                    'url' => Url::toRoute(['player-item/see-package']),
-                    'icon' => 'bi-backpack2',
-                    'tooltip' => "See what you are carrying"
-                ])
-                ?>
+    Button::widget([
+        'mode' => 'icon',
+        'url' => Url::toRoute(['player-item/see-package']),
+        'icon' => 'bi-backpack2',
+        'tooltip' => 'See what you are carrying',
+    ])
+?>
                 <?=
-                Button::widget([
-                    'mode' => 'icon',
-                    'url' => Url::toRoute(['player-cart/shop']),
-                    'icon' => 'bi-shop',
-                    'tooltip' => "Make some shopping"
-                ])
-                ?>
+    Button::widget([
+        'mode' => 'icon',
+        'url' => Url::toRoute(['player-cart/shop']),
+        'icon' => 'bi-shop',
+        'tooltip' => 'Make some shopping',
+    ])
+?>
             </div>
 
             <?php if ($itemTypes): ?>
@@ -48,7 +51,7 @@ $firstType = $itemTypes[0] ?? '';
                     <ul class="nav nav-tabs" role="tablist">
                         <?php foreach ($itemTypes as $itemType): ?>
                             <li class="nav-item">
-                                <a class="nav-link<?= ($itemType === $firstType) ? " active" : '' ?>"
+                                <a class="nav-link<?= $itemType === $firstType ? ' active' : '' ?>"
                                    data-bs-toggle="tab" href="#tab-<?= $itemType ?>" role="tab" href="#">
                                        <?= $itemType ?>
                                 </a>
@@ -58,14 +61,15 @@ $firstType = $itemTypes[0] ?? '';
 
                     <div class="tab-content">
                         <?php foreach ($itemTypes as $itemType): ?>
-                            <div class="tab-pane <?= ($itemType === $firstType) ? "active fade show" : "fade" ?>"
+                            <div class="tab-pane <?= $itemType === $firstType ? 'active fade show' : 'fade' ?>"
                                  id="tab-<?= $itemType ?>" role="tabpanel">
                                      <?=
-                                     $this->render('snippets/inventory', [
-                                         'items' => $playerItems[$itemType],
-                                         'player' => $currentPlayer,
-                                     ]);
-                                     ?>
+                            $this->render('snippets/inventory', [
+                                'items' => $playerItems[$itemType],
+                                'player' => $currentPlayer,
+                            ])
+                        ;
+                        ?>
                             </div>
                         <?php endforeach; ?>
                     </div>

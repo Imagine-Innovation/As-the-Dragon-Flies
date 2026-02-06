@@ -26,7 +26,6 @@ use yii\helpers\ArrayHelper;
 
 class BuilderComponent
 {
-
     const RETRY = 5;
     const CREATE_TABS = [
         'races' => [
@@ -35,8 +34,8 @@ class BuilderComponent
             'wizard' => 'race',
             'model_name' => null,
             'paragraphs' => [
-                "This world teem with diverse races. From common humans, elves, dwarves, and halflings, to rarer dragonborn, tieflings, gnomes, and even drow, the variety is vast. This racial diversity enriches D&D societies and adds depth to its settings.",
-                "Race significantly impacts your character. It influences abilities, traits, and backstory. Halflings might be sneaky rogues, dwarves tough warriors, and elves potent magic users. Race also offers roleplaying cues for personality, appearance, culture, and alignment, though individuals can deviate from these norms, creating interesting character possibilities.",
+                'This world teem with diverse races. From common humans, elves, dwarves, and halflings, to rarer dragonborn, tieflings, gnomes, and even drow, the variety is vast. This racial diversity enriches D&D societies and adds depth to its settings.',
+                'Race significantly impacts your character. It influences abilities, traits, and backstory. Halflings might be sneaky rogues, dwarves tough warriors, and elves potent magic users. Race also offers roleplaying cues for personality, appearance, culture, and alignment, though individuals can deviate from these norms, creating interesting character possibilities.',
             ],
             'field_name' => 'race',
             'admin' => 0,
@@ -47,8 +46,8 @@ class BuilderComponent
             'wizard' => 'class',
             'model_name' => 'CharacterClass',
             'paragraphs' => [
-                "Your character receives a number of benefits from your choice of class. Many of these benefits are class features-capabilities (including spellcasting) that set your character apart from members of other classes.",
-                "You also gain a number of proficiencies: armor, weapons, skills, saving throws, and sometimes tools. Your proficiencies define many of the things your character can do particularly well, from using certain weapons to telling a convincing lie.",
+                'Your character receives a number of benefits from your choice of class. Many of these benefits are class features-capabilities (including spellcasting) that set your character apart from members of other classes.',
+                'You also gain a number of proficiencies: armor, weapons, skills, saving throws, and sometimes tools. Your proficiencies define many of the things your character can do particularly well, from using certain weapons to telling a convincing lie.',
             ],
             'field_name' => 'class',
             'admin' => 0,
@@ -59,8 +58,8 @@ class BuilderComponent
             'wizard' => null,
             'model_name' => 'Background',
             'paragraphs' => [
-                "Your character’s background describes where he or she came from, his or her original occupation, and the character’s place in the D&D world. Your DM might offer additional backgrounds beyond the ones included in that chapter, and might be willing to work with you to craft a background that’s a more precise fit for your character concept.",
-                "A background gives your character a background feature (a general benefit) and proficiency in two skills, and it might also give you additional languages or proficiency with certain kinds of tools.",
+                'Your character’s background describes where he or she came from, his or her original occupation, and the character’s place in the D&D world. Your DM might offer additional backgrounds beyond the ones included in that chapter, and might be willing to work with you to craft a background that’s a more precise fit for your character concept.',
+                'A background gives your character a background feature (a general benefit) and proficiency in two skills, and it might also give you additional languages or proficiency with certain kinds of tools.',
             ],
             'field_name' => 'background',
             'admin' => 0,
@@ -71,8 +70,8 @@ class BuilderComponent
             'wizard' => null,
             'model_name' => null,
             'paragraphs' => [
-                "Your character’s background describes where he or she came from, his or her original occupation, and the character’s place in the D&D world. Your DM might offer additional backgrounds beyond     the ones included in that chapter, and might be willing to work with you to craft a background that’s a more precise fit for your character concept.",
-                "A background gives your character a background feature (a general benefit) and proficiency in two skills, and it might also give you additional languages or proficiency with certain kinds of tools.",
+                'Your character’s background describes where he or she came from, his or her original occupation, and the character’s place in the D&D world. Your DM might offer additional backgrounds beyond     the ones included in that chapter, and might be willing to work with you to craft a background that’s a more precise fit for your character concept.',
+                'A background gives your character a background feature (a general benefit) and proficiency in two skills, and it might also give you additional languages or proficiency with certain kinds of tools.',
             ],
             'field_name' => null,
             'admin' => 0,
@@ -85,7 +84,7 @@ class BuilderComponent
             'paragraphs' => [],
             'field_name' => null,
             'admin' => 1, // Only for admins
-        ]
+        ],
     ];
     const UPDATE_TABS = [
         'description' => [
@@ -114,8 +113,8 @@ class BuilderComponent
             'wizard' => null,
             'model_name' => null,
             'paragraphs' => [
-                "Much of what your character does in the game depends on his or her six abilities: Strength, Dexterity, Constitution, Intelligence, Wisdom, and Charisma.",
-                "The Ability Score Summary table provides a quick reference for what qualities are measured by each ability, what races increases which abilities, and what classes consider each ability particularly important."
+                'Much of what your character does in the game depends on his or her six abilities: Strength, Dexterity, Constitution, Intelligence, Wisdom, and Charisma.',
+                'The Ability Score Summary table provides a quick reference for what qualities are measured by each ability, what races increases which abilities, and what classes consider each ability particularly important.',
             ],
             'field_name' => null,
             'admin' => 0,
@@ -123,25 +122,25 @@ class BuilderComponent
             'onclick' => null,
         ],
         'skills' => [
-            'name' => "Set your traits and skills",
+            'name' => 'Set your traits and skills',
             'anchor' => 'skills',
             'wizard' => null,
             'model_name' => null,
             'paragraphs' => [
-                "A skill represents a specific aspect of an ability score, and an individual's proficiency in a skill demonstrates a focus on that aspect."
+                "A skill represents a specific aspect of an ability score, and an individual's proficiency in a skill demonstrates a focus on that aspect.",
             ],
             'field_name' => null,
             'admin' => 0,
             'onclick' => null,
         ],
         'equipment' => [
-            'name' => "Get your initial equipment",
+            'name' => 'Get your initial equipment',
             'anchor' => 'equipment',
             'wizard' => null,
             'model_name' => null,
             'paragraphs' => [
                 "Each class will provide a list of items included in their starting equipment package. This is often a good, balanced set of gear appropriate for that class's role.",
-                "For example, a fighter might start with chain mail, a longsword, and a shield, while a wizard might begin with a spellbook and a component pouch.",
+                'For example, a fighter might start with chain mail, a longsword, and a shield, while a wizard might begin with a spellbook and a component pouch.',
             ],
             'field_name' => null,
             'admin' => 0,
@@ -156,7 +155,7 @@ class BuilderComponent
             'field_name' => null,
             'admin' => 1, // Only for admins
             'onclick' => null,
-        ]
+        ],
     ];
 
     /*
@@ -197,8 +196,7 @@ class BuilderComponent
                 $attempts++;
             } while (in_array($name, $names) && $attempts < $maxAttempts);
 
-            $names[$i] = in_array($name, $names) ? "The {$ethnicity->name} #{$i}"
-                        : $name;
+            $names[$i] = in_array($name, $names) ? "The {$ethnicity->name} #{$i}" : $name;
         }
 
         return $names;
@@ -214,15 +212,14 @@ class BuilderComponent
      */
     private static function getEthnicNames(int $ethnicityId, string $className, ?string $gender = null): array
     {
-
         $query = match ($className) {
             'FirstName' => \common\models\FirstName::find()->select('name'),
             'LastName' => \common\models\LastName::find()->select('name'),
-            default => null
+            default => null,
         };
 
         if ($query === null) {
-            return[];
+            return [];
         }
 
         $query->where(['ethnicity_id' => $ethnicityId]);
@@ -267,8 +264,8 @@ class BuilderComponent
         if (!$race) {
             return [
                 'labels' => [
-                    ['lib' => 'unknown', 'age' => 0]
-                ]
+                    ['lib' => 'unknown', 'age' => 0],
+                ],
             ];
         }
 
@@ -283,7 +280,7 @@ class BuilderComponent
                 ['lib' => 'in his prime', 'age' => (int) ($lifespan * 0.75)],
                 ['lib' => 'elderly', 'age' => (int) ($lifespan * 0.9)],
                 ['lib' => 'old', 'age' => $lifespan],
-            ]
+            ],
         ];
     }
 
@@ -307,11 +304,11 @@ class BuilderComponent
     {
         // Direct query to get first question IDs using a single database call
         $firstQuestions = Wizard::find()
-                ->select('wq.id')
-                ->alias('w')
-                ->innerJoin(['wq' => 'wizard_question'], 'w.id = wq.wizard_id')
-                ->where(['w.topic' => $topic, 'wq.is_first_question' => true])
-                ->column();
+            ->select('wq.id')
+            ->alias('w')
+            ->innerJoin(['wq' => 'wizard_question'], 'w.id = wq.wizard_id')
+            ->where(['w.topic' => $topic, 'wq.is_first_question' => true])
+            ->column();
 
         // Return null if no questions found
         if (empty($firstQuestions)) {
@@ -349,7 +346,7 @@ class BuilderComponent
         return [
             'choice' => $choice,
             'items' => implode(',', $items),
-            'categories' => implode(',', $categories)
+            'categories' => implode(',', $categories),
         ];
     }
 
@@ -380,13 +377,12 @@ class BuilderComponent
             $playerCoin = new PlayerCoin([
                 'player_id' => $player->id,
                 'coin' => $coin,
-                'quantity' => ($coin === 'gp') ? self::getFundingFromBackground($player)
-                    : 0
+                'quantity' => $coin === 'gp' ? self::getFundingFromBackground($player) : 0,
             ]);
 
             // Save the player coin and track success status
             if (!$playerCoin->save()) {
-                throw new \Exception(implode("<br />", ArrayHelper::getColumn($playerCoin->errors, 0, false)));
+                throw new \Exception(implode('<br />', ArrayHelper::getColumn($playerCoin->errors, 0, false)));
             }
         }
     }
@@ -402,7 +398,7 @@ class BuilderComponent
 
         $funding = 0;
         foreach ($backgroundItems as $backgroundItem) {
-            $funding += ($backgroundItem->funding ?? 0);
+            $funding += $backgroundItem->funding ?? 0;
         }
         return $funding;
     }
@@ -449,7 +445,7 @@ class BuilderComponent
         $playerSkill->bonus = $playerAbility->bonus ?? 0;
 
         if (!$playerSkill->save()) {
-            throw new \Exception(implode("<br />", ArrayHelper::getColumn($playerSkill->errors, 0, false)));
+            throw new \Exception(implode('<br />', ArrayHelper::getColumn($playerSkill->errors, 0, false)));
         }
     }
 
@@ -514,7 +510,7 @@ class BuilderComponent
         $skillData = [
             'skill_id' => $skill->id,
             'name' => $skill->name,
-            'is_proficient' => $isProficient
+            'is_proficient' => $isProficient,
         ];
 
         return $skillData;
@@ -547,10 +543,10 @@ class BuilderComponent
                 'player_id' => $player->id,
                 'skill_id' => $skill->id,
                 'is_proficient' => $proficiencies[$skill->id] ?? 0,
-                'bonus' => $abilityModifier
+                'bonus' => $abilityModifier,
             ]);
             if (!$playerSkill->save()) {
-                throw new \Exception(implode("<br />", ArrayHelper::getColumn($playerSkill->errors, 0, false)));
+                throw new \Exception(implode('<br />', ArrayHelper::getColumn($playerSkill->errors, 0, false)));
             }
         }
     }
@@ -592,12 +588,12 @@ class BuilderComponent
                 $playerTrait = new PlayerTrait([
                     'player_id' => $player->id,
                     'trait_id' => $trait->id,
-                    'description' => $backgroundTrait->description
+                    'description' => $backgroundTrait->description,
                 ]);
 
                 // Save the player trait and update return value
                 if (!$playerTrait->save()) {
-                    throw new \Exception(implode("<br />", ArrayHelper::getColumn($playerTrait->errors, 0, false)));
+                    throw new \Exception(implode('<br />', ArrayHelper::getColumn($playerTrait->errors, 0, false)));
                 }
             }
         }
@@ -623,7 +619,6 @@ class BuilderComponent
      */
     public static function initAbilities(Player &$player): void
     {
-
         $initAbilityArray = self::initAbilityArray();
         self::addDefaultAbilityScore($player, $initAbilityArray);
         self::addRaceAbilities($player, $initAbilityArray);
@@ -641,7 +636,7 @@ class BuilderComponent
             ]);
 
             if (!$playerAbility->save()) {
-                throw new \Exception(implode("<br />", ArrayHelper::getColumn($playerAbility->errors, 0, false)));
+                throw new \Exception(implode('<br />', ArrayHelper::getColumn($playerAbility->errors, 0, false)));
             }
         }
     }
@@ -655,10 +650,9 @@ class BuilderComponent
      */
     private static function addDefaultAbilityScore(Player $player, array &$initAbilityArray): array
     {
-
         $defaultAbilities = AbilityDefault::findAll([
             'race_group_id' => $player->race->race_group_id,
-            'class_id' => $player->class->id
+            'class_id' => $player->class->id,
         ]);
 
         foreach ($defaultAbilities as $defaultAbility) {
@@ -714,7 +708,6 @@ class BuilderComponent
      */
     private static function initAbilityArray(): array
     {
-
         $abilities = Ability::find()->all();
 
         $initAbilityArray = [];
@@ -727,7 +720,7 @@ class BuilderComponent
                 'bonus' => 0,
                 'modifier' => 0,
                 'is_primary_ability' => 0, // false
-                'is_saving_throw' => 0 // false
+                'is_saving_throw' => 0, // false
             ];
 
             $initAbilityArray[$id] = $initAbility;

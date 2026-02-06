@@ -21,13 +21,13 @@ $this->params['breadcrumbs'][] = $this->title;
             <?php if ($user->is_designer): ?>
                 <div class="actions">
                     <?=
-                    Button::widget([
-                        'mode' => 'icon',
-                        'url' => Url::toRoute(['story/create']),
-                        'icon' => 'bi-journal-plus',
-                        'tooltip' => "Create a new story"
-                    ])
-                    ?>
+                Button::widget([
+                    'mode' => 'icon',
+                    'url' => Url::toRoute(['story/create']),
+                    'icon' => 'bi-journal-plus',
+                    'tooltip' => 'Create a new story',
+                ])
+            ?>
                 </div>
             <?php endif; ?>
             <?php if ($stories): ?>
@@ -35,15 +35,15 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?php foreach ($stories as $story): ?>
                         <div class="col">
                             <?=
-                            $this->renderFile('@app/views/story/snippets/card.php', [
-                                'user' => $user,
-                                'player' => $player,
-                                'story' => $story,
-                                'quest' => $quest,
-                                'isDesigner' => $user->is_designer,
-                                'isPlayer' => $user->is_player,
-                            ])
-                            ?>
+                        $this->renderFile('@app/views/story/snippets/card.php', [
+                            'user' => $user,
+                            'player' => $player,
+                            'story' => $story,
+                            'quest' => $quest,
+                            'isDesigner' => $user->is_designer,
+                            'isPlayer' => $user->is_player,
+                        ])
+                    ?>
                         </div>
                     <?php endforeach; ?>
                 </div>

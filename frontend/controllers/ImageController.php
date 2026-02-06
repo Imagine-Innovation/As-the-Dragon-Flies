@@ -20,41 +20,41 @@ use yii\web\UploadedFile;
  */
 class ImageController extends Controller
 {
-
     /**
      * @inheritDoc
      */
     public function behaviors()
     {
         /** @phpstan-ignore-next-line */
-        return array_merge(
-                parent::behaviors(),
-                [
-                    'access' => [
-                        'class' => AccessControl::class,
-                        'rules' => [
-                            [
-                                'actions' => ['*'],
-                                'allow' => false,
-                                'roles' => ['?'],
-                            ],
-                            [
-                                'actions' => [
-                                    'index', 'view', 'ajax', 'ajax-set-class', 'ajax-upload',
-                                ],
-                                'allow' => ManageAccessRights::isRouteAllowed($this),
-                                'roles' => ['@'],
-                            ],
-                        ],
+        return array_merge(parent::behaviors(), [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['*'],
+                        'allow' => false,
+                        'roles' => ['?'],
                     ],
-                    'verbs' => [
-                        'class' => VerbFilter::className(),
+                    [
                         'actions' => [
-                            'delete' => ['POST'],
+                            'index',
+                            'view',
+                            'ajax',
+                            'ajax-set-class',
+                            'ajax-upload',
                         ],
+                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'roles' => ['@'],
                     ],
-                ]
-        );
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['POST'],
+                ],
+            ],
+        ]);
     }
 
     /**
@@ -69,7 +69,7 @@ class ImageController extends Controller
         ]);
 
         return $this->render('index', [
-                    'dataProvider' => $dataProvider,
+            'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -93,9 +93,10 @@ class ImageController extends Controller
             'modelName' => 'Image',
             'param' => ['race_group_id' => $raceGroupId],
             'innerJoin' => [
-                ['table' => 'race_group_image', 'clause' => 'image.id = race_group_image.image_id']
+                ['table' => 'race_group_image', 'clause' => 'image.id = race_group_image.image_id'],
             ],
-            'filter' => $gender ? ['race_group_image.race_group_id' => $raceGroupId, 'race_group_image.gender' => $gender]
+            'filter' => $gender
+                ? ['race_group_image.race_group_id' => $raceGroupId, 'race_group_image.gender' => $gender]
                 : ['race_group_image.race_group_id' => $raceGroupId],
         ];
         $ajaxRequest = new AjaxRequest($param);
@@ -137,11 +138,15 @@ class ImageController extends Controller
         }
 
         if ($success) {
-            return ['error' => false, 'msg' => "Class $className has been " . (($status === 1)
-                    ? "added" : "removed") . " to the image."];
+            return [
+                'error' => false,
+                'msg' => "Class $className has been " . ($status === 1 ? 'added' : 'removed') . ' to the image.',
+            ];
         }
-        return ['error' => true, 'msg' => "Unable to " . (($status === 1) ? "add"
-                : "remove") . " class $className to the image!"];
+        return [
+            'error' => true,
+            'msg' => 'Unable to ' . ($status === 1 ? 'add' : 'remove') . " class $className to the image!",
+        ];
     }
 
     /**
@@ -153,7 +158,7 @@ class ImageController extends Controller
     public function actionView(int $id): string
     {
         return $this->render('view', [
-                    'model' => $this->findModel($id),
+            'model' => $this->findModel($id),
         ]);
     }
 
@@ -176,7 +181,7 @@ class ImageController extends Controller
         }
 
         return $this->render('create', [
-                    'model' => $model,
+            'model' => $model,
         ]);
     }
 
@@ -197,7 +202,7 @@ class ImageController extends Controller
         }
 
         return $this->render('update', [
-                    'model' => $model,
+            'model' => $model,
         ]);
     }
 

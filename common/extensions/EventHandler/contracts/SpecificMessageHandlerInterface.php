@@ -6,7 +6,6 @@ use Ratchet\ConnectionInterface;
 
 interface SpecificMessageHandlerInterface
 {
-
     /**
      *
      * @param ConnectionInterface $from

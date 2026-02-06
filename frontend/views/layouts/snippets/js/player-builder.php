@@ -1,12 +1,13 @@
 <?php
+
 /** @var \yii\web\View $this */
 /** @var string $controllerId */
 /** @var string $actionId */
 ?>
 
-<?php if ($actionId === "create"): ?>
+<?php if ($actionId === 'create'): ?>
     PlayerBuilder.initCreatePage();
-<?php elseif ($actionId === "update"): ?>
+<?php elseif ($actionId === 'update'): ?>
     PlayerBuilder.initUpdatePage();
 
     const gender = $('#playerbuilder-gender').val();
@@ -17,4 +18,4 @@
     PlayerBuilder.initAbilitiesTab();
     PlayerBuilder.initAvatarTab();
     PlayerBuilder.initSkillsTab();
-<?php endif; ?>
+<?php endif;

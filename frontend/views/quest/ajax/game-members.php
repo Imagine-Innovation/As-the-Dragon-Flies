@@ -17,7 +17,9 @@ $textColor = [
     <?php if (count($models) > 1): ?>
         <?php foreach ($models as $questPlayer): ?>
             <?php
-            if ($questPlayer->player_id !== $playerId): // only the other players
+
+            if ($questPlayer->player_id !== $playerId):
+                // only the other players
                 $partner = $questPlayer->player;
                 $statusEnum = AppStatus::from($questPlayer->status);
                 $iconInfo = $statusEnum->getIcon();
@@ -30,9 +32,13 @@ $textColor = [
                         </span>
                     </p>
                     <div class="progress" role="progressbar" aria-label="Hit points"
-                         aria-valuenow="<?= $partner->hit_points ?>" aria-valuemin="0" aria-valuemax="<?= $partner->max_hit_points ?>">
+                         aria-valuenow="<?= $partner->hit_points ?>" aria-valuemin="0" aria-valuemax="<?=
+                    $partner->max_hit_points
+                ?>">
                         <div class="progress-bar text-bg-<?= $textColor[$questPlayer->status] ?? '' ?>"
-                             style="width: <?= intval(($partner->hit_points ?? 0) / ($partner->max_hit_points ?? 1) * 100) ?>%">
+                             style="width: <?=
+                    intval((($partner->hit_points ?? 0) / ($partner->max_hit_points ?? 1)) * 100)
+                ?>%">
                             <?= $partner->hit_points ?>/<?= $partner->max_hit_points ?>
                         </div>
                     </div>

@@ -9,7 +9,6 @@ use yii\base\Widget;
 
 class ToolMenu extends Widget
 {
-
     public string $mode = 'nav';
     public bool $isAdmin = false;
 
@@ -20,7 +19,7 @@ class ToolMenu extends Widget
     public function run(): string
     {
         if ($this->isAdmin) {
-            $render = ($this->mode === 'nav') ? 'tool-menu-nav' : 'tool-menu-admin';
+            $render = $this->mode === 'nav' ? 'tool-menu-nav' : 'tool-menu-admin';
         } elseif ($this->mode === 'nav') {
             return '';
         } else {
@@ -28,8 +27,8 @@ class ToolMenu extends Widget
         }
 
         return $this->render($render, [
-                    'menus' => $this->getMenus(),
-                    'debugMode' => false
+            'menus' => $this->getMenus(),
+            'debugMode' => false,
         ]);
     }
 
@@ -51,9 +50,9 @@ class ToolMenu extends Widget
         $authorizedIds = ManageAccessRights::getAuthorizedIds($user, $hasPlayerSelected, $inQuest);
 
         $authorizedMenus = Menu::find()
-                ->joinWith('accessRight')
-                ->where(['access_right_id' => $authorizedIds])
-                ->orderBy(['sort_order' => SORT_ASC]);
+            ->joinWith('accessRight')
+            ->where(['access_right_id' => $authorizedIds])
+            ->orderBy(['sort_order' => SORT_ASC]);
 
         return $authorizedMenus->all();
     }

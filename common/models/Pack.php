@@ -16,31 +16,45 @@ use Yii;
  */
 class Pack extends Item
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'pack';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return array_merge(parent::rules(), [
             [['parent_item_id', 'item_id', 'quantity'], 'required'],
             [['parent_item_id', 'item_id', 'quantity'], 'integer'],
             [['parent_item_id', 'item_id'], 'unique', 'targetAttribute' => ['parent_item_id', 'item_id']],
-            [['item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['item_id' => 'id']],
-            [['parent_item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['parent_item_id' => 'id']],
+            [
+                ['item_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Item::class,
+                'targetAttribute' => ['item_id' => 'id'],
+            ],
+            [
+                ['parent_item_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Item::class,
+                'targetAttribute' => ['parent_item_id' => 'id'],
+            ],
         ]);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return array_merge(parent::attributeLabels(), [
             'parent_item_id' => 'Foreign key to “item” table. The table\'s record will be the container.',
             'item_id' => 'Foreign key to “item” table. The table\'s record will be the content.',
@@ -53,7 +67,8 @@ class Pack extends Item
      *
      * @return \yii\db\ActiveQuery<Item>
      */
-    public function getItems() {
+    public function getItems()
+    {
         return $this->hasMany(Item::class, ['id' => 'item_id']);
     }
 
@@ -62,7 +77,8 @@ class Pack extends Item
      *
      * @return \yii\db\ActiveQuery<Item>
      */
-    public function getParentItem() {
+    public function getParentItem()
+    {
         return $this->hasOne(Item::class, ['id' => 'parent_item_id']);
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /** @var yii\web\View $this */
 /** @var common\models\Player $model */
 /** @var string $cardHeaderClass */

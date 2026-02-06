@@ -25,11 +25,11 @@ $isAdmin = $currentUser->is_admin;
 
     <ul class="top-nav">
         <?=
-        CurrentPlayer::widget([
-            'user' => $currentUser,
-            'mode' => 'navbar',
-        ])
-        ?>
+    CurrentPlayer::widget([
+        'user' => $currentUser,
+        'mode' => 'navbar',
+    ])
+?>
 
         <li class="dropdown top-nav__notifications">
             <a class="top-nav position-relative" href="#" data-bs-toggle="dropdown">
@@ -76,9 +76,7 @@ $isAdmin = $currentUser->is_admin;
                         </div>
                     </a>
                     -->
-                    <?=
-                    Html::a('View all messages', ['site/index'], ['class' => 'view-more'])
-                    ?>
+                    <?= Html::a('View all messages', ['site/index'], ['class' => 'view-more']) ?>
                 </div>
             </div>
         </li>
@@ -118,13 +116,13 @@ $isAdmin = $currentUser->is_admin;
         </li>
         <li class="dropdown top-nav__notifications">
             <?=
-            Button::widget([
-                'isPost' => true,
-                'url' => Url::toRoute(['site/logout']),
-                'icon' => 'dnd-power-off',
-                'tooltip' => "logout"
-            ])
-            ?>
+    Button::widget([
+        'isPost' => true,
+        'url' => Url::toRoute(['site/logout']),
+        'icon' => 'dnd-power-off',
+        'tooltip' => 'logout',
+    ])
+?>
         </li>
     </ul>
 </header>

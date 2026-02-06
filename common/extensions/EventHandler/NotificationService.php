@@ -12,7 +12,6 @@ use common\models\Notification;
 
 class NotificationService
 {
-
     private LoggerService $logger;
     private BroadcastServiceInterface $broadcastService;
     private BroadcastMessageFactory $messageFactory;
@@ -24,11 +23,10 @@ class NotificationService
      * @param BroadcastMessageFactory $messageFactory
      */
     public function __construct(
-            LoggerService $logger,
-            BroadcastServiceInterface $broadcastService,
-            BroadcastMessageFactory $messageFactory
-    )
-    {
+        LoggerService $logger,
+        BroadcastServiceInterface $broadcastService,
+        BroadcastMessageFactory $messageFactory,
+    ) {
         $this->logger = $logger;
         $this->broadcastService = $broadcastService;
         $this->messageFactory = $messageFactory;
@@ -44,20 +42,26 @@ class NotificationService
      */
     public function broadcast(int $questId, array $data, ?string $excludeSessionId = null, ?int $userId = null): void
     {
-        $this->logger->logStart("NotificationService: broadcast questId=[{$questId}], excludeSessionId=[{$excludeSessionId}], userId=[{$userId}]");
+        $this->logger->logStart(
+            "NotificationService: broadcast questId=[{$questId}], excludeSessionId=[{$excludeSessionId}], userId=[{$userId}]",
+        );
 
         // Assuming $userId is equivalent to player_id for the notification
         $playerId = $userId ?? PayloadHelper::extractIntFromPayload('playerId', $data);
         if (!$playerId) {
-            $this->logger->log("NotificationService: Player ID not provided for notification.", $data, 'error');
-            $this->logger->logEnd("NotificationService: broadcast");
+            $this->logger->log('NotificationService: Player ID not provided for notification.', $data, 'error');
+            $this->logger->logEnd('NotificationService: broadcast');
             return;
         }
 
         $payload = PayloadHelper::extractPayloadFromData($data);
         $type = PayloadHelper::extractStringFromPayload('type', $data);
         if ($type === 'new-message') {
-            $message = PayloadHelper::extractStringFromPayload('message', $payload, 'I had something to say, but I completely forgot!');
+            $message = PayloadHelper::extractStringFromPayload(
+                'message',
+                $payload,
+                'I had something to say, but I completely forgot!',
+            );
             $sender = PayloadHelper::extractStringFromPayload('sender', $payload);
 
             $this->logger->log("NotificationService: broadcast - createNewMessage({$message}, {$sender})");
@@ -68,14 +72,14 @@ class NotificationService
             $messageDto = $this->messageFactory->createMessage($type, $payload);
         }
         if (!$messageDto) {
-            $this->logger->log("NotificationService: No message to broadcast.", $data, 'error');
-            $this->logger->logEnd("NotificationService: broadcast");
+            $this->logger->log('NotificationService: No message to broadcast.', $data, 'error');
+            $this->logger->logEnd('NotificationService: broadcast');
             return;
         }
         $this->logger->log("NotificationService: Message DTO [{$type}] broadcasted for questId=[{$questId}]");
         $this->broadcastService->broadcastToQuest($questId, $messageDto, $excludeSessionId);
 
-        $this->logger->logEnd("NotificationService: broadcast");
+        $this->logger->logEnd('NotificationService: broadcast');
     }
 
     /**
@@ -89,12 +93,12 @@ class NotificationService
      */
     public function getNotifications(int $questId, string $type, int $since): array
     {
-        $this->logger->logStart("NotificationService: getNotifications for questId=[{$questId}], type=[{$type}], since=[{$since}]");
+        $this->logger->logStart(
+            "NotificationService: getNotifications for questId=[{$questId}], type=[{$type}], since=[{$since}]",
+        );
 
         try {
-            $query = Notification::find()
-                    ->where(['quest_id' => $questId])
-                    ->andWhere(['notification_type' => $type]);
+            $query = Notification::find()->where(['quest_id' => $questId])->andWhere(['notification_type' => $type]);
 
             if ($since > 0) { // Only add time condition if 'since' is meaningful
                 $query->andWhere(['>', 'created_at', $since]);
@@ -106,10 +110,14 @@ class NotificationService
             $this->logger->log("NotificationService: {$notificationCount} notification(s) found.");
         } catch (\Exception $e) {
             $notifications = [];
-            $this->logger->log("NotificationService: Exception while getting notifications. Error: " . $e->getMessage(), $e->getTraceAsString(), 'error');
+            $this->logger->log(
+                'NotificationService: Exception while getting notifications. Error: ' . $e->getMessage(),
+                $e->getTraceAsString(),
+                'error',
+            );
         }
 
-        $this->logger->logEnd("NotificationService: getNotifications");
+        $this->logger->logEnd('NotificationService: getNotifications');
         return $notifications;
     }
 
@@ -122,7 +130,9 @@ class NotificationService
      */
     public function prepareNewMessageDto(Notification $notification, string $sessionId): NewMessageDto
     {
-        $this->logger->log("NotificationService: Preparing NewMessageDto for Notification ID: {$notification->id}, Session ID: {$sessionId}");
+        $this->logger->log(
+            "NotificationService: Preparing NewMessageDto for Notification ID: {$notification->id}, Session ID: {$sessionId}",
+        );
 
         $payload = JsonHelper::decode($notification->payload);
         $senderDisplayName = $notification->initiator->name;

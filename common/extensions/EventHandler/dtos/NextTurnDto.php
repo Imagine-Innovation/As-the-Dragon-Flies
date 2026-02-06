@@ -6,7 +6,6 @@ use common\extensions\EventHandler\contracts\BroadcastMessageInterface;
 
 class NextTurnDto implements BroadcastMessageInterface
 {
-
     private string $type = 'next-turn';
 
     /** @var array<string, mixed> $payload */
@@ -16,10 +15,11 @@ class NextTurnDto implements BroadcastMessageInterface
      *
      * @param array<string, mixed> $detail
      */
-    public function __construct(array $detail) {
+    public function __construct(array $detail)
+    {
         $this->payload = [
             'detail' => $detail,
-            'timestamp' => time()
+            'timestamp' => time(),
         ];
     }
 
@@ -27,7 +27,8 @@ class NextTurnDto implements BroadcastMessageInterface
      *
      * @return string
      */
-    public function getType(): string {
+    public function getType(): string
+    {
         return $this->type;
     }
 
@@ -35,7 +36,8 @@ class NextTurnDto implements BroadcastMessageInterface
      *
      * @return array<string, mixed>
      */
-    public function getPayload(): array {
+    public function getPayload(): array
+    {
         return $this->payload;
     }
 
@@ -43,7 +45,8 @@ class NextTurnDto implements BroadcastMessageInterface
      *
      * @return string|false
      */
-    public function toJson(): string|false {
+    public function toJson(): string|false
+    {
         return json_encode(['type' => $this->type, 'payload' => $this->payload]);
     }
 }

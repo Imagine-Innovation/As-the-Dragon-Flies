@@ -7,10 +7,10 @@ use common\models\Wizard;
 use common\models\WizardQuestion;
 use Yii;
 use yii\data\ActiveDataProvider;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
 use yii\web\Response;
 
 /**
@@ -18,38 +18,35 @@ use yii\web\Response;
  */
 class WizardController extends Controller
 {
-
     /**
      * @inheritDoc
      */
-    public function behaviors() {
+    public function behaviors()
+    {
         /** @phpstan-ignore-next-line */
-        return array_merge(
-                parent::behaviors(),
-                [
-                    'access' => [
-                        'class' => AccessControl::class,
-                        'rules' => [
-                            [
-                                'actions' => ['*'],
-                                'allow' => false,
-                                'roles' => ['?'],
-                            ],
-                            [
-                                'actions' => ['index', 'ajax-question', 'view'],
-                                'allow' => ManageAccessRights::isRouteAllowed($this),
-                                'roles' => ['@'],
-                            ],
-                        ],
+        return array_merge(parent::behaviors(), [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['*'],
+                        'allow' => false,
+                        'roles' => ['?'],
                     ],
-                    'verbs' => [
-                        'class' => VerbFilter::className(),
-                        'actions' => [
-                            'delete' => ['POST'],
-                        ],
+                    [
+                        'actions' => ['index', 'ajax-question', 'view'],
+                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'roles' => ['@'],
                     ],
-                ]
-        );
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['POST'],
+                ],
+            ],
+        ]);
     }
 
     /**
@@ -57,13 +54,14 @@ class WizardController extends Controller
      *
      * @return string
      */
-    public function actionIndex(): string {
+    public function actionIndex(): string
+    {
         $dataProvider = new ActiveDataProvider([
             'query' => Wizard::find(),
         ]);
 
         return $this->render('index', [
-                    'dataProvider' => $dataProvider,
+            'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -73,9 +71,10 @@ class WizardController extends Controller
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView(int $id): string {
+    public function actionView(int $id): string
+    {
         return $this->render('view', [
-                    'model' => $this->findModel($id),
+            'model' => $this->findModel($id),
         ]);
     }
 
@@ -83,7 +82,8 @@ class WizardController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxQuestion(): array {
+    public function actionAjaxQuestion(): array
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
@@ -97,7 +97,7 @@ class WizardController extends Controller
         $propertyMap = [
             'class' => 'class_id',
             'race' => 'race_id',
-            'alignment' => 'alignment_id'
+            'alignment' => 'alignment_id',
         ];
 
         $property = $propertyMap[$topic] ?? null;
@@ -106,9 +106,11 @@ class WizardController extends Controller
         }
 
         $model = $this->findQuestion($id);
-        $content = $this->renderPartial('ajax/question',
-                ['topic' => $topic, 'property' => $property, 'model' => $model]
-        );
+        $content = $this->renderPartial('ajax/question', [
+            'topic' => $topic,
+            'property' => $property,
+            'model' => $model,
+        ]);
         return ['error' => false, 'msg' => '', 'content' => $content];
     }
 
@@ -120,7 +122,8 @@ class WizardController extends Controller
      * @return Wizard the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel(int $id): Wizard {
+    protected function findModel(int $id): Wizard
+    {
         if (($model = Wizard::findOne(['id' => $id])) !== null) {
             return $model;
         }
@@ -136,7 +139,8 @@ class WizardController extends Controller
      * @return WizardQuestion the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findQuestion(int $id): WizardQuestion {
+    protected function findQuestion(int $id): WizardQuestion
+    {
         if (($model = WizardQuestion::findOne(['id' => $id])) !== null) {
             return $model;
         }

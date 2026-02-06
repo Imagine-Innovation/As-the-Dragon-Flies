@@ -6,10 +6,9 @@ use common\components\AppStatus;
 
 class ActionButtonsConfig
 {
-
     /**
      *
-     * @param string $modelName
+     * @param string $controller
      * @param int $status
      * @return array<int,array{
      *      tooltip: string,
@@ -24,21 +23,22 @@ class ActionButtonsConfig
      *      table: bool,
      *      view: bool
      * }> $action An associative array containing the action details and requirements.
-
+     *
      */
-    public static function getActions(string $modelName, int $status): array {
+    public static function getActions(string $controller, int $status): array
+    {
         $actions = [
             AppStatus::DELETED->value => [
                 [
                     'tooltip' => 'Restore',
-                    'route' => $modelName,
-                    'verb' => 'restore',
+                    'controller' => $controller,
+                    'action' => 'restore',
                     'mode' => 'POST',
                     'icon' => 'arrow-left-square',
                     'admin' => true,
                     'player' => false,
                     'owner' => false,
-                    'modelName' => ['user', 'player', 'rule'],
+                    'controllers' => ['user', 'player', 'rule'],
                     'table' => true,
                     'view' => true,
                 ],
@@ -46,40 +46,40 @@ class ActionButtonsConfig
             AppStatus::INACTIVE->value => [
                 [
                     'tooltip' => 'View',
-                    'route' => $modelName,
-                    'verb' => 'view',
+                    'controller' => $controller,
+                    'action' => 'view',
                     'mode' => 'GET',
                     'icon' => 'info-square',
                     'admin' => false,
                     'player' => false,
                     'owner' => false,
-                    'modelName' => ['rule'],
+                    'controllers' => ['rule'],
                     'table' => true,
                     'view' => false,
                 ],
                 [
                     'tooltip' => 'Validate',
-                    'route' => $modelName,
-                    'verb' => 'validate',
+                    'controller' => $controller,
+                    'action' => 'validate',
                     'mode' => 'POST',
                     'icon' => 'check-square',
                     'admin' => false,
                     'player' => false,
                     'owner' => false,
-                    'modelName' => ['user', 'player', 'rule'],
+                    'controllers' => ['user', 'player', 'rule'],
                     'table' => true,
                     'view' => true,
                 ],
                 [
                     'tooltip' => 'Delete',
-                    'route' => $modelName,
-                    'verb' => 'delete',
+                    'controller' => $controller,
+                    'action' => 'delete',
                     'mode' => 'POST',
                     'icon' => 'x-square',
                     'admin' => false,
                     'player' => false,
                     'owner' => false,
-                    'modelName' => ['user', 'player', 'rule'],
+                    'controllers' => ['user', 'player', 'rule'],
                     'table' => true,
                     'view' => true,
                 ],
@@ -87,40 +87,40 @@ class ActionButtonsConfig
             AppStatus::ACTIVE->value => [
                 [
                     'tooltip' => 'Unvalidate',
-                    'route' => $modelName,
-                    'verb' => 'restore',
+                    'controller' => $controller,
+                    'action' => 'restore',
                     'mode' => 'POST',
                     'icon' => 'pencil-square',
                     'admin' => false,
                     'player' => false,
                     'owner' => false,
-                    'modelName' => ['user', 'rule'],
+                    'controllers' => ['user', 'rule'],
                     'table' => true,
                     'view' => true,
                 ],
                 [
                     'tooltip' => 'Shop',
-                    'route' => 'player-cart',
-                    'verb' => 'shop',
+                    'controller' => 'player-cart',
+                    'action' => 'shop',
                     'mode' => 'GET',
                     'icon' => 'plus-square',
                     'admin' => false,
                     'player' => true,
                     'owner' => true,
-                    'modelName' => ['player'],
+                    'controllers' => ['player'],
                     'table' => true,
                     'view' => true,
                 ],
                 [
                     'tooltip' => 'Delete',
-                    'route' => $modelName,
-                    'verb' => 'delete',
+                    'controller' => $controller,
+                    'action' => 'delete',
                     'mode' => 'POST',
                     'icon' => 'x-square',
                     'admin' => false,
                     'player' => false,
                     'owner' => false,
-                    'modelName' => ['user', 'player', 'rule'],
+                    'controllers' => ['user', 'player', 'rule'],
                     'table' => true,
                     'view' => true,
                 ],

@@ -12,7 +12,6 @@ use Yii;
 
 class PlayerManager extends BaseManager
 {
-
     // Context data
     // Public facade
     public ?QuestPlayer $questPlayer = null;
@@ -70,9 +69,9 @@ class PlayerManager extends BaseManager
     {
         Yii::debug("*** debug *** getLevelId - xp={$xp}");
         $level = \common\models\Level::find()
-                ->where(['<=', 'xp_min', $xp])
-                ->andWhere(['>', 'xp_max', $xp])
-                ->one();
+            ->where(['<=', 'xp_min', $xp])
+            ->andWhere(['>', 'xp_max', $xp])
+            ->one();
         return $level->id ?? 1;
     }
 
@@ -95,6 +94,7 @@ class PlayerManager extends BaseManager
         $newLevelId = $this->getLevelId($newXP);
         if ($newLevelId <> $player->level_id) {
             $updateSetStatement['level_id'] = $newLevelId;
+
             // TODO : Alert the player that he has reached a new level
         }
 
@@ -127,7 +127,9 @@ class PlayerManager extends BaseManager
      */
     public function updatePlayerStats(Outcome &$outcome): void
     {
-        Yii::debug("*** debug *** updatePlayerStats - player={$this->player?->name}, outcome=" . print_r($outcome, true));
+        Yii::debug(
+            "*** debug *** updatePlayerStats - player={$this->player?->name}, outcome=" . print_r($outcome, true),
+        );
         if ($this->player === null) {
             return;
         }
@@ -142,7 +144,7 @@ class PlayerManager extends BaseManager
         }
 
         if (!empty($updateSetStatement)) {
-            Yii::debug("*** debug *** updatePlayerStats - update set=" . print_r($updateSetStatement, true));
+            Yii::debug('*** debug *** updatePlayerStats - update set=' . print_r($updateSetStatement, true));
             Player::updateAll($updateSetStatement, ['id' => $this->player->id]);
         }
 
@@ -160,7 +162,7 @@ class PlayerManager extends BaseManager
      */
     public function registerGainsAndLosses(array &$outcomes): void
     {
-        Yii::debug("*** debug *** registerGainsAndLosses - outcomes=" . count($outcomes));
+        Yii::debug('*** debug *** registerGainsAndLosses - outcomes=' . count($outcomes));
 
         if (empty($outcomes) || $this->player === null) {
             return;

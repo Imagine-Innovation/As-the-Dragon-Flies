@@ -26,7 +26,13 @@ if (empty($outcomes)) {
     foreach ($outcomes as $outcome) {
         echo $hr;
         if ($outcome->description) {
-            echo "<p>" . nl2br($outcome->description ?? "Something happened, that's for sure, but I don't really know what") . "</p>";
+            echo
+                '<p>'
+                    . nl2br(
+                        $outcome->description ?? "Something happened, that's for sure, but I don't really know what",
+                    )
+                    . '</p>'
+            ;
         }
 
         if ($outcome->gained_gp > 0) {
@@ -45,20 +51,32 @@ if (empty($outcomes)) {
     }
 }
 
-echo "<p>isFree=" . ($isFree ? 'true' : 'false') . ", questProgressId={$questProgressId}, nextMissionId=" . ($nextMissionId ?? "null") . ", canReplay=" . ($canReplay ? 'true' : 'false') . "</p>";
+echo
+    '<p>isFree='
+        . ($isFree ? 'true' : 'false')
+        . ", questProgressId={$questProgressId}, nextMissionId="
+        . ($nextMissionId ?? 'null')
+        . ', canReplay='
+        . ($canReplay ? 'true' : 'false')
+        . '</p>'
+;
 if ($isFree) {
-    echo Button::widget([
-        'icon' => 'bi-arrow-repeat',
-        'title' => "Try another action",
-        'isCta' => true,
-        'ariaParams' => ['data-bs-dismiss' => 'modal'],
-    ]);
+    echo
+        Button::widget([
+            'icon' => 'bi-arrow-repeat',
+            'title' => 'Try another action',
+            'isCta' => true,
+            'ariaParams' => ['data-bs-dismiss' => 'modal'],
+        ])
+    ;
 } else {
-    echo Button::widget([
-        'icon' => 'bi-escape',
-        'title' => "Finish your turn",
-        'isCta' => true,
-        'onclick' => "vtt.moveToNextPlayer({$questProgressId}, {$nextMissionId}); return false;",
-        'ariaParams' => ['data-bs-dismiss' => 'modal'],
-    ]);
+    echo
+        Button::widget([
+            'icon' => 'bi-escape',
+            'title' => 'Finish your turn',
+            'isCta' => true,
+            'onclick' => "vtt.moveToNextPlayer({$questProgressId}, {$nextMissionId}); return false;",
+            'ariaParams' => ['data-bs-dismiss' => 'modal'],
+        ])
+    ;
 }

@@ -7,10 +7,9 @@ use common\models\Weapon;
 
 class ItemHelper
 {
-
     // Define the available weapon properties as an associative array.
     // /!\ Don't forget to update this array when the data model changes
-    Const FULL_WEAPON_PROPERTIES = [
+    const FULL_WEAPON_PROPERTIES = [
         'need_ammunition' => 'Need ammunition',
         'is_two_handed' => 'Two Handed',
         'is_finesse' => 'Finesse',
@@ -23,7 +22,7 @@ class ItemHelper
         'is_thrown' => 'Thrown (%s)',
         'is_versatile' => 'Versatile (%s)',
     ];
-    Const LITE_WEAPON_PROPERTIES = [
+    const LITE_WEAPON_PROPERTIES = [
         'is_two_handed' => 'Two Handed',
         'is_finesse' => 'Finesse',
         'is_range' => 'Range (%s)',
@@ -39,23 +38,23 @@ class ItemHelper
      * @param array<string, string> $propertiesConst
      * @return string
      */
-    private static function getWeaponProperties(Weapon &$weapon, array $propertiesConst): string {
-
+    private static function getWeaponProperties(Weapon &$weapon, array $propertiesConst): string
+    {
         $properties = [];
 
         foreach ($propertiesConst as $property => $displayName) {
             if ($weapon->$property) {
                 if (str_contains($displayName, '%s')) {
-                    $value = ($property === 'is_versatile') ?
-                            $weapon->versatile_dice :
-                            "{$weapon->range_min}-{$weapon->range_max}";
+                    $value = $property === 'is_versatile'
+                        ? $weapon->versatile_dice
+                        : "{$weapon->range_min}-{$weapon->range_max}";
                     $properties[] = sprintf($displayName, $value);
                 } else {
                     $properties[] = $displayName;
                 }
             }
         }
-        return implode(", ", $properties);
+        return implode(', ', $properties);
     }
 
     /**
@@ -63,7 +62,8 @@ class ItemHelper
      * @param Weapon $weapon
      * @return string
      */
-    public static function getFullWeaponProperties(Weapon &$weapon): string {
+    public static function getFullWeaponProperties(Weapon &$weapon): string
+    {
         return self::getWeaponProperties($weapon, self::FULL_WEAPON_PROPERTIES);
     }
 
@@ -72,7 +72,8 @@ class ItemHelper
      * @param Weapon $weapon
      * @return string
      */
-    public static function getLiteWeaponProperties(Weapon &$weapon): string {
+    public static function getLiteWeaponProperties(Weapon &$weapon): string
+    {
         return self::getWeaponProperties($weapon, self::LITE_WEAPON_PROPERTIES);
     }
 
@@ -81,7 +82,8 @@ class ItemHelper
      * @param PlayerItem $playerItem
      * @return string|null
      */
-    public static function getRemainingAmunitions(PlayerItem &$playerItem): ?string {
+    public static function getRemainingAmunitions(PlayerItem &$playerItem): ?string
+    {
         $weapon = $playerItem->weapon;
 
         if (!$weapon->need_ammunition || !$weapon->amunition_id) {
@@ -90,7 +92,10 @@ class ItemHelper
 
         $amunition = $weapon->amunition->name;
 
-        $weaponAmunition = PlayerItem::findOne(['player_id' => $playerItem->player_id, 'item_id' => $weapon->amunition_id]);
+        $weaponAmunition = PlayerItem::findOne([
+            'player_id' => $playerItem->player_id,
+            'item_id' => $weapon->amunition_id,
+        ]);
         if (!$weaponAmunition) {
             return "You need {$amunition} to use it";
         }
@@ -98,7 +103,7 @@ class ItemHelper
         return match ($weaponAmunition->quantity) {
             0 => "No more {$amunition}",
             1 => "Only one {$amunition} left",
-            default => "{$weaponAmunition->quantity} {$amunition}s left"
+            default => "{$weaponAmunition->quantity} {$amunition}s left",
         };
     }
 }

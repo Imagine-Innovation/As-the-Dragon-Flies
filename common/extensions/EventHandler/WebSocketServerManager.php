@@ -15,7 +15,6 @@ use React\Socket\SocketServer;
 
 class WebSocketServerManager
 {
-
     /** @var array<string, ConnectionInterface> $clients */
     private array $clients = [];
     private LoggerService $logger;
@@ -30,11 +29,7 @@ class WebSocketServerManager
      * @param LoopInterface $loop
      * @param QuestSessionManager $questSessionManager
      */
-    public function __construct(
-            LoggerService $logger,
-            LoopInterface $loop,
-            QuestSessionManager $questSessionManager
-    )
+    public function __construct(LoggerService $logger, LoopInterface $loop, QuestSessionManager $questSessionManager)
     {
         $this->logger = $logger;
         $this->loop = $loop;
@@ -84,22 +79,32 @@ class WebSocketServerManager
         $this->logger->log("WebSocketServerManager: Attempting to create SocketServer on {$host}:{$port}...");
         try {
             $this->socket = new SocketServer("{$host}:{$port}", [], $this->loop);
-            $this->logger->log("WebSocketServerManager: SocketServer created successfully.");
+            $this->logger->log('WebSocketServerManager: SocketServer created successfully.');
         } catch (\Throwable $e) {
-            $this->logger->log("WebSocketServerManager: Error creating SocketServer: " . $e->getMessage() . " - Trace: " . $e->getTraceAsString(), null, 'error');
+            $this->logger->log(
+                'WebSocketServerManager: Error creating SocketServer: ' . $e->getMessage() . ' - Trace: '
+                    . $e->getTraceAsString(),
+                null,
+                'error',
+            );
             throw $e;
         }
 
-        $this->logger->log("WebSocketServerManager: Attempting to create IoServer...");
+        $this->logger->log('WebSocketServerManager: Attempting to create IoServer...');
         try {
             $this->IOServer = new IoServer($httpServer, $this->socket, $this->loop);
-            $this->logger->log("WebSocketServerManager: IoServer created successfully.");
+            $this->logger->log('WebSocketServerManager: IoServer created successfully.');
         } catch (\Throwable $e) {
-            $this->logger->log("WebSocketServerManager: Error creating IoServer: " . $e->getMessage() . " - Trace: " . $e->getTraceAsString(), null, 'error');
+            $this->logger->log(
+                'WebSocketServerManager: Error creating IoServer: ' . $e->getMessage() . ' - Trace: '
+                    . $e->getTraceAsString(),
+                null,
+                'error',
+            );
             throw $e;
         }
 
-        $this->logger->log("WebSocketServerManager: WebSocket server setup complete.");
+        $this->logger->log('WebSocketServerManager: WebSocket server setup complete.');
     }
 
     /**
@@ -108,7 +113,7 @@ class WebSocketServerManager
      */
     public function shutdown(): void
     {
-        $this->logger->logStart("Shutting down WebSocket server..."); // Use LoggerService
+        $this->logger->logStart('Shutting down WebSocket server...'); // Use LoggerService
         // Close all client connections
         foreach ($this->clients as $clientId => $client) {
             $client->close();
@@ -120,7 +125,7 @@ class WebSocketServerManager
         }
 
         $this->loop->stop();
-        $this->logger->logEnd("WebSocket server shut down."); // Use LoggerService
+        $this->logger->logEnd('WebSocket server shut down.'); // Use LoggerService
     }
 
     /**

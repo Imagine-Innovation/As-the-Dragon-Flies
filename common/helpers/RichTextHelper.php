@@ -7,7 +7,6 @@ use yii\helpers\HtmlPurifier;
 
 class RichTextHelper
 {
-
     /**
      * Sanitizes and caches the result to prevent CPU spikes.
      *
@@ -25,12 +24,12 @@ class RichTextHelper
         $cacheKey = 'purified_html_' . md5($content);
 
         return Yii::$app->cache->getOrSet(
-                        $cacheKey,
-                        function () use ($content) {
-                            return self::sanitize($content);
-                        },
-                        $duration
-                );
+            $cacheKey,
+            function () use ($content) {
+                return self::sanitize($content);
+            },
+            $duration,
+        );
     }
 
     /**
@@ -48,12 +47,12 @@ class RichTextHelper
         }
 
         return HtmlPurifier::process($content, [
-                    // Removed 'iframe' and associated attributes
-                    'HTML.Allowed' => 'p,b,strong,i,em,u,a[href|title|target],ul,ol,li,br,span[style],img[src|alt|width|height],table,thead,tbody,tr,th,td',
-                    // Allow basic styling for tables and text alignment
-                    'CSS.AllowedProperties' => 'font,font-size,font-weight,font-style,font-family,text-decoration,padding-left,color,background-color,text-align,width,height,border,border-collapse,border-spacing',
-                    'AutoFormat.RemoveEmpty' => true,
-                    'HTML.Nofollow' => true, // Good practice for SEO/Security on user-generated links
+            // Removed 'iframe' and associated attributes
+            'HTML.Allowed' => 'p,b,strong,i,em,u,a[href|title|target],ul,ol,li,br,span[style],img[src|alt|width|height],table,thead,tbody,tr,th,td',
+            // Allow basic styling for tables and text alignment
+            'CSS.AllowedProperties' => 'font,font-size,font-weight,font-style,font-family,text-decoration,padding-left,color,background-color,text-align,width,height,border,border-collapse,border-spacing',
+            'AutoFormat.RemoveEmpty' => true,
+            'HTML.Nofollow' => true, // Good practice for SEO/Security on user-generated links
         ]);
     }
 }

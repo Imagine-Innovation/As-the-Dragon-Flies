@@ -4,8 +4,8 @@ namespace common\components\gameplay;
 
 use common\components\AppStatus;
 use common\components\NarrativeComponent;
-use common\models\events\EventFactory;
 use common\models\Chapter;
+use common\models\events\EventFactory;
 use common\models\Mission;
 use common\models\Player;
 use common\models\Quest;
@@ -19,7 +19,6 @@ use yii\helpers\ArrayHelper;
 
 class QuestManager extends BaseManager
 {
-
     // Context data
     public ?Quest $quest = null;
     public ?QuestProgress $questProgress = null;
@@ -50,7 +49,7 @@ class QuestManager extends BaseManager
     private function getQuest(): Quest
     {
         if ($this->quest === null) {
-            throw new RuntimeException("QuestManager context error: Quest is missing.");
+            throw new RuntimeException('QuestManager context error: Quest is missing.');
         }
         return $this->quest;
     }
@@ -63,7 +62,7 @@ class QuestManager extends BaseManager
     private function getQuestProgress(): QuestProgress
     {
         if ($this->questProgress === null) {
-            throw new RuntimeException("QuestManager context error: QuestProgress is missing.");
+            throw new RuntimeException('QuestManager context error: QuestProgress is missing.');
         }
         return $this->questProgress;
     }
@@ -76,7 +75,7 @@ class QuestManager extends BaseManager
     private function getPlayer(): Player
     {
         if ($this->player === null) {
-            throw new RuntimeException("QuestManager context error: Player is missing.");
+            throw new RuntimeException('QuestManager context error: Player is missing.');
         }
         return $this->player;
     }
@@ -92,15 +91,14 @@ class QuestManager extends BaseManager
     {
         $quest = $this->getQuest();
         $query = QuestPlayer::find()
-                ->where(['quest_id' => $quest->id])
-                ->andWhere(['<>', 'status', AppStatus::LEFT->value]);
+            ->where(['quest_id' => $quest->id])
+            ->andWhere(['<>', 'status', AppStatus::LEFT->value]);
 
         if ($currentTurn) {
             $query->andWhere(['>', 'player_turn', $currentTurn]);
         }
 
-        return $query->orderBy(['player_turn' => SORT_ASC])
-                        ->one();
+        return $query->orderBy(['player_turn' => SORT_ASC])->one();
     }
 
     /**
@@ -150,9 +148,7 @@ class QuestManager extends BaseManager
     private function getLastTurnSequence(): int
     {
         $progress = $this->getQuestProgress();
-        $nextSequence = QuestTurn::find()
-                ->where(['quest_progress_id' => $progress->id])
-                ->max('sequence');
+        $nextSequence = QuestTurn::find()->where(['quest_progress_id' => $progress->id])->max('sequence');
 
         return is_scalar($nextSequence) ? (int) $nextSequence : 0;
     }
@@ -184,12 +180,12 @@ class QuestManager extends BaseManager
             'quest_progress_id' => $this->getQuestProgress()->id,
             'sequence' => $this->nextSequence,
             'status' => AppStatus::IN_PROGRESS->value,
-            'started_at' => time()
+            'started_at' => time(),
         ]);
 
         $successfullySaved = $questTurn->save();
         if (!$successfullySaved) {
-            throw new Exception(implode("<br />", ArrayHelper::getColumn($questTurn->errors, 0, false)));
+            throw new Exception(implode('<br />', ArrayHelper::getColumn($questTurn->errors, 0, false)));
         }
         return $questTurn;
     }
@@ -202,13 +198,10 @@ class QuestManager extends BaseManager
      */
     private function endCurrentTurn(?int $questProgressId = null, AppStatus $status = AppStatus::TERMINATED): int
     {
-        return QuestTurn::updateAll(
-                        ['status' => $status->value],
-                        [
-                            'status' => AppStatus::IN_PROGRESS->value,
-                            'quest_progress_id' => $questProgressId ?? $this->getQuestProgress()->id
-                        ]
-                );
+        return QuestTurn::updateAll(['status' => $status->value], [
+            'status' => AppStatus::IN_PROGRESS->value,
+            'quest_progress_id' => $questProgressId ?? $this->getQuestProgress()->id,
+        ]);
     }
 
     /**
@@ -219,17 +212,14 @@ class QuestManager extends BaseManager
      */
     private function endQuestPlayers(int $questId, string $reason): int
     {
-        return QuestPlayer::updateAll(
-                        [
-                            'status' => AppStatus::LEFT->value,
-                            'left_at' => time(),
-                            'reason' => $reason
-                        ],
-                        [
-                            'status' => [AppStatus::ONLINE->value, AppStatus::OFFLINE->value],
-                            'quest_id' => $questId
-                        ]
-                );
+        return QuestPlayer::updateAll([
+            'status' => AppStatus::LEFT->value,
+            'left_at' => time(),
+            'reason' => $reason,
+        ], [
+            'status' => [AppStatus::ONLINE->value, AppStatus::OFFLINE->value],
+            'quest_id' => $questId,
+        ]);
     }
 
     /**
@@ -239,10 +229,7 @@ class QuestManager extends BaseManager
      */
     private function detachPlayersFromQuest(int $questId): int
     {
-        return Player::updateAll(
-                        ['quest_id' => null],
-                        ['quest_id' => $questId]
-                );
+        return Player::updateAll(['quest_id' => null], ['quest_id' => $questId]);
     }
 
     /**
@@ -292,7 +279,7 @@ class QuestManager extends BaseManager
         }
 
         $questProgress = $this->addQuestProgress((int) $chapter->first_mission_id);
-        return ($questProgress !== null);
+        return $questProgress !== null;
     }
 
     /**
@@ -301,8 +288,10 @@ class QuestManager extends BaseManager
      * @param AppStatus $status
      * @return void
      */
-    private function endCurrentQuestProgress(QuestProgress $questProgress, AppStatus $status = AppStatus::TERMINATED): void
-    {
+    private function endCurrentQuestProgress(
+        QuestProgress $questProgress,
+        AppStatus $status = AppStatus::TERMINATED,
+    ): void {
         $this->endCurrentTurn($questProgress->id, $status);
 
         $questProgress->status = $status->value;
@@ -374,9 +363,9 @@ class QuestManager extends BaseManager
         $mission = $currentProgress->mission;
 
         $nextChapter = Chapter::find()
-                ->where(['>', 'chapter_number', $mission->chapter->chapter_number])
-                ->orderBy(['chapter_number' => SORT_ASC])
-                ->one();
+            ->where(['>', 'chapter_number', $mission->chapter->chapter_number])
+            ->orderBy(['chapter_number' => SORT_ASC])
+            ->one();
 
         return $nextChapter?->first_mission_id;
     }
@@ -389,9 +378,9 @@ class QuestManager extends BaseManager
     {
         $progress = $this->getQuestProgress();
         $nextMissionInChapter = Mission::find()
-                ->where(['>', 'id', $progress->mission_id])
-                ->orderBy(['id' => SORT_ASC])
-                ->one();
+            ->where(['>', 'id', $progress->mission_id])
+            ->orderBy(['id' => SORT_ASC])
+            ->one();
 
         if ($nextMissionInChapter) {
             return $nextMissionInChapter->id;
@@ -450,14 +439,14 @@ class QuestManager extends BaseManager
         $currentPlayer = $quest->currentPlayer;
 
         if ($currentPlayer === null) {
-            throw new Exception("No current player found for quest.");
+            throw new Exception('No current player found for quest.');
         }
 
         $this->endCurrentQuestProgress($currentQuestProgress);
         $nextQuestProgress = $this->addQuestProgress($nextMissionId);
 
         if (!$nextQuestProgress) {
-            throw new Exception("Could not initialize next quest progress.");
+            throw new Exception('Could not initialize next quest progress.');
         }
 
         $detail = $this->getNextMissionDetail($currentQuestProgress, $nextQuestProgress);
@@ -474,8 +463,7 @@ class QuestManager extends BaseManager
      */
     public function moveToNextMission(?int $nextMissionId = null): array
     {
-        Yii::debug("*** debug *** moveToNextMission nextMissionId=" . ($nextMissionId
-                            ? $nextMissionId : 'null'));
+        Yii::debug('*** debug *** moveToNextMission nextMissionId=' . ($nextMissionId ? $nextMissionId : 'null'));
 
         if ($nextMissionId) {
             return $this->setNextMission($this->getQuest(), $nextMissionId);
@@ -504,7 +492,7 @@ class QuestManager extends BaseManager
         }
 
         $newPlayer = $this->getPlayer();
-        $message = "Move to next player";
+        $message = 'Move to next player';
         $detail = [
             'currentPlayerId' => $oldPlayer->id,
             'currentPlayerName' => $oldPlayer->name,
@@ -528,8 +516,12 @@ class QuestManager extends BaseManager
      * @return bool
      * @throws Exception
      */
-    private function createQuestEvent(string $eventType, string $eventDescription, ?Player $initiator, array $detail = []): bool
-    {
+    private function createQuestEvent(
+        string $eventType,
+        string $eventDescription,
+        ?Player $initiator,
+        array $detail = [],
+    ): bool {
         Yii::debug("*** debug *** createQuestEvent - initiator={$initiator?->name}");
 
         try {
@@ -539,7 +531,7 @@ class QuestManager extends BaseManager
 
             $data = [
                 'action' => $eventDescription,
-                'detail' => $detail
+                'detail' => $detail,
             ];
 
             $event = EventFactory::createEvent($eventType, (string) $sessionId, $player, $quest, $data);
@@ -547,7 +539,7 @@ class QuestManager extends BaseManager
             return true;
         } catch (Exception $e) {
             Yii::error("Failed to broadcast '{$eventType}' event: " . $e->getMessage());
-            throw new Exception("Error: " . $e->getMessage());
+            throw new Exception('Error: ' . $e->getMessage());
         }
     }
 }

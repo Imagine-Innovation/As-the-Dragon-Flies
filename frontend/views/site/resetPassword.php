@@ -2,8 +2,8 @@
 
 use frontend\helpers\Caligraphy;
 use frontend\models\ResetPasswordForm;
-use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
+use yii\bootstrap5\Html;
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */
@@ -30,25 +30,25 @@ $this->params['breadcrumbs'][] = $this->title;
                             <?php $form = ActiveForm::begin(['id' => 'reset-password-form']); ?>
                             <div class="form-group last mb-3">
                                 <?=
-                                        $form->field($model, 'password',
-                                                ['inputOptions' => [
-                                                        'autofocus' => 'autofocus',
-                                                        'class' => 'form-control',
-                                                        'autocomplete' => 'current-password',
-                                                    ]
-                                                ])->passwordInput(['placeholder' => 'Your password',])
-                                        ->label('Password')
-                                ?>
+    $form
+        ->field($model, 'password', ['inputOptions' => [
+            'autofocus' => 'autofocus',
+            'class' => 'form-control',
+            'autocomplete' => 'current-password',
+        ]])
+        ->passwordInput(['placeholder' => 'Your password'])
+        ->label('Password')
+?>
                             </div>
 
 
                             <div class="form-group">
                                 <?=
-                                Html::submitButton('<img src="img/Dragonfly.svg" style="height:32px;" alt=""> Set new password', [
-                                    'class' => 'form-control btn btn-lg btn-warning text-decoration',
-                                    'name' => 'reset-button'
-                                ])
-                                ?>
+    Html::submitButton('<img src="img/Dragonfly.svg" style="height:32px;" alt=""> Set new password', [
+        'class' => 'form-control btn btn-lg btn-warning text-decoration',
+        'name' => 'reset-button',
+    ])
+?>
                             </div>
 
                             <?php ActiveForm::end(); ?>

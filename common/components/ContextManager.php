@@ -12,7 +12,6 @@ use yii\base\Component;
 
 class ContextManager extends Component
 {
-
     /**
      *
      * @return User
@@ -31,7 +30,7 @@ class ContextManager extends Component
         if (Yii::$app->user->isGuest) {
             return;
         }
-        Yii::debug("*** debug *** ContextManager - initContext");
+        Yii::debug('*** debug *** ContextManager - initContext');
 
         $user = self::getUser();
         Yii::$app->session->set('user', $user);
@@ -63,7 +62,7 @@ class ContextManager extends Component
             return;
         }
 
-        Yii::debug("*** debug *** ContextManager - updatePlayerContext playerId=" . ($playerId ?? 'null'));
+        Yii::debug('*** debug *** ContextManager - updatePlayerContext playerId=' . ($playerId ?? 'null'));
         self::setSessionId();
 
         $currentPlayer = $playerId ? Player::findOne(['id' => $playerId]) : null;
@@ -96,14 +95,12 @@ class ContextManager extends Component
             return;
         }
 
-        Yii::debug("*** debug *** ContextManager - updateQuestContext questId=" . ($questId ?? 'null'));
+        Yii::debug('*** debug *** ContextManager - updateQuestContext questId=' . ($questId ?? 'null'));
         self::setSessionId();
 
         $quest = $questId ? Quest::findOne(['id' => $questId]) : null;
 
-        if ($quest &&
-                ($quest->status === AppStatus::WAITING->value ||
-                $quest->status === AppStatus::PLAYING->value)) {
+        if ($quest && ($quest->status === AppStatus::WAITING->value || $quest->status === AppStatus::PLAYING->value)) {
             Yii::$app->session->set('inQuest', true);
             Yii::$app->session->set('questId', $quest->id);
             Yii::$app->session->set('questName', $quest->name);

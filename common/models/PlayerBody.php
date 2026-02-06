@@ -23,52 +23,79 @@ use Yii;
  */
 class PlayerBody extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'player_body';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['head_item_id', 'chest_item_id', 'right_hand_item_id', 'left_hand_item_id'], 'default', 'value' => null],
             [['player_id'], 'required'],
             [['player_id', 'head_item_id', 'chest_item_id', 'right_hand_item_id', 'left_hand_item_id'], 'integer'],
-            [['player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['player_id' => 'id']],
-            [['player_id', 'head_item_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlayerItem::class,
+            [
+                ['player_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Player::class,
+                'targetAttribute' => ['player_id' => 'id'],
+            ],
+            [
+                ['player_id', 'head_item_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => PlayerItem::class,
                 'targetAttribute' => ['player_id' => 'player_id', 'head_item_id' => 'item_id'],
                 'when' => function ($model) {
                     return $model->head_item_id !== null;
-                }
+                },
             ],
-            [['player_id', 'chest_item_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlayerItem::class,
+            [
+                ['player_id', 'chest_item_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => PlayerItem::class,
                 'targetAttribute' => ['player_id' => 'player_id', 'chest_item_id' => 'item_id'],
                 'when' => function ($model) {
                     return $model->chest_item_id !== null;
-                }
+                },
             ],
-            [['player_id', 'right_hand_item_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlayerItem::class,
+            [
+                ['player_id', 'right_hand_item_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => PlayerItem::class,
                 'targetAttribute' => ['player_id' => 'player_id', 'right_hand_item_id' => 'item_id'],
                 'when' => function ($model) {
                     return $model->right_hand_item_id !== null;
-                }
+                },
             ],
-            [['player_id', 'left_hand_item_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlayerItem::class,
+            [
+                ['player_id', 'left_hand_item_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => PlayerItem::class,
                 'targetAttribute' => ['player_id' => 'player_id', 'left_hand_item_id' => 'item_id'],
                 'when' => function ($model) {
                     return $model->left_hand_item_id !== null;
-                }
+                },
             ],
-            [['player_id', 'back_item_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlayerItem::class,
+            [
+                ['player_id', 'back_item_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => PlayerItem::class,
                 'targetAttribute' => ['player_id' => 'player_id', 'back_item_id' => 'item_id'],
                 'when' => function ($model) {
                     return $model->back_item_id !== null;
-                }
+                },
             ],
         ];
     }
@@ -76,7 +103,8 @@ class PlayerBody extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'player_id' => 'Foreign key to “player” table',
             'head_item_id' => 'Optional foreign key to “player_item” table. Item that protect the head',
@@ -92,7 +120,8 @@ class PlayerBody extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Player>
      */
-    public function getPlayer() {
+    public function getPlayer()
+    {
         return $this->hasOne(Player::class, ['id' => 'player_id']);
     }
 
@@ -101,7 +130,8 @@ class PlayerBody extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<PlayerItem>
      */
-    public function getHead() {
+    public function getHead()
+    {
         return $this->hasOne(PlayerItem::class, ['player_id' => 'player_id', 'item_id' => 'head_item_id']);
     }
 
@@ -110,7 +140,8 @@ class PlayerBody extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<PlayerItem>
      */
-    public function getChest() {
+    public function getChest()
+    {
         return $this->hasOne(PlayerItem::class, ['player_id' => 'player_id', 'item_id' => 'chest_item_id']);
     }
 
@@ -119,7 +150,8 @@ class PlayerBody extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<PlayerItem>
      */
-    public function getRightHand() {
+    public function getRightHand()
+    {
         return $this->hasOne(PlayerItem::class, ['player_id' => 'player_id', 'item_id' => 'right_hand_item_id']);
     }
 
@@ -128,7 +160,8 @@ class PlayerBody extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<PlayerItem>
      */
-    public function getLeftHand() {
+    public function getLeftHand()
+    {
         return $this->hasOne(PlayerItem::class, ['player_id' => 'player_id', 'item_id' => 'left_hand_item_id']);
     }
 
@@ -137,7 +170,8 @@ class PlayerBody extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<PlayerItem>
      */
-    public function getBack() {
+    public function getBack()
+    {
         return $this->hasOne(PlayerItem::class, ['player_id' => 'player_id', 'item_id' => 'back_item_id']);
     }
 }

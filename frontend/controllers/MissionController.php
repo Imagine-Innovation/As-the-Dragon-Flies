@@ -19,40 +19,41 @@ use yii\web\Response;
  */
 class MissionController extends Controller
 {
-
     /**
      * @inheritDoc
      */
-    public function behaviors() {
+    public function behaviors()
+    {
         /** @phpstan-ignore-next-line */
-        return array_merge(
-                parent::behaviors(),
-                [
-                    'access' => [
-                        'class' => AccessControl::class,
-                        'rules' => [
-                            [
-                                'actions' => ['*'],
-                                'allow' => false,
-                                'roles' => ['?'],
-                            ],
-                            [
-                                'actions' => [
-                                    'create', 'view', 'update', 'add-detail', 'edit-detail',
-                                ],
-                                'allow' => ManageAccessRights::isRouteAllowed($this),
-                                'roles' => ['@'],
-                            ],
-                        ],
+        return array_merge(parent::behaviors(), [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['*'],
+                        'allow' => false,
+                        'roles' => ['?'],
                     ],
-                    'verbs' => [
-                        'class' => VerbFilter::className(),
+                    [
                         'actions' => [
-                            'delete' => ['POST'],
+                            'create',
+                            'view',
+                            'update',
+                            'add-detail',
+                            'edit-detail',
                         ],
+                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'roles' => ['@'],
                     ],
-                ]
-        );
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['POST'],
+                ],
+            ],
+        ]);
     }
 
     /**
@@ -62,10 +63,11 @@ class MissionController extends Controller
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView(int $id): string {
+    public function actionView(int $id): string
+    {
         $model = FindModelHelper::findMission(['id' => $id]);
         return $this->render('view', [
-                    'model' => $model,
+            'model' => $model,
         ]);
     }
 
@@ -76,7 +78,8 @@ class MissionController extends Controller
      * @param int $chapterId
      * @return string|Response
      */
-    public function actionCreate(int $chapterId): string|Response {
+    public function actionCreate(int $chapterId): string|Response
+    {
         // Check if $id is a valid Chapter ID
         $chapter = FindModelHelper::findChapter(['id' => $chapterId]);
         $model = new Mission();
@@ -92,7 +95,7 @@ class MissionController extends Controller
         }
 
         return $this->render('create', [
-                    'model' => $model,
+            'model' => $model,
         ]);
     }
 
@@ -103,7 +106,8 @@ class MissionController extends Controller
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate(int $id): string|Response {
+    public function actionUpdate(int $id): string|Response
+    {
         $model = FindModelHelper::findMission(['id' => $id]);
 
         $post = (array) $this->request->post();
@@ -112,7 +116,7 @@ class MissionController extends Controller
         }
 
         return $this->render('update', [
-                    'model' => $model,
+            'model' => $model,
         ]);
     }
 
@@ -122,7 +126,8 @@ class MissionController extends Controller
      * @return array{className: string, snippet: string, childOf: string}
      * @throws \Exception
      */
-    protected function getDetailInfoFromType(string $type): array {
+    protected function getDetailInfoFromType(string $type): array
+    {
         return match ($type) {
             'NPC' => ['className' => 'Npc', 'snippet' => 'npc-form', 'childOf' => 'mission'],
             'Monster' => ['className' => 'Monster', 'snippet' => 'monster-form', 'childOf' => 'mission'],
@@ -147,22 +152,27 @@ class MissionController extends Controller
      * @return string|Response
      * @throws \Exception
      */
-    private function createDetailModel(\yii\db\ActiveRecord &$model, Mission $mission, string $type, string $snippet): string|Response {
+    private function createDetailModel(
+        \yii\db\ActiveRecord &$model,
+        Mission $mission,
+        string $type,
+        string $snippet,
+    ): string|Response {
         if ($this->request->isPost) {
             $post = (array) $this->request->post();
             if ($model->load($post) && $model->save()) {
                 return $this->redirect(['view', 'id' => $mission->id]);
             }
-            throw new \Exception(implode("<br/>", ArrayHelper::getColumn($model->errors, 0, false)));
+            throw new \Exception(implode('<br/>', ArrayHelper::getColumn($model->errors, 0, false)));
         } else {
             $model->loadDefaultValues();
         }
 
         return $this->render('add-detail', [
-                    'model' => $model,
-                    'mission' => $mission,
-                    'type' => $type,
-                    'snippet' => $snippet,
+            'model' => $model,
+            'mission' => $mission,
+            'type' => $type,
+            'snippet' => $snippet,
         ]);
     }
 
@@ -174,7 +184,8 @@ class MissionController extends Controller
      * @param string $snippet
      * @return string|Response
      */
-    private function addMissionChild(int $missionId, string $type, string $className, string $snippet): string|Response {
+    private function addMissionChild(int $missionId, string $type, string $className, string $snippet): string|Response
+    {
         $mission = FindModelHelper::findMission(['id' => $missionId]);
 
         /** @var class-string<\yii\db\ActiveRecord> $modelClass */
@@ -193,7 +204,8 @@ class MissionController extends Controller
      * @param string $snippet
      * @return string|Response
      */
-    private function addDecorChild(int $decorId, string $type, string $className, string $snippet): string|Response {
+    private function addDecorChild(int $decorId, string $type, string $className, string $snippet): string|Response
+    {
         $decor = FindModelHelper::findDecor(['id' => $decorId]);
         $mission = $decor->mission;
 
@@ -213,7 +225,8 @@ class MissionController extends Controller
      * @param string $snippet
      * @return string|Response
      */
-    private function addActionChild(int $actionId, string $type, string $className, string $snippet): string|Response {
+    private function addActionChild(int $actionId, string $type, string $className, string $snippet): string|Response
+    {
         $action = FindModelHelper::findAction(['id' => $actionId]);
         $mission = $action->mission;
 
@@ -238,7 +251,8 @@ class MissionController extends Controller
      * @return string|Response
      * @throws \Exception
      */
-    public function actionAddDetail(int $parentId, string $type): string|Response {
+    public function actionAddDetail(int $parentId, string $type): string|Response
+    {
         $detailInfo = $this->getDetailInfoFromType($type);
         $className = $detailInfo['className'];
         $snippet = $detailInfo['snippet'];
@@ -260,20 +274,25 @@ class MissionController extends Controller
      * @return string|Response
      * @throws \Exception
      */
-    private function updateDetailModel(\yii\db\ActiveRecord &$model, Mission $mission, string $type, string $snippet): string|Response {
+    private function updateDetailModel(
+        \yii\db\ActiveRecord &$model,
+        Mission $mission,
+        string $type,
+        string $snippet,
+    ): string|Response {
         if ($this->request->isPost) {
             $post = (array) $this->request->post();
             if ($model->load($post) && $model->save()) {
                 return $this->redirect(['view', 'id' => $mission->id]);
             }
-            throw new \Exception(implode("<br/>", ArrayHelper::getColumn($model->errors, 0, false)));
+            throw new \Exception(implode('<br/>', ArrayHelper::getColumn($model->errors, 0, false)));
         }
 
         return $this->render('edit-detail', [
-                    'model' => $model,
-                    'mission' => $mission,
-                    'type' => $type,
-                    'snippet' => $snippet,
+            'model' => $model,
+            'mission' => $mission,
+            'type' => $type,
+            'snippet' => $snippet,
         ]);
     }
 
@@ -285,7 +304,12 @@ class MissionController extends Controller
      * @param string $snippet
      * @return string|Response
      */
-    private function editMissionChild(string $jsonParams, string $type, string $className, string $snippet): string|Response {
+    private function editMissionChild(
+        string $jsonParams,
+        string $type,
+        string $className,
+        string $snippet,
+    ): string|Response {
         $searchParams = JsonHelper::decode($jsonParams);
 
         $model = FindModelHelper::findModel($className, $searchParams, false);
@@ -302,7 +326,12 @@ class MissionController extends Controller
      * @param string $snippet
      * @return string|Response
      */
-    private function editDecorChild(string $jsonParams, string $type, string $className, string $snippet): string|Response {
+    private function editDecorChild(
+        string $jsonParams,
+        string $type,
+        string $className,
+        string $snippet,
+    ): string|Response {
         $searchParams = JsonHelper::decode($jsonParams);
 
         $model = FindModelHelper::findModel($className, $searchParams, false);
@@ -320,13 +349,18 @@ class MissionController extends Controller
      * @param string $snippet
      * @return string|Response
      */
-    private function editActionChild(string $jsonParams, string $type, string $className, string $snippet): string|Response {
+    private function editActionChild(
+        string $jsonParams,
+        string $type,
+        string $className,
+        string $snippet,
+    ): string|Response {
         $searchParams = JsonHelper::decode($jsonParams);
 
         $model = FindModelHelper::findModel($className, $searchParams, false);
         if ($type === 'Prerequisite') {
             $action = $model->nextAction;
-        } elseif ($type === "Trigger") {
+        } elseif ($type === 'Trigger') {
             $action = $model->previousAction;
         } else {
             $action = $model->action;
@@ -343,7 +377,8 @@ class MissionController extends Controller
      * @return string|Response
      * @throws \Exception
      */
-    public function actionEditDetail(string $jsonParams, string $type): string|Response {
+    public function actionEditDetail(string $jsonParams, string $type): string|Response
+    {
         $detailInfo = $this->getDetailInfoFromType($type);
         /** @var class-string<\yii\db\ActiveRecord> $className */
         $className = $detailInfo['className'];

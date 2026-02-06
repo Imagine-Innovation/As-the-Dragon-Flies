@@ -18,7 +18,6 @@ use Yii;
  */
 class BackgroundAttribute extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
@@ -39,7 +38,13 @@ class BackgroundAttribute extends \yii\db\ActiveRecord
             [['description'], 'string'],
             [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['attribute_type', 'name'], 'string', 'max' => 64],
-            [['background_id'], 'exist', 'skipOnError' => true, 'targetClass' => Background::class, 'targetAttribute' => ['background_id' => 'id']],
+            [
+                ['background_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Background::class,
+                'targetAttribute' => ['background_id' => 'id'],
+            ],
         ];
     }
 

@@ -17,12 +17,12 @@ $icon = '<i class="bi bi-check-lg"></i>';
 <div class="card">
     <div class="card-body">
         <?=
-        RecordCount::widget([
-            'count' => $count,
-            'model' => 'Spell',
-            'adjective' => 'available',
-        ])
-        ?>
+    RecordCount::widget([
+        'count' => $count,
+        'model' => 'Spell',
+        'adjective' => 'available',
+    ])
+?>
         <div class="table-responsive">
             <table class="table table-dark table-hover mb-0">
                 <thead>
@@ -47,13 +47,14 @@ $icon = '<i class="bi bi-check-lg"></i>';
                             </th>
                             <td class="text-center"><?= $model->spell_level ?></td>
                             <?php
+
                             $components = [];
                             foreach ($model->components as $c) {
                                 $components[] = $c->code;
                             }
                             ?>
                             <td class="text-center"><?= implode(', ', $components) ?></td>
-                            <td class="text-center"><?= $model->is_ritual ? $icon : "&nbsp;" ?></td>
+                            <td class="text-center"><?= $model->is_ritual ? $icon : '&nbsp;' ?></td>
                             <td><?= $model->school->name ?></td>
                             <td><?= $model->range->name ?></td>
                             <td><?= $model->castingTime->name ?></td>
@@ -65,12 +66,12 @@ $icon = '<i class="bi bi-check-lg"></i>';
         </div>
         <!-- Pagination -->
         <?=
-        Pagination::widget([
-            'page' => $page,
-            'pageCount' => $pageCount,
-            'limit' => $limit,
-        ])
-        ?>
+    Pagination::widget([
+        'page' => $page,
+        'pageCount' => $pageCount,
+        'limit' => $limit,
+    ])
+?>
         <!-- End Pagination -->
     </div>
 </div>

@@ -16,32 +16,46 @@ use Yii;
  */
 class ItemCategory extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'item_category';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['is_main'], 'default', 'value' => 0],
             [['item_id', 'category_id'], 'required'],
             [['item_id', 'category_id', 'is_main'], 'integer'],
             [['item_id', 'category_id'], 'unique', 'targetAttribute' => ['item_id', 'category_id']],
-            [['item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['item_id' => 'id']],
-            [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::class, 'targetAttribute' => ['category_id' => 'id']],
+            [
+                ['item_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Item::class,
+                'targetAttribute' => ['item_id' => 'id'],
+            ],
+            [
+                ['category_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Category::class,
+                'targetAttribute' => ['category_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'item_id' => 'Foreign key to “item” table',
             'category_id' => 'Foreign key to “category” table',
@@ -54,7 +68,8 @@ class ItemCategory extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Category>
      */
-    public function getCategory() {
+    public function getCategory()
+    {
         return $this->hasOne(Category::class, ['id' => 'category_id']);
     }
 
@@ -63,7 +78,8 @@ class ItemCategory extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Item>
      */
-    public function getItem() {
+    public function getItem()
+    {
         return $this->hasOne(Item::class, ['id' => 'item_id']);
     }
 }

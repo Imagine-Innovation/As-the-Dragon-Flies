@@ -15,32 +15,45 @@ use Yii;
  */
 class BackgroundSkill extends \yii\db\ActiveRecord
 {
-
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'background_skill';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['background_id', 'skill_id'], 'required'],
             [['background_id', 'skill_id'], 'integer'],
             [['background_id', 'skill_id'], 'unique', 'targetAttribute' => ['background_id', 'skill_id']],
-            [['background_id'], 'exist', 'skipOnError' => true, 'targetClass' => Background::class, 'targetAttribute' => ['background_id' => 'id']],
-            [['skill_id'], 'exist', 'skipOnError' => true, 'targetClass' => Skill::class, 'targetAttribute' => ['skill_id' => 'id']],
+            [
+                ['background_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Background::class,
+                'targetAttribute' => ['background_id' => 'id'],
+            ],
+            [
+                ['skill_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Skill::class,
+                'targetAttribute' => ['skill_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'background_id' => 'Foreign key to “background” table',
             'skill_id' => 'Foreign key to “skill” table',
@@ -52,7 +65,8 @@ class BackgroundSkill extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Background>
      */
-    public function getBackground() {
+    public function getBackground()
+    {
         return $this->hasOne(Background::class, ['id' => 'background_id']);
     }
 
@@ -61,8 +75,8 @@ class BackgroundSkill extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Skill>
      */
-    public function getSkill() {
+    public function getSkill()
+    {
         return $this->hasOne(Skill::class, ['id' => 'skill_id']);
     }
-
 }

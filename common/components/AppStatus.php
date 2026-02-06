@@ -6,7 +6,6 @@ use Yii;
 
 enum AppStatus: int
 {
-
     // Global/User/Player statuses
     case DELETED = 0;
     case INACTIVE = 9;
@@ -30,18 +29,19 @@ enum AppStatus: int
     case IN_PROGRESS = 401;
     case TERMINATED = 402;
     // Action status used for bitwise comparison as a status bit mask
-    case SUCCESS = 2;       // Binary: 010=2
-    case PARTIAL = 1;       // Binary: 001=1
-    case FAILURE = 4;       // Binary: 100=4
-    case NOT_FAILED = 3;    // Binary: 011=3 (2 | 1)
+    case SUCCESS = 2; // Binary: 010=2
+    case PARTIAL = 1; // Binary: 001=1
+    case FAILURE = 4; // Binary: 100=4
+    case NOT_FAILED = 3; // Binary: 011=3 (2 | 1)
     case NOT_SUCCEEDED = 5; // Binary: 101=5 (4 | 1)
-    case ANY_OUTCOME = 7;   // Binary: 111=7 (4 | 2 | 1)
+    case ANY_OUTCOME = 7; // Binary: 111=7 (4 | 2 | 1)
 
     /**
      *
      * @return string
      */
-    public function getLabel(): string {
+    public function getLabel(): string
+    {
         return match ($this) {
             self::DELETED => 'Deleted',
             self::INACTIVE => 'Inactive',
@@ -82,7 +82,8 @@ enum AppStatus: int
      *     tooltip: string
      * }
      */
-    public function getIcon(): array {
+    public function getIcon(): array
+    {
         return match ($this) {
             self::DELETED => ['icon' => 'bi-x-square', 'tooltip' => 'Deleted, only adminstrators can restore'],
             self::INACTIVE => ['icon' => 'bi-code-square', 'tooltip' => 'Inactive. Need to be validated to be used'],
@@ -120,7 +121,8 @@ enum AppStatus: int
      *
      * @return list<int|null>
      */
-    public function getActionStatusFilter(): array {
+    public function getActionStatusFilter(): array
+    {
         return match ($this) {
             self::SUCCESS => [self::SUCCESS->value],
             self::PARTIAL => [self::PARTIAL->value],
@@ -136,12 +138,13 @@ enum AppStatus: int
      *
      * @return string
      */
-    public function getActionAdjective(): string {
+    public function getActionAdjective(): string
+    {
         return match ($this) {
             self::SUCCESS => 'succeeded',
             self::PARTIAL => 'partialy succeeded',
             self::FAILURE => 'failed',
-            default => 'did something, but I don\'t know what'
+            default => 'did something, but I don\'t know what',
         };
     }
 
@@ -150,7 +153,8 @@ enum AppStatus: int
      *
      * @return array<int>
      */
-    public static function getValuesForUser(): array {
+    public static function getValuesForUser(): array
+    {
         return [self::ACTIVE->value, self::INACTIVE->value, self::DELETED->value];
     }
 
@@ -158,7 +162,8 @@ enum AppStatus: int
      *
      * @return array<int>
      */
-    public static function getValuesForPlayer(): array {
+    public static function getValuesForPlayer(): array
+    {
         return [self::ACTIVE->value, self::INACTIVE->value, self::DELETED->value];
     }
 
@@ -166,7 +171,8 @@ enum AppStatus: int
      *
      * @return array<int>
      */
-    public static function getValuesForQuest(): array {
+    public static function getValuesForQuest(): array
+    {
         return [
             self::WAITING->value,
             self::PLAYING->value,
@@ -182,7 +188,8 @@ enum AppStatus: int
      *
      * @return array<int>
      */
-    public static function getValuesForStory(): array {
+    public static function getValuesForStory(): array
+    {
         return [
             self::DRAFT->value,
             self::PUBLISHED->value,
@@ -194,7 +201,8 @@ enum AppStatus: int
      *
      * @return array<int>
      */
-    public static function getValuesForQuestPlayer(): array {
+    public static function getValuesForQuestPlayer(): array
+    {
         return [
             self::ONLINE->value,
             self::OFFLINE->value,
@@ -206,7 +214,8 @@ enum AppStatus: int
      *
      * @return array<int>
      */
-    public static function getValuesForQuestProgress(): array {
+    public static function getValuesForQuestProgress(): array
+    {
         return [
             self::PENDING->value,
             self::IN_PROGRESS->value,
@@ -218,7 +227,8 @@ enum AppStatus: int
      *
      * @return array<int>
      */
-    public static function getValuesForAction(): array {
+    public static function getValuesForAction(): array
+    {
         return [
             self::SUCCESS->value,
             self::PARTIAL->value,
@@ -233,7 +243,8 @@ enum AppStatus: int
      *
      * @return array<int, string>
      */
-    public static function getActionStatus(): array {
+    public static function getActionStatus(): array
+    {
         return [
             self::SUCCESS->value => self::SUCCESS->getLabel(),
             self::PARTIAL->value => self::PARTIAL->getLabel(),
@@ -250,7 +261,8 @@ enum AppStatus: int
      * @param int $statusValue
      * @return bool
      */
-    public static function isValidForEntity(string $entityName, int $statusValue): bool {
+    public static function isValidForEntity(string $entityName, int $statusValue): bool
+    {
         Yii::debug("*** Debug *** - isValidForEntity entityName={$entityName}, statusValue={$statusValue}");
         $folders = explode("\\", $entityName);
         $className = end($folders);

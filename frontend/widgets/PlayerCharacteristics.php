@@ -7,7 +7,6 @@ use yii\base\Widget;
 
 class PlayerCharacteristics extends Widget
 {
-
     public Player $player;
     public bool $embedded;
 
@@ -18,8 +17,8 @@ class PlayerCharacteristics extends Widget
     public function run(): string
     {
         return $this->render('player-characteristics', [
-                    'model' => $this->player,
-                    'embedded' => $this->embedded ?? false,
+            'model' => $this->player,
+            'embedded' => $this->embedded ?? false,
         ]);
     }
 }

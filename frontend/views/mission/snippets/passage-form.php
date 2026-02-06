@@ -34,18 +34,19 @@ use yii\widgets\ActiveForm;
         <?php endif; ?>
 
         <?=
-                $form->field($model, 'image')
-                ->dropdownList(
-                        $model->image ? [$model->image => $model->image] : [],
-                        [
-                            'class' => 'select2-container w-100',
-                            'data-minimum-results-for-search' => -1,
-                            'data-placeholder' => "Select an image",
-                            'maxlength' => true,
-                        ]
-                )
-                ->label('Passage image')
-        ?>
+    $form
+        ->field($model, 'image')
+        ->dropdownList(
+            $model->image ? [$model->image => $model->image] : [],
+            [
+                'class' => 'select2-container w-100',
+                'data-minimum-results-for-search' => -1,
+                'data-placeholder' => 'Select an image',
+                'maxlength' => true,
+            ],
+        )
+        ->label('Passage image')
+?>
 
         <?= $form->field($model, 'found')->textInput() ?>
 
@@ -59,4 +60,4 @@ use yii\widgets\ActiveForm;
     <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
 </div>
 
-<?php ActiveForm::end(); ?>
+<?php ActiveForm::end();

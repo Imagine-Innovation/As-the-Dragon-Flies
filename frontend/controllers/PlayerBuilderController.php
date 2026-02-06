@@ -31,38 +31,45 @@ use yii\web\Response;
  */
 class PlayerBuilderController extends Controller
 {
-
     /**
      * @inheritDoc
      */
     public function behaviors()
     {
-        return array_merge(
-                parent::behaviors(),
-                [
-                    'access' => [
-                        'class' => AccessControl::class,
-                        'rules' => [
-                            [
-                                'actions' => ['*'],
-                                'allow' => false,
-                                'roles' => ['?'],
-                            ],
-                            [
-                                'actions' => [
-                                    'create', 'update', 'view',
-                                    'ajax-age', 'ajax-endowment', 'ajax-equipment', 'ajax-images',
-                                    'ajax-names', 'ajax-skills', 'ajax-traits', 'ajax-languages',
-                                    'ajax-item-category', 'ajax-update-skill', 'ajax-save-abilities',
-                                    'ajax-save-equipment', 'ajax-update-language',
-                                ],
-                                'allow' => ManageAccessRights::isRouteAllowed($this),
-                                'roles' => ['@'],
-                            ],
-                        ],
+        return array_merge(parent::behaviors(), [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['*'],
+                        'allow' => false,
+                        'roles' => ['?'],
                     ],
-                ]
-        );
+                    [
+                        'actions' => [
+                            'create',
+                            'update',
+                            'view',
+                            'ajax-age',
+                            'ajax-endowment',
+                            'ajax-equipment',
+                            'ajax-images',
+                            'ajax-names',
+                            'ajax-skills',
+                            'ajax-traits',
+                            'ajax-languages',
+                            'ajax-item-category',
+                            'ajax-update-skill',
+                            'ajax-save-abilities',
+                            'ajax-save-equipment',
+                            'ajax-update-language',
+                        ],
+                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+        ]);
     }
 
     /**
@@ -86,11 +93,12 @@ class PlayerBuilderController extends Controller
 
         $content = $this->renderPartial('ajax/age', [
             'age' => $age,
-            'ageTable' => $ageTable
+            'ageTable' => $ageTable,
         ]);
 
         return [
-            'error' => false, 'msg' => '',
+            'error' => false,
+            'msg' => '',
             'content' => $content,
             'ageTable' => json_encode($ageTable['labels']),
         ];
@@ -114,9 +122,10 @@ class PlayerBuilderController extends Controller
         $n = $request->post('n', 3);
 
         return [
-            'error' => false, 'msg' => '',
+            'error' => false,
+            'msg' => '',
             'content' => $this->renderPartial('ajax/names', [
-                'names' => BuilderComponent::loadRandomNames($raceId, $gender, $n)
+                'names' => BuilderComponent::loadRandomNames($raceId, $gender, $n),
             ]),
         ];
     }
@@ -132,19 +141,21 @@ class PlayerBuilderController extends Controller
     private function renderImages(int $raceId, int $classId, string $gender, ?int $imageId = null): array
     {
         $images = Image::find()
-                ->select('image.*')
-                ->innerJoin('class_image', 'image.id = class_image.image_id')
-                ->innerJoin('race_group_image', 'image.id = race_group_image.image_id')
-                ->innerJoin('race_group', 'race_group_image.race_group_id = race_group.id')
-                ->innerJoin('race', 'race_group.id = race.race_group_id')
-                ->andWhere(['class_image.class_id' => $classId])
-                ->andWhere(['race.id' => $raceId])
-                ->andWhere(['race_group_image.gender' => $gender])
-                ->all();
+            ->select('image.*')
+            ->innerJoin('class_image', 'image.id = class_image.image_id')
+            ->innerJoin('race_group_image', 'image.id = race_group_image.image_id')
+            ->innerJoin('race_group', 'race_group_image.race_group_id = race_group.id')
+            ->innerJoin('race', 'race_group.id = race.race_group_id')
+            ->andWhere(['class_image.class_id' => $classId])
+            ->andWhere(['race.id' => $raceId])
+            ->andWhere(['race_group_image.gender' => $gender])
+            ->all();
 
         return [
-            'error' => false, 'msg' => '',
-            'content' => $this->renderPartial('ajax/image', ['imageId' => $imageId, 'images' => $images])];
+            'error' => false,
+            'msg' => '',
+            'content' => $this->renderPartial('ajax/image', ['imageId' => $imageId, 'images' => $images]),
+        ];
     }
 
     /**
@@ -168,13 +179,16 @@ class PlayerBuilderController extends Controller
         if ($raceId > 0 && $classId > 0 && $gender) {
             $imageId = $request->post('imageId');
             Yii::debug("*** debug *** actionAjaxImages - imageId={$imageId}");
-            return $this->renderImages($raceId, $classId, $gender, is_numeric($imageId)
-                                ? (int) $imageId : null);
+            return $this->renderImages($raceId, $classId, $gender, is_numeric($imageId) ? (int) $imageId : null);
         }
-        return ['error' => true, 'msg' => 'Missing argument: '
-            . ($raceId ? '' : 'race ')
-            . ($classId ? '' : 'class ')
-            . ($gender ? '' : 'gender')];
+        return [
+            'error' => true,
+            'msg' =>
+                'Missing argument: '
+                    . ($raceId ? '' : 'race ')
+                    . ($classId ? '' : 'class ')
+                    . ($gender ? '' : 'gender'),
+        ];
     }
 
     /**
@@ -195,7 +209,8 @@ class PlayerBuilderController extends Controller
 
         $skills = BuilderComponent::initPlayerSkills($player);
         return [
-            'error' => false, 'msg' => '',
+            'error' => false,
+            'msg' => '',
             'content' => $this->renderPartial('ajax/skills', [
                 'player' => $player,
                 'backgroundSkills' => $skills['BackgroundSkills'],
@@ -225,7 +240,8 @@ class PlayerBuilderController extends Controller
         $languages = BuilderComponent::initPlayerLanguages($player);
         $this->saveLanguages($playerId, $languages['RaceLanguages']);
         return [
-            'error' => false, 'msg' => '',
+            'error' => false,
+            'msg' => '',
             'content' => $this->renderPartial('ajax/languages', [
                 'player' => $player,
                 'raceLanguages' => $languages['RaceLanguages'],
@@ -252,13 +268,15 @@ class PlayerBuilderController extends Controller
         $playerId = $request->post('playerId');
         $languageId = $request->post('languageId');
         $selected = $request->post('selected');
-        Yii::debug("*** debug *** actionAjaxUpdateLanguage - playerId={$playerId}, languageId=[$languageId}, selected={$selected}");
+        Yii::debug(
+            "*** debug *** actionAjaxUpdateLanguage - playerId={$playerId}, languageId=[$languageId}, selected={$selected}",
+        );
         if ($selected) {
             $this->addLanguage($playerId, $languageId);
         } else {
             PlayerLanguage::deleteAll([
                 'player_id' => $playerId,
-                'language_id' => $languageId
+                'language_id' => $languageId,
             ]);
         }
 
@@ -291,19 +309,19 @@ class PlayerBuilderController extends Controller
         Yii::debug("*** debug *** addLanguage - playerId={$playerId}, languageId=[$languageId}");
         $playerLanguage = PlayerLanguage::findOne([
             'player_id' => $playerId,
-            'language_id' => $languageId
+            'language_id' => $languageId,
         ]);
 
         if (!$playerLanguage) {
             $playerLanguage = new PlayerLanguage([
                 'player_id' => $playerId,
-                'language_id' => $languageId
+                'language_id' => $languageId,
             ]);
 
             if ($playerLanguage->save()) {
                 return;
             }
-            throw new \Exception(implode("<br/>", ArrayHelper::getColumn($playerLanguage->errors, 0, false)));
+            throw new \Exception(implode('<br/>', ArrayHelper::getColumn($playerLanguage->errors, 0, false)));
         }
     }
 
@@ -326,7 +344,8 @@ class PlayerBuilderController extends Controller
         BuilderComponent::initTraits($player);
 
         return [
-            'error' => false, 'msg' => '',
+            'error' => false,
+            'msg' => '',
             'content' => $this->renderPartial('ajax/traits', [
                 'player' => $player,
             ]),
@@ -354,7 +373,8 @@ class PlayerBuilderController extends Controller
         $choices = max(array_keys($endowmentTable));
         Yii::debug($endowmentTable);
         return [
-            'error' => false, 'msg' => '',
+            'error' => false,
+            'msg' => '',
             'content' => $this->renderPartial('ajax/endowment', [
                 'endowments' => $endowmentTable,
                 'choices' => $choices,
@@ -382,7 +402,8 @@ class PlayerBuilderController extends Controller
 
         $content = BuilderComponent::setEquipmentResponse($equipments);
         return [
-            'error' => false, 'msg' => '',
+            'error' => false,
+            'msg' => '',
             'content' => $content,
         ];
     }
@@ -406,7 +427,8 @@ class PlayerBuilderController extends Controller
 
         $content = BuilderComponent::setEquipmentResponse($equipments, $choice);
         return [
-            'error' => false, 'msg' => '',
+            'error' => false,
+            'msg' => '',
             'content' => $content,
         ];
     }
@@ -426,7 +448,7 @@ class PlayerBuilderController extends Controller
                 $data = explode('|', $selection);
                 $itemQuantity[] = [
                     'itemId' => (int) $data[0],
-                    'quantity' => (int) $data[1]
+                    'quantity' => (int) $data[1],
                 ];
             }
         }
@@ -444,7 +466,6 @@ class PlayerBuilderController extends Controller
      */
     private function addItem(Player &$player, int $itemId, int $quantity): void
     {
-
         $item = Item::findOne(['id' => $itemId]);
         if ($item === null) {
             return;
@@ -456,7 +477,7 @@ class PlayerBuilderController extends Controller
         } else {
             $playerItem = PlayerItem::findOne([
                 'player_id' => $player->id,
-                'item_id' => $itemId
+                'item_id' => $itemId,
             ]);
 
             if ($playerItem) {
@@ -469,7 +490,7 @@ class PlayerBuilderController extends Controller
             if ($playerItem->save()) {
                 return;
             }
-            throw new \Exception(implode("<br />", ArrayHelper::getColumn($playerItem->errors, 0, false)));
+            throw new \Exception(implode('<br />', ArrayHelper::getColumn($playerItem->errors, 0, false)));
         }
     }
 
@@ -483,10 +504,8 @@ class PlayerBuilderController extends Controller
      */
     private function newPlayerItem(Player &$player, Item &$item, int $quantity): PlayerItem
     {
-        $isProficient = PlayerComponent::isProficient($player->class_id, $item->id)
-                    ? 1 : 0;
-        $proficiencyModifier = $isProficient ? $player->level->proficiency_bonus
-                    : 0;
+        $isProficient = PlayerComponent::isProficient($player->class_id, $item->id) ? 1 : 0;
+        $proficiencyModifier = $isProficient ? $player->level->proficiency_bonus : 0;
 
         $weaponProperties = PlayerComponent::getPlayerWeaponProperties($player->id, $item->id, $proficiencyModifier);
         $itemType = $item->itemType->name;
@@ -582,7 +601,7 @@ class PlayerBuilderController extends Controller
             'param' => [
                 'choice' => $request->post('choice'),
                 'alreadySelectedItems' => $request->post('alreadySelectedItems'),
-                'quantity' => $quantity
+                'quantity' => $quantity,
             ],
             'filter' => ['category_id' => $categoryIds],
         ];
@@ -659,7 +678,7 @@ class PlayerBuilderController extends Controller
             $playerAbility->score = $score;
             $playerAbility->modifier = PlayerComponent::calcAbilityModifier($score);
             if (!$playerAbility->save()) {
-                throw new \Exception(implode("<br />", ArrayHelper::getColumn($playerAbility->errors, 0, false)));
+                throw new \Exception(implode('<br />', ArrayHelper::getColumn($playerAbility->errors, 0, false)));
             }
         }
 
@@ -687,7 +706,7 @@ class PlayerBuilderController extends Controller
         }
 
         return $this->render('create', [
-                    'model' => $playerBuilder,
+            'model' => $playerBuilder,
         ]);
     }
 
@@ -713,7 +732,7 @@ class PlayerBuilderController extends Controller
         }
 
         return $this->render('update', [
-                    'model' => $model
+            'model' => $model,
         ]);
     }
 
@@ -738,10 +757,9 @@ class PlayerBuilderController extends Controller
      */
     protected function findModel(int $id): PlayerBuilder
     {
-
         $query = PlayerBuilder::find()
-                ->with(['race', 'class', 'background', 'playerAbilities', 'playerSkills', 'playerTraits'])
-                ->where(['id' => $id]);
+            ->with(['race', 'class', 'background', 'playerAbilities', 'playerSkills', 'playerTraits'])
+            ->where(['id' => $id]);
 
         $user = Yii::$app->user->identity;
         if (!$user->is_admin) {

@@ -10,7 +10,6 @@ use yii\base\Model;
  */
 class ContactForm extends Model
 {
-
     public string $name;
     public string $email;
     public string $subject;
@@ -50,12 +49,14 @@ class ContactForm extends Model
      */
     public function sendEmail(string $email): bool
     {
-        return Yii::$app->mailer->compose()
-                        ->setTo($email)
-                        ->setFrom([Yii::$app->params['senderEmail'] => Yii::$app->params['senderName']])
-                        ->setReplyTo([$this->email => $this->name])
-                        ->setSubject($this->subject)
-                        ->setTextBody($this->body)
-                        ->send();
+        return Yii::$app
+            ->mailer
+            ->compose()
+            ->setTo($email)
+            ->setFrom([Yii::$app->params['senderEmail'] => Yii::$app->params['senderName']])
+            ->setReplyTo([$this->email => $this->name])
+            ->setSubject($this->subject)
+            ->setTextBody($this->body)
+            ->send();
     }
 }

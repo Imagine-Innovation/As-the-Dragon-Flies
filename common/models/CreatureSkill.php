@@ -16,32 +16,46 @@ use Yii;
  */
 class CreatureSkill extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'creature_skill';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['score'], 'default', 'value' => 0],
             [['creature_id', 'skill_id'], 'required'],
             [['creature_id', 'skill_id', 'score'], 'integer'],
             [['creature_id', 'skill_id'], 'unique', 'targetAttribute' => ['creature_id', 'skill_id']],
-            [['creature_id'], 'exist', 'skipOnError' => true, 'targetClass' => Creature::class, 'targetAttribute' => ['creature_id' => 'id']],
-            [['skill_id'], 'exist', 'skipOnError' => true, 'targetClass' => Skill::class, 'targetAttribute' => ['skill_id' => 'id']],
+            [
+                ['creature_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Creature::class,
+                'targetAttribute' => ['creature_id' => 'id'],
+            ],
+            [
+                ['skill_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Skill::class,
+                'targetAttribute' => ['skill_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'creature_id' => 'Foreign key to “creature” table',
             'skill_id' => 'Foreign key to “skill” table',
@@ -54,7 +68,8 @@ class CreatureSkill extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Creature>
      */
-    public function getCreature() {
+    public function getCreature()
+    {
         return $this->hasOne(Creature::class, ['id' => 'creature_id']);
     }
 
@@ -63,7 +78,8 @@ class CreatureSkill extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Skill>
      */
-    public function getSkill() {
+    public function getSkill()
+    {
         return $this->hasOne(Skill::class, ['id' => 'skill_id']);
     }
 }

@@ -9,37 +9,36 @@ use yii\web\Request;
 
 class AjaxRequest
 {
-
-    public CONST NOTAJAX = 0;
-    public CONST FAILED = 1;
-    public CONST NOTHING = 2;
-    public CONST NOTFOUND = 3;
-    public CONST NOTSAVED = 4;
-    public CONST SAVED = 5;
-    private CONST RESPONSE = [
+    public const NOTAJAX = 0;
+    public const FAILED = 1;
+    public const NOTHING = 2;
+    public const NOTFOUND = 3;
+    public const NOTSAVED = 4;
+    public const SAVED = 5;
+    private const RESPONSE = [
         self::NOTAJAX => [
             'error' => true,
-            'msg' => 'Not an Ajax POST request'
+            'msg' => 'Not an Ajax POST request',
         ],
         self::FAILED => [
             'error' => true,
-            'msg' => '%s failed'
+            'msg' => '%s failed',
         ],
         self::NOTHING => [
             'error' => true,
-            'msg' => 'Nothing to delete'
+            'msg' => 'Nothing to delete',
         ],
         self::NOTFOUND => [
             'error' => true,
-            'msg' => '%s not found'
+            'msg' => '%s not found',
         ],
         self::NOTSAVED => [
             'error' => false,
-            'msg' => 'Could not save %s'
+            'msg' => 'Could not save %s',
         ],
         self::SAVED => [
             'error' => false,
-            'msg' => '%s saved'
+            'msg' => '%s saved',
         ],
     ];
 
@@ -145,20 +144,19 @@ class AjaxRequest
 
         $query = $this->buildQuery();
         $count = (int) $query->count();
-        $pageCount = ($count === 0) ? 1 : ceil($count / $limit);
+        $pageCount = $count === 0 ? 1 : ceil($count / $limit);
         $page = (int) max(0, min($pageNo, $pageCount));
         $render = $this->render ?? 'index';
         $this->response = [
-            'error' => false, 'msg' => '',
-            'content' => Yii::$app->controller->renderPartial("ajax/{$render}", array_merge(
-                            [
-                                'models' => $this->loadModels($query, $limit, $page),
-                                'count' => $count,
-                                'page' => $page,
-                                'pageCount' => $pageCount,
-                                'limit' => $limit,
-                            ], $this->param)
-            )
+            'error' => false,
+            'msg' => '',
+            'content' => Yii::$app->controller->renderPartial("ajax/{$render}", array_merge([
+                'models' => $this->loadModels($query, $limit, $page),
+                'count' => $count,
+                'page' => $page,
+                'pageCount' => $pageCount,
+                'limit' => $limit,
+            ], $this->param)),
         ];
         return true;
     }

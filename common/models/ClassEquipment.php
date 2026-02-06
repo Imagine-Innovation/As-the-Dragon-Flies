@@ -19,34 +19,54 @@ use Yii;
  */
 class ClassEquipment extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'class_equipment';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['item_id', 'category_id'], 'default', 'value' => null],
             [['if_proficient'], 'default', 'value' => 0],
             [['quantity'], 'default', 'value' => 1],
             [['endowment_id'], 'required'],
             [['endowment_id', 'item_id', 'category_id', 'if_proficient', 'quantity'], 'integer'],
-            [['endowment_id'], 'exist', 'skipOnError' => true, 'targetClass' => ClassEndowment::class, 'targetAttribute' => ['endowment_id' => 'id']],
-            [['item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['item_id' => 'id']],
-            [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::class, 'targetAttribute' => ['category_id' => 'id']],
+            [
+                ['endowment_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => ClassEndowment::class,
+                'targetAttribute' => ['endowment_id' => 'id'],
+            ],
+            [
+                ['item_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Item::class,
+                'targetAttribute' => ['item_id' => 'id'],
+            ],
+            [
+                ['category_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Category::class,
+                'targetAttribute' => ['category_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'endowment_id' => 'Foreign key to “class_endowment” table',
             'item_id' => 'Optional foreign key to “item” table',
@@ -61,7 +81,8 @@ class ClassEquipment extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Category>
      */
-    public function getCategory() {
+    public function getCategory()
+    {
         return $this->hasOne(Category::class, ['id' => 'category_id']);
     }
 
@@ -70,7 +91,8 @@ class ClassEquipment extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<ClassEndowment>
      */
-    public function getEndowment() {
+    public function getEndowment()
+    {
         return $this->hasOne(ClassEndowment::class, ['id' => 'endowment_id']);
     }
 
@@ -79,7 +101,8 @@ class ClassEquipment extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Item>
      */
-    public function getItem() {
+    public function getItem()
+    {
         return $this->hasOne(Item::class, ['id' => 'item_id']);
     }
 }

@@ -16,33 +16,47 @@ use Yii;
  */
 class SpellComponent extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'spell_component';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['material'], 'default', 'value' => null],
             [['spell_id', 'component_id'], 'required'],
             [['spell_id', 'component_id'], 'integer'],
             [['material'], 'string'],
             [['spell_id', 'component_id'], 'unique', 'targetAttribute' => ['spell_id', 'component_id']],
-            [['spell_id'], 'exist', 'skipOnError' => true, 'targetClass' => Spell::class, 'targetAttribute' => ['spell_id' => 'id']],
-            [['component_id'], 'exist', 'skipOnError' => true, 'targetClass' => Component::class, 'targetAttribute' => ['component_id' => 'id']],
+            [
+                ['spell_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Spell::class,
+                'targetAttribute' => ['spell_id' => 'id'],
+            ],
+            [
+                ['component_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Component::class,
+                'targetAttribute' => ['component_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'spell_id' => 'Foreign key to “spell” table',
             'component_id' => 'Foreign key to “component” table',
@@ -55,7 +69,8 @@ class SpellComponent extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Component>
      */
-    public function getComponent() {
+    public function getComponent()
+    {
         return $this->hasOne(Component::class, ['id' => 'component_id']);
     }
 
@@ -64,7 +79,8 @@ class SpellComponent extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Spell>
      */
-    public function getSpell() {
+    public function getSpell()
+    {
         return $this->hasOne(Spell::class, ['id' => 'spell_id']);
     }
 }

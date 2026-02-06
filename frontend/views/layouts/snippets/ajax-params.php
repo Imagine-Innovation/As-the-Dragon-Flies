@@ -1,4 +1,5 @@
 <?php
+
 /** @var \yii\web\View $this */
 /** @var int $limit */
 /** @var string $route */
@@ -15,7 +16,7 @@ $functionCall = $functionCall ?? null;
 <div class="d-none" id="ajaxHiddenParams">
     <span id="limit"><?= $limit ?></span>
     <span id="route"><?= $route ?></span>
-    <span id="container"><?= $initTab ? "ajax-" . $initTab : '' ?></span>
+    <span id="container"><?= $initTab ? 'ajax-' . $initTab : '' ?></span>
     <span id="currentTab"><?= $initTab ?></span>
     <span id="currentId"><?= $initId ?></span>
     <span id="filter"><?= $filter ?></span>

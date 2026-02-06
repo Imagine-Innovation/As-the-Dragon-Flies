@@ -9,7 +9,6 @@ use yii\base\Model;
 
 class ResendVerificationEmailForm extends Model
 {
-
     /**
      * @var string
      */
@@ -24,10 +23,12 @@ class ResendVerificationEmailForm extends Model
             ['email', 'trim'],
             ['email', 'required'],
             ['email', 'email'],
-            ['email', 'exist',
+            [
+                'email',
+                'exist',
                 'targetClass' => '\common\models\User',
                 'filter' => ['status' => AppStatus::INACTIVE->value],
-                'message' => 'There is no user with this email address.'
+                'message' => 'There is no user with this email address.',
             ],
         ];
     }
@@ -41,7 +42,7 @@ class ResendVerificationEmailForm extends Model
     {
         $user = User::findOne([
             'email' => $this->email,
-            'status' => AppStatus::INACTIVE->value
+            'status' => AppStatus::INACTIVE->value,
         ]);
 
         if ($user === null) {
@@ -49,14 +50,11 @@ class ResendVerificationEmailForm extends Model
         }
 
         return Yii::$app
-                        ->mailer
-                        ->compose(
-                                ['html' => 'emailVerify-html', 'text' => 'emailVerify-text'],
-                                ['user' => $user]
-                        )
-                        ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name . ' robot'])
-                        ->setTo($this->email)
-                        ->setSubject('Account registration at ' . Yii::$app->name)
-                        ->send();
+            ->mailer
+            ->compose(['html' => 'emailVerify-html', 'text' => 'emailVerify-text'], ['user' => $user])
+            ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name . ' robot'])
+            ->setTo($this->email)
+            ->setSubject('Account registration at ' . Yii::$app->name)
+            ->send();
     }
 }

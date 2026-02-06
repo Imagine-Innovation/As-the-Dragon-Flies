@@ -1,26 +1,62 @@
 <?php
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Scripting/EmptyPHP.php to edit this template
  */
 $fonts = [
     /* handwritten */
-    'cursiveserif', 'senjasantuy',
+    'cursiveserif',
+    'senjasantuy',
     /* layout */
-    'balgruf', 'berenika', 'cavalier', 'charakterny', 'dumbledor2', 'dumbledor2thin',
-    'gamestation', 'goudymedieval', 'ipanemasecco', 'lombardic', 'lombardicnarrow',
-    'medievalsharp', 'romanuncialmodern', 'uncialantiqua',
+    'balgruf',
+    'berenika',
+    'cavalier',
+    'charakterny',
+    'dumbledor2',
+    'dumbledor2thin',
+    'gamestation',
+    'goudymedieval',
+    'ipanemasecco',
+    'lombardic',
+    'lombardicnarrow',
+    'medievalsharp',
+    'romanuncialmodern',
+    'uncialantiqua',
     /* parchment */
-    'acharmingfont', 'acharmingfontexpanded', 'alpineregular', 'bastarda', 'buoscardiggs', 'buwicked', 'cardinal',
-    'catwalzhari', 'cloisterblacklight', 'colchesterblack', 'devinneswash',
-    'fetteclassicunzfraktur', 'hildasonnenschein', 'insula', 'lancaster', 'marigoldwild',
-    'mediaevalcaps', 'oldeenglishregular', 'primitive', 'rotundapommerania', 'sidhenoble',
+    'acharmingfont',
+    'acharmingfontexpanded',
+    'alpineregular',
+    'bastarda',
+    'buoscardiggs',
+    'buwicked',
+    'cardinal',
+    'catwalzhari',
+    'cloisterblacklight',
+    'colchesterblack',
+    'devinneswash',
+    'fetteclassicunzfraktur',
+    'hildasonnenschein',
+    'insula',
+    'lancaster',
+    'marigoldwild',
+    'mediaevalcaps',
+    'oldeenglishregular',
+    'primitive',
+    'rotundapommerania',
+    'sidhenoble',
     /* special */
-    'cirnajacalligraphy', 'elficcaslin', 'glagolitsa', 'greifswaldertengwar',
-    'saratieldamarltr', 'tengwareldamar', 'tengwarparmaite', 'valmariceldamar',
+    'cirnajacalligraphy',
+    'elficcaslin',
+    'glagolitsa',
+    'greifswaldertengwar',
+    'saratieldamarltr',
+    'tengwareldamar',
+    'tengwarparmaite',
+    'valmariceldamar',
 ];
 
-$sampleText = "As the Dragon Flies";
+$sampleText = 'As the Dragon Flies';
 ?>
 <link href="/frontend/web/css/dev-fonts.css" rel="stylesheet">
 <div class="container-fluid">

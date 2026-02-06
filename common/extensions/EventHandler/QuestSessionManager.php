@@ -8,7 +8,6 @@ use common\models\QuestSession; // Required for QuestSession model usage
 
 class QuestSessionManager
 {
-
     private LoggerService $logger;
 
     /**
@@ -35,8 +34,12 @@ class QuestSessionManager
         $questId = PayloadHelper::extractIntFromPayload('questId', $data);
         // Validate input parameters
         if ($sessionId !== '' || !$questId) {
-            $this->logger->log("QuestSessionManager: Invalid sessionId or quest ID", ['sessionId' => $sessionId, 'questId' => $questId], 'error');
-            $this->logger->logEnd("QuestSessionManager: registerSessionForQuest");
+            $this->logger->log(
+                'QuestSessionManager: Invalid sessionId or quest ID',
+                ['sessionId' => $sessionId, 'questId' => $questId],
+                'error',
+            );
+            $this->logger->logEnd('QuestSessionManager: registerSessionForQuest');
             return false;
         }
 
@@ -45,11 +48,16 @@ class QuestSessionManager
             $playerId = PayloadHelper::extractIntFromPayload('playerId', $data);
             $clientId = PayloadHelper::extractStringFromPayload('clientId', $data);
             $this->registerSession($sessionId, $playerId, $questId, $clientId, $data);
-            $this->logger->logEnd("QuestSessionManager: registerSessionForQuest");
+            $this->logger->logEnd('QuestSessionManager: registerSessionForQuest');
             return true;
         } catch (\Exception $e) {
-            $this->logger->log("QuestSessionManager: Error registering session [{$sessionId}] for quest {$questId}: " . $e->getMessage(), null, 'error');
-            $this->logger->logEnd("QuestSessionManager: registerSessionForQuest");
+            $this->logger->log(
+                "QuestSessionManager: Error registering session [{$sessionId}] for quest {$questId}: "
+                    . $e->getMessage(),
+                null,
+                'error',
+            );
+            $this->logger->logEnd('QuestSessionManager: registerSessionForQuest');
             return false;
         }
     }
@@ -65,13 +73,21 @@ class QuestSessionManager
      * @param array<string, mixed>|null $contextData For logging purposes, original $data from message
      * @return bool
      */
-    public function registerSession(?string $sessionId, ?int $playerId, ?int $questId, ?string $clientId, array $contextData = null): bool
-    {
-        $this->logger->logStart("QuestSessionManager: registerSession (sessionId=[{$sessionId}], playerId=[{$playerId}], questId=[{$questId}], clientId=[{$clientId}])", $contextData);
+    public function registerSession(
+        ?string $sessionId,
+        ?int $playerId,
+        ?int $questId,
+        ?string $clientId,
+        array $contextData = null,
+    ): bool {
+        $this->logger->logStart(
+            "QuestSessionManager: registerSession (sessionId=[{$sessionId}], playerId=[{$playerId}], questId=[{$questId}], clientId=[{$clientId}])",
+            $contextData,
+        );
 
         if ($sessionId === null) {
-            $this->logger->log("QuestSessionManager: Missing sessionId", null, 'warning');
-            $this->logger->logEnd("QuestSessionManager: registerSession");
+            $this->logger->log('QuestSessionManager: Missing sessionId', null, 'warning');
+            $this->logger->logEnd('QuestSessionManager: registerSession');
             return false;
         }
 
@@ -84,7 +100,7 @@ class QuestSessionManager
             $registered = $this->newSession($sessionId, $questId, $playerId, $clientId);
         }
 
-        $this->logger->logEnd("QuestSessionManager: registerSession");
+        $this->logger->logEnd('QuestSessionManager: registerSession');
         return $registered;
     }
 
@@ -100,7 +116,9 @@ class QuestSessionManager
      */
     private function newSession(string $sessionId, ?int $questId, ?int $playerId, ?string $clientId): bool
     {
-        $this->logger->logStart("QuestSessionManager: newSession sessionId=[{$sessionId}], questId=[{$questId}], playerId=[{$playerId}], clientId=[{$clientId}]");
+        $this->logger->logStart(
+            "QuestSessionManager: newSession sessionId=[{$sessionId}], questId=[{$questId}], playerId=[{$playerId}], clientId=[{$clientId}]",
+        );
 
         $session = new QuestSession([
             'id' => $sessionId,
@@ -109,22 +127,32 @@ class QuestSessionManager
             'client_id' => $clientId,
             'last_ts' => time(), // Consider setting last_ts on creation
         ]);
-        $this->logger->log("QuestSessionManager: Attempting to save new QuestSession", $session->getAttributes());
+        $this->logger->log('QuestSessionManager: Attempting to save new QuestSession', $session->getAttributes());
 
         $successfullySaved = false;
         try {
             $successfullySaved = $session->save();
         } catch (\Exception $e) {
-            $this->logger->log("QuestSessionManager: Exception while saving new QuestSession: sessionId=[{$sessionId}]. Error: " . $e->getMessage(), $e->getTraceAsString(), 'error');
+            $this->logger->log(
+                "QuestSessionManager: Exception while saving new QuestSession: sessionId=[{$sessionId}]. Error: "
+                    . $e->getMessage(),
+                $e->getTraceAsString(),
+                'error',
+            );
         }
 
         if ($successfullySaved) {
             $this->logger->log("QuestSessionManager: Successfully saved new QuestSession: id=[{$session->id}]");
         } else {
-            $this->logger->log("QuestSessionManager: Failed to save new QuestSession: sessionId=[{$sessionId}]. Errors: " . print_r($session->getErrors(), true), null, 'error');
+            $this->logger->log(
+                "QuestSessionManager: Failed to save new QuestSession: sessionId=[{$sessionId}]. Errors: "
+                    . print_r($session->getErrors(), true),
+                null,
+                'error',
+            );
         }
         $this->logQuestSession("QuestSession status after newSession attempt for sessionId=[{$sessionId}]");
-        $this->logger->logEnd("QuestSessionManager: newSession");
+        $this->logger->logEnd('QuestSessionManager: newSession');
         return $successfullySaved;
     }
 
@@ -137,7 +165,9 @@ class QuestSessionManager
     private function updatedSessionPlayerId(QuestSession &$session, ?int $playerId): bool
     {
         if ($playerId !== null && $session->player_id !== $playerId) {
-            $this->logger->log("QuestSessionManager: Updating playerId from [{$session->player_id}] to [{$playerId}] for session [{$session->id}]");
+            $this->logger->log(
+                "QuestSessionManager: Updating playerId from [{$session->player_id}] to [{$playerId}] for session [{$session->id}]",
+            );
             $session->player_id = $playerId;
             $session->last_ts = 0; // Reset timestamp on player change
             return true;
@@ -154,7 +184,9 @@ class QuestSessionManager
     private function updatedSessionQuestId(QuestSession &$session, ?int $questId): bool
     {
         if ($questId !== null && $session->quest_id !== $questId) {
-            $this->logger->log("QuestSessionManager: Updating questId from [{$session->quest_id}] to [{$questId}] for session [{$session->id}]");
+            $this->logger->log(
+                "QuestSessionManager: Updating questId from [{$session->quest_id}] to [{$questId}] for session [{$session->id}]",
+            );
             $session->quest_id = $questId;
             $session->last_ts = 0; // Reset timestamp on quest change
             return true;
@@ -171,7 +203,9 @@ class QuestSessionManager
     private function updatedSessionClientId(QuestSession &$session, ?string $clientId): bool
     {
         if ($clientId !== null && $session->client_id !== $clientId) {
-            $this->logger->log("QuestSessionManager: Updating clientId from [{$session->client_id}] to [{$clientId}] for session [{$session->id}]");
+            $this->logger->log(
+                "QuestSessionManager: Updating clientId from [{$session->client_id}] to [{$clientId}] for session [{$session->id}]",
+            );
             $session->client_id = $clientId;
             return true;
         }
@@ -190,33 +224,48 @@ class QuestSessionManager
      */
     private function updateSession(QuestSession $session, ?int $questId, ?int $playerId, ?string $clientId): bool
     {
-        $this->logger->logStart("QuestSessionManager: updateSession session=[{$session->id}], newQuestId=[{$questId}], newPlayerId=[{$playerId}], newClientId=[{$clientId}]");
-        $needUpdate = $this->updatedSessionPlayerId($session, $playerId) ||
-                $this->updatedSessionQuestId($session, $questId) ||
-                $this->updatedSessionClientId($session, $clientId);
+        $this->logger->logStart(
+            "QuestSessionManager: updateSession session=[{$session->id}], newQuestId=[{$questId}], newPlayerId=[{$playerId}], newClientId=[{$clientId}]",
+        );
+        $needUpdate =
+            $this->updatedSessionPlayerId($session, $playerId)
+            || $this->updatedSessionQuestId($session, $questId)
+            || $this->updatedSessionClientId($session, $clientId);
 
         if ($needUpdate === false) {
             $this->logger->log("QuestSessionManager: No updates needed for QuestSession: id=[{$session->id}]");
             return true; // Assume success if no update is needed
         }
 
-        $this->logger->log("QuestSessionManager: Attempting to update QuestSession: id=[{$session->id}]", $session->getDirtyAttributes());
+        $this->logger->log(
+            "QuestSessionManager: Attempting to update QuestSession: id=[{$session->id}]",
+            $session->getDirtyAttributes(),
+        );
 
         $successfullySaved = false;
         try {
             $successfullySaved = $session->save();
         } catch (\Exception $e) {
-            $this->logger->log("QuestSessionManager: Exception while updating QuestSession: id=[{$session->id}]. Error: " . $e->getMessage(), $e->getTraceAsString(), 'error');
+            $this->logger->log(
+                "QuestSessionManager: Exception while updating QuestSession: id=[{$session->id}]. Error: "
+                    . $e->getMessage(),
+                $e->getTraceAsString(),
+                'error',
+            );
         }
 
         if ($successfullySaved) {
             $this->logger->log("QuestSessionManager: Successfully updated QuestSession: id=[{$session->id}]");
         } else {
-            $this->logger->log("QuestSessionManager: Failed to update QuestSession: id=[{$session->id}]. Errors: " . print_r($session->getErrors(), true), null, 'error');
+            $this->logger->log(
+                "QuestSessionManager: Failed to update QuestSession: id=[{$session->id}]. Errors: "
+                    . print_r($session->getErrors(), true),
+                null,
+                'error',
+            );
         }
         $this->logQuestSession("QuestSession status after updateSession attempt for session=[{$session->id}]");
-        $this->logger->logEnd('QuestSessionManager: updateSession: ' . ($successfullySaved
-                            ? "success" : "failed"));
+        $this->logger->logEnd('QuestSessionManager: updateSession: ' . ($successfullySaved ? 'success' : 'failed'));
         return $successfullySaved;
     }
 
@@ -260,14 +309,18 @@ class QuestSessionManager
         $this->logger->logStart("QuestSessionManager: clearClientId for clientId=[{$clientId}]");
 
         try {
-            $rowsUpdated = QuestSession::updateAll(
-                    ['client_id' => null],
-                    ['client_id' => $clientId]
+            $rowsUpdated = QuestSession::updateAll(['client_id' => null], ['client_id' => $clientId]);
+            $this->logger->log(
+                "QuestSessionManager: QuestSession::updateAll result: {$rowsUpdated} row(s) updated to nullify client_id for clientId=[{$clientId}]",
             );
-            $this->logger->log("QuestSessionManager: QuestSession::updateAll result: {$rowsUpdated} row(s) updated to nullify client_id for clientId=[{$clientId}]");
 
             if ($rowsUpdated === 0) {
-                $this->logger->log("QuestSessionManager: No QuestSessions found with clientId=[{$clientId}] to update.", null, 'info');
+                $this->logger->log(
+                    "QuestSessionManager: No QuestSessions found with clientId=[{$clientId}] to update.",
+                    null,
+                    'info',
+                );
+
                 // Optionally, try to find if any session still has this client_id (e.g., due to race condition or caching)
                 // $staleSession = QuestSession::findOne(['client_id' => $clientId]);
                 // if ($staleSession) {
@@ -275,7 +328,11 @@ class QuestSessionManager
                 // }
             }
         } catch (\Exception $e) {
-            $this->logger->log("QuestSessionManager: Exception during clearClientId for clientId=[{$clientId}]: " . $e->getMessage(), $e->getTraceAsString(), 'error');
+            $this->logger->log(
+                "QuestSessionManager: Exception during clearClientId for clientId=[{$clientId}]: " . $e->getMessage(),
+                $e->getTraceAsString(),
+                'error',
+            );
         }
 
         // Log current state of sessions for this client (should be none or cleared)
@@ -294,12 +351,18 @@ class QuestSessionManager
      */
     public function updateLastTimestamp(string $sessionId, int $timestamp): bool
     {
-        $this->logger->logStart("QuestSessionManager: updateLastTimestamp for sessionId=[{$sessionId}] to timestamp=[{$timestamp}]");
+        $this->logger->logStart(
+            "QuestSessionManager: updateLastTimestamp for sessionId=[{$sessionId}] to timestamp=[{$timestamp}]",
+        );
 
         $session = QuestSession::findOne(['id' => $sessionId]);
         if (!$session) {
-            $this->logger->log("QuestSessionManager: QuestSession not found for id=[{$sessionId}] during updateLastTimestamp.", null, 'warning');
-            $this->logger->logEnd("QuestSessionManager: updateLastTimestamp");
+            $this->logger->log(
+                "QuestSessionManager: QuestSession not found for id=[{$sessionId}] during updateLastTimestamp.",
+                null,
+                'warning',
+            );
+            $this->logger->logEnd('QuestSessionManager: updateLastTimestamp');
             return false;
         }
 
@@ -309,16 +372,26 @@ class QuestSessionManager
             $successfullySaved = $session->save();
             if ($successfullySaved) {
                 $this->logger->log("QuestSessionManager: Successfully updated last_ts for session [{$sessionId}].");
-                $this->logger->logEnd("QuestSessionManager: updateLastTimestamp");
+                $this->logger->logEnd('QuestSessionManager: updateLastTimestamp');
                 return true;
             } else {
-                $this->logger->log("QuestSessionManager: Failed to save QuestSession after updating last_ts for id=[{$sessionId}]. Errors: " . print_r($session->getErrors(), true), null, 'error');
-                $this->logger->logEnd("QuestSessionManager: updateLastTimestamp");
+                $this->logger->log(
+                    "QuestSessionManager: Failed to save QuestSession after updating last_ts for id=[{$sessionId}]. Errors: "
+                        . print_r($session->getErrors(), true),
+                    null,
+                    'error',
+                );
+                $this->logger->logEnd('QuestSessionManager: updateLastTimestamp');
                 return false;
             }
         } catch (\Exception $e) {
-            $this->logger->log("QuestSessionManager: Exception while saving QuestSession during updateLastTimestamp for id=[{$sessionId}]. Error: " . $e->getMessage(), $e->getTraceAsString(), 'error');
-            $this->logger->logEnd("QuestSessionManager: updateLastTimestamp");
+            $this->logger->log(
+                "QuestSessionManager: Exception while saving QuestSession during updateLastTimestamp for id=[{$sessionId}]. Error: "
+                    . $e->getMessage(),
+                $e->getTraceAsString(),
+                'error',
+            );
+            $this->logger->logEnd('QuestSessionManager: updateLastTimestamp');
             return false;
         }
     }

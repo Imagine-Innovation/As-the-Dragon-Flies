@@ -22,18 +22,19 @@ use Yii;
  */
 class RuleCondition extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'rule_condition';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['method_param'], 'default', 'value' => null],
             [['target'], 'default', 'value' => 1],
@@ -41,16 +42,35 @@ class RuleCondition extends \yii\db\ActiveRecord
             [['rule_id', 'expression_id', 'model_id', 'target'], 'integer'],
             [['method_param', 'val'], 'string', 'max' => 64],
             [['comparator'], 'string', 'max' => 2],
-            [['model_id'], 'exist', 'skipOnError' => true, 'targetClass' => RuleModel::class, 'targetAttribute' => ['model_id' => 'id']],
-            [['expression_id'], 'exist', 'skipOnError' => true, 'targetClass' => RuleExpression::class, 'targetAttribute' => ['expression_id' => 'id']],
-            [['rule_id'], 'exist', 'skipOnError' => true, 'targetClass' => Rule::class, 'targetAttribute' => ['rule_id' => 'id']],
+            [
+                ['model_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => RuleModel::class,
+                'targetAttribute' => ['model_id' => 'id'],
+            ],
+            [
+                ['expression_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => RuleExpression::class,
+                'targetAttribute' => ['expression_id' => 'id'],
+            ],
+            [
+                ['rule_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Rule::class,
+                'targetAttribute' => ['rule_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key.',
             'rule_id' => 'Foreign key to “rule” table',
@@ -68,7 +88,8 @@ class RuleCondition extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<RuleExpression>
      */
-    public function getExpression() {
+    public function getExpression()
+    {
         return $this->hasOne(RuleExpression::class, ['id' => 'expression_id']);
     }
 
@@ -77,7 +98,8 @@ class RuleCondition extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<RuleModel>
      */
-    public function getModel() {
+    public function getModel()
+    {
         return $this->hasOne(RuleModel::class, ['id' => 'model_id']);
     }
 
@@ -86,7 +108,8 @@ class RuleCondition extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Rule>
      */
-    public function getRule() {
+    public function getRule()
+    {
         return $this->hasOne(Rule::class, ['id' => 'rule_id']);
     }
 }

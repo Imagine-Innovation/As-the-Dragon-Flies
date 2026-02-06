@@ -28,7 +28,6 @@ use Yii;
  */
 class ShapeAttack extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
@@ -43,18 +42,43 @@ class ShapeAttack extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['description', 'damage_dice', 'additional_damage_dice', 'reach', 'range_min', 'range_max'], 'default', 'value' => null],
+            [
+                ['description', 'damage_dice', 'additional_damage_dice', 'reach', 'range_min', 'range_max'],
+                'default',
+                'value' => null,
+            ],
             [['damage'], 'default', 'value' => 0],
             [['id', 'weapon_id', 'shape_id', 'damage_type_id', 'name'], 'required'],
-            [['id', 'weapon_id', 'shape_id', 'damage_type_id', 'bonus', 'damage', 'reach', 'range_min', 'range_max'], 'integer'],
+            [
+                ['id', 'weapon_id', 'shape_id', 'damage_type_id', 'bonus', 'damage', 'reach', 'range_min', 'range_max'],
+                'integer',
+            ],
             [['description'], 'string'],
             [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name'], 'string', 'max' => 64],
             [['damage_dice', 'additional_damage_dice'], 'string', 'max' => 8],
             [['id'], 'unique'],
-            [['shape_id'], 'exist', 'skipOnError' => true, 'targetClass' => Shape::class, 'targetAttribute' => ['shape_id' => 'id']],
-            [['damage_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => DamageType::class, 'targetAttribute' => ['damage_type_id' => 'id']],
-            [['weapon_id'], 'exist', 'skipOnError' => true, 'targetClass' => Weapon::class, 'targetAttribute' => ['weapon_id' => 'item_id']],
+            [
+                ['shape_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Shape::class,
+                'targetAttribute' => ['shape_id' => 'id'],
+            ],
+            [
+                ['damage_type_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => DamageType::class,
+                'targetAttribute' => ['damage_type_id' => 'id'],
+            ],
+            [
+                ['weapon_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Weapon::class,
+                'targetAttribute' => ['weapon_id' => 'item_id'],
+            ],
         ];
     }
 

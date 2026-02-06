@@ -17,32 +17,46 @@ use Yii;
  */
 class CreatureAbility extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'creature_ability';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['bonus'], 'default', 'value' => 0],
             [['creature_id', 'ability_id'], 'required'],
             [['creature_id', 'ability_id', 'score', 'bonus'], 'integer'],
             [['creature_id', 'ability_id'], 'unique', 'targetAttribute' => ['creature_id', 'ability_id']],
-            [['creature_id'], 'exist', 'skipOnError' => true, 'targetClass' => Creature::class, 'targetAttribute' => ['creature_id' => 'id']],
-            [['ability_id'], 'exist', 'skipOnError' => true, 'targetClass' => Ability::class, 'targetAttribute' => ['ability_id' => 'id']],
+            [
+                ['creature_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Creature::class,
+                'targetAttribute' => ['creature_id' => 'id'],
+            ],
+            [
+                ['ability_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Ability::class,
+                'targetAttribute' => ['ability_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'creature_id' => 'Foreign key to “creature” table',
             'ability_id' => 'Foreign key to “ability” table',
@@ -56,7 +70,8 @@ class CreatureAbility extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Ability>
      */
-    public function getAbility() {
+    public function getAbility()
+    {
         return $this->hasOne(Ability::class, ['id' => 'ability_id']);
     }
 
@@ -65,7 +80,8 @@ class CreatureAbility extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Creature>
      */
-    public function getCreature() {
+    public function getCreature()
+    {
         return $this->hasOne(Creature::class, ['id' => 'creature_id']);
     }
 }

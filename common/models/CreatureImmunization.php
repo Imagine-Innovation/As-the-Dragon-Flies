@@ -15,31 +15,45 @@ use Yii;
  */
 class CreatureImmunization extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'creature_immunization';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['creature_id', 'condition_id'], 'required'],
             [['creature_id', 'condition_id'], 'integer'],
             [['creature_id', 'condition_id'], 'unique', 'targetAttribute' => ['creature_id', 'condition_id']],
-            [['creature_id'], 'exist', 'skipOnError' => true, 'targetClass' => Creature::class, 'targetAttribute' => ['creature_id' => 'id']],
-            [['condition_id'], 'exist', 'skipOnError' => true, 'targetClass' => Condition::class, 'targetAttribute' => ['condition_id' => 'id']],
+            [
+                ['creature_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Creature::class,
+                'targetAttribute' => ['creature_id' => 'id'],
+            ],
+            [
+                ['condition_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Condition::class,
+                'targetAttribute' => ['condition_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'creature_id' => 'Foreign key to “creature” table',
             'condition_id' => 'Foreign key to “condition” table',
@@ -51,7 +65,8 @@ class CreatureImmunization extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Condition>
      */
-    public function getCondition() {
+    public function getCondition()
+    {
         return $this->hasOne(Condition::class, ['id' => 'condition_id']);
     }
 
@@ -60,7 +75,8 @@ class CreatureImmunization extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Creature>
      */
-    public function getCreature() {
+    public function getCreature()
+    {
         return $this->hasOne(Creature::class, ['id' => 'creature_id']);
     }
 }

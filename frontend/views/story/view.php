@@ -16,17 +16,19 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="card mb-3">
         <div class="actions">
             <?=
-            Button::widget([
-                'mode' => 'icon',
-                'url' => Url::toRoute(['story/update', 'id' => $model->id]),
-                'icon' => 'dnd-spell',
-                'tooltip' => "Edit story"
-            ])
-            ?>
+    Button::widget([
+        'mode' => 'icon',
+        'url' => Url::toRoute(['story/update', 'id' => $model->id]),
+        'icon' => 'dnd-spell',
+        'tooltip' => 'Edit story',
+    ])
+?>
         </div>
         <div class="row g-0 d-flex"> <!-- Add d-flex to the row -->
             <div class="col-md-4 d-flex align-items-stretch"> <!-- Add d-flex and align-items-stretch -->
-                <img src="resources/story-<?= $model->id ?>/img/<?= $model->image ?>" class="img-fluid object-fit-cover rounded-start w-100" alt="<?= $model->name ?>">
+                <img src="resources/story-<?= $model->id ?>/img/<?= $model->image ?>" class="img-fluid object-fit-cover rounded-start w-100" alt="<?=
+    $model->name
+?>">
             </div>
             <div class="col-md-8 text-decoration d-flex flex-column"> <!-- Add d-flex and flex-column -->
                 <div class="card-header">
@@ -41,7 +43,9 @@ $this->params['breadcrumbs'][] = $this->title;
                         <span class="badge badge-info"><?= $model->companySize ?></span>
                     </p>
                     <?php foreach ($model->chapters as $chapter): ?>
-                        <p><a href="<?= Url::toRoute(['chapter/view', 'id' => $chapter->id]) ?>">Chapter <?= $chapter->chapter_number ?> - <?= $chapter->name ?></a></p>
+                        <p><a href="<?= Url::toRoute(['chapter/view', 'id' => $chapter->id]) ?>">Chapter <?=
+                        $chapter->chapter_number
+                    ?> - <?= $chapter->name ?></a></p>
                     <?php endforeach; ?>
                     <?php if ($model->tags): ?>
                         <div class="listview__attrs">
@@ -54,13 +58,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
                 <div class="card-footer">
                     <?=
-                    Button::widget([
-                        'url' => Url::toRoute(['chapter/create', 'storyId' => $model->id]),
-                        'icon' => 'dnd-scroll',
-                        'title' => "Add a chapter",
-                        'isCta' => true,
-                    ])
-                    ?>
+    Button::widget([
+        'url' => Url::toRoute(['chapter/create', 'storyId' => $model->id]),
+        'icon' => 'dnd-scroll',
+        'title' => 'Add a chapter',
+        'isCta' => true,
+    ])
+?>
                 </div>
             </div>
         </div>

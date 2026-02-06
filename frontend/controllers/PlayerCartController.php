@@ -20,42 +20,44 @@ use yii\web\Response;
  */
 class PlayerCartController extends Controller
 {
-
     /**
      * @inheritDoc
      */
     public function behaviors()
     {
         /** @phpstan-ignore-next-line */
-        return array_merge(
-                parent::behaviors(),
-                [
-                    'access' => [
-                        'class' => AccessControl::class,
-                        'rules' => [
-                            [
-                                'actions' => ['*'],
-                                'allow' => false,
-                                'roles' => ['?'],
-                            ],
-                            [
-                                'actions' => ['shop', 'cart',
-                                    'ajax-add', 'ajax-remove', 'ajax-delete', 'ajax-validate',
-                                    'ajax-info', 'ajax-item-count',
-                                ],
-                                'allow' => ManageAccessRights::isRouteAllowed($this),
-                                'roles' => ['@'],
-                            ],
-                        ],
+        return array_merge(parent::behaviors(), [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['*'],
+                        'allow' => false,
+                        'roles' => ['?'],
                     ],
-                    'verbs' => [
-                        'class' => VerbFilter::className(),
+                    [
                         'actions' => [
-                            'delete' => ['POST'],
+                            'shop',
+                            'cart',
+                            'ajax-add',
+                            'ajax-remove',
+                            'ajax-delete',
+                            'ajax-validate',
+                            'ajax-info',
+                            'ajax-item-count',
                         ],
+                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'roles' => ['@'],
                     ],
-                ]
-        );
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['POST'],
+                ],
+            ],
+        ]);
     }
 
     /**
@@ -71,14 +73,15 @@ class PlayerCartController extends Controller
         // Query items with cost greater than 0
         // Fetch models and order them by item type and name
         $items = Item::find()
-                        ->where(['>', 'cost', 0])
-                        ->orderBy([
-                            'item_type_id' => SORT_ASC,
-                            'name' => SORT_ASC,
-                        ])->all();
+            ->where(['>', 'cost', 0])
+            ->orderBy([
+                'item_type_id' => SORT_ASC,
+                'name' => SORT_ASC,
+            ])
+            ->all();
 
         return $this->render('shop', [
-                    'items' => $items,
+            'items' => $items,
         ]);
     }
 
@@ -96,7 +99,7 @@ class PlayerCartController extends Controller
         $playerCarts = $this->findPlayerCartContent();
 
         return $this->render('cart', [
-                    'playerCarts' => $playerCarts,
+            'playerCarts' => $playerCarts,
         ]);
     }
 
@@ -113,7 +116,6 @@ class PlayerCartController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
-
         $playerId = Yii::$app->session->get('playerId');
         $player = FindModelHelper::findPlayer(['id' => $playerId]);
 
@@ -128,7 +130,7 @@ class PlayerCartController extends Controller
         if ($funding <= 0) {
             return [
                 'error' => true,
-                'msg' => $shopping->purchaseNotPossibleMessage($player->playerCoins, $item)
+                'msg' => $shopping->purchaseNotPossibleMessage($player->playerCoins, $item),
             ];
         }
 
@@ -143,13 +145,11 @@ class PlayerCartController extends Controller
      */
     public function actionAjaxValidate(): array
     {
-
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
-
 
         $playerId = Yii::$app->session->get('playerId');
         $player = FindModelHelper::findPlayer(['id' => $playerId]);
@@ -179,7 +179,6 @@ class PlayerCartController extends Controller
         if (!$this->request->isPost || !$this->request->isAjax) {
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
-
 
         $playerId = Yii::$app->session->get('playerId');
         $player = FindModelHelper::findPlayer(['id' => $playerId]);
@@ -233,13 +232,11 @@ class PlayerCartController extends Controller
      */
     public function actionAjaxInfo(): array
     {
-
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isPost || !$this->request->isAjax) {
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
-
 
         $playerId = Yii::$app->session->get('playerId');
         $player = FindModelHelper::findPlayer(['id' => $playerId]);
@@ -255,9 +252,11 @@ class PlayerCartController extends Controller
         $purseMsg = $str !== '' ? "{$playerDesc} that currently has {$str}" : "{$player->name}'s purse is empty";
 
         return [
-            'error' => false, 'msg' => '', 'count' => $count,
-            'cartString' => "You have " . ($count > 0 ? $count : "no") . " article" . ($count > 1
-                ? "s" : '') . " in your cart",
+            'error' => false,
+            'msg' => '',
+            'count' => $count,
+            'cartString' =>
+                'You have ' . ($count > 0 ? $count : 'no') . ' article' . ($count > 1 ? 's' : '') . ' in your cart',
             'cartValueString' => $shopping->getCartValueString($this->findPlayerCartContent()),
             'purseString' => $purseMsg,
         ];
@@ -276,7 +275,6 @@ class PlayerCartController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
-
         $playerId = Yii::$app->session->get('playerId');
         $player = FindModelHelper::findPlayer(['id' => $playerId]);
 
@@ -286,8 +284,7 @@ class PlayerCartController extends Controller
         $model = PlayerCart::findOne(['player_id' => $player->id, 'item_id' => $itemId]);
 
         // Construct the response containing the count of the item and return it
-        return ['error' => false, 'msg' => '', 'count' => $model ? $model->quantity
-                : 0];
+        return ['error' => false, 'msg' => '', 'count' => $model ? $model->quantity : 0];
     }
 
     /**
@@ -301,9 +298,7 @@ class PlayerCartController extends Controller
         $playerId = Yii::$app->session->get('playerId');
 
         if ($playerId) {
-            $models = PlayerCart::find()
-                    ->where(['player_id' => $playerId])
-                    ->all();
+            $models = PlayerCart::find()->where(['player_id' => $playerId])->all();
 
             return $models;
         }

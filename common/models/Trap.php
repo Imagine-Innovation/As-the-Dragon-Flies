@@ -24,7 +24,6 @@ use Yii;
  */
 class Trap extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
@@ -48,8 +47,20 @@ class Trap extends \yii\db\ActiveRecord
             [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name', 'image'], 'string', 'max' => 64],
             [['damage'], 'string', 'max' => 8],
-            [['damage_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => DamageType::class, 'targetAttribute' => ['damage_type_id' => 'id']],
-            [['decor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Decor::class, 'targetAttribute' => ['decor_id' => 'id']],
+            [
+                ['damage_type_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => DamageType::class,
+                'targetAttribute' => ['damage_type_id' => 'id'],
+            ],
+            [
+                ['decor_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Decor::class,
+                'targetAttribute' => ['decor_id' => 'id'],
+            ],
         ];
     }
 

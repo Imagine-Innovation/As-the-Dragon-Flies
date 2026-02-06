@@ -18,18 +18,19 @@ use Yii;
  */
 class SpellCastingTime extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'spell_casting_time';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['modifier'], 'default', 'value' => null],
             [['name', 'duration', 'unit', 'minutes'], 'required'],
@@ -44,7 +45,8 @@ class SpellCastingTime extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'name' => 'Spell casting time',
@@ -60,7 +62,8 @@ class SpellCastingTime extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Spell>
      */
-    public function getSpells() {
+    public function getSpells()
+    {
         return $this->hasMany(Spell::class, ['casting_time_id' => 'id']);
     }
 }

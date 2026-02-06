@@ -23,35 +23,67 @@ use Yii;
  */
 class WizardAnswer extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'wizard_answer';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['next_question_id', 'class_id', 'race_id', 'alignment_id'], 'default', 'value' => null],
             [['question_id', 'answer'], 'required'],
             [['question_id', 'next_question_id', 'class_id', 'race_id', 'alignment_id'], 'integer'],
             [['answer'], 'string', 'max' => 255],
-            [['question_id'], 'exist', 'skipOnError' => true, 'targetClass' => WizardQuestion::class, 'targetAttribute' => ['question_id' => 'id']],
-            [['next_question_id'], 'exist', 'skipOnError' => true, 'targetClass' => WizardQuestion::class, 'targetAttribute' => ['next_question_id' => 'id']],
-            [['class_id'], 'exist', 'skipOnError' => true, 'targetClass' => CharacterClass::class, 'targetAttribute' => ['class_id' => 'id']],
-            [['race_id'], 'exist', 'skipOnError' => true, 'targetClass' => Race::class, 'targetAttribute' => ['race_id' => 'id']],
-            [['alignment_id'], 'exist', 'skipOnError' => true, 'targetClass' => Alignment::class, 'targetAttribute' => ['alignment_id' => 'id']],
+            [
+                ['question_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => WizardQuestion::class,
+                'targetAttribute' => ['question_id' => 'id'],
+            ],
+            [
+                ['next_question_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => WizardQuestion::class,
+                'targetAttribute' => ['next_question_id' => 'id'],
+            ],
+            [
+                ['class_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => CharacterClass::class,
+                'targetAttribute' => ['class_id' => 'id'],
+            ],
+            [
+                ['race_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Race::class,
+                'targetAttribute' => ['race_id' => 'id'],
+            ],
+            [
+                ['alignment_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Alignment::class,
+                'targetAttribute' => ['alignment_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'question_id' => 'Foreign key to “wizard_question” table',
@@ -68,7 +100,8 @@ class WizardAnswer extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Alignment>
      */
-    public function getAlignment() {
+    public function getAlignment()
+    {
         return $this->hasOne(Alignment::class, ['id' => 'alignment_id']);
     }
 
@@ -77,7 +110,8 @@ class WizardAnswer extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<CharacterClass>
      */
-    public function getClass() {
+    public function getClass()
+    {
         return $this->hasOne(CharacterClass::class, ['id' => 'class_id']);
     }
 
@@ -86,7 +120,8 @@ class WizardAnswer extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<WizardQuestion>
      */
-    public function getNextQuestion() {
+    public function getNextQuestion()
+    {
         return $this->hasOne(WizardQuestion::class, ['id' => 'next_question_id']);
     }
 
@@ -95,7 +130,8 @@ class WizardAnswer extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<WizardQuestion>
      */
-    public function getQuestion() {
+    public function getQuestion()
+    {
         return $this->hasOne(WizardQuestion::class, ['id' => 'question_id']);
     }
 
@@ -104,7 +140,8 @@ class WizardAnswer extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Race>
      */
-    public function getRace() {
+    public function getRace()
+    {
         return $this->hasOne(Race::class, ['id' => 'race_id']);
     }
 }

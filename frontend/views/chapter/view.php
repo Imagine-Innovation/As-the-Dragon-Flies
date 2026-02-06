@@ -23,17 +23,19 @@ $this->params['breadcrumbs'] = $breadcrumbs;
     <div class="card mb-3">
         <div class="actions">
             <?=
-            Button::widget([
-                'mode' => 'icon',
-                'url' => Url::toRoute(['chapter/update', 'id' => $model->id]),
-                'icon' => 'dnd-spell',
-                'tooltip' => "Edit chapter"
-            ])
-            ?>
+    Button::widget([
+        'mode' => 'icon',
+        'url' => Url::toRoute(['chapter/update', 'id' => $model->id]),
+        'icon' => 'dnd-spell',
+        'tooltip' => 'Edit chapter',
+    ])
+?>
         </div>
         <div class="row g-0 d-flex"> <!-- Add d-flex to the row -->
             <div class="col-md-4 d-flex align-items-stretch"> <!-- Add d-flex and align-items-stretch -->
-                <img src="resources/story-<?= $model->story_id ?>/img/<?= $model->image ?>" class="img-fluid object-fit-cover rounded-start w-100" alt="<?= $model->name ?>">
+                <img src="resources/story-<?= $model->story_id ?>/img/<?= $model->image ?>" class="img-fluid object-fit-cover rounded-start w-100" alt="<?=
+    $model->name
+?>">
             </div>
             <div class="col-md-8 text-decoration d-flex flex-column"> <!-- Add d-flex and flex-column -->
                 <div class="card-header">
@@ -48,21 +50,21 @@ $this->params['breadcrumbs'] = $breadcrumbs;
                 </div>
                 <div class="card-footer">
                     <?=
-                    Button::widget([
-                        'url' => Url::toRoute(['chapter/create', 'storyId' => $model->story_id]),
-                        'icon' => 'dnd-scroll',
-                        'title' => "Add another chapter",
-                        'isCta' => true,
-                    ])
-                    ?>
+    Button::widget([
+        'url' => Url::toRoute(['chapter/create', 'storyId' => $model->story_id]),
+        'icon' => 'dnd-scroll',
+        'title' => 'Add another chapter',
+        'isCta' => true,
+    ])
+?>
                     <?=
-                    Button::widget([
-                        'url' => Url::toRoute(['mission/create', 'chapterId' => $model->id]),
-                        'icon' => 'dnd-badge',
-                        'title' => "Add a mission to this chapter",
-                        'isCta' => true,
-                    ])
-                    ?>
+    Button::widget([
+        'url' => Url::toRoute(['mission/create', 'chapterId' => $model->id]),
+        'icon' => 'dnd-badge',
+        'title' => 'Add a mission to this chapter',
+        'isCta' => true,
+    ])
+?>
                 </div>
             </div>
         </div>

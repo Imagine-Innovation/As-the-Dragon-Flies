@@ -21,4 +21,4 @@ $isAdmin = $currentUser->is_admin;
     </div>
 <?php else: ?>
 
-<?php endif; ?>
+<?php endif;

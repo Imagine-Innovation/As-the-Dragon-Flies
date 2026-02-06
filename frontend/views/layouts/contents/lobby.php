@@ -1,4 +1,5 @@
 <?php
+
 /** @var \yii\web\View $this */
 
 /** @var string $content */
@@ -16,10 +17,9 @@ AppAsset::register($this);
     <a id="top"></a>
     <?=
     Breadcrumbs::widget([
-        'links' => isset($this->params['breadcrumbs']) ?
-                $this->params['breadcrumbs'] : [],
+        'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
     ])
-    ?>
+?>
 
     <div class="content__inner">
         <?= Alert::widget() ?>

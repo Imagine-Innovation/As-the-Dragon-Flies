@@ -15,31 +15,45 @@ use Yii;
  */
 class ShapeLanguage extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'shape_language';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['shape_id', 'language_id'], 'required'],
             [['shape_id', 'language_id'], 'integer'],
             [['shape_id', 'language_id'], 'unique', 'targetAttribute' => ['shape_id', 'language_id']],
-            [['shape_id'], 'exist', 'skipOnError' => true, 'targetClass' => Shape::class, 'targetAttribute' => ['shape_id' => 'id']],
-            [['language_id'], 'exist', 'skipOnError' => true, 'targetClass' => Language::class, 'targetAttribute' => ['language_id' => 'id']],
+            [
+                ['shape_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Shape::class,
+                'targetAttribute' => ['shape_id' => 'id'],
+            ],
+            [
+                ['language_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Language::class,
+                'targetAttribute' => ['language_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'shape_id' => 'Foreign key to “shape” table',
             'language_id' => 'Foreign key to “language” table',
@@ -51,7 +65,8 @@ class ShapeLanguage extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Language>
      */
-    public function getLanguage() {
+    public function getLanguage()
+    {
         return $this->hasOne(Language::class, ['id' => 'language_id']);
     }
 
@@ -60,7 +75,8 @@ class ShapeLanguage extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Shape>
      */
-    public function getShape() {
+    public function getShape()
+    {
         return $this->hasOne(Shape::class, ['id' => 'shape_id']);
     }
 }

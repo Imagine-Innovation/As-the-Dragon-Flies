@@ -18,40 +18,36 @@ use yii\web\Response;
  */
 class UserLoginController extends Controller
 {
-
     /**
      * @inheritDoc
      */
     public function behaviors()
     {
         /** @phpstan-ignore-next-line */
-        return array_merge(
-                parent::behaviors(),
-                [
-                    'access' => [
-                        'class' => AccessControl::class,
-                        'rules' => [
-                            [
-                                'actions' => ['*'],
-                                'allow' => false,
-                                'roles' => ['?'],
-                            ],
-                            [
-                                'actions' => ['index', 'ajax'],
-                                'allow' => ManageAccessRights::isRouteAllowed($this),
-                                'roles' => ['@'],
-                            ],
-                        ],
+        return array_merge(parent::behaviors(), [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['*'],
+                        'allow' => false,
+                        'roles' => ['?'],
                     ],
-                    'verbs' => [
-                        'class' => VerbFilter::className(),
-                        'actions' => [
-                            'delete' => ['POST'],
-                            'ajax' => ['POST', 'GET'],
-                        ],
+                    [
+                        'actions' => ['index', 'ajax'],
+                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'roles' => ['@'],
                     ],
-                ]
-        );
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['POST'],
+                    'ajax' => ['POST', 'GET'],
+                ],
+            ],
+        ]);
     }
 
     /**
@@ -69,12 +65,12 @@ class UserLoginController extends Controller
                 'defaultOrder' => [
                     'login_at' => SORT_DESC,
                     'application' => SORT_DESC,
-                ]
+                ],
             ],
         ]);
 
         return $this->render('index', [
-                    'dataProvider' => $dataProvider,
+            'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -117,11 +113,13 @@ class UserLoginController extends Controller
      */
     protected function findModel(int $userId, string $application, int $loginAt): UserLogin
     {
-        if (($model = UserLogin::findOne([
-            'user_id' => $userId,
-            'application' => $application,
-            'login_at' => $loginAt
-                ])) !== null) {
+        if (
+            ($model = UserLogin::findOne([
+                'user_id' => $userId,
+                'application' => $application,
+                'login_at' => $loginAt,
+            ])) !== null
+        ) {
             return $model;
         }
 

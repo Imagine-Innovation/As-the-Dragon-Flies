@@ -11,7 +11,6 @@ use yii\base\Model;
  */
 class SignupForm extends Model
 {
-
     public ?string $username = null;
     public ?string $fullname = null;
     public ?string $email = null;
@@ -25,15 +24,40 @@ class SignupForm extends Model
         return [
             [['username', 'fullname', 'email'], 'trim'],
             [['username', 'email', 'password'], 'required'],
-            ['username', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This username has already been taken.'],
+            [
+                'username',
+                'unique',
+                'targetClass' => '\common\models\User',
+                'message' => 'This username has already been taken.',
+            ],
             ['username', 'string', 'min' => 2, 'max' => 255],
-            ['username', 'match', 'pattern' => '/^[a-zA-Z0-9]+$/', 'message' => 'Username can only contain alphanumeric characters.'],
-            ['fullname', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This full name has already been taken.'],
+            [
+                'username',
+                'match',
+                'pattern' => '/^[a-zA-Z0-9]+$/',
+                'message' => 'Username can only contain alphanumeric characters.',
+            ],
+            [
+                'fullname',
+                'unique',
+                'targetClass' => '\common\models\User',
+                'message' => 'This full name has already been taken.',
+            ],
             ['fullname', 'string', 'max' => 64],
-            ['fullname', 'match', 'pattern' => '/^[a-zA-Z0-9]+$/', 'message' => 'Username can only contain alphanumeric characters.'],
+            [
+                'fullname',
+                'match',
+                'pattern' => '/^[a-zA-Z0-9]+$/',
+                'message' => 'Username can only contain alphanumeric characters.',
+            ],
             ['email', 'email'],
             ['email', 'string', 'max' => 255],
-            ['email', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This email address has already been taken.'],
+            [
+                'email',
+                'unique',
+                'targetClass' => '\common\models\User',
+                'message' => 'This email address has already been taken.',
+            ],
             ['password', 'string', 'min' => Yii::$app->params['user.passwordMinLength']],
         ];
     }
@@ -72,14 +96,11 @@ class SignupForm extends Model
     protected function sendEmail(User $user): bool
     {
         return Yii::$app
-                        ->mailer
-                        ->compose(
-                                ['html' => 'emailVerify-html', 'text' => 'emailVerify-text'],
-                                ['user' => $user]
-                        )
-                        ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name . ' robot'])
-                        ->setTo($this->email)
-                        ->setSubject('Account registration at ' . Yii::$app->name)
-                        ->send();
+            ->mailer
+            ->compose(['html' => 'emailVerify-html', 'text' => 'emailVerify-text'], ['user' => $user])
+            ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name . ' robot'])
+            ->setTo($this->email)
+            ->setSubject('Account registration at ' . Yii::$app->name)
+            ->send();
     }
 }

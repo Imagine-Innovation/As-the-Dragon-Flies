@@ -15,31 +15,45 @@ use Yii;
  */
 class PlayerLanguage extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'player_language';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['player_id', 'language_id'], 'required'],
             [['player_id', 'language_id'], 'integer'],
             [['player_id', 'language_id'], 'unique', 'targetAttribute' => ['player_id', 'language_id']],
-            [['player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['player_id' => 'id']],
-            [['language_id'], 'exist', 'skipOnError' => true, 'targetClass' => Language::class, 'targetAttribute' => ['language_id' => 'id']],
+            [
+                ['player_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Player::class,
+                'targetAttribute' => ['player_id' => 'id'],
+            ],
+            [
+                ['language_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Language::class,
+                'targetAttribute' => ['language_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'player_id' => 'Foreign key to “player” table',
             'language_id' => 'Foreign key to “language” table',
@@ -51,7 +65,8 @@ class PlayerLanguage extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Language>
      */
-    public function getLanguage() {
+    public function getLanguage()
+    {
         return $this->hasOne(Language::class, ['id' => 'language_id']);
     }
 
@@ -60,7 +75,8 @@ class PlayerLanguage extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Player>
      */
-    public function getPlayer() {
+    public function getPlayer()
+    {
         return $this->hasOne(Player::class, ['id' => 'player_id']);
     }
 }

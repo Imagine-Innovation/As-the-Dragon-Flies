@@ -37,7 +37,6 @@ use Yii;
  */
 class Story extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
@@ -94,8 +93,7 @@ class Story extends \yii\db\ActiveRecord
      */
     public function getChapters()
     {
-        return $this->hasMany(Chapter::class, ['story_id' => 'id'])
-                        ->orderBy(['chapter_number' => SORT_ASC]);
+        return $this->hasMany(Chapter::class, ['story_id' => 'id'])->orderBy(['chapter_number' => SORT_ASC]);
     }
 
     /**
@@ -105,7 +103,9 @@ class Story extends \yii\db\ActiveRecord
      */
     public function getClasses()
     {
-        return $this->hasMany(CharacterClass::class, ['id' => 'class_id'])->viaTable('story_class', ['story_id' => 'id']);
+        return $this->hasMany(CharacterClass::class, ['id' => 'class_id'])->viaTable('story_class', [
+            'story_id' => 'id',
+        ]);
     }
 
     /**
@@ -159,8 +159,7 @@ class Story extends \yii\db\ActiveRecord
      */
     public function getFirstChapter(): \yii\db\ActiveQuery
     {
-        return $this->hasOne(Chapter::class, ['story_id' => 'id'])
-                        ->andWhere(['chapter_number' => 1]);
+        return $this->hasOne(Chapter::class, ['story_id' => 'id'])->andWhere(['chapter_number' => 1]);
     }
 
     /**
@@ -172,7 +171,7 @@ class Story extends \yii\db\ActiveRecord
     {
         $quest = Quest::findOne([
             'story_id' => $this->id,
-            'status' => AppStatus::WAITING->value
+            'status' => AppStatus::WAITING->value,
         ]);
         return $quest;
     }
@@ -187,10 +186,10 @@ class Story extends \yii\db\ActiveRecord
         $max = $this->max_level ?? 0;
         $min = $this->min_level ?? 0;
         if (($min + $max) === 0) {
-            return "Undefined";
+            return 'Undefined';
         }
         if ($max === 1) {
-            return "Beginner only";
+            return 'Beginner only';
         }
         if ($max === $min) {
             return "Level {$min} only";
@@ -211,10 +210,10 @@ class Story extends \yii\db\ActiveRecord
         $max = $this->max_players ?? 0;
         $min = $this->min_players ?? 0;
         if (($min + $max) === 0) {
-            return "Undefined";
+            return 'Undefined';
         }
         if ($max === 1) {
-            return "Single player";
+            return 'Single player';
         }
         if (($max - $min) === 0) {
             return "{$min} players";

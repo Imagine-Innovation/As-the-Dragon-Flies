@@ -9,7 +9,6 @@ use yii\base\Widget;
 
 class CurrentPlayer extends Widget
 {
-
     public User $user;
     public ?string $mode = null;
 
@@ -21,19 +20,19 @@ class CurrentPlayer extends Widget
     {
         $currentUser = $this->user;
         $displayMode = $this->mode ?? 'navbar';
-        $render = ($displayMode === 'navbar') ? 'current-player-navbar' : 'current-player-modal';
+        $render = $displayMode === 'navbar' ? 'current-player-navbar' : 'current-player-modal';
 
         $selectedPlayerId = $currentUser->current_player_id;
 
         $players = $this->loadPlayers($currentUser->id);
         if ($players) {
             return $this->render($render, [
-                        'players' => $players,
-                        'selectedPlayerId' => $selectedPlayerId,
-                        'userId' => $currentUser->id,
+                'players' => $players,
+                'selectedPlayerId' => $selectedPlayerId,
+                'userId' => $currentUser->id,
             ]);
         } else {
-            $html = ($displayMode === 'navbar') ? '' : $this->render('current-player-empty');
+            $html = $displayMode === 'navbar' ? '' : $this->render('current-player-empty');
             return $html;
         }
     }
@@ -75,12 +74,10 @@ class CurrentPlayer extends Widget
         $gender = match ($player->gender) {
             'F' => 'female',
             'M' => 'male',
-            default => 'gender-neutral'
+            default => 'gender-neutral',
         };
 
-        return $gender . ' '
-                . mb_strtolower($player->race->name) . ' '
-                . mb_strtolower($player->class->name);
+        return $gender . ' ' . mb_strtolower($player->race->name) . ' ' . mb_strtolower($player->class->name);
     }
 
     /**
@@ -92,11 +89,11 @@ class CurrentPlayer extends Widget
     private function getPlayers(int $userId): array
     {
         return Player::find()
-                        ->with(['class', 'race'])
-                        ->where([
-                            'user_id' => $userId,
-                            'status' => AppStatus::ACTIVE->value,
-                        ])
-                        ->All();
+            ->with(['class', 'race'])
+            ->where([
+                'user_id' => $userId,
+                'status' => AppStatus::ACTIVE->value,
+            ])
+            ->All();
     }
 }

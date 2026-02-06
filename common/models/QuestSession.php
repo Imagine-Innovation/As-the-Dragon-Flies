@@ -18,18 +18,19 @@ use Yii;
  */
 class QuestSession extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'quest_session';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['quest_id', 'player_id', 'client_id'], 'default', 'value' => null],
             [['last_ts'], 'default', 'value' => time()],
@@ -38,15 +39,28 @@ class QuestSession extends \yii\db\ActiveRecord
             [['id', 'client_id'], 'string', 'max' => 64],
             [['client_id'], 'unique'],
             [['id'], 'unique'],
-            [['player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['player_id' => 'id']],
-            [['quest_id'], 'exist', 'skipOnError' => true, 'targetClass' => Quest::class, 'targetAttribute' => ['quest_id' => 'id']],
+            [
+                ['player_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Player::class,
+                'targetAttribute' => ['player_id' => 'id'],
+            ],
+            [
+                ['quest_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Quest::class,
+                'targetAttribute' => ['quest_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'quest_id' => 'Foreign key to “quest” table',
@@ -61,7 +75,8 @@ class QuestSession extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Player>
      */
-    public function getPlayer() {
+    public function getPlayer()
+    {
         return $this->hasOne(Player::class, ['id' => 'player_id']);
     }
 
@@ -70,7 +85,8 @@ class QuestSession extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Quest>
      */
-    public function getQuest() {
+    public function getQuest()
+    {
         return $this->hasOne(Quest::class, ['id' => 'quest_id']);
     }
 }

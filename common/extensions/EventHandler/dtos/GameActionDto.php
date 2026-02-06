@@ -6,7 +6,6 @@ use common\extensions\EventHandler\contracts\BroadcastMessageInterface;
 
 class GameActionDto implements BroadcastMessageInterface
 {
-
     private string $type = 'game-action';
 
     /** @var array<string, mixed> $payload */
@@ -18,12 +17,13 @@ class GameActionDto implements BroadcastMessageInterface
      * @param string $action
      * @param array<string, mixed> $detail
      */
-    public function __construct(string $playerName, string $action, array $detail) {
+    public function __construct(string $playerName, string $action, array $detail)
+    {
         $this->payload = [
             'playerName' => $playerName,
             'action' => $action,
             'detail' => $detail,
-            'timestamp' => time()
+            'timestamp' => time(),
         ];
     }
 
@@ -31,7 +31,8 @@ class GameActionDto implements BroadcastMessageInterface
      *
      * @return string
      */
-    public function getType(): string {
+    public function getType(): string
+    {
         return $this->type;
     }
 
@@ -39,7 +40,8 @@ class GameActionDto implements BroadcastMessageInterface
      *
      * @return array<string, mixed>
      */
-    public function getPayload(): array {
+    public function getPayload(): array
+    {
         return $this->payload;
     }
 
@@ -47,7 +49,8 @@ class GameActionDto implements BroadcastMessageInterface
      *
      * @return string|false
      */
-    public function toJson(): string|false {
+    public function toJson(): string|false
+    {
         return json_encode(['type' => $this->type, 'payload' => $this->payload]);
     }
 }

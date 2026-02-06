@@ -19,18 +19,19 @@ use Yii;
  */
 class Level extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'level';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['proficiency_bonus'], 'default', 'value' => 0],
             [['name', 'xp_min', 'xp_max'], 'required'],
@@ -43,7 +44,8 @@ class Level extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'name' => 'Level',
@@ -58,7 +60,8 @@ class Level extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<ClassFeature>
      */
-    public function getClassFeatures() {
+    public function getClassFeatures()
+    {
         return $this->hasMany(ClassFeature::class, ['level_id' => 'id']);
     }
 
@@ -67,7 +70,8 @@ class Level extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<ClassProficiency>
      */
-    public function getClassProficiencies() {
+    public function getClassProficiencies()
+    {
         return $this->hasMany(ClassProficiency::class, ['level_id' => 'id']);
     }
 
@@ -76,7 +80,8 @@ class Level extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Player>
      */
-    public function getPlayers() {
+    public function getPlayers()
+    {
         return $this->hasMany(Player::class, ['level_id' => 'id']);
     }
 }

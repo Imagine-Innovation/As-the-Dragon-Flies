@@ -11,7 +11,6 @@ use Yii;
  */
 class GameOverEvent extends Event
 {
-
     /** @var string|null The action type */
     public ?string $action = null;
 
@@ -26,7 +25,8 @@ class GameOverEvent extends Event
      * @param string|null $action The action type
      * @param array<string, mixed> $detail Additional action data
      */
-    public function __construct(string $sessionId, Player $player, Quest $quest, ?string $action, array $detail = []) {
+    public function __construct(string $sessionId, Player $player, Quest $quest, ?string $action, array $detail = [])
+    {
         parent::__construct($sessionId, $player, $quest);
         $this->action = $action;
         $this->detail = $detail;
@@ -37,7 +37,8 @@ class GameOverEvent extends Event
      *
      * @return string
      */
-    public function getType(): string {
+    public function getType(): string
+    {
         return 'game-over';
     }
 
@@ -46,7 +47,8 @@ class GameOverEvent extends Event
      *
      * @return string
      */
-    public function getTitle(): string {
+    public function getTitle(): string
+    {
         return $this->action ?? 'Game over';
     }
 
@@ -54,7 +56,8 @@ class GameOverEvent extends Event
      *
      * @return string
      */
-    public function getMessage(): string {
+    public function getMessage(): string
+    {
         /** @var array{playerName: string, questName: string, status: string} */
         $detail = $this->detail;
 
@@ -66,10 +69,11 @@ class GameOverEvent extends Event
      *
      * @return array<string, mixed>
      */
-    public function getPayload(): array {
+    public function getPayload(): array
+    {
         return [
             'detail' => $this->detail,
-            'timestamp' => $this->timestamp
+            'timestamp' => $this->timestamp,
         ];
     }
 
@@ -78,8 +82,9 @@ class GameOverEvent extends Event
      *
      * @return void
      */
-    public function process(): void {
-        Yii::debug("*** Debug *** GameOverEvent - process");
+    public function process(): void
+    {
+        Yii::debug('*** Debug *** GameOverEvent - process');
         $notification = $this->createNotification();
 
         $this->savePlayerNotifications($notification->id);

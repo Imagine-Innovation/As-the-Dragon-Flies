@@ -12,7 +12,6 @@ use yii\helpers\ArrayHelper;
 
 class Shopping
 {
-
     const DEFAULT_COIN = 'gp';
 
     /** @var array<string> $itemTypes */
@@ -27,13 +26,14 @@ class Shopping
     ];
 
     /** @var array<string, array{rate: int, prev: string|null}> $coins */
-    private array $coins = [];      // coin details (exchange rates and relationships).
+    private array $coins = []; // coin details (exchange rates and relationships).
 
     /** @var array<string, array{coin: string, quantity: int, copperValue: int, prev: string|null, rate: int}> $purse */
     private array $purse = [];
-    private int $purseValue = 0;    // Total value of the player's purse in copper coins.
+    private int $purseValue = 0; // Total value of the player's purse in copper coins.
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->coins = self::COINS;
     }
 
@@ -45,7 +45,8 @@ class Shopping
      *
      * @return int Total funding in copper coins.
      */
-    private function getPurseValue(): int {
+    private function getPurseValue(): int
+    {
         return array_sum(array_column($this->purse, 'copperValue'));
     }
 
@@ -58,7 +59,8 @@ class Shopping
      * @param PlayerCoin[] $playerCoins Content of the player's purse.
      * @return array<string, mixed> Associative array representing the player's purse with coin types as keys.
      */
-    private function initPurse(array $playerCoins): array {
+    private function initPurse(array $playerCoins): array
+    {
         if ($this->purse) {
             // if purse is already initialized, keep it
             return $this->purse;
@@ -77,7 +79,7 @@ class Shopping
                     'prev' => $thisCoin['prev'],
                     'rate' => $thisCoin['rate'],
                 ];
-                Yii::debug("*** debug *** initPurse");
+                Yii::debug('*** debug *** initPurse');
                 Yii::debug($purseContent);
                 $this->purse[$coin] = $purseContent;
             }
@@ -101,7 +103,8 @@ class Shopping
      *
      * @return bool True if saving is successful for all PlayerCoin objects, false otherwise.
      */
-    private function setPlayerCoins(array $playerCoins): bool {
+    private function setPlayerCoins(array $playerCoins): bool
+    {
         $success = true;
         foreach ($playerCoins as $playerCoin) {
             $coin = $playerCoin->coin;
@@ -125,7 +128,8 @@ class Shopping
      * @param string|null $coin The type of coin (e.g., 'gold', 'silver', 'copper').
      * @return void
      */
-    private function updateWallet(int $amount, ?string $coin = self::DEFAULT_COIN): void {
+    private function updateWallet(int $amount, ?string $coin = self::DEFAULT_COIN): void
+    {
         $wallet = $this->purse[$coin];
         $wallet['quantity'] += $amount;
         $wallet['copperValue'] = $this->copperValue($wallet['quantity'], $coin);
@@ -141,7 +145,8 @@ class Shopping
      * @param string|null $targetCoin The target coin type to exchange to.
      * @return bool True if the exchange is successful, false otherwise.
      */
-    private function changeHigherValueCoin(?string $targetCoin = self::DEFAULT_COIN): bool {
+    private function changeHigherValueCoin(?string $targetCoin = self::DEFAULT_COIN): bool
+    {
         if (!isset($this->coins[$targetCoin])) {
             // Coin is unknown type
             return false;
@@ -176,7 +181,8 @@ class Shopping
      * @param string|null $coin The current coin type being processed.
      * @return int The updated remaining value to be deducted.
      */
-    private function removeCoinsFromPurse(int &$itemCopperValue, ?string $coin): int {
+    private function removeCoinsFromPurse(int &$itemCopperValue, ?string $coin): int
+    {
         if ($itemCopperValue <= 0 || !$coin) {
             return $itemCopperValue;
         }
@@ -212,7 +218,8 @@ class Shopping
      *
      * @return bool True if the spending is successful, false otherwise.
      */
-    public function spend(array $playerCoins, int $amount, ?string $coin = self::DEFAULT_COIN): bool {
+    public function spend(array $playerCoins, int $amount, ?string $coin = self::DEFAULT_COIN): bool
+    {
         // Check if the player has sufficient funding for the specified cost and coin type.
         $itemCopperValue = $this->getFunding($playerCoins, $amount, $coin);
         if ($itemCopperValue <= 0) {
@@ -236,7 +243,8 @@ class Shopping
      * @param string|null $coin The type of coin (e.g., 'gold', 'silver', 'copper').
      * @return bool Whether the restoration was successful.
      */
-    public function restoreFunding(array $playerCoins, int|null $amount = 0, ?string $coin = self::DEFAULT_COIN): bool {
+    public function restoreFunding(array $playerCoins, ?int $amount = 0, ?string $coin = self::DEFAULT_COIN): bool
+    {
         $this->initPurse($playerCoins);
 
         foreach ($playerCoins as $playerCoin) {
@@ -257,7 +265,8 @@ class Shopping
      *
      * @return int The maximum funding the player can contribute towards the item purchase in copper coins.
      */
-    public function getFunding(array $playerCoins, int $amount, ?string $coin = self::DEFAULT_COIN): int {
+    public function getFunding(array $playerCoins, int $amount, ?string $coin = self::DEFAULT_COIN): int
+    {
         if (!isset($this->coins[$coin]) || $amount <= 0) {
             return 0;
         }
@@ -265,7 +274,7 @@ class Shopping
         $this->initPurse($playerCoins);
         $itemCopperValue = $this->copperValue($amount, $coin);
 
-        return ($this->purseValue < $itemCopperValue) ? 0 : $itemCopperValue;
+        return $this->purseValue < $itemCopperValue ? 0 : $itemCopperValue;
     }
 
     /**
@@ -277,10 +286,9 @@ class Shopping
      * @param string|null $coin The type of coin (e.g., 'gold', 'silver', 'copper').
      * @return int Value converted into copper coins.
      */
-    public function copperValue(int $amount, ?string $coin = self::DEFAULT_COIN): int {
-        return (!isset($this->coins[$coin]) || $amount <= 0) ?
-                0 :
-                (int) ($amount * $this->coins[$coin]['rate']);
+    public function copperValue(int $amount, ?string $coin = self::DEFAULT_COIN): int
+    {
+        return !isset($this->coins[$coin]) || $amount <= 0 ? 0 : (int) ($amount * $this->coins[$coin]['rate']);
     }
 
     /**
@@ -293,7 +301,8 @@ class Shopping
      * @param \common\models\PlayerCoin[] $playerCoins The player's current coin holdings represented as an associative array.
      * @return string The string representation of the player's purse.
      */
-    public function getPurseValueString(array $playerCoins): string {
+    public function getPurseValueString(array $playerCoins): string
+    {
         $string = [];
         $this->initPurse($playerCoins);
         foreach ($this->purse as $wallet) {
@@ -301,20 +310,21 @@ class Shopping
                 $string[] = $wallet['quantity'] . $wallet['coin'];
             }
         }
-        return implode(" + ", $string);
+        return implode(' + ', $string);
     }
 
     /**
      *
      * @return array<string, array{value: int, coin: string, rate: int}>
      */
-    private function initCoinage(): array {
+    private function initCoinage(): array
+    {
         $coinage = [];
         foreach (array_keys($this->coins) as $coin) {
             $coinage[$coin] = [
                 'value' => 0,
                 'coin' => $coin,
-                'rate' => (int) $this->coins[$coin]['rate']
+                'rate' => (int) $this->coins[$coin]['rate'],
             ];
         }
         return $coinage;
@@ -326,7 +336,8 @@ class Shopping
      * @param PlayerCart[] $playerCarts The player's cart containing items.
      * @return string The cart value string.
      */
-    public function getCartValueString(array $playerCarts): string {
+    public function getCartValueString(array $playerCarts): string
+    {
         if (empty($playerCarts)) {
             return '';
         }
@@ -347,10 +358,10 @@ class Shopping
         foreach ($coinage as $c) {
             /** @var array{value: int, coin: string, rate: int} $c */
             if ($c['value'] > 0) {
-                $cartValueString[] = $c['value'] . " " . $c['coin'];
+                $cartValueString[] = $c['value'] . ' ' . $c['coin'];
             }
         }
-        return implode(" + ", $cartValueString);
+        return implode(' + ', $cartValueString);
     }
 
     /**
@@ -361,7 +372,8 @@ class Shopping
      *
      * @return string The purchase status message.
      */
-    public function purchaseNotPossibleMessage(array $playerCoins, Item &$item): string {
+    public function purchaseNotPossibleMessage(array $playerCoins, Item &$item): string
+    {
         $this->initPurse($playerCoins);
 
         if ($this->getPurseValue() > 0) {
@@ -381,7 +393,8 @@ class Shopping
      * @param int|null $quantity The quantity of the item to be removed.
      * @return array{error: bool, msg: string, content?: string} An associative array containing the result of the operation.
      */
-    public function removeFromCart(Player &$player, Item &$item, ?int $quantity = null): array {
+    public function removeFromCart(Player &$player, Item &$item, ?int $quantity = null): array
+    {
         $cartItem = PlayerCart::findOne(['player_id' => $player->id, 'item_id' => $item->id]);
         if ($cartItem === null) {
             return ['error' => true, 'msg' => 'Nothing to remove'];
@@ -393,10 +406,10 @@ class Shopping
 
         if ($cartItem->quantity <= 0) {
             $ok = $cartItem->delete();
-            $verb = "deleted";
+            $verb = 'deleted';
         } else {
             $ok = $cartItem->save();
-            $verb = "removed";
+            $verb = 'removed';
         }
 
         if ($ok && $this->restoreFunding($player->playerCoins, $refund, $item->coin)) {
@@ -411,7 +424,8 @@ class Shopping
      * @param Item $item
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function deleteFromCart(Player &$player, Item &$item): array {
+    public function deleteFromCart(Player &$player, Item &$item): array
+    {
         $cartItem = PlayerCart::findOne(['player_id' => $player->id, 'item_id' => $item->id]);
         if ($cartItem === null) {
             return ['error' => true, 'msg' => 'Nothing to delete'];
@@ -433,7 +447,8 @@ class Shopping
      * @param int|null $quantity The quantity to be added to the cart.
      * @return array{error: bool, msg: string, content?: string}  An associative array containing the result of the operation.
      */
-    public function addToCart(Player &$player, Item &$item, ?int $quantity = null): array {
+    public function addToCart(Player &$player, Item &$item, ?int $quantity = null): array
+    {
         $qty = $quantity ?? 1;
         $cartItem = PlayerCart::findOne(['player_id' => $player->id, 'item_id' => $item->id]);
         if ($cartItem) {
@@ -442,7 +457,7 @@ class Shopping
             $cartItem = new PlayerCart([
                 'player_id' => $player->id,
                 'item_id' => $item->id,
-                'quantity' => $qty
+                'quantity' => $qty,
             ]);
         }
 
@@ -468,11 +483,12 @@ class Shopping
      * @param PlayerCart $playerCart The player cart item to validate.
      * @return array{error: bool, msg: string, content?: string} The JSON response indicating the success or failure of the validation.
      */
-    private function validateSingleItemPurchase(PlayerCart &$playerCart): array {
+    private function validateSingleItemPurchase(PlayerCart &$playerCart): array
+    {
         $item = $playerCart->item;
         $playerItem = PlayerItem::findOne([
             'player_id' => $playerCart->player_id,
-            'item_id' => $playerCart->item_id
+            'item_id' => $playerCart->item_id,
         ]);
         if ($playerItem) {
             $playerItem->quantity += $playerCart->quantity * ($item->quantity ?? 1);
@@ -482,10 +498,11 @@ class Shopping
         if ($playerItem->save()) {
             return ['error' => false, 'msg' => 'Cart is validated'];
         }
-        throw new \Exception(implode("<br />", ArrayHelper::getColumn($playerItem->errors, 0, false)));
+        throw new \Exception(implode('<br />', ArrayHelper::getColumn($playerItem->errors, 0, false)));
     }
 
-    private function addToInventory(PlayerCart &$playerCart): PlayerItem {
+    private function addToInventory(PlayerCart &$playerCart): PlayerItem
+    {
         $classId = $playerCart->player->class_id;
         $isProficient = PlayerComponent::isProficient($classId, $playerCart->item_id) ? 1 : 0;
 
@@ -493,7 +510,7 @@ class Shopping
 
         // By default, weapons and armors are carried.
         $itemType = $item->itemType;
-        $isCarrying = ($itemType->name === 'Weapon' || $itemType->name === 'Armor');
+        $isCarrying = $itemType->name === 'Weapon' || $itemType->name === 'Armor';
 
         $playerItemData = [
             'player_id' => $playerCart->player_id,
@@ -504,7 +521,7 @@ class Shopping
             'quantity' => $playerCart->quantity * $item->quantity,
             'is_carrying' => $isCarrying ? 1 : 0,
             'is_proficient' => $isProficient,
-            'is_two_handed' => ($item->weapon?->is_two_handed ? 1 : 0),
+            'is_two_handed' => $item->weapon?->is_two_handed ? 1 : 0,
         ];
         Yii::debug($playerItemData);
         $playerItem = new PlayerItem($playerItemData);
@@ -524,7 +541,8 @@ class Shopping
      * @param PlayerCart $playerCart The player's cart item to be validated.
      * @return array{error: bool, msg: string, content?: string} An associative array containing 'error' and 'msg' keys to indicate the validation result.
      */
-    private function validatePackPurchase(PlayerCart &$playerCart): array {
+    private function validatePackPurchase(PlayerCart &$playerCart): array
+    {
         $item = $playerCart->item;
         $packs = $item->packs;
         $packContent = new PlayerCart();
@@ -552,11 +570,12 @@ class Shopping
      * @param PlayerCart $playerCart The player's cart item to be validated.
      * @return array{error: bool, msg: string, content?: string} An associative array containing 'error' and 'msg' keys to indicate the validation result.
      */
-    public function validatePurchase(PlayerCart $playerCart): array {
+    public function validatePurchase(PlayerCart $playerCart): array
+    {
         $item = $playerCart->item;
-        $success = ($item->itemType->name === 'Pack') ?
-                $this->validatePackPurchase($playerCart) :
-                $this->validateSingleItemPurchase($playerCart);
+        $success = $item->itemType->name === 'Pack'
+            ? $this->validatePackPurchase($playerCart)
+            : $this->validateSingleItemPurchase($playerCart);
 
         if ($success['error']) {
             return $success;
@@ -576,7 +595,8 @@ class Shopping
      * @param Item[] $items The models to load data for.
      * @return array<string, list<array<string, int|string|null>>> The organized data for rendering the shop page.
      */
-    public function loadShopData(array $items): array {
+    public function loadShopData(array $items): array
+    {
         $data = [];
 
         foreach ($items as $item) {

@@ -16,32 +16,46 @@ use Yii;
  */
 class RaceAbility extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'race_ability';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['bonus'], 'default', 'value' => 0],
             [['race_id', 'ability_id'], 'required'],
             [['race_id', 'ability_id', 'bonus'], 'integer'],
             [['race_id', 'ability_id'], 'unique', 'targetAttribute' => ['race_id', 'ability_id']],
-            [['race_id'], 'exist', 'skipOnError' => true, 'targetClass' => Race::class, 'targetAttribute' => ['race_id' => 'id']],
-            [['ability_id'], 'exist', 'skipOnError' => true, 'targetClass' => Ability::class, 'targetAttribute' => ['ability_id' => 'id']],
+            [
+                ['race_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Race::class,
+                'targetAttribute' => ['race_id' => 'id'],
+            ],
+            [
+                ['ability_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Ability::class,
+                'targetAttribute' => ['ability_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'race_id' => 'Foreign key to “race” table',
             'ability_id' => 'Foreign key to “ability” table',
@@ -54,7 +68,8 @@ class RaceAbility extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Ability>
      */
-    public function getAbility() {
+    public function getAbility()
+    {
         return $this->hasOne(Ability::class, ['id' => 'ability_id']);
     }
 
@@ -63,7 +78,8 @@ class RaceAbility extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Race>
      */
-    public function getRace() {
+    public function getRace()
+    {
         return $this->hasOne(Race::class, ['id' => 'race_id']);
     }
 }

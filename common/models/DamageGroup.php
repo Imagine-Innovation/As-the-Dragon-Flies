@@ -16,7 +16,6 @@ use Yii;
  */
 class DamageGroup extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */

@@ -2,6 +2,7 @@
 
 /** @var \yii\web\View $this */
 use yii\helpers\Url;
+
 ?>
 <footer class="footer d-none d-sm-block">
     <ul class="footer__nav">

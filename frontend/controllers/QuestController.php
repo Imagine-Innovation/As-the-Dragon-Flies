@@ -46,7 +46,6 @@ use yii\web\Response;
  */
 class QuestController extends Controller
 {
-
     const DEFAULT_REDIRECT = 'story/index';
 
     /**
@@ -55,38 +54,48 @@ class QuestController extends Controller
     public function behaviors()
     {
         /** @phpstan-ignore-next-line */
-        return array_merge(
-                parent::behaviors(),
-                [
-                    'access' => [
-                        'class' => AccessControl::class,
-                        'rules' => [
-                            [
-                                'actions' => ['*'],
-                                'allow' => false,
-                                'roles' => ['?'],
-                            ],
-                            [
-                                'actions' => [
-                                    'create', 'delete', 'index', 'join', 'quit', 'resume', 'start', 'tavern', 'update', 'view',
-                                    'ajax-can-start', 'ajax-get-messages', 'ajax-quest-members', 'ajax-send-message', 'ajax-welcome-messages',
-                                ],
-                                'allow' => ManageAccessRights::isRouteAllowed($this),
-                                'roles' => ['@'],
-                            ],
-                        ],
+        return array_merge(parent::behaviors(), [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['*'],
+                        'allow' => false,
+                        'roles' => ['?'],
                     ],
-                    'verbs' => [
-                        'class' => VerbFilter::className(),
+                    [
                         'actions' => [
-                            'delete' => ['POST'],
-                            'start' => ['POST'],
-                            'quit' => ['POST'],
-                            'join' => ['POST'],
+                            'create',
+                            'delete',
+                            'index',
+                            'join',
+                            'quit',
+                            'resume',
+                            'start',
+                            'tavern',
+                            'update',
+                            'view',
+                            'ajax-can-start',
+                            'ajax-get-messages',
+                            'ajax-quest-members',
+                            'ajax-send-message',
+                            'ajax-welcome-messages',
                         ],
+                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'roles' => ['@'],
                     ],
-                ]
-        );
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['POST'],
+                    'start' => ['POST'],
+                    'quit' => ['POST'],
+                    'join' => ['POST'],
+                ],
+            ],
+        ]);
     }
 
     /**
@@ -103,25 +112,24 @@ class QuestController extends Controller
 
         // Admin users get full quest access
         if ($user->is_admin) {
-            Yii::debug("*** Debug *** quest/index is_admin", __METHOD__);
+            Yii::debug('*** Debug *** quest/index is_admin', __METHOD__);
             $dataProvider = new ActiveDataProvider([
-                'query' => Quest::find()
+                'query' => Quest::find(),
             ]);
         }
         // Regular users only see their quests
         else {
             $subQuery = (new Query())
-                    ->select('quest_id')
-                    ->from('quest_player')
-                    ->where(['player_id' => $user->current_player_id ?? 0]);
+                ->select('quest_id')
+                ->from('quest_player')
+                ->where(['player_id' => $user->current_player_id ?? 0]);
             $dataProvider = new ActiveDataProvider([
-                'query' => Quest::find()
-                        ->where(['id' => $subQuery])
+                'query' => Quest::find()->where(['id' => $subQuery]),
             ]);
         }
 
         return $this->render('index', [
-                    'dataProvider' => $dataProvider,
+            'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -137,7 +145,7 @@ class QuestController extends Controller
     public function actionView(int $id): string
     {
         return $this->render('view', [
-                    'model' => $this->findModel($id),
+            'model' => $this->findModel($id),
         ]);
     }
 
@@ -155,7 +163,7 @@ class QuestController extends Controller
      * @param int|null $playerId
      * @return Response|null
      */
-    public function actionJoin(int $storyId, ?int $playerId = null): Response|null
+    public function actionJoin(int $storyId, ?int $playerId = null): ?Response
     {
         $story = $this->findValidStory($storyId);
 
@@ -182,7 +190,7 @@ class QuestController extends Controller
         if ($success) {
             return $this->redirect(['tavern', 'id' => $tavern->id]);
         }
-        UserErrorMessage::throw($this, 'error', "Could not trigger event", self::DEFAULT_REDIRECT);
+        UserErrorMessage::throw($this, 'error', 'Could not trigger event', self::DEFAULT_REDIRECT);
         return null;
     }
 
@@ -260,9 +268,7 @@ class QuestController extends Controller
          * 3. An integer.
          *
          */
-        $playerCount = (int) Player::find()
-                        ->where(['quest_id' => $quest->id])
-                        ->count();
+        $playerCount = (int) Player::find()->where(['quest_id' => $quest->id])->count();
 
         $tavernManager = new TavernManager(['quest' => $quest]);
         $welcomeMessage = $tavernManager->welcomeMessage($playerCount);
@@ -270,10 +276,12 @@ class QuestController extends Controller
         $missingClasses = $tavernManager->missingClasses();
 
         // Return success response with welcome message
-        return ['error' => false, 'msg' => '',
+        return [
+            'error' => false,
+            'msg' => '',
             'welcomeMessage' => $welcomeMessage,
             'missingPlayers' => $missingPlayers,
-            'missingClasses' => $missingClasses
+            'missingClasses' => $missingClasses,
         ];
     }
 
@@ -283,7 +291,7 @@ class QuestController extends Controller
      */
     public function actionAjaxSendMessage(): array
     {
-        Yii::debug("*** Debug *** actionAjaxSendMessage");
+        Yii::debug('*** Debug *** actionAjaxSendMessage');
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         // Validate request method and type
@@ -296,14 +304,16 @@ class QuestController extends Controller
         $player = FindModelHelper::findPlayer(['id' => $playerId]);
 
         $message = Yii::$app->request->post('message');
-        Yii::debug("*** Debug *** actionAjaxSendMessage - Player: {$player->name}, Quest: {$quest->name}, Message: " . ($message ?? 'empty'));
+        Yii::debug(
+            "*** Debug *** actionAjaxSendMessage - Player: {$player->name}, Quest: {$quest->name}, Message: "
+            . ($message ?? 'empty'),
+        );
         if (empty($message)) {
             return ['error' => true, 'msg' => 'Message cannot be empty'];
         }
 
         $success = $this->createEvent('sending-message', $player, $quest, ['message' => $message]);
-        return ['error' => !$success, 'msg' => "Create 'sending-message' event " . ($success
-                ? 'succeded' : 'failed')];
+        return ['error' => !$success, 'msg' => "Create 'sending-message' event " . ($success ? 'succeded' : 'failed')];
     }
 
     /**
@@ -312,7 +322,7 @@ class QuestController extends Controller
      * @return Response|null
      * @throws \Exception
      */
-    public function actionStart(?int $id): Response|null
+    public function actionStart(?int $id): ?Response
     {
         $quest = $this->findModel($id);
 
@@ -323,7 +333,7 @@ class QuestController extends Controller
         $quest->started_at = time();
 
         if (!$quest->save()) {
-            throw new \Exception(implode("<br />", \yii\helpers\ArrayHelper::getColumn($quest->errors, 0, false)));
+            throw new \Exception(implode('<br />', \yii\helpers\ArrayHelper::getColumn($quest->errors, 0, false)));
         }
 
         $questManager = new QuestManager(['quest' => $quest]);
@@ -333,7 +343,7 @@ class QuestController extends Controller
         if ($success) {
             return $this->redirect(['game/view', 'id' => $id]);
         }
-        UserErrorMessage::throw($this, 'error', "Could not trigger event", self::DEFAULT_REDIRECT);
+        UserErrorMessage::throw($this, 'error', 'Could not trigger event', self::DEFAULT_REDIRECT);
         return null;
     }
 
@@ -405,7 +415,7 @@ class QuestController extends Controller
 
         $this->layout = 'game';
         return $this->render('tavern', [
-                    'model' => $tavern
+            'model' => $tavern,
         ]);
     }
 
@@ -415,9 +425,8 @@ class QuestController extends Controller
      * @param int|null $id
      * @return Response|null
      */
-    public function actionQuit(?int $playerId, ?int $id): Response|null
+    public function actionQuit(?int $playerId, ?int $id): ?Response
     {
-
         $player = FindModelHelper::findPlayer(['id' => $playerId]);
         $quest = $this->findModel($id);
         $reason = 'Player decided to quit the quest';
@@ -433,7 +442,7 @@ class QuestController extends Controller
         if ($success) {
             return $this->redirect(['story/index']);
         }
-        UserErrorMessage::throw($this, 'error', "Could not trigger event", self::DEFAULT_REDIRECT);
+        UserErrorMessage::throw($this, 'error', 'Could not trigger event', self::DEFAULT_REDIRECT);
         return null;
     }
 
@@ -480,7 +489,7 @@ class QuestController extends Controller
         }
 
         return $this->render('create', [
-                    'model' => $model,
+            'model' => $model,
         ]);
     }
 
@@ -505,7 +514,7 @@ class QuestController extends Controller
         }
 
         return $this->render('update', [
-                    'model' => $model,
+            'model' => $model,
         ]);
     }
 
@@ -571,7 +580,7 @@ class QuestController extends Controller
             }
             return $story;
         }
-        throw new NotFoundHttpException("Missing story ID");
+        throw new NotFoundHttpException('Missing story ID');
     }
 
     /**
@@ -592,7 +601,7 @@ class QuestController extends Controller
             return true;
         } catch (\Exception $e) {
             Yii::error("Failed to broadcast '{$eventType}' event: " . $e->getMessage());
-            $errorMessage = "Error: " . $e->getMessage() . "<br />Stack Trace:<br />" . nl2br($e->getTraceAsString());
+            $errorMessage = 'Error: ' . $e->getMessage() . '<br />Stack Trace:<br />' . nl2br($e->getTraceAsString());
             throw new \Exception($errorMessage);
         }
     }

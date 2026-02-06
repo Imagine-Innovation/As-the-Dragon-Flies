@@ -11,7 +11,6 @@ use Ratchet\ConnectionInterface;
 
 class PlayerQuittingHandler implements SpecificMessageHandlerInterface
 {
-
     private LoggerService $logger;
     private BroadcastServiceInterface $broadcastService;
     private BroadcastMessageFactory $messageFactory;
@@ -23,9 +22,9 @@ class PlayerQuittingHandler implements SpecificMessageHandlerInterface
      * @param BroadcastMessageFactory $messageFactory
      */
     public function __construct(
-            LoggerService $logger,
-            BroadcastServiceInterface $broadcastService,
-            BroadcastMessageFactory $messageFactory
+        LoggerService $logger,
+        BroadcastServiceInterface $broadcastService,
+        BroadcastMessageFactory $messageFactory,
     ) {
         $this->logger = $logger;
         $this->broadcastService = $broadcastService;
@@ -41,7 +40,8 @@ class PlayerQuittingHandler implements SpecificMessageHandlerInterface
      * @param array<string, mixed> $data
      * @return void
      */
-    public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void {
+    public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void
+    {
         $this->logger->logStart("PlayerQuittingHandler: handle for session {$sessionId}, client {$clientId}", $data);
 
         $payload = PayloadHelper::extractPayloadFromData($data);
@@ -51,18 +51,30 @@ class PlayerQuittingHandler implements SpecificMessageHandlerInterface
         $reason = PayloadHelper::extractStringFromPayload('reason', $payload);
 
         if ($questId === null || $questName === 'Unknown') {
-            $this->logger->log("PlayerQuittingHandler: Missing questId, or questName in data['payload'].", $data, 'warning');
-            $errorDto = $this->messageFactory->createErrorMessage("Invalid player leaving announcement: questId, or questName missing within payload.");
+            $this->logger->log(
+                "PlayerQuittingHandler: Missing questId, or questName in data['payload'].",
+                $data,
+                'warning',
+            );
+            $errorDto = $this->messageFactory->createErrorMessage(
+                'Invalid player leaving announcement: questId, or questName missing within payload.',
+            );
             $this->broadcastService->sendToClient($clientId, $errorDto, false, $sessionId);
-            $this->logger->logEnd("PlayerQuittingHandler: handle");
+            $this->logger->logEnd('PlayerQuittingHandler: handle');
             return;
         }
 
         $PlayerQuitDto = $this->messageFactory->createPlayerQuitMessage($playerName, $sessionId, $questName, $reason);
         $this->broadcastService->broadcastToQuest($questId, $PlayerQuitDto, $sessionId);
 
-        $this->broadcastService->sendBack($from, 'ack', ['type' => 'player-quitting_processed', 'playerName' => $playerName, 'questId' => $questId, 'questName' => $questName, 'reason' => $reason]);
+        $this->broadcastService->sendBack($from, 'ack', [
+            'type' => 'player-quitting_processed',
+            'playerName' => $playerName,
+            'questId' => $questId,
+            'questName' => $questName,
+            'reason' => $reason,
+        ]);
 
-        $this->logger->logEnd("PlayerQuittingHandler: handle");
+        $this->logger->logEnd('PlayerQuittingHandler: handle');
     }
 }

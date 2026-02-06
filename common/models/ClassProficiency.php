@@ -23,33 +23,53 @@ use Yii;
  */
 class ClassProficiency extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'class_proficiency';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['bonus', 'dice', 'spell_slot', 'spell_level'], 'default', 'value' => null],
             [['class_id', 'proficiency_id', 'level_id', 'sort_order'], 'required'],
             [['class_id', 'proficiency_id', 'level_id', 'sort_order', 'bonus', 'spell_slot', 'spell_level'], 'integer'],
             [['dice'], 'string', 'max' => 8],
-            [['class_id'], 'exist', 'skipOnError' => true, 'targetClass' => CharacterClass::class, 'targetAttribute' => ['class_id' => 'id']],
-            [['level_id'], 'exist', 'skipOnError' => true, 'targetClass' => Level::class, 'targetAttribute' => ['level_id' => 'id']],
-            [['proficiency_id'], 'exist', 'skipOnError' => true, 'targetClass' => Proficiency::class, 'targetAttribute' => ['proficiency_id' => 'id']],
+            [
+                ['class_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => CharacterClass::class,
+                'targetAttribute' => ['class_id' => 'id'],
+            ],
+            [
+                ['level_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Level::class,
+                'targetAttribute' => ['level_id' => 'id'],
+            ],
+            [
+                ['proficiency_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Proficiency::class,
+                'targetAttribute' => ['proficiency_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'class_id' => 'Foreign key to “character_class” table',
@@ -68,7 +88,8 @@ class ClassProficiency extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<CharacterClass>
      */
-    public function getClass() {
+    public function getClass()
+    {
         return $this->hasOne(CharacterClass::class, ['id' => 'class_id']);
     }
 
@@ -77,7 +98,8 @@ class ClassProficiency extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Level>
      */
-    public function getLevel() {
+    public function getLevel()
+    {
         return $this->hasOne(Level::class, ['id' => 'level_id']);
     }
 
@@ -86,7 +108,8 @@ class ClassProficiency extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Proficiency>
      */
-    public function getProficiency() {
+    public function getProficiency()
+    {
         return $this->hasOne(Proficiency::class, ['id' => 'proficiency_id']);
     }
 }

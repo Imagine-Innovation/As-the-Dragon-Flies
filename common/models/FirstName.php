@@ -16,31 +16,39 @@ use Yii;
  */
 class FirstName extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'first_name';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['ethnicity_id', 'name', 'gender'], 'required'],
             [['ethnicity_id'], 'integer'],
             [['name'], 'string', 'max' => 64],
             [['gender'], 'string', 'max' => 1],
-            [['ethnicity_id'], 'exist', 'skipOnError' => true, 'targetClass' => Ethnicity::class, 'targetAttribute' => ['ethnicity_id' => 'id']],
+            [
+                ['ethnicity_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Ethnicity::class,
+                'targetAttribute' => ['ethnicity_id' => 'id'],
+            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'ethnicity_id' => 'Foreign key to “ethnicity” table',
@@ -54,7 +62,8 @@ class FirstName extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Ethnicity>
      */
-    public function getEthnicity() {
+    public function getEthnicity()
+    {
         return $this->hasOne(Ethnicity::class, ['id' => 'ethnicity_id']);
     }
 }

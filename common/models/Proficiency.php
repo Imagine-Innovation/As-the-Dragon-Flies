@@ -17,7 +17,6 @@ use Yii;
  */
 class Proficiency extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */

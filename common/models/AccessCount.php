@@ -13,18 +13,19 @@ use Yii;
  */
 class AccessCount extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'access_count';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['calls'], 'default', 'value' => 1],
             [['route', 'action'], 'required'],
@@ -37,7 +38,8 @@ class AccessCount extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'route' => 'Controller route',
             'action' => 'Controller action',

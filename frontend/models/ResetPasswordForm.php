@@ -12,7 +12,6 @@ use yii\base\Model;
  */
 class ResetPasswordForm extends Model
 {
-
     public ?string $password = null;
     private ?User $_user = null;
 

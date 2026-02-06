@@ -19,7 +19,6 @@ use Yii;
  */
 class RuleAction extends \yii\db\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
@@ -40,8 +39,20 @@ class RuleAction extends \yii\db\ActiveRecord
             [['description'], 'string'],
             [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name'], 'string', 'max' => 64],
-            [['rule_id'], 'exist', 'skipOnError' => true, 'targetClass' => Rule::class, 'targetAttribute' => ['rule_id' => 'id']],
-            [['model_id'], 'exist', 'skipOnError' => true, 'targetClass' => RuleModel::class, 'targetAttribute' => ['model_id' => 'id']],
+            [
+                ['rule_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Rule::class,
+                'targetAttribute' => ['rule_id' => 'id'],
+            ],
+            [
+                ['model_id'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => RuleModel::class,
+                'targetAttribute' => ['model_id' => 'id'],
+            ],
         ];
     }
 
