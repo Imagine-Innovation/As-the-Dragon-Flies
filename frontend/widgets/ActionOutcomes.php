@@ -4,11 +4,13 @@ namespace frontend\widgets;
 
 use common\components\AppStatus;
 use common\models\Outcome;
+use common\helpers\RichTextHelper;
 use frontend\widgets\Button;
 use yii\base\Widget;
 
 class ActionOutcomes extends Widget
 {
+
     const HR = '<hr class="border border-warning border-1 opacity-50 w-50"><hr>';
 
     /** @var array<Outcome> $outcomes */
@@ -29,46 +31,38 @@ class ActionOutcomes extends Widget
         $canReplay = false;
         $status = $this->status ?? AppStatus::SUCCESS;
         $html = "<p>{$this->diceRoll}: the action {$status->getActionAdjective()}</p>" . PHP_EOL;
-        $html .= $this->hpLoss > 0 ? "<p>You lost {$this->hpLoss} hit points</p>" . PHP_EOL : '';
+        $html .= $this->hpLoss > 0 ? "<p>You lost {$this->hpLoss} hit points</p>" . PHP_EOL
+                    : '';
 
         if (empty($this->outcomes)) {
             $html .= "Something happened, that's for sure, but I don't really know what" . PHP_EOL;
         } else {
             foreach ($this->outcomes as $outcome) {
                 $html .= self::HR;
+                $description = RichTextHelper::sanitizeWithCache($outcome->description);
+                //$description = nl2br($outcome->description);
                 $actionOutcome = $this->getActionOutcome($outcome);
-                $html .= $this->render('action-outcome', ['outcome' => $outcome, 'actionOutcome' => $actionOutcome]);
+                $html .= $this->render('action-outcome', [
+                    'outcomeName' => $outcome->name,
+                    'description' => $description,
+                    'actionOutcome' => $actionOutcome
+                ]);
                 $canReplay = $canReplay || $outcome->can_replay;
             }
         }
         $html .= self::HR;
 
-        if ($this->isFree) {
-            $button = Button::widget([
-                'icon' => 'bi-arrow-repeat',
-                'title' => 'Try another action',
-                'isCta' => true,
-                'ariaParams' => ['data-bs-dismiss' => 'modal'],
-            ]);
-        } else {
-            $button = Button::widget([
-                'icon' => 'bi-escape',
-                'title' => 'Finish your turn',
-                'isCta' => true,
-                'onclick' => "vtt.moveToNextPlayer({$this->questProgressId}, {$this->nextMissionId}); return false;",
-                'ariaParams' => ['data-bs-dismiss' => 'modal'],
-            ]);
-        }
-        return $html . $button;
+        return $html;
     }
 
+    /**
+     *
+     * @param Outcome $outcome
+     * @return string
+     */
     private function getActionOutcome(Outcome $outcome): string
     {
         $actionOutcome = '';
-        if ($outcome->description) {
-            $actionOutcome .= '<p>' . nl2br($outcome->description) . '</p>' . PHP_EOL;
-        }
-
         if ($outcome->gained_gp > 0) {
             $actionOutcome .= "<p>You gained {$outcome->gained_gp} gold pieces</p>" . PHP_EOL;
         }
