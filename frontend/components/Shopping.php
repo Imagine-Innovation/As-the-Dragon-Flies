@@ -2,6 +2,7 @@
 
 namespace frontend\components;
 
+use common\helpers\SaveHelper;
 use common\models\Item;
 use common\models\Player;
 use common\models\PlayerCart;
@@ -12,6 +13,7 @@ use yii\helpers\ArrayHelper;
 
 class Shopping
 {
+
     const DEFAULT_COIN = 'gp';
 
     /** @var array<string> $itemTypes */
@@ -105,17 +107,17 @@ class Shopping
      */
     private function setPlayerCoins(array $playerCoins): bool
     {
-        $success = true;
         foreach ($playerCoins as $playerCoin) {
             $coin = $playerCoin->coin;
             $wallet = $this->purse[$coin] ?? null;
 
             if ($wallet) {
                 $playerCoin->quantity = $wallet['quantity'];
-                $success = $success && $playerCoin->save();
+                // will throw an exception if save fails
+                SaveHelper::save($playerCoin);
             }
         }
-        return $success;
+        return true;
     }
 
     /**
@@ -250,7 +252,7 @@ class Shopping
         foreach ($playerCoins as $playerCoin) {
             if ($playerCoin->coin === $coin) {
                 $playerCoin->quantity += (int) ($amount ?? 0);
-                return $playerCoin->save();
+                return SaveHelper::save($playerCoin);
             }
         }
         return false;
@@ -405,14 +407,14 @@ class Shopping
         $cartItem->quantity -= $qty;
 
         if ($cartItem->quantity <= 0) {
-            $ok = $cartItem->delete();
+            $succeeded = $cartItem->delete();
             $verb = 'deleted';
         } else {
-            $ok = $cartItem->save();
+            $succeeded = $cartItem->save();
             $verb = 'removed';
         }
 
-        if ($ok && $this->restoreFunding($player->playerCoins, $refund, $item->coin)) {
+        if ($succeeded && $this->restoreFunding($player->playerCoins, $refund, $item->coin)) {
             return ['error' => false, 'msg' => "{$qty} {$item->name}{($qty>1 ? 's':'')} $verb from your cart"];
         }
         return ['error' => true, 'msg' => 'Save failed'];
@@ -461,7 +463,8 @@ class Shopping
             ]);
         }
 
-        if ($cartItem->save()) {
+        $successfullySaved = SaveHelper::save($cartItem, false);
+        if ($successfullySaved) {
             $spent = $item->cost * $quantity;
             $this->spend($player->playerCoins, $spent, $item->coin);
             return ['error' => false, 'msg' => "Item {$item->name} is added to your cart"];
@@ -495,16 +498,15 @@ class Shopping
         } else {
             $playerItem = $this->addToInventory($playerCart);
         }
-        if ($playerItem->save()) {
-            return ['error' => false, 'msg' => 'Cart is validated'];
-        }
-        throw new \Exception(implode('<br />', ArrayHelper::getColumn($playerItem->errors, 0, false)));
+        SaveHelper::save($playerItem);
+        return ['error' => false, 'msg' => 'Cart is validated'];
     }
 
     private function addToInventory(PlayerCart &$playerCart): PlayerItem
     {
         $classId = $playerCart->player->class_id;
-        $isProficient = PlayerComponent::isProficient($classId, $playerCart->item_id) ? 1 : 0;
+        $isProficient = PlayerComponent::isProficient($classId, $playerCart->item_id)
+                    ? 1 : 0;
 
         $item = $playerCart->item;
 
@@ -573,9 +575,8 @@ class Shopping
     public function validatePurchase(PlayerCart $playerCart): array
     {
         $item = $playerCart->item;
-        $success = $item->itemType->name === 'Pack'
-            ? $this->validatePackPurchase($playerCart)
-            : $this->validateSingleItemPurchase($playerCart);
+        $success = $item->itemType->name === 'Pack' ? $this->validatePackPurchase($playerCart)
+                    : $this->validateSingleItemPurchase($playerCart);
 
         if ($success['error']) {
             return $success;

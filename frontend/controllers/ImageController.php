@@ -20,6 +20,7 @@ use yii\web\UploadedFile;
  */
 class ImageController extends Controller
 {
+
     /**
      * @inheritDoc
      */
@@ -69,7 +70,7 @@ class ImageController extends Controller
         ]);
 
         return $this->render('index', [
-            'dataProvider' => $dataProvider,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -95,8 +96,7 @@ class ImageController extends Controller
             'innerJoin' => [
                 ['table' => 'race_group_image', 'clause' => 'image.id = race_group_image.image_id'],
             ],
-            'filter' => $gender
-                ? ['race_group_image.race_group_id' => $raceGroupId, 'race_group_image.gender' => $gender]
+            'filter' => $gender ? ['race_group_image.race_group_id' => $raceGroupId, 'race_group_image.gender' => $gender]
                 : ['race_group_image.race_group_id' => $raceGroupId],
         ];
         $ajaxRequest = new AjaxRequest($param);
@@ -127,20 +127,21 @@ class ImageController extends Controller
 
         $model = ClassImage::findOne(['image_id' => $imageId, 'class_id' => $classId]);
 
-        $success = true;
+        $succeeded = true;
         if ($model && !$status) {
-            $success = $model->delete();
+            $succeeded = $model->delete();
         } else {
             if (!$model && $status) {
                 $model = new ClassImage(['image_id' => $imageId, 'class_id' => $classId]);
-                $success = $model->save();
+                $succeeded = $model->save();
             }
         }
 
-        if ($success) {
+        if ($succeeded) {
             return [
                 'error' => false,
-                'msg' => "Class $className has been " . ($status === 1 ? 'added' : 'removed') . ' to the image.',
+                'msg' => "Class $className has been " . ($status === 1 ? 'added'
+                    : 'removed') . ' to the image.',
             ];
         }
         return [
@@ -158,7 +159,7 @@ class ImageController extends Controller
     public function actionView(int $id): string
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+                    'model' => $this->findModel($id),
         ]);
     }
 
@@ -181,7 +182,7 @@ class ImageController extends Controller
         }
 
         return $this->render('create', [
-            'model' => $model,
+                    'model' => $model,
         ]);
     }
 
@@ -202,7 +203,7 @@ class ImageController extends Controller
         }
 
         return $this->render('update', [
-            'model' => $model,
+                    'model' => $model,
         ]);
     }
 

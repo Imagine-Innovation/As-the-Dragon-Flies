@@ -3,6 +3,7 @@
 namespace common\helpers;
 
 use common\components\AppStatus;
+use common\helpers\SaveHelper;
 use common\helpers\Utilities;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -11,6 +12,7 @@ use yii\helpers\Url;
 
 class Status
 {
+
     /**
      * Returns the string representation of a status code.
      *
@@ -37,15 +39,16 @@ class Status
     {
         $defaultIcon = ['icon' => 'bi-exclamation-square', 'tooltip' => 'Undefined'];
 
-        $icon = $statusCode ? AppStatus::tryFrom($statusCode)?->getIcon() ?? $defaultIcon : $defaultIcon;
+        $icon = $statusCode ? AppStatus::tryFrom($statusCode)?->getIcon() ?? $defaultIcon
+                    : $defaultIcon;
 
         $iconClass = $icon['icon'];
         $tooltip = $icon['tooltip'];
 
         return sprintf(
-            '<a title="%s" data-bs-toggle="tooltip" data-placement="top"><i class="bi %s h5"></i></a>',
-            Html::encode((string) $tooltip),
-            Html::encode((string) $iconClass),
+                '<a title="%s" data-bs-toggle="tooltip" data-placement="top"><i class="bi %s h5"></i></a>',
+                Html::encode((string) $tooltip),
+                Html::encode((string) $iconClass),
         );
     }
 
@@ -55,7 +58,6 @@ class Status
      * @param \yii\db\ActiveRecord $model The model to update.
      * @param int $statusCode The new status code to be set. This should be a valid code value from AppStatus enum.
      * @return bool True if the status change was successful (model saved), false otherwise.
-     * @throws \Exception
      */
     public static function changeStatus(\yii\db\ActiveRecord $model, int $statusCode): bool
     {
@@ -80,11 +82,7 @@ class Status
         }
 
         $model->status = $statusCode;
-        $successfullySaved = $model->save();
-        if ($successfullySaved) {
-            return true;
-        }
-        throw new \Exception(implode('<br />', ArrayHelper::getColumn($model->errors, 0, false)));
+        return SaveHelper::save($model);
     }
 
     /**
@@ -107,9 +105,8 @@ class Status
         $controller = Utilities::getController($model); // Get the controller name for the model
 
         $propertyVal = $model->$property;
-        $display = isset($model->$property)
-            ? Html::encode(empty($propertyVal) ? 'Unknown' : (string) $propertyVal)
-            : '<i class="bi bi-exclamation-square"></i>';
+        $display = isset($model->$property) ? Html::encode(empty($propertyVal) ? 'Unknown'
+                            : (string) $propertyVal) : '<i class="bi bi-exclamation-square"></i>';
 
         if ($controller && isset($model->id) && isset($model->status)) {
             $route = "{$controller}/view";

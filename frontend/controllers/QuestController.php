@@ -25,6 +25,7 @@ use common\components\gameplay\QuestManager;
 use common\components\gameplay\TavernManager;
 use common\components\ManageAccessRights;
 use common\helpers\FindModelHelper;
+use common\helpers\SaveHelper;
 use common\helpers\UserErrorMessage;
 use common\models\events\EventFactory;
 use common\models\Player;
@@ -46,6 +47,7 @@ use yii\web\Response;
  */
 class QuestController extends Controller
 {
+
     const DEFAULT_REDIRECT = 'story/index';
 
     /**
@@ -120,16 +122,16 @@ class QuestController extends Controller
         // Regular users only see their quests
         else {
             $subQuery = (new Query())
-                ->select('quest_id')
-                ->from('quest_player')
-                ->where(['player_id' => $user->current_player_id ?? 0]);
+                    ->select('quest_id')
+                    ->from('quest_player')
+                    ->where(['player_id' => $user->current_player_id ?? 0]);
             $dataProvider = new ActiveDataProvider([
                 'query' => Quest::find()->where(['id' => $subQuery]),
             ]);
         }
 
         return $this->render('index', [
-            'dataProvider' => $dataProvider,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -145,7 +147,7 @@ class QuestController extends Controller
     public function actionView(int $id): string
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+                    'model' => $this->findModel($id),
         ]);
     }
 
@@ -305,22 +307,22 @@ class QuestController extends Controller
 
         $message = Yii::$app->request->post('message');
         Yii::debug(
-            "*** Debug *** actionAjaxSendMessage - Player: {$player->name}, Quest: {$quest->name}, Message: "
-            . ($message ?? 'empty'),
+                "*** Debug *** actionAjaxSendMessage - Player: {$player->name}, Quest: {$quest->name}, Message: "
+                . ($message ?? 'empty'),
         );
         if (empty($message)) {
             return ['error' => true, 'msg' => 'Message cannot be empty'];
         }
 
         $success = $this->createEvent('sending-message', $player, $quest, ['message' => $message]);
-        return ['error' => !$success, 'msg' => "Create 'sending-message' event " . ($success ? 'succeded' : 'failed')];
+        return ['error' => !$success, 'msg' => "Create 'sending-message' event " . ($success
+                ? 'succeded' : 'failed')];
     }
 
     /**
      *
      * @param int|null $id
      * @return Response|null
-     * @throws \Exception
      */
     public function actionStart(?int $id): ?Response
     {
@@ -331,16 +333,13 @@ class QuestController extends Controller
         $quest->status = AppStatus::PLAYING->value;
         $quest->current_chapter_id = (int) $quest->story->firstChapter?->id;
         $quest->started_at = time();
-
-        if (!$quest->save()) {
-            throw new \Exception(implode('<br />', \yii\helpers\ArrayHelper::getColumn($quest->errors, 0, false)));
-        }
+        SaveHelper::save($quest);
 
         $questManager = new QuestManager(['quest' => $quest]);
         $questManager->addFirstQuestProgress();
 
-        $success = $this->createEvent('quest-starting', $player, $quest);
-        if ($success) {
+        $eventCreated = $this->createEvent('quest-starting', $player, $quest);
+        if ($eventCreated) {
             return $this->redirect(['game/view', 'id' => $id]);
         }
         UserErrorMessage::throw($this, 'error', 'Could not trigger event', self::DEFAULT_REDIRECT);
@@ -415,7 +414,7 @@ class QuestController extends Controller
 
         $this->layout = 'game';
         return $this->render('tavern', [
-            'model' => $tavern,
+                    'model' => $tavern,
         ]);
     }
 
@@ -489,7 +488,7 @@ class QuestController extends Controller
         }
 
         return $this->render('create', [
-            'model' => $model,
+                    'model' => $model,
         ]);
     }
 
@@ -514,7 +513,7 @@ class QuestController extends Controller
         }
 
         return $this->render('update', [
-            'model' => $model,
+                    'model' => $model,
         ]);
     }
 

@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use common\components\ManageAccessRights;
 use common\helpers\FindModelHelper;
+use common\helpers\SaveHelper;
 use common\models\Item;
 use common\models\Player;
 use common\models\PlayerBody;
@@ -22,6 +23,7 @@ use yii\web\Response;
  */
 class PlayerItemController extends Controller
 {
+
     /**
      * @inheritDoc
      */
@@ -73,15 +75,15 @@ class PlayerItemController extends Controller
         $playerId = Yii::$app->session->get('playerId');
 
         $models = PlayerItem::find()
-            ->select('player_item.*')
-            ->innerJoin('item', 'player_item.item_id = item.id')
-            ->innerJoin('item_type', 'item.item_type_id = item_type.id')
-            ->where(['player_item.player_id' => $playerId])
-            ->orderBy(['item_type.sort_order' => SORT_ASC, 'item.name' => SORT_ASC])
-            ->all();
+                ->select('player_item.*')
+                ->innerJoin('item', 'player_item.item_id = item.id')
+                ->innerJoin('item_type', 'item.item_type_id = item_type.id')
+                ->where(['player_item.player_id' => $playerId])
+                ->orderBy(['item_type.sort_order' => SORT_ASC, 'item.name' => SORT_ASC])
+                ->all();
 
         return $this->render('index', [
-            'models' => $models,
+                    'models' => $models,
         ]);
     }
 
@@ -109,7 +111,7 @@ class PlayerItemController extends Controller
 
         // Render the pack view with the found model
         return $this->render('pack', [
-            'models' => $package,
+                    'models' => $package,
         ]);
     }
 
@@ -205,8 +207,8 @@ class PlayerItemController extends Controller
         $data = [];
 
         foreach (PlayerItem::BODY_ZONE as $property => $zone) {
-            if ($playerBody->hasProperty($property)) {
-                $playerItem = $playerBody->$property;
+            $playerItem = $playerBody->$property;
+            if ($playerItem !== null) {
                 $data[$zone] = [
                     'itemId' => $playerItem->item_id,
                     'itemName' => $playerItem->item_name,
@@ -220,8 +222,35 @@ class PlayerItemController extends Controller
                 ];
             }
         }
-
         return $data;
+    }
+
+    /**
+     *
+     * @param array<string, array{itemId: int|null, itemName: string|null, image: string|null}> $playerBodyData
+     * @param string $zone
+     * @return string
+     */
+    private function getPlayerBodyRender(array $playerBodyData, string $zone): string
+    {
+        $snippet = 'ajax\svg';
+        return match ($zone) {
+            'modal' => $this->renderPartial($snippet, [
+                'playerBodyData' => $playerBodyData,
+                'withId' => true,
+                'withOffcanvas' => false,
+            ]),
+            'aside' => $this->renderPartial($snippet, [
+                'playerBodyData' => $playerBodyData,
+                'withId' => false,
+                'withOffcanvas' => false,
+            ]),
+            default => $this->renderPartial($snippet, [
+                'playerBodyData' => $playerBodyData,
+                'withId' => false,
+                'withOffcanvas' => true,
+            ])
+        };
     }
 
     /**
@@ -234,31 +263,16 @@ class PlayerItemController extends Controller
     private function savePlayerBody(PlayerBody &$playerBody, string $itemName, bool $equiped = true): array
     {
         Yii::debug("*** debug *** savePlayerBody - itemName={$itemName}");
-        if ($playerBody->save()) {
+        $successfullySaved = SaveHelper::save($playerBody, false);
+        if ($successfullySaved) {
             $playerBodyData = $this->getPlayerBodyData($playerBody);
-
-            $contentModal = $this->renderPartial('ajax\svg', [
-                'playerBodyData' => $playerBodyData,
-                'withId' => true,
-                'withOffcanvas' => false,
-            ]);
-            $contentAside = $this->renderPartial('ajax\svg', [
-                'playerBodyData' => $playerBodyData,
-                'withId' => false,
-                'withOffcanvas' => false,
-            ]);
-            $contentOffcanvas = $this->renderPartial('ajax\svg', [
-                'playerBodyData' => $playerBodyData,
-                'withId' => false,
-                'withOffcanvas' => true,
-            ]);
 
             return [
                 'error' => false,
                 'msg' => "{$itemName} is " . ($equiped ? 'equiped' : 'disarmed'),
-                'contentModal' => $contentModal,
-                'contentAside' => $contentAside,
-                'contentOffcanvas' => $contentOffcanvas,
+                'contentModal' => $this->getPlayerBodyRender($playerBodyData, 'modal'),
+                'contentAside' => $this->getPlayerBodyRender($playerBodyData, 'aside'),
+                'contentOffcanvas' => $this->getPlayerBodyRender($playerBodyData, 'offcanvas'),
                 'data' => $playerBodyData,
             ];
         }
@@ -392,11 +406,12 @@ class PlayerItemController extends Controller
      * @return array<string, mixed>
      */
     private function equipPlayerWithWeapon(
-        PlayerItem &$playerItem,
-        Item &$weapon,
-        PlayerBody &$playerBody,
-        string $bodyZone,
-    ): array {
+            PlayerItem &$playerItem,
+            Item &$weapon,
+            PlayerBody &$playerBody,
+            string $bodyZone,
+    ): array
+    {
         $weaponName = $weapon->name;
         Yii::debug("*** debug *** equipPlayerWithWeapon - bodyZone={$bodyZone}, item={$weaponName}");
         if ($bodyZone !== PlayerItem::BODY_RIGHT_HAND_ZONE && $bodyZone !== PlayerItem::BODY_LEFT_HAND_ZONE) {
@@ -473,9 +488,9 @@ class PlayerItemController extends Controller
             $otherHand = $playerBody->$property;
             $itemId = $playerBody->$otherHandItemIdField;
             if (
-                $otherHand->is_two_handed === 0 // The Weapon is not two-handed AND
-                && $itemId === $weapon->id // The player holds the same weapon in the other hand AND
-                && $otherHand->quantity < 2 // He does not have mode than one weapon of this sort
+                    $otherHand->is_two_handed === 0 // The Weapon is not two-handed AND
+                    && $itemId === $weapon->id // The player holds the same weapon in the other hand AND
+                    && $otherHand->quantity < 2 // He does not have mode than one weapon of this sort
             ) {
                 // The player does not have 2 or more identical weapon => Disarm the other hand.
                 $otherHandBodyZone = PlayerItem::HAND_PROPERTIES[$bodyZone]['otherHandBodyZone'];
@@ -534,7 +549,7 @@ class PlayerItemController extends Controller
 
         $bodyZone = $request->post('bodyZone') ?? '';
         Yii::debug(
-            "*** debug *** actionAjaxEquipPlayer - playerId={$playerId}, itemId={$itemId}, bodyZone={$bodyZone}",
+                "*** debug *** actionAjaxEquipPlayer - playerId={$playerId}, itemId={$itemId}, bodyZone={$bodyZone}",
         );
 
         return $this->equipPlayer($playerItem, $bodyZone);
@@ -549,11 +564,12 @@ class PlayerItemController extends Controller
      * @return void
      */
     private function disarmWeapon(
-        PlayerItem &$playerItem,
-        PlayerBody &$playerBody,
-        string $bodyZone,
-        string $weaponName,
-    ): void {
+            PlayerItem &$playerItem,
+            PlayerBody &$playerBody,
+            string $bodyZone,
+            string $weaponName,
+    ): void
+    {
         Yii::debug("*** debug *** disarmWeapon - bodyZone={$bodyZone}, weaponName={$weaponName}");
         $haystack = strtolower($weaponName);
 

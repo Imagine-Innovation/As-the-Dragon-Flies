@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\helpers\SaveHelper;
 use yii\helpers\Url;
 use yii\web\UploadedFile;
 
@@ -20,6 +21,7 @@ use yii\web\UploadedFile;
  */
 class Image extends \yii\db\ActiveRecord
 {
+
     /**
      * {@inheritdoc}
      */
@@ -72,7 +74,7 @@ class Image extends \yii\db\ActiveRecord
     public function getClasses()
     {
         return $this->hasMany(CharacterClass::class, ['id' => 'class_id'])->viaTable('class_image', [
-            'image_id' => 'id',
+                    'image_id' => 'id',
         ]);
     }
 
@@ -104,7 +106,7 @@ class Image extends \yii\db\ActiveRecord
     public function getRaceGroups()
     {
         return $this->hasMany(RaceGroup::class, ['id' => 'race_group_id'])->viaTable('race_group_image', [
-            'image_id' => 'id',
+                    'image_id' => 'id',
         ]);
     }
 
@@ -135,11 +137,8 @@ class Image extends \yii\db\ActiveRecord
         $fullFileName = $this->uploadPath() . $fileName;
         $this->image->saveAs($fullFileName);
         $this->file_name = $fileName;
-        $successfullySaved = $this->save();
-        if ($successfullySaved) {
-            return true;
-        }
-        throw new \Exception(implode('<br />', ArrayHelper::getColumn($this->errors, 0, false)));
+
+        return SaveHelper::save($this);
     }
 
     /**

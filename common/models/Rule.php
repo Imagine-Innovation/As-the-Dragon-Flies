@@ -8,6 +8,7 @@ use common\components\RuleParser;
 use common\components\RuleValidator;
 use common\helpers\ModelHelper;
 use common\helpers\RichTextHelper;
+use common\helpers\SaveHelper;
 use common\models\RuleCondition;
 use common\models\RuleExpression;
 use common\models\RuleModel;
@@ -31,6 +32,7 @@ use Yii;
  */
 class Rule extends \yii\db\ActiveRecord
 {
+
     private ?RuleNode $parsingTree = null;
     public string $errorMessage;
 
@@ -229,7 +231,6 @@ class Rule extends \yii\db\ActiveRecord
      * @param int|null $ruleId The ID of the rule associated with the condition.
      * @param int|null $parentId The ID of the parent node in the parsing tree.
      * @return bool Whether the save operation is successful (true) or not.
-     * @throws \Exception
      */
     private function saveRuleCondition(?RuleNode $condition = null, ?int $ruleId = null, ?int $parentId = null): bool
     {
@@ -249,11 +250,7 @@ class Rule extends \yii\db\ActiveRecord
             'val' => $condition->value,
         ]);
 
-        $successfullySaved = $cond->save();
-        if ($successfullySaved) {
-            return true;
-        }
-        throw new \Exception(implode('<br />', ArrayHelper::getColumn($cond->errors, 0, false)));
+        return SaveHelper::save($cond);
     }
 
     /**
@@ -267,7 +264,6 @@ class Rule extends \yii\db\ActiveRecord
      * @param int|null $parentId The ID of the parent node in the parsing tree (optional).
      * @param string|null $op The operator for the rule expression (optional).
      * @return int The ID of the newly created RuleExpression.
-     * @throws \Exception
      */
     private function newRuleExpression(int $ruleId, ?int $parentId = null, ?string $op = null): int
     {
@@ -277,11 +273,8 @@ class Rule extends \yii\db\ActiveRecord
             'op' => $op,
         ]);
 
-        $successfullySaved = $expr->save();
-        if ($successfullySaved) {
-            return $expr->id;
-        }
-        throw new \Exception(implode('<br />', ArrayHelper::getColumn($expr->errors, 0, false)));
+        SaveHelper::save($expr);
+        return $expr->id;
     }
 
     /**
@@ -357,10 +350,11 @@ class Rule extends \yii\db\ActiveRecord
      * @return bool Whether the save operation is successful (true) or not.
      */
     private function saveRuleBoolExpression(
-        ?RuleNode $expression = null,
-        ?int $ruleId = null,
-        ?int $parentId = null,
-    ): bool {
+            ?RuleNode $expression = null,
+            ?int $ruleId = null,
+            ?int $parentId = null,
+    ): bool
+    {
         if ($expression === null || $ruleId === null) {
             return false;
         }
@@ -432,14 +426,8 @@ class Rule extends \yii\db\ActiveRecord
 
             $model = new RuleModel($data);
 
-            // Save the new RuleModel instance in the database
-            $successfullySaved = $model->save();
-            if (!$successfullySaved) {
-                throw new \Exception(implode('<br />', ArrayHelper::getColumn($model->errors, 0, false)));
-            }
+            SaveHelper::save($model);
         }
-
-        // Return the retrieved or created RuleModel instance
         return $model;
     }
 }

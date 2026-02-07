@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\components\ManageAccessRights;
+use common\helpers\SaveHelper;
 use common\models\AccessRight;
 use frontend\components\AjaxRequest;
 use Yii;
@@ -18,6 +19,7 @@ use yii\web\Response;
  */
 class AccessRightController extends Controller
 {
+
     /**
      * @inheritDoc
      */
@@ -65,20 +67,20 @@ class AccessRightController extends Controller
     {
         $dataProvider = new ActiveDataProvider([
             'query' => AccessRight::find(),
-            /*
-             * 'pagination' => [
-             * 'pageSize' => 50
-             * ],
-             * 'sort' => [
-             * 'defaultOrder' => [
-             * 'id' => SORT_DESC,
-             * ]
-             * ],
-             */
+                /*
+                 * 'pagination' => [
+                 * 'pageSize' => 50
+                 * ],
+                 * 'sort' => [
+                 * 'defaultOrder' => [
+                 * 'id' => SORT_DESC,
+                 * ]
+                 * ],
+                 */
         ]);
 
         return $this->render('index', [
-            'dataProvider' => $dataProvider,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -132,21 +134,22 @@ class AccessRightController extends Controller
         }
         $model->$access = $status;
 
-        if ($model->save()) {
+        $successfullySaved = SaveHelper::save($model, false);
+        if ($successfullySaved) {
             return [
                 'error' => false,
                 'msg' =>
-                    "Access right {$access} has been "
-                        . ($status === 1 ? 'granted' : 'revoked')
-                        . " to route {$model->route}",
+                "Access right {$access} has been "
+                . ($status === 1 ? 'granted' : 'revoked')
+                . " to route {$model->route}",
             ];
         }
         return [
             'error' => true,
             'msg' =>
-                'Unable to '
-                    . ($status === 1 ? 'grant' : 'revoke')
-                    . " Access right {$access} to route {$model->route}",
+            'Unable to '
+            . ($status === 1 ? 'grant' : 'revoke')
+            . " Access right {$access} to route {$model->route}",
         ];
     }
 
@@ -159,7 +162,7 @@ class AccessRightController extends Controller
     public function actionView(int $id): string
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+                    'model' => $this->findModel($id),
         ]);
     }
 
@@ -182,7 +185,7 @@ class AccessRightController extends Controller
         }
 
         return $this->render('create', [
-            'model' => $model,
+                    'model' => $model,
         ]);
     }
 
@@ -203,7 +206,7 @@ class AccessRightController extends Controller
         }
 
         return $this->render('update', [
-            'model' => $model,
+                    'model' => $model,
         ]);
     }
 

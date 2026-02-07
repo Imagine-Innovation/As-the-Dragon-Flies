@@ -2,6 +2,7 @@
 
 namespace frontend\components;
 
+use common\helpers\SaveHelper;
 use common\models\Item;
 use common\models\Player;
 use common\models\PlayerItem;
@@ -9,6 +10,7 @@ use Yii;
 
 class Inventory
 {
+
     const IGNORE_TYPES = ['Armor', 'Weapon', 'Shield'];
 
     /**
@@ -182,9 +184,9 @@ class Inventory
         }
 
         $playerItem->is_carrying = 1;
-        $saved = $playerItem->save();
+        $successfullySaved = SaveHelper::save($playerItem, false);
 
-        if ($saved) {
+        if ($successfullySaved) {
             return [
                 'error' => false,
                 'msg' => "Your {$playerItem->item_name} has been successfully added to your {$containerItem->name}",
@@ -214,9 +216,9 @@ class Inventory
         }
 
         $playerItem->is_carrying = 0;
-        $saved = $playerItem->save();
+        $successfullySaved = SaveHelper::save($playerItem, false);
 
-        if ($saved) {
+        if ($successfullySaved) {
             return [
                 'error' => false,
                 'msg' => "Your {$playerItem->item_name} has been successfully removed from your {$containerItem->name}",

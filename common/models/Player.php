@@ -4,6 +4,7 @@ namespace common\models;
 
 use common\components\AppStatus;
 use common\helpers\RichTextHelper;
+use common\helpers\SaveHelper;
 use common\models\Image;
 use common\models\PlayerCoin;
 use common\models\Weapon;
@@ -779,12 +780,8 @@ class Player extends \yii\db\ActiveRecord
     public function setStatus(int $status): bool
     {
         $this->status = $status;
-        // Save the changes to the model and returns whether the save operation was successful
-        $successfullySaved = $this->save();
-        if ($successfullySaved) {
-            return true;
-        }
-        throw new \Exception(implode('<br />', ArrayHelper::getColumn($this->errors, 0, false)));
+
+        return SaveHelper::save($this);
     }
 
     /**
@@ -792,7 +789,6 @@ class Player extends \yii\db\ActiveRecord
      * @param int|null $quantity
      * @param string $coin
      * @return bool|null
-     * @throws \Exception
      */
     public function addCoins(?int $quantity, string $coin = 'gp'): ?bool
     {
@@ -812,11 +808,7 @@ class Player extends \yii\db\ActiveRecord
                 'coin' => $coin,
                 'quantity' => $quantity,
             ]);
-            $successfullySaved = $playerCoinGp->save();
-            if ($successfullySaved) {
-                return true;
-            }
-            throw new \Exception(implode('<br />', ArrayHelper::getColumn($playerCoinGp->errors, 0, false)));
+            return SaveHelper::save($playerCoinGp);
         }
         return true;
     }
@@ -826,7 +818,6 @@ class Player extends \yii\db\ActiveRecord
      * @param int $itemId
      * @param int $quantity
      * @return bool|null
-     * @throws \Exception
      */
     public function addItems(int $itemId, int $quantity = 1): ?bool
     {
@@ -854,11 +845,8 @@ class Player extends \yii\db\ActiveRecord
                 'image' => $item->image,
                 'is_carrying' => 1,
             ]);
-            $successfullySaved = $playerItem->save();
-            if ($successfullySaved) {
-                return true;
-            }
-            throw new \Exception(implode('<br />', ArrayHelper::getColumn($playerItem->errors, 0, false)));
+
+            return SaveHelper::save($playerItem);
         }
         return true;
     }

@@ -2,11 +2,11 @@
 
 namespace common\components\gameplay;
 
+use common\helpers\SaveHelper;
 use common\helpers\Utilities;
 use common\models\Notification;
 use Yii;
 use yii\base\Component;
-use yii\helpers\ArrayHelper;
 
 /**
  * BaseManager
@@ -16,6 +16,7 @@ use yii\helpers\ArrayHelper;
  */
 abstract class BaseManager extends Component
 {
+
     const DEFAULT_LIMIT = 20;
 
     /**
@@ -31,11 +32,7 @@ abstract class BaseManager extends Component
 
     protected function save(\yii\db\ActiveRecord $model): bool
     {
-        $successfullySaved = $model->save();
-        if ($successfullySaved) {
-            return true;
-        }
-        throw new \Exception(implode('<br />', ArrayHelper::getColumn($model->errors, 0, false)));
+        return SaveHelper::save($model);
     }
 
     /**
@@ -50,10 +47,10 @@ abstract class BaseManager extends Component
     protected function getNotifications(int $questId, string $type, ?int $since = null, ?int $limit = null): ?array
     {
         Yii::debug(
-            "*** Debug *** getNotifications - questId={$questId}, type={$type}, since="
-            . ($since ? Utilities::formatDate($since) : 'null')
-            . ', limit='
-            . ($limit ?? 'null'),
+                "*** Debug *** getNotifications - questId={$questId}, type={$type}, since="
+                . ($since ? Utilities::formatDate($since) : 'null')
+                . ', limit='
+                . ($limit ?? 'null'),
         );
         $query = Notification::find()->where(['quest_id' => $questId])->andWhere(['notification_type' => $type]);
 

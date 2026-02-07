@@ -5,6 +5,7 @@ namespace frontend\controllers;
 use common\components\AppStatus;
 use common\components\ContextManager;
 use common\components\ManageAccessRights;
+use common\helpers\SaveHelper;
 use common\helpers\Status;
 use common\models\Player;
 use common\models\User;
@@ -21,6 +22,7 @@ use yii\web\Response;
  */
 class PlayerController extends Controller
 {
+
     /**
      * @inheritDoc
      */
@@ -77,9 +79,9 @@ class PlayerController extends Controller
     {
         $user = Yii::$app->user->identity;
         $players = Player::find()
-            ->where(['user_id' => $user->id])
-            ->andWhere(['status' => [AppStatus::ACTIVE->value, AppStatus::INACTIVE->value]])
-            ->all();
+                ->where(['user_id' => $user->id])
+                ->andWhere(['status' => [AppStatus::ACTIVE->value, AppStatus::INACTIVE->value]])
+                ->all();
 
         return $this->render('index', ['players' => $players]);
     }
@@ -207,9 +209,8 @@ class PlayerController extends Controller
         $player = $this->findModel($id); // findModel already checks for ownership
         $user = Yii::$app->user->identity;
         $user->current_player_id = $player->id;
-        if ($user->save()) {
-            ContextManager::updatePlayerContext($player->id);
-        }
+        SaveHelper::save($user);
+        ContextManager::updatePlayerContext($player->id);
         return $this->redirect(['site/index']);
     }
 
@@ -232,7 +233,7 @@ class PlayerController extends Controller
     public function actionView(int $id): string
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+                    'model' => $this->findModel($id),
         ]);
     }
 
@@ -305,8 +306,8 @@ class PlayerController extends Controller
     protected function findModel(int $id): Player
     {
         $query = Player::find()
-            ->with(['race', 'class', 'background', 'playerAbilities', 'playerSkills', 'playerTraits'])
-            ->where(['id' => $id]);
+                ->with(['race', 'class', 'background', 'playerAbilities', 'playerSkills', 'playerTraits'])
+                ->where(['id' => $id]);
 
         $user = Yii::$app->user->identity;
         if (!$user->is_admin) {

@@ -4,6 +4,7 @@ namespace common\components\gameplay;
 
 use common\components\AppStatus;
 use common\components\NarrativeComponent;
+use common\helpers\SaveHelper;
 use common\models\Chapter;
 use common\models\events\EventFactory;
 use common\models\Mission;
@@ -19,6 +20,7 @@ use yii\helpers\ArrayHelper;
 
 class QuestManager extends BaseManager
 {
+
     // Context data
     public ?Quest $quest = null;
     public ?QuestProgress $questProgress = null;
@@ -91,8 +93,8 @@ class QuestManager extends BaseManager
     {
         $quest = $this->getQuest();
         $query = QuestPlayer::find()
-            ->where(['quest_id' => $quest->id])
-            ->andWhere(['<>', 'status', AppStatus::LEFT->value]);
+                ->where(['quest_id' => $quest->id])
+                ->andWhere(['<>', 'status', AppStatus::LEFT->value]);
 
         if ($currentTurn) {
             $query->andWhere(['>', 'player_turn', $currentTurn]);
@@ -183,10 +185,7 @@ class QuestManager extends BaseManager
             'started_at' => time(),
         ]);
 
-        $successfullySaved = $questTurn->save();
-        if (!$successfullySaved) {
-            throw new Exception(implode('<br />', ArrayHelper::getColumn($questTurn->errors, 0, false)));
-        }
+        SaveHelper::save($questTurn);
         return $questTurn;
     }
 
@@ -199,8 +198,8 @@ class QuestManager extends BaseManager
     private function endCurrentTurn(?int $questProgressId = null, AppStatus $status = AppStatus::TERMINATED): int
     {
         return QuestTurn::updateAll(['status' => $status->value], [
-            'status' => AppStatus::IN_PROGRESS->value,
-            'quest_progress_id' => $questProgressId ?? $this->getQuestProgress()->id,
+                    'status' => AppStatus::IN_PROGRESS->value,
+                    'quest_progress_id' => $questProgressId ?? $this->getQuestProgress()->id,
         ]);
     }
 
@@ -213,12 +212,12 @@ class QuestManager extends BaseManager
     private function endQuestPlayers(int $questId, string $reason): int
     {
         return QuestPlayer::updateAll([
-            'status' => AppStatus::LEFT->value,
-            'left_at' => time(),
-            'reason' => $reason,
-        ], [
-            'status' => [AppStatus::ONLINE->value, AppStatus::OFFLINE->value],
-            'quest_id' => $questId,
+                    'status' => AppStatus::LEFT->value,
+                    'left_at' => time(),
+                    'reason' => $reason,
+                        ], [
+                    'status' => [AppStatus::ONLINE->value, AppStatus::OFFLINE->value],
+                    'quest_id' => $questId,
         ]);
     }
 
@@ -289,9 +288,10 @@ class QuestManager extends BaseManager
      * @return void
      */
     private function endCurrentQuestProgress(
-        QuestProgress $questProgress,
-        AppStatus $status = AppStatus::TERMINATED,
-    ): void {
+            QuestProgress $questProgress,
+            AppStatus $status = AppStatus::TERMINATED,
+    ): void
+    {
         $this->endCurrentTurn($questProgress->id, $status);
 
         $questProgress->status = $status->value;
@@ -363,9 +363,9 @@ class QuestManager extends BaseManager
         $mission = $currentProgress->mission;
 
         $nextChapter = Chapter::find()
-            ->where(['>', 'chapter_number', $mission->chapter->chapter_number])
-            ->orderBy(['chapter_number' => SORT_ASC])
-            ->one();
+                ->where(['>', 'chapter_number', $mission->chapter->chapter_number])
+                ->orderBy(['chapter_number' => SORT_ASC])
+                ->one();
 
         return $nextChapter?->first_mission_id;
     }
@@ -378,9 +378,9 @@ class QuestManager extends BaseManager
     {
         $progress = $this->getQuestProgress();
         $nextMissionInChapter = Mission::find()
-            ->where(['>', 'id', $progress->mission_id])
-            ->orderBy(['id' => SORT_ASC])
-            ->one();
+                ->where(['>', 'id', $progress->mission_id])
+                ->orderBy(['id' => SORT_ASC])
+                ->one();
 
         if ($nextMissionInChapter) {
             return $nextMissionInChapter->id;
@@ -463,7 +463,8 @@ class QuestManager extends BaseManager
      */
     public function moveToNextMission(?int $nextMissionId = null): array
     {
-        Yii::debug('*** debug *** moveToNextMission nextMissionId=' . ($nextMissionId ? $nextMissionId : 'null'));
+        Yii::debug('*** debug *** moveToNextMission nextMissionId=' . ($nextMissionId
+                            ? $nextMissionId : 'null'));
 
         if ($nextMissionId) {
             return $this->setNextMission($this->getQuest(), $nextMissionId);
@@ -517,11 +518,12 @@ class QuestManager extends BaseManager
      * @throws Exception
      */
     private function createQuestEvent(
-        string $eventType,
-        string $eventDescription,
-        ?Player $initiator,
-        array $detail = [],
-    ): bool {
+            string $eventType,
+            string $eventDescription,
+            ?Player $initiator,
+            array $detail = [],
+    ): bool
+    {
         Yii::debug("*** debug *** createQuestEvent - initiator={$initiator?->name}");
 
         try {

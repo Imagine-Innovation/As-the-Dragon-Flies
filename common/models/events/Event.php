@@ -2,6 +2,7 @@
 
 namespace common\models\events;
 
+use common\helpers\SaveHelper;
 use common\models\Notification;
 use common\models\NotificationPlayer;
 use common\models\Player;
@@ -143,10 +144,7 @@ abstract class Event extends BaseObject
             'is_read' => 0,
         ]);
 
-        $successfullySaved = $notificationPlayer->save();
-        if (!$successfullySaved) {
-            throw new \Exception(implode('<br />', ArrayHelper::getColumn($notificationPlayer->errors, 0, false)));
-        }
+        SaveHelper::save($notificationPlayer);
     }
 
     /**
@@ -181,16 +179,10 @@ abstract class Event extends BaseObject
             'payload' => json_encode($this->getPayload()),
             'is_private' => 0,
         ];
-        Yii::debug('*** debug *** Event - createNotification');
-        Yii::debug($notificationData);
         $notification = new Notification($notificationData);
 
-        $successfullySaved = $notification->save();
-        if ($successfullySaved) {
-            $this->notificationId = $notification->id;
-            return $notification;
-        }
-
-        throw new \Exception(implode('<br />', ArrayHelper::getColumn($notification->errors, 0, false)));
+        SaveHelper::save($notification);
+        $this->notificationId = $notification->id;
+        return $notification;
     }
 }

@@ -23,6 +23,7 @@ use yii\web\NotFoundHttpException;
 
 class FindModelHelper
 {
+
     /**
      * Resolve a short model name or FQCN to a fully-qualified class name.
      *
@@ -52,8 +53,8 @@ class FindModelHelper
         $pkColumns = $className::primaryKey();
         if (empty($pkColumns)) {
             throw new InvalidArgumentException(
-                "Model {$className} does not declare primary key columns via primaryKey().",
-            );
+                            "Model {$className} does not declare primary key columns via primaryKey().",
+                    );
         }
         return $pkColumns;
     }
@@ -148,7 +149,8 @@ class FindModelHelper
         $className = self::fullyQualifiedClassName($modelName);
         $pkColumns = $withPk ? self::getPrimaryKeyColumns($className) : [];
         $findOneFunctionParam = self::findOneFunctionParam($param, $pkColumns, $withPk);
-
+        Yii::debug("*** debug *** - findModel className={$className}, param=" . print_r($param, true));
+        Yii::debug($pkColumns);
         /** @var T|null $model */
         $model = $className::findOne($findOneFunctionParam);
 

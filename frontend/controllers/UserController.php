@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use common\components\AppStatus;
 use common\components\ManageAccessRights;
+use common\helpers\SaveHelper;
 use common\helpers\Status;
 use common\models\User;
 use frontend\components\AjaxRequest;
@@ -22,6 +23,7 @@ use yii\web\Response;
  */
 class UserController extends Controller
 {
+
     /**
      * @inheritDoc
      */
@@ -90,7 +92,7 @@ class UserController extends Controller
         ]);
 
         return $this->render('index', [
-            'dataProvider' => $dataProvider,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -142,7 +144,8 @@ class UserController extends Controller
         $property = "is_{$role}";
         $model->$property = $status;
 
-        if ($model->save()) {
+        $successfullySaved = SaveHelper::save($model, false);
+        if ($successfullySaved) {
             return [
                 'error' => false,
                 'msg' => "Role $role has been " . ($status === 1 ? 'granted' : 'revoked') . " to user $model->username",
@@ -164,7 +167,7 @@ class UserController extends Controller
     public function actionView(int $id): string
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+                    'model' => $this->findModel($id),
         ]);
     }
 

@@ -5,6 +5,7 @@ namespace frontend\controllers;
 use common\components\AppStatus;
 use common\components\ContextManager;
 use common\components\ManageAccessRights;
+use common\helpers\SaveHelper;
 use common\helpers\Utilities;
 use common\models\LoginForm;
 use common\models\Player;
@@ -30,6 +31,7 @@ use yii\web\UploadedFile;
  */
 class SiteController extends Controller
 {
+
     /**
      * {@inheritdoc}
      */
@@ -139,13 +141,9 @@ class SiteController extends Controller
             $state = 0;
         } elseif ($player !== null) {
             //$state = $inQuest ? 3 : 2;
-            $state = $inQuest
-            && (
-                $player->quest->status === AppStatus::WAITING->value
-                || $player->quest->status === AppStatus::PLAYING->value
-            )
-                ? 3
-                : 2;
+            $state = $inQuest && (
+                    $player->quest->status === AppStatus::WAITING->value || $player->quest->status === AppStatus::PLAYING->value
+                    ) ? 3 : 2;
         } else {
             $state = 1;
         }
@@ -184,8 +182,8 @@ class SiteController extends Controller
             'otherPlayers' => $this->getOtherPlayers($players, $state, $player?->id),
         ];
         return $this->render('lobby', [
-            'state' => $state,
-            'viewParameters' => $viewParameters,
+                    'state' => $state,
+                    'viewParameters' => $viewParameters,
         ]);
     }
 
@@ -249,24 +247,23 @@ class SiteController extends Controller
             $user = Yii::$app->user->identity;
             $login_at = time();
             $user->frontend_last_login_at = $login_at;
-            if ($user->save()) {
-                $log = new UserLogin([
-                    'user_id' => $user->id,
-                    'application' => 'frontend',
-                    'login_at' => $login_at,
-                    'ip_address' => Yii::$app->getRequest()->getUserIP(),
-                ]);
-                $log->save();
-            } else {
-                throw new \Exception(implode('<br />', \yii\helpers\ArrayHelper::getColumn($user->errors, 0, false)));
-            }
+
+            SaveHelper::save($user);
+
+            $log = new UserLogin([
+                'user_id' => $user->id,
+                'application' => 'frontend',
+                'login_at' => $login_at,
+                'ip_address' => Yii::$app->getRequest()->getUserIP(),
+            ]);
+            SaveHelper::save($log);
             return $this->goBack();
         }
 
         $model->password = '';
 
         return $this->render('login', [
-            'model' => $model,
+                    'model' => $model,
         ]);
     }
 
@@ -302,8 +299,8 @@ class SiteController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if ($model->sendEmail(Yii::$app->params['adminEmail'])) {
                 Yii::$app->session->setFlash(
-                    'success',
-                    'Thank you for contacting us. We will respond to you as soon as possible.',
+                        'success',
+                        'Thank you for contacting us. We will respond to you as soon as possible.',
                 );
             } else {
                 Yii::$app->session->setFlash('error', 'There was an error sending your message.');
@@ -313,7 +310,7 @@ class SiteController extends Controller
         }
 
         return $this->render('contact', [
-            'model' => $model,
+                    'model' => $model,
         ]);
     }
 
@@ -339,14 +336,14 @@ class SiteController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->signup()) {
             Yii::$app->session->setFlash(
-                'success',
-                'Thank you for registration. Please check your inbox for verification email.',
+                    'success',
+                    'Thank you for registration. Please check your inbox for verification email.',
             );
             return $this->goHome();
         }
 
         return $this->render('signup', [
-            'model' => $model,
+                    'model' => $model,
         ]);
     }
 
@@ -367,13 +364,13 @@ class SiteController extends Controller
             }
 
             Yii::$app->session->setFlash(
-                'error',
-                'Sorry, we are unable to reset password for the provided email address.',
+                    'error',
+                    'Sorry, we are unable to reset password for the provided email address.',
             );
         }
 
         return $this->render('requestPasswordResetToken', [
-            'model' => $model,
+                    'model' => $model,
         ]);
     }
 
@@ -399,7 +396,7 @@ class SiteController extends Controller
         }
 
         return $this->render('resetPassword', [
-            'model' => $model,
+                    'model' => $model,
         ]);
     }
 
@@ -440,13 +437,13 @@ class SiteController extends Controller
                 return $this->goHome();
             }
             Yii::$app->session->setFlash(
-                'error',
-                'Sorry, we are unable to resend verification email for the provided email address.',
+                    'error',
+                    'Sorry, we are unable to resend verification email for the provided email address.',
             );
         }
 
         return $this->render('resendVerificationEmail', [
-            'model' => $model,
+                    'model' => $model,
         ]);
     }
 
@@ -500,7 +497,7 @@ class SiteController extends Controller
         }
 
         return $this->render('image-upload', [
-            'model' => $model,
+                    'model' => $model,
         ]);
     }
 }
