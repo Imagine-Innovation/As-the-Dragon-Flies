@@ -10,9 +10,11 @@ use yii\web\Response;
 
 /**
  * MissionController implements the CRUD actions for Mission model.
+ * @extends \yii\web\Controller<\yii\base\Module>
  */
 class SearchController extends Controller
 {
+
     /**
      * @inheritDoc
      */
@@ -94,15 +96,15 @@ class SearchController extends Controller
         }
 
         $normalizedString = str_replace(
-            [
-                "'", // Single quote
-                '’', // Right single quotation mark
-                '‘', // Left single quotation mark
-                '´', // Acute accent
-                '`', // Grave accent
-            ],
-            '_', // single character SQL wildcard
-            $inputString,
+                [
+                    "'", // Single quote
+                    '’', // Right single quotation mark
+                    '‘', // Left single quotation mark
+                    '´', // Acute accent
+                    '`', // Grave accent
+                ],
+                '_', // single character SQL wildcard
+                $inputString,
         );
         return $normalizedString;
     }
@@ -142,8 +144,8 @@ class SearchController extends Controller
 
         $className = $this->fullyQualifiedClassName($modelName);
         $query = $className::find()
-            ->select(['t.id', 't.name', 't.description as text'])
-            ->from(['t' => $className::tableName()]);
+                ->select(['t.id', 't.name', 't.description as text'])
+                ->from(['t' => $className::tableName()]);
 
         if ($searchString) {
             $query->where(['like', 'name', "%{$searchString}%", false])->orWhere(['like', 'description', "%{$searchString}%", false]); // The 'false' parameter prevents Yii from adding extra escaping
@@ -152,6 +154,7 @@ class SearchController extends Controller
 
         $searchResult = $query->asArray()->all();
 
+        /** @phpstan-ignore-next-line */
         return ['error' => false, 'msg' => '', 'results' => $searchResult];
     }
 
@@ -205,10 +208,10 @@ class SearchController extends Controller
 
         $className = $this->fullyQualifiedClassName($modelName);
         $searchResult = $className::find()
-            ->select(['id', 'text'])
-            ->where(['like', 'text', "%{$searchString}%", false]) // The 'false' parameter prevents Yii from adding extra escaping
-            ->asArray()
-            ->all();
+                ->select(['id', 'text'])
+                ->where(['like', 'text', "%{$searchString}%", false]) // The 'false' parameter prevents Yii from adding extra escaping
+                ->asArray()
+                ->all();
 
         return ['error' => false, 'msg' => '', 'results' => $searchResult];
     }
@@ -224,7 +227,7 @@ class SearchController extends Controller
     private function searchBrocker(string $valueType, string $search, ?int $parentId, ?string $folder): array
     {
         Yii::debug(
-            "*** Debug *** searchBrocker(valueType={$valueType}, search={$search}, parentId={$parentId}, folder={$folder})",
+                "*** Debug *** searchBrocker(valueType={$valueType}, search={$search}, parentId={$parentId}, folder={$folder})",
         );
         return match ($valueType) {
             'image' => $this->imageSearch($search, $folder),

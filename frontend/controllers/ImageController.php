@@ -17,6 +17,7 @@ use yii\web\UploadedFile;
 
 /**
  * ImageController implements the CRUD actions for Image model.
+ * @extends \yii\web\Controller<\yii\base\Module>
  */
 class ImageController extends Controller
 {

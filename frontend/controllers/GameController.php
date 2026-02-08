@@ -20,10 +20,12 @@ use yii\web\Request;
 use yii\web\Response;
 
 /**
- * QuestController implements the CRUD actions for Quest model.
+ * GameController implements the CRUD actions for Quest model.
+ * @extends \yii\web\Controller<\yii\base\Module>
  */
 class GameController extends Controller
 {
+
     /**
      * @inheritDoc
      */
@@ -70,13 +72,13 @@ class GameController extends Controller
 
         $quest = FindModelHelper::findQuest(['id' => $id]);
         $nbPlayers = QuestPlayer::find()
-            ->where(['quest_id' => $quest->id])
-            ->andWhere(['<>', 'status', AppStatus::LEFT->value])
-            ->count();
+                ->where(['quest_id' => $quest->id])
+                ->andWhere(['<>', 'status', AppStatus::LEFT->value])
+                ->count();
 
         return $this->render('view', [
-            'quest' => $quest,
-            'nbPlayers' => $nbPlayers,
+                    'quest' => $quest,
+                    'nbPlayers' => $nbPlayers,
         ]);
     }
 
@@ -179,9 +181,9 @@ class GameController extends Controller
         }
 
         $questTurn = QuestTurn::find()->where([
-            'status' => AppStatus::IN_PROGRESS->value,
-            'quest_progress_id' => Yii::$app->request->get('questProgressId'),
-        ])->one();
+                    'status' => AppStatus::IN_PROGRESS->value,
+                    'quest_progress_id' => Yii::$app->request->get('questProgressId'),
+                ])->one();
 
         if ($questTurn) {
             $content = [
@@ -328,7 +330,7 @@ class GameController extends Controller
         $remainingActions = $questProgress->remainingActions;
 
         Yii::debug(
-            "*** debug *** actionAjaxNextTurn - currentMissionId={$currentMissionId}, nextMissionId={$nextMissionId}, remainingAction="
+                "*** debug *** actionAjaxNextTurn - currentMissionId={$currentMissionId}, nextMissionId={$nextMissionId}, remainingAction="
                 . count($remainingActions),
         );
 
@@ -355,11 +357,12 @@ class GameController extends Controller
      * @throws \Exception
      */
     protected function createEvent(
-        string $eventType,
-        Request $postRequest,
-        string $actionName,
-        array $outcome = [],
-    ): bool {
+            string $eventType,
+            Request $postRequest,
+            string $actionName,
+            array $outcome = [],
+    ): bool
+    {
         $sessionId = Yii::$app->session->get('sessionId');
         try {
             $playerId = $postRequest->post('playerId');

@@ -116,6 +116,7 @@ class Rule extends \yii\db\ActiveRecord
      */
     public function getRootExpression()
     {
+        /** @phpstan-ignore-next-line */
         return $this->hasOne(RuleExpression::class, ['rule_id' => 'id', 'parent_id' => null]);
     }
 

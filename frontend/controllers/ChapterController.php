@@ -14,9 +14,11 @@ use yii\web\Response;
 
 /**
  * ChapterController implements the CRUD actions for Chapter model.
+ * @extends \yii\web\Controller<\yii\base\Module>
  */
 class ChapterController extends Controller
 {
+
     /**
      * @inheritDoc
      */
@@ -62,7 +64,7 @@ class ChapterController extends Controller
     public function actionView(int $id): string
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+                    'model' => $this->findModel($id),
         ]);
     }
 
@@ -90,7 +92,7 @@ class ChapterController extends Controller
         }
 
         return $this->render('create', [
-            'model' => $model,
+                    'model' => $model,
         ]);
     }
 
@@ -112,7 +114,7 @@ class ChapterController extends Controller
         }
 
         return $this->render('update', [
-            'model' => $model,
+                    'model' => $model,
         ]);
     }
 

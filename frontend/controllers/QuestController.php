@@ -44,6 +44,7 @@ use yii\web\Response;
 
 /**
  * QuestController implements the CRUD actions for Quest model.
+ * @extends \yii\web\Controller<\yii\base\Module>
  */
 class QuestController extends Controller
 {

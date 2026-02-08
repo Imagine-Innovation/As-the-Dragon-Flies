@@ -13,13 +13,14 @@ use yii\base\Component;
 use yii\db\ActiveQuery;
 use yii\web\Controller;
 
+/** @template T of \yii\web\Controller */
 class ManageAccessRights extends Component
 {
     // --- Strict Accessors (The Level 8/9 "Secret Sauce") ---
 
     /**
      *
-     * @param Controller $controller
+     * @param T $controller
      * @return string
      * @throws RuntimeException
      */
@@ -53,10 +54,11 @@ class ManageAccessRights extends Component
      * @return ActiveQuery<AccessRight> Query containing all authorized access right IDs
      */
     public static function getAuthorizedIds(
-        User $user,
-        bool $hasPlayerSelected = false,
-        bool $inQuest = false,
-    ): ActiveQuery {
+            User $user,
+            bool $hasPlayerSelected = false,
+            bool $inQuest = false,
+    ): ActiveQuery
+    {
         $accesRights = AccessRight::find()->select('id')->where(['id' => 1]);
         if ($user->is_player) {
             // Get access rights for players
@@ -90,7 +92,7 @@ class ManageAccessRights extends Component
     /**
      * Checks if a user is authorized to access a specific route
      *
-     * @param \yii\web\Controller $controller The source controller
+     * @param T $controller The source controller
      * @param string $redirect route url to redirect avec throwing an error
      * @return bool True if access is granted, false otherwise
      */
@@ -138,12 +140,12 @@ class ManageAccessRights extends Component
     private static function getAccessRight(string $route, string $action): ?AccessRight
     {
         $accessRightData = Yii::$app
-            ->db
-            ->createCommand('SELECT * FROM `access_right` WHERE `route` = :route AND `action` = :action', [
-                ':route' => $route,
-                ':action' => $action,
-            ])
-            ->queryOne();
+                ->db
+                ->createCommand('SELECT * FROM `access_right` WHERE `route` = :route AND `action` = :action', [
+                    ':route' => $route,
+                    ':action' => $action,
+                ])
+                ->queryOne();
 
         return $accessRightData ? new AccessRight($accessRightData) : null;
     }
@@ -164,7 +166,7 @@ class ManageAccessRights extends Component
     /**
      * Checks that the requested action is authorised within the controller
      *
-     * @param \yii\web\Controller $controller
+     * @param T $controller
      * @return array{
      *     denied: bool,
      *     severity: string,
@@ -180,11 +182,11 @@ class ManageAccessRights extends Component
 
         if (self::isPublic($route, $action)) {
             return self::logAccess(
-                null,
-                false,
-                'success',
-                "[{$route}/{$action}] Access granted by default to public route",
-            );
+                            null,
+                            false,
+                            'success',
+                            "[{$route}/{$action}] Access granted by default to public route",
+                    );
         }
         // Get access rights for the route
         //$accessRight = AccessRight::findOne(['route' => $route, 'action' => $action]);
@@ -193,11 +195,11 @@ class ManageAccessRights extends Component
         // If no access rights defined, grant access to public "route/action"
         if (!$accessRight) {
             return self::logAccess(
-                null,
-                true,
-                'error',
-                "[{$route}/{$action}] Access denied by default: no specific AccessRight found",
-            );
+                            null,
+                            true,
+                            'error',
+                            "[{$route}/{$action}] Access denied by default: no specific AccessRight found",
+                    );
         }
 
         $user = Yii::$app->session->get('user') ?? Yii::$app->user->identity;
@@ -205,32 +207,32 @@ class ManageAccessRights extends Component
         // Grant access if user is admin and route allows admin access
         if ($user->is_admin && $accessRight->is_admin) {
             return self::logAccess(
-                $accessRight->id,
-                false,
-                'success',
-                "[{$route}/{$action}] Access granted for Admin role",
-            );
+                            $accessRight->id,
+                            false,
+                            'success',
+                            "[{$route}/{$action}] Access granted for Admin role",
+                    );
         }
 
         // Grant access if user is designer and route allows designer access
         if ($user->is_designer && $accessRight->is_designer) {
             return self::logAccess(
-                $accessRight->id,
-                false,
-                'success',
-                "[{$route}/{$action}] Access granted for Designer role",
-            );
+                            $accessRight->id,
+                            false,
+                            'success',
+                            "[{$route}/{$action}] Access granted for Designer role",
+                    );
         }
 
         // Check player-specific access conditions
         if ($user->is_player && $accessRight->is_player) {
             $playerAccess = self::checkPlayerAccess($accessRight);
             return self::logAccess(
-                $accessRight->id,
-                $playerAccess['denied'],
-                $playerAccess['severity'],
-                "[{$route}/{$action}] {$playerAccess['reason']}",
-            );
+                            $accessRight->id,
+                            $playerAccess['denied'],
+                            $playerAccess['severity'],
+                            "[{$route}/{$action}] {$playerAccess['reason']}",
+                    );
         }
 
         // Deny access by default
@@ -322,11 +324,11 @@ class ManageAccessRights extends Component
         }
         if ($user->current_player_id) {
             $player = Yii::$app
-                ->db
-                ->createCommand('SELECT * FROM `player` WHERE `id` = :playerId', [
-                    ':playerId' => $user->current_player_id,
-                ])
-                ->queryOne();
+                    ->db
+                    ->createCommand('SELECT * FROM `player` WHERE `id` = :playerId', [
+                        ':playerId' => $user->current_player_id,
+                    ])
+                    ->queryOne();
             $playerId = $player['id'];
             $questId = $player['quest_id'];
         } else {
@@ -334,9 +336,8 @@ class ManageAccessRights extends Component
             $questId = null;
         }
 
-        $sql =
-            'INSERT INTO `user_log` (`user_id`, `access_right_id`, `player_id`, `quest_id`, `ip_address`, `action_at`, `denied`, `reason`)'
-            . ' VALUES (:user_id, :access_right_id, :player_id, :quest_id, :ip_address, :action_at, :denied, :reason)';
+        $sql = 'INSERT INTO `user_log` (`user_id`, `access_right_id`, `player_id`, `quest_id`, `ip_address`, `action_at`, `denied`, `reason`)'
+                . ' VALUES (:user_id, :access_right_id, :player_id, :quest_id, :ip_address, :action_at, :denied, :reason)';
 
         $values = [
             ':user_id' => $user->id,
@@ -395,7 +396,7 @@ class ManageAccessRights extends Component
         $user = Yii::$app->session->get('user');
 
         // Check if the model name is allowed for the action
-        if (!in_array($controller, $action['controllers'])) {
+        if (!in_array($controller, $action['modelName'])) {
             return false;
         }
 
@@ -432,21 +433,22 @@ class ManageAccessRights extends Component
      * @return list<array<string, string>>
      */
     public static function selectActionButtons(
-        string $route,
-        string $action = 'index',
-        int $status = AppStatus::ACTIVE->value,
-    ): array {
+            string $route,
+            string $action = 'index',
+            int $status = AppStatus::ACTIVE->value,
+    ): array
+    {
         $actionButtons = ActionButton::find()
-            ->select(['action_button.icon', 'action_button.route', 'action_button.action', 'action_button.tooltip'])
-            ->innerJoin('access_right_action_button', 'action_button.id = access_right_action_button.action_button_id')
-            ->innerJoin('access_right', 'access_right.id = access_right_action_button.access_right_id')
-            ->where([
-                'access_right.route' => $route,
-                'access_right.action' => $action,
-                'access_right_action_button.status' => $status,
-            ])
-            ->asArray()
-            ->all();
+                ->select(['action_button.icon', 'action_button.route', 'action_button.action', 'action_button.tooltip'])
+                ->innerJoin('access_right_action_button', 'action_button.id = access_right_action_button.action_button_id')
+                ->innerJoin('access_right', 'access_right.id = access_right_action_button.access_right_id')
+                ->where([
+                    'access_right.route' => $route,
+                    'access_right.action' => $action,
+                    'access_right_action_button.status' => $status,
+                ])
+                ->asArray()
+                ->all();
 
         $buttons = [];
         foreach ($actionButtons as $actionButton) {

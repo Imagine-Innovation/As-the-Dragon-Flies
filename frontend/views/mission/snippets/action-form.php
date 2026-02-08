@@ -19,6 +19,8 @@ $difficultyClass = [
     25 => 'Very Hard',
     30 => 'Nearly Impossible',
 ];
+
+$actionType = $model->action_type_id ? $model->actionType : null;
 ?>
 <div class="d-none">
     Hidden div to embeb utility tags for PHP/JS communication
@@ -30,16 +32,19 @@ $difficultyClass = [
 <?php if ($model->id): ?>
     <article>
         <p>Action:
-            <?= $model->actionType?->name ?> <?= $model->actionType?->description
-                    ? "({$model->actionType?->description})" : '' ?>
+            <?php if ($actionType): ?>
+                <?= $actionType->name ?> <?=
+                $actionType->description ? "({$actionType->description})" : ''
+                ?>
+            <?php endif; ?>
             <?= $model->passage?->name ?>
             <?= $model->trap?->name ?>
             <?= $model->decorItem?->name ?>
             <?= $model->decor ? "in {$model->decor->name}" : '' ?>
             <?= $model->npc ? "with {$model->npc->name}" : '' ?>
             <?= $model->reply ? "saying “{$model->reply->text}”" : '' ?>
-            <?= $model->requiredItem ? "will need {$model->requiredItem->name}"
-                        : ''
+            <?=
+            $model->requiredItem ? "will need {$model->requiredItem->name}" : ''
             ?>
         </p>
     </article>
@@ -56,7 +61,7 @@ $difficultyClass = [
                 $form
                 ->field($model, 'action_type_id')
                 ->dropdownList(
-                        $model->action_type_id ? [$model->action_type_id => $model->actionType->name]
+                        $model->action_type_id ? [$model->action_type_id => $actionType?->name]
                                     : [],
                         [
                             'class' => 'select2-container w-100',
@@ -243,7 +248,7 @@ $difficultyClass = [
 </div>
 
 <div class="form-group">
-<?= Html::submitButton('Save', ['class' => 'btn btn-success bi-floppy']) ?>
+    <?= Html::submitButton('Save', ['class' => 'btn btn-success bi-floppy']) ?>
 </div>
 
 <?php

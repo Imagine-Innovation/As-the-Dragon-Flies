@@ -17,9 +17,11 @@ use yii\web\Response;
 
 /**
  * PlayerCartController implements the CRUD actions for PlayerCart model.
+ * @extends \yii\web\Controller<\yii\base\Module>
  */
 class PlayerCartController extends Controller
 {
+
     /**
      * @inheritDoc
      */
@@ -73,15 +75,15 @@ class PlayerCartController extends Controller
         // Query items with cost greater than 0
         // Fetch models and order them by item type and name
         $items = Item::find()
-            ->where(['>', 'cost', 0])
-            ->orderBy([
-                'item_type_id' => SORT_ASC,
-                'name' => SORT_ASC,
-            ])
-            ->all();
+                ->where(['>', 'cost', 0])
+                ->orderBy([
+                    'item_type_id' => SORT_ASC,
+                    'name' => SORT_ASC,
+                ])
+                ->all();
 
         return $this->render('shop', [
-            'items' => $items,
+                    'items' => $items,
         ]);
     }
 
@@ -99,7 +101,7 @@ class PlayerCartController extends Controller
         $playerCarts = $this->findPlayerCartContent();
 
         return $this->render('cart', [
-            'playerCarts' => $playerCarts,
+                    'playerCarts' => $playerCarts,
         ]);
     }
 
@@ -256,7 +258,8 @@ class PlayerCartController extends Controller
             'msg' => '',
             'count' => $count,
             'cartString' =>
-                'You have ' . ($count > 0 ? $count : 'no') . ' article' . ($count > 1 ? 's' : '') . ' in your cart',
+            'You have ' . ($count > 0 ? $count : 'no') . ' article' . ($count > 1
+                ? 's' : '') . ' in your cart',
             'cartValueString' => $shopping->getCartValueString($this->findPlayerCartContent()),
             'purseString' => $purseMsg,
         ];
@@ -284,7 +287,8 @@ class PlayerCartController extends Controller
         $model = PlayerCart::findOne(['player_id' => $player->id, 'item_id' => $itemId]);
 
         // Construct the response containing the count of the item and return it
-        return ['error' => false, 'msg' => '', 'count' => $model ? $model->quantity : 0];
+        return ['error' => false, 'msg' => '', 'count' => $model ? $model->quantity
+                : 0];
     }
 
     /**

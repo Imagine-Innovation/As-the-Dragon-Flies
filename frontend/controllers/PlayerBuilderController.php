@@ -28,7 +28,8 @@ use yii\web\Response;
 //use yii\db\ActiveRecord;
 
 /**
- * PlayerController implements the CRUD actions for Player model.
+ * PlayerBuilderController implements the CRUD actions for Player model.
+ * @extends \yii\web\Controller<\yii\base\Module>
  */
 class PlayerBuilderController extends Controller
 {

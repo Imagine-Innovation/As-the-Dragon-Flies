@@ -28,6 +28,7 @@ use yii\web\UploadedFile;
 
 /**
  * Site controller
+ * @extends \yii\web\Controller<\yii\base\Module>
  */
 class SiteController extends Controller
 {

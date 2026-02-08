@@ -16,9 +16,11 @@ use yii\web\Response;
 
 /**
  * StoryController implements the CRUD actions for Story model.
+ * @extends \yii\web\Controller<\yii\base\Module>
  */
 class StoryController extends Controller
 {
+
     /**
      * @inheritDoc
      */
@@ -75,7 +77,7 @@ class StoryController extends Controller
         $dataProvider = new ActiveDataProvider(['query' => $query]);
 
         return $this->render('index', [
-            'dataProvider' => $dataProvider,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -88,7 +90,7 @@ class StoryController extends Controller
     public function actionView(int $id): string
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+                    'model' => $this->findModel($id),
         ]);
     }
 
@@ -111,7 +113,7 @@ class StoryController extends Controller
         }
 
         return $this->render('create', [
-            'model' => $model,
+                    'model' => $model,
         ]);
     }
 
@@ -132,7 +134,7 @@ class StoryController extends Controller
         }
 
         return $this->render('update', [
-            'model' => $model,
+                    'model' => $model,
         ]);
     }
 

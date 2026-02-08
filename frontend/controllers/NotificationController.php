@@ -16,9 +16,11 @@ use yii\web\Response;
 
 /**
  * NotificationController implements the CRUD actions for Notification model.
+ * @extends \yii\web\Controller<\yii\base\Module>
  */
 class NotificationController extends Controller
 {
+
     /**
      * @inheritDoc
      */
@@ -80,7 +82,7 @@ class NotificationController extends Controller
         $user = Yii::$app->user->identity;
         if ($user->is_admin) {
             return $this->render('view', [
-                'model' => $this->findModel($id),
+                        'model' => $this->findModel($id),
             ]);
         }
         throw new ForbiddenHttpException('You are not allowed to see the notifications');

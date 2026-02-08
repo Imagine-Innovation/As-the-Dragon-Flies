@@ -18,9 +18,11 @@ use yii\web\Response;
 
 /**
  * CharacterClassController implements the CRUD actions for CharacterClass model.
+ * @extends \yii\web\Controller<\yii\base\Module>
  */
 class CharacterClassController extends Controller
 {
+
     /**
      * @inheritDoc
      */
@@ -64,7 +66,7 @@ class CharacterClassController extends Controller
         ]);
 
         return $this->render('index', [
-            'dataProvider' => $dataProvider,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -102,9 +104,9 @@ class CharacterClassController extends Controller
         // Find proficiency ID for Spell to avoid nested sub query
         // in the "foreach" statement
         $spellProficieny = Proficiency::find()
-            ->select('id')
-            ->where(['name' => 'Spell'])
-            ->one();
+                ->select('id')
+                ->where(['name' => 'Spell'])
+                ->one();
 
         if (!$spellProficieny) {
             // Spell proficiency not found
@@ -143,11 +145,11 @@ class CharacterClassController extends Controller
         }
 
         return $this->render('view', [
-            'model' => $model,
-            'hasSpell' => $hasSpell,
-            'proficiencyHeaders' => $proficiencyHeaders,
-            'proficiencies' => $proficiencies,
-            'spellsByLevel' => $spellsByLevel,
+                    'model' => $model,
+                    'hasSpell' => $hasSpell,
+                    'proficiencyHeaders' => $proficiencyHeaders,
+                    'proficiencies' => $proficiencies,
+                    'spellsByLevel' => $spellsByLevel,
         ]);
     }
 
@@ -166,7 +168,8 @@ class CharacterClassController extends Controller
             $colId = 2 + (int) $proficiency->sort_order;
             if (!isset($headers[$colId])) {
                 $name = $proficiency->proficiency->name;
-                $headers[$colId] = $name === 'Spell' ? "Spell L{$proficiency->spell_level}" : $name;
+                $headers[$colId] = $name === 'Spell' ? "Spell L{$proficiency->spell_level}"
+                            : $name;
             }
         }
 
@@ -229,8 +232,7 @@ class CharacterClassController extends Controller
             $rowId = (int) $proficiency->level_id;
             $colId = 2 + (int) $proficiency->sort_order;
             if (isset($proficiencies[$rowId][$colId])) {
-                $proficiencies[$rowId][$colId]['value'] =
-                    (string) $proficiency->bonus . (string) $proficiency->dice . (string) $proficiency->spell_slot;
+                $proficiencies[$rowId][$colId]['value'] = (string) $proficiency->bonus . (string) $proficiency->dice . (string) $proficiency->spell_slot;
             }
         }
 

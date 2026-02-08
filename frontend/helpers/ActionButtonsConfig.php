@@ -6,6 +6,7 @@ use common\components\AppStatus;
 
 class ActionButtonsConfig
 {
+
     /**
      *
      * @param string $controller
@@ -127,6 +128,7 @@ class ActionButtonsConfig
             ],
         ];
 
+        /** @phpstan-ignore-next-line */
         return $actions[$status] ?? [];
     }
 }

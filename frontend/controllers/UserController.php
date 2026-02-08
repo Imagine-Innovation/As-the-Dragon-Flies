@@ -20,6 +20,7 @@ use yii\web\Response;
 
 /**
  * UserController implements the CRUD actions for User model.
+ * @extends \yii\web\Controller<\yii\base\Module>
  */
 class UserController extends Controller
 {

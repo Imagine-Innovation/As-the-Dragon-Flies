@@ -10,8 +10,8 @@ final class SaveHelper
 {
 
     /**
-     *
-     * @param ActiveRecord $model
+     * @template T of \yii\db\ActiveRecord
+     * @param T $model
      * @param bool $throw
      * @return bool
      * @throws \Exception

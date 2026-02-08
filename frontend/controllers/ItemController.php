@@ -14,9 +14,11 @@ use yii\web\UnauthorizedHttpException;
 
 /**
  * ItemController implements the CRUD actions for Item model.
+ * @extends \yii\web\Controller<\yii\base\Module>
  */
 class ItemController extends Controller
 {
+
     /**
      * @inheritDoc
      */
@@ -64,12 +66,12 @@ class ItemController extends Controller
         $query = Item::find()->where(['>', 'cost', 0]);
 
         $models = $query->orderBy([
-            'item_type_id' => SORT_ASC,
-            'name' => SORT_ASC,
-        ])->all();
+                    'item_type_id' => SORT_ASC,
+                    'name' => SORT_ASC,
+                ])->all();
 
         return $this->render('shop', [
-            'models' => $models,
+                    'models' => $models,
         ]);
     }
 
@@ -141,7 +143,7 @@ class ItemController extends Controller
     public function actionView(int $id): string
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+                    'model' => $this->findModel($id),
         ]);
     }
 

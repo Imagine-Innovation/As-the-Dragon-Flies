@@ -14,9 +14,11 @@ use yii\web\Response;
 
 /**
  * RaceController implements the CRUD actions for Race model.
+ * @extends \yii\web\Controller<\yii\base\Module>
  */
 class RaceController extends Controller
 {
+
     /**
      * @inheritDoc
      */
@@ -60,7 +62,7 @@ class RaceController extends Controller
         ]);
 
         return $this->render('index', [
-            'dataProvider' => $dataProvider,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -74,7 +76,7 @@ class RaceController extends Controller
     public function actionView(int $id): string
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+                    'model' => $this->findModel($id),
         ]);
     }
 

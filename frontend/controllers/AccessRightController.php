@@ -16,6 +16,7 @@ use yii\web\Response;
 
 /**
  * AccessRightController implements the CRUD actions for AccessRight model.
+ * @extends \yii\web\Controller<\yii\base\Module>
  */
 class AccessRightController extends Controller
 {

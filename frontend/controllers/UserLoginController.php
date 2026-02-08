@@ -15,9 +15,11 @@ use yii\web\Response;
 
 /**
  * UserLoginController implements the CRUD actions for UserLogin model.
+ * @extends \yii\web\Controller<\yii\base\Module>
  */
 class UserLoginController extends Controller
 {
+
     /**
      * @inheritDoc
      */
@@ -70,7 +72,7 @@ class UserLoginController extends Controller
         ]);
 
         return $this->render('index', [
-            'dataProvider' => $dataProvider,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -114,11 +116,11 @@ class UserLoginController extends Controller
     protected function findModel(int $userId, string $application, int $loginAt): UserLogin
     {
         if (
-            ($model = UserLogin::findOne([
-                'user_id' => $userId,
-                'application' => $application,
-                'login_at' => $loginAt,
-            ])) !== null
+                ($model = UserLogin::findOne([
+            'user_id' => $userId,
+            'application' => $application,
+            'login_at' => $loginAt,
+                ])) !== null
         ) {
             return $model;
         }

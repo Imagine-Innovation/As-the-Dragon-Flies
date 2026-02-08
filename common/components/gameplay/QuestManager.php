@@ -177,6 +177,7 @@ class QuestManager extends BaseManager
         $this->player = $quest->currentPlayer;
         $this->nextSequence = $this->getLastTurnSequence() + 1;
 
+        /** @var QuestTurn $questTurn */
         $questTurn = new QuestTurn([
             'player_id' => $nextPlayerId,
             'quest_progress_id' => $this->getQuestProgress()->id,

@@ -36,6 +36,5 @@ Button::widget([
 <p>
     isFree=<?= $isFree ? 'true' : 'false' ?>,
     questProgressId=<?= $questProgressId ?>,
-    nextMissionId=<?= $nextMissionId ?? 'null' ?>,
-    canReplay=<?= $canReplay ? 'true' : 'false' ?>
+    nextMissionId=<?= $nextMissionId ?? 'null' ?>
 </p>

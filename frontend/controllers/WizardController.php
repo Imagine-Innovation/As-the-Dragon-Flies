@@ -15,9 +15,11 @@ use yii\web\Response;
 
 /**
  * WizardController implements the CRUD actions for Wizard model.
+ * @extends \yii\web\Controller<\yii\base\Module>
  */
 class WizardController extends Controller
 {
+
     /**
      * @inheritDoc
      */
@@ -61,7 +63,7 @@ class WizardController extends Controller
         ]);
 
         return $this->render('index', [
-            'dataProvider' => $dataProvider,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -74,7 +76,7 @@ class WizardController extends Controller
     public function actionView(int $id): string
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+                    'model' => $this->findModel($id),
         ]);
     }
 

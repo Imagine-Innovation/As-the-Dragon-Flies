@@ -15,9 +15,11 @@ use yii\web\Response;
 
 /**
  * SpellController implements the CRUD actions for Spell model.
+ * @extends \yii\web\Controller<\yii\base\Module>
  */
 class SpellController extends Controller
 {
+
     /**
      * @inheritDoc
      */
@@ -62,7 +64,7 @@ class SpellController extends Controller
         ]);
 
         return $this->render('index', [
-            'dataProvider' => $dataProvider,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -96,7 +98,7 @@ class SpellController extends Controller
     public function actionView(int $id): string
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+                    'model' => $this->findModel($id),
         ]);
     }
 

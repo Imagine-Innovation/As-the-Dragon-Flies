@@ -20,6 +20,7 @@ use yii\web\Response;
 
 /**
  * PlayerItemController implements the CRUD actions for PlayerItem model.
+ * @extends \yii\web\Controller<\yii\base\Module>
  */
 class PlayerItemController extends Controller
 {
@@ -207,8 +208,8 @@ class PlayerItemController extends Controller
         $data = [];
 
         foreach (PlayerItem::BODY_ZONE as $property => $zone) {
-            $playerItem = $playerBody->$property;
-            if ($playerItem !== null) {
+            if ($playerBody->hasProperty($property)) {
+                $playerItem = $playerBody->$property;
                 $data[$zone] = [
                     'itemId' => $playerItem->item_id,
                     'itemName' => $playerItem->item_name,

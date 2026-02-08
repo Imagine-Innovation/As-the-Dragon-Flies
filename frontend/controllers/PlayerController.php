@@ -19,6 +19,7 @@ use yii\web\Response;
 
 /**
  * PlayerController implements the CRUD actions for Player model.
+ * @extends \yii\web\Controller<\yii\base\Module>
  */
 class PlayerController extends Controller
 {

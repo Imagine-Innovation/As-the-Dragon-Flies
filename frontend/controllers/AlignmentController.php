@@ -12,9 +12,11 @@ use yii\web\Response;
 
 /**
  * AlignmentController implements the CRUD actions for Alignment model.
+ * @extends \yii\web\Controller<\yii\base\Module>
  */
 class AlignmentController extends Controller
 {
+
     /**
      * @inheritDoc
      */
@@ -48,7 +50,7 @@ class AlignmentController extends Controller
     public function actionView(int $id): string
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+                    'model' => $this->findModel($id),
         ]);
     }
 

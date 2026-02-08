@@ -19,9 +19,11 @@ use yii\web\Response;
 
 /**
  * RuleController implements the CRUD actions for Rule model.
+ * @extends \yii\web\Controller<\yii\base\Module>
  */
 class RuleController extends Controller
 {
+
     /**
      * @inheritDoc
      */
@@ -115,7 +117,7 @@ class RuleController extends Controller
     public function actionView(int $id): string
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+                    'model' => $this->findModel($id),
         ]);
     }
 
@@ -140,7 +142,7 @@ class RuleController extends Controller
         }
 
         return $this->render('create', [
-            'model' => $model,
+                    'model' => $model,
         ]);
     }
 
@@ -164,7 +166,7 @@ class RuleController extends Controller
         }
 
         return $this->render('update', [
-            'model' => $model,
+                    'model' => $model,
         ]);
     }
 
