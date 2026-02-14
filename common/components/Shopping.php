@@ -503,9 +503,8 @@ class Shopping
 
     private function addToInventory(PlayerCart &$playerCart): PlayerItem
     {
-        $classId = $playerCart->player->class_id;
-        $isProficient = PlayerComponent::isProficient($classId, $playerCart->item_id)
-                    ? 1 : 0;
+        $player = $playerCart->player;
+        $isProficient = $player->isProficient($playerCart->item_id) ? 1 : 0;
 
         $item = $playerCart->item;
 

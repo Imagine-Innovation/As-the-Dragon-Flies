@@ -760,15 +760,33 @@ class Player extends \yii\db\ActiveRecord
     /**
      * Checks if a player is proficient with a specific item.
      *
-     * @param int $item_id The ID of the item to check proficiency for.
+     * @param int $itemId The ID of the item to check proficiency for.
      * @return bool|null Returns true if the player is proficient with the item, false if not,
      *                   or null if the player parameter is null.
      */
-    public function isProficient(int $item_id): ?bool
+    public function isProficient(int $itemId): ?bool
     {
-        $class = $this->class;
+        // return PlayerComponent::isProficient($this->class_id, $item_id);
+        // Check whether the player's class gives a direct proficiency for the item.
+        Yii::debug("*** Debug *** isProficient({$this->class_id}, {$itemId})");
+        $proficientForItem = ClassItemProficiency::findOne(['class_id' => $this->class_id, 'item_id' => $itemId]);
+        if ($proficientForItem) {
+            Yii::debug('*** Debug *** isProficient is proficient for item');
+            return true;
+        }
 
-        return PlayerComponent::isProficient($class->id, $item_id);
+        // If not, check that the item belongs to a category for which
+        // the class gives the player a particular proficiency.
+        $categoryIds = ClassItemProficiency::find()
+                ->select('category_id')
+                ->where(['class_id' => $this->class_id])
+                ->andWhere(['is not', 'category_id', null])
+                ->all();
+
+        $proficient = ItemCategory::findAll(['item_id' => $itemId, 'category_id' => $categoryIds]);
+
+        Yii::debug('*** Debug *** isProficient return ' . ($proficient ? 'true' : 'false'));
+        return $proficient ? true : false;
     }
 
     /**

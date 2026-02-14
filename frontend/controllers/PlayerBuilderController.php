@@ -501,10 +501,9 @@ class PlayerBuilderController extends Controller
      */
     private function newPlayerItem(Player &$player, Item &$item, int $quantity): PlayerItem
     {
-        $isProficient = PlayerComponent::isProficient($player->class_id, $item->id)
-                    ? 1 : 0;
-        $proficiencyModifier = $isProficient ? $player->level->proficiency_bonus
-                    : 0;
+        $isProficient = $player->isProficient($item->id) ? 1 : 0;
+        $proficiencyModifier = $isProficient ?
+                $player->level->proficiency_bonus : 0;
 
         $weaponProperties = PlayerComponent::getPlayerWeaponProperties($player->id, $item->id, $proficiencyModifier);
         $itemType = $item->itemType->name;

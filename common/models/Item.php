@@ -3,7 +3,7 @@
 namespace common\models;
 
 use common\helpers\RichTextHelper;
-use frontend\components\Shopping;
+use common\components\Shopping;
 use Yii;
 
 /**
@@ -62,6 +62,7 @@ use Yii;
  */
 class Item extends \yii\db\ActiveRecord
 {
+
     /**
      * {@inheritdoc}
      */
@@ -367,10 +368,10 @@ class Item extends \yii\db\ActiveRecord
     public function getCategory(): string
     {
         $mainCategory = Category::find()
-            ->joinWith('itemCategories')
-            ->joinWith('itemCategories.item')
-            ->where(['item_category.is_main' => 1, 'item_category.item_id' => $this->id])
-            ->one();
+                ->joinWith('itemCategories')
+                ->joinWith('itemCategories.item')
+                ->where(['item_category.is_main' => 1, 'item_category.item_id' => $this->id])
+                ->one();
 
         return $mainCategory ? $mainCategory->name : 'Undefined';
     }
