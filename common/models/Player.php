@@ -8,7 +8,6 @@ use common\helpers\SaveHelper;
 use common\models\Image;
 use common\models\PlayerCoin;
 use common\models\Weapon;
-use frontend\components\PlayerComponent;
 use Yii;
 
 /**
@@ -766,7 +765,6 @@ class Player extends \yii\db\ActiveRecord
      */
     public function isProficient(int $itemId): ?bool
     {
-        // return PlayerComponent::isProficient($this->class_id, $item_id);
         // Check whether the player's class gives a direct proficiency for the item.
         Yii::debug("*** Debug *** isProficient({$this->class_id}, {$itemId})");
         $proficientForItem = ClassItemProficiency::findOne(['class_id' => $this->class_id, 'item_id' => $itemId]);
