@@ -1,11 +1,12 @@
 <?php
 
-namespace frontend\widgets;
+namespace common\widgets;
 
 use yii\base\Widget;
 
 class CheckBox extends Widget
 {
+
     public ?string $id = null;
     public ?string $onclick = null;
     public ?string $checked = null;
@@ -29,9 +30,8 @@ class CheckBox extends Widget
         $icon = $this->icon ? '<i class = "bi ' . $this->icon . '"></i> ' : '';
         $label = $this->label ?? '';
 
-        $startTooltip = $this->title
-            ? '<a href="#" title="' . $this->title . '" data-bs-toggle="tooltip" data-placement="right">'
-            : '';
+        $startTooltip = $this->title ? '<a href="#" title="' . $this->title . '" data-bs-toggle="tooltip" data-placement="right">'
+                    : '';
         $endTooltip = $this->title ? '</a>' : '';
 
         $html = <<<HTML
