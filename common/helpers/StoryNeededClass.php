@@ -1,5 +1,4 @@
 <?php
-
 /**
  * StoryNeedClass Helper
  *
@@ -21,10 +20,11 @@ namespace common\helpers;
 
 use common\models\CharacterClass;
 use common\models\Story;
-use frontend\widgets\CheckBox;
+use common\widgets\CheckBox;
 
 class StoryNeededClass
 {
+
     /**
      * Generates HTML markup for character classes if the story object contains them.
      * Each character class is represented as a disabled checkbox, and the checkbox is

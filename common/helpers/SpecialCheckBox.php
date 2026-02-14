@@ -4,10 +4,11 @@ namespace common\helpers;
 
 use common\models\AccessRight;
 use common\models\User;
-use frontend\widgets\CheckBox;
+use common\widgets\CheckBox;
 
 class SpecialCheckBox
 {
+
     /**
      * Generates an HTML checkbox for a given role on a model.
      *

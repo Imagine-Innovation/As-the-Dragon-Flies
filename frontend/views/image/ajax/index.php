@@ -1,7 +1,7 @@
 <?php
 
 use common\models\CharacterClass;
-use frontend\widgets\CheckBox;
+use common\widgets\CheckBox;
 use frontend\widgets\Pagination;
 use frontend\widgets\RecordCount;
 
@@ -30,12 +30,12 @@ foreach ($models as $model) {
 <div class="card">
     <div class="card-body">
         <?=
-    RecordCount::widget([
-        'count' => $count,
-        'model' => 'image',
-        'adjective' => 'available',
-    ])
-?>
+        RecordCount::widget([
+            'count' => $count,
+            'model' => 'image',
+            'adjective' => 'available',
+        ])
+        ?>
         <div class="table-responsive">
             <table class="table table-dark table-hover mb-0">
                 <thead>
@@ -55,13 +55,14 @@ foreach ($models as $model) {
                             <?php foreach ($classes as $class): ?>
                                 <td class="text-center">
                                     <?=
-                                CheckBox::widget([
-                                    'id' => "image-{$model->id}-{$class->id}",
-                                    'onclick' => "ImageManager.setClass({$model->id}, {$class->id}, '{$class->name}');",
-                                    'checked' => $checked[$model->id][$class->id] ? 'checked' : '',
-                                    'title' => $class->name,
-                                ])
-                            ?>
+                                    CheckBox::widget([
+                                        'id' => "image-{$model->id}-{$class->id}",
+                                        'onclick' => "ImageManager.setClass({$model->id}, {$class->id}, '{$class->name}');",
+                                        'checked' => $checked[$model->id][$class->id]
+                                                    ? 'checked' : '',
+                                        'title' => $class->name,
+                                    ])
+                                    ?>
                                 </td>
                         <?php endforeach; ?>
                         </tr>
@@ -71,12 +72,12 @@ foreach ($models as $model) {
         </div>
         <!-- Pagination -->
         <?=
-    Pagination::widget([
-        'page' => $page,
-        'pageCount' => $pageCount,
-        'limit' => $limit,
-    ])
-?>
+        Pagination::widget([
+            'page' => $page,
+            'pageCount' => $pageCount,
+            'limit' => $limit,
+        ])
+        ?>
         <!-- End Pagination -->
     </div>
 </div>
