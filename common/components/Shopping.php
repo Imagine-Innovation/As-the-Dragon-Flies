@@ -1,6 +1,6 @@
 <?php
 
-namespace frontend\components;
+namespace common\components;
 
 use common\helpers\SaveHelper;
 use common\models\Item;
@@ -9,7 +9,6 @@ use common\models\PlayerCart;
 use common\models\PlayerCoin;
 use common\models\PlayerItem;
 use Yii;
-use yii\helpers\ArrayHelper;
 
 class Shopping
 {

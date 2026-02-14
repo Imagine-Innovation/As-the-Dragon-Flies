@@ -3,11 +3,11 @@
 namespace frontend\controllers;
 
 use common\components\ManageAccessRights;
+use common\components\Shopping;
 use common\helpers\FindModelHelper;
 use common\models\Item;
 use common\models\Player;
 use common\models\PlayerCart;
-use frontend\components\Shopping;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;

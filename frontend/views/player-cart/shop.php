@@ -1,6 +1,6 @@
 <?php
 
-use frontend\components\Shopping;
+use common\components\Shopping;
 use frontend\widgets\Button;
 use frontend\widgets\CurrentPlayer;
 use yii\helpers\Url;
@@ -28,13 +28,13 @@ $firstType = $itemTypes[0];
             <p id="purseContent"></p>
             <div class="actions">
                 <?=
-    Button::widget([
-        'mode' => 'icon',
-        'url' => Url::toRoute(['player-cart/cart']),
-        'icon' => 'bi-cart',
-        'tooltip' => 'Go to your cart',
-    ])
-?>
+                Button::widget([
+                    'mode' => 'icon',
+                    'url' => Url::toRoute(['player-cart/cart']),
+                    'icon' => 'bi-cart',
+                    'tooltip' => 'Go to your cart',
+                ])
+                ?>
                 <div style="font-size: 12.35px">
                     <span id="cartItemCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"></span>
                 </div>
@@ -45,28 +45,30 @@ $firstType = $itemTypes[0];
                 <ul class="nav nav-tabs" role="tablist">
                     <?php foreach ($itemTypes as $itemType): ?>
                         <li class="nav-item">
-                            <a class="nav-link<?= $itemType === $firstType ? ' active' : '' ?>"
+                            <a class="nav-link<?= $itemType === $firstType ? ' active'
+                                : '' ?>"
                                data-bs-toggle="tab" href="#tab-<?= $itemType ?>" role="tab" href="#">
-                                   <?= $itemType ?>
+    <?= $itemType ?>
                             </a>
                         </li>
-                    <?php endforeach; ?>
+<?php endforeach; ?>
                 </ul>
 
                 <div class="tab-content">
-                    <?php foreach ($itemTypes as $itemType): ?>
-                        <div class="tab-pane <?= $itemType === $firstType ? 'active fade show' : 'fade' ?>"
+<?php foreach ($itemTypes as $itemType): ?>
+                        <div class="tab-pane <?= $itemType === $firstType ? 'active fade show'
+                : 'fade' ?>"
                              id="tab-<?= $itemType ?>" role="tabpanel">
                                  <?=
-                        $this->render('snippets/shop-items', [
-                            'shopData' => $shopData[$itemType],
-                            'player' => $currentPlayer,
-                            'active' => $active,
-                        ])
-                    ;
-                    ?>
+                                 $this->render('snippets/shop-items', [
+                                     'shopData' => $shopData[$itemType],
+                                     'player' => $currentPlayer,
+                                     'active' => $active,
+                                 ])
+                                 ;
+                                 ?>
                         </div>
-                    <?php endforeach; ?>
+<?php endforeach; ?>
                 </div>
             </div>
         </div>
@@ -76,7 +78,7 @@ $firstType = $itemTypes[0];
         'user' => $user,
         'mode' => 'modal',
     ])
-?>
+    ?>
     <div class="modal fade" id="somethingWrongModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
