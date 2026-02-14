@@ -1,6 +1,6 @@
 <?php
 
-use frontend\helpers\ItemHelper;
+use common\helpers\ItemHelper;
 
 /** @var yii\web\View $this */
 /** @var common\models\Player $model */
@@ -14,7 +14,6 @@ use frontend\helpers\ItemHelper;
     <div class="card-body">
         <?php foreach ($model->playerItems as $playerItem): ?>
             <?php
-
             if ($playerItem->item_type === 'Weapon'):
                 $weapon = $playerItem->weapon;
                 $properties = ItemHelper::getLiteWeaponProperties($weapon);
@@ -27,9 +26,9 @@ use frontend\helpers\ItemHelper;
                             <span class="badge btn-fantasy"><?= $playerItem->attack_modifier ?> to hit</span>
                         </div>
                         <small class="text-muted"><?= $playerItem->damage ?> <?= $weapon->damageType->name ?><?=
-                    $properties ? ", {$properties}" : ''
+        $properties ? ", {$properties}" : ''
                 ?></small>
-                        <?php if ($remaining): ?>
+                            <?php if ($remaining): ?>
                             <br><small class="text-muted"><?= $remaining ?></small>
                         <?php endif; ?>
                     </div>

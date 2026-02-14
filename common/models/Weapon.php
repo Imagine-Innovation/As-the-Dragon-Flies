@@ -2,7 +2,7 @@
 
 namespace common\models;
 
-use frontend\helpers\ItemHelper;
+use common\helpers\ItemHelper;
 use Yii;
 
 /**
@@ -39,6 +39,7 @@ use Yii;
  */
 class Weapon extends Item
 {
+
     /**
      * {@inheritdoc}
      */

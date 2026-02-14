@@ -1,12 +1,13 @@
 <?php
 
-namespace frontend\helpers;
+namespace common\helpers;
 
 use common\models\PlayerItem;
 use common\models\Weapon;
 
 class ItemHelper
 {
+
     // Define the available weapon properties as an associative array.
     // /!\ Don't forget to update this array when the data model changes
     const FULL_WEAPON_PROPERTIES = [
@@ -45,9 +46,8 @@ class ItemHelper
         foreach ($propertiesConst as $property => $displayName) {
             if ($weapon->$property) {
                 if (str_contains($displayName, '%s')) {
-                    $value = $property === 'is_versatile'
-                        ? $weapon->versatile_dice
-                        : "{$weapon->range_min}-{$weapon->range_max}";
+                    $value = $property === 'is_versatile' ? $weapon->versatile_dice
+                                : "{$weapon->range_min}-{$weapon->range_max}";
                     $properties[] = sprintf($displayName, $value);
                 } else {
                     $properties[] = $displayName;
