@@ -2,7 +2,7 @@
 
 namespace frontend\controllers;
 
-use common\components\ManageAccessRights;
+use common\components\AccessRightsManager;
 use common\models\Race;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -36,7 +36,7 @@ class RaceController extends Controller
                     ],
                     [
                         'actions' => ['index', 'ajax-wizard', 'view'],
-                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'allow' => AccessRightsManager::isRouteAllowed($this),
                         'roles' => ['@'],
                     ],
                 ],

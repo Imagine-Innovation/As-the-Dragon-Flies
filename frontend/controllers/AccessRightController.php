@@ -2,7 +2,7 @@
 
 namespace frontend\controllers;
 
-use common\components\ManageAccessRights;
+use common\components\AccessRightsManager;
 use common\helpers\SaveHelper;
 use common\models\AccessRight;
 use frontend\components\AjaxRequest;
@@ -45,7 +45,7 @@ class AccessRightController extends Controller
                             'ajax',
                             'ajax-set-access-right',
                         ],
-                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'allow' => AccessRightsManager::isRouteAllowed($this),
                         'roles' => ['@'],
                     ],
                 ],
@@ -130,7 +130,7 @@ class AccessRightController extends Controller
         $access = $request->post('access');
         $status = $request->post('status') ? 1 : 0; // Ensure status is boolean (0 or 1)
 
-        if (ManageAccessRights::isValidAttribute($access ?? 'null') === false) {
+        if (AccessRightsManager::isValidAttribute($access ?? 'null') === false) {
             return ['error' => true, 'msg' => "Invalid access attribute {$access} specified."];
         }
         $model->$access = $status;

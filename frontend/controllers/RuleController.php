@@ -3,7 +3,7 @@
 namespace frontend\controllers;
 
 use common\components\AppStatus;
-use common\components\ManageAccessRights;
+use common\components\AccessRightsManager;
 use common\helpers\Status;
 use common\models\Rule;
 use common\models\RuleExpression;
@@ -50,7 +50,7 @@ class RuleController extends Controller
                             'restore',
                             'ajax',
                         ],
-                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'allow' => AccessRightsManager::isRouteAllowed($this),
                         'roles' => ['@'],
                     ],
                 ],

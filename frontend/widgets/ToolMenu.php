@@ -2,7 +2,7 @@
 
 namespace frontend\widgets;
 
-use common\components\ManageAccessRights;
+use common\components\AccessRightsManager;
 use common\models\Menu;
 use Yii;
 use yii\base\Widget;
@@ -47,7 +47,7 @@ class ToolMenu extends Widget
             $inQuest = Yii::$app->session->get('questId') ? true : false;
         }
 
-        $authorizedIds = ManageAccessRights::getAuthorizedIds($user, $hasPlayerSelected, $inQuest);
+        $authorizedIds = AccessRightsManager::getAuthorizedIds($user, $hasPlayerSelected, $inQuest);
 
         $authorizedMenus = Menu::find()
             ->joinWith('accessRight')

@@ -7,7 +7,7 @@ use common\components\ContextManager;
 use common\components\gameplay\ActionManager;
 use common\components\gameplay\QuestManager;
 use common\components\gameplay\TavernManager;
-use common\components\ManageAccessRights;
+use common\components\AccessRightsManager;
 use common\helpers\FindModelHelper;
 use common\models\events\EventFactory;
 use common\models\QuestPlayer;
@@ -48,7 +48,7 @@ class GameController extends Controller
                             'ajax-quit',
                             'ajax-turn',
                         ],
-                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'allow' => AccessRightsManager::isRouteAllowed($this),
                         'roles' => ['@'],
                     ],
                 ],

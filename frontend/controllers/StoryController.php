@@ -3,7 +3,7 @@
 namespace frontend\controllers;
 
 use common\components\AppStatus;
-use common\components\ManageAccessRights;
+use common\components\AccessRightsManager;
 use common\helpers\Status;
 use common\models\Story;
 use Yii;
@@ -46,7 +46,7 @@ class StoryController extends Controller
                             'validate',
                             'restore',
                         ],
-                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'allow' => AccessRightsManager::isRouteAllowed($this),
                         'roles' => ['@'],
                     ],
                 ],

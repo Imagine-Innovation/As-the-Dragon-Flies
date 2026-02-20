@@ -2,7 +2,7 @@
 
 namespace frontend\controllers;
 
-use common\components\ManageAccessRights;
+use common\components\AccessRightsManager;
 use common\models\Spell;
 use frontend\components\AjaxRequest;
 use Yii;
@@ -37,7 +37,7 @@ class SpellController extends Controller
                     ],
                     [
                         'actions' => ['index', 'ajax', 'view'],
-                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'allow' => AccessRightsManager::isRouteAllowed($this),
                         'roles' => ['@'],
                     ],
                 ],

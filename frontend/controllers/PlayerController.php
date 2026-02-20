@@ -4,7 +4,7 @@ namespace frontend\controllers;
 
 use common\components\AppStatus;
 use common\components\ContextManager;
-use common\components\ManageAccessRights;
+use common\components\AccessRightsManager;
 use common\helpers\SaveHelper;
 use common\helpers\Status;
 use common\models\Player;
@@ -55,7 +55,7 @@ class PlayerController extends Controller
                             'set-current',
                             'history',
                         ],
-                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'allow' => AccessRightsManager::isRouteAllowed($this),
                         'roles' => ['@'],
                     ],
                 ],

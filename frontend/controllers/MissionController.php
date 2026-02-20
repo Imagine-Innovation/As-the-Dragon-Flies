@@ -2,7 +2,7 @@
 
 namespace frontend\controllers;
 
-use common\components\ManageAccessRights;
+use common\components\AccessRightsManager;
 use common\helpers\FindModelHelper;
 use common\helpers\JsonHelper;
 use common\models\Mission;
@@ -44,7 +44,7 @@ class MissionController extends Controller
                             'add-detail',
                             'edit-detail',
                         ],
-                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'allow' => AccessRightsManager::isRouteAllowed($this),
                         'roles' => ['@'],
                     ],
                 ],

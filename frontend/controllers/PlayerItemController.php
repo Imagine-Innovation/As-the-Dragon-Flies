@@ -2,7 +2,7 @@
 
 namespace frontend\controllers;
 
-use common\components\ManageAccessRights;
+use common\components\AccessRightsManager;
 use common\helpers\FindModelHelper;
 use common\helpers\SaveHelper;
 use common\models\Item;
@@ -49,7 +49,7 @@ class PlayerItemController extends Controller
                             'ajax-equip-player',
                             'ajax-disarm-player',
                         ],
-                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'allow' => AccessRightsManager::isRouteAllowed($this),
                         'roles' => ['@'],
                     ],
                 ],

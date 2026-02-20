@@ -3,7 +3,7 @@
 namespace frontend\controllers;
 
 use common\components\AppStatus;
-use common\components\ManageAccessRights;
+use common\components\AccessRightsManager;
 use common\helpers\FindModelHelper;
 use common\helpers\SaveHelper;
 use common\models\BackgroundItem;
@@ -67,7 +67,7 @@ class PlayerBuilderController extends Controller
                             'ajax-save-equipment',
                             'ajax-update-language',
                         ],
-                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'allow' => AccessRightsManager::isRouteAllowed($this),
                         'roles' => ['@'],
                     ],
                 ],

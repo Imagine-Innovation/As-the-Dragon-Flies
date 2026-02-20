@@ -1,6 +1,6 @@
 <?php
 
-use common\components\ManageAccessRights;
+use common\components\AccessRightsManager;
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */
@@ -12,7 +12,7 @@ use yii\helpers\Url;
 <div class="btn-group">
     <?php foreach ($actions as $action): ?>
 
-        <?php if (ManageAccessRights::isActionButtonAllowed($action, $controller, $isOwner, 'table')): ?>
+        <?php if (AccessRightsManager::isActionButtonAllowed($action, $controller, $isOwner, 'table')): ?>
 
             <?php
 

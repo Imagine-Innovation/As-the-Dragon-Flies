@@ -2,7 +2,7 @@
 
 namespace frontend\controllers;
 
-use common\components\ManageAccessRights;
+use common\components\AccessRightsManager;
 use common\models\ClassImage;
 use common\models\Image;
 use frontend\components\AjaxRequest;
@@ -45,7 +45,7 @@ class ImageController extends Controller
                             'ajax-set-class',
                             'ajax-upload',
                         ],
-                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'allow' => AccessRightsManager::isRouteAllowed($this),
                         'roles' => ['@'],
                     ],
                 ],

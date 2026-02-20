@@ -3,7 +3,7 @@
 namespace frontend\controllers;
 
 use common\components\AppStatus;
-use common\components\ManageAccessRights;
+use common\components\AccessRightsManager;
 use common\helpers\SaveHelper;
 use common\helpers\Status;
 use common\models\User;
@@ -51,7 +51,7 @@ class UserController extends Controller
                             'ajax',
                             'ajax-set-role',
                         ],
-                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'allow' => AccessRightsManager::isRouteAllowed($this),
                         'roles' => ['@'],
                     ],
                 ],

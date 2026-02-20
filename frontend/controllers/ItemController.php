@@ -2,7 +2,7 @@
 
 namespace frontend\controllers;
 
-use common\components\ManageAccessRights;
+use common\components\AccessRightsManager;
 use common\models\Item;
 use frontend\components\AjaxRequest;
 use Yii;
@@ -35,7 +35,7 @@ class ItemController extends Controller
                     ],
                     [
                         'actions' => ['index', 'shop', 'ajax', 'ajax-images', 'view'],
-                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'allow' => AccessRightsManager::isRouteAllowed($this),
                         'roles' => ['@'],
                     ],
                 ],

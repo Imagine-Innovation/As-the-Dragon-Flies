@@ -2,7 +2,7 @@
 
 namespace frontend\controllers;
 
-use common\components\ManageAccessRights;
+use common\components\AccessRightsManager;
 use common\models\Notification;
 use frontend\components\AjaxRequest;
 use frontend\components\QuestNotification;
@@ -43,7 +43,7 @@ class NotificationController extends Controller
                             'ajax',
                             'ajax-mark-as-read',
                         ],
-                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'allow' => AccessRightsManager::isRouteAllowed($this),
                         'roles' => ['@'],
                     ],
                 ],

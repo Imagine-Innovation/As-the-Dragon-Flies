@@ -2,7 +2,7 @@
 
 namespace frontend\controllers;
 
-use common\components\ManageAccessRights;
+use common\components\AccessRightsManager;
 use common\models\Wizard;
 use common\models\WizardQuestion;
 use Yii;
@@ -37,7 +37,7 @@ class WizardController extends Controller
                     ],
                     [
                         'actions' => ['index', 'ajax-question', 'view'],
-                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'allow' => AccessRightsManager::isRouteAllowed($this),
                         'roles' => ['@'],
                     ],
                 ],

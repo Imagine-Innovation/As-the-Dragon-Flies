@@ -4,7 +4,7 @@ namespace frontend\controllers;
 
 use common\components\AppStatus;
 use common\components\ContextManager;
-use common\components\ManageAccessRights;
+use common\components\AccessRightsManager;
 use common\helpers\SaveHelper;
 use common\helpers\Utilities;
 use common\models\LoginForm;
@@ -51,7 +51,7 @@ class SiteController extends Controller
                     [
                         'actions' => ['logout', 'ajax-toast', 'websocket'],
                         //                        'allow' => true,
-                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'allow' => AccessRightsManager::isRouteAllowed($this),
                         'roles' => ['@'],
                     ],
                 ],
@@ -195,7 +195,7 @@ class SiteController extends Controller
      */
     public function actionIcons(): string
     {
-        ManageAccessRights::isRouteAllowed($this);
+        AccessRightsManager::isRouteAllowed($this);
         return $this->render('icons');
     }
 
@@ -205,7 +205,7 @@ class SiteController extends Controller
      */
     public function actionFonts(): string
     {
-        ManageAccessRights::isRouteAllowed($this);
+        AccessRightsManager::isRouteAllowed($this);
         return $this->render('fonts');
     }
 
@@ -215,7 +215,7 @@ class SiteController extends Controller
      */
     public function actionGame(): string
     {
-        ManageAccessRights::isRouteAllowed($this);
+        AccessRightsManager::isRouteAllowed($this);
         return $this->render('game');
     }
 
@@ -225,7 +225,7 @@ class SiteController extends Controller
      */
     public function actionColors(): string
     {
-        ManageAccessRights::isRouteAllowed($this);
+        AccessRightsManager::isRouteAllowed($this);
         return $this->render('colors');
     }
 

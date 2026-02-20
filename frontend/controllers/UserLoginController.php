@@ -2,7 +2,7 @@
 
 namespace frontend\controllers;
 
-use common\components\ManageAccessRights;
+use common\components\AccessRightsManager;
 use common\models\UserLogin;
 use frontend\components\AjaxRequest;
 use Yii;
@@ -37,7 +37,7 @@ class UserLoginController extends Controller
                     ],
                     [
                         'actions' => ['index', 'ajax'],
-                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'allow' => AccessRightsManager::isRouteAllowed($this),
                         'roles' => ['@'],
                     ],
                 ],

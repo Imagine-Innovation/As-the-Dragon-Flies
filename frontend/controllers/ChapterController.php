@@ -2,7 +2,7 @@
 
 namespace frontend\controllers;
 
-use common\components\ManageAccessRights;
+use common\components\AccessRightsManager;
 use common\helpers\FindModelHelper;
 use common\models\Chapter;
 use Yii;
@@ -40,7 +40,7 @@ class ChapterController extends Controller
                             'view',
                             'update',
                         ],
-                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'allow' => AccessRightsManager::isRouteAllowed($this),
                         'roles' => ['@'],
                     ],
                 ],

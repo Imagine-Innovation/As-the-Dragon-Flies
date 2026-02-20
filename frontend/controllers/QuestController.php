@@ -23,7 +23,7 @@ use common\components\ContextManager;
 use common\components\gameplay\ChatManager;
 use common\components\gameplay\QuestManager;
 use common\components\gameplay\TavernManager;
-use common\components\ManageAccessRights;
+use common\components\AccessRightsManager;
 use common\helpers\FindModelHelper;
 use common\helpers\SaveHelper;
 use common\helpers\UserErrorMessage;
@@ -84,7 +84,7 @@ class QuestController extends Controller
                             'ajax-send-message',
                             'ajax-welcome-messages',
                         ],
-                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'allow' => AccessRightsManager::isRouteAllowed($this),
                         'roles' => ['@'],
                     ],
                 ],

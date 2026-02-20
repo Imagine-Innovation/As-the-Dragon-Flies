@@ -14,7 +14,7 @@ use yii\db\ActiveQuery;
 use yii\web\Controller;
 
 /** @template T of \yii\web\Controller */
-class ManageAccessRights extends Component
+class AccessRightsManager extends Component
 {
     // --- Strict Accessors (The Level 8/9 "Secret Sauce") ---
 
@@ -27,7 +27,7 @@ class ManageAccessRights extends Component
     private static function getAction(Controller $controller): string
     {
         if ($controller->action === null) {
-            throw new RuntimeException('ManageAccessRights component error: Action is missing.');
+            throw new RuntimeException('AccessRightsManager component error: Action is missing.');
         }
         return $controller->action->id;
     }

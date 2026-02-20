@@ -1,6 +1,6 @@
 <?php
 
-use common\components\ManageAccessRights;
+use common\components\AccessRightsManager;
 use frontend\widgets\Button;
 use yii\helpers\Url;
 
@@ -14,7 +14,7 @@ use yii\helpers\Url;
     <?php
 
     foreach ($actions as $action) {
-        if (ManageAccessRights::isActionButtonAllowed($action, $controller, $isOwner, 'view')) {
+        if (AccessRightsManager::isActionButtonAllowed($action, $controller, $isOwner, 'view')) {
             if ($action['mode'] === 'POST') {
                 echo
                     Button::widget([

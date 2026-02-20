@@ -2,7 +2,7 @@
 
 namespace frontend\controllers;
 
-use common\components\ManageAccessRights;
+use common\components\AccessRightsManager;
 use common\components\Shopping;
 use common\helpers\FindModelHelper;
 use common\models\Item;
@@ -48,7 +48,7 @@ class PlayerCartController extends Controller
                             'ajax-info',
                             'ajax-item-count',
                         ],
-                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'allow' => AccessRightsManager::isRouteAllowed($this),
                         'roles' => ['@'],
                     ],
                 ],

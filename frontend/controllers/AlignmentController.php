@@ -2,7 +2,7 @@
 
 namespace frontend\controllers;
 
-use common\components\ManageAccessRights;
+use common\components\AccessRightsManager;
 use common\models\Alignment;
 use Yii;
 use yii\filters\AccessControl;
@@ -33,7 +33,7 @@ class AlignmentController extends Controller
                     ],
                     [
                         'actions' => ['ajax-wizard', 'view'],
-                        'allow' => ManageAccessRights::isRouteAllowed($this),
+                        'allow' => AccessRightsManager::isRouteAllowed($this),
                         'roles' => ['@'],
                     ],
                 ],
