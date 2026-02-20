@@ -48,7 +48,7 @@ class Alert extends \yii\bootstrap5\Widget
     /**
      *
      * @param string $type
-     * @param array $flash
+     * @param array<string, string> $flash
      * @return string
      */
     protected function echoAlerts(string $type, array $flash): string
