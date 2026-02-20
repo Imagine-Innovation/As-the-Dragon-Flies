@@ -382,7 +382,7 @@ class AccessRightsManager extends Component
      *      admin: bool,
      *      player: bool,
      *      owner: bool,
-     *      modelName: array<string>,
+     *      controllers: array<string>,
      *      table: bool,
      *      view: bool
      * } $action An associative array containing the action details and requirements.
@@ -396,7 +396,7 @@ class AccessRightsManager extends Component
         $user = Yii::$app->session->get('user');
 
         // Check if the model name is allowed for the action
-        if (!in_array($controller, $action['modelName'])) {
+        if (!in_array($controller, $action['controllers'])) {
             return false;
         }
 

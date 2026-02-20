@@ -1,5 +1,4 @@
 <?php
-
 /** @var \yii\web\View $this */
 
 /** @var string $content */
@@ -24,12 +23,6 @@ $snippet = Yii::$app->user->isGuest ? 'guest' : 'lobby';
         </main>
 
         <?= $this->renderFile('@app/views/layouts/snippets/footer.php') ?>
-
-        <?php if (!Yii::$app->user->isGuest): ?>
-            <script type="text/javascript">
-                console.log('loading main layout');
-            </script>
-        <?php endif; ?>
 
         <?php $this->endBody(); ?>
         <?= $this->renderFile('@app/views/layouts/snippets/javascript.php') ?>
