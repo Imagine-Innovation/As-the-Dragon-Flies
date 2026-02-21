@@ -13,90 +13,7 @@ AppAsset::register($this);
 <html lang="<?= Yii::$app->language ?>" data-bs-theme="dark">
 
     <?= $this->renderFile('@app/views/layouts/snippets/head.php') ?>
-
-    <?php if (1 === 2): ?>
-        <head>
-            <meta charset="<?= Yii::$app->charset ?>">
-            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-            <link href="favicon.png" rel="icon">
-            <meta content="<?= Yii::$app->request->scriptUrl ?>" name="script-url">
-
-            <?= $this->registerCsrfMetaTags() ?>
-
-            <title><?= Html::encode($this->title) ?></title>
-
-            <?php $this->head() ?>
-            <style>
-                :root {
-                    --sidebar-width: 260px;
-                    --sidebar-shrinked: 75px;
-                }
-
-                body {
-                    overflow-x: hidden;
-                }
-                #sidebar {
-                    width: var(--sidebar-width);
-                    transition: width 0.2s ease-in-out;
-                    z-index: 1000;
-                }
-
-                /* Automatic Shrink on Medium Screens (576px to 991px) */
-                @media (min-width: 576px) and (max-width: 991.98px) {
-                    #sidebar {
-                        width: var(--sidebar-shrinked);
-                    }
-                    #sidebar .menu-text, #sidebar .sidebar-heading, #sidebar .logo-text {
-                        display: none;
-                    }
-                    #sidebar .nav-link {
-                        text-align: center;
-                        padding-left: 0;
-                        padding-right: 0;
-                    }
-                    #sidebar .nav-link i {
-                        margin-right: 0 !important;
-                        font-size: 1.3rem;
-                    }
-                }
-
-                /* Manual Shrink class for the Toggle button */
-                #sidebar.manual-shrink {
-                    width: var(--sidebar-shrinked);
-                }
-                #sidebar.manual-shrink .menu-text, #sidebar.manual-shrink .sidebar-heading, #sidebar.manual-shrink .logo-text {
-                    display: none;
-                }
-                #sidebar.manual-shrink .nav-link {
-                    text-align: center;
-                    padding-left: 0;
-                    padding-right: 0;
-                }
-                #sidebar.manual-shrink .nav-link i {
-                    margin-right: 0 !important;
-                }
-
-                /* Hide sidebar on Mobile (handled by Offcanvas) */
-                @media (max-width: 575.98px) {
-                    #sidebar {
-                        display: none;
-                    }
-                }
-
-                .kpi-icon {
-                    font-size: 2.5rem;
-                    opacity: 0.3;
-                    position: absolute;
-                    right: 15px;
-                    bottom: 10px;
-                }
-                .card-kpi {
-                    position: relative;
-                    overflow: hidden;
-                }
-            </style>
-        </head>
-    <?php endif; ?>
+    <?php $this->beginBody(); ?>
     <body>
 
         <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileSidebar">
@@ -260,18 +177,18 @@ AppAsset::register($this);
             </div>
         </div>
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-        <script>
-            // Sidebar manual toggle for Large screens
-            const sidebar = document.getElementById('sidebar');
-            const sidebarToggle = document.getElementById('sidebarToggle');
-            sidebarToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('manual-shrink');
-            });
-
-            // Clone menu for mobile offcanvas on load
-            document.getElementById('mobileSidebarContent').innerHTML = document.getElementById('mainNavContent').innerHTML;
-        </script>
     </body>
+    <?php $this->endBody(); ?>
+    <script>
+        // Sidebar manual toggle for Large screens
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('manual-shrink');
+        });
+
+        // Clone menu for mobile offcanvas on load
+        document.getElementById('mobileSidebarContent').innerHTML = document.getElementById('mainNavContent').innerHTML;
+    </script>
 </html>
 <?php $this->endPage() ?>
