@@ -4,7 +4,7 @@ namespace frontend\controllers;
 
 use common\components\AccessRightsManager;
 use common\models\Notification;
-use frontend\components\AjaxRequest;
+use common\components\AjaxRequest;
 use frontend\components\QuestNotification;
 use Yii;
 use yii\filters\AccessControl;

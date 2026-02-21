@@ -1,6 +1,6 @@
 <?php
 
-namespace frontend\components;
+namespace common\components;
 
 use Yii;
 use yii\db\ActiveQuery;
@@ -9,6 +9,7 @@ use yii\web\Request;
 
 class AjaxRequest
 {
+
     public const NOTAJAX = 0;
     public const FAILED = 1;
     public const NOTHING = 2;
@@ -156,7 +157,7 @@ class AjaxRequest
                 'page' => $page,
                 'pageCount' => $pageCount,
                 'limit' => $limit,
-            ], $this->param)),
+                            ], $this->param)),
         ];
         return true;
     }

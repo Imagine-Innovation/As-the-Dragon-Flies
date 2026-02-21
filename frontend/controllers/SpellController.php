@@ -4,7 +4,7 @@ namespace frontend\controllers;
 
 use common\components\AccessRightsManager;
 use common\models\Spell;
-use frontend\components\AjaxRequest;
+use common\components\AjaxRequest;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;

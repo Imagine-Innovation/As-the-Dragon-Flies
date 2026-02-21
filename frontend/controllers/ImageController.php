@@ -5,7 +5,7 @@ namespace frontend\controllers;
 use common\components\AccessRightsManager;
 use common\models\ClassImage;
 use common\models\Image;
-use frontend\components\AjaxRequest;
+use common\components\AjaxRequest;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;

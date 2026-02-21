@@ -7,7 +7,7 @@ use common\components\AccessRightsManager;
 use common\helpers\Status;
 use common\models\Rule;
 use common\models\RuleExpression;
-use frontend\components\AjaxRequest;
+use common\components\AjaxRequest;
 use Yii;
 use yii\behaviors\AttributeBehavior;
 use yii\db\ActiveRecord;

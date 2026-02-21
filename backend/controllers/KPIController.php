@@ -1,6 +1,6 @@
 <?php
 
-namespace frontend\controllers;
+namespace backend\controllers;
 
 use common\components\AppStatus;
 use common\components\AccessRightsManager;
@@ -31,7 +31,7 @@ use yii\web\Response;
  * PlayerBuilderController implements the CRUD actions for Player model.
  * @extends \yii\web\Controller<\yii\base\Module>
  */
-class PlayerBuilderController extends Controller
+class KPIController extends Controller
 {
 
     /**

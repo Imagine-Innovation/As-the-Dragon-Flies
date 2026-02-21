@@ -9,7 +9,7 @@ use common\helpers\SaveHelper;
 use common\helpers\Status;
 use common\models\Player;
 use common\models\User;
-use frontend\components\AjaxRequest;
+use common\components\AjaxRequest;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;

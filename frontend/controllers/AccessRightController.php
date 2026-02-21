@@ -5,7 +5,7 @@ namespace frontend\controllers;
 use common\components\AccessRightsManager;
 use common\helpers\SaveHelper;
 use common\models\AccessRight;
-use frontend\components\AjaxRequest;
+use common\components\AjaxRequest;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;

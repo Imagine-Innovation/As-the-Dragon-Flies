@@ -4,7 +4,7 @@ namespace frontend\controllers;
 
 use common\components\AccessRightsManager;
 use common\models\Item;
-use frontend\components\AjaxRequest;
+use common\components\AjaxRequest;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;

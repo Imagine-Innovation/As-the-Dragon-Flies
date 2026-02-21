@@ -7,7 +7,7 @@ use common\components\AccessRightsManager;
 use common\helpers\SaveHelper;
 use common\helpers\Status;
 use common\models\User;
-use frontend\components\AjaxRequest;
+use common\components\AjaxRequest;
 use Yii;
 use yii\behaviors\AttributeBehavior;
 use yii\data\ActiveDataProvider;

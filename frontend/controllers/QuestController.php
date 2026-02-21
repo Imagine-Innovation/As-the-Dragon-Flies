@@ -32,7 +32,7 @@ use common\models\Player;
 use common\models\Quest;
 use common\models\QuestPlayer;
 use common\models\Story;
-use frontend\components\AjaxRequest;
+use common\components\AjaxRequest;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\db\Query;
