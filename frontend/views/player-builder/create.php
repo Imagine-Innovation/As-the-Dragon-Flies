@@ -3,7 +3,7 @@
 use frontend\components\BuilderComponent;
 use frontend\widgets\AjaxContainer;
 use frontend\widgets\BuilderTab;
-use frontend\widgets\Button;
+use common\widgets\Button;
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */

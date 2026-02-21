@@ -1,6 +1,6 @@
 <?php
 
-namespace frontend\widgets;
+namespace common\widgets;
 
 use common\helpers\Utilities;
 use Yii;
@@ -9,6 +9,7 @@ use yii\helpers\Html;
 
 class Button extends Widget
 {
+
     public bool $isPost = false; // 'true' if the button triggers a POST request, default='false'
     public ?string $url = null; // URL to call when the button is clicked, default='#'
     public ?string $id = null; // Button ID (for javascript purpose)
@@ -92,7 +93,8 @@ class Button extends Widget
         $closeModal = $this->isCloseModal ? ' data-bs-dismiss="modal"' : '';
         $onclick = $this->onclick ? " onclick=\"{$this->onclick}\"" : '';
         $id = $this->idElement();
-        $aria = $this->ariaParams ? ' ' . Utilities::formatAttributes($this->ariaParams) : '';
+        $aria = $this->ariaParams ? ' ' . Utilities::formatAttributes($this->ariaParams)
+                    : '';
 
         $html = "<a href=\"{$url}\" {$id} role=\"button\" class=\"{$baseCss} {$AdditionalCss}\"{$closeModal}{$this->tooltipElement()}{$aria}{$onclick}>";
         return $html;
@@ -116,7 +118,8 @@ class Button extends Widget
     {
         // Caution: The spaces at the beginning of the line are intentional; do not delete them.
         $tooltip = Html::encode($this->tooltip ?? '');
-        return $this->tooltip ? " data-bs-toggle=\"tooltip\" title=\"{$tooltip}\" data-bs-placement=\"bottom\"" : '';
+        return $this->tooltip ? " data-bs-toggle=\"tooltip\" title=\"{$tooltip}\" data-bs-placement=\"bottom\""
+                    : '';
     }
 
     /**

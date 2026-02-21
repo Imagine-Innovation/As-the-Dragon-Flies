@@ -1,7 +1,7 @@
 <?php
 
 use common\models\PlayerItem;
-use frontend\widgets\Button;
+use common\widgets\Button;
 
 /** @var yii\web\View $this */
 /** @var common\models\PlayerBody $playerBody */

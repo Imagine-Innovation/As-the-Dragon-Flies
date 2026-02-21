@@ -2,7 +2,7 @@
 
 use common\models\RaceGroup;
 use frontend\widgets\AjaxContainer;
-use frontend\widgets\Button;
+use common\widgets\Button;
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */

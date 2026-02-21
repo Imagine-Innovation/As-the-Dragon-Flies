@@ -1,7 +1,7 @@
 <?php
 
 use common\components\Shopping;
-use frontend\widgets\Button;
+use common\widgets\Button;
 use frontend\widgets\CurrentPlayer;
 use yii\helpers\Url;
 

@@ -3,7 +3,7 @@
 use common\components\gameplay\TavernManager;
 use common\helpers\StoryNeededClass;
 use common\helpers\StoryPlayers;
-use frontend\widgets\Button;
+use common\widgets\Button;
 use frontend\widgets\ModalDesc;
 use yii\helpers\Url;
 

@@ -1,7 +1,7 @@
 <?php
 
 use backend\assets\AppAsset;
-use frontend\widgets\Button;
+use common\widgets\Button;
 use yii\helpers\Html;
 use yii\helpers\Url;
 

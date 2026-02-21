@@ -1,6 +1,6 @@
 <?php
 
-use frontend\widgets\Button;
+use common\widgets\Button;
 
 /** @var string $countLabel */
 /** @var array<string, array{url: string, icon: string, tooltip: string}>|null $actions action buttons associated with the context */

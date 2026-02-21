@@ -2,7 +2,7 @@
 
 use common\helpers\Utilities;
 use common\models\Menu;
-use frontend\widgets\Button;
+use common\widgets\Button;
 use yii\helpers\HtmlPurifier;
 use yii\helpers\Url;
 

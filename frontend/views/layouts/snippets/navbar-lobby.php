@@ -2,7 +2,7 @@
 
 use frontend\assets\AppAsset;
 use frontend\helpers\Caligraphy;
-use frontend\widgets\Button;
+use common\widgets\Button;
 use frontend\widgets\CurrentPlayer;
 use frontend\widgets\ToolMenu;
 use yii\bootstrap5\Html;

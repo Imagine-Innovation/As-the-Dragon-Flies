@@ -1,7 +1,7 @@
 <?php
 
 use common\components\AppStatus;
-use frontend\widgets\Button;
+use common\widgets\Button;
 use frontend\widgets\PlayerCharacteristics;
 use yii\helpers\Url;
 

@@ -1,0 +1,1198 @@
+:root {
+    --icon-color: currentColor; /* This will make icons inherit text color */
+}
+
+@font-face {
+    font-display: block;
+    font-family: "bootstrap-icons";
+}
+
+.dnd-dev::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/sword.svg') no-repeat center center;
+    mask: url('icons/sword.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-d20::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/d20.svg') no-repeat center center;
+    mask: url('icons/d20.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-apothecary::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/apothecary.svg') no-repeat center center;
+    mask: url('icons/apothecary.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-badge::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/badge.svg') no-repeat center center;
+    mask: url('icons/badge.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-banner::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/banner.svg') no-repeat center center;
+    mask: url('icons/banner.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-candle::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/candle.svg') no-repeat center center;
+    mask: url('icons/candle.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-castle::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/castle.svg') no-repeat center center;
+    mask: url('icons/castle.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-castle2::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/castle2.svg') no-repeat center center;
+    mask: url('icons/castle2.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-castle3::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/castle3.svg') no-repeat center center;
+    mask: url('icons/castle3.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-cauldron::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/cauldron.svg') no-repeat center center;
+    mask: url('icons/cauldron.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-chest::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/chest.svg') no-repeat center center;
+    mask: url('icons/chest.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-crown::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/crown.svg') no-repeat center center;
+    mask: url('icons/crown.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-crown2::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/crown2.svg') no-repeat center center;
+    mask: url('icons/crown2.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-coin-pouch::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/coin-pouch.svg') no-repeat center center;
+    mask: url('icons/coin-pouch.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-coins::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/coins.svg') no-repeat center center;
+    mask: url('icons/coins.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-coins2::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/coins2.svg') no-repeat center center;
+    mask: url('icons/coins2.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-danger::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/danger.svg') no-repeat center center;
+    mask: url('icons/danger.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-diamond::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/diamond.svg') no-repeat center center;
+    mask: url('icons/diamond.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-dungeon::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/dungeon.svg') no-repeat center center;
+    mask: url('icons/dungeon.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-equipment::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/equipment.svg') no-repeat center center;
+    mask: url('icons/equipment.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-fire::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/fire.svg') no-repeat center center;
+    mask: url('icons/fire.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-gate::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/gate.svg') no-repeat center center;
+    mask: url('icons/gate.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-ghost::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/ghost.svg') no-repeat center center;
+    mask: url('icons/ghost.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-horse::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/horse.svg') no-repeat center center;
+    mask: url('icons/horse.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-key::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/key.svg') no-repeat center center;
+    mask: url('icons/key.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-key2::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/key2.svg') no-repeat center center;
+    mask: url('icons/key2.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-logo::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/logo.svg') no-repeat center center;
+    mask: url('icons/logo.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-magic-wand::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/magic-wand.svg') no-repeat center center;
+    mask: url('icons/magic-wand.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-magic-wand2::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/magic-wand2.svg') no-repeat center center;
+    mask: url('icons/magic-wand2.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-pirate::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/pirate.svg') no-repeat center center;
+    mask: url('icons/pirate.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-potion::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/potion.svg') no-repeat center center;
+    mask: url('icons/potion.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-pouch::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/pouch.svg') no-repeat center center;
+    mask: url('icons/pouch.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-power-off::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/power-off.svg') no-repeat center center;
+    mask: url('icons/power-off.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-ring::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/ring.svg') no-repeat center center;
+    mask: url('icons/ring.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-ring-diamond::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/ring-diamond.svg') no-repeat center center;
+    mask: url('icons/ring-diamond.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-rope::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/rope.svg') no-repeat center center;
+    mask: url('icons/rope.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-scroll::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/scroll.svg') no-repeat center center;
+    mask: url('icons/scroll.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-skull::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/skull.svg') no-repeat center center;
+    mask: url('icons/skull.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-spell::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/spell.svg') no-repeat center center;
+    mask: url('icons/spell.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-spell-book::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/spell-book.svg') no-repeat center center;
+    mask: url('icons/spell-book.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-tent::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/tent.svg') no-repeat center center;
+    mask: url('icons/tent.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-trap::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/trap.svg') no-repeat center center;
+    mask: url('icons/trap.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-tower::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/tower.svg') no-repeat center center;
+    mask: url('icons/tower.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-treble-clef::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/treble-clef.svg') no-repeat center center;
+    mask: url('icons/treble-clef.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-trophy::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/trophy.svg') no-repeat center center;
+    mask: url('icons/trophy.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-action-attack::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/action-attack.svg') no-repeat center center;
+    mask: url('icons/action-attack.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-action-climb::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/action-climb.svg') no-repeat center center;
+    mask: url('icons/action-climb.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-action-fight::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/action-fight.svg') no-repeat center center;
+    mask: url('icons/action-fight.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-action-inventory::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/action-inventory.svg') no-repeat center center;
+    mask: url('icons/action-inventory.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-action-unarmed-strike::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/action-unarmed-strike.svg') no-repeat center center;
+    mask: url('icons/action-unarmed-strike.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-action-hide::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/action-hide.svg') no-repeat center center;
+    mask: url('icons/action-hide.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-action-move::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/action-move.svg') no-repeat center center;
+    mask: url('icons/action-move.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-action-prepare-spell::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/action-prepare-spell.svg') no-repeat center center;
+    mask: url('icons/action-prepare-spell.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-action-pull-lever::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/action-pull-lever.svg') no-repeat center center;
+    mask: url('icons/action-pull-lever.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-action-rest::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/action-rest.svg') no-repeat center center;
+    mask: url('icons/action-rest.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-action-smash-down::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/action-smash-down.svg') no-repeat center center;
+    mask: url('icons/action-smash-down.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-action-run::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/action-run.svg') no-repeat center center;
+    mask: url('icons/action-run.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-weapon::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/weapon.svg') no-repeat center center;
+    mask: url('icons/weapon.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-weapon-arrows::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/weapon-arrows.svg') no-repeat center center;
+    mask: url('icons/weapon-arrows.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-weapon-axe::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/weapon-axe.svg') no-repeat center center;
+    mask: url('icons/weapon-axe.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-weapon-crossbow::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/weapon-crossbow.svg') no-repeat center center;
+    mask: url('icons/weapon-crossbow.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-weapon-glaive::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/weapon-glaive.svg') no-repeat center center;
+    mask: url('icons/weapon-glaive.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-weapon-sword::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/weapon-sword.svg') no-repeat center center;
+    mask: url('icons/weapon-sword.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-weapon-bow::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/weapon-bow.svg') no-repeat center center;
+    mask: url('icons/weapon-bow.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-armor::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/armor.svg') no-repeat center center;
+    mask: url('icons/armor.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-armor-plate::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/armor-plate.svg') no-repeat center center;
+    mask: url('icons/armor-plate.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-armor-shield::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/armor-shield.svg') no-repeat center center;
+    mask: url('icons/armor-shield.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-armor-round-shield::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/armor-round-shield.svg') no-repeat center center;
+    mask: url('icons/armor-round-shield.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-armor-helmet::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/armor-helmet.svg') no-repeat center center;
+    mask: url('icons/armor-helmet.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-armor-helmet-large::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/armor-helmet-large.svg') no-repeat center center;
+    mask: url('icons/armor-helmet-large.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-armor-helmet-plume::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/armor-helmet-plume.svg') no-repeat center center;
+    mask: url('icons/armor-helmet-plume.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-armor-spartan::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/armor-spartan.svg') no-repeat center center;
+    mask: url('icons/armor-spartan.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-class-wizard::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/class-wizard.svg') no-repeat center center;
+    mask: url('icons/class-wizard.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-class-barbarian::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/class-barbarian.svg') no-repeat center center;
+    mask: url('icons/class-barbarian.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-class-bard::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/class-bard.svg') no-repeat center center;
+    mask: url('icons/class-bard.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-class-rogue::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/class-rogue.svg') no-repeat center center;
+    mask: url('icons/class-rogue.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-class-sorcerer::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/class-sorcerer.svg') no-repeat center center;
+    mask: url('icons/class-sorcerer.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-monster::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/monster.svg') no-repeat center center;
+    mask: url('icons/monster.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-monster2::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/monster2.svg') no-repeat center center;
+    mask: url('icons/monster2.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-monster-dragon::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/monster-dragon.svg') no-repeat center center;
+    mask: url('icons/monster-dragon.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-race-dwarf::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/race-dwarf.svg') no-repeat center center;
+    mask: url('icons/race-dwarf.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-race-elf::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/race-elf.svg') no-repeat center center;
+    mask: url('icons/race-elf.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-race-orc::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/race-orc.svg') no-repeat center center;
+    mask: url('icons/race-orc.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-horse::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/horse.svg') no-repeat center center;
+    mask: url('icons/horse.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-condition-stunned::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/condition-stunned.svg') no-repeat center center;
+    mask: url('icons/condition-stunned.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}

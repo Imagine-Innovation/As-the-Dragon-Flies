@@ -2,7 +2,7 @@
 
 use common\helpers\Utilities;
 use common\models\Alignment;
-use frontend\widgets\Button;
+use common\widgets\Button;
 
 /** @var yii\web\View $this */
 /** @var frontend\models\PlayerBuilder $model */

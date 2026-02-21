@@ -1,6 +1,6 @@
 <?php
 
-use frontend\widgets\Button;
+use common\widgets\Button;
 use frontend\widgets\MissionElement;
 use yii\helpers\Url;
 

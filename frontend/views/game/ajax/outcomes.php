@@ -1,7 +1,7 @@
 <?php
 
 use frontend\widgets\ActionOutcomes;
-use frontend\widgets\Button;
+use common\widgets\Button;
 
 /** @var yii\web\View $this */
 /** @var string $diceRoll */

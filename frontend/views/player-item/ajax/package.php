@@ -1,6 +1,6 @@
 <?php
 
-use frontend\widgets\Button;
+use common\widgets\Button;
 
 /** @var yii\web\View $this */
 /** @var array<string, non-empty-list<array{itemId: int, name: string, image: string|null, quantity: int, isProficient: int, isTwoHanded: int, buttonId: non-falsy-string}>> $playerItems */

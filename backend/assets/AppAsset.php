@@ -9,9 +9,11 @@ use yii\web\AssetBundle;
  */
 class AppAsset extends AssetBundle
 {
+
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [
+        'css/icons.css',
         'css/site.css',
     ];
     public $js = [

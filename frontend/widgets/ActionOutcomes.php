@@ -5,7 +5,7 @@ namespace frontend\widgets;
 use common\components\AppStatus;
 use common\models\Outcome;
 use common\helpers\RichTextHelper;
-use frontend\widgets\Button;
+use common\widgets\Button;
 use yii\base\Widget;
 
 class ActionOutcomes extends Widget

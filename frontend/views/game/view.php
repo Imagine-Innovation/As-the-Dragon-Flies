@@ -1,7 +1,7 @@
 <?php
 
 use frontend\widgets\AjaxContainer;
-use frontend\widgets\Button;
+use common\widgets\Button;
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */

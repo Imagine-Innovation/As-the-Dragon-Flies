@@ -1,6 +1,6 @@
 <?php
 
-use frontend\widgets\Button;
+use common\widgets\Button;
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
