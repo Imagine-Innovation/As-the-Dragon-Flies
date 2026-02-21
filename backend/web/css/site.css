@@ -1,90 +1,67 @@
-main > .container {
-    padding: 70px 15px 20px;
+:root {
+    --sidebar-width: 260px;
+    --sidebar-shrinked: 75px;
 }
 
-.footer {
-    background-color: #f5f5f5;
-    font-size: .9em;
-    height: 60px;
+body {
+    overflow-x: hidden;
+}
+#sidebar {
+    width: var(--sidebar-width);
+    transition: width 0.2s ease-in-out;
+    z-index: 1000;
 }
 
-.footer > .container {
-    padding-right: 15px;
-    padding-left: 15px;
-}
-
-.not-set {
-    color: #c55;
-    font-style: italic;
-}
-
-/* add sorting icons to gridview sort links */
-a.asc:after, a.desc:after {
-    content: '';
-    left: 3px;
-    display: inline-block;
-    width: 0;
-    height: 0;
-    border: solid 5px transparent;
-    margin: 4px 4px 2px 4px;
-    background: transparent;
-}
-
-a.asc:after {
-    border-bottom: solid 7px #212529;
-    border-top-width: 0;
-}
-
-a.desc:after {
-    border-top: solid 7px #212529;
-    border-bottom-width: 0;
-}
-
-.grid-view th,
-.grid-view td:last-child {
-    white-space: nowrap;
-}
-
-.grid-view .filters input,
-.grid-view .filters select {
-    min-width: 50px;
-}
-
-.hint-block {
-    display: block;
-    margin-top: 5px;
-    color: #999;
-}
-
-.error-summary {
-    color: #a94442;
-    background: #fdf7f7;
-    border-left: 3px solid #eed3d7;
-    padding: 10px 20px;
-    margin: 0 0 15px 0;
-}
-
-/* align the logout "link" (button in form) of the navbar */
-.nav li > form > button.logout {
-    padding-top: 7px;
-    color: rgba(255, 255, 255, 0.5);
-}
-
-@media(max-width:767px) {
-    .nav li > form > button.logout {
-        display:block;
-        text-align: left;
-        width: 100%;
-        padding: 10px 0;
+/* Automatic Shrink on Medium Screens (576px to 991px) */
+@media (min-width: 576px) and (max-width: 991.98px) {
+    #sidebar {
+        width: var(--sidebar-shrinked);
+    }
+    #sidebar .menu-text, #sidebar .sidebar-heading, #sidebar .logo-text {
+        display: none;
+    }
+    #sidebar .nav-link {
+        text-align: center;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    #sidebar .nav-link i {
+        margin-right: 0 !important;
+        font-size: 1.3rem;
     }
 }
 
-.nav > li > form > button.logout:focus,
-.nav > li > form > button.logout:hover {
-    text-decoration: none;
-    color: rgba(255, 255, 255, 0.75);
+/* Manual Shrink class for the Toggle button */
+#sidebar.manual-shrink {
+    width: var(--sidebar-shrinked);
+}
+#sidebar.manual-shrink .menu-text, #sidebar.manual-shrink .sidebar-heading, #sidebar.manual-shrink .logo-text {
+    display: none;
+}
+#sidebar.manual-shrink .nav-link {
+    text-align: center;
+    padding-left: 0;
+    padding-right: 0;
+}
+#sidebar.manual-shrink .nav-link i {
+    margin-right: 0 !important;
 }
 
-.nav > li > form > button.logout:focus {
-    outline: none;
+/* Hide sidebar on Mobile (handled by Offcanvas) */
+@media (max-width: 575.98px) {
+    #sidebar {
+        display: none;
+    }
+}
+
+.kpi-icon {
+    font-size: 2.5rem;
+    opacity: 0.3;
+    position: absolute;
+    right: 15px;
+    bottom: 10px;
+}
+.card-kpi {
+    position: relative;
+    overflow: hidden;
 }

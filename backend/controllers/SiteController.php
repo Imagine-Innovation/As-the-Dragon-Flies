@@ -11,9 +11,11 @@ use yii\web\Response;
 
 /**
  * Site controller
+ * @extends \yii\web\Controller<\yii\base\Module>
  */
 class SiteController extends Controller
 {
+
     /**
      * {@inheritdoc}
      */
@@ -62,6 +64,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+        $this->layout = 'dashboard';
         return $this->render('index');
     }
 
@@ -86,7 +89,7 @@ class SiteController extends Controller
         $model->password = '';
 
         return $this->render('login', [
-            'model' => $model,
+                    'model' => $model,
         ]);
     }
 

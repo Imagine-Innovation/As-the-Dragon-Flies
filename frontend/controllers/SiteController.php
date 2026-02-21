@@ -50,7 +50,6 @@ class SiteController extends Controller
                     ],
                     [
                         'actions' => ['logout', 'ajax-toast', 'websocket'],
-                        //                        'allow' => true,
                         'allow' => AccessRightsManager::isRouteAllowed($this),
                         'roles' => ['@'],
                     ],
@@ -127,9 +126,9 @@ class SiteController extends Controller
     /**
      * Defines in which state is the user:
      *  0   Starting the game, no player defined
-     *  1   At least on player is defined, but none is selected
+     *  1   At least one player is defined, but none is selected
      *  2   A player is selected, but he is not engaged in a quest
-     *  3   A player is selected ans currently engaged in a quest
+     *  3   A player is selected and currently engaged in a quest
      *
      * @param Player[] $players
      * @param Player|null $player
