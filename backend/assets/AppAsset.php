@@ -17,6 +17,8 @@ class AppAsset extends AssetBundle
         'css/site.css',
     ];
     public $js = [
+        'js/core-library.js',
+        'js/kpi.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',

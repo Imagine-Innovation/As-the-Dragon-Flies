@@ -1,12 +1,18 @@
 <?php
 
 use backend\assets\AppAsset;
+use backend\helpers\KpiHelper;
 use common\widgets\Button;
+use common\widgets\Alert;
+use yii\bootstrap5\Breadcrumbs;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
 /** @var \yii\web\View $this */
 AppAsset::register($this);
+
+$currentUser = Yii::$app->user->identity;
+$containers = json_encode(KpiHelper::containers());
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -18,7 +24,10 @@ AppAsset::register($this);
 
         <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileSidebar">
             <div class="offcanvas-header border-bottom">
-                <h5 class="offcanvas-title"><i class="bi bi-dragon me-2"></i>Admin Menu</h5>
+                <h5 class="offcanvas-title">
+                    <img src="Dragonfly32White.png" alt="<?= Yii::$app->name ?>">
+                    <?= Yii::$app->name ?>
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
             </div>
             <div class="offcanvas-body p-0" id="mobileSidebarContent">
@@ -39,8 +48,9 @@ AppAsset::register($this);
                         </button>
 
                         <ul class="navbar-nav ms-auto align-items-center">
-                            <li class="nav-item px-3 text-secondary border-end d-none d-sm-block">Admin Panel v1.0</li>
-                            <li class="nav-item px-2 ms-2"><a href="#"><i class="bi bi-person-circle fs-4 text-white"></i></a></li>
+                            <li class="nav-item px-3 text-secondary border-end d-none d-sm-block">
+                                <?= $currentUser->fullname ?? $currentUser->username ?>
+                            </li>
                             <li class="nav-item px-2">
                                 <?=
                                 Button::widget([
@@ -56,129 +66,44 @@ AppAsset::register($this);
                 </header>
 
                 <main class="p-4">
-                    <div class="row g-3 mb-4">
-                        <div class="col-12 col-md-6 col-xl-3">
-                            <div class="card card-kpi bg-primary bg-gradient text-white border-0 shadow-sm">
-                                <div class="card-body">
-                                    <h6 class="card-subtitle mb-2 opacity-75">Active Users</h6>
-                                    <h2 class="card-title mb-0">1,240</h2>
-                                    <i class="bi bi-people-fill kpi-icon"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-6 col-xl-3">
-                            <div class="card card-kpi bg-success bg-gradient text-white border-0 shadow-sm">
-                                <div class="card-body">
-                                    <h6 class="card-subtitle mb-2 opacity-75">Active Players</h6>
-                                    <h2 class="card-title mb-0">856</h2>
-                                    <i class="bi bi-controller kpi-icon"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-6 col-xl-3">
-                            <div class="card card-kpi bg-info bg-gradient text-white border-0 shadow-sm">
-                                <div class="card-body">
-                                    <h6 class="card-subtitle mb-2 opacity-75">Available Stories</h6>
-                                    <h2 class="card-title mb-0">42</h2>
-                                    <i class="bi bi-book-half kpi-icon"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-6 col-xl-3">
-                            <div class="card card-kpi bg-danger bg-gradient text-white border-0 shadow-sm">
-                                <div class="card-body">
-                                    <h6 class="card-subtitle mb-2 opacity-75">Total Quests</h6>
-                                    <h2 class="card-title mb-0">312</h2>
-                                    <i class="bi bi-sword kpi-icon"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <section class="content">
+                        <a id="top"></a>
+                        <?=
+                        Breadcrumbs::widget([
+                            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs']
+                                        : [],
+                        ])
+                        ?>
 
-                    <div class="row g-4">
-                        <div class="col-12 col-xxl-6">
-                            <div class="card shadow-sm">
-                                <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center">
-                                    <span class="fw-bold"><i class="bi bi-journal-check me-2"></i>Active Quests</span>
-                                    <button class="btn btn-sm btn-link text-decoration-none">View All</button>
-                                </div>
-                                <div class="table-responsive">
-                                    <table class="table table-hover align-middle mb-0">
-                                        <thead>
-                                            <tr>
-                                                <th>Quest</th>
-                                                <th>Progress</th>
-                                                <th>Initiator</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>The Lost Mine of Phandelver</td>
-                                                <td>
-                                                    <div class="progress" style="height: 8px;">
-                                                        <div class="progress-bar bg-primary" style="width: 75%"></div>
-                                                    </div>
-                                                </td>
-                                                <td><span class="badge bg-secondary">Gundren R.</span></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Slaying the Cryovain</td>
-                                                <td>
-                                                    <div class="progress" style="height: 8px;">
-                                                        <div class="progress-bar bg-warning" style="width: 15%"></div>
-                                                    </div>
-                                                </td>
-                                                <td><span class="badge bg-secondary">Townmaster Harbin</span></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
+                        <div class="content__inner">
+                            <?= Alert::widget() ?>
+
+                            <?= $content ?>
+                        </div>
+
+                        <!-- Toast Markup -->
+                        <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+                            <div class="toast-wrapper">
+                                <div id="toastContainer"></div>
                             </div>
                         </div>
 
-                        <div class="col-12 col-xxl-6">
-                            <div class="card shadow-sm">
-                                <div class="card-header bg-transparent border-bottom">
-                                    <span class="fw-bold"><i class="bi bi-trophy me-2 text-warning"></i>Top 10 Players</span>
-                                </div>
-                                <div class="table-responsive">
-                                    <table class="table table-hover align-middle mb-0">
-                                        <thead>
-                                            <tr>
-                                                <th>Player</th>
-                                                <th>Lvl</th>
-                                                <th>Class</th>
-                                                <th>Race</th>
-                                                <th>XP</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td><i class="bi bi-person-square text-info me-2"></i><strong>Elara</strong></td>
-                                                <td>12</td>
-                                                <td><small>Wizard</small></td>
-                                                <td><small>Elf</small></td>
-                                                <td><span class="text-success">65k</span></td>
-                                            </tr>
-                                            <tr>
-                                                <td><i class="bi bi-person-square text-danger me-2"></i><strong>Korg</strong></td>
-                                                <td>11</td>
-                                                <td><small>Fighter</small></td>
-                                                <td><small>Orc</small></td>
-                                                <td><span class="text-success">58k</span></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    </section>
                 </main>
             </div>
         </div>
 
     </body>
     <?php $this->endBody(); ?>
+
+    <script type="text/javascript">
+        const containers = <?= $containers ?>;
+
+        const kpiManager = new KpiManager(containers, 60);
+        kpiManager.init();
+
+    </script>
+
     <script>
         // Sidebar manual toggle for Large screens
         const sidebar = document.getElementById('sidebar');

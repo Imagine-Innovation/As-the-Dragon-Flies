@@ -1,8 +1,10 @@
 <?php
 
 /** @var \yii\web\View $this */
-use yii\bootstrap5\Html;
+use yii\helpers\Html;
 use yii\helpers\Url;
+
+$webRoot = Url::base();
 ?>
 <head>
     <meta charset="<?= Yii::$app->charset ?>">
@@ -14,5 +16,6 @@ use yii\helpers\Url;
 
     <title><?= Html::encode($this->title) ?></title>
 
+    <meta name="ajax-root-url" content="<?= $webRoot ?>">
     <?php $this->head() ?>
 </head>
