@@ -1,6 +1,5 @@
 class KpiManager {
-    constructor(KPIs, delay) {
-        this.KPIs = KPIs;
+    constructor(delay) {
         this.delay = (delay ?? 300) * 1000; // Convert seconds to milliseconds
         this.timer = null;
     }
@@ -10,6 +9,7 @@ class KpiManager {
      * We trigger an immediate update first, then start the interval.
      */
     init() {
+        CoreLibrary.init();
         if (this.timer)
             return; // Prevent multiple initializations
 
@@ -28,39 +28,45 @@ class KpiManager {
     async updateKpis() {
         Logger.log(1, 'updateKpis', `Refreshing KPIs`);
 
-        // We use Promise.allSettled so that if one API fails, 
-        // the others still have a chance to update.
-        const tasks = this.KPIs.map(kpi => this.refreshSingle(kpi));
-        await Promise.allSettled(tasks);
+        const task = this.refreshKpis();
     }
 
     /**
-     * Internal helper to fetch data and call the existing updateSingleKpi function.
+     * Internal helper to fetch data and call the existing updateEveryKpi function.
      * 
-     * @param array{containerName: string, api: string} kpi
+     * @param array kpis
      * @returns void
      */
-    async refreshSingle(kpi) {
+    async refreshKpis() {
+        Logger.log(2, 'refreshKpis', `async refresh`);
         try {
-            this.updateSingleKpi(kpi.containerName, kpi.api);
+            this.updateEveryKpi();
         } catch (error) {
-            console.error(`Failed to update KPI: ${kpi.containerName}`, error);
+            console.error(`Failed to update KPI`, error);
         }
     }
 
-    updateSingleKpi(container, api) {
-        Logger.log(2, 'updateSingleKpi', `container=${container}, api=${api}`);
+    updateEveryKpi() {
+        Logger.log(3, 'updateEveryKpi', ``);
+
+        AjaxUtils.request({
+            url: 'kpi/update',
+            method: 'GET',
+            successCallback: (response) => {
+                Object.entries(response).forEach(([container, value]) => {
+                    this.updateKpi(container, value);
+                });
+            }
+        });
+    }
+
+    updateKpi(container, value) {
+        Logger.log(2, 'updateKpi', `container=${container}, value=${value}`);
         const target = `#${container}`;
         if (!DOMUtils.exists(target))
             return;
 
-        AjaxUtils.request({
-            url: api,
-            method: 'GET',
-            successCallback: (response) => {
-                $(target).text(response.kpi);
-            }
-        });
+        $(target).text(value);
     }
 
     /**

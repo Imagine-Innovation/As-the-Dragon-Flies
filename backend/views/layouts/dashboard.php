@@ -12,7 +12,6 @@ use yii\helpers\Url;
 AppAsset::register($this);
 
 $currentUser = Yii::$app->user->identity;
-$containers = json_encode(KpiHelper::containers());
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -97,9 +96,7 @@ $containers = json_encode(KpiHelper::containers());
     <?php $this->endBody(); ?>
 
     <script type="text/javascript">
-        const containers = <?= $containers ?>;
-
-        const kpiManager = new KpiManager(containers, 60);
+        const kpiManager = new KpiManager(60);
         kpiManager.init();
 
     </script>

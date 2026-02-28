@@ -5,7 +5,7 @@ namespace backend\helpers;
 class KpiHelper
 {
 
-    const KPI = [
+    public const KPI = [
         'users' => [
             'title' => 'Active Users',
             'icon' => 'bi-people-fill',
@@ -91,24 +91,5 @@ class KpiHelper
     public static function mdBreakpoint(): int
     {
         return self::rowColumns('md');
-    }
-
-    /**
-     *
-     * @return array{containerName: string, api: string, response: string}
-     */
-    public static function containers(): array
-    {
-        /** @var array{containerName: string, api: string} */
-        $containers = [];
-        foreach (self::KPI as $kpi) {
-            $containers[] = [
-                'containerName' => $kpi['containerName'],
-                'api' => $kpi['api'],
-                'response' => $kpi['response'],
-            ];
-        }
-        /** @phpstan-ignore-next-line */
-        return $containers;
     }
 }

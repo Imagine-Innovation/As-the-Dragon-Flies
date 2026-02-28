@@ -1,11 +1,6 @@
 <?php
-
-use backend\helpers\KpiHelper;
-
 /** @var yii\web\View $this */
 $this->title = Yii::$app->name;
-
-$containers = json_encode(KpiHelper::containers());
 ?>
 <?= $this->renderFile('@app/views/site/snippets/Kpi.php') ?>
 
