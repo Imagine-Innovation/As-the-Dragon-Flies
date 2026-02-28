@@ -9,6 +9,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 
 /** @var \yii\web\View $this */
+/** @var string $content */
 AppAsset::register($this);
 
 $currentUser = Yii::$app->user->identity;

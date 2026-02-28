@@ -53,7 +53,7 @@ class KpiManager {
             url: 'kpi/update',
             method: 'GET',
             successCallback: (response) => {
-                Object.entries(response).forEach(([container, value]) => {
+                Object.entries(response.content).forEach(([container, value]) => {
                     this.updateKpi(container, value);
                 });
             }
