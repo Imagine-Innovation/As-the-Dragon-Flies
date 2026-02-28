@@ -12,6 +12,7 @@ use Yii;
  * @property int|null $player_id Optional foreign key to “player” table
  * @property int|null $quest_id Optional foreign key to “quest” table
  * @property int|null $action_at Action was triggerd at
+ * @property string $application Calling application
  * @property string|null $ip_address IP Address
  * @property int $denied Is action denied
  * @property string|null $reason Reason why
@@ -23,72 +24,44 @@ use Yii;
  */
 class UserLog extends \yii\db\ActiveRecord
 {
+
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'user_log';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [
-                ['access_right_id', 'player_id', 'quest_id', 'action_at', 'ip_address', 'reason'],
-                'default',
-                'value' => null,
-            ],
+            [['access_right_id', 'player_id', 'quest_id', 'action_at', 'ip_address', 'reason'], 'default', 'value' => null],
+            [['application'], 'default', 'value' => 'Unknown'],
             [['denied'], 'default', 'value' => 0],
             [['user_id'], 'required'],
             [['user_id', 'access_right_id', 'player_id', 'quest_id', 'action_at', 'denied'], 'integer'],
-            [['ip_address'], 'string', 'max' => 64],
+            [['application', 'ip_address'], 'string', 'max' => 64],
             [['reason'], 'string', 'max' => 255],
-            [
-                ['user_id'],
-                'exist',
-                'skipOnError' => true,
-                'targetClass' => User::class,
-                'targetAttribute' => ['user_id' => 'id'],
-            ],
-            [
-                ['access_right_id'],
-                'exist',
-                'skipOnError' => true,
-                'targetClass' => AccessRight::class,
-                'targetAttribute' => ['access_right_id' => 'id'],
-            ],
-            [
-                ['player_id'],
-                'exist',
-                'skipOnError' => true,
-                'targetClass' => Player::class,
-                'targetAttribute' => ['player_id' => 'id'],
-            ],
-            [
-                ['quest_id'],
-                'exist',
-                'skipOnError' => true,
-                'targetClass' => Quest::class,
-                'targetAttribute' => ['quest_id' => 'id'],
-            ],
+            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
+            [['access_right_id'], 'exist', 'skipOnError' => true, 'targetClass' => AccessRight::class, 'targetAttribute' => ['access_right_id' => 'id']],
+            [['player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['player_id' => 'id']],
+            [['quest_id'], 'exist', 'skipOnError' => true, 'targetClass' => Quest::class, 'targetAttribute' => ['quest_id' => 'id']],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'user_id' => 'Foreign key to “user” table',
             'access_right_id' => 'Optional Foreign key to “access_right” table',
             'player_id' => 'Optional foreign key to “player” table',
             'quest_id' => 'Optional foreign key to “quest” table',
             'action_at' => 'Action was triggerd at',
+            'application' => 'Calling application',
             'ip_address' => 'IP Address',
             'denied' => 'Is action denied',
             'reason' => 'Reason why',
@@ -100,8 +73,7 @@ class UserLog extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<AccessRight>
      */
-    public function getAccessRight()
-    {
+    public function getAccessRight() {
         return $this->hasOne(AccessRight::class, ['id' => 'access_right_id']);
     }
 
@@ -110,8 +82,7 @@ class UserLog extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Player>
      */
-    public function getPlayer()
-    {
+    public function getPlayer() {
         return $this->hasOne(Player::class, ['id' => 'player_id']);
     }
 
@@ -120,8 +91,7 @@ class UserLog extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Quest>
      */
-    public function getQuest()
-    {
+    public function getQuest() {
         return $this->hasOne(Quest::class, ['id' => 'quest_id']);
     }
 
@@ -130,8 +100,7 @@ class UserLog extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<User>
      */
-    public function getUser()
-    {
+    public function getUser() {
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 }

@@ -7,40 +7,40 @@ use Yii;
 /**
  * This is the model class for table "access_count".
  *
+ * @property string $application Calling application
  * @property string $route Controller route
  * @property string $action Controller action
  * @property int $calls Calls
  */
 class AccessCount extends \yii\db\ActiveRecord
 {
+
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'access_count';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['calls'], 'default', 'value' => 1],
-            [['route', 'action'], 'required'],
+            [['application', 'route', 'action'], 'required'],
             [['calls'], 'integer'],
-            [['route', 'action'], 'string', 'max' => 64],
-            [['route', 'action'], 'unique', 'targetAttribute' => ['route', 'action']],
+            [['application', 'route', 'action'], 'string', 'max' => 64],
+            [['application', 'route', 'action'], 'unique', 'targetAttribute' => ['application', 'route', 'action']],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
+            'application' => 'Calling application',
             'route' => 'Controller route',
             'action' => 'Controller action',
             'calls' => 'Calls',

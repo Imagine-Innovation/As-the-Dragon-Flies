@@ -152,12 +152,14 @@ class AccessRightsManager extends Component
 
     private static function countAccess(string $route, string $action): bool
     {
-        $accessCount = AccessCount::findOne(['route' => $route, 'action' => $action]);
+        $appId = \Yii::$app->id;
+
+        $accessCount = AccessCount::findOne(['application' => $appId, 'route' => $route, 'action' => $action]);
 
         if ($accessCount) {
             $accessCount->calls = $accessCount->calls + 1;
         } else {
-            $accessCount = new AccessCount(['route' => $route, 'action' => $action]);
+            $accessCount = new AccessCount(['application' => $appId, 'route' => $route, 'action' => $action]);
         }
 
         return $accessCount->save(false);
@@ -331,8 +333,8 @@ class AccessRightsManager extends Component
             }
         }
 
-        $sql = 'INSERT INTO `user_log` (`user_id`, `access_right_id`, `player_id`, `quest_id`, `ip_address`, `action_at`, `denied`, `reason`)'
-                . ' VALUES (:user_id, :access_right_id, :player_id, :quest_id, :ip_address, :action_at, :denied, :reason)';
+        $sql = 'INSERT INTO `user_log` (`user_id`, `access_right_id`, `player_id`, `quest_id`, `ip_address`, `action_at`, `application`, `denied`, `reason`)'
+                . ' VALUES (:user_id, :access_right_id, :player_id, :quest_id, :ip_address, :action_at, :application, :denied, :reason)';
 
         $values = [
             ':user_id' => $user->id,
@@ -341,6 +343,7 @@ class AccessRightsManager extends Component
             ':quest_id' => $questId,
             ':ip_address' => Yii::$app->getRequest()->getUserIP(),
             ':action_at' => time(),
+            ':application' => \Yii::$app->id,
             ':denied' => $denied ? 1 : 0,
             ':reason' => $reason,
         ];
