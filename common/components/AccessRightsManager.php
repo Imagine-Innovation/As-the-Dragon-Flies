@@ -307,21 +307,17 @@ class AccessRightsManager extends Component
      * @param bool $denied
      * @param string $severity
      * @param string $reason
-     * @return array{
-     *     denied: bool,
-     *     severity: string,
-     *     reason: string
-     * }
+     * @return array{denied: bool, severity: string, reason: string}
      * @throws \Exception
      */
     private static function logAccess(?int $accessRightId, bool $denied, string $severity, string $reason): array
     {
-        $user = Yii::$app->session->get('user') ?? Yii::$app->user->identity;
-        //$playerId = Yii::$app->session->get('playerId');
-        //$questId = Yii::$app->session->get('questId');
+        $user = Yii::$app->user->identity;
         if (!$user) {
             return ['denied' => false, 'severity' => 'none', 'reason' => 'User is not logged in'];
         }
+        $playerId = null;
+        $questId = null;
         if ($user->current_player_id) {
             $player = Yii::$app
                     ->db
@@ -329,11 +325,10 @@ class AccessRightsManager extends Component
                         ':playerId' => $user->current_player_id,
                     ])
                     ->queryOne();
-            $playerId = $player['id'];
-            $questId = $player['quest_id'];
-        } else {
-            $playerId = null;
-            $questId = null;
+            if ($player) {
+                $playerId = $player['id'];
+                $questId = $player['quest_id'];
+            }
         }
 
         $sql = 'INSERT INTO `user_log` (`user_id`, `access_right_id`, `player_id`, `quest_id`, `ip_address`, `action_at`, `denied`, `reason`)'

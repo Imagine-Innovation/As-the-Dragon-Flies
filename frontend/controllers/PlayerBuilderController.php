@@ -11,6 +11,7 @@ use common\models\ClassEquipment;
 use common\models\Image;
 use common\models\Item;
 use common\models\Player;
+use common\models\PlayerBody;
 use common\models\PlayerItem;
 use common\models\PlayerLanguage;
 use common\components\AjaxRequest;
@@ -19,7 +20,6 @@ use frontend\components\PlayerComponent;
 use frontend\models\PlayerBuilder;
 use Yii;
 use yii\filters\AccessControl;
-use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
@@ -693,6 +693,9 @@ class PlayerBuilderController extends Controller
         if ($this->request->isPost) {
             $post = (array) $this->request->post();
             if ($playerBuilder->load($post) && $playerBuilder->save()) {
+                $playerId = $playerBuilder->id;
+                $playerBody = new PlayerBody(['player_id' => $playerId]);
+                SaveHelper::save($playerBody);
                 return $this->redirect(['update', 'id' => $playerBuilder->id]);
             }
         } else {
