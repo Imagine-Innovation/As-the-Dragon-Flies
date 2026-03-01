@@ -188,47 +188,6 @@ class SiteController extends Controller
     }
 
     /**
-     * Displays homepage.
-     *
-     * @return string
-     */
-    public function actionIcons(): string
-    {
-        AccessRightsManager::isRouteAllowed($this);
-        return $this->render('icons');
-    }
-
-    /**
-     *
-     * @return string
-     */
-    public function actionFonts(): string
-    {
-        AccessRightsManager::isRouteAllowed($this);
-        return $this->render('fonts');
-    }
-
-    /**
-     *
-     * @return string
-     */
-    public function actionGame(): string
-    {
-        AccessRightsManager::isRouteAllowed($this);
-        return $this->render('game');
-    }
-
-    /**
-     *
-     * @return string
-     */
-    public function actionColors(): string
-    {
-        AccessRightsManager::isRouteAllowed($this);
-        return $this->render('colors');
-    }
-
-    /**
      * Logs in a user.
      *
      * @return string|Response

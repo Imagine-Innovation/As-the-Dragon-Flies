@@ -31,7 +31,7 @@ class SiteController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout', 'index'],
+                        'actions' => ['logout', 'index', 'colors', 'fonts', 'icons'],
                         'allow' => AccessRightsManager::isRouteAllowed($this),
                         // 'allow' => true,
                         'roles' => ['@'],
@@ -105,5 +105,36 @@ class SiteController extends Controller
         Yii::$app->user->logout();
 
         return $this->goHome();
+    }
+
+    /**
+     * Displays homepage.
+     *
+     * @return string
+     */
+    public function actionIcons(): string
+    {
+        AccessRightsManager::isRouteAllowed($this);
+        return $this->render('icons');
+    }
+
+    /**
+     *
+     * @return string
+     */
+    public function actionFonts(): string
+    {
+        AccessRightsManager::isRouteAllowed($this);
+        return $this->render('fonts');
+    }
+
+    /**
+     *
+     * @return string
+     */
+    public function actionColors(): string
+    {
+        AccessRightsManager::isRouteAllowed($this);
+        return $this->render('colors');
     }
 }
