@@ -8,6 +8,7 @@ use Yii;
  * This is the model class for table "access_right".
  *
  * @property int $id Primary key
+ * @property string $application Calling application
  * @property string $route Route
  * @property string $action Action
  * @property int $is_admin An admin can access
@@ -22,34 +23,33 @@ use Yii;
  */
 class AccessRight extends \yii\db\ActiveRecord
 {
+
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'access_right';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['route', 'action', 'is_admin', 'is_designer', 'is_player', 'has_player', 'in_quest'], 'required'],
+            [['application', 'route', 'action', 'is_admin', 'is_designer', 'is_player', 'has_player', 'in_quest'], 'required'],
             [['is_admin', 'is_designer', 'is_player', 'has_player', 'in_quest'], 'integer'],
-            [['route', 'action'], 'string', 'max' => 64],
-            [['route', 'action'], 'unique', 'targetAttribute' => ['route', 'action']],
+            [['application', 'route', 'action'], 'string', 'max' => 64],
+            [['application', 'route', 'action'], 'unique', 'targetAttribute' => ['application', 'route', 'action']],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => 'Primary key',
+            'application' => 'Calling application',
             'route' => 'Route',
             'action' => 'Action',
             'is_admin' => 'An admin can access',
@@ -65,8 +65,7 @@ class AccessRight extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<AccessRightActionButton>
      */
-    public function getAccessRightActionButtons()
-    {
+    public function getAccessRightActionButtons() {
         return $this->hasMany(AccessRightActionButton::class, ['access_right_id' => 'id']);
     }
 
@@ -75,8 +74,7 @@ class AccessRight extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Menu>
      */
-    public function getMenu()
-    {
+    public function getMenu() {
         return $this->hasOne(Menu::class, ['access_right_id' => 'id']);
     }
 
@@ -85,8 +83,7 @@ class AccessRight extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<UserLog>
      */
-    public function getUserLogs()
-    {
+    public function getUserLogs() {
         return $this->hasMany(UserLog::class, ['access_right_id' => 'id']);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use common\components\AccessRightsManager;
 use common\models\LoginForm;
 use Yii;
 use yii\filters\VerbFilter;
@@ -31,7 +32,8 @@ class SiteController extends Controller
                     ],
                     [
                         'actions' => ['logout', 'index'],
-                        'allow' => true,
+                        'allow' => AccessRightsManager::isRouteAllowed($this),
+                        // 'allow' => true,
                         'roles' => ['@'],
                     ],
                 ],

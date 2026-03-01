@@ -37,8 +37,8 @@ class KpiController extends Controller
                     ],
                     [
                         'actions' => ['update'],
-//                        'allow' => AccessRightsManager::isRouteAllowed($this),
-                        'allow' => true,
+                        'allow' => AccessRightsManager::isRouteAllowed($this),
+                        // 'allow' => true,
                         'roles' => ['@'],
                     ],
                 ],

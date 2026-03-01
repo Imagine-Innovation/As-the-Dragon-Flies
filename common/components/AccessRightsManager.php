@@ -59,6 +59,9 @@ class AccessRightsManager extends Component
             bool $inQuest = false,
     ): ActiveQuery
     {
+        // Side effect: Id=1 does not exist. This statement is used as a first
+        // query that returns no records so that it can then be used to
+        // aggregate queries using UNION.
         $accesRights = AccessRight::find()->select('id')->where(['id' => 1]);
         if ($user->is_player) {
             // Get access rights for players
@@ -139,12 +142,16 @@ class AccessRightsManager extends Component
 
     private static function getAccessRight(string $route, string $action): ?AccessRight
     {
+        $application = \Yii::$app->id;
+
         $accessRightData = Yii::$app
                 ->db
-                ->createCommand('SELECT * FROM `access_right` WHERE `route` = :route AND `action` = :action', [
+                ->createCommand('SELECT * FROM `access_right`'
+                        . ' WHERE `application` = :application AND `route` = :route AND `action` = :action', [
+                    ':application' => $application,
                     ':route' => $route,
                     ':action' => $action,
-                ])
+                        ])
                 ->queryOne();
 
         return $accessRightData ? new AccessRight($accessRightData) : null;
@@ -152,14 +159,14 @@ class AccessRightsManager extends Component
 
     private static function countAccess(string $route, string $action): bool
     {
-        $appId = \Yii::$app->id;
+        $application = \Yii::$app->id;
 
-        $accessCount = AccessCount::findOne(['application' => $appId, 'route' => $route, 'action' => $action]);
+        $accessCount = AccessCount::findOne(['application' => $application, 'route' => $route, 'action' => $action]);
 
         if ($accessCount) {
             $accessCount->calls = $accessCount->calls + 1;
         } else {
-            $accessCount = new AccessCount(['application' => $appId, 'route' => $route, 'action' => $action]);
+            $accessCount = new AccessCount(['application' => $application, 'route' => $route, 'action' => $action]);
         }
 
         return $accessCount->save(false);
@@ -179,28 +186,23 @@ class AccessRightsManager extends Component
     {
         $route = $controller->id;
         $action = self::getAction($controller);
+        $grantedMessage = "[{$route}/{$action}] Access granted";
+        $deniedMessage = "[{$route}/{$action}] Access denied";
 
         self::countAccess($route, $action);
 
         if (self::isPublic($route, $action)) {
-            return self::logAccess(
-                            null,
-                            false,
-                            'success',
-                            "[{$route}/{$action}] Access granted by default to public route",
+            return self::logAccess(null, false, 'success',
+                            "{$grantedMessage} by default to public route",
                     );
         }
         // Get access rights for the route
-        //$accessRight = AccessRight::findOne(['route' => $route, 'action' => $action]);
         $accessRight = self::getAccessRight($route, $action);
 
         // If no access rights defined, grant access to public "route/action"
         if (!$accessRight) {
-            return self::logAccess(
-                            null,
-                            true,
-                            'error',
-                            "[{$route}/{$action}] Access denied by default: no specific AccessRight found",
+            return self::logAccess(null, true, 'error',
+                            "{$deniedMessage} by default: no specific AccessRight found",
                     );
         }
 
@@ -208,21 +210,15 @@ class AccessRightsManager extends Component
 
         // Grant access if user is admin and route allows admin access
         if ($user->is_admin && $accessRight->is_admin) {
-            return self::logAccess(
-                            $accessRight->id,
-                            false,
-                            'success',
-                            "[{$route}/{$action}] Access granted for Admin role",
+            return self::logAccess($accessRight->id, false, 'success',
+                            "{$grantedMessage} for Admin role",
                     );
         }
 
         // Grant access if user is designer and route allows designer access
         if ($user->is_designer && $accessRight->is_designer) {
-            return self::logAccess(
-                            $accessRight->id,
-                            false,
-                            'success',
-                            "[{$route}/{$action}] Access granted for Designer role",
+            return self::logAccess($accessRight->id, false, 'success',
+                            "{$grantedMessage} for Designer role",
                     );
         }
 
@@ -238,7 +234,7 @@ class AccessRightsManager extends Component
         }
 
         // Deny access by default
-        return self::logAccess($accessRight->id, true, 'fatal', "[{$route}/{$action}] Access denied");
+        return self::logAccess($accessRight->id, true, 'fatal', $deniedMessage);
     }
 
     /**
@@ -277,7 +273,7 @@ class AccessRightsManager extends Component
         return [
             'denied' => false,
             'severity' => 'success',
-            'reason' => 'Access granted' . ($playerName ? ' for ' . $playerName : ''),
+            'reason' => 'Access granted' . ($playerName ? " for {$playerName}" : ''),
         ];
     }
 
