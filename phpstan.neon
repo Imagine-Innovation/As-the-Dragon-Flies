@@ -15,6 +15,7 @@ parameters:
         - common
         - console
         - frontend
+        - backend
     excludePaths:
         - '**/node_modules/*'
         - '**/runtime/*'
@@ -22,7 +23,9 @@ parameters:
         - '**/tests/*'
         - '**/migrations/*'
         - '**/vendor/*'
-        - frontend/views/site/icons.php
+        - backend/views/site/icons.php
+        - backend/web/index.php
+        - backend/web/index-test.php
         - frontend/web/index.php
         - frontend/web/index-test.php
     # Yii2 often uses undefined properties; this helps ignore those specific errors

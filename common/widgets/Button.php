@@ -49,7 +49,7 @@ class Button extends Widget
     {
         // Caution: The spaces at the beginning of the line are intentional; do not delete them.
         //
-        // If the btn style is not defined by the user, default it to 'btn-seconday'
+        // If the btn style is not defined by the user, default it to 'btn-secondary'
         $paramStyle = $this->style ?? '';
         $defaultBtn = strpos($paramStyle, 'btn-') !== false ? '' : ' btn-secondary';
         $style = ($this->isCta ? ' btn-warning' : $defaultBtn) . ' ' . $paramStyle;
