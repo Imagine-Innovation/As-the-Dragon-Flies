@@ -211,9 +211,12 @@ class PlayerItemController extends Controller
             if ($playerBody->hasProperty($property)) {
                 $playerItem = $playerBody->$property;
                 $data[$zone] = [
-                    'itemId' => $playerItem->item_id,
-                    'itemName' => $playerItem->item_name,
-                    'image' => $playerItem->image,
+                    /** @phpstan-ignore-next-line */
+                    'itemId' => $playerItem?->item_id,
+                    /** @phpstan-ignore-next-line */
+                    'itemName' => $playerItem?->item_name,
+                    /** @phpstan-ignore-next-line */
+                    'image' => $playerItem?->image,
                 ];
             } else {
                 $data[$zone] = [

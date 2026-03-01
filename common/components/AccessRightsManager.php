@@ -419,45 +419,6 @@ class AccessRightsManager extends Component
     }
 
     /**
-     * Return the list of action button allowed for the specific route and action
-     *
-     * @param string $route
-     * @param string $action
-     * @param int $status
-     * @return list<array<string, string>>
-     */
-    public static function selectActionButtons(
-            string $route,
-            string $action = 'index',
-            int $status = AppStatus::ACTIVE->value,
-    ): array
-    {
-        $actionButtons = ActionButton::find()
-                ->select(['action_button.icon', 'action_button.route', 'action_button.action', 'action_button.tooltip'])
-                ->innerJoin('access_right_action_button', 'action_button.id = access_right_action_button.action_button_id')
-                ->innerJoin('access_right', 'access_right.id = access_right_action_button.access_right_id')
-                ->where([
-                    'access_right.route' => $route,
-                    'access_right.action' => $action,
-                    'access_right_action_button.status' => $status,
-                ])
-                ->asArray()
-                ->all();
-
-        $buttons = [];
-        foreach ($actionButtons as $actionButton) {
-            $buttons[] = [
-                'icon' => $actionButton['icon'],
-                'route' => $actionButton['route'] ?? $route,
-                'action' => $actionButton['action'],
-                'tooltip' => $actionButton['tooltip'],
-            ];
-        }
-
-        return $buttons;
-    }
-
-    /**
      * Check if the attribute is valid
      *
      * @param string $attribute
