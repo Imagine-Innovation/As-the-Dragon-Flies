@@ -17,6 +17,13 @@ $this->title = Yii::$app->name;
     </div>
 </div>
 
-<div class="card">
-    <?= ActivityGraph::widget() ?>
+<div class="card mt-4">
+    <div class="card-header d-flex align-items-center gap-2">
+        <i class="bi bi-activity"></i>
+        <span class="fw-semibold">Application Activity</span>
+        <span class="text-secondary small ms-1">(last 60 min, 5 min steps)</span>
+    </div>
+    <div class="card-body p-3">
+        <?= ActivityGraph::widget() ?>
+    </div>
 </div>
