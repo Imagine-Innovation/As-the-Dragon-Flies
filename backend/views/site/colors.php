@@ -51,99 +51,107 @@ $colors = [
     'var(--white)',
 ];
 ?>
-<h1>Background colors</h1>
-<div class="container-fluid">
-    <div class="row g-1">
-        <?php foreach ($colors as $color): ?>
-            <div class="col-2 col-lg-1">
-                <div class="card h-100" style="background-color: <?= $color ?>;">
-                    <div class="card-body" style="padding: 5px;">
-                        <p style="color: black;"><?= $color ?></p>
-                        <p style="color: white;"><?= $color ?></p>
+<div class="container">
+    <h1>Background colors</h1>
+    <div class="article">
+        <div class="row g-2">
+            <?php foreach ($colors as $color): ?>
+                <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+                    <div class="card h-100" style="background-color: <?= $color ?>;">
+                        <div class="card-body" style="padding: 5px;">
+                            <p style="color: black;"><?= $color ?></p>
+                            <p style="color: white;"><?= $color ?></p>
+                        </div>
                     </div>
                 </div>
-            </div>
-        <?php endforeach; ?>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    <br>
+    <hr>
+    <br>
+    <div class="article" style="background-color: white;">
+        <div class="row g-2">
+            <?php foreach ($colors as $color): ?>
+                <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+                    <div class="card h-100" style="background-color: <?= $color ?>;">
+                        <div class="card-body" style="padding: 5px;">
+                            <p style="color: black;"><?= $color ?></p>
+                            <p style="color: white;"><?= $color ?></p>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
     </div>
 </div>
 <br>
 <hr>
 <br>
-<div class="container-fluid" style="background-color: white;">
-    <div class="row g-1">
-        <?php foreach ($colors as $color): ?>
-            <div class="col-2 col-lg-1">
-                <div class="card h-100" style="background-color: <?= $color ?>;">
-                    <div class="card-body" style="padding: 5px;">
-                        <p style="color: black;"><?= $color ?></p>
-                        <p style="color: white;"><?= $color ?></p>
+<div class="container">
+    <h1>Border colors</h1>
+    <div class="article">
+        <div class="row g-2">
+            <?php foreach ($colors as $color): ?>
+                <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+                    <div class="card h-100" style="border: 5px solid <?= $color ?>;">
+                        <div class="card-body" style="padding: 5px;">
+                            <p style="color: white;"><?= $color ?></p>
+                        </div>
                     </div>
                 </div>
-            </div>
-        <?php endforeach; ?>
+            <?php endforeach; ?>
+        </div>
     </div>
 </div>
 <br>
 <hr>
 <br>
-<h1>Border colors</h1>
-<div class="container-fluid">
-    <div class="row g-1">
-        <?php foreach ($colors as $color): ?>
-            <div class="col-2 col-lg-1">
-                <div class="card h-100" style="border: 5px solid <?= $color ?>;">
-                    <div class="card-body" style="padding: 5px;">
-                        <p style="color: white;"><?= $color ?></p>
+<div class="container">
+    <h1>Colors</h1>
+    <div class="article">
+        <div class="row g-2">
+            <?php foreach ($colors as $color): ?>
+                <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+                    <div class="card h-100">
+                        <div class="card-body" style="padding: 5px;">
+                            <p style="color: <?= $color ?>;"><?= $color ?></p>
+                        </div>
                     </div>
                 </div>
-            </div>
-        <?php endforeach; ?>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    <div class="article">
+        <div class="row g-2">
+            <?php foreach ($colors as $color): ?>
+                <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+                    <div class="card h-100" style="background-color: rgba(255,255,255,.75);">
+                        <div class="card-body" style="padding: 5px;">
+                            <p style="color: <?= $color ?>;"><?= $color ?></p>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
     </div>
 </div>
 <br>
 <hr>
 <br>
-<h1>Colors</h1>
-<div class="container-fluid">
-    <div class="row g-1">
-        <?php foreach ($colors as $color): ?>
-            <div class="col-2 col-lg-1">
-                <div class="card h-100">
-                    <div class="card-body" style="padding: 5px;">
-                        <p style="color: <?= $color ?>;"><?= $color ?></p>
+<div class="container">
+    <h1>Shadows</h1>
+    <div class="article">
+        <div class="row g-2">
+            <?php foreach ($colors as $color): ?>
+                <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+                    <div class="card h-100" style="box-shadow: <?= $color ?>;">
+                        <div class="card-body" style="padding: 5px;">
+                            <p><?= $color ?></p>
+                        </div>
                     </div>
                 </div>
-            </div>
-        <?php endforeach; ?>
-    </div>
-</div>
-<div class="container-fluid">
-    <div class="row g-1">
-        <?php foreach ($colors as $color): ?>
-            <div class="col-2 col-lg-1">
-                <div class="card h-100" style="background-color: rgba(255,255,255,.75);">
-                    <div class="card-body" style="padding: 5px;">
-                        <p style="color: <?= $color ?>;"><?= $color ?></p>
-                    </div>
-                </div>
-            </div>
-        <?php endforeach; ?>
-    </div>
-</div>
-<br>
-<hr>
-<br>
-<h1>Shadows</h1>
-<div class="container-fluid">
-    <div class="row g-1">
-        <?php foreach ($colors as $color): ?>
-            <div class="col-2 col-lg-1">
-                <div class="card h-100" style="box-shadow: <?= $color ?>;">
-                    <div class="card-body" style="padding: 5px;">
-                        <p><?= $color ?></p>
-                    </div>
-                </div>
-            </div>
-        <?php endforeach; ?>
+            <?php endforeach; ?>
+        </div>
     </div>
 </div>

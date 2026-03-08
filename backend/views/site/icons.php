@@ -1,5 +1,4 @@
 <?php
-
 /** @var \yii\web\View $this */
 $this->title = 'Custom Icons';
 $this->params['breadcrumbs'][] = $this->title;
@@ -138,10 +137,10 @@ if ($devIcons) {
     ];
 }
 ?>
-<div class="container-fluid">
-    <div class="row g-4">
+<div class="container">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xxl-4 g-4">
         <?php foreach ($icons as $icon): ?>
-            <div class="col-6 col-md-4 col-lg-3">
+            <div class="col">
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title"><?= $icon ?></h4>

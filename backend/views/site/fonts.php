@@ -54,9 +54,9 @@ $fonts = [
 $sampleText = 'As the Dragon Flies';
 ?>
 <link href="/frontend/web/css/dev-fonts.css" rel="stylesheet">
-<div class="container-fluid">
-    <div class="row g-4">
-        <div class="col-6 col-xxl-3">
+<div class="container">
+    <div class="row row-cols-1 row-cols-xl-2 g-4">
+        <div class="col">
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title">Normal</h4>
@@ -104,7 +104,7 @@ $sampleText = 'As the Dragon Flies';
             </div>
         </div>
         <?php foreach ($fonts as $font): ?>
-            <div class="col-6 col-xxl-3">
+            <div class="col">
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title"><?= $font ?></h4>
