@@ -220,10 +220,11 @@ class ActivityGraph extends Widget
             $value = $i * $step;
 
             $x2 = $layout['width'] - $layout['padding'];
-            $out[] = "<line x1='{$layout['padding']}' y1='{$y}' x2='{$x2}' y2='{$y}' stroke='#ddd' />";
+            $out[] = "<line x1='{$layout['padding']}' y1='{$y}' x2='{$x2}' y2='{$y}' stroke='currentColor'style='opacity: 0.5;' />";
 
             $y += 4;
-            $out[] = "<text x='10' y='{$y}' font-size='12'>{$value}</text>";
+            $x = $layout['padding'] - 8;
+            $out[] = "<text x='{$x}' y='{$y}' font-size='12' fill='currentColor' text-anchor='end'>{$value}</text>";
         }
 
         return implode(PHP_EOL, $out);
@@ -241,7 +242,7 @@ class ActivityGraph extends Widget
         foreach ($layout['labels'] as $i => $label) {
             $x = $layout['padding'] + $i * $layout['xStep'];
             $y = $layout['height'] - 10;
-            $out[] = "<text x='{$x}' y='{$y}' font-size='12' text-anchor='middle'>{$label}</text>";
+            $out[] = "<text x='{$x}' y='{$y}' font-size='12' fill='currentColor' text-anchor='middle'>{$label}</text>";
         }
 
         return implode(PHP_EOL, $out);
