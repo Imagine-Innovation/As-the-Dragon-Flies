@@ -3,10 +3,11 @@
 use yii\helpers\Url;
 
 /** @var \yii\web\View $this */
-/** @var string $currentMenu */
+/** @var string|null $currentMenu */
 $menuConfig = [
     'void' => [// No heading for the first group
         ['label' => 'Dashboard', 'icon' => 'bi-speedometer2', 'url' => ['/site/index'], 'admin' => false],
+        ['label' => 'DbMonitor', 'icon' => 'bi-speedometer2', 'url' => ['/db-monitor/index'], 'admin' => true],
     ],
     'Admin' => [
         ['label' => 'Users', 'icon' => 'bi-people', 'url' => ['/user/index'], 'admin' => true],

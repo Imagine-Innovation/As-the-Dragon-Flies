@@ -50,7 +50,7 @@ class ActivityGraph extends Widget
     {
         // to ajust to "round" number of minutes
         $step = $this->stepMinutes * 60;
-        $now = floor(time() / $step) * $step;
+        $now = (int) (floor(time() / $step) * $step);
         $from = $now - ($this->windowMinutes * 60);
         $stepSeconds = $this->stepMinutes * 60;
 
