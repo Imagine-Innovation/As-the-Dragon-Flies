@@ -1,14 +1,16 @@
 <?php
 
+use common\helpers\WebResourcesHelper;
+use common\widgets\Button;
 use frontend\assets\AppAsset;
 use frontend\helpers\Caligraphy;
-use common\widgets\Button;
 use frontend\widgets\CurrentPlayer;
 use frontend\widgets\ToolMenu;
 use yii\bootstrap5\Html;
 use yii\helpers\Url;
 
 /** @var \yii\web\View $this */
+$imgPath = WebResourcesHelper::imagePath();
 $currentUser = Yii::$app->user->identity;
 AppAsset::register($this);
 $isAdmin = $currentUser->is_admin;
@@ -17,7 +19,7 @@ $isAdmin = $currentUser->is_admin;
 
     <div class="logo d-none d-md-inline-flex">
         <a href="<?= Url::toRoute(['site/index']) ?>">
-            <img src="img/Dragonfly32White.png" alt="">
+            <img src="<?= $imgPath ?>/Dragonfly32White.png" alt="">
             <?= Caligraphy::appName() ?>
             (<?= $currentUser->username ?>)
         </a>
@@ -25,11 +27,11 @@ $isAdmin = $currentUser->is_admin;
 
     <ul class="top-nav">
         <?=
-    CurrentPlayer::widget([
-        'user' => $currentUser,
-        'mode' => 'navbar',
-    ])
-?>
+        CurrentPlayer::widget([
+            'user' => $currentUser,
+            'mode' => 'navbar',
+        ])
+        ?>
 
         <li class="dropdown top-nav__notifications">
             <a class="top-nav position-relative" href="#" data-bs-toggle="dropdown">
@@ -116,13 +118,13 @@ $isAdmin = $currentUser->is_admin;
         </li>
         <li class="dropdown top-nav__notifications">
             <?=
-    Button::widget([
-        'isPost' => true,
-        'url' => Url::toRoute(['site/logout']),
-        'icon' => 'dnd-power-off',
-        'tooltip' => 'logout',
-    ])
-?>
+            Button::widget([
+                'isPost' => true,
+                'url' => Url::toRoute(['site/logout']),
+                'icon' => 'dnd-power-off',
+                'tooltip' => 'logout',
+            ])
+            ?>
         </li>
     </ul>
 </header>

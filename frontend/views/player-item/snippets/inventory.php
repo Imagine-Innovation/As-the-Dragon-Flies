@@ -1,10 +1,12 @@
 <?php
 
+use common\helpers\WebResourcesHelper;
 use frontend\widgets\ModalDesc;
 
 /** @var yii\web\View $this */
 /** @var array $items */
 /** @var common\models\Player $player */
+$imgPath = WebResourcesHelper::imagePath();
 ?>
 <div class="container">
     <div class="row g-4">
@@ -12,7 +14,7 @@ use frontend\widgets\ModalDesc;
             <div class="col-12 col-md-6 col-lg-4 col-xxl-3">
                 <div class="card h-100">
                     <?php if ($item['image']): ?>
-                        <img class="card-img-top" src="img/item/<?= $item['image'] ?>">
+                        <img class="card-img-top" src="<?= $imgPath ?>/item/<?= $item['image'] ?>">
                     <?php endif; ?>
                     <div class="card-body">
                         <div class="actions">
@@ -20,8 +22,8 @@ use frontend\widgets\ModalDesc;
                                 <div class="toggle-switch">
                                     <span data-bs-toggle="tooltip" title="Add or remove from pack" data-placement="bottom">
                                         <input type="checkbox" class="toggle-switch__checkbox" id="pack-<?= $item['id'] ?>" <?=
-            $item['is_carrying'] ? 'checked' : ''
-        ?>
+                                        $item['is_carrying'] ? 'checked' : ''
+                                        ?>
                                                onchange="ItemManager.togglePack(<?= $item['id'] ?>);">
                                         <i class="toggle-switch__helper"></i>
                                     </span>
@@ -38,14 +40,14 @@ use frontend\widgets\ModalDesc;
                         </h4>
                         <h6 class="card-subtitle text-muted">
                             <?=
-            ModalDesc::widget([
-                'name' => $item['name'],
-                'description' => $item['description'],
-                'maxLength' => 180,
-                'type' => $item['type'],
-                'id' => $item['id'],
-            ])
-        ?>
+                            ModalDesc::widget([
+                                'name' => $item['name'],
+                                'description' => $item['description'],
+                                'maxLength' => 180,
+                                'type' => $item['type'],
+                                'id' => $item['id'],
+                            ])
+                            ?>
                         </h6>
                     </div>
                 </div>

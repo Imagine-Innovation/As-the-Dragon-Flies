@@ -1,10 +1,12 @@
 <?php
 
+use common\helpers\WebResourcesHelper;
 use frontend\assets\AppAsset;
 use frontend\widgets\ToolMenu;
 use yii\helpers\Url;
 
 /** @var \yii\web\View $this */
+$imgPath = WebResourcesHelper::imagePath();
 $currentUser = Yii::$app->user->identity;
 $questName = Yii::$app->session->get('questName');
 AppAsset::register($this);
@@ -15,7 +17,7 @@ $isAdmin = $currentUser->is_admin;
     <div class="logo d-none d-md-inline-flex">
         <a href="<?= Url::toRoute(['site/index']) ?>">
             <h5 class="text-decoration">
-                <img src="img/Dragonfly32White.png" alt=""> <?= $questName ?>
+                <img src="<?= $imgPath ?>/Dragonfly32White.png" alt=""> <?= $questName ?>
             </h5>
         </a>
     </div>

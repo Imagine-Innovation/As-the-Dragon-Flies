@@ -1,7 +1,10 @@
 <?php
 
+use common\helpers\WebResourcesHelper;
+
 /** @var yii\web\View $this */
 /** @var common\models\Player $model */
+$imgPath = WebResourcesHelper::imagePath();
 $this->title = $model->name ?? 'New player';
 $this->params['breadcrumbs'][] = ['label' => 'Players', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
@@ -14,7 +17,7 @@ $proficiencyBonus = $model->level->proficiency_bonus;
     <table>
         <tr>
             <td style="min-width: 100px">
-                <img src="img/character/<?= $model->avatar ?>" class="avatar">
+                <img src="<?= $imgPath ?>/character/<?= $model->avatar ?>" class="avatar">
             </td>
             <td>
                 <h3 class="mb-3 text-decoration"><?= $model->name ?></h3>
@@ -27,7 +30,6 @@ $proficiencyBonus = $model->level->proficiency_bonus;
     <!-- Main Content -->
     <div class="row">
         <?php
-
         $cardHeaderClass = 'card-header bg-purple text-decoration fw-bold h-100 py-2';
         $div = '<div class="col-12 col-md-6">';
 

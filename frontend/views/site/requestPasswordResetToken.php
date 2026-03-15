@@ -1,5 +1,6 @@
 <?php
 
+use common\helpers\WebResourcesHelper;
 use frontend\helpers\Caligraphy;
 use frontend\models\PasswordResetRequestForm;
 use yii\bootstrap5\ActiveForm;
@@ -9,6 +10,7 @@ use yii\helpers\Url;
 /** @var yii\web\View $this */
 /** @var ActiveForm $form */
 /** @var PasswordResetRequestForm $model */
+$imgPath = WebResourcesHelper::imagePath();
 $this->title = 'Request password reset';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -20,7 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <div class="card-body p-5">
                         <div class="mb-md-5 mt-md-4 pb-5">
                             <h2 class="mb-2">
-                                <img src="img/Dragonfly32White.png" alt="Logo">
+                                <img src="<?= $imgPath ?>/Dragonfly32White.png" alt="Logo">
                                 <?= Caligraphy::appName() ?>
                             </h2>
                             <p class="mb-5">Reset your password</p>
@@ -28,23 +30,23 @@ $this->params['breadcrumbs'][] = $this->title;
                             <?php $form = ActiveForm::begin(['id' => 'request-password-reset-form']); ?>
                             <div class="form-group first">
                                 <?=
-    $form
-        ->field($model, 'email', ['inputOptions' => [
-            'autofocus' => 'autofocus',
-            'class' => 'form-control',
-        ]])
-        ->textInput(['placeholder' => 'Your email'])
-        ->label('Email')
-?>
+                                        $form
+                                        ->field($model, 'email', ['inputOptions' => [
+                                                'autofocus' => 'autofocus',
+                                                'class' => 'form-control',
+                                    ]])
+                                        ->textInput(['placeholder' => 'Your email'])
+                                        ->label('Email')
+                                ?>
                             </div>
 
                             <div class="form-group">
                                 <?=
-    Html::submitButton('<img src="img/Dragonfly.svg" style="height:32px;" alt=""> Send request', [
-        'class' => 'form-control btn btn-lg btn-warning text-decoration',
-        'name' => 'Send',
-    ])
-?>
+                                Html::submitButton('<img src="' . $imgPath . '/Dragonfly.svg" style="height:32px;" alt=""> Send request', [
+                                    'class' => 'form-control btn btn-lg btn-warning text-decoration',
+                                    'name' => 'Send',
+                                ])
+                                ?>
                             </div>
                             <p class="mb-0">
                                 Back to <a class="fw-bold" href="<?= Url::toRoute(['site/login']) ?>">Login</a>

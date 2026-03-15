@@ -1,5 +1,6 @@
 <?php
 
+use common\helpers\WebResourcesHelper;
 use common\models\CharacterClass;
 use common\widgets\CheckBox;
 use frontend\widgets\Pagination;
@@ -11,6 +12,7 @@ use frontend\widgets\RecordCount;
 /** @var int $page: current page number */
 /** @var int $pageCount: nomber of pages regarding the limit of the query */
 /** @var int $limit: nomber of records to be fetched */
+$imgPath = WebResourcesHelper::imagePath();
 $classes = CharacterClass::find()->All();
 
 $checked = [];
@@ -50,7 +52,7 @@ foreach ($models as $model) {
                     <?php foreach ($models as $model): ?>
                         <tr>
                             <th scope="row">
-                                <img src="img/character/<?= $model->file_name ?>" class="image-thumbnail">
+                                <img src="<?= $imgPath ?>/character/<?= $model->file_name ?>" class="image-thumbnail">
                             </th>
                             <?php foreach ($classes as $class): ?>
                                 <td class="text-center">
@@ -64,9 +66,9 @@ foreach ($models as $model) {
                                     ])
                                     ?>
                                 </td>
-                        <?php endforeach; ?>
+                            <?php endforeach; ?>
                         </tr>
-<?php endforeach; ?>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>

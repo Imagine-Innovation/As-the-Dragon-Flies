@@ -1,10 +1,12 @@
 <?php
 
+use common\helpers\WebResourcesHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */
 /** @var yii\data\ActiveDataProvider $dataProvider */
+$imgPath = WebResourcesHelper::imagePath();
 $this->title = 'Character Classes';
 $this->params['breadcrumbs'][] = $this->title;
 $models = $dataProvider->getModels();
@@ -27,7 +29,7 @@ $models = $dataProvider->getModels();
                     <?php foreach ($models as $model): ?>
                         <tr>
                             <th scope="row">
-                                <img src="img/character/<?= $model->randomImage ?>" alt="<?= $model->name ?>" style="width: 100px;">
+                                <img src="<?= $imgPath ?>/character/<?= $model->randomImage ?>" alt="<?= $model->name ?>" style="width: 100px;">
                             </th>
                             <td>
                                 <a href="<?= Url::toRoute(['character-class/view', 'id' => $model->id]) ?>">

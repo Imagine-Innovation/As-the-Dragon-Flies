@@ -1,12 +1,14 @@
 <?php
 
-use frontend\helpers\Caligraphy;
+use common\helpers\WebResourcesHelper;
 use common\widgets\Button;
+use frontend\helpers\Caligraphy;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
 /** @var \yii\web\View $this */
 $this->title = Html::encode(Yii::$app->name);
+$imgPath = WebResourcesHelper::imagePath();
 ?>
 <style>
     .hero-section {
@@ -61,11 +63,11 @@ $this->title = Html::encode(Yii::$app->name);
     <div class="carousel slide carousel-fade transition: transform 2s ease, opacity 2s ease-out d-none d-md-block" data-bs-ride="carousel">
         <div class="carousel-inner" role="listbox">
             <div class="carousel-item active">
-                <img src="img/carousel/car1.jpg" alt="First slide">
+                <img src="<?= $imgPath ?>/carousel/car1.jpg" alt="First slide">
             </div>
             <?php for ($img = 2; $img <= 10; $img++): ?>
                 <div class="carousel-item" data-aos="fade-up" data-aos-delay="500">
-                    <img src="img/carousel/car<?= $img ?>.jpg" class="d-block h-100">
+                    <img src="<?= $imgPath ?>/carousel/car<?= $img ?>.jpg" class="d-block h-100">
                 </div>
             <?php endfor; ?>
         </div>
@@ -76,36 +78,38 @@ $this->title = Html::encode(Yii::$app->name);
                 <h1 class="text-warning text-decoration">Venture into a Realm of Dragons!</h1>
                 <br />
                 <p style="font-weight: 100">
-                    <?= Caligraphy::illuminate([
-    'Embark on an epic adventure with '
-        . Caligraphy::appName()
-        . ',
+                    <?=
+                    Caligraphy::illuminate([
+                        'Embark on an epic adventure with '
+                        . Caligraphy::appName()
+                        . ',
                                      where you can create your character, explore a vast interactive map,
                                      and connect with fellow adventurers.',
-    'Join our community and weave your legend today!',
-], 'lead text-decoration'
-    //style
-) ?>
+                        'Join our community and weave your legend today!',
+                            ], 'lead text-decoration'
+                            //style
+                    )
+                    ?>
                 </p>
                 <br>
 
                 <div class="d-flex flex-column flex-sm-row gap-3 mt-4 justify-content-center">
                     <?=
-    Button::widget([
-        'icon' => 'dnd-logo h2',
-        'url' => Url::toRoute(['site/login']),
-        'title' => 'Come and join us!',
-        'style' => 'btn-lg text-decoration w-auto',
-        'isCta' => true,
-    ])
-?>
+                    Button::widget([
+                        'icon' => 'dnd-logo h2',
+                        'url' => Url::toRoute(['site/login']),
+                        'title' => 'Come and join us!',
+                        'style' => 'btn-lg text-decoration w-auto',
+                        'isCta' => true,
+                    ])
+                    ?>
                     <?=
-    Button::widget([
-        'icon' => 'bi-hand-index',
-        'title' => 'Learn More',
-        'style' => 'btn-lg text-decoration w-auto',
-    ])
-?>
+                    Button::widget([
+                        'icon' => 'bi-hand-index',
+                        'title' => 'Learn More',
+                        'style' => 'btn-lg text-decoration w-auto',
+                    ])
+                    ?>
                 </div>
             </div>
         </div>
@@ -123,30 +127,30 @@ $this->title = Html::encode(Yii::$app->name);
                 <div class="card p-5 h-100">
                     <h2 class="text-warning text-decoration">Our Mission and Values</h2>
                     <?=
-    Caligraphy::illuminate(
-        [
-            'The As the Dragon Flies game was imagined in 2021 by a passionate'
-                . ' team of Dungeons and Dragons enthusiasts. Our mission is to provide'
-                . ' an engaging and interactive online gaming experience that captures'
-                . ' the essence of epic gaming.',
-            'We believe in creativity, fostering a welcoming community, and maintaining'
-                . ' integrity in gameplay. Our team is dedicated to building a vibrant platform'
-                . ' where players can explore, create, and connect in a rich fantasy world.',
-        ],
-        'text-decoration',
-        //style
-    )
-?>
+                    Caligraphy::illuminate(
+                            [
+                                'The As the Dragon Flies game was imagined in 2021 by a passionate'
+                                . ' team of Dungeons and Dragons enthusiasts. Our mission is to provide'
+                                . ' an engaging and interactive online gaming experience that captures'
+                                . ' the essence of epic gaming.',
+                                'We believe in creativity, fostering a welcoming community, and maintaining'
+                                . ' integrity in gameplay. Our team is dedicated to building a vibrant platform'
+                                . ' where players can explore, create, and connect in a rich fantasy world.',
+                            ],
+                            'text-decoration',
+                            //style
+                    )
+                    ?>
 
                     <div class="d-flex justify-content-center">
                         <?=
-    Button::widget([
-        'icon' => 'dnd-logo',
-        'url' => Url::toRoute(['site/login']),
-        'title' => 'Come and join us!',
-        'style' => 'text-decoration',
-    ])
-?>
+                        Button::widget([
+                            'icon' => 'dnd-logo',
+                            'url' => Url::toRoute(['site/login']),
+                            'title' => 'Come and join us!',
+                            'style' => 'text-decoration',
+                        ])
+                        ?>
                     </div>
                 </div>
             </div>
@@ -157,26 +161,26 @@ $this->title = Html::encode(Yii::$app->name);
                     <h2 class="text-warning text-decoration">Embark on an Epic Adventure with As the Dragon Flies!</h2>
 
                     <?=
-    Caligraphy::illuminate(
-        [
-            'Dive into a world of fantasy and adventure with an online role game experience.',
-            'Create your character, explore a vast map, and interact with fellow adventurers in real-time.',
-            'Experience the thrill of collaborative storytelling and strategic gameplay from the comfort of your home.',
-        ],
-        'text-decoration',
-        //style
-    )
-?>
+                    Caligraphy::illuminate(
+                            [
+                                'Dive into a world of fantasy and adventure with an online role game experience.',
+                                'Create your character, explore a vast map, and interact with fellow adventurers in real-time.',
+                                'Experience the thrill of collaborative storytelling and strategic gameplay from the comfort of your home.',
+                            ],
+                            'text-decoration',
+                            //style
+                    )
+                    ?>
 
                     <div class="d-flex justify-content-center">
                         <?=
-    Button::widget([
-        'icon' => 'dnd-logo',
-        'url' => Url::toRoute(['site/login']),
-        'title' => 'Come and join us!',
-        'style' => 'text-decoration',
-    ])
-?>
+                        Button::widget([
+                            'icon' => 'dnd-logo',
+                            'url' => Url::toRoute(['site/login']),
+                            'title' => 'Come and join us!',
+                            'style' => 'text-decoration',
+                        ])
+                        ?>
                     </div>
                 </div>
             </div>

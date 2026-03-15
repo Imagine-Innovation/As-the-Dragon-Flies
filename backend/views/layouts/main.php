@@ -25,7 +25,7 @@ $currentUser = Yii::$app->user->identity;
         <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileSidebar">
             <div class="offcanvas-header border-bottom">
                 <h5 class="offcanvas-title">
-                    <img src="Dragonfly32White.png" alt="<?= Yii::$app->name ?>">
+                    <i class="bi dnd-logo display-4"></i>
                     <?= Yii::$app->name ?>
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>

@@ -2,6 +2,7 @@
 
 use common\helpers\Status;
 use common\helpers\Utilities;
+use common\helpers\WebResourcesHelper;
 use frontend\widgets\ActionButtons;
 use frontend\widgets\Pagination;
 use frontend\widgets\RecordCount;
@@ -13,6 +14,7 @@ use yii\helpers\Url;
 /** @var int $page: current page number */
 /** @var int $pageCount: nomber of pages regarding the limit of the query */
 /** @var int $limit: nomber of records to be fetched */
+$imgPath = WebResourcesHelper::imagePath();
 $isAdmin = Yii::$app->user->identity->is_admin;
 $currentUserId = Yii::$app->user->id;
 
@@ -63,22 +65,25 @@ if (Yii::$app->user->identity->is_player) {
                         <?php $isOwner = $model->user->id === $currentUserId; ?>
                         <tr>
                             <th scope="row">
-                                <img src="img/character/<?= $model->avatar ?>" class="image-thumbnail">
+                                <img src="<?= $imgPath ?>/character/<?= $model->avatar ?>" class="image-thumbnail">
                             </th>
                             <td>
                                 <?php if ($isOwner): ?>
                                     <?= Status::hyperlink($model) ?>
                                 <?php else: ?>
-                                    <?= Utilities::encode(empty($model->name) ? 'Unknown' : $model->name) ?>
-                            <?php endif; ?><br>
+                                    <?=
+                                    Utilities::encode(empty($model->name) ? 'Unknown'
+                                                        : $model->name)
+                                    ?>
+                                <?php endif; ?><br>
                             </td>
-    <?php if ($isAdmin): ?>
+                            <?php if ($isAdmin): ?>
                                 <td>
                                     <a href="<?= Url::toRoute(['user/view', 'id' => $model->user->id]) ?>">
-        <?= Utilities::encode($model->user->username) ?>
+                                        <?= Utilities::encode($model->user->username) ?>
                                     </a>
                                 </td>
-    <?php endif; ?>
+                            <?php endif; ?>
                             <td class="text-center"><?= Status::icon($model->status) ?></td>
                             <td><?= $model->level->name ?></td>
                             <td><?= $model->race->name ?></td>
@@ -87,26 +92,26 @@ if (Yii::$app->user->identity->is_player) {
                             <td><?= $model->alignment->name ?? 'Unkown' ?></td>
                             <td>
                                 <?=
-                        ActionButtons::widget([
-                            'model' => $model,
-                            'mode' => 'table',
-                            'isOwner' => $isOwner,
-                        ])
-                    ?>
+                                ActionButtons::widget([
+                                    'model' => $model,
+                                    'mode' => 'table',
+                                    'isOwner' => $isOwner,
+                                ])
+                                ?>
                             </td>
                         </tr>
-<?php endforeach; ?>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
         <!-- Pagination -->
         <?=
-    Pagination::widget([
-        'page' => $page,
-        'pageCount' => $pageCount,
-        'limit' => $limit,
-    ])
-?>
+        Pagination::widget([
+            'page' => $page,
+            'pageCount' => $pageCount,
+            'limit' => $limit,
+        ])
+        ?>
         <!-- End Pagination -->
     </div>
 </div>

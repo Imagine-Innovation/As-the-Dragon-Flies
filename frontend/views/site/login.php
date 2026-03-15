@@ -1,5 +1,6 @@
 <?php
 
+use common\helpers\WebResourcesHelper;
 use common\models\LoginForm;
 use frontend\helpers\Caligraphy;
 use yii\bootstrap5\ActiveForm;
@@ -9,6 +10,7 @@ use yii\helpers\Url;
 /** @var yii\web\View $this */
 /** @var ActiveForm $form */
 /** @var LoginForm $model */
+$imgPath = WebResourcesHelper::imagePath();
 $this->title = 'Login';
 $this->params['breadcrumbs'][] = $this->title;
 
@@ -24,7 +26,7 @@ $v1 = false;
                         <div class="mb-md-5 mt-md-4 pb-5">
 
                             <h2 class="mb-2">
-                                <img src="img/Dragonfly32White.png" alt="Logo">
+                                <img src="<?= $imgPath ?>/Dragonfly32White.png" alt="Logo">
                                 <?= Caligraphy::appName() ?>
                             </h2>
                             <p class="mb-5">Please enter your login and password!</p>
@@ -32,27 +34,27 @@ $v1 = false;
                             <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
                             <div class="form-group first">
                                 <?=
-    $form
-        ->field($model, 'username', ['inputOptions' => [
-            'autofocus' => 'autofocus',
-            'class' => 'form-control',
-            'autocomplete' => 'username',
-        ]])
-        ->textInput(['placeholder' => 'Your user name'])
-        ->label('Username')
-?>
+                                        $form
+                                        ->field($model, 'username', ['inputOptions' => [
+                                                'autofocus' => 'autofocus',
+                                                'class' => 'form-control',
+                                                'autocomplete' => 'username',
+                                    ]])
+                                        ->textInput(['placeholder' => 'Your user name'])
+                                        ->label('Username')
+                                ?>
                             </div>
                             <div class="form-group last mb-3">
                                 <?=
-    $form
-        ->field($model, 'password', ['inputOptions' => [
-            'autofocus' => 'autofocus',
-            'class' => 'form-control',
-            'autocomplete' => 'current-password',
-        ]])
-        ->passwordInput(['placeholder' => 'Your password'])
-        ->label('Password')
-?>
+                                        $form
+                                        ->field($model, 'password', ['inputOptions' => [
+                                                'autofocus' => 'autofocus',
+                                                'class' => 'form-control',
+                                                'autocomplete' => 'current-password',
+                                    ]])
+                                        ->passwordInput(['placeholder' => 'Your password'])
+                                        ->label('Password')
+                                ?>
                             </div>
 
                             <div class="d-flex mb-5 align-items-center">
@@ -66,11 +68,11 @@ $v1 = false;
 
                             <div class="form-group">
                                 <?=
-    Html::submitButton('<img src="img/Dragonfly.svg" style="height:32px;" alt=""> Log In', [
-        'class' => 'form-control btn btn-lg btn-warning text-decoration',
-        'name' => 'login-button',
-    ])
-?>
+                                Html::submitButton('<img src="' . $imgPath . '/Dragonfly.svg" style="height:32px;" alt=""> Log In', [
+                                    'class' => 'form-control btn btn-lg btn-warning text-decoration',
+                                    'name' => 'login-button',
+                                ])
+                                ?>
                             </div>
 
                             <?php ActiveForm::end(); ?>

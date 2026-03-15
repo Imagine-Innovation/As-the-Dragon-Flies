@@ -1,11 +1,13 @@
 <?php
 
+use common\helpers\WebResourcesHelper;
 use common\models\PlayerItem;
 use common\widgets\Button;
 
 /** @var yii\web\View $this */
 /** @var common\models\PlayerBody $playerBody */
 /** @var array<string, list<array{name: string, image: string|null, quantity: int}>> $playerItems */
+$imgPath = WebResourcesHelper::imagePath();
 $playerItems = [];
 $itemTypes = ['Armor', 'Helmet', 'Shield', 'Weapon', 'Tool'];
 
@@ -32,7 +34,7 @@ $lastItemType = 'none';
         'tooltip' => "Player's equipement",
         'modal' => 'equipmentModal',
     ])
-?>
+    ?>
 </div>
 <div class="m-3">
     <h6 class="text-warning">Equipment</h6>
@@ -40,7 +42,6 @@ $lastItemType = 'none';
     <?php foreach ($itemTypes as $itemType): ?>
         <?php if (array_key_exists($itemType, $playerItems) && !empty($playerItems[$itemType])): ?>
             <?php
-
             if ($lastItemType !== $itemType):
                 $lastItemType = $itemType;
                 ?>
@@ -50,11 +51,13 @@ $lastItemType = 'none';
             <?php foreach ($playerItems[$itemType] as $item): ?>
                 <div class="d-flex align-items-center justify-content-between">
                     <div class="d-flex align-items-center">
-                        <img src="img/item/<?= $item['image'] ?>" class="image-thumbnail me-2" style="width: 50px;height: 50px;">
-                        <?= $item['name'] ?> <?= $item['quantity'] > 1 ? "(x{$item['quantity']})" : '' ?>
+                        <img src="<?= $imgPath ?>/item/<?= $item['image'] ?>" class="image-thumbnail me-2" style="width: 50px;height: 50px;">
+                        <?= $item['name'] ?>
+                        <?= $item['quantity'] > 1 ? "(x{$item['quantity']})"
+                                    : '' ?>
                     </div>
                 </div>
             <?php endforeach; ?>
         <?php endif; ?>
-    <?php endforeach; ?>
+<?php endforeach; ?>
 </div>
