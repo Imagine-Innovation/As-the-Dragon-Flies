@@ -1,7 +1,7 @@
 <?php
 
 use common\components\gameplay\ChatManager;
-use frontend\widgets\AjaxContainer;
+use common\widgets\AjaxContainer;
 
 /** @var yii\web\View $this */
 /** @var common\models\Quest $model */

@@ -1,7 +1,7 @@
 <?php
 
 use frontend\components\BuilderComponent;
-use frontend\widgets\AjaxContainer;
+use common\widgets\AjaxContainer;
 use frontend\widgets\BuilderTab;
 use common\widgets\Button;
 use yii\helpers\Html;

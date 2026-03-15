@@ -1,7 +1,7 @@
 <?php
 
 use common\models\RaceGroup;
-use frontend\widgets\AjaxContainer;
+use common\widgets\AjaxContainer;
 use common\widgets\Button;
 use yii\helpers\Html;
 

@@ -1,6 +1,6 @@
 <?php
 
-use frontend\widgets\AjaxContainer;
+use common\widgets\AjaxContainer;
 use common\widgets\Button;
 use yii\helpers\Url;
 

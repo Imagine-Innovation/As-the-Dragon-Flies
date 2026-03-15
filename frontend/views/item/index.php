@@ -1,7 +1,7 @@
 <?php
 
 use common\models\ItemType;
-use frontend\widgets\AjaxContainer;
+use common\widgets\AjaxContainer;
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
