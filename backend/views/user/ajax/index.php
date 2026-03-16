@@ -3,9 +3,9 @@
 use common\helpers\SpecialCheckBox;
 use common\helpers\Status;
 use common\models\User;
-use frontend\widgets\ActionButtons;
-use frontend\widgets\Pagination;
-use frontend\widgets\RecordCount;
+use common\widgets\ActionButtons;
+use common\widgets\Pagination;
+use common\widgets\RecordCount;
 
 /** @var yii\web\View $this */
 /** @var User[] $models */

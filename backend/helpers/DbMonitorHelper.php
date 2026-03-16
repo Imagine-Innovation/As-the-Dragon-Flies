@@ -23,28 +23,6 @@ final class DbMonitorHelper
 
         /** @var array<string> $extras */
         $extras = [];
-        /*
-          if (isset($node['table'])) {
-          $tableName = is_string($node['table']) ? (string) $node['table'] : 'Unknown';
-          $extras[] = "[{$tableName}]";
-          }
-          if (isset($node['index'])) {
-          $index = is_string($node['index']) ? (string) $node['index'] : 'Unknown';
-          $extras[] = "({$index})";
-          }
-          if (isset($node['detail'])) {
-          $index = is_string($node['index']) ? (string) $node['index'] : 'Unknown';
-          $extras[] = "({$index})";
-          $extras[] = '(' . (string) $node['detail'] . ')';
-          }
-          if (isset($node['rows'])) {
-          $extras[] = '(rows: ' . (string) $node['rows'] . ')';
-          }
-          if (isset($node['cost'])) {
-          $extras[] = '(cost: ' . (string) $node['cost'] . ')';
-          }
-         *
-         */
         self::extractProperty($node, 'table', $extras, '[%s]');
         self::extractProperty($node, 'index', $extras);
         self::extractProperty($node, 'rows', $extras);
@@ -75,8 +53,7 @@ final class DbMonitorHelper
     private static function extractProperty(array $node, string $propertyName, array &$extras, string $placeHolder = '(%s)'): void
     {
         if (isset($node[$propertyName])) {
-            $property = is_string($node[$propertyName]) ? (string) $node[$propertyName]
-                        : 'Unknown';
+            $property = is_string($node[$propertyName]) ? (string) $node[$propertyName] : 'Unknown';
             $extras[] = sprintf($placeHolder, $property);
         }
     }

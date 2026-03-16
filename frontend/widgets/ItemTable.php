@@ -2,6 +2,7 @@
 
 namespace frontend\widgets;
 
+use common\helpers\WebResourcesHelper;
 use common\models\Item;
 use Yii;
 use yii\base\Widget;
@@ -11,6 +12,7 @@ use yii\helpers\Url;
 
 class ItemTable extends Widget
 {
+
     /**
      *  Define constant for column configurations.
      *      column-header   Column header caption
@@ -177,8 +179,8 @@ class ItemTable extends Widget
         $this->type = self::LUT_TYPE[$this->itemTypeId - 1];
 
         return $this->render('item-table', [
-            'tableHeader' => $this->renderTableHeader(),
-            'tableBody' => $this->renderTableBody(),
+                    'tableHeader' => $this->renderTableHeader(),
+                    'tableBody' => $this->renderTableBody(),
         ]);
     }
 
@@ -200,21 +202,22 @@ class ItemTable extends Widget
     private function renderTableCell(array $col, Item $item, int $colIndex): string
     {
         Yii::debug(
-            "*** Debug ***  ItemTable Widget - renderTableCell() - colIndex={$colIndex}, col['property']={$col['property']}",
+                "*** Debug ***  ItemTable Widget - renderTableCell() - colIndex={$colIndex}, col['property']={$col['property']}",
         );
         // Retrieve the content for the table cell using the model's property.
-        $property = $col['property'] === 'categories'
-            ? implode(', ', ArrayHelper::getColumn($item->categories, 'name'))
-            : $item[$col['property']];
+        $property = $col['property'] === 'categories' ? implode(', ', ArrayHelper::getColumn($item->categories, 'name'))
+                    : $item[$col['property']];
 
         $cellContent = is_string($property) ? $property : '';
         Yii::debug("*** Debug ***  ItemTable Widget - renderTableCell() - cellContent={$cellContent}");
 
         // Format the content for display, considering whether it's an icon, an image
         // or needs HTML encoding.
+        $imgPath = WebResourcesHelper::imagePath();
+
         $display = match ($col['iconography']) {
             'icon' => "<i class=\"bi {$cellContent}\"></i>",
-            'image' => "<img src=\"img/item/{$cellContent}\" class=\"image-thumbnail\">",
+            'image' => "<img src=\"{$imgPath}/item/{$cellContent}\" class=\"image-thumbnail\">",
             default => Html::encode($cellContent),
         };
 
@@ -234,9 +237,8 @@ class ItemTable extends Widget
         }
 
         // Check if the column requires a link and construct the HTML accordingly.
-        $innerHtml = $col['is-link']
-            ? '<a href="' . Url::toRoute(['item/view', 'id' => $item->id]) . '">' . $display . '</a>'
-            : $display;
+        $innerHtml = $col['is-link'] ? '<a href="' . Url::toRoute(['item/view', 'id' => $item->id]) . '">' . $display . '</a>'
+                    : $display;
 
         // Return the final HTML content for the table cell.
         return $element . $innerHtml . "</{$tagName}>";

@@ -1,14 +1,15 @@
 <?php
 
-namespace frontend\widgets;
+namespace common\widgets;
 
 use common\helpers\Utilities;
-use frontend\helpers\ActionButtonsConfig;
+use common\helpers\ActionButtonsConfig;
 use yii\base\Widget;
 
 /** @template T of \yii\db\ActiveRecord */
 class ActionButtons extends Widget
 {
+
     /** @var T */
     public \yii\db\ActiveRecord $model;
     public ?bool $isOwner = null;
@@ -29,10 +30,10 @@ class ActionButtons extends Widget
         $widgetView = $this->mode === 'table' ? 'action-buttons-table' : 'action-buttons-icon';
 
         return $this->render($widgetView, [
-            'model' => $this->model,
-            'controller' => $controller,
-            'actions' => $actions,
-            'isOwner' => $this->isOwner ?? true,
+                    'model' => $this->model,
+                    'controller' => $controller,
+                    'actions' => $actions,
+                    'isOwner' => $this->isOwner ?? true,
         ]);
     }
 }

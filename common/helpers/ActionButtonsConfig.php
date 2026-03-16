@@ -1,6 +1,6 @@
 <?php
 
-namespace frontend\helpers;
+namespace common\helpers;
 
 use common\components\AppStatus;
 

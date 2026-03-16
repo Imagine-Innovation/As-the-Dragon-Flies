@@ -1,7 +1,7 @@
 <?php
 
-use frontend\widgets\Pagination;
-use frontend\widgets\RecordCount;
+use common\widgets\Pagination;
+use common\widgets\RecordCount;
 
 /** @var yii\web\View $this */
 /** @var common\models\Notification[] $models */

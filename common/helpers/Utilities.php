@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Utility Helper Class
  *
@@ -14,12 +13,14 @@
 
 namespace common\helpers;
 
+use common\helpers\WebResourcesHelper;
 use Yii;
 use yii\helpers\Html;
 use yii\helpers\Inflector;
 
 class Utilities extends Html
 {
+
     /**
      * Trims the input string to a specified maximum length, adding ellipsis
      * if necessary.
@@ -91,22 +92,22 @@ class Utilities extends Html
     public static function newUUID()
     {
         return sprintf(
-            '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-            // 32 bits for "time_low"
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0xffff),
-            // 16 bits for "time_mid"
-            mt_rand(0, 0xffff),
-            // 16 bits for "time_hi_and_version"
-            // (the most significant bits set to 0100 for version 4)
-            mt_rand(0, 0x0fff) | 0x4000,
-            // 16 bits for "clk_seq_hi_res" and "clk_seq_low"
-            // (the most significant bits set to 10 for variant DCE1.1)
-            mt_rand(0, 0x3fff) | 0x8000,
-            // 48 bits for "node"
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0xffff),
+                '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+                // 32 bits for "time_low"
+                mt_rand(0, 0xffff),
+                mt_rand(0, 0xffff),
+                // 16 bits for "time_mid"
+                mt_rand(0, 0xffff),
+                // 16 bits for "time_hi_and_version"
+                // (the most significant bits set to 0100 for version 4)
+                mt_rand(0, 0x0fff) | 0x4000,
+                // 16 bits for "clk_seq_hi_res" and "clk_seq_low"
+                // (the most significant bits set to 10 for variant DCE1.1)
+                mt_rand(0, 0x3fff) | 0x8000,
+                // 48 bits for "node"
+                mt_rand(0, 0xffff),
+                mt_rand(0, 0xffff),
+                mt_rand(0, 0xffff),
         );
     }
 
@@ -165,8 +166,9 @@ class Utilities extends Html
         }
 
         // Generate path for regular or random placeholder image
-        $randomFileName = random_int(1, 8) . '.jpg';
-        return 'img/sm/' . ($imageFile ?? $randomFileName);
+        $fileName = $imageFile ?? random_int(1, 8) . '.jpg';
+        $imgPath = WebResourcesHelper::imagePath();
+        return "{$imgPath}/sm/{$fileName}";
     }
 
     /**

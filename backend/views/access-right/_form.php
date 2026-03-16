@@ -12,6 +12,8 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
+    <?= $form->field($model, 'application')->textInput(['maxlength' => true]) ?>
+
     <?= $form->field($model, 'route')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'action')->textInput(['maxlength' => true]) ?>

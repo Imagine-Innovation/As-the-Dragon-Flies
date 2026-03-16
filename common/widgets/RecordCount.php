@@ -1,11 +1,12 @@
 <?php
 
-namespace frontend\widgets;
+namespace common\widgets;
 
 use yii\base\Widget;
 
 class RecordCount extends Widget
 {
+
     public string $model;
     public int $count;
     public string $adjective;
@@ -20,8 +21,8 @@ class RecordCount extends Widget
     public function run(): string
     {
         return $this->render('record-count', [
-            'countLabel' => $this->setCountLabel(),
-            'actions' => $this->actions,
+                    'countLabel' => $this->setCountLabel(),
+                    'actions' => $this->actions,
         ]);
     }
 

@@ -1,5 +1,6 @@
 <?php
 
+use common\helpers\WebResourcesHelper;
 use common\models\Player;
 use common\widgets\Button;
 use yii\helpers\Url;
@@ -8,6 +9,7 @@ use yii\helpers\Url;
 /** @var Player|null $currentPlayer  */
 /** @var Player[] $otherPlayers */
 /** @var int|null $nbCards */
+$imgPath = WebResourcesHelper::imagePath();
 $maxCard = min($nbCards ?? 2, 6);
 
 $rowCols = [
@@ -26,26 +28,21 @@ $n = 0;
 <h4 class="text-decoration text-yellow">Your players</h4>
 <div class="row <?= $rowCol ?> g-4">
     <?php
-
     if ($currentPlayer !== null) {
-        echo
-            $this->renderFile('@app/views/site/snippets/player-card.php', [
-                'player' => $currentPlayer,
-                'current' => true,
-            ])
-        ;
+        echo $this->renderFile('@app/views/site/snippets/player-card.php', [
+            'player' => $currentPlayer,
+            'current' => true,
+        ]);
         $n++;
     }
     foreach ($otherPlayers as $player) {
         if ($n >= $maxCard) {
             break;
         }
-        echo
-            $this->renderFile('@app/views/site/snippets/player-card.php', [
-                'player' => $player,
-                'current' => false,
-            ])
-        ;
+        echo $this->renderFile('@app/views/site/snippets/player-card.php', [
+            'player' => $player,
+            'current' => false,
+        ]);
         $n++;
     }
     ?>
@@ -53,7 +50,7 @@ $n = 0;
     <!-- Create new player card -->
     <div class="col">
         <div class="image-card h-100">
-            <div class="image-card-body" style="background-image: url('img/blank.png');">
+            <div class="image-card-body" style="background-image: url('<?= $imgPath ?>/blank.png');">
                 <div class="image-card-label">
                     <h1 class="display-5">
                         <i class="bi bi-plus-circle"></i>
@@ -61,16 +58,16 @@ $n = 0;
                     <h5>Create a new player</h5>
                     <p></p>
                     <?=
-    Button::widget([
-        'url' => Url::toRoute('player-builder/create'),
-        'icon' => 'bi-plus-circle',
-        'style' => 'text-decoration justify-content-center mt-auto',
-        'tooltip' => null,
-        'title' => 'Create',
-        'isCta' => false,
-    ])
-;
-?>
+                    Button::widget([
+                        'url' => Url::toRoute('player-builder/create'),
+                        'icon' => 'bi-plus-circle',
+                        'style' => 'text-decoration justify-content-center mt-auto',
+                        'tooltip' => null,
+                        'title' => 'Create',
+                        'isCta' => false,
+                    ])
+                    ;
+                    ?>
                 </div>
             </div>
         </div>
@@ -80,4 +77,4 @@ $n = 0;
     <div class="lead text-decoration text-end">
         <a href="<?= Url::toRoute('player/index') ?>">See more...</a>
     </div>
-<?php endif;
+<?php endif; ?>

@@ -1,11 +1,12 @@
 <?php
 
-namespace frontend\widgets;
+namespace common\widgets;
 
 use yii\base\Widget;
 
 class Pagination extends Widget
 {
+
     public int $limit;
     public int $pageCount;
     public int $page;
@@ -26,11 +27,11 @@ class Pagination extends Widget
         $this->lastVisiblePage = min($this->pageCount - 1, $tmpLastPage);
 
         return $this->render('pagination', [
-            'limit' => $this->limit,
-            'pageCount' => $this->pageCount,
-            'lastVisiblePage' => $this->lastVisiblePage,
-            'page' => $this->page,
-            'pages' => $this->calculatePages(),
+                    'limit' => $this->limit,
+                    'pageCount' => $this->pageCount,
+                    'lastVisiblePage' => $this->lastVisiblePage,
+                    'page' => $this->page,
+                    'pages' => $this->calculatePages(),
         ]);
     }
 

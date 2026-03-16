@@ -3,8 +3,8 @@
 use common\helpers\WebResourcesHelper;
 use common\models\CharacterClass;
 use common\widgets\CheckBox;
-use frontend\widgets\Pagination;
-use frontend\widgets\RecordCount;
+use common\widgets\Pagination;
+use common\widgets\RecordCount;
 
 /** @var yii\web\View $this */
 /** @var common\models\Image[] $models */

@@ -1,8 +1,8 @@
 <?php
 
 use common\models\Spell;
-use frontend\widgets\Pagination;
-use frontend\widgets\RecordCount;
+use common\widgets\Pagination;
+use common\widgets\RecordCount;
 use yii\helpers\Html;
 use yii\helpers\Url;
 

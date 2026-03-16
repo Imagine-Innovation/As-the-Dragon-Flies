@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use common\components\AccessRightsManager;
+use common\helpers\Utilities;
 use common\models\LoginForm;
 use Yii;
 use yii\filters\VerbFilter;
@@ -31,7 +32,7 @@ class SiteController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout', 'index', 'colors', 'fonts', 'icons'],
+                        'actions' => ['logout', 'index', 'colors', 'fonts', 'icons', 'ajax-toast'],
                         'allow' => AccessRightsManager::isRouteAllowed($this),
                         // 'allow' => true,
                         'roles' => ['@'],
@@ -105,6 +106,37 @@ class SiteController extends Controller
         Yii::$app->user->logout();
 
         return $this->goHome();
+    }
+
+    /**
+     *
+     * @return array{error: bool, msg: string, UUID?: string, content?: string}
+     */
+    public function actionAjaxToast(): array
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        if (!$this->request->isPost || !$this->request->isAjax) {
+            return ['error' => true, 'msg' => 'Not an Ajax POST request'];
+        }
+
+        // Retrieve the item ID from the POST data and find the item
+        $messageHeader = Yii::$app->request->post('messageHeader');
+        $message = Yii::$app->request->post('message');
+        $severity = Yii::$app->request->post('severity');
+
+        $UUID = Utilities::newUUID();
+        return [
+            'error' => false,
+            'msg' => '',
+            'UUID' => $UUID,
+            'content' => $this->renderPartial('ajax/toast', [
+                'UUID' => $UUID,
+                'messageHeader' => $messageHeader,
+                'message' => $message,
+                'severity' => $severity,
+            ]),
+        ];
     }
 
     /**

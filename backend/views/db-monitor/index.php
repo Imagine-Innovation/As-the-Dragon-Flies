@@ -1,7 +1,7 @@
 <?php
 
 use backend\helpers\DbMonitorHelper;
-use backend\widgets\DbMonitorKpi;
+use backend\widgets\Kpi;
 use backend\widgets\DbMonitorTopQueries;
 use yii\helpers\Url;
 
@@ -17,11 +17,36 @@ use yii\helpers\Url;
 $explainUrl = Url::to(['db-monitor/explain']);
 $suggestionUrl = Url::to(['db-monitor/suggestion']);
 ?>
-<div class="row g-3">
-    <?= DbMonitorKpi::widget(['label' => 'Uptime', 'value' => DbMonitorHelper::formatUptime($kpis['uptime'])]) ?>
-    <?= DbMonitorKpi::widget(['label' => 'Threads', 'value' => $kpis['threadsConnected']]) ?>
-    <?= DbMonitorKpi::widget(['label' => 'Slow Queries', 'value' => $kpis['slowQueries']]) ?>
-    <?= DbMonitorKpi::widget(['label' => 'Queries', 'value' => $kpis['queriesPerSecond']]) ?>
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 row-cols-xxl-4 g-3 mb-4">
+    <?=
+    Kpi::widget([
+        'title' => 'Uptime',
+        'value' => DbMonitorHelper::formatUptime($kpis['uptime']),
+        'badge' => Yii::$app->db->getDriverName(),
+        'icon' => 'bi-clock-history',
+    ])
+    ?>
+    <?=
+    Kpi::widget([
+        'title' => 'Threads',
+        'value' => $kpis['threadsConnected'],
+        'icon' => 'bi-cpu',
+    ])
+    ?>
+    <?=
+    Kpi::widget([
+        'title' => 'Slow Queries',
+        'value' => $kpis['slowQueries'],
+        'icon' => 'bi-speedometer',
+    ])
+    ?>
+    <?=
+    Kpi::widget([
+        'title' => 'Queries',
+        'value' => $kpis['queriesPerSecond'],
+        'icon' => 'bi-database',
+    ])
+    ?>
 </div>
 
 <div class="mt-4">

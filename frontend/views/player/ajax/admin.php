@@ -3,9 +3,9 @@
 use common\helpers\Status;
 use common\helpers\Utilities;
 use common\helpers\WebResourcesHelper;
-use frontend\widgets\ActionButtons;
-use frontend\widgets\Pagination;
-use frontend\widgets\RecordCount;
+use common\widgets\ActionButtons;
+use common\widgets\Pagination;
+use common\widgets\RecordCount;
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */

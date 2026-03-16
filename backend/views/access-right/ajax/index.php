@@ -1,8 +1,8 @@
 <?php
 
 use common\helpers\SpecialCheckBox;
-use frontend\widgets\Pagination;
-use frontend\widgets\RecordCount;
+use common\widgets\Pagination;
+use common\widgets\RecordCount;
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */

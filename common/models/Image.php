@@ -3,6 +3,7 @@
 namespace common\models;
 
 use common\helpers\SaveHelper;
+use common\helpers\WebResourcesHelper;
 use yii\helpers\Url;
 use yii\web\UploadedFile;
 
@@ -120,7 +121,8 @@ class Image extends \yii\db\ActiveRecord
      */
     public function getImageUrl(): string
     {
-        $path = 'img/' . $this->category . '/' . $this->file_name;
+        $imgPath = WebResourcesHelper::imagePath();
+        $path = "{$imgPath}/{$this->category}/{$this->file_name}";
         return \yii\helpers\Url::to('@web/' . $path);
     }
 

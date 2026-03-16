@@ -70,8 +70,7 @@ $currentUser = Yii::$app->user->identity;
                         <a id="top"></a>
                         <?=
                         Breadcrumbs::widget([
-                            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs']
-                                        : [],
+                            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
                         ])
                         ?>
 
@@ -96,13 +95,15 @@ $currentUser = Yii::$app->user->identity;
     </body>
     <?php $this->endBody(); ?>
 
+
     <script type="text/javascript">
+
+        if (DOMUtils.exists('#ajaxHiddenParams')) {
+            LayoutInitializer.initAjaxPage();
+        }
         const kpiManager = new KpiManager(60);
         kpiManager.init();
 
-    </script>
-
-    <script>
         // Sidebar manual toggle for Large screens
         const sidebar = document.getElementById('sidebar');
         const sidebarToggle = document.getElementById('sidebarToggle');
