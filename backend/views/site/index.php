@@ -5,7 +5,7 @@ use backend\widgets\ActivityGraph;
 /** @var yii\web\View $this */
 $this->title = Yii::$app->name;
 ?>
-<?= $this->renderFile('@app/views/site/snippets/Kpi.php') ?>
+<?= $this->renderFile('@app/views/site/snippets/kpi.php') ?>
 
 <div class="row g-4">
     <div class="col-12 col-xxl-6" id="activeQuestsTable">
