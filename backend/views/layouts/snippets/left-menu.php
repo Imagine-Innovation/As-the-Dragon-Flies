@@ -10,6 +10,7 @@ $menuConfig = [
         ['label' => 'DbMonitor', 'icon' => 'bi-speedometer2', 'url' => ['/db-monitor/index'], 'admin' => true],
     ],
     'Admin' => [
+        ['label' => 'Access Rights', 'icon' => 'bi-shield-check', 'url' => ['/access-right/index'], 'admin' => true],
         ['label' => 'Users', 'icon' => 'bi-people', 'url' => ['/user/index'], 'admin' => true],
         ['label' => 'Players', 'icon' => 'bi-person-badge', 'url' => ['/player/index'], 'admin' => true],
         ['label' => 'Stories', 'icon' => 'bi-journal-text', 'url' => ['/story/index'], 'admin' => false],
