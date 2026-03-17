@@ -53,7 +53,7 @@ $fonts = [
 
 $sampleText = 'As the Dragon Flies';
 ?>
-<link href="/frontend/web/css/dev-fonts.css" rel="stylesheet">
+<link href="/common/web/css/dev-fonts.css" rel="stylesheet">
 <div class="container">
     <div class="row row-cols-1 row-cols-xl-2 g-4">
         <div class="col">

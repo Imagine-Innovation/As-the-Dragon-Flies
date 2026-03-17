@@ -11,6 +11,7 @@ use yii\base\Model;
  */
 class SignupForm extends Model
 {
+
     public ?string $username = null;
     public ?string $fullname = null;
     public ?string $email = null;
@@ -47,8 +48,8 @@ class SignupForm extends Model
             [
                 'fullname',
                 'match',
-                'pattern' => '/^[a-zA-Z0-9]+$/',
-                'message' => 'Username can only contain alphanumeric characters.',
+                'pattern' => '/^[a-zA-Z0-9 ]+$/',
+                'message' => 'Username can only contain alphanumeric characters and space.',
             ],
             ['email', 'email'],
             ['email', 'string', 'max' => 255],
@@ -96,11 +97,11 @@ class SignupForm extends Model
     protected function sendEmail(User $user): bool
     {
         return Yii::$app
-            ->mailer
-            ->compose(['html' => 'emailVerify-html', 'text' => 'emailVerify-text'], ['user' => $user])
-            ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name . ' robot'])
-            ->setTo($this->email)
-            ->setSubject('Account registration at ' . Yii::$app->name)
-            ->send();
+                        ->mailer
+                        ->compose(['html' => 'emailVerify-html', 'text' => 'emailVerify-text'], ['user' => $user])
+                        ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name . ' robot'])
+                        ->setTo($this->email)
+                        ->setSubject('Account registration at ' . Yii::$app->name)
+                        ->send();
     }
 }

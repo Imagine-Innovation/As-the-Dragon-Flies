@@ -48,10 +48,10 @@ class Alert extends \yii\bootstrap5\Widget
     /**
      *
      * @param string $type
-     * @param array<string, string> $flash
+     * @param array<string, string>|string $flash
      * @return string
      */
-    protected function echoAlerts(string $type, array $flash): string
+    protected function echoAlerts(string $type, array|string $flash): string
     {
         $bootstrapAlertType = $this->bootstrapAlertType($type);
 
@@ -60,8 +60,7 @@ class Alert extends \yii\bootstrap5\Widget
         }
 
         $alert = '';
-        $class = isset($this->options['class']) ? "{$bootstrapAlertType} {$this->options['class']}"
-                    : $bootstrapAlertType;
+        $class = isset($this->options['class']) ? "{$bootstrapAlertType} {$this->options['class']}" : $bootstrapAlertType;
 
         foreach ((array) $flash as $i => $message) {
             $alert .= \yii\bootstrap5\Alert::widget([

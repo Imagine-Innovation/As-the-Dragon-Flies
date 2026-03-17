@@ -12,6 +12,14 @@ body {
     z-index: 1000;
 }
 
+.container {
+    max-width: none;
+}
+
+.content:not(.content--boxed):not(.content--full) {
+    padding: 30px 30px 30px 30px;
+}
+
 /* Automatic Shrink on Medium Screens (576px to 991px) */
 @media (min-width: 576px) and (max-width: 991.98px) {
     #sidebar {
@@ -55,7 +63,7 @@ body {
 }
 
 .kpi-icon {
-    font-size: 2.5rem;
+    font-size: 1.5rem;
     opacity: 0.3;
     position: absolute;
     right: 15px;

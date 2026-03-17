@@ -11,18 +11,15 @@ use backend\models\DbMonitor;
         <tr>
             <th>ID</th>
             <th>Avg Runtime (ms)</th>
-            <th>SQL Excerpt</th>
+            <th>SQL query</th>
         </tr>
     </thead>
     <tbody>
         <?php foreach ($queries as $q): ?>
-            <tr
-                onclick="loadExplain(<?= (int) $q->id ?>)"
-                style="cursor:pointer;"
-                >
+            <tr onclick="loadExplain(<?= (int) $q->id ?>)" style="cursor:pointer;">
                 <td><?= (int) $q->id ?></td>
                 <td><?= (int) $q->avg_runtime_ms ?></td>
-                <td><?= htmlspecialchars(mb_strimwidth($q->sql_text, 0, 80, '…')) ?></td>
+                <td><?= htmlspecialchars($q->sql_text) ?></td>
             </tr>
         <?php endforeach; ?>
     </tbody>

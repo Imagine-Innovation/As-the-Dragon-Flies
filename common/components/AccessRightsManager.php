@@ -2,10 +2,8 @@
 
 namespace common\components;
 
-use common\components\AppStatus;
 use common\models\AccessCount;
 use common\models\AccessRight;
-use common\models\ActionButton;
 use common\models\User;
 use RuntimeException;
 use Yii;
@@ -261,8 +259,8 @@ class AccessRightsManager extends Component
         }
 
         // Deny if quest participation is required but player is not in a quest
-        $inQuest = Yii::$app->session->get('inQuest');
-        $playerName = Yii::$app->session->get('playerName');
+        $inQuest = Yii::$app->session->get('inQuest') ?? false;
+        $playerName = Yii::$app->session->get('playerName') ?? 'Unknown';
         if (!$inQuest && $accessRight->in_quest) {
             return [
                 'denied' => true,
@@ -387,7 +385,8 @@ class AccessRightsManager extends Component
      */
     public static function isActionButtonAllowed(array $action, string $controller, bool $isOwner, string $mode): bool
     {
-        $user = Yii::$app->session->get('user');
+        //$user = Yii::$app->session->get('user');
+        $user = Yii::$app->user->identity;
 
         // Check if the model name is allowed for the action
         if (!in_array($controller, $action['controllers'])) {

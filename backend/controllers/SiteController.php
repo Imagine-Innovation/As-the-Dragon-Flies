@@ -28,13 +28,14 @@ class SiteController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['login', 'error'],
-                        'allow' => true,
+                        'actions' => ['login'],
+                        // 'allow' => true,
+                        'allow' => AccessRightsManager::isRouteAllowed($this),
+                        'roles' => ['?'],
                     ],
                     [
                         'actions' => ['logout', 'index', 'colors', 'fonts', 'icons', 'ajax-toast'],
                         'allow' => AccessRightsManager::isRouteAllowed($this),
-                        // 'allow' => true,
                         'roles' => ['@'],
                     ],
                 ],

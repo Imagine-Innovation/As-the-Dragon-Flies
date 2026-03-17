@@ -801,7 +801,7 @@ textarea.form-control {
 .form-control.is-valid,.was-validated .form-control:valid {
     border-color: var(--green);
     padding-right: calc(1.5em + 1.2rem);
-    background-image: url(../img/form-validation-valid.svg);
+    background-image: url(/common/web/img/form-validation-valid.svg);
     background-position: center right calc(.375em + .3rem);
     background-size: calc(.75em + .6rem) calc(.75em + .6rem);
 }
@@ -824,7 +824,7 @@ textarea.form-control {
 .custom-select.is-valid,.was-validated .custom-select:valid {
     border-color: var(--green);
     padding-right: calc((1em + 1.2rem) * 3 / 4 + 2rem);
-    background: transparent url(../img/select-caret.svg) no-repeat bottom 5px right 5px, url(../img/form-validation-valid.svg) transparent no-repeat center right 2rem/calc(.75em + .6rem) calc(.75em + .6rem);
+    background: transparent url(/common/web/img/select-caret.svg) no-repeat bottom 5px right 5px, url(/common/web/img/form-validation-valid.svg) transparent no-repeat center right 2rem/calc(.75em + .6rem) calc(.75em + .6rem);
 }
 
 .custom-select.is-valid:focus,.was-validated .custom-select:valid:focus {
@@ -897,7 +897,7 @@ textarea.form-control {
 .custom-select.is-invalid,.was-validated .custom-select:invalid {
     border-color: var(--red);
     padding-right: calc((1em + 1.2rem) * 3 / 4 + 2rem);
-    background: transparent url(../img/select-caret.svg) no-repeat bottom 5px right 5px,url(../img/form-validation-invalid.svg) transparent no-repeat center right 2rem/calc(.75em + .6rem) calc(.75em + .6rem);
+    background: transparent url(/common/web/img/select-caret.svg) no-repeat bottom 5px right 5px,url(/common/web/img/form-validation-invalid.svg) transparent no-repeat center right 2rem/calc(.75em + .6rem) calc(.75em + .6rem);
 }
 
 .custom-select.is-invalid:focus,.was-validated .custom-select:invalid:focus {
@@ -1094,7 +1094,7 @@ textarea.form-control {
 }
 
 .custom-checkbox .custom-control-input:checked~.custom-control-label::after {
-    background-image: url(../img/checkbox-checked.svg);
+    background-image: url(/common/web/img/checkbox-checked.svg);
 }
 
 .custom-checkbox .custom-control-input:indeterminate~.custom-control-label::before {
@@ -1185,7 +1185,7 @@ textarea.form-control {
     line-height: 1.5;
     color: var(--light-85);
     vertical-align: middle;
-    background: transparent url(../img/select-caret.svg) no-repeat bottom 5px right 5px;
+    background: transparent url(/common/web/img/select-caret.svg) no-repeat bottom 5px right 5px;
     background-color: transparent;
     border: 1px solid var(--light-25);
     -webkit-appearance: none;
@@ -3708,7 +3708,7 @@ select::-ms-expand {
 }
 
 select.form-control {
-    background: url(../img/select-caret.svg) no-repeat bottom 5px right 5px;
+    background: url(/common/web/img/select-caret.svg) no-repeat bottom 5px right 5px;
 }
 
 .invalid-tooltip,.valid-tooltip {
@@ -5719,7 +5719,7 @@ pre {
 
 .select2-container--default .select2-selection--single {
     border-radius: 0;
-    background: transparent url(../img/select-caret.svg) no-repeat bottom 5px right 5px;
+    background: transparent url(/common/web/img/select-caret.svg) no-repeat bottom 5px right 5px;
     border-color: var(--light-25);
     height: auto
 }
@@ -5900,7 +5900,7 @@ pre {
 
 .scroll {
     padding: 8%;
-    background-image: url(../img/sm/scroll.png);
+    background-image: url(/common/web/img/sm/scroll.png);
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;

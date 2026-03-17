@@ -1,10 +1,14 @@
 <?php
 
+use common\helpers\WebResourcesHelper;
+
 /** @var yii\web\View $this */
 /** @var array $playerBodyData */
 /** @var bool $withId */
 /** @var bool $withOffcanvas */
 /** @var array<string, array{cx: int, cy: int, r: int, x: int, y: int, size: int, fill: string, opacity: string}> $circles */
+$imgPath = WebResourcesHelper::imagePath();
+
 $circles = [
     'equipmentHeadZone' => [
         'cx' => 200,
@@ -70,52 +74,31 @@ foreach ($playerBodyData as $zone => $playerBody) {
 <div class="card-body svg-container">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 900" preserveAspectRatio="xMidYMid meet" <?=
     $withId ? 'id="equipmentSvg"' : 'style="max-height: 30vh;"'
-?>>
-        <?php foreach ($playerBodyData as $zone => $playerBody): ?>
-            <?php
+    ?>>
+             <?php foreach ($playerBodyData as $zone => $playerBody): ?>
+                 <?php
+                 // Ensure the zone exists in our SVG coordinate map
 
-
-
-            // Ensure the zone exists in our SVG coordinate map
-
-            if (!empty($playerBody['itemId']) && isset($circles[$zone])):
-    
-            $circle = $circles[$zone];
-    
-            ?>
+                 if (!empty($playerBody['itemId']) && isset($circles[$zone])):
+                     $circle = $circles[$zone];
+                     ?>
                 <defs>
-                    <pattern id="pattern-<?= $zone ?><?= $suffix ?>" patternUnits="userSpaceOnUse" width="<?=
-        
-            $circle['size']
-    
-            ?>" height="<?= $circle['size'] ?>" x="<?= $circle['x'] ?>" y="<?= $circle['y'] ?>">
-                        <image href="/frontend/web/img/item/<?= $playerBody['image'] ?>" width="<?= $circle['size'] ?>" height="<?=
-        
-            $circle['size']
-    
-            ?>"/>
+                    <pattern id="pattern-<?= $zone ?><?= $suffix ?>" patternUnits="userSpaceOnUse" width="<?= $circle['size'] ?>" height="<?= $circle['size'] ?>" x="<?= $circle['x'] ?>" y="<?= $circle['y'] ?>">
+                        <image href="<?= $imgPath ?>/item/<?= $playerBody['image'] ?>" width="<?= $circle['size'] ?>" height="<?= $circle['size'] ?>"/>
                     </pattern>
                 </defs>
             <?php endif; ?>
         <?php endforeach; ?>
-        <image href="/frontend/web/img/man-back-view.png" width="200" height="450" x=300 y=0 class="img-fluid" />
-        <image href="/frontend/web/img/man-front-view.png" width="400" height="900" class="img-fluid" />
+        <image href="<?= $imgPath ?>/man-back-view.png" width="200" height="450" x=300 y=0 class="img-fluid" />
+        <image href="<?= $imgPath ?>/man-front-view.png" width="400" height="900" class="img-fluid" />
 
         <?php if ($withId): ?>
             <?php foreach ($circles as $zone => $circle): ?>
-                <circle id="<?= $zone ?>" cx="<?= $circle['cx'] ?>" cy="<?= $circle['cy'] ?>" r="<?= $circle['r'] ?>" fill="<?=
-    
-            $circle['fill']
-
-            ?>" fill-opacity="<?= $circle['opacity'] ?>" style="cursor: pointer;"/>
+                <circle id="<?= $zone ?>" cx="<?= $circle['cx'] ?>" cy="<?= $circle['cy'] ?>" r="<?= $circle['r'] ?>" fill="<?= $circle['fill'] ?>" fill-opacity="<?= $circle['opacity'] ?>" style="cursor: pointer;"/>
             <?php endforeach; ?>
         <?php else: ?>
             <?php foreach ($circles as $zone => $circle): ?>
-                <circle cx="<?= $circle['cx'] ?>" cy="<?= $circle['cy'] ?>" r="<?= $circle['r'] ?>" fill="<?=
-    
-            $circle['fill']
-
-            ?>" fill-opacity="<?= $circle['opacity'] ?>" />
+                <circle cx="<?= $circle['cx'] ?>" cy="<?= $circle['cy'] ?>" r="<?= $circle['r'] ?>" fill="<?= $circle['fill'] ?>" fill-opacity="<?= $circle['opacity'] ?>" />
             <?php endforeach; ?>
         <?php endif; ?>
     </svg>

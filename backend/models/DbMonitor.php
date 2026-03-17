@@ -176,17 +176,11 @@ final class DbMonitor extends ActiveRecord
 
             // Try to find existing
             /** @var DbMonitor|null $existing */
-            $existing = self::findOne(['sql_text' => $sql]);
-
-            if ($existing === null) {
-                $existing = new self();
-            }
+            $existing = self::findOne(['sql_text' => $sql]) ?? new self();
 
             $existing->sql_text = $sql;
-            $existing->avg_runtime_ms = is_numeric($r['avg_runtime_ms']) ? (int) $r['avg_runtime_ms']
-                        : 0;
-            $existing->calls_last_hour = is_numeric($r['calls_last_hour']) ? (int) $r['calls_last_hour']
-                        : 0;
+            $existing->avg_runtime_ms = is_numeric($r['avg_runtime_ms']) ? (int) $r['avg_runtime_ms'] : 0;
+            $existing->calls_last_hour = is_numeric($r['calls_last_hour']) ? (int) $r['calls_last_hour'] : 0;
             $existing->last_seen = (int) time();
             $existing->save(false);
 

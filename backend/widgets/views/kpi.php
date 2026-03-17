@@ -16,13 +16,13 @@
                     <span class="badge text-bg-secondary badge-metric"><?= $badge ?></span>
                 <?php endif; ?>
             </div>
-            <h2 class="card-title mb-0">
+            <h3 class="card-title mb-0">
                 <?php if ($containerName): ?>
                     <span id="<?= $containerName ?>"><?= $value ?></span>
                 <?php else: ?>
                     <?= $value ?>
                 <?php endif; ?>
-            </h2>
+            </h3>
             <?php if ($icon): ?>
                 <i class="bi <?= $icon ?> kpi-icon"></i>
             <?php endif; ?>

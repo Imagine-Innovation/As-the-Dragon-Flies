@@ -123,7 +123,7 @@ class Image extends \yii\db\ActiveRecord
     {
         $imgPath = WebResourcesHelper::imagePath();
         $path = "{$imgPath}/{$this->category}/{$this->file_name}";
-        return \yii\helpers\Url::to('@web/' . $path);
+        return \yii\helpers\Url::to($path);
     }
 
     /**

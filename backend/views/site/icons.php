@@ -138,7 +138,7 @@ if ($devIcons) {
 }
 ?>
 <div class="container">
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xxl-4 g-4">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xxl-4 row-cols-3xl-6 g-4">
         <?php foreach ($icons as $icon): ?>
             <div class="col">
                 <div class="card">
