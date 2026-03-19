@@ -8,6 +8,7 @@ body {
 }
 #sidebar {
     width: var(--sidebar-width);
+    flex-shrink: 0;    /* Prevents flexbox from compressing it */
     transition: width 0.2s ease-in-out;
     z-index: 1000;
 }
