@@ -1,5 +1,6 @@
 <?php
 
+use common\helpers\WebResourcesHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -8,11 +9,12 @@ use yii\widgets\ActiveForm;
 /** @var yii\widgets\ActiveForm $form */
 /** @var string $storyId */
 /** @var string $chapterId */
+$storyRoot = WebResourcesHelper::storyRootPath($storyId);
 ?>
 
 <div class="d-none">
     Hidden div to embeb utility tags for PHP/JS communication
-    <span id="hiddenImagePath">resources\story-<?= $storyId ?>\img</span>
+    <span id="hiddenImagePath"><?= $storyRoot ?>\img</span>
     <span id="hiddenFormName">mission</span>
     <span id="hiddenParentId"><?= $chapterId ?></span>
 </div>
@@ -26,25 +28,23 @@ use yii\widgets\ActiveForm;
 <?php if ($model->image): ?>
     <div class="row">
         <div class="col-2">
-            <img src="resources/story-<?= $storyId ?>/img/<?= $model->image ?>" alt="<?= $model->name ?>" class="w-100 h-100" style="object-fit: cover;" />
+            <img src="<?= $storyRoot ?>/img/<?= $model->image ?>" alt="<?= $model->name ?>" class="w-100 h-100" style="object-fit: cover;" />
         </div>
         <div class="col-10">
         <?php endif; ?>
 
         <?=
-    $form
-        ->field($model, 'image')
-        ->dropdownList(
-            $model->image ? [$model->image => $model->image] : [],
-            [
-                'class' => 'select2-container w-100',
-                'data-minimum-results-for-search' => -1,
-                'data-placeholder' => 'Select an image',
-                'maxlength' => true,
-            ],
-        )
-        ->label('Mission image')
-?>
+                $form->field($model, 'image')->dropdownList(
+                        $model->image ? [$model->image => $model->image] : [],
+                        [
+                            'class' => 'select2-container w-100',
+                            'data-minimum-results-for-search' => -1,
+                            'data-placeholder' => 'Select an image',
+                            'maxlength' => true,
+                        ],
+                )
+                ->label('Mission image')
+        ?>
 
         <?php if ($model->image): ?>
         </div>
@@ -55,4 +55,4 @@ use yii\widgets\ActiveForm;
     <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
 </div>
 
-<?php ActiveForm::end();
+<?php ActiveForm::end(); ?>

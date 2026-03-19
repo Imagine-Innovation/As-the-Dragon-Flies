@@ -1,5 +1,6 @@
 <?php
 
+use common\helpers\WebResourcesHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -10,11 +11,12 @@ use yii\widgets\ActiveForm;
 /** @var string $chapterId */
 /** @var string $missionId */
 /** @var string $parentId */
+$storyRoot = WebResourcesHelper::storyRootPath($storyId);
 ?>
 
 <div class="d-none">
     Hidden div to embeb utility tags for PHP/JS communication
-    <span id="hiddenImagePath">resources\story-<?= $storyId ?>\img</span>
+    <span id="hiddenImagePath"><?= $storyRoot ?>\img</span>
     <span id="hiddenFormName">npc</span>
     <span id="hiddenParentId"><?= $parentId ?></span>
 </div>
@@ -28,72 +30,51 @@ use yii\widgets\ActiveForm;
 <?php if ($model->image): ?>
     <div class="row">
         <div class="col-2">
-            <img src="resources/story-<?= $storyId ?>/img/<?= $model->image ?>" alt="<?= $model->name ?>" class="w-100 h-100" style="object-fit: cover;" />
+            <img src="<?= $storyRoot ?>/img/<?= $model->image ?>" alt="<?= $model->name ?>" class="w-100 h-100" style="object-fit: cover;" />
         </div>
         <div class="col-10">
         <?php endif; ?>
 
-        <?=
-    $form
-        ->field($model, 'npc_type_id')
-        ->dropdownList(
-            $model->npc_type_id ? [$model->npc_type_id => $model->npcType->name] : [],
-            [
-                'class' => 'select2-container w-100',
-                'data-minimum-results-for-search' => -1,
-                'data-placeholder' => 'Select the type of NPC',
-            ],
-        )
-        ->label('NPC type')
-?>
-
-        <?=
-    $form
-        ->field($model, 'image')
-        ->dropdownList(
-            $model->image ? [$model->image => $model->image] : [],
-            [
-                'class' => 'select2-container w-100',
-                'data-minimum-results-for-search' => -1,
-                'data-placeholder' => 'Select an image',
-                'maxlength' => true,
-            ],
-        )
-        ->label('NPC image')
-?>
-
         <?php
-
-        if ($model->id) {
-            echo
-                $form
-                    ->field($model, 'first_dialog_id')
-                    ->dropdownList(
-                        $model->first_dialog_id ? [$model->first_dialog_id => $model->firstDialog->text] : [],
+        echo $form->field($model, 'npc_type_id')->dropdownList(
+                        $model->npc_type_id ? [$model->npc_type_id => $model->npcType->name] : [],
                         [
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
-                            'data-placeholder' => 'Select the first dialog of the NPC',
+                            'data-placeholder' => 'Select the type of NPC',
                         ],
+                )
+                ->label('NPC type');
+
+        echo $form->field($model, 'image')->dropdownList(
+                        $model->image ? [$model->image => $model->image] : [],
+                        [
+                            'class' => 'select2-container w-100',
+                            'data-minimum-results-for-search' => -1,
+                            'data-placeholder' => 'Select an image',
+                            'maxlength' => true,
+                        ],
+                )
+                ->label('NPC image');
+
+        if ($model->id) {
+            echo $form->field($model, 'first_dialog_id')->dropdownList(
+                            $model->first_dialog_id ? [$model->first_dialog_id => $model->firstDialog->text] : [],
+                            [
+                                'class' => 'select2-container w-100',
+                                'data-minimum-results-for-search' => -1,
+                                'data-placeholder' => 'Select the first dialog of the NPC',
+                            ],
                     )
                     ->label('First dialog')
             ;
-        }
-        ?>
-
-        <?php
-
-        if ($model->id) {
-            echo
-                $form
-                    ->field($model, 'language_id')
-                    ->dropdownList(
-                        $model->language_id ? [$model->language_id => $model->language->name] : [],
-                        [
-                            'class' => 'select2-container w-100',
-                            'data-minimum-results-for-search' => -1,
-                            'data-placeholder' => 'Select a language',
-                        ],
+            echo $form->field($model, 'language_id')->dropdownList(
+                            $model->language_id ? [$model->language_id => $model->language->name] : [],
+                            [
+                                'class' => 'select2-container w-100',
+                                'data-minimum-results-for-search' => -1,
+                                'data-placeholder' => 'Select a language',
+                            ],
                     )
                     ->label('Language spoken')
             ;
@@ -104,7 +85,6 @@ use yii\widgets\ActiveForm;
         </div>
     </div>
 <?php endif; ?>
-
 
 <div class="form-group">
     <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
@@ -121,4 +101,4 @@ use yii\widgets\ActiveForm;
             <?= $this->renderFile('@app/views/mission/snippets/dialog.php', ['dialog' => $model->firstDialog]) ?>
         </div>
     </section>
-<?php endif;
+<?php endif; ?>

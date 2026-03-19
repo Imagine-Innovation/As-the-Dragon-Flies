@@ -12,11 +12,12 @@ use yii\widgets\ActiveForm;
 /** @var string $missionId */
 /** @var string $parentId */
 $imgPath = WebResourcesHelper::imagePath();
+$storyRoot = WebResourcesHelper::storyRootPath($storyId);
 ?>
 
 <div class="d-none">
     Hidden div to embeb utility tags for PHP/JS communication
-    <span id="hiddenImagePath">resources\story-<?= $storyId ?>\img</span>
+    <span id="hiddenImagePath"><?= $storyRoot ?>\img</span>
     <span id="hiddenFormName">monster</span>
     <span id="hiddenParentId"><?= $parentId ?></span>
 </div>
@@ -39,8 +40,7 @@ $imgPath = WebResourcesHelper::imagePath();
                 $form
                 ->field($model, 'creature_id')
                 ->dropdownList(
-                        $model->creature_id ? [$model->creature_id => $model->creature->name]
-                                    : [],
+                        $model->creature_id ? [$model->creature_id => $model->creature->name] : [],
                         [
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
@@ -69,13 +69,13 @@ $imgPath = WebResourcesHelper::imagePath();
 
         <?= $form->field($model, 'identified')->textInput() ?>
 
-<?php if ($model->image): ?>
+        <?php if ($model->image): ?>
         </div>
     </div>
 <?php endif; ?>
 
 <div class="form-group">
-<?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+    <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
 </div>
 
 <?php

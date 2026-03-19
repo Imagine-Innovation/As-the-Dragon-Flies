@@ -1,6 +1,7 @@
 <?php
 
 use common\components\AppStatus;
+use common\helpers\WebResourcesHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -11,11 +12,12 @@ use yii\widgets\ActiveForm;
 /** @var string $chapterId */
 /** @var string $missionId */
 /** @var string $parentId */
+$storyRoot = WebResourcesHelper::storyRootPath($storyId);
 ?>
 
 <div class="d-none">
     Hidden div to embeb utility tags for PHP/JS communication
-    <span id="hiddenImagePath">resources\story-<?= $storyId ?>\img</span>
+    <span id="hiddenImagePath"><?= $storyRoot ?>\img</span>
     <span id="hiddenFormName">outcome</span>
     <span id="hiddenParentId"><?= $chapterId ?></span>
 </div>
@@ -37,44 +39,38 @@ use yii\widgets\ActiveForm;
     </div>
     <div class="col-12 col-sm-4">
         <?=
-    $form
-        ->field($model, 'can_replay')
-        ->radioList([1 => 'Action can be played again', 0 => 'Action is not available anymore'])
-        ->label('How many time this action can be triggered')
-?>
+                $form->field($model, 'can_replay')->radioList([1 => 'Action can be played again', 0 => 'Action is not available anymore'])
+                ->label('How many time this action can be triggered')
+        ?>
     </div>
 </div>
 
 <div class="row">
     <div class="col-12 col-sm-6">
         <?=
-    $form
-        ->field($model, 'item_id')
-        ->dropdownList(
-            $model->item_id ? [$model->item_id => $model->item?->name] : [],
-            [
-                'class' => 'select2-container w-100',
-                'data-minimum-results-for-search' => -1,
-                'data-placeholder' => 'Select an item',
-            ],
-        )
-        ->label('Item gained')
-?>
+                $form->field($model, 'item_id')->dropdownList(
+                        $model->item_id ? [$model->item_id => $model->item?->name] : [],
+                        [
+                            'class' => 'select2-container w-100',
+                            'data-minimum-results-for-search' => -1,
+                            'data-placeholder' => 'Select an item',
+                        ],
+                )
+                ->label('Item gained')
+        ?>
     </div>
     <div class="col-12 col-sm-6">
         <?=
-    $form
-        ->field($model, 'next_mission_id')
-        ->dropdownList(
-            $model->next_mission_id ? [$model->next_mission_id => $model->nextMission?->name] : [],
-            [
-                'class' => 'select2-container w-100',
-                'data-minimum-results-for-search' => -1,
-                'data-placeholder' => 'Select a mission',
-            ],
-        )
-        ->label('Next mission')
-?>
+                $form->field($model, 'next_mission_id')->dropdownList(
+                        $model->next_mission_id ? [$model->next_mission_id => $model->nextMission?->name] : [],
+                        [
+                            'class' => 'select2-container w-100',
+                            'data-minimum-results-for-search' => -1,
+                            'data-placeholder' => 'Select a mission',
+                        ],
+                )
+                ->label('Next mission')
+        ?>
     </div>
 </div>
 
@@ -82,4 +78,4 @@ use yii\widgets\ActiveForm;
     <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
 </div>
 
-<?php ActiveForm::end();
+<?php ActiveForm::end(); ?>

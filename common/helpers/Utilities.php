@@ -159,9 +159,10 @@ class Utilities extends Html
         // Handle context-specific story images
         if ($isContext && $questId) {
             $quest = Yii::$app->session->get('currentQuest');
+            $storyRoot = WebResourcesHelper::storyRootPath($quest->story_id);
             // Return story-specific image if available
             if ($quest->image) {
-                return "resources/story-{$quest->story_id}/img/{$quest->image}";
+                return "{$storyRoot}/img/{$quest->image}";
             }
         }
 

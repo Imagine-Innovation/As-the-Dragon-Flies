@@ -1,5 +1,6 @@
 <?php
 
+use common\helpers\WebResourcesHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -10,6 +11,7 @@ use yii\widgets\ActiveForm;
 /** @var string $chapterId */
 /** @var string $missionId */
 /** @var string $parentId */
+$storyRoot = WebResourcesHelper::storyRootPath($storyId);
 $difficultyClass = [
     0 => 'Trivial',
     5 => 'Very Easy',
@@ -24,7 +26,7 @@ $actionType = $model->action_type_id ? $model->actionType : null;
 ?>
 <div class="d-none">
     Hidden div to embeb utility tags for PHP/JS communication
-    <span id="hiddenImagePath">resources\story-<?= $storyId ?>\img</span>
+    <span id="hiddenImagePath"><?= $storyRoot ?>\img</span>
     <span id="hiddenFormName">action</span>
     <span id="hiddenParentId"><?= $parentId ?></span>
 </div>
@@ -33,9 +35,7 @@ $actionType = $model->action_type_id ? $model->actionType : null;
     <article>
         <p>Action:
             <?php if ($actionType): ?>
-                <?= $actionType->name ?> <?=
-                $actionType->description ? "({$actionType->description})" : ''
-                ?>
+                <?= $actionType->name ?> <?= $actionType->description ? "({$actionType->description})" : '' ?>
             <?php endif; ?>
             <?= $model->passage?->name ?>
             <?= $model->trap?->name ?>
@@ -43,9 +43,7 @@ $actionType = $model->action_type_id ? $model->actionType : null;
             <?= $model->decor ? "in {$model->decor->name}" : '' ?>
             <?= $model->npc ? "with {$model->npc->name}" : '' ?>
             <?= $model->reply ? "saying “{$model->reply->text}”" : '' ?>
-            <?=
-            $model->requiredItem ? "will need {$model->requiredItem->name}" : ''
-            ?>
+            <?= $model->requiredItem ? "will need {$model->requiredItem->name}" : '' ?>
         </p>
     </article>
 <?php endif; ?>
@@ -58,11 +56,8 @@ $actionType = $model->action_type_id ? $model->actionType : null;
     </div>
     <div class="col">
         <?=
-                $form
-                ->field($model, 'action_type_id')
-                ->dropdownList(
-                        $model->action_type_id ? [$model->action_type_id => $actionType?->name]
-                                    : [],
+                $form->field($model, 'action_type_id')->dropdownList(
+                        $model->action_type_id ? [$model->action_type_id => $actionType?->name] : [],
                         [
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
@@ -119,9 +114,7 @@ $actionType = $model->action_type_id ? $model->actionType : null;
     </div>
     <div class="col">
         <?=
-                $form
-                ->field($model, 'partial_dc')
-                ->radioList($difficultyClass)
+                $form->field($model, 'partial_dc')->radioList($difficultyClass)
                 ->label('Select a Difficulty Class (DC) for partial success')
         ?>
     </div>
@@ -136,11 +129,8 @@ $actionType = $model->action_type_id ? $model->actionType : null;
 <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-5 row-cols-3xl-6">
     <div class="col">
         <?=
-                $form
-                ->field($model, 'required_item_id')
-                ->dropdownList(
-                        $model->required_item_id ? [$model->required_item_id => $model->requiredItem?->name]
-                                    : [],
+                $form->field($model, 'required_item_id')->dropdownList(
+                        $model->required_item_id ? [$model->required_item_id => $model->requiredItem?->name] : [],
                         [
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
@@ -153,10 +143,8 @@ $actionType = $model->action_type_id ? $model->actionType : null;
     <div class="col">
         <?=
                 $form
-                ->field($model, 'passage_id')
-                ->dropdownList(
-                        $model->passage_id ? [$model->passage_id => $model->passage?->name]
-                                    : [],
+                ->field($model, 'passage_id')->dropdownList(
+                        $model->passage_id ? [$model->passage_id => $model->passage?->name] : [],
                         [
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
@@ -168,11 +156,8 @@ $actionType = $model->action_type_id ? $model->actionType : null;
     </div>
     <div class="col">
         <?=
-                $form
-                ->field($model, 'decor_id')
-                ->dropdownList(
-                        $model->decor_id ? [$model->decor_id => $model->decor?->name]
-                                    : [],
+                $form->field($model, 'decor_id')->dropdownList(
+                        $model->decor_id ? [$model->decor_id => $model->decor?->name] : [],
                         [
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
@@ -184,11 +169,8 @@ $actionType = $model->action_type_id ? $model->actionType : null;
     </div>
     <div class="col">
         <?=
-                $form
-                ->field($model, 'trap_id')
-                ->dropdownList(
-                        $model->trap_id ? [$model->trap_id => $model->trap?->name]
-                                    : [],
+                $form->field($model, 'trap_id')->dropdownList(
+                        $model->trap_id ? [$model->trap_id => $model->trap?->name] : [],
                         [
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
@@ -200,11 +182,8 @@ $actionType = $model->action_type_id ? $model->actionType : null;
     </div>
     <div class="col">
         <?=
-                $form
-                ->field($model, 'decor_item_id')
-                ->dropdownList(
-                        $model->decor_item_id ? [$model->decor_item_id => $model->decorItem?->name]
-                                    : [],
+                $form->field($model, 'decor_item_id')->dropdownList(
+                        $model->decor_item_id ? [$model->decor_item_id => $model->decorItem?->name] : [],
                         [
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
@@ -216,9 +195,7 @@ $actionType = $model->action_type_id ? $model->actionType : null;
     </div>
     <div class="col">
         <?=
-                $form
-                ->field($model, 'npc_id')
-                ->dropdownList(
+                $form->field($model, 'npc_id')->dropdownList(
                         $model->npc_id ? [$model->npc_id => $model->npc?->name] : [],
                         [
                             'class' => 'select2-container w-100',
@@ -231,11 +208,8 @@ $actionType = $model->action_type_id ? $model->actionType : null;
     </div>
     <div class="col">
         <?=
-                $form
-                ->field($model, 'reply_id')
-                ->dropdownList(
-                        $model->reply_id ? [$model->reply_id => $model->reply?->text]
-                                    : [],
+                $form->field($model, 'reply_id')->dropdownList(
+                        $model->reply_id ? [$model->reply_id => $model->reply?->text] : [],
                         [
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
@@ -251,5 +225,4 @@ $actionType = $model->action_type_id ? $model->actionType : null;
     <?= Html::submitButton('Save', ['class' => 'btn btn-success bi-floppy']) ?>
 </div>
 
-<?php
-ActiveForm::end();
+<?php ActiveForm::end(); ?>

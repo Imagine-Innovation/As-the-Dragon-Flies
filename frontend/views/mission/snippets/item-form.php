@@ -12,10 +12,11 @@ use yii\widgets\ActiveForm;
 /** @var string $missionId */
 /** @var string $parentId */
 $imgPath = WebResourcesHelper::imagePath();
+$storyRoot = WebResourcesHelper::storyRootPath($storyId);
 ?>
 <div class="d-none">
     Hidden div to embeb utility tags for PHP/JS communication
-    <span id="hiddenImagePath">resources\story-<?= $storyId ?>\img</span>
+    <span id="hiddenImagePath"><?= $storyRoot ?>\img</span>
     <span id="hiddenFormName">decoritem</span>
     <span id="hiddenParentId"><?= $parentId ?></span>
 </div>
@@ -29,15 +30,13 @@ $imgPath = WebResourcesHelper::imagePath();
 <?php if ($model->item_id): ?>
     <div class="row">
         <div class="col-2">
-            <img src="<?= $model->image ? "resources/story-{$storyId}/img/{$model->image}" : "{$imgPath}/item/{$model->item->image}" ?>" alt="<?= $model->name ?>" class="w-100 h-100" style="object-fit: cover;" />
+            <img src="<?= $model->image ? "{$storyRoot}/img/{$model->image}" : "{$imgPath}/item/{$model->item->image}" ?>" alt="<?= $model->name ?>" class="w-100 h-100" style="object-fit: cover;" />
         </div>
         <div class="col-10">
         <?php endif; ?>
 
         <?=
-                $form
-                ->field($model, 'item_id')
-                ->dropdownList(
+                $form->field($model, 'item_id')->dropdownList(
                         $model->item_id ? [$model->item_id => $model->item->name] : [],
                         [
                             'class' => 'select2-container w-100',
@@ -48,9 +47,7 @@ $imgPath = WebResourcesHelper::imagePath();
                 ->label('Item present in the decor')
         ?>
         <?=
-                $form
-                ->field($model, 'image')
-                ->dropdownList(
+                $form->field($model, 'image')->dropdownList(
                         $model->image ? [$model->image => $model->image] : [],
                         [
                             'class' => 'select2-container w-100',
@@ -75,5 +72,4 @@ $imgPath = WebResourcesHelper::imagePath();
     <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
 </div>
 
-<?php
-ActiveForm::end();
+<?php ActiveForm::end(); ?>

@@ -21,8 +21,9 @@ $canJoin = $tavernManager->canPlayerJoinQuest($player);
 $randomFileName = random_int(1, 8) . '.jpg';
 $imgPath = WebResourcesHelper::imagePath();
 $fileName = "{$imgPath}/sm/{$randomFileName}";
+$storyRoot = WebResourcesHelper::storyRootPath($story->id);
 
-$image = $story->image ? "resources/story-{$story->id}/img/{$story->image}" : $fileName;
+$image = $story->image ? "{$storyRoot}/img/{$story->image}" : $fileName;
 ?>
 
 <div class="card h-100">
