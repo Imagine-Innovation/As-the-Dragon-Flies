@@ -19,7 +19,7 @@ use Yii;
  *
  * @property AccessRightActionButton[] $accessRightActionButtons
  * @property Menu $menu
- * @property UserLog[] $userLogs
+ * @property AccesLog[] $accessLogs
  */
 class AccessRight extends \yii\db\ActiveRecord
 {
@@ -27,14 +27,16 @@ class AccessRight extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'access_right';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['application', 'route', 'action', 'is_admin', 'is_designer', 'is_player', 'has_player', 'in_quest'], 'required'],
             [['is_admin', 'is_designer', 'is_player', 'has_player', 'in_quest'], 'integer'],
@@ -46,7 +48,8 @@ class AccessRight extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'id' => 'Primary key',
             'application' => 'Calling application',
@@ -65,7 +68,8 @@ class AccessRight extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<AccessRightActionButton>
      */
-    public function getAccessRightActionButtons() {
+    public function getAccessRightActionButtons()
+    {
         return $this->hasMany(AccessRightActionButton::class, ['access_right_id' => 'id']);
     }
 
@@ -74,16 +78,18 @@ class AccessRight extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Menu>
      */
-    public function getMenu() {
+    public function getMenu()
+    {
         return $this->hasOne(Menu::class, ['access_right_id' => 'id']);
     }
 
     /**
-     * Gets query for [[UserLogs]].
+     * Gets query for [[AccesLogs]].
      *
-     * @return \yii\db\ActiveQuery<UserLog>
+     * @return \yii\db\ActiveQuery<AccesLog>
      */
-    public function getUserLogs() {
-        return $this->hasMany(UserLog::class, ['access_right_id' => 'id']);
+    public function getAccesLogs()
+    {
+        return $this->hasMany(AccesLog::class, ['access_right_id' => 'id']);
     }
 }

@@ -32,7 +32,7 @@
             "version": "3.7.1",
             "source": {
                 "type": "git",
-                "url": "git@github.com:jquery/jquery-dist.git",
+                "url": "https://github.com/jquery/jquery-dist.git",
                 "reference": "fde1f76e2799dd877c176abde0ec836553246991"
             },
             "dist": {
@@ -3336,16 +3336,16 @@
         },
         {
             "name": "carthage-software/mago",
-            "version": "1.14.1",
+            "version": "1.15.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/carthage-software/mago.git",
-                "reference": "00957008352c130f7672bcaab754a278a0a4950b"
+                "reference": "6caa9a633f012dd484bb5a394e97c01a451b129a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/carthage-software/mago/zipball/00957008352c130f7672bcaab754a278a0a4950b",
-                "reference": "00957008352c130f7672bcaab754a278a0a4950b",
+                "url": "https://api.github.com/repos/carthage-software/mago/zipball/6caa9a633f012dd484bb5a394e97c01a451b129a",
+                "reference": "6caa9a633f012dd484bb5a394e97c01a451b129a",
                 "shasum": ""
             },
             "require": {
@@ -3380,7 +3380,7 @@
             ],
             "support": {
                 "issues": "https://github.com/carthage-software/mago/issues",
-                "source": "https://github.com/carthage-software/mago/tree/1.14.1"
+                "source": "https://github.com/carthage-software/mago/tree/1.15.2"
             },
             "funding": [
                 {
@@ -3388,7 +3388,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-03-14T00:50:47+00:00"
+            "time": "2026-03-19T02:27:43+00:00"
         },
         {
             "name": "codeception/codeception",
@@ -4422,11 +4422,11 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "2.1.41",
+            "version": "2.1.42",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/a2eae8f20856b3afe74bf1f9726ce8c11438e300",
-                "reference": "a2eae8f20856b3afe74bf1f9726ce8c11438e300",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/1279e1ce86ba768f0780c9d889852b4e02ff40d0",
+                "reference": "1279e1ce86ba768f0780c9d889852b4e02ff40d0",
                 "shasum": ""
             },
             "require": {
@@ -4471,7 +4471,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-03-16T18:24:10+00:00"
+            "time": "2026-03-17T14:58:32+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",

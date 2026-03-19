@@ -35,11 +35,12 @@ use yii\web\IdentityInterface;
  * @property int $hasPlayers
  * @property Player $currentPlayer
  * @property Player[] $players
- * @property UserLogin[] $userLogins
- * @property UserLog[] $userLogs
+ * @property AccesLogin[] $accessLogins
+ * @property AccesLog[] $accessLogs
  */
 class User extends ActiveRecord implements IdentityInterface
 {
+
     /**
      * {@inheritdoc}
      */
@@ -180,8 +181,8 @@ class User extends ActiveRecord implements IdentityInterface
         }
 
         return static::findOne([
-            'password_reset_token' => $token,
-            'status' => AppStatus::ACTIVE->value,
+                    'password_reset_token' => $token,
+                    'status' => AppStatus::ACTIVE->value,
         ]);
     }
 
@@ -194,8 +195,8 @@ class User extends ActiveRecord implements IdentityInterface
     public static function findByVerificationToken(string $token): ?User
     {
         return static::findOne([
-            'verification_token' => $token,
-            'status' => AppStatus::INACTIVE->value,
+                    'verification_token' => $token,
+                    'status' => AppStatus::INACTIVE->value,
         ]);
     }
 
@@ -343,23 +344,23 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * Gets query for [[UserLogins]].
+     * Gets query for [[AccesLogins]].
      *
-     * @return \yii\db\ActiveQuery<UserLogin>
+     * @return \yii\db\ActiveQuery<AccesLogin>
      */
-    public function getUserLogins()
+    public function getAccesLogins()
     {
-        return $this->hasMany(UserLogin::class, ['user_id' => 'id']);
+        return $this->hasMany(AccesLogin::class, ['user_id' => 'id']);
     }
 
     /**
-     * Gets query for [[UserLogs]].
+     * Gets query for [[AccesLogs]].
      *
-     * @return \yii\db\ActiveQuery<UserLog>
+     * @return \yii\db\ActiveQuery<AccesLog>
      */
-    public function getUserLogs()
+    public function getAccesLogs()
     {
-        return $this->hasMany(UserLog::class, ['user_id' => 'id']);
+        return $this->hasMany(AccesLog::class, ['user_id' => 'id']);
     }
 
     /**

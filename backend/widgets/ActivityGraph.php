@@ -59,7 +59,7 @@ class ActivityGraph extends Widget
                 FROM_UNIXTIME(FLOOR(action_at / :step) * :step, '%H:%i') AS slot,
                 application,
                 COUNT(*) AS total
-            FROM user_log
+            FROM access_log
             WHERE action_at >= :from
               AND application IN (" . $this->quoteArray($this->applications) . ")
             GROUP BY slot, application

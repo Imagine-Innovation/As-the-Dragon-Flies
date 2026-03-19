@@ -34,7 +34,7 @@ use Yii;
  * @property QuestProgress[] $questProgresses
  * @property QuestSession[] $questSessions
  * @property Story $story
- * @property UserLog[] $userLogs
+ * @property AccesLog[] $accessLogs
  *
  * Custom properties
  *
@@ -44,6 +44,7 @@ use Yii;
  */
 class Quest extends \yii\db\ActiveRecord
 {
+
     /**
      * {@inheritdoc}
      */
@@ -247,13 +248,13 @@ class Quest extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[UserLogs]].
+     * Gets query for [[AccesLogs]].
      *
-     * @return \yii\db\ActiveQuery<UserLog>
+     * @return \yii\db\ActiveQuery<AccesLog>
      */
-    public function getUserLogs()
+    public function getAccesLogs()
     {
-        return $this->hasMany(UserLog::class, ['quest_id' => 'id']);
+        return $this->hasMany(AccesLog::class, ['quest_id' => 'id']);
     }
 
     /**
@@ -278,7 +279,7 @@ class Quest extends \yii\db\ActiveRecord
     public function getCurrentQuestProgress()
     {
         return $this->hasOne(QuestProgress::class, ['quest_id' => 'id'])->andWhere([
-            'status' => AppStatus::IN_PROGRESS->value,
+                    'status' => AppStatus::IN_PROGRESS->value,
         ]);
     }
 }

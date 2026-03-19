@@ -280,7 +280,7 @@ class AccessRightsManager extends Component
      *
      * The initial code was:
      *
-     *   $userLog = new UserLog([
+     *   $accessLog = new AccesLog([
      *       'user_id' => $user->id,
      *       'access_right_id' => $accessRightId,
      *       'player_id' => $playerId,
@@ -292,8 +292,8 @@ class AccessRightsManager extends Component
      *   ]);
      *   // "false" parameter to skip validation and save directly
      *   // and avoid 7 query at each acces right evaluation
-     *   if (!$userLog->save(false)) {
-     *       throw new \Exception(implode("<br />", ArrayHelper::getColumn($userLog->errors, 0, false)));
+     *   if (!$accessLog->save(false)) {
+     *       throw new \Exception(implode("<br />", ArrayHelper::getColumn($accessLog->errors, 0, false)));
      *   }
      * This previously generated three SQL SELECT queries before the INSERT statement.
      * For optimization purposes, given that this logging function is called for each HTTP query,
@@ -327,7 +327,7 @@ class AccessRightsManager extends Component
             }
         }
 
-        $sql = 'INSERT INTO `user_log` (`user_id`, `access_right_id`, `player_id`, `quest_id`, `ip_address`, `action_at`, `application`, `denied`, `reason`)'
+        $sql = 'INSERT INTO `access_log` (`user_id`, `access_right_id`, `player_id`, `quest_id`, `ip_address`, `action_at`, `application`, `denied`, `reason`)'
                 . ' VALUES (:user_id, :access_right_id, :player_id, :quest_id, :ip_address, :action_at, :application, :denied, :reason)';
 
         $values = [

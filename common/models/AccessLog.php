@@ -5,7 +5,7 @@ namespace common\models;
 use Yii;
 
 /**
- * This is the model class for table "user_log".
+ * This is the model class for table "access_log".
  *
  * @property int $user_id Foreign key to “user” table
  * @property int|null $access_right_id Optional Foreign key to “access_right” table
@@ -22,20 +22,22 @@ use Yii;
  * @property Quest $quest
  * @property User $user
  */
-class UserLog extends \yii\db\ActiveRecord
+class AccessLog extends \yii\db\ActiveRecord
 {
 
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
-        return 'user_log';
+    public static function tableName()
+    {
+        return 'access_log';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['access_right_id', 'player_id', 'quest_id', 'action_at', 'ip_address', 'reason'], 'default', 'value' => null],
             [['application'], 'default', 'value' => 'Unknown'],
@@ -54,7 +56,8 @@ class UserLog extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'user_id' => 'Foreign key to “user” table',
             'access_right_id' => 'Optional Foreign key to “access_right” table',
@@ -73,7 +76,8 @@ class UserLog extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<AccessRight>
      */
-    public function getAccessRight() {
+    public function getAccessRight()
+    {
         return $this->hasOne(AccessRight::class, ['id' => 'access_right_id']);
     }
 
@@ -82,7 +86,8 @@ class UserLog extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Player>
      */
-    public function getPlayer() {
+    public function getPlayer()
+    {
         return $this->hasOne(Player::class, ['id' => 'player_id']);
     }
 
@@ -91,7 +96,8 @@ class UserLog extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Quest>
      */
-    public function getQuest() {
+    public function getQuest()
+    {
         return $this->hasOne(Quest::class, ['id' => 'quest_id']);
     }
 
@@ -100,7 +106,8 @@ class UserLog extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<User>
      */
-    public function getUser() {
+    public function getUser()
+    {
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 }
