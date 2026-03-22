@@ -225,7 +225,9 @@ class AccessRightsManager extends Component
         $application = \Yii::$app->id;
 
         // Blanket backend restriction: only is_admin or is_designer
-        if ($application === self::APP_BACKEND && $user !== null && !$user->is_admin && !$user->is_designer) {
+        // Exempt logout, error, and captcha to avoid stuck sessions
+        $exemptActions = ['logout', 'error', 'captcha'];
+        if ($application === self::APP_BACKEND && $user !== null && !in_array($action, $exemptActions) && !$user->is_admin && !$user->is_designer) {
             return self::logAccess(null, true, 'error', "{$deniedMessage}: Invalid user role for logging in to the backend application");
         }
 
