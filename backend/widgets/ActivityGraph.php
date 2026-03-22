@@ -84,7 +84,6 @@ class ActivityGraph extends Widget
         $data = [];
 
         for ($i = $this->windowMinutes; $i >= 0; $i -= $this->stepMinutes) {
-            Yii::debug("normalizeTimeSeries now={$now}, i={$i}");
             $label = date('H:i', $now - ($i * 60));
             foreach ($this->applications as $application) {
                 $data[$label][$application] = 0;
@@ -96,7 +95,6 @@ class ActivityGraph extends Widget
             $data[$row['slot']][$row['application']] = (int) $row['total'];
         }
 
-        Yii::debug($data);
         return $data;
     }
 
@@ -133,7 +131,6 @@ class ActivityGraph extends Widget
         $height = 300;
         $padding = 50;
 
-        //$maxValue = max(array_map('max', $data));
         $maxValue = $this->getMaxValue($data);
         $yMax = $this->computeYAxisMax($maxValue);
 
@@ -148,7 +145,6 @@ class ActivityGraph extends Widget
             'yScale' => (int) ceil(($height - 2 * $padding) / $yMax),
         ];
 
-        Yii::debug($layout);
         return $layout;
     }
 
@@ -260,7 +256,6 @@ class ActivityGraph extends Widget
         /** @var list<array{x: int, y: int, value: int}> */
         $points = [];
 
-        Yii::debug(['data' => $data, 'layout' => $layout]);
         foreach ($layout['labels'] as $i => $label) {
             $points[] = [
                 'x' => (int) $layout['padding'] + ($i * $layout['xStep']),

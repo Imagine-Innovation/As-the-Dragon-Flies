@@ -14,6 +14,10 @@ use yii\web\Controller;
 /** @template T of \yii\web\Controller */
 class AccessRightsManager extends Component
 {
+
+    const APP_BACKEND = 'app-backend';
+    const APP_FRONTEND = 'app-frontend';
+
     // --- Strict Accessors (The Level 8/9 "Secret Sauce") ---
 
     /**
@@ -94,10 +98,9 @@ class AccessRightsManager extends Component
      * Checks if a user is authorized to access a specific route
      *
      * @param T $controller The source controller
-     * @param string $redirect route url to redirect avec throwing an error
      * @return bool True if access is granted, false otherwise
      */
-    public static function isRouteAllowed(Controller $controller, string $redirect = null): bool
+    public static function isRouteAllowed(Controller $controller): bool
     {
         $access = self::checkAccess($controller);
 
@@ -138,9 +141,17 @@ class AccessRightsManager extends Component
         return $route === 'site' && in_array($action, $publicSiteActions) || strncmp($action, 'ajax', 4) === 0;
     }
 
+    /**
+     *
+     * @param string $route
+     * @param string $action
+     * @return AccessRight|null
+     */
     private static function getAccessRight(string $route, string $action): ?AccessRight
     {
         $application = \Yii::$app->id;
+
+        self::countAccess($application, $route, $action);
 
         $accessRightData = Yii::$app
                 ->db
@@ -155,10 +166,15 @@ class AccessRightsManager extends Component
         return $accessRightData ? new AccessRight($accessRightData) : null;
     }
 
-    private static function countAccess(string $route, string $action): bool
+    /**
+     *
+     * @param string $application
+     * @param string $route
+     * @param string $action
+     * @return bool
+     */
+    private static function countAccess(string $application, string $route, string $action): bool
     {
-        $application = \Yii::$app->id;
-
         $accessCount = AccessCount::findOne(['application' => $application, 'route' => $route, 'action' => $action]);
 
         if ($accessCount) {
@@ -168,6 +184,33 @@ class AccessRightsManager extends Component
         }
 
         return $accessCount->save(false);
+    }
+
+    /**
+     *
+     * @param string $route
+     * @param string $action
+     * @param string $grantedMessage
+     * @param string $deniedMessage
+     * @return array{denied: bool, severity: string, reason: string}
+     */
+    private static function manageDefaultAccess(string $route, string $action, string $grantedMessage, string $deniedMessage): array
+    {
+        $user = Yii::$app->user->identity;
+        $application = \Yii::$app->id;
+
+        // Blanket backend restriction: only is_admin or is_designer
+        // Exempt logout, error, and captcha to avoid stuck sessions
+        $exemptActions = ['logout', 'error', 'captcha'];
+        if ($application === self::APP_BACKEND && $user !== null && !in_array($action, $exemptActions) && !$user->is_admin && !$user->is_designer) {
+            return self::logAccess(null, true, 'error', "{$deniedMessage}: Invalid user role for logging in to the backend application");
+        }
+
+        if (self::isPublic($route, $action)) {
+            return self::logAccess(null, false, 'success', "{$grantedMessage} by default to public route");
+        }
+
+        return self::logAccess(null, true, 'error', "{$deniedMessage} by default: no specific AccessRight found");
     }
 
     /**
@@ -187,48 +230,31 @@ class AccessRightsManager extends Component
         $grantedMessage = "[{$route}/{$action}] Access granted";
         $deniedMessage = "[{$route}/{$action}] Access denied";
 
-        self::countAccess($route, $action);
-
-        if (self::isPublic($route, $action)) {
-            return self::logAccess(null, false, 'success',
-                            "{$grantedMessage} by default to public route",
-                    );
-        }
         // Get access rights for the route
         $accessRight = self::getAccessRight($route, $action);
 
         // If no access rights defined, grant access to public "route/action"
         if (!$accessRight) {
-            return self::logAccess(null, true, 'error',
-                            "{$deniedMessage} by default: no specific AccessRight found",
-                    );
+            return self::manageDefaultAccess($route, $action, $grantedMessage, $deniedMessage);
         }
 
-        $user = Yii::$app->session->get('user') ?? Yii::$app->user->identity;
+        $user = Yii::$app->user->identity;
 
         // Grant access if user is admin and route allows admin access
-        if ($user->is_admin && $accessRight->is_admin) {
-            return self::logAccess($accessRight->id, false, 'success',
-                            "{$grantedMessage} for Admin role",
-                    );
+        if ($user && ($user->is_admin && false) && $accessRight->is_admin) {
+            return self::logAccess($accessRight->id, false, 'success', "{$grantedMessage} for Admin role");
         }
 
         // Grant access if user is designer and route allows designer access
-        if ($user->is_designer && $accessRight->is_designer) {
-            return self::logAccess($accessRight->id, false, 'success',
-                            "{$grantedMessage} for Designer role",
-                    );
+        if ($user && ($user->is_designer ?? false) && $accessRight->is_designer) {
+            return self::logAccess($accessRight->id, false, 'success', "{$grantedMessage} for Designer role");
         }
 
         // Check player-specific access conditions
-        if ($user->is_player && $accessRight->is_player) {
+        if ($user && ($user->is_player ?? false) && $accessRight->is_player) {
             $playerAccess = self::checkPlayerAccess($accessRight);
-            return self::logAccess(
-                            $accessRight->id,
-                            $playerAccess['denied'],
-                            $playerAccess['severity'],
-                            "[{$route}/{$action}] {$playerAccess['reason']}",
-                    );
+            return self::logAccess($accessRight->id, $playerAccess['denied'], $playerAccess['severity'],
+                            "[{$route}/{$action}] {$playerAccess['reason']}");
         }
 
         // Deny access by default
@@ -315,9 +341,7 @@ class AccessRightsManager extends Component
         $playerId = null;
         $questId = null;
         if ($user->current_player_id) {
-            $player = Yii::$app
-                    ->db
-                    ->createCommand('SELECT * FROM `player` WHERE `id` = :playerId', [
+            $player = Yii::$app->db->createCommand('SELECT * FROM `player` WHERE `id` = :playerId', [
                         ':playerId' => $user->current_player_id,
                     ])
                     ->queryOne();

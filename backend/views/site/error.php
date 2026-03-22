@@ -1,27 +1,31 @@
 <?php
 
+use yii\base\Exception;
+use yii\helpers\Html;
+
 /** @var yii\web\View $this */
 /** @var string $name */
 /** @var string $message */
-/** @var Exception $exception*/
+/** @var yii\base\Exception $exception */
+//$previousException = $exception->getPrevious();
 
-use yii\helpers\Html;
-
-$this->title = $name;
+$this->title = 'Oups, something went wrong';
 ?>
-<div class="site-error">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <div class="alert alert-danger">
-        <?= nl2br(Html::encode($message)) ?>
-    </div>
-
-    <p>
-        The above error occurred while the Web server was processing your request.
-    </p>
-    <p>
-        Please contact us if you think this is a server error. Thank you.
-    </p>
-
-</div>
+<?php if ($exception->statusCode === 404): ?>
+    <section class="error">
+        <div class="error__inner">
+            <h1>Rhoooo</h1>
+            <h2>You little rascal!</h2>
+            <h2><?= Html::encode($message) ?></h2>
+            <h2>That's not right!</h2>
+        </div>
+    </section>
+<?php else: ?>
+    <section class="error">
+        <div class="error__inner">
+            <h1><?= Html::encode($exception->getName()) ?></h1>
+            <h2>Don't tell me you're trying to cheat the system!</h2>
+            <p><?= Html::encode($message) ?></p>
+        </div>
+    </section>
+<?php endif;

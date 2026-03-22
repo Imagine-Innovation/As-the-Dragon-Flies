@@ -28,10 +28,8 @@ class SiteController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['login'],
-                        // 'allow' => true,
-                        'allow' => AccessRightsManager::isRouteAllowed($this),
-                        'roles' => ['?'],
+                        'actions' => ['login', 'error'],
+                        'allow' => true,
                     ],
                     [
                         'actions' => ['logout', 'index', 'colors', 'fonts', 'icons', 'ajax-toast'],
@@ -44,6 +42,7 @@ class SiteController extends Controller
                 'class' => VerbFilter::class,
                 'actions' => [
                     'logout' => ['post'],
+                    'layout' => 'blank',
                 ],
             ],
         ];
@@ -80,14 +79,25 @@ class SiteController extends Controller
     public function actionLogin()
     {
         if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
-        }
+            $user = Yii::$app->user->identity;
+            if ($user && ($user->is_admin || $user->is_designer)) {
+                return $this->goHome();
+            }
 
+            Yii::$app->user->logout();
+            Yii::$app->session->setFlash('error', 'You do not have permission to access the backend.');
+        }
         $this->layout = 'blank';
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+            $user = Yii::$app->user->identity;
+            if ($user && ($user->is_admin || $user->is_designer)) {
+                return $this->goBack();
+            }
+
+            Yii::$app->user->logout();
+            Yii::$app->session->setFlash('error', 'You do not have permission to access the backend.');
         }
 
         $model->password = '';
@@ -147,7 +157,6 @@ class SiteController extends Controller
      */
     public function actionIcons(): string
     {
-        AccessRightsManager::isRouteAllowed($this);
         return $this->render('icons');
     }
 
@@ -157,7 +166,6 @@ class SiteController extends Controller
      */
     public function actionFonts(): string
     {
-        AccessRightsManager::isRouteAllowed($this);
         return $this->render('fonts');
     }
 
@@ -167,7 +175,6 @@ class SiteController extends Controller
      */
     public function actionColors(): string
     {
-        AccessRightsManager::isRouteAllowed($this);
         return $this->render('colors');
     }
 }
