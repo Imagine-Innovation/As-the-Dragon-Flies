@@ -29,8 +29,7 @@ class SiteController extends Controller
                 'rules' => [
                     [
                         'actions' => ['login'],
-                        // 'allow' => true,
-                        'allow' => AccessRightsManager::isRouteAllowed($this),
+                        'allow' => true,
                         'roles' => ['?'],
                     ],
                     [
@@ -87,7 +86,13 @@ class SiteController extends Controller
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+            $user = Yii::$app->user->identity;
+            if ($user && ($user->is_admin || $user->is_designer)) {
+                return $this->goBack();
+            }
+
+            Yii::$app->user->logout();
+            Yii::$app->session->setFlash('error', 'You do not have permission to access the backend.');
         }
 
         $model->password = '';

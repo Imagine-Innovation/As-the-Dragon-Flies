@@ -32,8 +32,7 @@ final class DbMonitorController extends Controller
                     ],
                     [
                         'actions' => ['index', 'explain', 'suggestion', 'refresh'],
-                        //'allow' => AccessRightsManager::isRouteAllowed($this),
-                        'allow' => true,
+                        'allow' => AccessRightsManager::isRouteAllowed($this),
                         'roles' => ['@'],
                     ],
                 ],
