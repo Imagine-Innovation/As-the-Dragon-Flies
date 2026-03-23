@@ -17,12 +17,12 @@ use common\widgets\RecordCount;
 <div class="card">
     <div class="card-body">
         <?=
-    RecordCount::widget([
-        'count' => $count,
-        'model' => 'user',
-        'adjective' => 'registered',
-    ])
-?>
+        RecordCount::widget([
+            'count' => $count,
+            'model' => 'user',
+            'adjective' => 'registered',
+        ])
+        ?>
         <div class="table-responsive">
             <table class="table table-dark table-hover mb-0">
                 <thead>
@@ -35,7 +35,6 @@ use common\widgets\RecordCount;
                         <th class="text-center">Designer</th>
                         <th class="text-center">Player</th>
                         <th>Created at</th>
-                        <th>Last login at</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -50,16 +49,13 @@ use common\widgets\RecordCount;
                             <td class="text-center"><?= SpecialCheckBox::setUserRole($model, 'designer') ?></td>
                             <td class="text-center"><?= SpecialCheckBox::setUserRole($model, 'player') ?></td>
                             <td><?= Yii::$app->formatter->asDateTime($model->created_at, 'dd/MM/yyyy HH:mm') ?></td>
-                            <td><?=
-                        Yii::$app->formatter->asDateTime($model->frontend_last_login_at, 'dd/MM/yyyy HH:mm')
-                    ?></td>
                             <td>
                                 <?=
-                        ActionButtons::widget([
-                            'model' => $model,
-                            'mode' => 'table',
-                        ])
-                    ?>
+                                ActionButtons::widget([
+                                    'model' => $model,
+                                    'mode' => 'table',
+                                ])
+                                ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -68,12 +64,12 @@ use common\widgets\RecordCount;
         </div>
         <!-- Pagination -->
         <?=
-    Pagination::widget([
-        'page' => $page,
-        'pageCount' => $pageCount,
-        'limit' => $limit,
-    ])
-?>
+        Pagination::widget([
+            'page' => $page,
+            'pageCount' => $pageCount,
+            'limit' => $limit,
+        ])
+        ?>
         <!-- End Pagination -->
     </div>
 </div>

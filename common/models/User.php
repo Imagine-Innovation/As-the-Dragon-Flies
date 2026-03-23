@@ -27,8 +27,6 @@ use yii\web\IdentityInterface;
  * @property int|null $current_player_id Optional foreign key to “player” table
  * @property int|null $created_at Created at
  * @property int|null $updated_at Updated at
- * @property int|null $backend_last_login_at Last login to the backend at
- * @property int|null $frontend_last_login_at Last login to the frontend at
  * @property string $password write-only password
  *
  * @property AccessRight[] $accessRights
@@ -65,53 +63,17 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [
-                [
-                    'fullname',
-                    'auth_key',
-                    'password_reset_token',
-                    'current_player_id',
-                    'created_at',
-                    'updated_at',
-                    'backend_last_login_at',
-                    'frontend_last_login_at',
-                ],
-                'default',
-                'value' => null,
-            ],
+            [['fullname', 'auth_key', 'password_reset_token', 'current_player_id', 'created_at', 'updated_at'], 'default', 'value' => null],
             [['status'], 'default', 'value' => AppStatus::INACTIVE->value],
             [['status'], 'in', 'range' => AppStatus::getValuesForUser()],
             [['is_designer'], 'default', 'value' => 0],
             [['is_player'], 'default', 'value' => 1],
             [['username', 'password_hash', 'verification_token', 'email'], 'required'],
-            [
-                [
-                    'status',
-                    'is_admin',
-                    'is_designer',
-                    'is_player',
-                    'current_player_id',
-                    'created_at',
-                    'updated_at',
-                    'backend_last_login_at',
-                    'frontend_last_login_at',
-                ],
-                'integer',
-            ],
-            [
-                ['username', 'password_hash', 'password_reset_token', 'verification_token', 'email'],
-                'string',
-                'max' => 255,
-            ],
+            [['status', 'is_admin', 'is_designer', 'is_player', 'current_player_id', 'created_at', 'updated_at'], 'integer'],
+            [['username', 'password_hash', 'password_reset_token', 'verification_token', 'email'], 'string', 'max' => 255],
             [['fullname', 'auth_key'], 'string', 'max' => 64],
             [['username'], 'unique'],
-            [
-                ['current_player_id'],
-                'exist',
-                'skipOnError' => true,
-                'targetClass' => Player::class,
-                'targetAttribute' => ['current_player_id' => 'id'],
-            ],
+            [['current_player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['current_player_id' => 'id']],
         ];
     }
 
@@ -136,8 +98,6 @@ class User extends ActiveRecord implements IdentityInterface
             'current_player_id' => 'Optional foreign key to “player” table',
             'created_at' => 'Created at',
             'updated_at' => 'Updated at',
-            'backend_last_login_at' => 'Last login to the backend at',
-            'frontend_last_login_at' => 'Last login to the frontend at',
         ];
     }
 

@@ -202,12 +202,6 @@ class SiteController extends Controller
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            $user = Yii::$app->user->identity;
-            $login_at = time();
-            $user->frontend_last_login_at = $login_at;
-
-            SaveHelper::save($user);
-
             return $this->goBack();
         }
 
