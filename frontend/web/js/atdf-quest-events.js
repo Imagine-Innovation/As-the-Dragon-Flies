@@ -147,7 +147,10 @@ class NotificationClient {
 
             // Redirect all participants to the summary page after a short delay
             setTimeout(() => {
-                window.location.href = `index.php?r=quest/summary&id=${this.questId}`;
+                // Preserve current origin/base path/front controller and only change the route/query
+                const url = new URL(window.location.href);
+                url.search = `r=quest/summary&id=${encodeURIComponent(this.questId)}`;
+                window.location.href = url.toString();
             }, 3000);
         });
 

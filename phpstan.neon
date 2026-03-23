@@ -24,10 +24,6 @@ parameters:
         - '**/migrations/*'
         - '**/vendor/*'
         - backend/views/site/icons.php
-        - backend/web/index.php (?)
-        - backend/web/index-test.php (?)
-        - frontend/web/index.php (?)
-        - frontend/web/index-test.php (?)
     # Yii2 often uses undefined properties; this helps ignore those specific errors
     ignoreErrors:
         - '#Access to an undefined property yii\\base\\Component::\$[a-zA-Z0-9_]+#'

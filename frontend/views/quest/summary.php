@@ -40,7 +40,7 @@ $status = AppStatus::from($model->status);
                     <h5 class="mb-0">Quest Description</h5>
                 </div>
                 <div class="card-body">
-                    <?= $model->description ?>
+                    <?= nl2br(Html::encode((string) $model->description)) ?>
                 </div>
             </div>
         </div>
@@ -54,7 +54,7 @@ $status = AppStatus::from($model->status);
                     <?php foreach ($model->allPlayers as $player): ?>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <?= Html::encode($player->name) ?>
-                            <span class="badge bg-secondary"><?= Html::encode($player->characterClass->name ?? 'Adventurer') ?></span>
+                            <span class="badge bg-secondary"><?= Html::encode($player->characterClass?->name ?? 'Adventurer') ?></span>
                         </li>
                     <?php endforeach; ?>
                 </ul>

@@ -455,7 +455,17 @@ class QuestManager extends BaseManager
         // Update quest current chapter if needed
         if ($quest->current_chapter_id !== $nextQuestProgress->mission->chapter_id) {
             $quest->current_chapter_id = $nextQuestProgress->mission->chapter_id;
-            $this->save($quest);
+
+            // Persist quest without running validation, to avoid leaving current_chapter_id out of sync
+            if ($quest->save(false) === false) {
+                Yii::error([
+                    'message' => 'Failed to update current_chapter_id for quest',
+                    'questId' => $quest->id,
+                    'newChapterId' => $nextQuestProgress->mission->chapter_id,
+                ], __METHOD__);
+
+                throw new Exception('Could not update quest current chapter.');
+            }
         }
 
         $detail = $this->getNextMissionDetail($currentQuestProgress, $nextQuestProgress);
