@@ -364,7 +364,8 @@ class QuestManager extends BaseManager
         $mission = $currentProgress->mission;
 
         $nextChapter = Chapter::find()
-                ->where(['>', 'chapter_number', $mission->chapter->chapter_number])
+                ->where(['story_id' => $mission->chapter->story_id])
+                ->andWhere(['>', 'chapter_number', $mission->chapter->chapter_number])
                 ->orderBy(['chapter_number' => SORT_ASC])
                 ->one();
 
@@ -379,7 +380,8 @@ class QuestManager extends BaseManager
     {
         $progress = $this->getQuestProgress();
         $nextMissionInChapter = Mission::find()
-                ->where(['>', 'id', $progress->mission_id])
+                ->where(['chapter_id' => $progress->mission->chapter_id])
+                ->andWhere(['>', 'id', $progress->mission_id])
                 ->orderBy(['id' => SORT_ASC])
                 ->one();
 
@@ -448,6 +450,12 @@ class QuestManager extends BaseManager
 
         if (!$nextQuestProgress) {
             throw new Exception('Could not initialize next quest progress.');
+        }
+
+        // Update quest current chapter if needed
+        if ($quest->current_chapter_id !== $nextQuestProgress->mission->chapter_id) {
+            $quest->current_chapter_id = $nextQuestProgress->mission->chapter_id;
+            $this->save($quest);
         }
 
         $detail = $this->getNextMissionDetail($currentQuestProgress, $nextQuestProgress);

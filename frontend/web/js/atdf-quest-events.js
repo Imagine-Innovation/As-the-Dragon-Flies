@@ -142,7 +142,13 @@ class NotificationClient {
             Logger.log(10, 'setupDefaultHandlers', `Payload: ${JSON.stringify(data.payload)}`);
             const detail = data.payload.detail;
             const message = `${detail.playerName} has ended quest “${detail.questName}” with status ${detail.status}.`;
-            VirtualTableTop.refresh(this.questId, this.sessionId);
+
+            ToastManager.show('Game Over', message, 'info');
+
+            // Redirect all participants to the summary page after a short delay
+            setTimeout(() => {
+                window.location.href = `index.php?r=quest/summary&id=${this.questId}`;
+            }, 3000);
         });
 
         this.on('player-joined', (data) => {

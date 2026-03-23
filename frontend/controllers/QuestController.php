@@ -78,6 +78,7 @@ class QuestController extends Controller
                             'tavern',
                             'update',
                             'view',
+                            'summary',
                             'ajax-can-start',
                             'ajax-get-messages',
                             'ajax-quest-members',
@@ -532,6 +533,27 @@ class QuestController extends Controller
     {
         $this->findModel($id)->delete();
         return $this->redirect(['index']);
+    }
+
+    /**
+     * Displays quest summary after game over
+     *
+     * @param int $id Quest ID
+     * @return string
+     * @throws NotFoundHttpException
+     */
+    public function actionSummary(int $id): string
+    {
+        $quest = $this->findModel($id);
+
+        if ($quest->status !== AppStatus::COMPLETED->value && $quest->status !== AppStatus::ABORTED->value) {
+            // Optional: maybe redirect to game view if it's still playing
+            // but for now let's just show the summary if they asked for it
+        }
+
+        return $this->render('summary', [
+            'model' => $quest,
+        ]);
     }
 
     /**
