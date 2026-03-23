@@ -2,6 +2,7 @@
 
 namespace backend\widgets;
 
+use common\components\AccessRightsManager;
 use Yii;
 use yii\base\Widget;
 
@@ -17,8 +18,8 @@ class ActivityGraph extends Widget
 
     /** @var array<string> */
     public array $applications = [
-        'app-backend',
-        'app-frontend',
+        AccessRightsManager::APP_BACKEND,
+        AccessRightsManager::APP_FRONTEND,
     ];
 
     /* ==========================
@@ -319,8 +320,8 @@ class ActivityGraph extends Widget
     private function colorForApp(string $application): string
     {
         return match ($application) {
-            'app-backend' => 'var(--bs-primary)',
-            'app-frontend' => 'var(--bs-success)',
+            AccessRightsManager::APP_BACKEND => 'var(--bs-primary)',
+            AccessRightsManager::APP_FRONTEND => 'var(--bs-success)',
             default => 'var(--bs-secondary)',
         };
     }

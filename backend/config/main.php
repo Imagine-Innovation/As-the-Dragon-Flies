@@ -1,4 +1,7 @@
 <?php
+
+use common\components\AccessRightsManager;
+
 $params = array_merge(
         require __DIR__ . '/../../common/config/params.php',
         require __DIR__ . '/../../common/config/params-local.php',
@@ -7,7 +10,8 @@ $params = array_merge(
 );
 
 return [
-    'id' => 'app-backend',
+    //'id' => 'app-backend',
+    'id' => AccessRightsManager::APP_BACKEND,
     'name' => 'Admin Panel',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
