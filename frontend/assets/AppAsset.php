@@ -18,7 +18,7 @@ class AppAsset extends AssetBundle
         '/common/web/css/dragon.css',
     ];
     public $js = [
-        'js/atdf-core-library.js',
+        '/common/web/js/core-library.js',
         'js/atdf-action-button-manager.js',
     ];
     public $depends = [

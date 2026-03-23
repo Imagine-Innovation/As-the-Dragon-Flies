@@ -329,10 +329,7 @@ class GameController extends Controller
         $currentMissionId = (int) $request->post('missionId');
         $remainingActions = $questProgress->remainingActions;
 
-        Yii::debug(
-                "*** debug *** actionAjaxNextTurn - currentMissionId={$currentMissionId}, nextMissionId={$nextMissionId}, remainingAction="
-                . count($remainingActions),
-        );
+        Yii::debug("*** debug *** actionAjaxNextTurn - currentMissionId={$currentMissionId}, nextMissionId={$nextMissionId}, remainingAction=" . count($remainingActions),);
 
         if ($remainingActions) {
             if ($nextMissionId && $nextMissionId !== $currentMissionId) {
@@ -356,12 +353,7 @@ class GameController extends Controller
      * @return bool
      * @throws \Exception
      */
-    protected function createEvent(
-            string $eventType,
-            Request $postRequest,
-            string $actionName,
-            array $outcome = [],
-    ): bool
+    protected function createEvent(string $eventType, Request $postRequest, string $actionName, array $outcome = [],): bool
     {
         $sessionId = Yii::$app->session->get('sessionId');
         try {
