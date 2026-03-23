@@ -54,7 +54,7 @@ $status = AppStatus::from($model->status);
                     <?php foreach ($model->allPlayers as $player): ?>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <?= Html::encode($player->name) ?>
-                            <span class="badge bg-secondary"><?= Html::encode($player->characterClass?->name ?? 'Adventurer') ?></span>
+                            <span class="badge bg-secondary"><?= Html::encode($player->class?->name ?? 'Adventurer') ?></span>
                         </li>
                     <?php endforeach; ?>
                 </ul>

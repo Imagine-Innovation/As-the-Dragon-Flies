@@ -363,13 +363,28 @@ class QuestManager extends BaseManager
         $currentProgress = $this->getQuestProgress();
         $mission = $currentProgress->mission;
 
-        $nextChapter = Chapter::find()
+        $nextChapters = Chapter::find()
                 ->where(['story_id' => $mission->chapter->story_id])
                 ->andWhere(['>', 'chapter_number', $mission->chapter->chapter_number])
                 ->orderBy(['chapter_number' => SORT_ASC])
-                ->one();
+                ->all();
 
-        return $nextChapter?->first_mission_id;
+        foreach ($nextChapters as $chapter) {
+            $missionId = $chapter->first_mission_id;
+            if (!$missionId) {
+                $firstMission = Mission::find()
+                        ->where(['chapter_id' => $chapter->id])
+                        ->orderBy(['id' => SORT_ASC])
+                        ->one();
+                $missionId = $firstMission?->id;
+            }
+
+            if ($missionId) {
+                return (int) $missionId;
+            }
+        }
+
+        return null;
     }
 
     /**

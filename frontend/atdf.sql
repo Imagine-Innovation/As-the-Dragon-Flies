@@ -1462,6 +1462,7 @@ CREATE TABLE access_right (
   is_player BOOLEAN  NOT NULL   COMMENT 'A player can access' ,
   has_player BOOLEAN  NOT NULL   COMMENT 'A selected player can access' ,
   in_quest BOOLEAN  NOT NULL   COMMENT 'A player involved in a quest can access'   ,
+  application VARCHAR(32) NOT NULL DEFAULT 'app-backend' COMMENT 'Calling application',
 PRIMARY KEY(id)  ,
 UNIQUE INDEX uk_access_right(route, action))
 COMMENT = 'Defines what a user is and isn''t allowed to do according to their profile' ;
@@ -1519,6 +1520,7 @@ INSERT INTO `access_right` (`id`, `route`, `action`, `is_admin`, `is_designer`, 
 (1206, 'quest', 'update', 0, 0, 1, 1, 1),
 (1207, 'quest', 'view', 0, 0, 1, 1, 1),
 (1208, 'quest', 'quit', 0, 0, 1, 1, 1),
+(1209, 'quest', 'summary', 0, 0, 1, 1, 1, 'app-frontend'),
 (1250, 'game', 'view', 0, 0, 1, 1, 1),
 (1300, 'race', 'index', 0, 1, 0, 0, 0),
 (1301, 'race', 'view', 0, 1, 0, 0, 0),
