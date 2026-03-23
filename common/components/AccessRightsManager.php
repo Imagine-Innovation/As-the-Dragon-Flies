@@ -240,17 +240,17 @@ class AccessRightsManager extends Component
         }
 
         // Grant access if user is admin and route allows admin access
-        if (($user->is_admin ?? false) && $accessRight->is_admin) {
+        if (($user?->is_admin ?? false) && $accessRight->is_admin) {
             return self::logAccess($accessRight->id, false, 'success', "{$grantedMessage} for Admin role");
         }
 
         // Grant access if user is designer and route allows designer access
-        if (($user->is_designer ?? false) && $accessRight->is_designer) {
+        if (($user?->is_designer ?? false) && $accessRight->is_designer) {
             return self::logAccess($accessRight->id, false, 'success', "{$grantedMessage} for Designer role");
         }
 
         // Check player-specific access conditions
-        if (($user->is_player ?? false) && $accessRight->is_player) {
+        if (($user?->is_player ?? false) && $accessRight->is_player) {
             $playerAccess = self::checkPlayerAccess($accessRight);
             return self::logAccess($accessRight->id, $playerAccess['denied'], $playerAccess['severity'],
                             "[{$route}/{$action}] {$playerAccess['reason']}");
