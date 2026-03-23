@@ -9,7 +9,6 @@ use common\helpers\SaveHelper;
 use common\helpers\Utilities;
 use common\models\LoginForm;
 use common\models\Player;
-use common\models\UserLogin;
 use frontend\models\ContactForm;
 use frontend\models\ImageUploadForm;
 use frontend\models\PasswordResetRequestForm;
@@ -209,13 +208,6 @@ class SiteController extends Controller
 
             SaveHelper::save($user);
 
-            $log = new UserLogin([
-                'user_id' => $user->id,
-                'application' => 'frontend',
-                'login_at' => $login_at,
-                'ip_address' => Yii::$app->getRequest()->getUserIP(),
-            ]);
-            SaveHelper::save($log);
             return $this->goBack();
         }
 
@@ -233,15 +225,6 @@ class SiteController extends Controller
      */
     public function actionLogout(): Response
     {
-        $user = Yii::$app->user->identity;
-        $ipAddress = Yii::$app->getRequest()->getUserIP();
-
-        UserLogin::updateAll(['logout_at' => time()], [
-            'user_id' => $user->id,
-            'application' => 'frontend',
-            'login_at' => $user->frontend_last_login_at,
-            'ip_address' => $ipAddress,
-        ]);
         Yii::$app->user->logout();
 
         return $this->goHome();
