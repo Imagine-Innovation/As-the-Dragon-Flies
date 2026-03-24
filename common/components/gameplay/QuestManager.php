@@ -370,17 +370,9 @@ class QuestManager extends BaseManager
                 ->all();
 
         foreach ($nextChapters as $chapter) {
-            $missionId = $chapter->first_mission_id;
-            if (!$missionId) {
-                $firstMission = Mission::find()
-                        ->where(['chapter_id' => $chapter->id])
-                        ->orderBy(['id' => SORT_ASC])
-                        ->one();
-                $missionId = $firstMission?->id;
-            }
-
-            if ($missionId) {
-                return (int) $missionId;
+            $firstMission = $chapter->firstMission;
+            if ($firstMission) {
+                return $firstMission->id;
             }
         }
 
