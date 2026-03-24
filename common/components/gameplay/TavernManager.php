@@ -455,6 +455,12 @@ class TavernManager extends BaseManager
                 'player_turn' => $this->getNextPlayerTurn($questId),
                 'status' => $status,
             ]);
+        } else {
+            // If the player is re-joining after having left, assign a new turn
+            if ($questPlayer->status === AppStatus::LEFT->value && $status === AppStatus::ONLINE->value) {
+                $questPlayer->player_turn = $this->getNextPlayerTurn($questId);
+            }
+            $questPlayer->status = $status;
         }
 
         $questPlayer->left_at = $reasonWhyPlayerQuit ? time() : null;
