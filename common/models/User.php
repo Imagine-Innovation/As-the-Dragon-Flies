@@ -33,8 +33,7 @@ use yii\web\IdentityInterface;
  * @property int $hasPlayers
  * @property Player $currentPlayer
  * @property Player[] $players
- * @property AccesLogin[] $accessLogins
- * @property AccesLog[] $accessLogs
+ * @property AccessLog[] $accessLogs
  */
 class User extends ActiveRecord implements IdentityInterface
 {
@@ -304,23 +303,13 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * Gets query for [[AccesLogins]].
+     * Gets query for [[AccessLogs]].
      *
-     * @return \yii\db\ActiveQuery<AccesLogin>
+     * @return \yii\db\ActiveQuery<AccessLog>
      */
-    public function getAccesLogins()
+    public function getAccessLogs()
     {
-        return $this->hasMany(AccesLogin::class, ['user_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[AccesLogs]].
-     *
-     * @return \yii\db\ActiveQuery<AccesLog>
-     */
-    public function getAccesLogs()
-    {
-        return $this->hasMany(AccesLog::class, ['user_id' => 'id']);
+        return $this->hasMany(AccessLog::class, ['user_id' => 'id']);
     }
 
     /**

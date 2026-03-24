@@ -8,10 +8,10 @@ use yii\widgets\ActiveForm;
 /** @var yii\web\View $this */
 /** @var common\models\Outcome $model */
 /** @var yii\widgets\ActiveForm $form */
-/** @var string $storyId */
-/** @var string $chapterId */
-/** @var string $missionId */
-/** @var string $parentId */
+/** @var int $storyId */
+/** @var int $chapterId */
+/** @var int $missionId */
+/** @var int $parentId */
 $storyRoot = WebResourcesHelper::storyRootPath($storyId);
 ?>
 

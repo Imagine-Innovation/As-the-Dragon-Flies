@@ -17,9 +17,8 @@ use Yii;
  * @property int $has_player A selected player can access
  * @property int $in_quest A player involved in a quest can access
  *
- * @property AccessRightActionButton[] $accessRightActionButtons
  * @property Menu $menu
- * @property AccesLog[] $accessLogs
+ * @property AccessLog[] $accessLogs
  */
 class AccessRight extends \yii\db\ActiveRecord
 {
@@ -64,16 +63,6 @@ class AccessRight extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[AccessRightActionButtons]].
-     *
-     * @return \yii\db\ActiveQuery<AccessRightActionButton>
-     */
-    public function getAccessRightActionButtons()
-    {
-        return $this->hasMany(AccessRightActionButton::class, ['access_right_id' => 'id']);
-    }
-
-    /**
      * Gets query for [[Menu]].
      *
      * @return \yii\db\ActiveQuery<Menu>
@@ -84,12 +73,12 @@ class AccessRight extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[AccesLogs]].
+     * Gets query for [[AccessLogs]].
      *
-     * @return \yii\db\ActiveQuery<AccesLog>
+     * @return \yii\db\ActiveQuery<AccessLog>
      */
-    public function getAccesLogs()
+    public function getAccessLogs()
     {
-        return $this->hasMany(AccesLog::class, ['access_right_id' => 'id']);
+        return $this->hasMany(AccessLog::class, ['access_right_id' => 'id']);
     }
 }

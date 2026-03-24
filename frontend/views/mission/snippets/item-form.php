@@ -7,10 +7,10 @@ use yii\widgets\ActiveForm;
 /** @var yii\web\View $this */
 /** @var common\models\DecorItem $model */
 /** @var yii\widgets\ActiveForm $form */
-/** @var string $storyId */
-/** @var string $chapterId */
-/** @var string $missionId */
-/** @var string $parentId */
+/** @var int $storyId */
+/** @var int $chapterId */
+/** @var int $missionId */
+/** @var int $parentId */
 $imgPath = WebResourcesHelper::imagePath();
 $storyRoot = WebResourcesHelper::storyRootPath($storyId);
 ?>

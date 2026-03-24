@@ -15,13 +15,18 @@ use yii\db\ActiveRecord;
 final class DbMonitor extends ActiveRecord
 {
 
+    public int $id;
+    public string $sql_text;
+    public int $avg_runtime_ms;
+    public ?int $calls_last_hour = null;
+    public ?int $last_seen = null;
+
     const MYSQL_MONITOR = "
         SELECT DIGEST_TEXT AS sql_text, ROUND(AVG_TIMER_WAIT / 1000000) AS avg_runtime_ms, COUNT_STAR AS calls_last_hour
         FROM performance_schema.events_statements_summary_by_digest
         WHERE SCHEMA_NAME=DATABASE() AND (DIGEST_TEXT LIKE 'SELECT%' OR DIGEST_TEXT LIKE 'INSERT%' OR DIGEST_TEXT LIKE 'UPDATE%' OR DIGEST_TEXT LIKE 'DELETE%')
         ORDER BY AVG_TIMER_WAIT DESC
-        LIMIT 100
-    ";
+        LIMIT 100";
 
     public static function tableName(): string
     {
@@ -177,6 +182,10 @@ final class DbMonitor extends ActiveRecord
             // Try to find existing
             /** @var DbMonitor|null $existing */
             $existing = self::findOne(['sql_text' => $sql]) ?? new self();
+
+            if ($existing === null) {
+                $existing = new DbMonitor();
+            }
 
             $existing->sql_text = $sql;
             $existing->avg_runtime_ms = is_numeric($r['avg_runtime_ms']) ? (int) $r['avg_runtime_ms'] : 0;

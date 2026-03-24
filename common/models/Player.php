@@ -68,7 +68,7 @@ use Yii;
  * @property Spell[] $spells
  * @property CharacterTrait[] $traits
  * @property User $user
- * @property AccesLog[] $accessLogs
+ * @property AccessLog[] $accessLogs
  *
  * *********** Custom Properties **********
  *
@@ -593,13 +593,13 @@ class Player extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[AccesLogs]].
+     * Gets query for [[AccessLogs]].
      *
-     * @return \yii\db\ActiveQuery<AccesLog>
+     * @return \yii\db\ActiveQuery<AccessLog>
      */
-    public function getAccesLogs()
+    public function getAccessLogs()
     {
-        return $this->hasMany(AccesLog::class, ['player_id' => 'id']);
+        return $this->hasMany(AccessLog::class, ['player_id' => 'id']);
     }
 
     /**

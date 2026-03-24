@@ -2,8 +2,8 @@
 
 /** @var yii\web\View $this */
 /** @var common\models\Dialog $dialog */
-/** @var string $storyId */
-/** @var string $chapterId */
+/** @var int $storyId */
+/** @var int $chapterId */
 ?>
 <ul>
     <li><?= nl2br($dialog->text) ?></li>

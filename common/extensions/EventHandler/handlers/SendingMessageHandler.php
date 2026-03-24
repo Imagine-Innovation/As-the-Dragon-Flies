@@ -11,6 +11,7 @@ use Ratchet\ConnectionInterface;
 
 class SendingMessageHandler implements SpecificMessageHandlerInterface
 {
+
     private LoggerService $logger;
     private BroadcastServiceInterface $broadcastService; // Corrected type hint
     private BroadcastMessageFactory $messageFactory;
@@ -40,19 +41,20 @@ class SendingMessageHandler implements SpecificMessageHandlerInterface
     public function handle(ConnectionInterface $from, string $clientId, string $sessionId, array $data): void
     {
         $this->logger->logStart(
-            "SendingMessageHandler: handle sessionId=[{$sessionId}], clientId=[{$clientId}]",
-            $data,
+                "SendingMessageHandler: handle sessionId=[{$sessionId}], clientId=[{$clientId}]",
+                $data,
         );
 
         $questId = PayloadHelper::extractIntFromPayload('questId', $data);
         $playerName = PayloadHelper::extractStringFromPayload('playerName', $data);
+        /** @var array<string> $messages */
         $messages = PayloadHelper::extractArrayFromPayload('message', $data);
         $messageText = implode(PHP_EOL, $messages);
 
         if (empty($messageText) || $questId === null) {
             $this->logger->log('SendingMessageHandler: Missing message or questId.', $data, 'warning');
             $errorDto = $this->messageFactory->createErrorMessage(
-                'Invalid chat message data: message or quest ID missing.',
+                    'Invalid chat message data: message or quest ID missing.',
             );
             $this->broadcastService->sendToClient($clientId, $errorDto, false, $sessionId);
             $this->logger->logEnd("SendingMessageHandler: handle sessionId=[{$sessionId}]");

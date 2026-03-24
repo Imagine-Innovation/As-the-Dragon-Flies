@@ -145,25 +145,27 @@ class AccessRightsManager extends Component
      *
      * @param string $route
      * @param string $action
-     * @return AccessRight|null
+     * @return array{}|array{id: int, application: string, route: string, action: string, is_admin: bool, is_designer: bool, is_player: bool, has_player: bool, in_quest: bool}
      */
-    private static function getAccessRight(string $route, string $action): ?AccessRight
+    private static function getAccessRight(string $route, string $action): array
     {
         $application = \Yii::$app->id;
 
         self::countAccess($application, $route, $action);
 
-        $accessRightData = Yii::$app
-                ->db
-                ->createCommand('SELECT * FROM `access_right`'
-                        . ' WHERE `application` = :application AND `route` = :route AND `action` = :action', [
-                    ':application' => $application,
-                    ':route' => $route,
-                    ':action' => $action,
-                        ])
-                ->queryOne();
+        $currentSQLParam = [
+            ':application' => $application,
+            ':route' => $route,
+            ':action' => $action,
+        ];
 
-        return $accessRightData ? new AccessRight($accessRightData) : null;
+        $sqlStatement = 'SELECT * FROM `access_right` WHERE `application` = :application AND `route` = :route AND `action` = :action';
+
+        /** @var array{id: int, application: string, route: string, action: string, is_admin: bool, is_designer: bool, is_player: bool, has_player: bool, in_quest: bool}|false $accessRightData */
+        $accessRightData = Yii::$app->db->createCommand($sqlStatement, $currentSQLParam)->queryOne();
+        Yii::debug($accessRightData);
+
+        return $accessRightData === false ? [] : $accessRightData;
     }
 
     /**
@@ -175,15 +177,26 @@ class AccessRightsManager extends Component
      */
     private static function countAccess(string $application, string $route, string $action): bool
     {
-        $accessCount = AccessCount::findOne(['application' => $application, 'route' => $route, 'action' => $action]);
+        $currentSQLParam = [
+            ':application' => $application,
+            ':route' => $route,
+            ':action' => $action,
+        ];
 
-        if ($accessCount) {
-            $accessCount->calls = $accessCount->calls + 1;
+        $count = (int) Yii::$app->db->createCommand(
+                        'SELECT COUNT(*) FROM `access_count` WHERE `application` = :application AND `route` = :route AND `action` = :action',
+                        $currentSQLParam
+                )->queryScalar();
+
+        if ($count > 0) {
+            $sqlStatement = 'UPDATE `access_count` SET `calls`=`calls`+1 WHERE `application` = :application AND `route` = :route AND `action` = :action';
         } else {
-            $accessCount = new AccessCount(['application' => $application, 'route' => $route, 'action' => $action]);
+            $sqlStatement = 'INSERT INTO `access_count`(`calls`, `application`, `route`, `action`) VALUES (1, :application, :route, :action)';
         }
 
-        return $accessCount->save(false);
+        $rowsAffected = (int) Yii::$app->db->createCommand($sqlStatement, $currentSQLParam)->execute();
+
+        return $rowsAffected > 0;
     }
 
     /**
@@ -234,60 +247,55 @@ class AccessRightsManager extends Component
         $accessRight = self::getAccessRight($route, $action);
 
         // If no access rights defined, grant access to public "route/action"
-        if (!$accessRight) {
+        if (empty($accessRight)) {
             return self::manageDefaultAccess($route, $action, $grantedMessage, $deniedMessage);
         }
 
         $user = Yii::$app->user->identity;
 
         // Grant access if user is admin and route allows admin access
-        if ($user && ($user->is_admin && false) && $accessRight->is_admin) {
-            return self::logAccess($accessRight->id, false, 'success', "{$grantedMessage} for Admin role");
+        if ($user && ($user->is_admin ?? false) && $accessRight['is_admin']) {
+            return self::logAccess($accessRight['id'], false, 'success', "{$grantedMessage} for Admin role");
         }
 
         // Grant access if user is designer and route allows designer access
-        if ($user && ($user->is_designer ?? false) && $accessRight->is_designer) {
-            return self::logAccess($accessRight->id, false, 'success', "{$grantedMessage} for Designer role");
+        if ($user && ($user->is_designer ?? false) && $accessRight['is_designer']) {
+            return self::logAccess($accessRight['id'], false, 'success', "{$grantedMessage} for Designer role");
         }
 
         // Check player-specific access conditions
-        if ($user && ($user->is_player ?? false) && $accessRight->is_player) {
+        if ($user && ($user->is_player ?? false) && $accessRight['is_player']) {
             $playerAccess = self::checkPlayerAccess($accessRight);
-            return self::logAccess($accessRight->id, $playerAccess['denied'], $playerAccess['severity'],
-                            "[{$route}/{$action}] {$playerAccess['reason']}");
+            return self::logAccess($accessRight['id'], $playerAccess['denied'], $playerAccess['severity'], "[{$route}/{$action}] {$playerAccess['reason']}");
         }
 
         // Deny access by default
-        return self::logAccess($accessRight->id, true, 'fatal', $deniedMessage);
+        return self::logAccess($accessRight['id'], true, 'fatal', $deniedMessage);
     }
 
     /**
      * Check player-specific access conditions
      *
-     * @param \common\models\AccessRight $accessRight
+     * @param  array{id: int, application: string, route: string, action: string, is_admin: bool, is_designer: bool, is_player: bool, has_player: bool, in_quest: bool} $accessRight
      * @return array{
      *     denied: bool,
      *     severity: string,
      *     reason: string
      * }
      */
-    private static function checkPlayerAccess(AccessRight $accessRight): array
+    private static function checkPlayerAccess(array $accessRight): array
     {
         // Deny if player selection is required but none selected
         $hasPlayerSelected = Yii::$app->session->get('hasPlayerSelected') ?? false;
 
-        if (!$hasPlayerSelected && $accessRight->has_player) {
-            return [
-                'denied' => true,
-                'severity' => 'error',
-                'reason' => 'No player have been selected',
-            ];
+        if (!$hasPlayerSelected && $accessRight['has_player']) {
+            return ['denied' => true, 'severity' => 'error', 'reason' => 'No player have been selected'];
         }
 
         // Deny if quest participation is required but player is not in a quest
         $inQuest = Yii::$app->session->get('inQuest') ?? false;
         $playerName = Yii::$app->session->get('playerName') ?? 'Unknown';
-        if (!$inQuest && $accessRight->in_quest) {
+        if (!$inQuest && $accessRight['in_quest']) {
             return [
                 'denied' => true,
                 'severity' => 'error',
@@ -303,27 +311,6 @@ class AccessRightsManager extends Component
 
     /**
      * Log the access to the database.
-     *
-     * The initial code was:
-     *
-     *   $accessLog = new AccesLog([
-     *       'user_id' => $user->id,
-     *       'access_right_id' => $accessRightId,
-     *       'player_id' => $playerId,
-     *       'quest_id' => $questId,
-     *       'ip_address' => Yii::$app->getRequest()->getUserIP(),
-     *       'action_at' => time(),
-     *       'denied' => $denied ? 1 : 0,
-     *       'reason' => $reason,
-     *   ]);
-     *   // "false" parameter to skip validation and save directly
-     *   // and avoid 7 query at each acces right evaluation
-     *   if (!$accessLog->save(false)) {
-     *       throw new \Exception(implode("<br />", ArrayHelper::getColumn($accessLog->errors, 0, false)));
-     *   }
-     * This previously generated three SQL SELECT queries before the INSERT statement.
-     * For optimization purposes, given that this logging function is called for each HTTP query,
-     * we switched to a more optimized low-level query to perform only the INSERT.
      *
      * @param int|null $accessRightId
      * @param bool $denied
