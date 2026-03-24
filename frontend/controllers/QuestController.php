@@ -68,21 +68,8 @@ class QuestController extends Controller
                     ],
                     [
                         'actions' => [
-                            'create',
-                            'delete',
-                            'index',
-                            'join',
-                            'quit',
-                            'resume',
-                            'start',
-                            'tavern',
-                            'update',
-                            'view',
-                            'ajax-can-start',
-                            'ajax-get-messages',
-                            'ajax-quest-members',
-                            'ajax-send-message',
-                            'ajax-welcome-messages',
+                            'create', 'delete', 'index', 'join', 'quit', 'resume', 'start', 'tavern', 'update', 'view', 'summarize',
+                            'ajax-can-start', 'ajax-get-messages', 'ajax-quest-members', 'ajax-send-message', 'ajax-welcome-messages',
                         ],
                         'allow' => AccessRightsManager::isRouteAllowed($this),
                         'roles' => ['@'],
@@ -316,8 +303,7 @@ class QuestController extends Controller
         }
 
         $success = $this->createEvent('sending-message', $player, $quest, ['message' => $message]);
-        return ['error' => !$success, 'msg' => "Create 'sending-message' event " . ($success
-                ? 'succeded' : 'failed')];
+        return ['error' => !$success, 'msg' => "Create 'sending-message' event " . ($success ? 'succeded' : 'failed')];
     }
 
     /**
@@ -532,6 +518,29 @@ class QuestController extends Controller
     {
         $this->findModel($id)->delete();
         return $this->redirect(['index']);
+    }
+
+    /**
+     * Displays quest summary after game over
+     *
+     * @param int $id Quest ID
+     * @return string
+     * @throws NotFoundHttpException
+     */
+    public function actionSummarize(int $id): string
+    {
+        $quest = $this->findModel($id);
+
+        /**
+          // Summary is only available for finished quests to avoid relying on missing completion data in the view
+          if ($quest->status !== AppStatus::COMPLETED->value && $quest->status !== AppStatus::ABORTED->value) {
+          throw new NotFoundHttpException('The requested quest summary is only available after the quest is completed or aborted.');
+          }
+         *
+         */
+        return $this->render('summary', [
+                    'model' => $quest,
+        ]);
     }
 
     /**

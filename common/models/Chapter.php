@@ -16,13 +16,14 @@ use Yii;
  * @property string|null $image Image
  * @property int|null $first_mission_id Optional foreign key to “mission” table to identify the first mission to complete
  *
- * @property Mission $firstMission
+ * @property Mission|null $firstMission
  * @property Mission[] $missions
  * @property Quest[] $quests
  * @property Story $story
  */
 class Chapter extends \yii\db\ActiveRecord
 {
+
     /**
      * {@inheritdoc}
      */
@@ -81,7 +82,7 @@ class Chapter extends \yii\db\ActiveRecord
     /**
      * Gets query for [[FirstMission]].
      *
-     * @return \yii\db\ActiveQuery<Mission>
+     * @return \yii\db\ActiveQuery<Mission>|null
      */
     public function getFirstMission()
     {

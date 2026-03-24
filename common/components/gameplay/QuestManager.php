@@ -363,12 +363,20 @@ class QuestManager extends BaseManager
         $currentProgress = $this->getQuestProgress();
         $mission = $currentProgress->mission;
 
-        $nextChapter = Chapter::find()
-                ->where(['>', 'chapter_number', $mission->chapter->chapter_number])
+        $nextChapters = Chapter::find()
+                ->where(['story_id' => $mission->chapter->story_id])
+                ->andWhere(['>', 'chapter_number', $mission->chapter->chapter_number])
                 ->orderBy(['chapter_number' => SORT_ASC])
-                ->one();
+                ->all();
 
-        return $nextChapter?->first_mission_id;
+        foreach ($nextChapters as $chapter) {
+            $firstMission = $chapter->firstMission;
+            if ($firstMission) {
+                return $firstMission->id;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -379,7 +387,8 @@ class QuestManager extends BaseManager
     {
         $progress = $this->getQuestProgress();
         $nextMissionInChapter = Mission::find()
-                ->where(['>', 'id', $progress->mission_id])
+                ->where(['chapter_id' => $progress->mission->chapter_id])
+                ->andWhere(['>', 'id', $progress->mission_id])
                 ->orderBy(['id' => SORT_ASC])
                 ->one();
 
@@ -430,6 +439,25 @@ class QuestManager extends BaseManager
     /**
      *
      * @param Quest $quest
+     * @param int $nextChapterId
+     * @return void
+     * @throws Exception
+     */
+    private function synchronizeChapterId(Quest $quest, int $nextChapterId): void
+    {
+        if ($quest->current_chapter_id !== $nextChapterId) {
+            $quest->current_chapter_id = $nextChapterId;
+
+            // Persist quest without running validation, to avoid leaving current_chapter_id out of sync
+            if (!$quest->save()) {
+                throw new Exception('Could not update quest current chapter.');
+            }
+        }
+    }
+
+    /**
+     *
+     * @param Quest $quest
      * @param int $nextMissionId
      * @return array{error: bool, msg: string, content?: string}
      * @throws Exception
@@ -449,6 +477,10 @@ class QuestManager extends BaseManager
         if (!$nextQuestProgress) {
             throw new Exception('Could not initialize next quest progress.');
         }
+
+        // Update quest current chapter if needed
+        $nextChapterId = $nextQuestProgress->mission->chapter_id;
+        $this->synchronizeChapterId($quest, $nextChapterId);
 
         $detail = $this->getNextMissionDetail($currentQuestProgress, $nextQuestProgress);
         $message = "The mission '{$detail['currentMissionName']}' is over, let's move to '{$detail['nextMissionName']}'!!!";
