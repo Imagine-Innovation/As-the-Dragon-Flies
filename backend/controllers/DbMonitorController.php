@@ -3,11 +3,13 @@
 namespace backend\controllers;
 
 use backend\components\DbMonitorManager;
+use backend\helpers\ExplainPlanHelper;
 use backend\models\DbMonitor;
 use common\components\AccessRightsManager;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
+use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 /**
@@ -32,7 +34,7 @@ final class DbMonitorController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['index', 'ajax-explain', 'ajax-suggestion', 'refresh'],
+                        'actions' => ['index', 'ajax-explain'],
                         'allow' => AccessRightsManager::isRouteAllowed($this),
                         'roles' => ['@'],
                     ],
@@ -52,7 +54,7 @@ final class DbMonitorController extends Controller
         $limit = 10;
 
         $dbMonitor->refreshSlowQueries();
-        /** @var array<int, DbMonitor> $rows */
+        /** @var array<int, DbMonitor> $slowQueries */
         $slowQueries = DbMonitor::find()
                 ->orderBy(['avg_runtime_ms' => SORT_DESC])
                 ->limit($limit)
@@ -77,54 +79,15 @@ final class DbMonitorController extends Controller
 
         $sql = $model->sql_text;
         $explainPlan = $dbMonitor->getExplainPlan($sql);
+        /** @var array<string, mixed> $startingPoint */
+        $startingPoint = $explainPlan['query_block'];
+        $tree = ExplainPlanHelper::buildTree($startingPoint);
         Yii::debug($explainPlan);
         return $this->renderPartial('ajax/explain', [
-                    'plan' => $explainPlan,
+                    'plan' => $tree,
                     'sql' => $sql,
                     'queryId' => $id,
         ]);
-    }
-
-    /**
-     *
-     * @param int $id
-     * @return string
-     */
-    public function actionAjaxSuggestion(int $id): string
-    {
-        $model = $this->findModel($id);
-        $dbMonitor = new DbMonitorManager();
-        $suggestions = $dbMonitor->getQuerySuggestions($model->sql_text);
-
-        return $this->renderAjax('ajax/suggestion', [
-                    'suggestions' => $suggestions,
-        ]);
-    }
-
-    /**
-     *
-     * @return array{error: bool, msg: string, rowsUpdated?: int}
-     */
-    public function actionRefresh(): array
-    {
-        Yii::$app->response->format = Response::FORMAT_JSON;
-
-        $model = new DbMonitor();
-
-        try {
-            $count = $model->refreshFromEngine();
-            return [
-                'error' => false,
-                'msg' => 'DB Monitor refreshed successfully.',
-                'rowsUpdated' => $count,
-            ];
-        } catch (\Throwable $e) {
-            return [
-                'error' => true,
-                'msg' => $e->getMessage(),
-                'rowsUpdated' => 0,
-            ];
-        }
     }
 
     /**

@@ -5,17 +5,18 @@ parameters:
     #reportUnmatchedIgnoredErrors: false
     #inferPrivatePropertyTypeFromConstructor: true
     paths:
-        - models
-        - controllers
         - components
-        - views
+        - controllers
+        - extensions
         - helpers
+        - models
+        - views
         - widgets
     scanDirectories:
+        - backend
         - common
         - console
         - frontend
-        - backend
     excludePaths:
         - '**/node_modules/*'
         - '**/runtime/*'

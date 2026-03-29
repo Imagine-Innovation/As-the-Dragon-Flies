@@ -2,6 +2,7 @@
 
 namespace backend\components;
 
+use backend\components\drivers\DriverInterface;
 use backend\models\DbMonitor;
 use Yii;
 use yii\base\Component;
@@ -9,7 +10,7 @@ use yii\base\Component;
 class DbMonitorManager extends Component
 {
 
-    private $driver;
+    private DriverInterface $driver;
 
     public function __construct(array $config = [])
     {
@@ -68,30 +69,5 @@ class DbMonitorManager extends Component
     public function getKPIs(): array
     {
         return $this->driver->getKPIs();
-    }
-
-    /**
-     * @param string $sqlStatement
-     * @return string[]
-     */
-    public function getQuerySuggestions(string $sqlStatement): array
-    {
-        $sql = strtolower($sqlStatement);
-        $s = [];
-
-        if (str_contains($sql, 'select *')) {
-            $s[] = 'Avoid SELECT *; specify columns.';
-        }
-        if (preg_match('/like\s+[\'"]%/i', $sql)) {
-            $s[] = 'Leading wildcard in LIKE prevents index usage.';
-        }
-        if (str_contains($sql, 'lower(')) {
-            $s[] = 'Avoid LOWER() in WHERE; use functional indexes or normalized data.';
-        }
-        if (strlen($sql) > 2000) {
-            $s[] = 'Query is large; consider refactoring or breaking it down.';
-        }
-
-        return $s !== [] ? $s : ['No suggestions'];
     }
 }

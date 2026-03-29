@@ -11,14 +11,8 @@
 </div>
 
 <div class="mb-3">
-    <div class="small text-secondary">Explain Plan</div>
-    <pre class="bg-dark text-light p-3" style="white-space:pre-wrap;">
-        <?= htmlspecialchars($tree) ?>
-    </pre>
-</div>
-
-<div class="text-end">
-    <button class="btn btn-warning" onclick="loadSuggestion(<?= (int) $queryId ?>)">
-        Improve Query
-    </button>
+    <p class="small text-secondary">Explain Plan</p>
+    <div class="bg-dark text-light p-3">
+        <?= $tree ?>
+    </div>
 </div>

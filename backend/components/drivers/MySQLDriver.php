@@ -134,7 +134,8 @@ class MySQLDriver implements DriverInterface
                     ':hash' => $hash,
                 ])->queryOne();
 
-        return $row['sql_text'] ?? null;
+        $sql = $row['sql_text'];
+        return is_string($sql) ? (string) $sql : null;
     }
 
     /**
@@ -228,21 +229,35 @@ class MySQLDriver implements DriverInterface
 
         $dbMonitor = [];
         foreach ($statementHistory as $statement) {
-            $dbMonitor[] = [
-                'sql_text' => $this->getLastQueryByDigest($statement['hash']),
-                'hash' => $statement['hash'],
-                'avg_runtime_ms' => $statement['avg_runtime_ms'],
-                'calls_last_hour' => $statement['count'],
-                'last_seen' => $statement['last_start'] + $dbStartTime,
-            ];
+            $hash = is_string($statement['hash']) ? (string) $statement['hash'] : '';
+            $sql = $this->getLastQueryByDigest($hash);
+            $lastStart = $statement['last_start'];
+            if ($sql) {
+                $dbMonitor[] = [
+                    'sql_text' => $sql,
+                    'hash' => $hash,
+                    'avg_runtime_ms' => $statement['avg_runtime_ms'],
+                    'calls_last_hour' => $statement['count'],
+                    'last_seen' => (is_numeric($lastStart) ? (int) $lastStart : 0) + $dbStartTime,
+                ];
+            }
         }
         return $dbMonitor;
     }
 
     /**
      *
+     * @param array<string, mixed> $kpis
+     * @param string $kpiName
      * @return int
      */
+    private function intValue(array $kpis, string $kpiName): int
+    {
+        if (isset($kpis[$kpiName]) && is_numeric($kpis[$kpiName])) {
+            return (int) $kpis[$kpiName];
+        }
+        return 0;
+    }
 
     /**
      *
@@ -258,11 +273,12 @@ class MySQLDriver implements DriverInterface
         foreach ($globalVars as $var) {
             $kpis[$var['Variable_name']] = $var['Value'];
         }
+
         return [
-            'uptime' => isset($kpis['Uptime']) ? $kpis['Uptime'] : 0,
-            'threadsConnected' => isset($kpis['Threads_connected']) ? $kpis['Threads_connected'] : 0,
-            'slowQueries' => isset($kpis['Slow_queries']) ? $kpis['Slow_queries'] : 0,
-            'queriesPerSecond' => isset($kpis['Questions']) ? $kpis['Questions'] : 0,
+            'uptime' => $this->intValue($kpis, 'Uptime'),
+            'threadsConnected' => $this->intValue($kpis, 'Threads_connected'),
+            'slowQueries' => $this->intValue($kpis, 'Slow_queries'),
+            'queriesPerSecond' => $this->intValue($kpis, 'Questions'),
         ];
     }
 

@@ -5,7 +5,6 @@ use yii\helpers\Html;
 
 /** @var yii\web\View $this */
 /** @var common\models\Quest $model */
-
 $this->title = 'Quest Summary: ' . $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Quests', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
@@ -24,7 +23,7 @@ $status = AppStatus::from($model->status);
                 </div>
                 <div class="card-body">
                     <p><strong>Story:</strong> <?= Html::encode($model->story->name) ?></p>
-                    <p><strong>Status:</strong> 
+                    <p><strong>Status:</strong>
                         <span class="badge bg-<?= $model->status === AppStatus::COMPLETED->value ? 'success' : 'danger' ?>">
                             <?= Html::encode($status->getLabel()) ?>
                         </span>
@@ -53,13 +52,13 @@ $status = AppStatus::from($model->status);
                 <ul class="list-group list-group-flush">
                     <?php foreach ($model->allPlayers as $player): ?>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <?= Html::encode($player->name) ?>
-                            <span class="badge bg-secondary"><?= Html::encode($player->class?->name ?? 'Adventurer') ?></span>
+                            <?= Html::encode($player->name ?? '') ?>
+                            <span class="badge bg-secondary"><?= Html::encode($player->class->name ?? 'Adventurer') ?></span>
                         </li>
                     <?php endforeach; ?>
                 </ul>
             </div>
-            
+
             <div class="d-grid gap-2">
                 <?= Html::a('Back to Stories', ['story/index'], ['class' => 'btn btn-primary']) ?>
                 <?= Html::a('View All Quests', ['quest/index'], ['class' => 'btn btn-outline-secondary']) ?>

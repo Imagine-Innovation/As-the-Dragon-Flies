@@ -2,7 +2,7 @@
 
 namespace backend\widgets;
 
-use backend\helpers\DbMonitorHelper;
+use backend\helpers\ExplainPlanHelper;
 use Yii;
 use yii\base\Widget;
 
@@ -18,7 +18,7 @@ final class DbMonitorExplainPlan extends Widget
     {
         Yii::debug(print_r($this->sql, true));
         Yii::debug(print_r($this->plan, true));
-        $tree = DbMonitorHelper::renderNode($this->plan);
+        $tree = ExplainPlanHelper::renderTree($this->plan);
         Yii::debug(print_r($tree, true));
         return $this->render('db-monitor-explain-plan', [
                     'sql' => $this->sql,
