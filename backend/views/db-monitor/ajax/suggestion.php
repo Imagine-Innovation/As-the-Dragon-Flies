@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @var string[] $suggest
+ * @var string[] suggestions
  */
 use backend\widgets\DbMonitorSuggestion;
 

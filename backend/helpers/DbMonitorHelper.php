@@ -2,6 +2,8 @@
 
 namespace backend\helpers;
 
+use Yii;
+
 /**
  * Helper to render an EXPLAIN plan as an indented tree (Oracle-like).
  *
@@ -20,13 +22,18 @@ final class DbMonitorHelper
 
         /** @var string $label */
         $label = $node['operation'] ?? $node['table'] ?? 'Step';
+        Yii::debug("*** debug *** renderNode level={$level}, label={$label} " . print_r($node, true));
 
         /** @var array<string> $extras */
         $extras = [];
         self::extractProperty($node, 'table', $extras, '[%s]');
+        Yii::debug(print_r($extras, true));
         self::extractProperty($node, 'index', $extras);
+        Yii::debug(print_r($extras, true));
         self::extractProperty($node, 'rows', $extras);
+        Yii::debug(print_r($extras, true));
         self::extractProperty($node, 'cost', $extras);
+        Yii::debug(print_r($extras, true));
 
         $info = implode(' ', $extras);
         $line = "{$indent}- {$label} {$info}\n";
@@ -54,7 +61,9 @@ final class DbMonitorHelper
     {
         if (isset($node[$propertyName])) {
             $property = is_string($node[$propertyName]) ? (string) $node[$propertyName] : 'Unknown';
-            $extras[] = sprintf($placeHolder, $property);
+            $extra = sprintf($placeHolder, $property);
+            Yii::debug("*** debug *** extractProperty propertyName={$propertyName}" . print_r($node, true));
+            $extras[] = $extra;
         }
     }
 

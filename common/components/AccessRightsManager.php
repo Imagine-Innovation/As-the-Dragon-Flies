@@ -163,7 +163,6 @@ class AccessRightsManager extends Component
 
         /** @var array{id: int, application: string, route: string, action: string, is_admin: bool, is_designer: bool, is_player: bool, has_player: bool, in_quest: bool}|false $accessRightData */
         $accessRightData = Yii::$app->db->createCommand($sqlStatement, $currentSQLParam)->queryOne();
-        Yii::debug($accessRightData);
 
         return $accessRightData === false ? [] : $accessRightData;
     }

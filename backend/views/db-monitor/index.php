@@ -1,6 +1,7 @@
 <?php
 
 use backend\helpers\DbMonitorHelper;
+use backend\models\DbMonitor;
 use backend\widgets\Kpi;
 use backend\widgets\DbMonitorTopQueries;
 use yii\helpers\Url;
@@ -12,10 +13,10 @@ use yii\helpers\Url;
  *   slowQueries:int,
  *   queriesPerSecond:int
  * } $kpis
- * @var array<int, \backend\models\DbMonitor> $topQueries
+ * @var array<int, DbMonitor> $topQueries
  */
-$explainUrl = Url::to(['db-monitor/explain']);
-$suggestionUrl = Url::to(['db-monitor/suggestion']);
+$explainUrl = Url::to(['db-monitor/ajax-explain']);
+$suggestionUrl = Url::to(['db-monitor/ajax-suggestion']);
 ?>
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 row-cols-xxl-4 g-3 mb-4">
     <?=

@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\components\DbMonitorManager;
 use backend\models\DbMonitor;
 use common\components\AccessRightsManager;
 use Yii;
@@ -31,7 +32,7 @@ final class DbMonitorController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['index', 'explain', 'suggestion', 'refresh'],
+                        'actions' => ['index', 'ajax-explain', 'ajax-suggestion', 'refresh'],
                         'allow' => AccessRightsManager::isRouteAllowed($this),
                         'roles' => ['@'],
                     ],
@@ -46,13 +47,20 @@ final class DbMonitorController extends Controller
      */
     public function actionIndex(): string
     {
-        $model = new DbMonitor();
-        $count = $model->refreshFromEngine();
+        $dbMonitor = new DbMonitorManager();
+        $kpis = $dbMonitor->getKPIs();
+        $limit = 10;
+
+        $dbMonitor->refreshSlowQueries();
+        /** @var array<int, DbMonitor> $rows */
+        $slowQueries = DbMonitor::find()
+                ->orderBy(['avg_runtime_ms' => SORT_DESC])
+                ->limit($limit)
+                ->all();
 
         return $this->render('index', [
-                    'kpis' => $model->getKpis(),
-                    'topQueries' => $model->getTopSlowQueries(),
-                    'updatedRows' => $count,
+                    'kpis' => $kpis,
+                    'topQueries' => $slowQueries,
         ]);
     }
 
@@ -61,13 +69,18 @@ final class DbMonitorController extends Controller
      * @param int $id
      * @return string
      */
-    public function actionExplain(int $id): string
+    public function actionAjaxExplain(int $id): string
     {
-        $model = new DbMonitor();
+        $model = $this->findModel($id);
 
-        return $this->renderAjax('ajax/explain', [
-                    'plan' => $model->getExplainPlan($id),
-                    'sql' => $model->getQueryText($id),
+        $dbMonitor = new DbMonitorManager();
+
+        $sql = $model->sql_text;
+        $explainPlan = $dbMonitor->getExplainPlan($sql);
+        Yii::debug($explainPlan);
+        return $this->renderPartial('ajax/explain', [
+                    'plan' => $explainPlan,
+                    'sql' => $sql,
                     'queryId' => $id,
         ]);
     }
@@ -77,12 +90,14 @@ final class DbMonitorController extends Controller
      * @param int $id
      * @return string
      */
-    public function actionSuggestion(int $id): string
+    public function actionAjaxSuggestion(int $id): string
     {
-        $model = new DbMonitor();
+        $model = $this->findModel($id);
+        $dbMonitor = new DbMonitorManager();
+        $suggestions = $dbMonitor->getQuerySuggestions($model->sql_text);
 
         return $this->renderAjax('ajax/suggestion', [
-                    'suggest' => $model->getQuerySuggestions($id),
+                    'suggestions' => $suggestions,
         ]);
     }
 
@@ -110,5 +125,22 @@ final class DbMonitorController extends Controller
                 'rowsUpdated' => 0,
             ];
         }
+    }
+
+    /**
+     * Finds the DbMonitor model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     *
+     * @param int $id Primary Key
+     * @return DbMonitor the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel(int $id): DbMonitor
+    {
+        if (($model = DbMonitor::findOne(['id' => $id])) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The user your are looking for does not exist.');
     }
 }
