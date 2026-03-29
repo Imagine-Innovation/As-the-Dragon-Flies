@@ -23,7 +23,7 @@ class ItemHelper
         'is_thrown' => 'Thrown (%s)',
         'is_versatile' => 'Versatile (%s)',
     ];
-    const LITE_WEAPON_PROPERTIES = [
+    const LIGHT_WEAPON_PROPERTIES = [
         'is_two_handed' => 'Two Handed',
         'is_finesse' => 'Finesse',
         'is_range' => 'Range (%s)',
@@ -72,9 +72,9 @@ class ItemHelper
      * @param Weapon $weapon
      * @return string
      */
-    public static function getLiteWeaponProperties(Weapon &$weapon): string
+    public static function getLightWeaponProperties(Weapon &$weapon): string
     {
-        return self::getWeaponProperties($weapon, self::LITE_WEAPON_PROPERTIES);
+        return self::getWeaponProperties($weapon, self::LIGHT_WEAPON_PROPERTIES);
     }
 
     /**
