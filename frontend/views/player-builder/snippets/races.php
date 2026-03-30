@@ -2,7 +2,7 @@
 
 use common\helpers\Utilities;
 use common\models\RaceGroup;
-use frontend\widgets\ModalDesc;
+use common\widgets\ModalDesc;
 
 /** @var yii\web\View $this */
 /** @var frontend\models\PlayerBuilder $model */

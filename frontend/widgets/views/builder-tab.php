@@ -1,7 +1,7 @@
 <?php
 
 use common\helpers\Utilities;
-use frontend\widgets\ModalDesc;
+use common\widgets\ModalDesc;
 
 /** @var yii\web\View $this */
 /** @var array $models */

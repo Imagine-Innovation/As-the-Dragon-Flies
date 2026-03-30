@@ -9,7 +9,7 @@ use common\widgets\RecordCount;
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */
-/** @var frontend\models\PlayerBuilder[] $models */
+/** @var common\models\Player[] $models */
 /** @var int $count: total number of records retrived by the query */
 /** @var int $page: current page number */
 /** @var int $pageCount: nomber of pages regarding the limit of the query */

@@ -2,7 +2,7 @@
 
 use common\helpers\WebResourcesHelper;
 use common\widgets\Button;
-use frontend\widgets\ModalDesc;
+use common\widgets\ModalDesc;
 
 /** @var yii\web\View $this */
 /** @var common\models\PlayerCart $playerCart */

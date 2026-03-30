@@ -5,7 +5,7 @@ use common\helpers\StoryNeededClass;
 use common\helpers\StoryPlayers;
 use common\helpers\WebResourcesHelper;
 use common\widgets\Button;
-use frontend\widgets\ModalDesc;
+use common\widgets\ModalDesc;
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */

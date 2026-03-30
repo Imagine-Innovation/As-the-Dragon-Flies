@@ -3,7 +3,7 @@
 use common\helpers\Utilities;
 use common\models\History;
 use frontend\models\PlayerBuilder;
-use frontend\widgets\ModalDesc;
+use common\widgets\ModalDesc;
 
 /** @var yii\web\View $this */
 /** @var PlayerBuilder $model */

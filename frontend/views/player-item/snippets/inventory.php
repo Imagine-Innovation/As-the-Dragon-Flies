@@ -1,7 +1,7 @@
 <?php
 
 use common\helpers\WebResourcesHelper;
-use frontend\widgets\ModalDesc;
+use common\widgets\ModalDesc;
 
 /** @var yii\web\View $this */
 /** @var array $items */
