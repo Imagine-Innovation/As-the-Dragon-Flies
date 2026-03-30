@@ -24,7 +24,7 @@ $imgPath = WebResourcesHelper::imagePath();
                                         <input type="checkbox" class="toggle-switch__checkbox" id="pack-<?= $item['id'] ?>" <?=
                                         $item['is_carrying'] ? 'checked' : ''
                                         ?>
-                                               onchange="ItemManager.togglePack(<?= $item['id'] ?>);">
+                                               onchange="PlayerItemManager.togglePack(<?= $item['id'] ?>);">
                                         <i class="toggle-switch__helper"></i>
                                     </span>
                                 </div>

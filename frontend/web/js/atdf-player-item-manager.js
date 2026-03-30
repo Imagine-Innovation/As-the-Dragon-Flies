@@ -1,21 +1,4 @@
-/**
- * ItemManager Class
- * Handles item-related operations and tab management
- */
-class ItemManager {
-    /**
-     * Loads and displays items for a specific type
-     * @param {number} itemType - Type of items to load
-     */
-    static loadTypeTab(itemType) {
-        Logger.log(1, 'loadTypeTab', `itemType=${itemType}`);
-
-        $("#container").html(`ajax-${itemType}`);
-        $("#currentTab").html(itemType);
-
-        TableManager.loadGenericAjaxTable(0);
-    }
-
+class PlayerItemManager {
     /**
      * Toggles an item in player's pack
      * @param {number} itemId - Item identifier to toggle
@@ -42,23 +25,6 @@ class ItemManager {
                 } else {
                     ToastManager.show("Player's pack", response.msg, 'info');
                 }
-            }
-        });
-    }
-
-    /**
-     * 
-     * @param {number} categoryId
-     * @returns {string}
-     */
-    static getCategoryItems(categoryId) {
-        Logger.log(1, 'getCategoryItems', `categoryId=${categoryId}`);
-
-        AjaxUtils.request({
-            url: 'item/ajax-category',
-            data: {categoryId: categoryId},
-            successCallback: (response) => {
-                return response.content;
             }
         });
     }

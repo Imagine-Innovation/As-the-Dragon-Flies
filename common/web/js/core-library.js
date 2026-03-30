@@ -445,5 +445,24 @@ class LayoutInitializer {
     }
 }
 
+/**
+ * ItemManager Class
+ * Handles item-related operations and tab management
+ */
+class ItemManager {
+    /**
+     * Loads and displays items for a specific type
+     * @param {number} itemType - Type of items to load
+     */
+    static loadTypeTab(itemType) {
+        Logger.log(1, 'loadTypeTab', `itemType=${itemType}`);
+
+        $("#container").html(`ajax-${itemType}`);
+        $("#currentTab").html(itemType);
+
+        TableManager.loadGenericAjaxTable(0);
+    }
+}
+
 // Initialize library when DOM is ready
 $(document).ready(() => CoreLibrary.init());

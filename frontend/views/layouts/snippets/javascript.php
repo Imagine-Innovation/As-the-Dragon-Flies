@@ -1,5 +1,4 @@
 <?php
-
 /** @var \yii\web\View $this */
 // Specific javascript libraries to load according to controller name
 $controllerCustomJavascriptLib = [
@@ -8,7 +7,7 @@ $controllerCustomJavascriptLib = [
     'quest' => ['atdf-quest-tavern', 'atdf-quest-events'],
     'game' => ['atdf-quest-game', 'atdf-quest-events', 'atdf-equipment-manager'],
     'item' => ['atdf-item-manager'],
-    'player-item' => ['atdf-item-manager'],
+    'player-item' => ['atdf-player-item-manager'],
     'image' => ['atdf-image-manager'],
     'mission' => ['atdf-search-select'],
 ];
@@ -45,9 +44,11 @@ $jsSnippet = match ($controllerId) {
     }
 
 
-<?= $jsSnippet ? $this->renderFile("@app/views/layouts/snippets/js/{$jsSnippet}.php", [
-        'controllerId' => $controllerId,
-        'actionId' => $actionId,
-    ]) : '' ?>
+<?=
+$jsSnippet ? $this->renderFile("@app/views/layouts/snippets/js/{$jsSnippet}.php", [
+            'controllerId' => $controllerId,
+            'actionId' => $actionId,
+        ]) : ''
+?>
 
 </script>
