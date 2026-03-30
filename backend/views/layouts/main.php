@@ -36,7 +36,7 @@ $currentUser = Yii::$app->user->identity;
             <?= $this->renderFile('@app/views/layouts/snippets/left-menu.php') ?>
 
             <div class="flex-grow-1">
-                <header class="navbar navbar-expand bg-body-tertiary border-bottom sticky-top">
+                <header class="navbar navbar-expand border-bottom sticky-top">
                     <div class="container-fluid">
                         <button class="btn btn-sm btn-outline-secondary d-none d-lg-inline-block" id="sidebarToggle">
                             <i class="bi bi-list"></i>

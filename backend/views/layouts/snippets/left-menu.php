@@ -42,13 +42,13 @@ $currentUser = Yii::$app->user->identity;
 $isAdmin = $currentUser->is_admin;
 ?>
 
-<nav id="sidebar" class="bg-body-tertiary border-end min-vh-100 d-none d-sm-block">
+<nav id="sidebar" class="border-end min-vh-100 d-none d-sm-block">
     <div class="p-3 border-bottom d-flex align-items-center justify-content-center justify-content-lg-start">
         <i class="bi dnd-logo h2"></i>
         <span class="fw-bold fs-5 ms-2 logo-text"><?= Yii::$app->name ?></span>
     </div>
 
-    <div id="mainNavContent" class="p-3">
+    <div id="mainNavContent" class="p-3 text-warning">
         <?php foreach ($menuConfig as $heading => $menuItems): ?>
 
             <?= ($firstHeading === $heading) ? '' : '<hr>' ?>
@@ -65,8 +65,9 @@ $isAdmin = $currentUser->is_admin;
                             <?=
                             ($menuItem['label'] === $currentMenu) ? 'active' : ''
                             ?>">
-                                <i class="bi <?= $menuItem['icon'] ?> me-2"></i>
-                                <span class="menu-text"><?= $menuItem['label'] ?></span>
+                                <span class="text-warning-emphasis">
+                                    <i class="bi <?= $menuItem['icon'] ?> me-2"></i>
+                                    <?= $menuItem['label'] ?></span>
                             </a>
                         </li>
                     <?php endif; ?>
