@@ -30,7 +30,7 @@ $menuConfig = [
         ['label' => 'Skills', 'icon' => 'bi-stars', 'url' => ['/skill/index'], 'admin' => false],
         ['label' => 'Languages', 'icon' => 'bi-translate', 'url' => ['/language/index'], 'admin' => false],
         ['label' => 'Races', 'icon' => 'bi-person-gear', 'url' => ['/race/index'], 'admin' => false],
-        ['label' => 'Classes', 'icon' => 'bi-shield-shaded', 'url' => ['/class/index'], 'admin' => false],
+        ['label' => 'Classes', 'icon' => 'bi-shield-shaded', 'url' => ['/character-class/index'], 'admin' => false],
     ],
 ];
 
