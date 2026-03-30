@@ -32,25 +32,12 @@ class AlignmentController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['ajax-wizard', 'view'],
+                        'actions' => ['ajax-wizard'],
                         'allow' => AccessRightsManager::isRouteAllowed($this),
                         'roles' => ['@'],
                     ],
                 ],
             ],
-        ]);
-    }
-
-    /**
-     * Displays a single Alignment model.
-     * @param int $id ID
-     * @return string
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionView(int $id): string
-    {
-        return $this->render('view', [
-                    'model' => $this->findModel($id),
         ]);
     }
 
