@@ -48,8 +48,6 @@ class PlayerController extends Controller
                             'validate',
                             'view',
                             'ajax',
-                            'ajax-admin',
-                            'ajax-set-context',
                         ],
                         'allow' => AccessRightsManager::isRouteAllowed($this),
                         'roles' => ['@'],
@@ -97,58 +95,6 @@ class PlayerController extends Controller
             return $ajaxRequest->response;
         }
         return ['error' => true, 'msg' => 'Error encountered'];
-    }
-
-    /**
-     *
-     * @return array{error: bool, msg: string, content?: string}
-     */
-    public function actionAjaxAdmin(): array
-    {
-        Yii::$app->response->format = Response::FORMAT_JSON;
-
-        if (!$this->request->isPost || !$this->request->isAjax) {
-            return ['error' => true, 'msg' => 'Not an Ajax POST request'];
-        }
-
-        $param = [
-            'modelName' => 'Player',
-            'render' => 'admin',
-        ];
-        $ajaxRequest = new AjaxRequest($param);
-
-        if ($ajaxRequest->makeResponse(Yii::$app->request)) {
-            return $ajaxRequest->response;
-        }
-        return ['error' => true, 'msg' => 'Error encountered'];
-    }
-
-    /**
-     *
-     * @return array{error: bool, msg: string, content?: string}
-     */
-    public function actionAjaxSetContext(): array
-    {
-        Yii::$app->response->format = Response::FORMAT_JSON;
-
-        if (!$this->request->isPost || !$this->request->isAjax) {
-            return ['error' => true, 'msg' => 'Not an Ajax POST request'];
-        }
-
-        $request = Yii::$app->request;
-
-        $userId = $request->post('userId');
-        $postPlayerId = $request->post('playerId');
-        $playerId = is_numeric($postPlayerId) ? (int) $postPlayerId : null;
-
-        $success = User::updateAll(['current_player_id' => $playerId], ['id' => $userId]);
-
-        ContextManager::updatePlayerContext($playerId);
-
-        return [
-            'error' => !$success,
-            'msg' => $success ? 'Context is saved' : 'Could not save context',
-        ];
     }
 
     /**

@@ -15,23 +15,24 @@ use yii\helpers\Url;
 <div class="card">
     <div class="card-body">
         <?=
-    RecordCount::widget([
-        'count' => $count,
-        'model' => 'access right',
-        'adjective' => 'defined',
-        'actions' => [
-            [
-                'url' => Url::toRoute(['access-right/create']),
-                'icon' => 'bi-shield-plus',
-                'tooltip' => 'Add a new access right',
+        RecordCount::widget([
+            'count' => $count,
+            'model' => 'access right',
+            'adjective' => 'defined',
+            'actions' => [
+                [
+                    'url' => Url::toRoute(['access-right/create']),
+                    'icon' => 'bi-shield-plus',
+                    'tooltip' => 'Add a new access right',
+                ],
             ],
-        ],
-    ])
-?>
+        ])
+        ?>
         <div class="table-responsive">
             <table class="table table-dark table-hover mb-0">
                 <thead>
                     <tr>
+                        <th>Application</th>
                         <th>Route</th>
                         <th class="text-center">Admin</th>
                         <th class="text-center">Designer</th>
@@ -43,7 +44,8 @@ use yii\helpers\Url;
                 <tbody>
                     <?php foreach ($models as $model): ?>
                         <tr>
-                            <th scope="row">
+                            <td scope="row"><?= $model->application ?></td>
+                            <th >
                                 <a href="<?= Url::toRoute(['access-right/view', 'id' => $model->id]) ?>">
                                     <?= $model->route . '/' . $model->action ?>
                                 </a>
@@ -60,12 +62,12 @@ use yii\helpers\Url;
         </div>
         <!-- Pagination -->
         <?=
-    Pagination::widget([
-        'page' => $page,
-        'pageCount' => $pageCount,
-        'limit' => $limit,
-    ])
-?>
+        Pagination::widget([
+            'page' => $page,
+            'pageCount' => $pageCount,
+            'limit' => $limit,
+        ])
+        ?>
         <!-- End Pagination -->
     </div>
 </div>
