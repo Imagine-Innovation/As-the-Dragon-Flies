@@ -102,7 +102,10 @@ class AccessRightsManager extends Component
      */
     public static function isRouteAllowed(Controller $controller): bool
     {
-        $access = self::checkAccess($controller);
+        $route = $controller->id;
+        $action = self::getAction($controller);
+        //$access = self::checkAccess($controller);
+        $access = self::checkAccess($route, $action);
 
         if ($access['denied']) {
             throw new \yii\web\ForbiddenHttpException($access['reason']);
@@ -228,17 +231,16 @@ class AccessRightsManager extends Component
     /**
      * Checks that the requested action is authorised within the controller
      *
-     * @param T $controller
+     * @param string $route
+     * @param string $action
      * @return array{
      *     denied: bool,
      *     severity: string,
      *     reason: string
      * }
      */
-    private static function checkAccess(Controller $controller): array
+    public static function checkAccess(string $route, string $action): array
     {
-        $route = $controller->id;
-        $action = self::getAction($controller);
         $grantedMessage = "[{$route}/{$action}] Access granted";
         $deniedMessage = "[{$route}/{$action}] Access denied";
 
