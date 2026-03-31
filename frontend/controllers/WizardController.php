@@ -3,6 +3,9 @@
 namespace frontend\controllers;
 
 use common\components\AccessRightsManager;
+use common\models\Alignment;
+use common\models\CharacterClass;
+use common\models\Race;
 use common\models\Wizard;
 use common\models\WizardQuestion;
 use Yii;
@@ -36,7 +39,7 @@ class WizardController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['index', 'ajax-question', 'view'],
+                        'actions' => ['index', 'ajax-question', 'ajax-alignment', 'ajax-character-class', 'ajax-race', 'view'],
                         'allow' => AccessRightsManager::isRouteAllowed($this),
                         'roles' => ['@'],
                     ],
@@ -117,6 +120,77 @@ class WizardController extends Controller
     }
 
     /**
+     *
+     * @return array{error: bool, msg: string, content?: string}
+     * }
+     */
+    public function actionAjaxAlignment(): array
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        if (!$this->request->isPost || !$this->request->isAjax) {
+            return ['error' => true, 'msg' => 'Not an Ajax POST request'];
+        }
+
+        $request = Yii::$app->request;
+        $id = $request->post('id');
+        $model = $this->findAlignment($id);
+
+        $content = $this->renderPartial('ajax/alignment', [
+            'model' => $model,
+        ]);
+
+        return ['error' => false, 'msg' => '', 'content' => $content];
+    }
+
+    /**
+     *
+     * @return array{error: bool, msg: string, content?: string}
+     */
+    public function actionAjaxCharacterClass()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        if (!$this->request->isPost || !$this->request->isAjax) {
+            return ['error' => true, 'msg' => 'Not an Ajax POST request'];
+        }
+
+        $request = Yii::$app->request;
+        $id = (int) $request->post('id');
+
+        $model = $this->findCharacterClass($id);
+
+        $content = $this->renderPartial('ajax/character-class', [
+            'model' => $model,
+        ]);
+
+        return ['error' => false, 'msg' => '', 'content' => $content];
+    }
+
+    /**
+     *
+     * @return array{error: bool, msg: string, content?: string}
+     */
+    public function actionAjaxRace(): array
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        if (!$this->request->isPost || !$this->request->isAjax) {
+            return ['error' => true, 'msg' => 'Not an Ajax POST request'];
+        }
+
+        $request = Yii::$app->request;
+        $id = $request->post('id');
+        $model = $this->findRace($id);
+
+        $content = $this->renderPartial('ajax/race', [
+            'model' => $model,
+        ]);
+
+        return ['error' => false, 'msg' => '', 'content' => $content];
+    }
+
+    /**
      * Finds the Wizard model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      *
@@ -148,5 +222,56 @@ class WizardController extends Controller
         }
 
         throw new NotFoundHttpException('The requested question does not exist.');
+    }
+
+    /**
+     * Finds the Alignment model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     *
+     * @param int $id ID
+     * @return Alignment the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findAlignment(int $id): Alignment
+    {
+        if (($model = Alignment::findOne(['id' => $id])) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The requested alignment does not exist.');
+    }
+
+    /**
+     * Finds the CharacterClass model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     *
+     * @param int $id ID
+     * @return Race the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findCharacterClass(int $id): CharacterClass
+    {
+        if (($model = CharacterClass::findOne(['id' => $id])) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The requested race does not exist.');
+    }
+
+    /**
+     * Finds the Race model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     *
+     * @param int $id ID
+     * @return Race the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findRace(int $id): Race
+    {
+        if (($model = Race::findOne(['id' => $id])) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The requested race does not exist.');
     }
 }

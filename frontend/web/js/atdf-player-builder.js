@@ -285,14 +285,8 @@ class PlayerBuilder {
     static initWizard(topic) {
         Logger.log(1, 'initWizard', `topic=${topic}`);
         const target = "#hiddenWizard-topic";
-console.log ("**************************************");
-console.log ("**************************************");
-console.log ("**************************************");
         if (!DOMUtils.exists(target))
             return;
-console.log ("**************************************");
-console.log ("**************************************");
-console.log ("**************************************");
 
         if (topic) {
             $('#showBuilderWizardModal-button').css('visibility', 'visible');
@@ -318,9 +312,9 @@ console.log ("**************************************");
 
         const loaders = {
             question: () => this._loadWizardModalContent('question', id, 'wizard/ajax-question', true),
-            class: () => this._loadWizardModalContent('class', id, 'character-class/ajax-wizard'),
-            race: () => this._loadWizardModalContent('race', id, 'race/ajax-wizard'),
-            alignment: () => this._loadWizardModalContent('alignment', id, 'alignment/ajax-wizard')
+            class: () => this._loadWizardModalContent('class', id, 'wizard/ajax-character-class'),
+            race: () => this._loadWizardModalContent('race', id, 'wizard/ajax-race'),
+            alignment: () => this._loadWizardModalContent('alignment', id, 'wizard/ajax-alignment')
         }
         ;
 
@@ -329,16 +323,10 @@ console.log ("**************************************");
 
     static _loadWizardModalContent(type, id, url, showNextButton = false) {
         Logger.log(2, `_load${type}`, `id=${id}`);
-console.log ("**************************************");
-console.log ("**************************************");
-console.log ("**************************************");
 
         const target = `#ajaxBuilderWizardQA`;
         if (!DOMUtils.exists(target))
             return;
-console.log ("**************************************");
-console.log ("**************************************");
-console.log ("**************************************");
 
         $('#nextQuestionButton').css('visibility', showNextButton ? 'visible' : 'hidden');
 
