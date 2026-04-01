@@ -207,6 +207,8 @@ class MySQLDriver implements DriverInterface
                 FROM performance_schema.events_statements_history_long
                 WHERE "
                 . "CURRENT_SCHEMA='{$schemaName}' "
+                . "AND SQL_TEXT not like '%performance_schema%' "
+                . "AND SQL_TEXT not like '%information_schema%' "
                 . "AND EVENT_NAME in ('statement/sql/select', 'statement/sql/update', 'statement/sql/insert', 'statement/sql/delete') "
                 . "AND TIMER_START > {$timerStartFrom}
                 GROUP BY DIGEST";

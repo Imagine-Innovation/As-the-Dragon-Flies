@@ -27,13 +27,9 @@ final class DbMonitorHelper
         /** @var array<string> $extras */
         $extras = [];
         self::extractProperty($node, 'table', $extras, '[%s]');
-        Yii::debug(print_r($extras, true));
         self::extractProperty($node, 'index', $extras);
-        Yii::debug(print_r($extras, true));
         self::extractProperty($node, 'rows', $extras);
-        Yii::debug(print_r($extras, true));
         self::extractProperty($node, 'cost', $extras);
-        Yii::debug(print_r($extras, true));
 
         $info = implode(' ', $extras);
         $line = "{$indent}- {$label} {$info}\n";

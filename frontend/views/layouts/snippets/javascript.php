@@ -37,7 +37,6 @@ $jsSnippet = match ($controllerId) {
     var currentPlayerId = <?= Yii::$app->session->get('playerId') ?? 'null' ?>;
     PlayerSelector.initializeFromDOM();
     LayoutInitializer.initNavbarLobby();
-    ActionButtonManager.initActionButton();
 
     if (DOMUtils.exists('#ajaxHiddenParams')) {
         LayoutInitializer.initAjaxPage();

@@ -19,7 +19,6 @@ class AppAsset extends AssetBundle
     ];
     public $js = [
         '/common/web/js/core-library.js',
-        'js/atdf-action-button-manager.js',
     ];
     public $depends = [
         'yii\web\YiiAsset', // Provides jQuery
