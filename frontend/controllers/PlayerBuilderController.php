@@ -182,8 +182,7 @@ class PlayerBuilderController extends Controller
         if ($raceId > 0 && $classId > 0 && $gender) {
             $imageId = $request->post('imageId');
             Yii::debug("*** debug *** actionAjaxImages - imageId={$imageId}");
-            return $this->renderImages($raceId, $classId, $gender, is_numeric($imageId)
-                                ? (int) $imageId : null);
+            return $this->renderImages($raceId, $classId, $gender, is_numeric($imageId) ? (int) $imageId : null);
         }
         return [
             'error' => true,
@@ -575,16 +574,14 @@ class PlayerBuilderController extends Controller
 
     /**
      *
-     * @param \yii\web\Request $request
-     * @return AjaxRequest
+     * @param string $idList
+     * @param string $choice
+     * @param string $alreadySelectedItems
+     * @return array<string, mixed>
      */
-    private function getItemsCategory(\yii\web\Request $request): AjaxRequest
+    private function getItemsCategoryAjaxParam(string $idList, string $choice, string $alreadySelectedItems): array
     {
-        // First split by comma to get each pair
-        $idsPost = $request->post('categoryIds');
-        $idsString = is_string($idsPost) ? (string) $idsPost : '';
-        $pairs = explode(',', $idsString);
-
+        $pairs = explode(',', $idList);
         $quantity = explode('|', $pairs[0])[1];
 
         // Extract first elements (ids) using array_map
@@ -597,14 +594,14 @@ class PlayerBuilderController extends Controller
             'render' => 'item-category',
             'with' => ['item', 'image'],
             'param' => [
-                'choice' => $request->post('choice'),
-                'alreadySelectedItems' => $request->post('alreadySelectedItems'),
+                'choice' => $choice,
+                'alreadySelectedItems' => $alreadySelectedItems,
                 'quantity' => $quantity,
             ],
             'filter' => ['category_id' => $categoryIds],
         ];
 
-        return new AjaxRequest($param);
+        return $param;
     }
 
     /**
@@ -620,10 +617,21 @@ class PlayerBuilderController extends Controller
         }
 
         $request = Yii::$app->request;
-        $ajaxRequest = $this->getItemsCategory($request);
+        $idList = $request->post('categoryIds');
+        if (is_string($idList) && $idList <> '') {
+            $choice = $request->post('choice');
+            $alreadySelectedItems = $request->post('alreadySelectedItems');
+            $param = $this->getItemsCategoryAjaxParam(
+                    $idList,
+                    is_string($choice) ? $choice : '',
+                    is_string($alreadySelectedItems) ? $alreadySelectedItems : ''
+            );
 
-        if ($ajaxRequest->makeResponse($request)) {
-            return $ajaxRequest->response;
+            $ajaxRequest = new AjaxRequest($param);
+
+            if ($ajaxRequest->makeResponse($request)) {
+                return $ajaxRequest->response;
+            }
         }
         return ['error' => true, 'msg' => 'Error encountered'];
     }

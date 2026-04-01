@@ -12,7 +12,6 @@ use common\models\User;
 use common\components\AjaxRequest;
 use Yii;
 use yii\filters\AccessControl;
-use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
@@ -41,31 +40,18 @@ class PlayerController extends Controller
                     ],
                     [
                         'actions' => [
-                            'admin',
-                            'delete',
+                            'ajax',
+                            'ajax-lite',
+                            'ajax-set-context',
                             'index',
-                            'restore',
+                            'set-current',
                             'update',
                             'validate',
                             'view',
-                            'ajax',
-                            'ajax-admin',
-                            'ajax-lite',
-                            'ajax-set-context',
-                            'set-current',
-                            'history',
                         ],
                         'allow' => AccessRightsManager::isRouteAllowed($this),
                         'roles' => ['@'],
                     ],
-                ],
-            ],
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                    'restore' => ['POST'],
-                    'validate' => ['POST'],
                 ],
             ],
         ]);
@@ -89,15 +75,6 @@ class PlayerController extends Controller
 
     /**
      *
-     * @return string
-     */
-    public function actionAdmin(): string
-    {
-        return $this->render('admin');
-    }
-
-    /**
-     *
      * @return array{error: bool, msg: string, content?: string}
      */
     public function actionAjax(): array
@@ -111,30 +88,6 @@ class PlayerController extends Controller
         $param = [
             'modelName' => 'Player',
             'filter' => ['user_id' => Yii::$app->user->identity->id],
-        ];
-        $ajaxRequest = new AjaxRequest($param);
-
-        if ($ajaxRequest->makeResponse(Yii::$app->request)) {
-            return $ajaxRequest->response;
-        }
-        return ['error' => true, 'msg' => 'Error encountered'];
-    }
-
-    /**
-     *
-     * @return array{error: bool, msg: string, content?: string}
-     */
-    public function actionAjaxAdmin(): array
-    {
-        Yii::$app->response->format = Response::FORMAT_JSON;
-
-        if (!$this->request->isPost || !$this->request->isAjax) {
-            return ['error' => true, 'msg' => 'Not an Ajax POST request'];
-        }
-
-        $param = [
-            'modelName' => 'Player',
-            'render' => 'admin',
         ];
         $ajaxRequest = new AjaxRequest($param);
 
@@ -216,16 +169,6 @@ class PlayerController extends Controller
     }
 
     /**
-     *
-     * @return string
-     */
-    public function actionHistory(): string
-    {
-        // For now, just render a simple view
-        return $this->render('history');
-    }
-
-    /**
      * Displays a single Player model.
      *
      * @param int $id ID
@@ -251,22 +194,6 @@ class PlayerController extends Controller
     }
 
     /**
-     * Deletes an existing Player model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id ID
-     * @return \yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionDelete(int $id): Response
-    {
-        $model = $this->findModel($id);
-        if (Status::changeStatus($model, AppStatus::DELETED->value)) {
-            return $this->redirect(['admin']);
-        }
-        throw new NotFoundHttpException('Could not delete this player');
-    }
-
-    /**
      *
      * @param int $id
      * @return Response
@@ -280,21 +207,6 @@ class PlayerController extends Controller
             return $this->redirect($viewName);
         }
         throw new NotFoundHttpException('Could not validate this player');
-    }
-
-    /**
-     *
-     * @param int $id
-     * @return Response
-     * @throws NotFoundHttpException
-     */
-    public function actionRestore(int $id): Response
-    {
-        $model = $this->findModel($id);
-        if (Status::changeStatus($model, AppStatus::INACTIVE->value)) {
-            return $this->redirect(['admin']);
-        }
-        throw new NotFoundHttpException('Could not restore this player');
     }
 
     /**
