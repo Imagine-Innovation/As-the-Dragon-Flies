@@ -2,7 +2,6 @@
 
 namespace common\components;
 
-use common\models\AccessCount;
 use common\models\AccessRight;
 use common\models\User;
 use RuntimeException;
@@ -191,7 +190,7 @@ class AccessRightsManager extends Component
                 )->queryScalar();
 
         if ($count > 0) {
-            $sqlStatement = 'UPDATE `access_count` SET `calls`=`calls`+1 WHERE `application` = :application AND `route` = :route AND `action` = :action';
+            $sqlStatement = 'UPDATE `access_count` SET `calls`=`calls`+1, last_call=current_timestamp() WHERE `application` = :application AND `route` = :route AND `action` = :action';
         } else {
             $sqlStatement = 'INSERT INTO `access_count`(`calls`, `application`, `route`, `action`) VALUES (1, :application, :route, :action)';
         }
