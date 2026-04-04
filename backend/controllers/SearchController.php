@@ -184,7 +184,7 @@ class SearchController extends Controller
             $query->where(['like', 'name', "%{$searchString}%", false])->orWhere(['like', 'description', "%{$searchString}%", false]); // The 'false' parameter prevents Yii from adding extra escaping
         }
         if ($filter) {
-            $query->where($filter);
+            $query->andWhere($filter);
         }
 
         $searchResult = $query->asArray()->all();

@@ -26,7 +26,7 @@ $actionType = $model->action_type_id ? $model->actionType : null;
 ?>
 <div class="d-none">
     Hidden div to embeb utility tags for PHP/JS communication
-    <span id="hiddenImagePath"><?= $storyRoot ?>\img</span>
+    <span id="hiddenImagePath"><?= $storyRoot ?>/img</span>
     <span id="hiddenFormName">action</span>
     <span id="hiddenParentId"><?= $parentId ?></span>
 </div>

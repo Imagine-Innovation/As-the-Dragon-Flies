@@ -16,7 +16,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
 
 <div class="d-none">
     Hidden div to embeb utility tags for PHP/JS communication
-    <span id="hiddenImagePath"><?= $storyRoot ?>\img</span>
+    <span id="hiddenImagePath"><?= $storyRoot ?>/img</span>
     <span id="hiddenFormName">npc</span>
     <span id="hiddenParentId"><?= $parentId ?></span>
 </div>
