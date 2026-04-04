@@ -156,9 +156,9 @@ class SearchController extends Controller
                 ->from(['t' => $className::tableName()]);
 
         if ($searchString) {
-            $query->where(['like', 'name', "%{$searchString}%", false])->orWhere(['like', 'description', "%{$searchString}%", false]); // The 'false' parameter prevents Yii from adding extra escaping
+            $query->andWhere(['or', ['like', 'name', "%{$searchString}%", false], ['like', 'description', "%{$searchString}%", false]]); // The 'false' parameter prevents Yii from adding extra escaping
         }
-        $query->innerJoin('decor', 't.decor_id = decor.id')->where(['decor.mission_id' => $missionId]);
+        $query->innerJoin('decor', 't.decor_id = decor.id')->andWhere(['decor.mission_id' => $missionId]);
 
         $searchResult = $query->asArray()->all();
 
@@ -187,10 +187,10 @@ class SearchController extends Controller
         $query = $className::find()->select(['id', 'name', 'description as text']);
 
         if ($searchString) {
-            $query->where(['like', 'name', "%{$searchString}%", false])->orWhere(['like', 'description', "%{$searchString}%", false]); // The 'false' parameter prevents Yii from adding extra escaping
+            $query->andWhere(['or', ['like', 'name', "%{$searchString}%", false], ['like', 'description', "%{$searchString}%", false]]); // The 'false' parameter prevents Yii from adding extra escaping
         }
         if ($filter) {
-            $query->where($filter);
+            $query->andWhere($filter);
         }
 
         $searchResult = $query->asArray()->all();
@@ -217,7 +217,7 @@ class SearchController extends Controller
         $className = $this->fullyQualifiedClassName($modelName);
         $searchResult = $className::find()
                 ->select(['id', 'text'])
-                ->where(['like', 'text', "%{$searchString}%", false]) // The 'false' parameter prevents Yii from adding extra escaping
+                ->andWhere(['like', 'text', "%{$searchString}%", false]) // The 'false' parameter prevents Yii from adding extra escaping
                 ->asArray()
                 ->all();
 
@@ -232,10 +232,10 @@ class SearchController extends Controller
      * @param string|null $folder
      * @return array{error: bool, msg: string, results?: mixed}
      */
-    private function searchBrocker(string $valueType, string $search, ?int $parentId, ?string $folder): array
+    private function searchBroker(string $valueType, string $search, ?int $parentId, ?string $folder): array
     {
         Yii::debug(
-                "*** Debug *** searchBrocker(valueType={$valueType}, search={$search}, parentId={$parentId}, folder={$folder})",
+                "*** Debug *** searchBroker(valueType={$valueType}, search={$search}, parentId={$parentId}, folder={$folder})",
         );
         return match ($valueType) {
             'image' => $this->imageSearch($search, $folder),
@@ -283,6 +283,6 @@ class SearchController extends Controller
         $parentId = (int) $request->get('parentId');
         $folder = $request->get('folder');
 
-        return $this->searchBrocker($valueType, $search ?? '', $parentId, $folder);
+        return $this->searchBroker($valueType, $search ?? '', $parentId, $folder);
     }
 }

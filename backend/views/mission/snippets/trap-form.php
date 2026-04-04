@@ -39,7 +39,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
                 $form->field($model, 'image')->dropdownList(
                         $model->image ? [$model->image => $model->image] : [],
                         [
-                            'class' => 'form-select w-100',
+                            'class' => 'select2-container w-100 select2-hidden-accessible',
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select an image',
                         //'maxlength' => true,
@@ -52,7 +52,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
                 $form->field($model, 'damage_type_id')->dropdownList(
                         $model->damage_type_id ? [$model->damage_type_id => $model->damageType->name] : [],
                         [
-                            'class' => 'form-select w-100',
+                            'class' => 'select2-container w-100 select2-hidden-accessible',
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select a damage type',
                         ],
