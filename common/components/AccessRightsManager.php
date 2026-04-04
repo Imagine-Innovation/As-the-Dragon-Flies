@@ -185,14 +185,15 @@ class AccessRightsManager extends Component
         ];
 
         $count = (int) Yii::$app->db->createCommand(
-                        'SELECT COUNT(*) FROM `access_count` WHERE `application` = :application AND `route` = :route AND `action` = :action',
+                        'SELECT COUNT(*) FROM `access_count` WHERE `application`=:application AND `route`=:route AND `action`=:action',
                         $currentSQLParam
                 )->queryScalar();
 
+        $currentSQLParam[':lastCall'] = time();
         if ($count > 0) {
-            $sqlStatement = 'UPDATE `access_count` SET `calls`=`calls`+1, last_call=current_timestamp() WHERE `application` = :application AND `route` = :route AND `action` = :action';
+            $sqlStatement = 'UPDATE `access_count` SET `calls`=`calls`+1, last_call=:lastCall WHERE `application` = :application AND `route` = :route AND `action` = :action';
         } else {
-            $sqlStatement = 'INSERT INTO `access_count`(`calls`, `application`, `route`, `action`) VALUES (1, :application, :route, :action)';
+            $sqlStatement = 'INSERT INTO `access_count`(`calls`, `application`, `route`, `action`, `last_call`) VALUES (1, :application, :route, :action, :lastCall)';
         }
 
         $rowsAffected = (int) Yii::$app->db->createCommand($sqlStatement, $currentSQLParam)->execute();
