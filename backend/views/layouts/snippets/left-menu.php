@@ -73,11 +73,13 @@ $currentMenu = $currentMenu ?? $firstHeading;
             <ul class="nav nav-pills flex-column mb-auto">
                 <?php foreach ($menus as $menu): ?>
                     <li class="nav-item">
-                        <a href="<?= Url::toRoute($menu['url']) ?>" class="nav-link
-                           <?= ($menu['label'] === $currentMenu) ? 'active' : '' ?>">
+                        <a href="<?= Url::toRoute($menu['url']) ?>" class="nav-link <?=
+                        ($menu['label'] === $currentMenu) ? 'active' : ''
+                        ?>">
                             <span class="text-warning-emphasis">
                                 <i class="bi <?= $menu['icon'] ?> me-2"></i>
-                                <?= $menu['label'] ?></span>
+                                <span class="menu-text"><?= $menu['label'] ?></span>
+                            </span>
                         </a>
                     </li>
                 <?php endforeach; ?>
