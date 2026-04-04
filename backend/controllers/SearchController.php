@@ -9,7 +9,7 @@ use yii\web\Controller;
 use yii\web\Response;
 
 /**
- * MissionController implements the CRUD actions for Mission model.
+ * SearchController handles AJAX search requests for various model types and images.
  * @extends \yii\web\Controller<\yii\base\Module>
  */
 class SearchController extends Controller
@@ -60,11 +60,12 @@ class SearchController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
         }
 
-        $path = Yii::getAlias('@frontend/web/') . ($folder ?? 'invalid');
+        $root = dirname(dirname(__DIR__));
+        $path = $root . ($folder ?? 'invalid');
         $path = realpath($path);
-        $frontendWeb = realpath(Yii::getAlias('@frontend/web/'));
+        $commonWeb = realpath($root . '/common/web');
 
-        if ($path === false || $frontendWeb === false || strpos($path, $frontendWeb) !== 0) {
+        if ($path === false || $commonWeb === false || strpos($path, $commonWeb) !== 0) {
             Yii::debug("*** debug *** - actionimage - '{$path}' is not a valid directory or access denied");
             return ['error' => true, 'msg' => "Access denied or invalid directory"];
         }
