@@ -55,6 +55,10 @@ main {
     line-height: 38px !important;
     padding-left: 15px !important;
     color: var(--yellow) !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    display: block !important;
 }
 
 .select2-container--default .select2-selection--single .select2-selection__arrow {
