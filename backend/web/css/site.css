@@ -18,8 +18,19 @@ body {
 }
 
 .content__inner {
-    margin: 0;
-    max-width: 100%;
+    margin: 0 !important;
+    max-width: none !important;
+    width: 100% !important;
+}
+
+.select2-container {
+    width: 100% !important;
+}
+
+.select2-container .select2-selection--single {
+    height: calc(1.5em + 1.2rem + 2px) !important;
+    display: flex !important;
+    align-items: center !important;
 }
 
 .content:not(.content--boxed):not(.content--full) {
