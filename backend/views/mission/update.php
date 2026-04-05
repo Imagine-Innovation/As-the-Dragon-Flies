@@ -23,7 +23,7 @@ $breadcrumbs = [
 // Set breadcrumbs for the view
 $this->params['breadcrumbs'] = $breadcrumbs;
 ?>
-<div class="container">
+<div class="container-fluid">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -33,6 +33,6 @@ $this->params['breadcrumbs'] = $breadcrumbs;
         'storyId' => $story->id,
         'chapterId' => $chapter->id,
     ])
-?>
+    ?>
 
 </div>

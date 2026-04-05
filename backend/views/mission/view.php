@@ -26,7 +26,7 @@ $narrative = new NarrativeComponent(['mission' => $model]);
 $missionDescription = $narrative->missionDecription();
 \yii\web\YiiAsset::register($this);
 ?>
-<div class="container">
+<div class="container-fluid">
     <div class="card mb-3">
         <div class="actions">
             <?=

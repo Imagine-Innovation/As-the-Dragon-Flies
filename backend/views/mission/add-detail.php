@@ -31,16 +31,18 @@ $breadcrumbs = [
 // Set breadcrumbs for the view
 $this->params['breadcrumbs'] = $breadcrumbs;
 ?>
-<div class="container">
+<div class="container-fluid">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <?= $this->render("snippets/{$snippet}", [
-    'model' => $model,
-    'storyId' => $story->id,
-    'chapterId' => $chapter->id,
-    'missionId' => $mission->id,
-    'parentId' => $parentId,
-]) ?>
+    <?=
+    $this->render("snippets/{$snippet}", [
+        'model' => $model,
+        'storyId' => $story->id,
+        'chapterId' => $chapter->id,
+        'missionId' => $mission->id,
+        'parentId' => $parentId,
+    ])
+    ?>
 
 </div>
