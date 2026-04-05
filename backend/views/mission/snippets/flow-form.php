@@ -37,7 +37,7 @@ $form = ActiveForm::begin([
         echo $form->field($model, 'previous_action_id')->dropdownList(
                         $model->previous_action_id ? [$model->previous_action_id => $model->previousAction->name] : [],
                         [
-                            'class' => 'form-select w-100',
+                            'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select an action',
                         ],
@@ -70,7 +70,7 @@ $form = ActiveForm::begin([
         echo $form->field($model, 'next_action_id')->dropdownList(
                         $model->next_action_id ? [$model->next_action_id => $model->nextAction->name] : [],
                         [
-                            'class' => 'form-select w-100',
+                            'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select an action',
                         ],

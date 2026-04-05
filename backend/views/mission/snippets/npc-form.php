@@ -39,7 +39,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
         echo $form->field($model, 'npc_type_id')->dropdownList(
                         $model->npc_type_id ? [$model->npc_type_id => $model->npcType->name] : [],
                         [
-                            'class' => 'form-select w-100',
+                            'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select the type of NPC',
                         ],
@@ -49,7 +49,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
         echo $form->field($model, 'image')->dropdownList(
                         $model->image ? [$model->image => $model->image] : [],
                         [
-                            'class' => 'form-select w-100',
+                            'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select an image',
                             'maxlength' => true,
@@ -61,7 +61,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
             echo $form->field($model, 'first_dialog_id')->dropdownList(
                             $model->first_dialog_id ? [$model->first_dialog_id => $model->firstDialog->text] : [],
                             [
-                                'class' => 'form-select w-100',
+                                'class' => 'select2-container w-100',
                                 'data-minimum-results-for-search' => -1,
                                 'data-placeholder' => 'Select the first dialog of the NPC',
                             ],
@@ -71,7 +71,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
             echo $form->field($model, 'language_id')->dropdownList(
                             $model->language_id ? [$model->language_id => $model->language->name] : [],
                             [
-                                'class' => 'form-select w-100',
+                                'class' => 'select2-container w-100',
                                 'data-minimum-results-for-search' => -1,
                                 'data-placeholder' => 'Select a language',
                             ],
