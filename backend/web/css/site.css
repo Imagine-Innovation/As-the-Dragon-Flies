@@ -17,21 +17,28 @@ body {
     max-width: none;
 }
 
+.d-flex {
+    max-width: 100vw;
+}
+
 .flex-grow-1 {
     min-width: 0; /* Allow flex child to shrink */
 }
 
 main {
     width: 100%;
+    overflow-x: hidden;
 }
 
 .content__inner {
     max-width: 100% !important;
+    width: 100% !important;
     margin: 0 !important;
 }
 
 .container-fluid {
     max-width: 100% !important;
+    width: 100% !important;
     margin: 0 !important;
 }
 
