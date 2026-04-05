@@ -17,6 +17,11 @@ body {
     max-width: none;
 }
 
+.content__inner {
+    margin: 0;
+    max-width: 100%;
+}
+
 .content:not(.content--boxed):not(.content--full) {
     padding: 30px 30px 30px 30px;
 }

@@ -59,7 +59,7 @@ $actionType = $model->action_type_id ? $model->actionType : null;
                 $form->field($model, 'action_type_id')->dropdownList(
                         $model->action_type_id ? [$model->action_type_id => $actionType?->name] : [],
                         [
-                            'class' => 'select2-container w-100',
+                            'class' => 'form-select w-100',
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select an action type',
                         ],
@@ -132,7 +132,7 @@ $actionType = $model->action_type_id ? $model->actionType : null;
                 $form->field($model, 'required_item_id')->dropdownList(
                         $model->required_item_id ? [$model->required_item_id => $model->requiredItem?->name] : [],
                         [
-                            'class' => 'select2-container w-100',
+                            'class' => 'form-select w-100',
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select an item',
                         ],
@@ -146,7 +146,7 @@ $actionType = $model->action_type_id ? $model->actionType : null;
                 ->field($model, 'passage_id')->dropdownList(
                         $model->passage_id ? [$model->passage_id => $model->passage?->name] : [],
                         [
-                            'class' => 'select2-container w-100',
+                            'class' => 'form-select w-100',
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select a passage',
                         ],
@@ -159,7 +159,7 @@ $actionType = $model->action_type_id ? $model->actionType : null;
                 $form->field($model, 'decor_id')->dropdownList(
                         $model->decor_id ? [$model->decor_id => $model->decor?->name] : [],
                         [
-                            'class' => 'select2-container w-100',
+                            'class' => 'form-select w-100',
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select a decor',
                         ],
@@ -172,7 +172,7 @@ $actionType = $model->action_type_id ? $model->actionType : null;
                 $form->field($model, 'trap_id')->dropdownList(
                         $model->trap_id ? [$model->trap_id => $model->trap?->name] : [],
                         [
-                            'class' => 'select2-container w-100',
+                            'class' => 'form-select w-100',
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select a trap',
                         ],
@@ -185,7 +185,7 @@ $actionType = $model->action_type_id ? $model->actionType : null;
                 $form->field($model, 'decor_item_id')->dropdownList(
                         $model->decor_item_id ? [$model->decor_item_id => $model->decorItem?->name] : [],
                         [
-                            'class' => 'select2-container w-100',
+                            'class' => 'form-select w-100',
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select an item',
                         ],
@@ -198,7 +198,7 @@ $actionType = $model->action_type_id ? $model->actionType : null;
                 $form->field($model, 'npc_id')->dropdownList(
                         $model->npc_id ? [$model->npc_id => $model->npc?->name] : [],
                         [
-                            'class' => 'select2-container w-100',
+                            'class' => 'form-select w-100',
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select a NPC',
                         ],
@@ -211,7 +211,7 @@ $actionType = $model->action_type_id ? $model->actionType : null;
                 $form->field($model, 'reply_id')->dropdownList(
                         $model->reply_id ? [$model->reply_id => $model->reply?->text] : [],
                         [
-                            'class' => 'select2-container w-100',
+                            'class' => 'form-select w-100',
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select a reply',
                         ],
