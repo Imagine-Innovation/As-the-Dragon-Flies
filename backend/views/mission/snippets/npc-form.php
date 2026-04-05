@@ -28,11 +28,11 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
 <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
 
 <?php if ($model->image): ?>
-    <div class="row">
-        <div class="col-2">
+    <div class="row row-cols-1 row-cols-md-2">
+        <div class="col col-md-2 d-none d-md-block ">
             <img src="<?= $storyRoot ?>/img/<?= $model->image ?>" alt="<?= $model->name ?>" class="w-100 h-100" style="object-fit: cover;" />
         </div>
-        <div class="col-10">
+        <div class="col-12 col-md-10">
         <?php endif; ?>
 
         <?php
@@ -68,6 +68,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
                     )
                     ->label('First dialog')
             ;
+
             echo $form->field($model, 'language_id')->dropdownList(
                             $model->language_id ? [$model->language_id => $model->language->name] : [],
                             [

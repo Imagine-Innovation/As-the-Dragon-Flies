@@ -1,11 +1,12 @@
 :root {
-    --sidebar-width: 260px;
-    --sidebar-shrinked: 75px;
+    --sidebar-width: 200px;
+    --sidebar-shrinked: 60px;
 }
 
 body {
     overflow-x: hidden;
 }
+
 #sidebar {
     width: var(--sidebar-width);
     flex-shrink: 0;    /* Prevents flexbox from compressing it */
@@ -13,38 +14,12 @@ body {
     z-index: 1000;
 }
 
-.container, .container-fluid {
-    max-width: none !important;
-    width: 100% !important;
-    margin: 0 !important;
-}
-
-.content, .content__inner {
-    margin: 0 !important;
-    max-width: none !important;
-    width: 100% !important;
-}
-
-.select2-container {
-    width: 100% !important;
-}
-
-.select2-container .select2-selection--single {
-    height: auto !important;
-    min-height: 40px !important;
-}
-
-.select2-container--default .select2-selection--single .select2-selection__rendered {
-    line-height: 1.5 !important;
-    padding: .6rem 15px !important;
-}
-
-.select2-container--default .select2-selection--single .select2-selection__arrow {
-    height: 38px !important;
+.container {
+    max-width: none;
 }
 
 .content:not(.content--boxed):not(.content--full) {
-    padding: 30px 30px 30px 30px;
+    padding: 0px 30px 30px 30px;
 }
 
 /* Automatic Shrink on Medium Screens (576px to 991px) */
@@ -99,4 +74,12 @@ body {
 .card-kpi {
     position: relative;
     overflow: hidden;
+}
+
+.select2-selection__rendered {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding-right: 2.5rem;
 }

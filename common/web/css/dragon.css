@@ -5718,10 +5718,11 @@ pre {
 }
 
 .select2-container--default .select2-selection--single {
-    border-radius: 0;
     background: transparent url(/common/web/img/select-caret.svg) no-repeat bottom 5px right 5px;
     border-color: var(--light-25);
-    height: auto
+    height: auto;
+    max-width: 80%;
+    overflow: hidden;
 }
 
 .select2-container--default .select2-selection--single .select2-selection__arrow {
@@ -5747,13 +5748,11 @@ pre {
 .select2-container--default .select2-selection--multiple {
     background-color: transparent;
     border-color: var(--light-25);
-    border-radius: 0;
     -webkit-transition: border-color .3s;
     transition: border-color .3s
 }
 
 .select2-container--default .select2-selection--multiple .select2-selection__choice {
-    border-radius: 0;
     border: 0;
     background-color: var(--light-10);
     padding: .2rem .75rem;
