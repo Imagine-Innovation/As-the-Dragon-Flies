@@ -104,7 +104,11 @@ class AccessRightsManager extends Component
         $route = $controller->id;
         $action = self::getAction($controller);
         //$access = self::checkAccess($controller);
-        $access = self::checkAccess($route, $action);
+        $application = \Yii::$app->id;
+
+        // Count all controller calls, regardless of actual access permissions
+        self::countAccess($application, $route, $action);
+        $access = self::checkAccess($application, $route, $action);
 
         if ($access['denied']) {
             throw new \yii\web\ForbiddenHttpException($access['reason']);
@@ -145,14 +149,13 @@ class AccessRightsManager extends Component
 
     /**
      *
+     * @param string $application
      * @param string $route
      * @param string $action
      * @return array{}|array{id: int, application: string, route: string, action: string, is_admin: bool, is_designer: bool, is_player: bool, has_player: bool, in_quest: bool}
      */
-    private static function getAccessRight(string $route, string $action): array
+    private static function getAccessRight(string $application, string $route, string $action): array
     {
-        $application = \Yii::$app->id;
-
         self::countAccess($application, $route, $action);
 
         $currentSQLParam = [
@@ -231,6 +234,7 @@ class AccessRightsManager extends Component
     /**
      * Checks that the requested action is authorised within the controller
      *
+     * @param string $application
      * @param string $route
      * @param string $action
      * @return array{
@@ -239,13 +243,13 @@ class AccessRightsManager extends Component
      *     reason: string
      * }
      */
-    public static function checkAccess(string $route, string $action): array
+    public static function checkAccess(string $application, string $route, string $action): array
     {
         $grantedMessage = "[{$route}/{$action}] Access granted";
         $deniedMessage = "[{$route}/{$action}] Access denied";
 
         // Get access rights for the route
-        $accessRight = self::getAccessRight($route, $action);
+        $accessRight = self::getAccessRight($application, $route, $action);
 
         // If no access rights defined, grant access to public "route/action"
         if (empty($accessRight)) {

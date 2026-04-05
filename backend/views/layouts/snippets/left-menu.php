@@ -8,12 +8,14 @@ use yii\helpers\Url;
 $menuConfig = [
     'void' => [// No heading for the first group
         ['label' => 'Dashboard', 'icon' => 'bi-speedometer2', 'url' => 'site/index'],
-        ['label' => 'DbMonitor', 'icon' => 'bi-speedometer2', 'url' => 'db-monitor/index'],
     ],
     'Admin' => [
+        ['label' => 'DbMonitor', 'icon' => 'bi-database-fill-exclamation', 'url' => 'db-monitor/index'],
         ['label' => 'Access Rights', 'icon' => 'bi-shield-check', 'url' => 'access-right/index'],
         ['label' => 'Users', 'icon' => 'bi-people', 'url' => 'user/index'],
         ['label' => 'Players', 'icon' => 'bi-person-badge', 'url' => 'player/index'],
+    ],
+    'Design' => [
         ['label' => 'Stories', 'icon' => 'bi-journal-text', 'url' => 'story/index'],
         ['label' => 'Quests', 'icon' => 'bi-flag', 'url' => 'quest/index'],
         ['label' => 'Icons', 'icon' => 'bi-bootstrap', 'url' => 'site/icons'],
@@ -41,7 +43,7 @@ foreach ($menuConfig as $chapter => $menus) {
     $chapterMenu = [];
     foreach ($menus as $menu) {
         $url = explode('/', $menu['url']);
-        $accessRight = AccessRightsManager::checkAccess($url[0], $url[1]);
+        $accessRight = AccessRightsManager::checkAccess(AccessRightsManager::APP_BACKEND, $url[0], $url[1]);
         if ($accessRight['denied'] === false) {
             $chapterMenu[] = $menu;
         }
