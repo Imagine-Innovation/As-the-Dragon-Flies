@@ -127,7 +127,7 @@ class EquipmentHandler {
     }
 
     _filterItemType(visibleTypes) {
-        Logger.log(1, '_filterItemType', `visibleTypes=${JSON.stringify(visibleTypes)}`);
+        Logger.log(1, '_filterItemType', `visibleTypes=${JSON.stringify(visibleTypes, null, 2)}`);
         const divs = document.querySelectorAll('[id^="itemType-"]');
 
         // Loop through each div and check for visibility

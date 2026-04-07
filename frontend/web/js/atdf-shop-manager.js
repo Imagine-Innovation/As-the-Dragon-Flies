@@ -171,7 +171,7 @@ class ShopManager {
             url: 'player-cart/ajax-info',
             successCallback: (response) => {
                 if (!response.error) {
-                    Logger.log(1, 'getCartInfo', JSON.stringify(response));
+                    Logger.log(1, 'getCartInfo', JSON.stringify(response, null, 2));
                     this._updateCartDisplay(response);
                 }
             }

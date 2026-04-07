@@ -236,7 +236,7 @@ function searchSelect(searchField, valueType, minChar = 3, imagePath = null) {
                     parentId: parentId,
                     folder: imagePath
                 };
-                console.log(`====> ajaxParams=${JSON.stringify(ajaxParams)}`);
+                console.log(`====> ajaxParams=${JSON.stringify(ajaxParams, null, 2)}`);
                 return ajaxParams;
             },
             dropdownCssClass: 'form-select',

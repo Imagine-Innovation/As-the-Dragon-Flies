@@ -10,9 +10,9 @@ class VirtualTableTop {
     init() {
         this.context = {
             questId: $('#hiddenQuestId').html(),
-            playerId: $('#hiddenPlayerId').html(),
+            playerId: $('#hiddenPlayerId').html()
         };
-        Logger.log(1, 'init', `context=${JSON.stringify(this.context)}`);
+        Logger.log(1, 'init', `context=${JSON.stringify(this.context, null, 2)}`);
     }
 
     refresh(questId, sessionId, message = null) {
@@ -86,7 +86,7 @@ class VirtualTableTop {
             url: 'quest/ajax-can-start',
             data: {sessionId: sessionId},
             successCallback: (response) => {
-                Logger.log(3, '_checkIfQuestCanStart', `Can start? ${JSON.stringify(response)}`);
+                Logger.log(3, '_checkIfQuestCanStart', `Can start? ${JSON.stringify(response, null, 2)}`);
                 if (response.canStart) {
                     $(button).removeClass('d-none');
                 } else {

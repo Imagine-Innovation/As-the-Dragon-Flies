@@ -120,7 +120,7 @@ class NotificationClient {
 
         this.on('game-action', (data) => {
             Logger.log(2, 'setupDefaultHandlers', 'Received game-action message:', data);
-            Logger.log(10, 'setupDefaultHandlers', `Payload: ${JSON.stringify(data.payload)}`);
+            Logger.log(10, 'setupDefaultHandlers', `Payload: ${JSON.stringify(data.payload, null, 2)}`);
             if (this.vtt) {
                 this.vtt.refresh(this.questId, this.sessionId);
             }
@@ -128,7 +128,7 @@ class NotificationClient {
 
         this.on('next-turn', (data) => {
             Logger.log(2, 'setupDefaultHandlers', 'Received next-turn message:', data);
-            Logger.log(10, 'setupDefaultHandlers', `Payload: ${JSON.stringify(data.payload)}`);
+            Logger.log(10, 'setupDefaultHandlers', `Payload: ${JSON.stringify(data.payload, null, 2)}`);
 
             const detail = data.payload.detail;
             if (this.vtt && typeof this.vtt.refreshTurn === 'function') {
@@ -138,7 +138,7 @@ class NotificationClient {
 
         this.on('next-mission', (data) => {
             Logger.log(2, 'setupDefaultHandlers', 'Received next-mission message:', data);
-            Logger.log(10, 'setupDefaultHandlers', `Payload: ${JSON.stringify(data.payload)}`);
+            Logger.log(10, 'setupDefaultHandlers', `Payload: ${JSON.stringify(data.payload, null, 2)}`);
 
             const detail = data.payload.detail;
             if (this.vtt && typeof this.vtt.refreshMission === 'function') {
@@ -148,7 +148,7 @@ class NotificationClient {
 
         this.on('game-over', (data) => {
             Logger.log(2, 'setupDefaultHandlers', 'Received game-over message:', data);
-            Logger.log(10, 'setupDefaultHandlers', `Payload: ${JSON.stringify(data.payload)}`);
+            Logger.log(10, 'setupDefaultHandlers', `Payload: ${JSON.stringify(data.payload, null, 2)}`);
             const detail = data.payload.detail;
             const message = `${detail.playerName} has ended quest “${detail.questName}” with status ${detail.status}.`;
             // VirtualTableTop.refresh(this.questId, this.sessionId);
@@ -321,7 +321,7 @@ class NotificationClient {
             playerId: this.playerId,
             questId: this.questId
         };
-        Logger.log(10, 'updateChatMessages', `contextData=${JSON.stringify(contextData)}`);
+        Logger.log(10, 'updateChatMessages', `contextData=${JSON.stringify(contextData, null, 2)}`);
 
         AjaxUtils.request({
             url: 'quest/ajax-get-messages',
@@ -351,7 +351,7 @@ class NotificationClient {
             url: 'quest/ajax-can-start',
             data: {sessionId: this.sessionId},
             successCallback: (response) => {
-                Logger.log(3, 'checkIfQuestCanStart', `Can start? ${JSON.stringify(response)}`);
+                Logger.log(3, 'checkIfQuestCanStart', `Can start? ${JSON.stringify(response, null, 2)}`);
                 if (response.canStart) {
                     $(button).removeClass('d-none');
                 } else {
@@ -377,7 +377,7 @@ class NotificationClient {
             questId: this.questId,
             playerName: this.playerName
         };
-        Logger.log(2, 'send', `completeMessage=${JSON.stringify(completeMessage)}`);
+        Logger.log(2, 'send', `completeMessage=${JSON.stringify(completeMessage, null, 2)}`);
 
         if (this.connected) {
             Logger.log(2, 'send', 'Sending message:', completeMessage);
@@ -521,7 +521,7 @@ class NotificationClient {
      * @param {Object} data - Request data
      */
     executeRequest(config, data) {
-        Logger.log(1, 'executeRequest', `config=${JSON.stringify(config)}, data=${JSON.stringify(data)}`);
+        Logger.log(1, 'executeRequest', `config=${JSON.stringify(config, null, 2)}, data=${JSON.stringify(data, null, 2)}`);
 
         const target = `#${config.placeholder}`;
         if (!DOMUtils.exists(target))

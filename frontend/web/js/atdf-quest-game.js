@@ -18,7 +18,7 @@ class VirtualTableTop {
             questProgressId: $('#hiddenQuestProgressId').html(),
             actionId: $('#hiddenQuestActionId').html()
         };
-        Logger.log(1, 'init', `context=${JSON.stringify(this.context)}`);
+        Logger.log(1, 'init', `context=${JSON.stringify(this.context, null, 2)}`);
 
         this._updateMission(this.context.missionId);
         this._updateTurn(this.context.playerId, this.context.currentPlayerId, this.context.currentPlayerName);
@@ -26,12 +26,12 @@ class VirtualTableTop {
     }
 
     updateContext(newData) {
-        Logger.log(2, 'updateContext', `newData=${JSON.stringify(newData)}`);
+        Logger.log(2, 'updateContext', `newData=${JSON.stringify(newData, null, 2)}`);
         this.context = {
             ...this.context,
             ...newData
         };
-        Logger.log(3, 'updateContext', `context=${JSON.stringify(this.context)}`);
+        Logger.log(3, 'updateContext', `context=${JSON.stringify(this.context, null, 2)}`);
     }
 
     refresh(questId, sessionId, message = null) {
@@ -44,7 +44,7 @@ class VirtualTableTop {
     }
 
     refreshMission(questId, playerId, detail) {
-        Logger.log(1, 'refreshMission', `questId=${questId}, playerId=${playerId}, detail=${JSON.stringify(detail)}`);
+        Logger.log(1, 'refreshMission', `questId=${questId}, playerId=${playerId}, detail=${JSON.stringify(detail, null, 2)}`);
 
         const nextPlayer = (playerId === detail.nextPlayerId) ? 'your' : `${detail.nextPlayerName}'s`;
         const toastMessage = `${detail.currentPlayerName} has completed mission “${detail.currentMissionName}”.
@@ -60,7 +60,7 @@ class VirtualTableTop {
     }
 
     refreshTurn(questId, playerId, detail) {
-        Logger.log(1, 'refreshTurn', `questId=${questId}, playerId=${playerId}, detail=${JSON.stringify(detail)}`);
+        Logger.log(1, 'refreshTurn', `questId=${questId}, playerId=${playerId}, detail=${JSON.stringify(detail, null, 2)}`);
 
         const nextPlayer = (playerId === detail.nextPlayerId) ? 'your' : `${detail.nextPlayerName}'s`;
         const toastMessage = `${detail.currentPlayerName} has finished his turn. Now it's ${nextPlayer} turn to play.`;
@@ -175,6 +175,7 @@ class VirtualTableTop {
             method: 'GET',
             data: {questProgressId: questProgressId},
             successCallback: (response) => {
+                this._handleResponseEvent(response);
                 const content = response.error ? response.msg : response.content;
                 if (!response.error) {
                     this.updateContext({questProgressId: questProgressId});
@@ -182,6 +183,15 @@ class VirtualTableTop {
                 $(target).html(content);
             }
         });
+    }
+
+    _handleResponseEvent(response) {
+        if (response && response.event && response.payload && typeof notificationClient !== 'undefined') {
+            Logger.log(2, '_handleResponseEvent', `Triggering local event: ${response.event}`);
+            notificationClient.triggerEvent(response.event, response);
+            return true;
+        }
+        return false;
     }
 
     _showModal(modalId) {
@@ -312,7 +322,7 @@ class VirtualTableTop {
                 nextMissionId: nextMissionId
             },
             successCallback: (response) => {
-                console.log(`moveToNextPlayer callback=${JSON.stringify(response)}`);
+                Logger.log(1, 'moveToNextPlayer', `moveToNextPlayer callback=${JSON.stringify(response)}`);
                 if (!response.error) {
                     window.location.reload();
                 }
@@ -335,9 +345,7 @@ class VirtualTableTop {
             method: 'POST',
             data: this.context,
             successCallback: (response) => {
-                // console.log(`evaluateAction callback=${JSON.stringify(response)}`);
                 if (!response.error) {
-                    console.log(`evaluateAction callback=${JSON.stringify(response)}`);
                     this._showModal('#gameModal');
                     $(target).html(response.content);
                     // update action list
