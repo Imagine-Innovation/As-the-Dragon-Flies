@@ -324,7 +324,9 @@ class VirtualTableTop {
             successCallback: (response) => {
                 Logger.log(1, 'moveToNextPlayer', `moveToNextPlayer callback=${JSON.stringify(response)}`);
                 if (!response.error) {
-                    window.location.reload();
+                    if (!this._handleResponseEvent(response)) {
+                        window.location.reload();
+                    }
                 }
             }
         });
@@ -352,7 +354,9 @@ class VirtualTableTop {
                     this._updateActions(this.context.playerId, this.context.playerId, this.context.questProgressId);
                 }
                 this._updatePlayer(this.context.playerId);
-                notificationClient.updateChatMessages();
+                if (typeof notificationClient !== 'undefined') {
+                    notificationClient.updateChatMessages();
+                }
             }
         });
     }
