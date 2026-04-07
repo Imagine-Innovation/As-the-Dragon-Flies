@@ -20,32 +20,30 @@ class VirtualTableTop {
         };
         Logger.log(1, 'init', `context=${JSON.stringify(this.context)}`);
 
-        VirtualTableTop._updateMission(this.context.missionId);
-        VirtualTableTop._updateTurn(this.context.playerId, this.context.currentPlayerId, this.context.currentPlayerName);
-        VirtualTableTop._updateActions(this.context.playerId, this.context.currentPlayerId, this.context.questProgressId);
+        this._updateMission(this.context.missionId);
+        this._updateTurn(this.context.playerId, this.context.currentPlayerId, this.context.currentPlayerName);
+        this._updateActions(this.context.playerId, this.context.currentPlayerId, this.context.questProgressId);
     }
 
-    static updateContext(newData) {
-        console.table(newData);
-        console.table(this.context);
+    updateContext(newData) {
+        Logger.log(2, 'updateContext', `newData=${JSON.stringify(newData)}`);
         this.context = {
             ...this.context,
             ...newData
         };
-        console.table(this.context);
+        Logger.log(3, 'updateContext', `context=${JSON.stringify(this.context)}`);
     }
 
-    static refresh(questId, sessionId, message = null) {
+    refresh(questId, sessionId, message = null) {
         Logger.log(1, 'refresh', `questId=${questId}, sessionId=${sessionId}, message=${message}`);
         if (message)
             ToastManager.show('Tavern message', message, 'info');
-        // Cannot use the context within a static method
-        const playerId = $('#hiddenPlayerId').html();
-        VirtualTableTop._updatePlayer(playerId);
-        VirtualTableTop._updateQuestMembers(questId);
+
+        this._updatePlayer(this.context.playerId);
+        this._updateQuestMembers(questId);
     }
 
-    static refreshMission(questId, playerId, detail) {
+    refreshMission(questId, playerId, detail) {
         Logger.log(1, 'refreshMission', `questId=${questId}, playerId=${playerId}, detail=${JSON.stringify(detail)}`);
 
         const nextPlayer = (playerId === detail.nextPlayerId) ? 'your' : `${detail.nextPlayerName}'s`;
@@ -54,14 +52,14 @@ class VirtualTableTop {
 
         ToastManager.show('Game message', toastMessage, 'info');
 
-        VirtualTableTop._updatePlayer(playerId);
-        VirtualTableTop._updateQuestMembers(questId);
-        VirtualTableTop._updateMission(detail.nextMissionId);
-        VirtualTableTop._updateTurn(playerId, detail.nextPlayerId, detail.nextPlayerName);
-        VirtualTableTop._updateActions(playerId, detail.nextPlayerId, detail.nextQuestProgressId);
+        this._updatePlayer(playerId);
+        this._updateQuestMembers(questId);
+        this._updateMission(detail.nextMissionId);
+        this._updateTurn(playerId, detail.nextPlayerId, detail.nextPlayerName);
+        this._updateActions(playerId, detail.nextPlayerId, detail.nextQuestProgressId);
     }
 
-    static refreshTurn(questId, playerId, detail) {
+    refreshTurn(questId, playerId, detail) {
         Logger.log(1, 'refreshTurn', `questId=${questId}, playerId=${playerId}, detail=${JSON.stringify(detail)}`);
 
         const nextPlayer = (playerId === detail.nextPlayerId) ? 'your' : `${detail.nextPlayerName}'s`;
@@ -69,13 +67,13 @@ class VirtualTableTop {
 
         ToastManager.show('Game message', toastMessage, 'info');
 
-        VirtualTableTop._updatePlayer(playerId);
-        VirtualTableTop._updateQuestMembers(questId);
-        VirtualTableTop._updateTurn(playerId, detail.nextPlayerId, detail.nextPlayerName);
-        VirtualTableTop._updateActions(playerId, detail.nextPlayerId, detail.questProgressId);
+        this._updatePlayer(playerId);
+        this._updateQuestMembers(questId);
+        this._updateTurn(playerId, detail.nextPlayerId, detail.nextPlayerName);
+        this._updateActions(playerId, detail.nextPlayerId, detail.questProgressId);
     }
 
-    static _updateQuestMembers(questId) {
+    _updateQuestMembers(questId) {
         Logger.log(2, '_updateQuestMembers', `questId=${questId}`);
         const asideTarget = `#questMembers-aside`;
         if (!DOMUtils.exists(asideTarget))
@@ -97,7 +95,7 @@ class VirtualTableTop {
         });
     }
 
-    static _updatePlayer(playerId) {
+    _updatePlayer(playerId) {
         Logger.log(2, '_updatePlayer', `playerId=${playerId}`);
         const asideTarget = `#player-aside`;
         if (!DOMUtils.exists(asideTarget))
@@ -121,7 +119,7 @@ class VirtualTableTop {
         });
     }
 
-    static _updateMission(missionId) {
+    _updateMission(missionId) {
         Logger.log(2, '_updateMission', `missionId=${missionId}`);
 
         const targetTitle = `#missionTitle`;
@@ -141,13 +139,13 @@ class VirtualTableTop {
                     const content = response.content;
                     $(targetDescription).html(content);
                     $(targetTitle).html(response.title);
-                    VirtualTableTop.updateContext({missionId: missionId});
+                    this.updateContext({missionId: missionId});
                 }
             }
         });
     }
 
-    static _updateTurn(playerId, nextPlayerId, nextPlayerName) {
+    _updateTurn(playerId, nextPlayerId, nextPlayerName) {
         Logger.log(2, '_updateTurn', `playerId=${playerId}, nextPlayerId=${nextPlayerId}, nextPlayerName=${nextPlayerName}`);
         const target = `#turnDescription`;
         if (!DOMUtils.exists(target))
@@ -158,7 +156,7 @@ class VirtualTableTop {
         $(target).html(message);
     }
 
-    static _updateActions(playerId, currentPlayerId, questProgressId) {
+    _updateActions(playerId, currentPlayerId, questProgressId) {
         Logger.log(2, '_updateActions', `playerId=${playerId}, currentPlayerId=${currentPlayerId}, questProgressId=${questProgressId}`);
         const target = `#actionList`;
         if (!DOMUtils.exists(target))
@@ -179,7 +177,7 @@ class VirtualTableTop {
             successCallback: (response) => {
                 const content = response.error ? response.msg : response.content;
                 if (!response.error) {
-                    VirtualTableTop.updateContext({questProgressId: questProgressId});
+                    this.updateContext({questProgressId: questProgressId});
                 }
                 $(target).html(content);
             }
@@ -343,9 +341,9 @@ class VirtualTableTop {
                     this._showModal('#gameModal');
                     $(target).html(response.content);
                     // update action list
-                    VirtualTableTop._updateActions(this.context.playerId, this.context.playerId, this.context.questProgressId);
+                    this._updateActions(this.context.playerId, this.context.playerId, this.context.questProgressId);
                 }
-                VirtualTableTop._updatePlayer(this.context.playerId);
+                this._updatePlayer(this.context.playerId);
                 notificationClient.updateChatMessages();
             }
         });
