@@ -23,7 +23,16 @@ class VirtualTableTop {
         VirtualTableTop._updateMission(this.context.missionId);
         VirtualTableTop._updateTurn(this.context.playerId, this.context.currentPlayerId, this.context.currentPlayerName);
         VirtualTableTop._updateActions(this.context.playerId, this.context.currentPlayerId, this.context.questProgressId);
+    }
 
+    static updateContext(newData) {
+        console.table(newData);
+        console.table(this.context);
+        this.context = {
+            ...this.context,
+            ...newData
+        };
+        console.table(this.context);
     }
 
     static refresh(questId, sessionId, message = null) {
@@ -114,7 +123,7 @@ class VirtualTableTop {
 
     static _updateMission(missionId) {
         Logger.log(2, '_updateMission', `missionId=${missionId}`);
-        
+
         const targetTitle = `#missionTitle`;
         if (!DOMUtils.exists(targetTitle))
             return;
@@ -132,6 +141,7 @@ class VirtualTableTop {
                     const content = response.content;
                     $(targetDescription).html(content);
                     $(targetTitle).html(response.title);
+                    VirtualTableTop.updateContext({missionId: missionId});
                 }
             }
         });
@@ -167,13 +177,11 @@ class VirtualTableTop {
             method: 'GET',
             data: {questProgressId: questProgressId},
             successCallback: (response) => {
+                const content = response.error ? response.msg : response.content;
                 if (!response.error) {
-                    const content = response.content;
-                    $(target).html(content);
-                } else {
-                    const content = response.msg;
-                    $(target).html(content);
+                    VirtualTableTop.updateContext({questProgressId: questProgressId});
                 }
+                $(target).html(content);
             }
         });
     }
