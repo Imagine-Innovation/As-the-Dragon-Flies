@@ -175,6 +175,7 @@ class VirtualTableTop {
             method: 'GET',
             data: {questProgressId: questProgressId},
             successCallback: (response) => {
+                this._handleResponseEvent(response);
                 const content = response.error ? response.msg : response.content;
                 if (!response.error) {
                     this.updateContext({questProgressId: questProgressId});
@@ -182,6 +183,15 @@ class VirtualTableTop {
                 $(target).html(content);
             }
         });
+    }
+
+    _handleResponseEvent(response) {
+        if (response && response.event && response.payload && typeof notificationClient !== 'undefined') {
+            Logger.log(2, '_handleResponseEvent', `Triggering local event: ${response.event}`);
+            notificationClient.triggerEvent(response.event, response);
+            return true;
+        }
+        return false;
     }
 
     _showModal(modalId) {
@@ -314,7 +324,9 @@ class VirtualTableTop {
             successCallback: (response) => {
                 console.log(`moveToNextPlayer callback=${JSON.stringify(response)}`);
                 if (!response.error) {
-                    window.location.reload();
+                    if (!this._handleResponseEvent(response)) {
+                        window.location.reload();
+                    }
                 }
             }
         });
@@ -344,7 +356,9 @@ class VirtualTableTop {
                     this._updateActions(this.context.playerId, this.context.playerId, this.context.questProgressId);
                 }
                 this._updatePlayer(this.context.playerId);
-                notificationClient.updateChatMessages();
+                if (typeof notificationClient !== 'undefined') {
+                    notificationClient.updateChatMessages();
+                }
             }
         });
     }
