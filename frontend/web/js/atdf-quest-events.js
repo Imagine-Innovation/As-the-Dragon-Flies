@@ -159,7 +159,7 @@ class NotificationClient {
             setTimeout(() => {
                 // Preserve current origin/base path/front controller and only change the route/query
                 const url = new URL(window.location.href);
-                url.search = `r=quest/summary&id=${encodeURIComponent(this.questId)}`;
+                url.search = `r=quest/summarize&id=${encodeURIComponent(this.questId)}`;
                 window.location.href = url.toString();
             }, 3000);
         });
