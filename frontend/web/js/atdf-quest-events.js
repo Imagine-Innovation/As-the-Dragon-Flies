@@ -1,5 +1,5 @@
 class NotificationClient {
-    constructor(url, sessionId, playerId, playerName, avatar, questId, questName) {
+    constructor(url, sessionId, playerId, playerName, avatar, questId, questName, vtt = null) {
         // loading init parameters
         this.url = url;
         this.sessionId = sessionId;
@@ -8,6 +8,7 @@ class NotificationClient {
         this.avatar = avatar;
         this.questId = questId;
         this.questName = questName;
+        this.vtt = vtt;
 
         // init internal variables
         this.socket = null;
@@ -88,7 +89,9 @@ class NotificationClient {
             Logger.log(2, 'setupDefaultHandlers', 'Received notification:', data);
             // this.displayNotification(data);
             const message = data.message ?? null;
-            VirtualTableTop.refresh(this.questId, this.sessionId, message);
+            if (this.vtt) {
+                this.vtt.refresh(this.questId, this.sessionId, message);
+            }
         });
 
         // Handle incoming notifications
@@ -118,7 +121,9 @@ class NotificationClient {
         this.on('game-action', (data) => {
             Logger.log(2, 'setupDefaultHandlers', 'Received game-action message:', data);
             Logger.log(10, 'setupDefaultHandlers', `Payload: ${JSON.stringify(data.payload)}`);
-            VirtualTableTop.refresh(this.questId, this.sessionId);
+            if (this.vtt) {
+                this.vtt.refresh(this.questId, this.sessionId);
+            }
         });
 
         this.on('next-turn', (data) => {
@@ -126,7 +131,9 @@ class NotificationClient {
             Logger.log(10, 'setupDefaultHandlers', `Payload: ${JSON.stringify(data.payload)}`);
 
             const detail = data.payload.detail;
-            VirtualTableTop.refreshTurn(this.questId, this.playerId, detail);
+            if (this.vtt && typeof this.vtt.refreshTurn === 'function') {
+                this.vtt.refreshTurn(this.questId, this.playerId, detail);
+            }
         });
 
         this.on('next-mission', (data) => {
@@ -134,7 +141,9 @@ class NotificationClient {
             Logger.log(10, 'setupDefaultHandlers', `Payload: ${JSON.stringify(data.payload)}`);
 
             const detail = data.payload.detail;
-            VirtualTableTop.refreshMission(this.questId, this.playerId, detail);
+            if (this.vtt && typeof this.vtt.refreshMission === 'function') {
+                this.vtt.refreshMission(this.questId, this.playerId, detail);
+            }
         });
 
         this.on('game-over', (data) => {
@@ -161,7 +170,9 @@ class NotificationClient {
                 // Construct the message from the payload
                 const message = `Player ${data.payload.playerName} has joined quest "${data.payload.questName}".`;
                 //this.refreshTavern(message);
-                VirtualTableTop.refresh(this.questId, this.sessionId, message);
+                if (this.vtt) {
+                    this.vtt.refresh(this.questId, this.sessionId, message);
+                }
             } else {
                 console.warn('Received player-joined event with incomplete payload:', data);
             }
@@ -173,7 +184,9 @@ class NotificationClient {
                 // Construct the message from the payload
                 const message = `Player ${data.payload.playerName} has left the quest`;
                 // this.refreshTavern(message);
-                VirtualTableTop.refresh(this.questId, this.sessionId, message);
+                if (this.vtt) {
+                    this.vtt.refresh(this.questId, this.sessionId, message);
+                }
             } else {
                 console.warn('Received player-quit event with incomplete payload:', data);
             }
@@ -206,7 +219,9 @@ class NotificationClient {
 
             this.triggerEvent('open');
             //this.refreshTavern();
-            VirtualTableTop.refresh(this.questId, this.sessionId);
+            if (this.vtt) {
+                this.vtt.refresh(this.questId, this.sessionId);
+            }
         };
 
         this.socket.onmessage = (event) => {

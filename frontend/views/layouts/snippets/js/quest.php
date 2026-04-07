@@ -20,7 +20,18 @@ const playerName = `<?= $playerName ?>`;
 const questId = <?= $questId ?>;
 const questName = `<?= $questName ?>`;
 
-const notificationClient = new NotificationClient(url, sessionId, playerId, playerName, avatar, questId, questName);
+<?php
+/**
+ * Game/Quest specific local script
+ */
+if ($controllerId === 'game' || $controllerId === 'quest'): ?>
+    const vtt = new VirtualTableTop();
+    vtt.init();
+<?php else: ?>
+    const vtt = null;
+<?php endif; ?>
+
+const notificationClient = new NotificationClient(url, sessionId, playerId, playerName, avatar, questId, questName, vtt);
 
 notificationClient.init();
 
@@ -33,7 +44,4 @@ if ($controllerId === 'game'): ?>
     const equipmentHandler = new EquipmentHandler();
     const svg = document.getElementById('equipmentSvg');
     equipmentHandler.init(playerId, svg);
-
-    const vtt = new VirtualTableTop();
-    vtt.init();
 <?php endif;

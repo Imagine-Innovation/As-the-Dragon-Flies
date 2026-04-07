@@ -1,16 +1,31 @@
 class VirtualTableTop {
+    constructor(options = {}) {
+        this.context = {};
+        this.modal = null;
+        this.options = {
+            ...options
+        };
+    }
 
-    static refresh(questId, sessionId, message = null) {
+    init() {
+        this.context = {
+            questId: $('#hiddenQuestId').html(),
+            playerId: $('#hiddenPlayerId').html(),
+        };
+        Logger.log(1, 'init', `context=${JSON.stringify(this.context)}`);
+    }
+
+    refresh(questId, sessionId, message = null) {
         Logger.log(1, 'refresh', `questId=${questId}, sessionId=${sessionId}, message=${message}`);
 
         if (message)
             ToastManager.show('Tavern message', message, 'info');
 
-        VirtualTableTop._updateQuestMembers(questId);
-        VirtualTableTop._updateWelcomeMessages(questId);
+        this._updateQuestMembers(questId);
+        this._updateWelcomeMessages(questId);
     }
 
-    static _updateQuestMembers(questId) {
+    _updateQuestMembers(questId) {
         Logger.log(2, '_updateQuestMembers', `questId=${questId}`);
 
         const target = `#tavernPlayersContainer`;
@@ -24,14 +39,14 @@ class VirtualTableTop {
             successCallback: (response) => {
                 if (!response.error) {
                     $(target).html(response.content);
-                    VirtualTableTop._checkIfQuestCanStart();
+                    this._checkIfQuestCanStart(questId, this.context.sessionId);
                 }
             }
         });
 
     }
 
-    static _updateWelcomeMessages(questId) {
+    _updateWelcomeMessages(questId) {
         Logger.log(1, '_updateWelcomeMessages', `questId=${questId}`);
         let target = `#tavernWelcomeMessage`;
         if (!DOMUtils.exists(target))
@@ -60,7 +75,7 @@ class VirtualTableTop {
 
     }
 
-    static _checkIfQuestCanStart(questId, sessionId) {
+    _checkIfQuestCanStart(questId, sessionId) {
         Logger.log(2, '_checkIfQuestCanStart', `questId=${questId}, sessionId=${sessionId}`);
 
         const button = `#startQuestButton`;
