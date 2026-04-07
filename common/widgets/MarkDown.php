@@ -27,9 +27,7 @@ class MarkDown extends Widget
             return '';
         }
 
-        return $this->render('mark-down', [
-                    'htmlContent' => $this->renderMarkdown($this->content),
-        ]);
+        return $this->renderMarkdown($this->content);
     }
 
     /**
