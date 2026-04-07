@@ -235,7 +235,7 @@ class QuestManager extends BaseManager
     /**
      *
      * @param AppStatus $status
-     * @return array{error: bool, msg: string, content?: string}
+     * @return array{error: bool, msg: string, event?: string, payload?: array<string, mixed>}
      */
     private function gameOver(AppStatus $status): array
     {
@@ -260,8 +260,13 @@ class QuestManager extends BaseManager
             'timestamp' => time(),
         ];
 
-        $this->createQuestEvent('game-over', $message, $player, $detail);
-        return ['error' => false, 'msg' => $message];
+        $event = $this->createQuestEvent('game-over', $message, $player, $detail);
+        return [
+            'error' => false,
+            'msg' => $message,
+            'event' => 'game-over',
+            'payload' => $event->toArray(),
+        ];
     }
 
     /**
@@ -459,7 +464,7 @@ class QuestManager extends BaseManager
      *
      * @param Quest $quest
      * @param int $nextMissionId
-     * @return array{error: bool, msg: string, content?: string}
+     * @return array{error: bool, msg: string, event?: string, payload?: array<string, mixed>}
      * @throws Exception
      */
     private function setNextMission(Quest $quest, int $nextMissionId): array
@@ -478,6 +483,15 @@ class QuestManager extends BaseManager
             throw new Exception('Could not initialize next quest progress.');
         }
 
+        // Check if the new mission is empty
+        if (empty($nextQuestProgress->remainingActions)) {
+            Yii::debug("*** debug *** setNextMission - Mission #{$nextMissionId} is empty, skipping.");
+            // End this empty mission progress
+            $this->endCurrentQuestProgress($nextQuestProgress, AppStatus::COMPLETED);
+            // Try to move to the next mission
+            return $this->moveToNextMission();
+        }
+
         // Update quest current chapter if needed
         $nextChapterId = $nextQuestProgress->mission->chapter_id;
         $this->synchronizeChapterId($quest, $nextChapterId);
@@ -485,14 +499,19 @@ class QuestManager extends BaseManager
         $detail = $this->getNextMissionDetail($currentQuestProgress, $nextQuestProgress);
         $message = "The mission '{$detail['currentMissionName']}' is over, let's move to '{$detail['nextMissionName']}'!!!";
 
-        $this->createQuestEvent('next-mission', $message, $currentPlayer, $detail);
-        return ['error' => false, 'msg' => $message];
+        $event = $this->createQuestEvent('next-mission', $message, $currentPlayer, $detail);
+        return [
+            'error' => false,
+            'msg' => $message,
+            'event' => 'next-mission',
+            'payload' => $event->toArray(),
+        ];
     }
 
     /**
      *
      * @param int|null $nextMissionId
-     * @return array{error: bool, msg: string, content?: string}
+     * @return array{error: bool, msg: string, event?: string, payload?: array<string, mixed>}
      */
     public function moveToNextMission(?int $nextMissionId = null): array
     {
@@ -512,7 +531,7 @@ class QuestManager extends BaseManager
 
     /**
      *
-     * @return array{error: bool, msg: string, content?: string}
+     * @return array{error: bool, msg: string, event?: string, payload?: array<string, mixed>}
      */
     public function nextPlayer(): array
     {
@@ -536,8 +555,13 @@ class QuestManager extends BaseManager
             'timestamp' => time(),
         ];
 
-        $this->createQuestEvent('next-turn', $message, $oldPlayer, $detail);
-        return ['error' => false, 'msg' => $message];
+        $event = $this->createQuestEvent('next-turn', $message, $oldPlayer, $detail);
+        return [
+            'error' => false,
+            'msg' => $message,
+            'event' => 'next-turn',
+            'payload' => $event->toArray(),
+        ];
     }
 
     /**
@@ -546,7 +570,7 @@ class QuestManager extends BaseManager
      * @param string $eventDescription
      * @param Player|null $initiator
      * @param array<string, mixed> $detail
-     * @return bool
+     * @return \common\models\events\Event
      * @throws Exception
      */
     private function createQuestEvent(
@@ -554,7 +578,7 @@ class QuestManager extends BaseManager
             string $eventDescription,
             ?Player $initiator,
             array $detail = [],
-    ): bool
+    ): \common\models\events\Event
     {
         Yii::debug("*** debug *** createQuestEvent - initiator={$initiator?->name}");
 
@@ -570,7 +594,7 @@ class QuestManager extends BaseManager
 
             $event = EventFactory::createEvent($eventType, (string) $sessionId, $player, $quest, $data);
             $event->process();
-            return true;
+            return $event;
         } catch (Exception $e) {
             Yii::error("Failed to broadcast '{$eventType}' event: " . $e->getMessage());
             throw new Exception('Error: ' . $e->getMessage());
