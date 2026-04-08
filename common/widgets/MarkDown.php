@@ -176,9 +176,13 @@ class MarkDown extends Widget
             $url = trim($matches[2]);
 
             // Second security layer: basic URL validation to prevent javascript: and other malicious schemes
-            // Allow relative paths, anchors, and common protocols
-            if (preg_match('/^(https?:\/\/|mailto:|tel:|\/|#)/i', $url)) {
-                $links[] = '<a href="' . $url . '" class="link-primary" target="_blank" rel="noopener">' . $inner . '</a>';
+            // Allow relative paths (starting with /, ./, ../, or just word characters), anchors, and common protocols
+            $isValid = preg_match('/^(https?:\/\/|mailto:|tel:|\/\/|\/|\.\.?\/|#)/i', $url) ||
+                       preg_match('/^[^:]+?(\/|$)/', $url);
+
+            if ($isValid) {
+                $escapedUrl = htmlspecialchars($url, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                $links[] = '<a href="' . $escapedUrl . '" class="link-primary" target="_blank" rel="noopener">' . $inner . '</a>';
             } else {
                 $links[] = '[' . $inner . '](' . $url . ')';
             }
@@ -204,13 +208,18 @@ class MarkDown extends Widget
      */
     protected function applyBoldItalic(string $text): string
     {
-        // Bold (**text** or __text__)
-        $text = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', $text);
-        $text = preg_replace('/__(.*?)__/', '<strong>$1</strong>', $text);
+        // 1. Bold Italic (***text***)
+        $text = preg_replace('/\*\*\*(?=\S)(.*?)(?<=\S)\*\*\*/', '<strong><em>$1</em></strong>', $text);
+        $text = preg_replace('/___(?=\S)(.*?)(?<=\S)___/', '<strong><em>$1</em></strong>', $text);
 
-        // Italic (*text* or _text_)
-        $text = preg_replace('/\*(.*?)\*/', '<em>$1</em>', $text);
-        $text = preg_replace('/_(.*?)_/', '<em>$1</em>', $text);
+        // 2. Bold (**text** or __text__)
+        $text = preg_replace('/\*\*(?=\S)(.*?)(?<=\S)\*\*/', '<strong>$1</strong>', $text);
+        $text = preg_replace('/__(?=\S)(.*?)(?<=\S)__/', '<strong>$1</strong>', $text);
+
+        // 3. Italic (*text* or _text_)
+        // Avoid matching markers inside words unless it's *
+        $text = preg_replace('/(?<!\w)\*([^\s\*](?:[^*]*[^\s\*])?)\*(?!\w)/', '<em>$1</em>', $text);
+        $text = preg_replace('/(?<!\w)_([^\s_](?:[^_]*[^\s_])?)_(?!\w)/', '<em>$1</em>', $text);
 
         return $text;
     }
