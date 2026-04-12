@@ -188,7 +188,7 @@ class VirtualTableTop {
     _handleResponseEvent(response) {
         if (response && response.event && response.payload && typeof notificationClient !== 'undefined') {
             Logger.log(2, '_handleResponseEvent', `Triggering local event: ${response.event}`);
-            notificationClient.triggerEvent(response.event, response);
+            notificationClient.triggerEvent(response.event, response.payload);
             return true;
         }
         return false;
