@@ -123,7 +123,7 @@ class AccessRightsManager extends Component
      * @param string $action
      * @return bool
      */
-    private static function isPublic(string $route, string $action): bool
+    public static function isPublic(string $route, string $action): bool
     {
         $publicSiteActions = [
             'error',
@@ -154,10 +154,8 @@ class AccessRightsManager extends Component
      * @param string $action
      * @return array{}|array{id: int, application: string, route: string, action: string, is_admin: bool, is_designer: bool, is_player: bool, has_player: bool, in_quest: bool}
      */
-    private static function getAccessRight(string $application, string $route, string $action): array
+    public static function getAccessRight(string $application, string $route, string $action): array
     {
-        self::countAccess($application, $route, $action);
-
         $currentSQLParam = [
             ':application' => $application,
             ':route' => $route,

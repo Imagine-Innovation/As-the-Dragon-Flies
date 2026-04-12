@@ -5,6 +5,7 @@ namespace backend\controllers;
 use common\components\AppStatus;
 use common\components\AccessRightsManager;
 use common\helpers\Status;
+use common\models\Chapter;
 use common\models\Story;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -37,15 +38,7 @@ class StoryController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => [
-                            'index',
-                            'create',
-                            'view',
-                            'update',
-                            'delete',
-                            'validate',
-                            'restore',
-                        ],
+                        'actions' => ['index', 'create', 'view', 'update', 'delete', 'validate', 'restore', 'print'],
                         'allow' => AccessRightsManager::isRouteAllowed($this),
                         'roles' => ['@'],
                     ],
@@ -182,6 +175,36 @@ class StoryController extends Controller
             return $this->redirect(['index']);
         }
         throw new NotFoundHttpException('Could not restore this story');
+    }
+
+    /**
+     *
+     * @param int $id
+     * @return string
+     */
+    public function actionPrint(int $id): string
+    {
+        $story = $this->findModel($id);
+        $chapters = Chapter::find()
+                ->where(['story_id' => $story->id])
+                ->orderBy('chapter_number')
+                ->with([
+                    'missions',
+                    'missions.decors',
+                    'missions.decors.traps',
+                    'missions.decors.decorItems',
+                    'missions.decors.actions',
+                    'missions.passages',
+                    'missions.npcs',
+                    'missions.outcomes',
+                    'missions.monsters',
+                ])
+                ->all();
+
+        return $this->render('print', [
+                    'story' => $story,
+                    'chapters' => $chapters,
+        ]);
     }
 
     /**

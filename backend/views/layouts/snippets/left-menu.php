@@ -7,33 +7,33 @@ use yii\helpers\Url;
 /** @var string|null $currentMenu */
 $menuConfig = [
     'void' => [// No heading for the first group
-        ['label' => 'Dashboard', 'icon' => 'bi-speedometer2', 'url' => 'site/index'],
+        ['label' => 'Dashboard', 'icon' => 'bi-speedometer2', 'route' => 'site/index'],
     ],
     'Admin' => [
-        ['label' => 'DbMonitor', 'icon' => 'bi-database-fill-exclamation', 'url' => 'db-monitor/index'],
-        ['label' => 'Access Rights', 'icon' => 'bi-shield-check', 'url' => 'access-right/index'],
-        ['label' => 'Users', 'icon' => 'bi-people', 'url' => 'user/index'],
-        ['label' => 'Players', 'icon' => 'bi-person-badge', 'url' => 'player/index'],
+        ['label' => 'DbMonitor', 'icon' => 'bi-database-fill-exclamation', 'route' => 'db-monitor/index'],
+        ['label' => 'Access Rights', 'icon' => 'bi-shield-check', 'route' => 'access-right/index'],
+        ['label' => 'Users', 'icon' => 'bi-people', 'route' => 'user/index'],
+        ['label' => 'Players', 'icon' => 'bi-person-badge', 'route' => 'player/index'],
     ],
     'Design' => [
-        ['label' => 'Stories', 'icon' => 'bi-journal-text', 'url' => 'story/index'],
-        ['label' => 'Quests', 'icon' => 'bi-flag', 'url' => 'quest/index'],
-        ['label' => 'Icons', 'icon' => 'bi-bootstrap', 'url' => 'site/icons'],
-        ['label' => 'Fonts', 'icon' => 'bi-fonts', 'url' => 'site/fonts'],
-        ['label' => 'Colors', 'icon' => 'bi-palette', 'url' => 'site/colors'],
+        ['label' => 'Stories', 'icon' => 'bi-journal-text', 'route' => 'story/index'],
+        ['label' => 'Quests', 'icon' => 'bi-flag', 'route' => 'quest/index'],
+        ['label' => 'Icons', 'icon' => 'bi-bootstrap', 'route' => 'site/icons'],
+        ['label' => 'Fonts', 'icon' => 'bi-fonts', 'route' => 'site/fonts'],
+        ['label' => 'Colors', 'icon' => 'bi-palette', 'route' => 'site/colors'],
     ],
     'Homebrew' => [
-        ['label' => 'Items', 'icon' => 'bi-box-seam', 'url' => 'item/index'],
-        ['label' => 'Spells', 'icon' => 'bi-magic', 'url' => 'spell/index'],
-        ['label' => 'Creatures', 'icon' => 'bi-bug', 'url' => 'creature/index'],
-        ['label' => 'Images', 'icon' => 'bi-images', 'url' => 'image/index'],
+        ['label' => 'Items', 'icon' => 'bi-box-seam', 'route' => 'item/index'],
+        ['label' => 'Spells', 'icon' => 'bi-magic', 'route' => 'spell/index'],
+        ['label' => 'Creatures', 'icon' => 'bi-bug', 'route' => 'creature/index'],
+        ['label' => 'Images', 'icon' => 'bi-images', 'route' => 'image/index'],
     ],
     'Resources' => [
-        ['label' => 'Abilities', 'icon' => 'bi-lightning-charge', 'url' => 'ability/index'],
-        ['label' => 'Skills', 'icon' => 'bi-stars', 'url' => 'skill/index'],
-        ['label' => 'Languages', 'icon' => 'bi-translate', 'url' => 'language/index'],
-        ['label' => 'Races', 'icon' => 'bi-person-gear', 'url' => 'race/index'],
-        ['label' => 'Classes', 'icon' => 'bi-shield-shaded', 'url' => 'character-class/index'],
+        ['label' => 'Abilities', 'icon' => 'bi-lightning-charge', 'route' => 'ability/index'],
+        ['label' => 'Skills', 'icon' => 'bi-stars', 'route' => 'skill/index'],
+        ['label' => 'Languages', 'icon' => 'bi-translate', 'route' => 'language/index'],
+        ['label' => 'Races', 'icon' => 'bi-person-gear', 'route' => 'race/index'],
+        ['label' => 'Classes', 'icon' => 'bi-shield-shaded', 'route' => 'character-class/index'],
     ],
 ];
 
@@ -42,9 +42,9 @@ $allowedMenus = [];
 foreach ($menuConfig as $chapter => $menus) {
     $chapterMenu = [];
     foreach ($menus as $menu) {
-        $url = explode('/', $menu['url']);
-        $accessRight = AccessRightsManager::checkAccess(AccessRightsManager::APP_BACKEND, $url[0], $url[1]);
-        if ($accessRight['denied'] === false) {
+        $url = explode('/', $menu['route']);
+        $accessRight = AccessRightsManager::getAccessRight(AccessRightsManager::APP_BACKEND, $url[0], $url[1]);
+        if (!empty($accessRight) || AccessRightsManager::isPublic($url[0], $url[1])) {
             $chapterMenu[] = $menu;
         }
     }
@@ -75,7 +75,7 @@ $currentMenu = $currentMenu ?? $firstHeading;
             <ul class="nav nav-pills flex-column mb-auto">
                 <?php foreach ($menus as $menu): ?>
                     <li class="nav-item">
-                        <a href="<?= Url::toRoute($menu['url']) ?>" class="nav-link <?=
+                        <a href="<?= Url::toRoute($menu['route']) ?>" class="nav-link <?=
                         ($menu['label'] === $currentMenu) ? 'active' : ''
                         ?>">
                             <span class="text-warning-emphasis">

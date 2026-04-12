@@ -20,10 +20,10 @@ $canJoin = $tavernManager->canPlayerJoinQuest($player);
 
 $randomFileName = random_int(1, 8) . '.jpg';
 $imgPath = WebResourcesHelper::imagePath();
-$fileName = "{$imgPath}/sm/{$randomFileName}";
+$randomImage = "{$imgPath}/sm/{$randomFileName}";
 $storyRoot = WebResourcesHelper::storyRootPath($story->id);
 
-$image = $story->image ? "{$storyRoot}/img/{$story->image}" : $fileName;
+$image = $story->image ? "{$storyRoot}/img/{$story->image}" : $randomImage;
 ?>
 
 <div class="card h-100">
@@ -38,6 +38,14 @@ $image = $story->image ? "{$storyRoot}/img/{$story->image}" : $fileName;
                 'url' => Url::toRoute(['story/view', 'id' => $story->id]),
                 'icon' => 'bi-journal',
                 'tooltip' => 'View story details',
+            ])
+            ?>
+            <?=
+            Button::widget([
+                'mode' => 'icon',
+                'url' => Url::toRoute(['story/print', 'id' => $story->id]),
+                'icon' => 'bi-journal-text',
+                'tooltip' => 'Print story',
             ])
             ?>
             <?=

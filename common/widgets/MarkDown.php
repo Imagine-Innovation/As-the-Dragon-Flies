@@ -13,6 +13,7 @@ use yii\base\Widget;
  */
 class MarkDown extends Widget
 {
+
     /**
      * @var string|null The markdown content to render.
      */
@@ -28,6 +29,23 @@ class MarkDown extends Widget
         }
 
         return $this->renderMarkdown($this->content);
+    }
+
+    protected function closeTag(bool $opened, string $tag, array &$result): bool
+    {
+        if ($opened) {
+            $result[] = "</{$tag}>";
+            return false;
+        }
+        return true;
+    }
+
+    protected function openTag(bool $opened, string $tag, array &$result): bool
+    {
+        if ($opened === false) {
+            $result[] = "<{$tag} class=\"mb-3\">";
+        }
+        return true;
     }
 
     /**
@@ -52,35 +70,17 @@ class MarkDown extends Widget
             $trimmed = trim($line);
 
             if (empty($trimmed)) {
-                if ($ulOpen) {
-                    $result[] = '</ul>';
-                    $ulOpen = false;
-                }
-                if ($olOpen) {
-                    $result[] = '</ol>';
-                    $olOpen = false;
-                }
-                if ($pOpen) {
-                    $result[] = '</p>';
-                    $pOpen = false;
-                }
+                $ulOpen = $this->closeTag($ulOpen, 'ul', $result);
+                $olOpen = $this->closeTag($olOpen, 'ol', $result);
+                $pOpen = $this->closeTag($pOpen, 'p', $result);
                 continue;
             }
 
             // Headers (H1 - H6)
             if (preg_match('/^(#{1,6})\s+(.+)$/', $trimmed, $matches)) {
-                if ($ulOpen) {
-                    $result[] = '</ul>';
-                    $ulOpen = false;
-                }
-                if ($olOpen) {
-                    $result[] = '</ol>';
-                    $olOpen = false;
-                }
-                if ($pOpen) {
-                    $result[] = '</p>';
-                    $pOpen = false;
-                }
+                $ulOpen = $this->closeTag($ulOpen, 'ul', $result);
+                $olOpen = $this->closeTag($olOpen, 'ol', $result);
+                $pOpen = $this->closeTag($pOpen, 'p', $result);
 
                 $level = strlen($matches[1]);
                 $innerContent = $this->applyInlineStyles($matches[2]);
@@ -90,18 +90,10 @@ class MarkDown extends Widget
 
             // Unordered List item (*, -, +)
             if (preg_match('/^[\*\-\+]\s+(.+)$/', $trimmed, $matches)) {
-                if ($pOpen) {
-                    $result[] = '</p>';
-                    $pOpen = false;
-                }
-                if ($olOpen) {
-                    $result[] = '</ol>';
-                    $olOpen = false;
-                }
-                if (!$ulOpen) {
-                    $result[] = '<ul class="mb-3">';
-                    $ulOpen = true;
-                }
+                $ulOpen = $this->openTag($ulOpen, 'ul', $result);
+                $olOpen = $this->closeTag($olOpen, 'ol', $result);
+                $pOpen = $this->closeTag($pOpen, 'p', $result);
+
                 $innerContent = $this->applyInlineStyles($matches[1]);
                 $result[] = "<li>{$innerContent}</li>";
                 continue;
@@ -109,32 +101,18 @@ class MarkDown extends Widget
 
             // Ordered List item (1., 2., etc.)
             if (preg_match('/^\d+\.\s+(.+)$/', $trimmed, $matches)) {
-                if ($pOpen) {
-                    $result[] = '</p>';
-                    $pOpen = false;
-                }
-                if ($ulOpen) {
-                    $result[] = '</ul>';
-                    $ulOpen = false;
-                }
-                if (!$olOpen) {
-                    $result[] = '<ol class="mb-3">';
-                    $olOpen = true;
-                }
+                $ulOpen = $this->closeTag($ulOpen, 'ul', $result);
+                $olOpen = $this->openTag($olOpen, 'ol', $result);
+                $pOpen = $this->closeTag($pOpen, 'p', $result);
+
                 $innerContent = $this->applyInlineStyles($matches[1]);
                 $result[] = "<li>{$innerContent}</li>";
                 continue;
             }
 
             // Paragraph
-            if ($ulOpen) {
-                $result[] = '</ul>';
-                $ulOpen = false;
-            }
-            if ($olOpen) {
-                $result[] = '</ol>';
-                $olOpen = false;
-            }
+            $ulOpen = $this->closeTag($ulOpen, 'ul', $result);
+            $olOpen = $this->closeTag($olOpen, 'ol', $result);
 
             if (!$pOpen) {
                 $result[] = '<p class="mb-3">' . $this->applyInlineStyles($trimmed);
@@ -146,15 +124,9 @@ class MarkDown extends Widget
         }
 
         // Close any remaining tags
-        if ($ulOpen) {
-            $result[] = '</ul>';
-        }
-        if ($olOpen) {
-            $result[] = '</ol>';
-        }
-        if ($pOpen) {
-            $result[] = '</p>';
-        }
+        $this->closeTag($ulOpen, 'ul', $result);
+        $this->closeTag($olOpen, 'ol', $result);
+        $this->closeTag($pOpen, 'p', $result);
 
         return implode("\n", $result);
     }
@@ -178,7 +150,7 @@ class MarkDown extends Widget
             // Second security layer: basic URL validation to prevent javascript: and other malicious schemes
             // Allow relative paths (starting with /, ./, ../, or just word characters), anchors, and common protocols
             $isValid = preg_match('/^(https?:\/\/|mailto:|tel:|\/\/|\/|\.\.?\/|#)/i', $url) ||
-                       preg_match('/^[^:]+?(\/|$)/', $url);
+                    preg_match('/^[^:]+?(\/|$)/', $url);
 
             if ($isValid) {
                 $escapedUrl = htmlspecialchars($url, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
