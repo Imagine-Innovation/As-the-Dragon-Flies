@@ -59,7 +59,6 @@ class QuestStartingEvent extends Event
     {
         return [
             'questName' => $this->quest->name,
-            'questId' => $this->quest->id,
             'startedAt' => date('Y-m-d H:i:s', $this->timestamp),
         ];
     }

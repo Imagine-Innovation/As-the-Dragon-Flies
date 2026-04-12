@@ -73,15 +73,14 @@ abstract class Event extends BaseObject
      */
     public function toArray(): array
     {
-        $array = [
+        $array = array_merge([
             'type' => $this->getType(),
             'notificationId' => $this->notificationId,
             'sessionId' => $this->sessionId,
             'playerId' => $this->player->id,
             'questId' => $this->quest->id,
             'timestamp' => $this->timestamp,
-            'payload' => $this->getPayload(),
-        ];
+        ], $this->getPayload());
         Yii::debug($array);
         return $array;
     }

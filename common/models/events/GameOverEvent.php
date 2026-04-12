@@ -71,9 +71,10 @@ class GameOverEvent extends Event
      */
     public function getPayload(): array
     {
+        $detail = $this->detail;
+        $detail['timestamp'] = $this->timestamp;
         return [
-            'detail' => $this->detail,
-            'timestamp' => $this->timestamp,
+            'detail' => $detail,
         ];
     }
 

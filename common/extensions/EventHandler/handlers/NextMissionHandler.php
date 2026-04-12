@@ -55,7 +55,10 @@ class NextMissionHandler implements SpecificMessageHandlerInterface
             $this->logger->logEnd('NextMissionHandler: handle');
         }
 
-        $nextMissionDto = $this->messageFactory->createNextMissionMessage($detail);
+        $nextMissionDto = $this->messageFactory->createNextMissionMessage($detail, [
+            'questId' => $questId,
+            'sessionId' => $sessionId,
+        ]);
 
         $this->broadcastService->broadcastToQuest((int) $questId, $nextMissionDto, $sessionId);
 

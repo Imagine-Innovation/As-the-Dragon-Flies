@@ -2,51 +2,13 @@
 
 namespace common\extensions\EventHandler\dtos;
 
-use common\extensions\EventHandler\contracts\BroadcastMessageInterface;
-
-class NextTurnDto implements BroadcastMessageInterface
+class NextTurnDto extends BaseDto
 {
-    private string $type = 'next-turn';
-
-    /** @var array<string, mixed> $payload */
-    private array $payload;
-
     /**
-     *
-     * @param array<string, mixed> $detail
+     * @param array<string, mixed> $data
      */
-    public function __construct(array $detail)
+    public function __construct(array $data)
     {
-        $this->payload = [
-            'detail' => $detail,
-            'timestamp' => time(),
-        ];
-    }
-
-    /**
-     *
-     * @return string
-     */
-    public function getType(): string
-    {
-        return $this->type;
-    }
-
-    /**
-     *
-     * @return array<string, mixed>
-     */
-    public function getPayload(): array
-    {
-        return $this->payload;
-    }
-
-    /**
-     *
-     * @return string|false
-     */
-    public function toJson(): string|false
-    {
-        return json_encode(['type' => $this->type, 'payload' => $this->payload]);
+        parent::__construct('next-turn', $data);
     }
 }

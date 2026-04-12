@@ -2,55 +2,13 @@
 
 namespace common\extensions\EventHandler\dtos;
 
-use common\extensions\EventHandler\contracts\BroadcastMessageInterface;
-
-class NewMessageDto implements BroadcastMessageInterface
+class NewMessageDto extends BaseDto
 {
-    private string $type = 'new-message';
-
-    /** @var array<string, mixed> $payload */
-    private array $payload;
-
     /**
-     *
-     * @param string $message
-     * @param string $sender
-     * @param string|null $recipient
+     * @param array<string, mixed> $data
      */
-    public function __construct(string $message, string $sender, ?string $recipient = null)
+    public function __construct(array $data)
     {
-        $this->payload = [
-            'message' => $message,
-            'sender' => $sender,
-            'recipient' => $recipient,
-            'timestamp' => time(),
-        ];
-    }
-
-    /**
-     *
-     * @return string
-     */
-    public function getType(): string
-    {
-        return $this->type;
-    }
-
-    /**
-     *
-     * @return array<string, mixed>
-     */
-    public function getPayload(): array
-    {
-        return $this->payload;
-    }
-
-    /**
-     *
-     * @return string|false
-     */
-    public function toJson(): string|false
-    {
-        return json_encode(['type' => $this->type, 'payload' => $this->payload]);
+        parent::__construct('new-message', $data);
     }
 }

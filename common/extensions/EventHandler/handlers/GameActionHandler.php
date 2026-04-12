@@ -64,7 +64,10 @@ class GameActionHandler implements SpecificMessageHandlerInterface
             return;
         }
 
-        $gameActionDto = $this->messageFactory->createGameActionMessage($playerName, $action, $detail);
+        $gameActionDto = $this->messageFactory->createGameActionMessage($playerName, $action, $detail, [
+            'questId' => $questId,
+            'sessionId' => $sessionId,
+        ]);
 
         $this->broadcastService->broadcastToQuest($questId, $gameActionDto, $sessionId);
 

@@ -88,7 +88,8 @@ class NotificationClient {
         this.on('notification', (data) => {
             Logger.log(2, 'setupDefaultHandlers', 'Received notification:', data);
             // this.displayNotification(data);
-            const message = data.message ?? null;
+            const source = data.payload ?? data;
+            const message = source.message ?? null;
             if (this.vtt) {
                 this.vtt.refresh(this.questId, this.sessionId, message);
             }
@@ -113,14 +114,15 @@ class NotificationClient {
 
         this.on('quest-started', (data) => {
             Logger.log(2, 'setupDefaultHandlers', 'Received quest-started message:', data);
-            if (data.payload && data.payload.redirectUrl) {
-                window.location.href = data.payload.redirectUrl;
+            const source = data.payload ?? data;
+            if (source && source.redirectUrl) {
+                window.location.href = source.redirectUrl;
             }
         });
 
         this.on('game-action', (data) => {
             Logger.log(2, 'setupDefaultHandlers', 'Received game-action message:', data);
-            Logger.log(10, 'setupDefaultHandlers', `Payload: ${JSON.stringify(data.payload, null, 2)}`);
+            Logger.log(10, 'setupDefaultHandlers', `Payload: ${JSON.stringify(data, null, 2)}`);
             if (this.vtt) {
                 this.vtt.refresh(this.questId, this.sessionId);
             }
@@ -128,9 +130,10 @@ class NotificationClient {
 
         this.on('next-turn', (data) => {
             Logger.log(2, 'setupDefaultHandlers', 'Received next-turn message:', data);
-            Logger.log(10, 'setupDefaultHandlers', `Payload: ${JSON.stringify(data.payload, null, 2)}`);
+            Logger.log(10, 'setupDefaultHandlers', `Payload: ${JSON.stringify(data, null, 2)}`);
 
-            const detail = data.payload.detail;
+            const source = data.payload ?? data;
+            const detail = source.detail;
             if (this.vtt && typeof this.vtt.refreshTurn === 'function') {
                 this.vtt.refreshTurn(this.questId, this.playerId, detail);
             }
@@ -138,9 +141,10 @@ class NotificationClient {
 
         this.on('next-mission', (data) => {
             Logger.log(2, 'setupDefaultHandlers', 'Received next-mission message:', data);
-            Logger.log(10, 'setupDefaultHandlers', `Payload: ${JSON.stringify(data.payload, null, 2)}`);
+            Logger.log(10, 'setupDefaultHandlers', `Payload: ${JSON.stringify(data, null, 2)}`);
 
-            const detail = data.payload.detail;
+            const source = data.payload ?? data;
+            const detail = source.detail;
             if (this.vtt && typeof this.vtt.refreshMission === 'function') {
                 this.vtt.refreshMission(this.questId, this.playerId, detail);
             }
@@ -148,8 +152,9 @@ class NotificationClient {
 
         this.on('game-over', (data) => {
             Logger.log(2, 'setupDefaultHandlers', 'Received game-over message:', data);
-            Logger.log(10, 'setupDefaultHandlers', `Payload: ${JSON.stringify(data.payload, null, 2)}`);
-            const detail = data.payload.detail;
+            Logger.log(10, 'setupDefaultHandlers', `Payload: ${JSON.stringify(data, null, 2)}`);
+            const source = data.payload ?? data;
+            const detail = source.detail;
             const message = `${detail.playerName} has ended quest “${detail.questName}” with status ${detail.status}.`;
             // VirtualTableTop.refresh(this.questId, this.sessionId);
 
@@ -166,9 +171,10 @@ class NotificationClient {
 
         this.on('player-joined', (data) => {
             Logger.log(2, 'setupDefaultHandlers', 'Received player-joined event:', data);
-            if (data.payload && data.payload.playerName && data.payload.questName) {
+            const source = data.payload ?? data;
+            if (source && source.playerName && source.questName) {
                 // Construct the message from the payload
-                const message = `Player ${data.payload.playerName} has joined quest "${data.payload.questName}".`;
+                const message = `Player ${source.playerName} has joined quest "${source.questName}".`;
                 //this.refreshTavern(message);
                 if (this.vtt) {
                     this.vtt.refresh(this.questId, this.sessionId, message);
@@ -180,9 +186,10 @@ class NotificationClient {
 
         this.on('player-quit', (data) => {
             Logger.log(2, 'setupDefaultHandlers', 'Received player-quit event:', data);
-            if (data.payload && data.payload.playerName && data.payload.questName) {
+            const source = data.payload ?? data;
+            if (source && source.playerName && source.questName) {
                 // Construct the message from the payload
-                const message = `Player ${data.payload.playerName} has left the quest`;
+                const message = `Player ${source.playerName} has left the quest`;
                 // this.refreshTavern(message);
                 if (this.vtt) {
                     this.vtt.refresh(this.questId, this.sessionId, message);
