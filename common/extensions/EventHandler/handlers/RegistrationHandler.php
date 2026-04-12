@@ -73,7 +73,11 @@ class RegistrationHandler implements SpecificMessageHandlerInterface
             return;
         }
 
-        $NotificationDto = $this->messageFactory->createNotificationMessage('Player registered', 'info', []);
+        $NotificationDto = $this->messageFactory->createNotificationMessage('Player registered', 'info', [], [
+            'questId' => $questId,
+            'playerId' => $playerId,
+            'sessionId' => $sessionId,
+        ]);
         $this->broadcastService->broadcastToQuest($questId, $NotificationDto, $sessionId);
         $this->logger->logEnd('RegistrationHandler: updateQuestPlayerStatus');
     }

@@ -27,11 +27,20 @@ class BroadcastMessageFactory
      * @param string $message
      * @param string $sender
      * @param string|null $recipient
+     * @param array<string, mixed> $extraData
      * @return NewMessageDto
      */
-    public function createNewMessage(string $message, string $sender, ?string $recipient = null): NewMessageDto
-    {
-        return new NewMessageDto($message, $sender, $recipient);
+    public function createNewMessage(
+        string $message,
+        string $sender,
+        ?string $recipient = null,
+        array $extraData = [],
+    ): NewMessageDto {
+        return new NewMessageDto(array_merge($extraData, [
+            'message' => $message,
+            'sender' => $sender,
+            'recipient' => $recipient,
+        ]));
     }
 
     /**
@@ -39,11 +48,20 @@ class BroadcastMessageFactory
      * @param string $playerName
      * @param string $sessionId
      * @param string $questName
+     * @param array<string, mixed> $extraData
      * @return PlayerJoinedDto
      */
-    public function createPlayerJoinedMessage(string $playerName, string $sessionId, string $questName): PlayerJoinedDto
-    {
-        return new PlayerJoinedDto($playerName, $sessionId, $questName);
+    public function createPlayerJoinedMessage(
+        string $playerName,
+        string $sessionId,
+        string $questName,
+        array $extraData = [],
+    ): PlayerJoinedDto {
+        return new PlayerJoinedDto(array_merge($extraData, [
+            'playerName' => $playerName,
+            'sessionId' => $sessionId,
+            'questName' => $questName,
+        ]));
     }
 
     /**
@@ -52,6 +70,7 @@ class BroadcastMessageFactory
      * @param string $sessionId
      * @param string $questName
      * @param string $reason
+     * @param array<string, mixed> $extraData
      * @return PlayerQuitDto
      */
     public function createPlayerQuitMessage(
@@ -59,8 +78,14 @@ class BroadcastMessageFactory
         string $sessionId,
         string $questName,
         string $reason,
+        array $extraData = [],
     ): PlayerQuitDto {
-        return new PlayerQuitDto($playerName, $sessionId, $questName, $reason);
+        return new PlayerQuitDto(array_merge($extraData, [
+            'playerName' => $playerName,
+            'sessionId' => $sessionId,
+            'questName' => $questName,
+            'reason' => $reason,
+        ]));
     }
 
     /**
@@ -68,11 +93,23 @@ class BroadcastMessageFactory
      * @param string $sessionId
      * @param int $questId
      * @param string $questName
+     * @param array<string, mixed> $extraData
      * @return QuestStartedDto
      */
-    public function createQuestStartedMessage(string $sessionId, int $questId, string $questName): QuestStartedDto
-    {
-        return new QuestStartedDto($sessionId, $questId, $questName);
+    public function createQuestStartedMessage(
+        string $sessionId,
+        int $questId,
+        string $questName,
+        array $extraData = [],
+    ): QuestStartedDto {
+        return new QuestStartedDto(array_merge($extraData, [
+            'sessionId' => $sessionId,
+            'questId' => $questId,
+            'questName' => $questName,
+            'message' => "Quest '{$questName}' has started!",
+            'redirectUrl' => '/frontend/web/index.php?r=game/view&id=' . $questId,
+            'startedAt' => date('Y-m-d H:i:s', time()),
+        ]));
     }
 
     /**
@@ -80,41 +117,59 @@ class BroadcastMessageFactory
      * @param string $playerName
      * @param string $action
      * @param array<string, mixed> $detail
+     * @param array<string, mixed> $extraData
      * @return GameActionDto
      */
-    public function createGameActionMessage(string $playerName, string $action, array $detail): GameActionDto
-    {
-        return new GameActionDto($playerName, $action, $detail);
+    public function createGameActionMessage(
+        string $playerName,
+        string $action,
+        array $detail,
+        array $extraData = [],
+    ): GameActionDto {
+        return new GameActionDto(array_merge($extraData, [
+            'playerName' => $playerName,
+            'action' => $action,
+            'detail' => $detail,
+        ]));
     }
 
     /**
      *
      * @param array<string, mixed> $detail
+     * @param array<string, mixed> $extraData
      * @return NextTurnDto
      */
-    public function createNextTurnMessage(array $detail): NextTurnDto
+    public function createNextTurnMessage(array $detail, array $extraData = []): NextTurnDto
     {
-        return new NextTurnDto($detail);
+        return new NextTurnDto(array_merge($extraData, [
+            'detail' => $detail,
+        ]));
     }
 
     /**
      *
      * @param array<string, mixed> $detail
+     * @param array<string, mixed> $extraData
      * @return NextMissionDto
      */
-    public function createNextMissionMessage(array $detail): NextMissionDto
+    public function createNextMissionMessage(array $detail, array $extraData = []): NextMissionDto
     {
-        return new NextMissionDto($detail);
+        return new NextMissionDto(array_merge($extraData, [
+            'detail' => $detail,
+        ]));
     }
 
     /**
      *
      * @param array<string, mixed> $detail
+     * @param array<string, mixed> $extraData
      * @return GameOverDto
      */
-    public function createGameOverMessage(array $detail): GameOverDto
+    public function createGameOverMessage(array $detail, array $extraData = []): GameOverDto
     {
-        return new GameOverDto($detail);
+        return new GameOverDto(array_merge($extraData, [
+            'detail' => $detail,
+        ]));
     }
 
     /**
@@ -122,14 +177,23 @@ class BroadcastMessageFactory
      * @param string $message
      * @param string $level
      * @param array<string, mixed>|null $details
+     * @param array<string, mixed> $extraData
      * @return NotificationDto
      */
     public function createNotificationMessage(
         string $message,
         string $level = 'info',
         ?array $details = null,
+        array $extraData = [],
     ): NotificationDto {
-        return new NotificationDto($message, $level, $details);
+        $data = array_merge($extraData, [
+            'message' => $message,
+            'level' => $level,
+        ]);
+        if ($details !== null) {
+            $data['details'] = $details;
+        }
+        return new NotificationDto($data);
     }
 
     /**
@@ -137,11 +201,25 @@ class BroadcastMessageFactory
      * @param string $errorMessage
      * @param int|null $errorCode
      * @param array<string, mixed>|null $details
+     * @param array<string, mixed> $extraData
      * @return ErrorDto
      */
-    public function createErrorMessage(string $errorMessage, ?int $errorCode = null, ?array $details = null): ErrorDto
-    {
-        return new ErrorDto($errorMessage, $errorCode, $details);
+    public function createErrorMessage(
+        string $errorMessage,
+        ?int $errorCode = null,
+        ?array $details = null,
+        array $extraData = [],
+    ): ErrorDto {
+        $data = array_merge($extraData, [
+            'message' => $errorMessage,
+        ]);
+        if ($errorCode !== null) {
+            $data['code'] = $errorCode;
+        }
+        if ($details !== null) {
+            $data['details'] = $details;
+        }
+        return new ErrorDto($data);
     }
 
     /**
@@ -168,7 +246,6 @@ class BroadcastMessageFactory
      * @param string $type
      * @param array<string, mixed> $payload
      * @param array<string> $requiredKeys
-     * @param array<string> $optionalKeys
      * @return BroadcastMessageInterface|null
      */
     private function newDto(
@@ -176,17 +253,10 @@ class BroadcastMessageFactory
         string $type,
         array $payload,
         array $requiredKeys,
-        array $optionalKeys = [],
     ): ?BroadcastMessageInterface {
         if ($this->validatePayload($payload, $requiredKeys)) {
-            $args = [];
-            foreach ($requiredKeys as $key) {
-                $args[] = $payload[$key];
-            }
-            foreach ($optionalKeys as $key) {
-                $args[] = $payload[$key] ?? null;
-            }
-            return new $dtoClass(...$args);
+            /** @var BroadcastMessageInterface */
+            return new $dtoClass($payload);
         }
         $requiredKeysLabel = implode(', ', $requiredKeys);
         $this->loggerService->log(
@@ -223,7 +293,7 @@ class BroadcastMessageFactory
         $this->loggerService->logStart("BroadcastMessageFactory - createMessage - type={$type}, payload=", $payload);
 
         $dto = match ($type) {
-            'new-message' => $this->newDto(NewMessageDto::class, $type, $payload, ['message', 'sender'], ['recipient']),
+            'new-message' => $this->newDto(NewMessageDto::class, $type, $payload, ['message', 'sender']),
             'player-joined' => $this->newDto(
                 PlayerJoinedDto::class,
                 $type,
@@ -246,8 +316,8 @@ class BroadcastMessageFactory
             'next-turn' => $this->newDto(NextTurnDto::class, $type, $payload, ['detail']),
             'next-mission' => $this->newDto(NextMissionDto::class, $type, $payload, ['detail']),
             'game-over' => $this->newDto(GameOverDto::class, $type, $payload, ['detail']),
-            'notification' => $this->newDto(NotificationDto::class, $type, $payload, ['message'], ['level', 'details']),
-            'error' => $this->newDto(ErrorDto::class, $type, $payload, ['message'], ['code', 'details']),
+            'notification' => $this->newDto(NotificationDto::class, $type, $payload, ['message']),
+            'error' => $this->newDto(ErrorDto::class, $type, $payload, ['message']),
             default => $this->handleUnknownType($type),
         };
 

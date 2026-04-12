@@ -56,7 +56,10 @@ class NextTurnHandler implements SpecificMessageHandlerInterface
             return;
         }
 
-        $nextTurnDto = $this->messageFactory->createNextTurnMessage($detail);
+        $nextTurnDto = $this->messageFactory->createNextTurnMessage($detail, [
+            'questId' => $questId,
+            'sessionId' => $sessionId,
+        ]);
 
         $this->broadcastService->broadcastToQuest($questId, $nextTurnDto, $sessionId);
 

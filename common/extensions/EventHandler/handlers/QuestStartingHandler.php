@@ -57,7 +57,9 @@ class QuestStartingHandler implements SpecificMessageHandlerInterface
             return;
         }
 
-        $questStartedDto = $this->messageFactory->createQuestStartedMessage($sessionId, $questId, $questName);
+        $questStartedDto = $this->messageFactory->createQuestStartedMessage($sessionId, $questId, $questName, [
+            'questId' => $questId,
+        ]);
         $this->broadcastService->broadcastToQuest($questId, $questStartedDto, $sessionId);
 
         $this->broadcastService->sendBack($from, 'ack', [

@@ -56,6 +56,21 @@ class NotificationService
 
         $payload = PayloadHelper::extractPayloadFromData($data);
         $type = PayloadHelper::extractStringFromPayload('type', $data);
+
+        // Ensure common context is in the payload only if not already present
+        if (!isset($payload['questId'])) {
+            $payload['questId'] = $questId;
+        }
+        if (!isset($payload['playerId'])) {
+            $payload['playerId'] = $playerId;
+        }
+        if (!isset($payload['sessionId'])) {
+            $payload['sessionId'] = PayloadHelper::extractStringFromPayload('sessionId', $data, '');
+        }
+        if (!isset($payload['notificationId'])) {
+            $payload['notificationId'] = PayloadHelper::extractIntFromPayload('notificationId', $data);
+        }
+
         if ($type === 'new-message') {
             $message = PayloadHelper::extractStringFromPayload(
                 'message',
@@ -65,10 +80,9 @@ class NotificationService
             $sender = PayloadHelper::extractStringFromPayload('sender', $payload);
 
             $this->logger->log("NotificationService: broadcast - createNewMessage({$message}, {$sender})");
-            $messageDto = $this->messageFactory->createNewMessage($message, $sender);
+            $messageDto = $this->messageFactory->createNewMessage($message, $sender, null, $payload);
         } else {
             $this->logger->log("NotificationService: create messageDto -> Notification type={$type}");
-            $payload['sessionId'] = PayloadHelper::extractStringFromPayload('sessionId', $data); // ensure sessionId is in the payload
             $messageDto = $this->messageFactory->createMessage($type, $payload);
         }
         if (!$messageDto) {
@@ -141,6 +155,19 @@ class NotificationService
 
         $messageContent = empty($message) ? $notification->message : $message;
 
-        return $this->messageFactory->createNewMessage($messageContent, $senderDisplayName ?? 'Unknown');
+        $extraData = [
+            'sessionId' => $sessionId,
+            'questId' => $notification->quest_id,
+            'playerId' => $notification->initiator_id,
+            'notificationId' => $notification->id,
+            'timestamp' => $notification->created_at,
+        ];
+
+        return $this->messageFactory->createNewMessage(
+            $messageContent,
+            $senderDisplayName ?? 'Unknown',
+            null,
+            $extraData,
+        );
     }
 }

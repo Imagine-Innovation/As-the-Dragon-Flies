@@ -56,7 +56,10 @@ class GameOverHandler implements SpecificMessageHandlerInterface
             return;
         }
 
-        $gameOverDto = $this->messageFactory->createGameOverMessage($detail);
+        $gameOverDto = $this->messageFactory->createGameOverMessage($detail, [
+            'questId' => $questId,
+            'sessionId' => $sessionId,
+        ]);
 
         $this->broadcastService->broadcastToQuest($questId, $gameOverDto, $sessionId);
 

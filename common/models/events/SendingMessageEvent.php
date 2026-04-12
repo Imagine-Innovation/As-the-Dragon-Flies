@@ -63,8 +63,6 @@ class SendingMessageEvent extends Event
     {
         return [
             'playerName' => $this->player->name,
-            'playerId' => $this->player->id,
-            'questId' => $this->quest->id,
             'message' => $this->message,
             'sentAt' => date('Y-m-d H:i:s', $this->timestamp),
         ];

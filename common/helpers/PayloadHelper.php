@@ -15,7 +15,7 @@ final class PayloadHelper
         if (array_key_exists('payload', $data) && is_array($data['payload'])) {
             return (array) $data['payload'];
         }
-        return [];
+        return $data;
     }
 
     /**

@@ -78,15 +78,13 @@ class GameActionEvent extends Event
      */
     public function getPayload(): array
     {
+        $detail = $this->detail;
+        $detail['timestamp'] = $this->timestamp;
         return [
-            'playerId' => $this->player->id,
             'playerName' => $this->player->name,
             'action' => $this->action,
-            'questId' => $this->quest->id,
             'questName' => $this->quest->name,
-            'detail' => $this->detail,
-            //'timestamp' => date('Y-m-d H:i:s', $this->timestamp)
-            'timestamp' => $this->timestamp,
+            'detail' => $detail,
         ];
     }
 

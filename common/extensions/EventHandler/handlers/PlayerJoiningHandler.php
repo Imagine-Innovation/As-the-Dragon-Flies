@@ -63,7 +63,9 @@ class PlayerJoiningHandler implements SpecificMessageHandlerInterface
             return;
         }
 
-        $playerJoinedDto = $this->messageFactory->createPlayerJoinedMessage($playerName, $sessionId, $questName);
+        $playerJoinedDto = $this->messageFactory->createPlayerJoinedMessage($playerName, $sessionId, $questName, [
+            'questId' => $questId,
+        ]);
         $this->broadcastService->broadcastToQuest($questId, $playerJoinedDto, $sessionId);
 
         $this->broadcastService->recoverMessageHistory($sessionId);

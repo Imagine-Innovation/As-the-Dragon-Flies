@@ -64,7 +64,9 @@ class PlayerQuittingHandler implements SpecificMessageHandlerInterface
             return;
         }
 
-        $PlayerQuitDto = $this->messageFactory->createPlayerQuitMessage($playerName, $sessionId, $questName, $reason);
+        $PlayerQuitDto = $this->messageFactory->createPlayerQuitMessage($playerName, $sessionId, $questName, $reason, [
+            'questId' => $questId,
+        ]);
         $this->broadcastService->broadcastToQuest($questId, $PlayerQuitDto, $sessionId);
 
         $this->broadcastService->sendBack($from, 'ack', [

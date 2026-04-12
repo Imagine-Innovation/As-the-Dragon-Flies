@@ -63,9 +63,7 @@ class PlayerQuittingEvent extends Event
     {
         return [
             'playerName' => $this->player->name,
-            'playerId' => $this->player->id,
             'questName' => $this->quest->name,
-            'questId' => $this->quest->id,
             'leftAt' => date('Y-m-d H:i:s', $this->timestamp),
             'reason' => $this->reason,
         ];
