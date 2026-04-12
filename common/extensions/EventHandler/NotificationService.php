@@ -57,9 +57,13 @@ class NotificationService
         $payload = PayloadHelper::extractPayloadFromData($data);
         $type = PayloadHelper::extractStringFromPayload('type', $data);
 
-        // Ensure common context is in the payload
-        $payload['questId'] = $questId;
-        $payload['playerId'] = $playerId;
+        // Ensure common context is in the payload only if not already present
+        if (!isset($payload['questId'])) {
+            $payload['questId'] = $questId;
+        }
+        if (!isset($payload['playerId'])) {
+            $payload['playerId'] = $playerId;
+        }
         if (!isset($payload['sessionId'])) {
             $payload['sessionId'] = PayloadHelper::extractStringFromPayload('sessionId', $data, '');
         }

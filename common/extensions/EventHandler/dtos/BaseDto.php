@@ -19,6 +19,9 @@ abstract class BaseDto implements BroadcastMessageInterface
         $this->type = $type;
         $this->data = $data;
 
+        // Ensure 'type' from payload doesn't conflict with the DTO's own type
+        unset($this->data['type']);
+
         if (!isset($this->data['timestamp'])) {
             $this->data['timestamp'] = time();
         }
