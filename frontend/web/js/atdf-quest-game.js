@@ -5,6 +5,7 @@ class VirtualTableTop {
         this.options = {
             ...options
         };
+        this.isDispatchingLocalEvent = false;
     }
 
     init() {
@@ -186,12 +187,46 @@ class VirtualTableTop {
     }
 
     _handleResponseEvent(response) {
+        if (this.isDispatchingLocalEvent) {
+            Logger.log(1, '_handleResponseEvent', 'Local event dispatch already in progress, skipping nested dispatch');
+            return false;
+        }
+
         if (response && response.event && response.payload && typeof notificationClient !== 'undefined') {
             Logger.log(2, '_handleResponseEvent', `Triggering local event: ${response.event}`);
-            notificationClient.triggerEvent(response.event, response);
+            const eventData = this._normalizeLocalEventPayload(response.event, response.payload);
+            if (!eventData) {
+                Logger.log(1, '_handleResponseEvent', `Ignoring local event ${response.event}: payload contract mismatch`);
+                return false;
+            }
+
+            this.isDispatchingLocalEvent = true;
+            try {
+                notificationClient.triggerEvent(response.event, eventData);
+            } finally {
+                this.isDispatchingLocalEvent = false;
+            }
             return true;
         }
         return false;
+    }
+
+    _normalizeLocalEventPayload(eventType, payload) {
+        if (!payload || typeof payload !== 'object') {
+            return null;
+        }
+
+        const normalizedPayload = {
+            ...payload,
+            type: payload.type ?? eventType,
+        };
+
+        const eventWithDetail = ['next-turn', 'next-mission', 'game-over'];
+        if (eventWithDetail.includes(eventType) && (!normalizedPayload.detail || typeof normalizedPayload.detail !== 'object')) {
+            return null;
+        }
+
+        return normalizedPayload;
     }
 
     _showModal(modalId) {

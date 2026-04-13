@@ -56,7 +56,7 @@ class ChatManager extends BaseManager
     }
 
     /**
-     * Prepare a new entry for the char message array based on the cha event payload
+     * Prepare a new entry for the chat message array based on the chat event payload
      *
      * @param \common\models\Notification $chatNotification
      * @param int $playerId
