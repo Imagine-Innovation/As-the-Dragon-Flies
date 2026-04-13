@@ -41,7 +41,7 @@ class NotificationClient {
             });
         }
 
-        // Event delegation for the "Leave Tavern" button
+        // Event delegation for the chat send button
         document.addEventListener('click', (event) => {
             if (event.target) {
                 Logger.log(2, 'init', `------> click, event.target.id=${event.target.id}`);
@@ -96,7 +96,7 @@ class NotificationClient {
 
         // Handle incoming notifications
         this.on('ack', (data) => {
-            Logger.log(2, 'setupDefaultHandlers', 'Received aknowledgement:', data);
+            Logger.log(2, 'setupDefaultHandlers', 'Received acknowledgement:', data);
         });
 
         // Handle chat messages
@@ -130,7 +130,12 @@ class NotificationClient {
             Logger.log(2, 'setupDefaultHandlers', 'Received next-turn message:', data);
             Logger.log(10, 'setupDefaultHandlers', `Payload: ${JSON.stringify(data, null, 2)}`);
 
-            const detail = data.detail;
+            const detail = this._getEventDetail(data);
+            if (!detail || typeof detail !== 'object' || !detail.nextPlayerId || !detail.nextPlayerName) {
+                Logger.log(1, 'setupDefaultHandlers', 'Ignoring next-turn message: invalid detail payload');
+                return;
+            }
+
             if (this.vtt && typeof this.vtt.refreshTurn === 'function') {
                 this.vtt.refreshTurn(this.questId, this.playerId, detail);
             }
@@ -140,7 +145,12 @@ class NotificationClient {
             Logger.log(2, 'setupDefaultHandlers', 'Received next-mission message:', data);
             Logger.log(10, 'setupDefaultHandlers', `Payload: ${JSON.stringify(data, null, 2)}`);
 
-            const detail = data.detail;
+            const detail = this._getEventDetail(data);
+            if (!detail || typeof detail !== 'object' || !detail.nextMissionId || !detail.nextPlayerId || !detail.nextPlayerName) {
+                Logger.log(1, 'setupDefaultHandlers', 'Ignoring next-mission message: invalid detail payload');
+                return;
+            }
+
             if (this.vtt && typeof this.vtt.refreshMission === 'function') {
                 this.vtt.refreshMission(this.questId, this.playerId, detail);
             }
@@ -149,7 +159,11 @@ class NotificationClient {
         this.on('game-over', (data) => {
             Logger.log(2, 'setupDefaultHandlers', 'Received game-over message:', data);
             Logger.log(10, 'setupDefaultHandlers', `Payload: ${JSON.stringify(data, null, 2)}`);
-            const detail = data.detail;
+            const detail = this._getEventDetail(data);
+            if (!detail || typeof detail !== 'object') {
+                Logger.log(1, 'setupDefaultHandlers', 'Ignoring game-over message: invalid detail payload');
+                return;
+            }
             const message = `${detail.playerName} has ended quest “${detail.questName}” with status ${detail.status}.`;
             // VirtualTableTop.refresh(this.questId, this.sessionId);
 
@@ -191,6 +205,19 @@ class NotificationClient {
                 console.warn('Received player-quit event with incomplete payload:', data);
             }
         });
+    }
+
+    /**
+     * Extract normalized event detail from a realtime message.
+     *
+     * @param {object|null} data
+     * @returns {object|null}
+     */
+    _getEventDetail(data) {
+        if (!data || typeof data !== 'object') {
+            return null;
+        }
+        return data.detail && typeof data.detail === 'object' ? data.detail : null;
     }
 
     /**
