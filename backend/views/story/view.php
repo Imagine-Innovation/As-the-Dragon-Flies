@@ -35,7 +35,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($model->id);
                     <h3 class="card-title"><?= $model->name ?></h3>
                 </div>
                 <div class="card-body flex-grow-1"> <!-- Add flex-grow-1 -->
-                    <p class="card-text"><?= nl2br($model->description ?? '') ?></p>
+                    <div class="card-text"><?= \common\widgets\MarkDown::widget(['content' => $model->description]) ?></div>
                     <br>
                     <?= StoryNeededClass::classList($model); ?>
                     <p>

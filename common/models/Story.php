@@ -59,7 +59,7 @@ class Story extends \yii\db\ActiveRecord
             [['language'], 'default', 'value' => 'en'],
             [['name'], 'required'],
             [['description'], 'string'],
-            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
+            [['description'], 'filter', 'filter' => [\common\widgets\SimpleRichText::class, 'sanitize']],
             [['status', 'min_level', 'max_level', 'min_players', 'max_players'], 'integer'],
             [['name', 'image'], 'string', 'max' => 64],
             [['language'], 'string', 'max' => 8],

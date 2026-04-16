@@ -19,7 +19,7 @@ use yii\helpers\Html;
             <div class="col-12 text-decoration"> <!-- Add d-flex and flex-column -->
             <?php endif; ?>
             <div class="mb-3">
-                <?= nl2br($story->description ?? '') ?>
+                <?= \common\widgets\MarkDown::widget(['content' => $story->description]) ?>
             </div>
             <div class="mb-4">
                 <ul>
