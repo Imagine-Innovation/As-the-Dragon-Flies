@@ -13,13 +13,14 @@ $buttons = [
     ['icon' => 'bi-type-h4', 'cmd' => 'h4', 'title' => 'Heading 4'],
     ['icon' => 'bi-type-h5', 'cmd' => 'h5', 'title' => 'Heading 5'],
     ['icon' => 'bi-type-h6', 'cmd' => 'h6', 'title' => 'Heading 6'],
+    ['icon' => 'bi-eraser-fill', 'cmd' => 'p', 'title' => 'Clear format'],
 ];
 ?>
 <div class="btn-toolbar mb-2 rounded shadow-sm" role="toolbar" aria-label="Layout toolbar">
     <div class="btn-group me-2" role="group" aria-label="Layout buttons">
         <?php foreach ($buttons as $btn): ?>
             <button type="button" class="btn btn-outline-warning btn-sm"
-                    title="<?= $btn['title'] ?>"
+                    title="<?= $btn['title'] ?>" aria-label="<?= $btn['title'] ?>"
                     onclick="SimpleRichTextEditor.exec('<?= $id ?>', '<?= $btn['cmd'] ?>')">
                 <i class="bi <?= $btn['icon'] ?>"></i>
             </button>

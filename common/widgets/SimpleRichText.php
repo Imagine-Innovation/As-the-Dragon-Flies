@@ -19,10 +19,23 @@ class SimpleRichText extends InputWidget
      */
     public function run()
     {
+        /** @var string $id */
         $id = $this->options['id'];
-        $value = $this->hasModel() ? Html::getAttributeValue($this->model, $this->attribute) : $this->value;
+
+        $model = $this->model;
+        /** @var \yii\base\Model|null $model */
+        if ($model === null) {
+            return '';
+        }
+        $value = $this->hasModel() ? Html::getAttributeValue($model, $this->attribute ?? '') : $this->value;
 
         $this->registerAssets();
+
+        Yii::debug("*** run SimpleRichText Widget error " . print_r(gettype($value), true));
+        if (!is_string($value)) {
+            /** */
+            return '';
+        }
 
         return $this->renderEditor($id, $value);
     }
@@ -30,11 +43,23 @@ class SimpleRichText extends InputWidget
     /**
      * Renders the editor UI.
      */
-    protected function renderEditor($id, $value)
-    {
-        $hiddenInput = $this->hasModel() ? Html::activeHiddenInput($this->model, $this->attribute, $this->options) : Html::hiddenInput($this->name, $value, $this->options);
 
-        // $toolbar = $this->renderToolbar($id);
+    /**
+     *
+     * @param string $id
+     * @param string $value
+     * @return string
+     */
+    protected function renderEditor(string $id, string $value): string
+    {
+        $model = $this->model;
+        /** @var \yii\base\Model|null $model */
+        if ($model === null) {
+            return '';
+        }
+
+        $hiddenInput = $this->hasModel() ? Html::activeHiddenInput($model, $this->attribute ?? '', $this->options) : Html::hiddenInput($this->name ?? 'RichText', $value, $this->options);
+
         $toolbar = $this->render('simple-rich-text-toolbar', [
             'id' => $id,
         ]);
@@ -55,60 +80,14 @@ class SimpleRichText extends InputWidget
     }
 
     /**
-     * Renders the toolbar with buttons.
-     */
-    protected function renderToolbar($id)
-    {
-        $buttons = [
-            ['icon' => 'bi-type-bold', 'cmd' => 'bold', 'title' => 'Bold'],
-            ['icon' => 'bi-type-italic', 'cmd' => 'italic', 'title' => 'Italic'],
-            ['icon' => 'bi-link-45deg', 'cmd' => 'createLink', 'title' => 'Link'],
-            ['icon' => 'bi-list-ul', 'cmd' => 'insertUnorderedList', 'title' => 'Unordered List'],
-            ['icon' => 'bi-list-ol', 'cmd' => 'insertOrderedList', 'title' => 'Ordered List'],
-            ['icon' => 'bi-type-h1', 'cmd' => 'h1', 'title' => 'Heading 1'],
-            ['icon' => 'bi-type-h2', 'cmd' => 'h2', 'title' => 'Heading 2'],
-            ['icon' => 'bi-type-h3', 'cmd' => 'h3', 'title' => 'Heading 3'],
-            ['icon' => 'bi-type-h4', 'cmd' => 'h4', 'title' => 'Heading 4'],
-            ['icon' => 'bi-type-h5', 'cmd' => 'h5', 'title' => 'Heading 5'],
-            ['icon' => 'bi-type-h6', 'cmd' => 'h6', 'title' => 'Heading 6'],
-        ];
-
-        $html = '<div class="btn-toolbar mb-2 rounded shadow-sm" role="toolbar" aria-label="Layout toolbar">';
-        $html .= '<div class="btn-group me-2" role="group" aria-label="Layout buttons">';
-        foreach ($buttons as $btn) {
-            $html .= Html::button(Html::tag('i', '', ['class' => 'bi ' . $btn['icon']]), [
-                'class' => 'btn btn-outline-warning btn-sm',
-                'title' => $btn['title'],
-                'type' => 'button',
-                'onclick' => "SimpleRichTextEditor.exec('{$id}', '{$btn['cmd']}')",
-            ]);
-        }
-        $html .= '</div></div>';
-
-        return $html;
-    }
-
-    /**
      * Registers the necessary JS and CSS.
+     *
+     * @return void
      */
-    protected function registerAssets()
+    protected function registerAssets(): void
     {
         $view = $this->getView();
         $id = $this->options['id'];
-
-        $css = "
-            .simple-rich-text-editor:focus {
-                outline: none;
-                border-color: #86b7fe;
-                box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-            }
-            .simple-rich-text-editor h1, .simple-rich-text-editor h2, .simple-rich-text-editor h3,
-            .simple-rich-text-editor h4, .simple-rich-text-editor h5, .simple-rich-text-editor h6 {
-                margin-top: 0.5rem;
-                margin-bottom: 0.5rem;
-            }
-        ";
-        $view->registerCss($css);
 
         $mainJs = <<<'JS'
         var SimpleRichTextEditor = {
@@ -117,7 +96,7 @@ class SimpleRichText extends InputWidget
                 if (!editor) return;
                 editor.focus();
 
-                if (cmd.match(/^h[1-6]$/)) {
+                if (cmd.match(/^(h[1-6]|p)$/)) {
                     document.execCommand('formatBlock', false, cmd.toUpperCase());
                 } else if (cmd === 'createLink') {
                     const url = prompt('Enter the URL:');
@@ -229,7 +208,7 @@ JS;
      * @param string|null $markdown
      * @return string
      */
-    public static function sanitize($markdown)
+    public static function sanitize(?string $markdown): string
     {
         return RichTextHelper::sanitizeMarkdown($markdown);
     }

@@ -5907,3 +5907,13 @@ pre {
     line-height: 1.6;
 }
 
+.simple-rich-text-editor:focus {
+    outline: none;
+    border-color: var(--ligth-yellow);
+    box-shadow: 0 0 0 0.25rem var(--blue-25);
+}
+.simple-rich-text-editor h1, .simple-rich-text-editor h2, .simple-rich-text-editor h3,
+.simple-rich-text-editor h4, .simple-rich-text-editor h5, .simple-rich-text-editor h6 {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
