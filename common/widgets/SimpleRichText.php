@@ -2,6 +2,7 @@
 
 namespace common\widgets;
 
+use common\helpers\RichTextHelper;
 use yii\helpers\Html;
 use yii\widgets\InputWidget;
 
@@ -12,6 +13,7 @@ use yii\widgets\InputWidget;
  */
 class SimpleRichText extends InputWidget
 {
+
     /**
      * {@inheritdoc}
      */
@@ -30,11 +32,12 @@ class SimpleRichText extends InputWidget
      */
     protected function renderEditor($id, $value)
     {
-        $hiddenInput = $this->hasModel()
-            ? Html::activeHiddenInput($this->model, $this->attribute, $this->options)
-            : Html::hiddenInput($this->name, $value, $this->options);
+        $hiddenInput = $this->hasModel() ? Html::activeHiddenInput($this->model, $this->attribute, $this->options) : Html::hiddenInput($this->name, $value, $this->options);
 
-        $toolbar = $this->renderToolbar($id);
+        // $toolbar = $this->renderToolbar($id);
+        $toolbar = $this->render('simple-rich-text-toolbar', [
+            'id' => $id,
+        ]);
 
         // Use the existing MarkDown widget to render initial HTML from Markdown value
         $initialHtml = MarkDown::widget(['content' => $value]);
@@ -47,7 +50,7 @@ class SimpleRichText extends InputWidget
         ]);
 
         return Html::tag('div', $toolbar . $editor . $hiddenInput, [
-            'class' => 'simple-rich-text-container',
+                    'class' => 'simple-rich-text-container',
         ]);
     }
 
@@ -70,11 +73,11 @@ class SimpleRichText extends InputWidget
             ['icon' => 'bi-type-h6', 'cmd' => 'h6', 'title' => 'Heading 6'],
         ];
 
-        $html = '<div class="btn-toolbar mb-2 border p-1 bg-light rounded shadow-sm" role="toolbar">';
-        $html .= '<div class="btn-group me-2" role="group">';
+        $html = '<div class="btn-toolbar mb-2 rounded shadow-sm" role="toolbar" aria-label="Layout toolbar">';
+        $html .= '<div class="btn-group me-2" role="group" aria-label="Layout buttons">';
         foreach ($buttons as $btn) {
             $html .= Html::button(Html::tag('i', '', ['class' => 'bi ' . $btn['icon']]), [
-                'class' => 'btn btn-outline-secondary btn-sm',
+                'class' => 'btn btn-outline-warning btn-sm',
                 'title' => $btn['title'],
                 'type' => 'button',
                 'onclick' => "SimpleRichTextEditor.exec('{$id}', '{$btn['cmd']}')",
@@ -228,6 +231,6 @@ JS;
      */
     public static function sanitize($markdown)
     {
-        return \common\helpers\RichTextHelper::sanitizeMarkdown($markdown);
+        return RichTextHelper::sanitizeMarkdown($markdown);
     }
 }

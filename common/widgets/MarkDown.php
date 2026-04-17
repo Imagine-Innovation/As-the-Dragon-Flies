@@ -31,6 +31,13 @@ class MarkDown extends Widget
         return $this->renderMarkdown($this->content);
     }
 
+    /**
+     *
+     * @param bool $opened
+     * @param string $tag
+     * @param array<string> $result
+     * @return bool
+     */
     protected function closeTag(bool $opened, string $tag, array &$result): bool
     {
         if ($opened) {
@@ -40,6 +47,13 @@ class MarkDown extends Widget
         return true;
     }
 
+    /**
+     *
+     * @param bool $opened
+     * @param string $tag
+     * @param array<string> $result
+     * @return bool
+     */
     protected function openTag(bool $opened, string $tag, array &$result): bool
     {
         if ($opened === false) {

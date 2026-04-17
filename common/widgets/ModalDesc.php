@@ -15,7 +15,6 @@ class ModalDesc extends Widget
     public ?int $maxLength = null;
     public ?string $type = null;
     public ?int $id = null;
-    public bool $asMarkdown = false;
 
     public function run()
     {
@@ -28,7 +27,6 @@ class ModalDesc extends Widget
         if (mb_strlen($this->description) <= $maxLength) {
             return $this->render('modal-desc-raw', [
                         'description' => $this->description,
-                        'asMarkdown' => $this->asMarkdown,
             ]);
         }
 
@@ -39,7 +37,6 @@ class ModalDesc extends Widget
                     'description' => $this->description,
                     'maxLength' => $maxLength,
                     'name' => $this->name,
-                    'asMarkdown' => $this->asMarkdown,
         ]);
     }
 }

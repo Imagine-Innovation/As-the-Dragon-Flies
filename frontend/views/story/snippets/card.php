@@ -90,7 +90,6 @@ $image = $story->image ? "{$storyRoot}/img/{$story->image}" : $fileName;
                 'description' => $story->description,
                 'maxLength' => 300,
                 'id' => $story->id,
-                'asMarkdown' => true,
             ])
             ?>
         </p>

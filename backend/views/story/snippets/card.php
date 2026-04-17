@@ -98,7 +98,6 @@ $image = $story->image ? "{$storyRoot}/img/{$story->image}" : $randomImage;
                 'description' => $story->description,
                 'maxLength' => 300,
                 'id' => $story->id,
-                'asMarkdown' => true,
             ])
             ?>
         </p>
