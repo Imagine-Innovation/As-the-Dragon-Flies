@@ -62,4 +62,52 @@ class RichTextHelper
 
         return nl2br($html);
     }
+
+    /**
+     * Sanitizes Markdown and caches the result.
+     *
+     * @param string|null $markdown
+     * @param int $duration How long to cache in seconds (0 = forever)
+     * @return string
+     */
+    public static function sanitizeMarkdownWithCache(?string $markdown, int $duration = 3600): string
+    {
+        if (empty($markdown)) {
+            return '';
+        }
+
+        $cacheKey = 'purified_md_' . md5($markdown);
+
+        return Yii::$app->cache->getOrSet(
+            $cacheKey,
+            function () use ($markdown) {
+                return self::sanitizeMarkdown($markdown);
+            },
+            $duration,
+        );
+    }
+
+    /**
+     * Sanitizes Markdown by stripping HTML tags and normalizing newlines.
+     *
+     * @param string|null $markdown
+     * @return string
+     */
+    public static function sanitizeMarkdown(?string $markdown): string
+    {
+        if ($markdown === null || $markdown === '') {
+            return '';
+        }
+
+        // 1. Strip any HTML tags.
+        $markdown = strip_tags($markdown);
+
+        // 2. Basic cleanup: normalize newlines and trim
+        $markdown = str_replace(["\r\n", "\r"], "\n", $markdown);
+
+        // 3. Ensure we don't have too many consecutive newlines
+        $markdown = preg_replace("/\n{3,}/", "\n\n", $markdown);
+
+        return trim($markdown);
+    }
 }

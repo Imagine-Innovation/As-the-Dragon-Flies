@@ -6,6 +6,7 @@ use common\helpers\Utilities;
 /** @var string $description */
 /** @var int $maxLength */
 /** @var string $name */
+/** @var bool $asMarkdown */
 
 $shortDesc = Utilities::trim($description, $maxLength);
 ?>
@@ -19,7 +20,13 @@ $shortDesc = Utilities::trim($description, $maxLength);
                         <h5 class="modal-title"><?= Utilities::encode($name) ?></h5>
                     </div>
                 <?php endif; ?>
-                 <div class="modal-body"><?= \common\widgets\MarkDown::widget(['content' => $description]) ?></div>
+                 <div class="modal-body">
+                    <?php if ($asMarkdown): ?>
+                        <?= \common\widgets\MarkDown::widget(['content' => $description]) ?>
+                    <?php else: ?>
+                        <?= Utilities::encode($description) ?>
+                    <?php endif; ?>
+                </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-theme btn--icon" data-bs-dismiss="modal">
                         <i class="bi bi-x-lg"></i>

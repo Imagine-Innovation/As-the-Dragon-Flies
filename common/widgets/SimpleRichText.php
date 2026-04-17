@@ -154,7 +154,10 @@ class SimpleRichText extends InputWidget
                                     text += '*' + walk(child) + '*';
                                     break;
                                 case 'a':
-                                    const href = child.getAttribute('href') || '';
+                                        let href = child.getAttribute('href') || '';
+                                        // Simple protocol validation
+                                        const isSafe = /^(https?:\/\/|mailto:|tel:|\/\/|\/|\.\.?\/|#)/i.test(href) || /^[^:]+?(\/|$)/.test(href);
+                                        if (!isSafe) href = '#';
                                     text += '[' + walk(child) + '](' + href + ')';
                                     break;
                                 case 'ul':
@@ -225,20 +228,6 @@ JS;
      */
     public static function sanitize($markdown)
     {
-        if ($markdown === null || $markdown === '') {
-            return '';
-        }
-
-        // 1. Strip any HTML tags. We store pure Markdown.
-        // The MarkDown widget used for display will handle escaping anyway.
-        $markdown = strip_tags($markdown);
-
-        // 2. Basic cleanup: normalize newlines and trim
-        $markdown = str_replace(["\r\n", "\r"], "\n", $markdown);
-
-        // 3. Ensure we don't have too many consecutive newlines
-        $markdown = preg_replace("/\n{3,}/", "\n\n", $markdown);
-
-        return trim($markdown);
+        return \common\helpers\RichTextHelper::sanitizeMarkdown($markdown);
     }
 }
