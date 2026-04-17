@@ -17,7 +17,7 @@ $buttons = [
     ['icon' => 'bi-type-h4', 'cmd' => 'h4', 'title' => 'Heading 4'],
     ['icon' => 'bi-type-h5', 'cmd' => 'h5', 'title' => 'Heading 5'],
     ['icon' => 'bi-type-h6', 'cmd' => 'h6', 'title' => 'Heading 6'],
-    ['icon' => 'bi-eraser-fill', 'cmd' => 'p', 'title' => 'Clear format'],
+    ['icon' => 'bi-eraser-fill', 'cmd' => 'clear', 'title' => 'Clear format'],
 ];
 ?>
 

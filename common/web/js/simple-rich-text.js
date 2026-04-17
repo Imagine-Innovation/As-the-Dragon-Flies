@@ -46,6 +46,10 @@ class SimpleRichTextEditor {
             if (url) {
                 document.execCommand(cmd, false, url);
             }
+        } else if (cmd === 'clear') {
+            document.execCommand('removeFormat', false, null);
+            document.execCommand('unlink', false, null);
+            document.execCommand('formatBlock', false, 'P');
         } else {
             document.execCommand(cmd, false, null);
         }
@@ -123,16 +127,42 @@ class SimpleRichTextEditor {
                     const tagName = child.tagName.toLowerCase();
                     switch(tagName) {
                         case 'b':
-                        case 'strong':
-                            parts.push('**', walk(child), '**');
+                        case 'strong': {
+                            const content = walk(child);
+                            const leadingSpace = content.match(/^\s*/)[0];
+                            const trailingSpace = content.match(/\s*$/)[0];
+                            const trimmed = content.trim();
+                            if (trimmed) {
+                                parts.push(leadingSpace, '**', trimmed, '**', trailingSpace);
+                            } else {
+                                parts.push(content);
+                            }
                             break;
+                        }
                         case 'i':
-                        case 'em':
-                            parts.push('*', walk(child), '*');
+                        case 'em': {
+                            const content = walk(child);
+                            const leadingSpace = content.match(/^\s*/)[0];
+                            const trailingSpace = content.match(/\s*$/)[0];
+                            const trimmed = content.trim();
+                            if (trimmed) {
+                                parts.push(leadingSpace, '*', trimmed, '*', trailingSpace);
+                            } else {
+                                parts.push(content);
+                            }
                             break;
+                        }
                         case 'a': {
+                            const content = walk(child);
+                            const leadingSpace = content.match(/^\s*/)[0];
+                            const trailingSpace = content.match(/\s*$/)[0];
+                            const trimmed = content.trim();
                             const href = this.sanitizeHref(child.getAttribute('href'));
-                            parts.push('[', walk(child), '](', href, ')');
+                            if (trimmed) {
+                                parts.push(leadingSpace, '[', trimmed, '](', href, ')', trailingSpace);
+                            } else {
+                                parts.push(content);
+                            }
                             break;
                         }
                         case 'li': {
