@@ -83,7 +83,18 @@ class SimpleRichText extends InputWidget
                 'onclick' => "SimpleRichTextEditor.exec('{$id}', '{$btn['cmd']}')",
             ]);
         }
-        $html .= '</div></div>';
+        $html .= '</div>';
+
+        $html .= '<div class="btn-group ms-auto" role="group" aria-label="Clear format">';
+        $html .= Html::button(Html::tag('i', '', ['class' => 'bi bi-eraser-fill']), [
+            'class' => 'btn btn-outline-warning btn-sm',
+            'title' => 'Clear Format',
+            'type' => 'button',
+            'onclick' => "SimpleRichTextEditor.exec('{$id}', 'p')",
+        ]);
+        $html .= '</div>';
+
+        $html .= '</div>';
 
         return $html;
     }
@@ -117,7 +128,7 @@ class SimpleRichText extends InputWidget
                 if (!editor) return;
                 editor.focus();
 
-                if (cmd.match(/^h[1-6]$/)) {
+                if (cmd.match(/^(h[1-6]|p)$/)) {
                     document.execCommand('formatBlock', false, cmd.toUpperCase());
                 } else if (cmd === 'createLink') {
                     const url = prompt('Enter the URL:');

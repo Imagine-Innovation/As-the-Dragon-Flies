@@ -25,4 +25,11 @@ $buttons = [
             </button>
         <?php endforeach; ?>
     </div>
+    <div class="btn-group ms-auto" role="group" aria-label="Clear format">
+        <button type="button" class="btn btn-outline-warning btn-sm"
+                title="Clear Format"
+                onclick="SimpleRichTextEditor.exec('<?= $id ?>', 'p')">
+            <i class="bi bi-eraser-fill"></i>
+        </button>
+    </div>
 </div>
