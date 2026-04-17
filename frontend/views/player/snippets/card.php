@@ -30,7 +30,7 @@ $route = $player->status === AppStatus::ACTIVE->value ? 'player/view' : 'player/
     <img class="card-img-top" src="<?= $imgPath ?>/character/<?= $player->avatar ?>" alt="avatar">
 
     <div class="card-body">
-        <h4 class="card-title"><?= $player->name ?? 'Unkown yet' ?></h4>
+        <h4 class="card-title"><?= $player->name ?? 'Unknown yet' ?></h4>
         <?php if ($player->age): ?>
             <h4 class="card-subtitle"><?= $player->age ?>-year-old
                 <?= $player->gender === 'M' ? 'male' : 'female' ?>

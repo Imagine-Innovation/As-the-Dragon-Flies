@@ -89,7 +89,7 @@ if (Yii::$app->user->identity->is_player) {
                             <td><?= $model->race->name ?></td>
                             <td><?= $model->class->name ?></td>
                             <td><?= $model->background->name ?></td>
-                            <td><?= $model->alignment->name ?? 'Unkown' ?></td>
+                            <td><?= $model->alignment->name ?? 'Unknown' ?></td>
                             <td>
                                 <?=
                                 ActionButtons::widget([
