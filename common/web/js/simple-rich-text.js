@@ -4,26 +4,29 @@
  */
 class SimpleRichTextEditor {
     /**
-     * Initializes all rich text editors on the page.
+     * Initializes event delegation for rich text editors.
+     * Using delegation to support elements injected via AJAX/PJAX.
      */
     static init() {
-        $('.simple-rich-text-editor').each(function() {
-            const editor = this;
+        if (this._initialized) return;
+
+        $(document).on('input', '.simple-rich-text-editor', (e) => {
+            const editor = e.currentTarget;
             const id = editor.id.replace('-editor', '');
-
-            // Avoid double initialization
-            if (editor.dataset.initialized) return;
-
-            editor.addEventListener('input', () => SimpleRichTextEditor.updateHidden(id));
-            editor.addEventListener('paste', (e) => {
-                e.preventDefault();
-                const text = (e.clipboardData || window.clipboardData).getData('text/plain');
-                document.execCommand('insertText', false, text);
-                SimpleRichTextEditor.updateHidden(id);
-            });
-
-            editor.dataset.initialized = 'true';
+            this.updateHidden(id);
         });
+
+        $(document).on('paste', '.simple-rich-text-editor', (e) => {
+            e.preventDefault();
+            const text = (e.originalEvent.clipboardData || window.clipboardData).getData('text/plain');
+            document.execCommand('insertText', false, text);
+
+            const editor = e.currentTarget;
+            const id = editor.id.replace('-editor', '');
+            this.updateHidden(id);
+        });
+
+        this._initialized = true;
     }
 
     /**
@@ -62,71 +65,103 @@ class SimpleRichTextEditor {
     }
 
     /**
+     * Sanitizes a URL for use in a Markdown link.
+     * @param {string|null} href
+     * @returns {string}
+     */
+    static sanitizeHref(href) {
+        href = href || '';
+        const isSafe = /^(https?:\/\/|mailto:|tel:|\/\/|\/|\.\.?\/|#)/i.test(href) || /^[^:]+?(\/|$)/.test(href);
+        return isSafe ? href : '#';
+    }
+
+    /**
+     * Gets the Markdown prefix for a heading tag.
+     * @param {string} tagName
+     * @returns {string}
+     */
+    static headingPrefix(tagName) {
+        const level = parseInt(tagName[1], 10);
+        return '#'.repeat(level);
+    }
+
+    /**
+     * Checks if a tag is a block-level element.
+     * @param {string} tagName
+     * @returns {boolean}
+     */
+    static isBlock(tagName) {
+        return tagName === 'p' || tagName === 'div';
+    }
+
+    /**
+     * Checks if a tag is a list element.
+     * @param {string} tagName
+     * @returns {boolean}
+     */
+    static isList(tagName) {
+        return tagName === 'ul' || tagName === 'ol';
+    }
+
+    /**
      * Converts HTML to Markdown.
      * @param {string} html - The HTML string to convert.
      * @returns {string} - The converted Markdown string.
      */
     static htmlToMarkdown(html) {
-        const temp = document.createElement('div');
-        temp.innerHTML = html;
+        // Use DOMParser instead of innerHTML for better security
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const root = doc.body;
 
         const walk = (node) => {
-            let text = '';
+            const parts = [];
             node.childNodes.forEach(child => {
                 if (child.nodeType === 3) {
-                    text += child.textContent;
+                    parts.push(child.textContent);
                 } else if (child.nodeType === 1) {
                     const tagName = child.tagName.toLowerCase();
                     switch(tagName) {
                         case 'b':
                         case 'strong':
-                            text += '**' + walk(child) + '**';
+                            parts.push('**', walk(child), '**');
                             break;
                         case 'i':
                         case 'em':
-                            text += '*' + walk(child) + '*';
+                            parts.push('*', walk(child), '*');
                             break;
-                        case 'a':
-                            let href = child.getAttribute('href') || '';
-                            // Simple protocol validation
-                            const isSafe = /^(https?:\/\/|mailto:|tel:|\/\/|\/|\.\.?\/|#)/i.test(href) || /^[^:]+?(\/|$)/.test(href);
-                            if (!isSafe) href = '#';
-                            text += '[' + walk(child) + '](' + href + ')';
+                        case 'a': {
+                            const href = this.sanitizeHref(child.getAttribute('href'));
+                            parts.push('[', walk(child), '](', href, ')');
                             break;
-                        case 'ul':
-                            text += '\n\n' + walk(child) + '\n';
-                            break;
-                        case 'ol':
-                            text += '\n\n' + walk(child) + '\n';
-                            break;
-                        case 'li':
+                        }
+                        case 'li': {
                             const parent = child.parentNode;
                             const isOrdered = parent && parent.tagName.toLowerCase() === 'ol';
                             const prefix = isOrdered ? '1. ' : '* ';
-                            text += prefix + walk(child) + '\n';
+                            parts.push(prefix, walk(child), '\n');
                             break;
-                        case 'h1': text += '\n# ' + walk(child) + '\n'; break;
-                        case 'h2': text += '\n## ' + walk(child) + '\n'; break;
-                        case 'h3': text += '\n### ' + walk(child) + '\n'; break;
-                        case 'h4': text += '\n#### ' + walk(child) + '\n'; break;
-                        case 'h5': text += '\n##### ' + walk(child) + '\n'; break;
-                        case 'h6': text += '\n###### ' + walk(child) + '\n'; break;
-                        case 'p':
-                        case 'div':
-                            text += '\n' + walk(child) + '\n';
-                            break;
+                        }
                         case 'br':
-                            text += '\n';
+                            parts.push('\n');
                             break;
                         default:
-                            text += walk(child);
+                            if (this.isList(tagName)) {
+                                parts.push('\n\n', walk(child), '\n');
+                            } else if (/^h[1-6]$/.test(tagName)) {
+                                parts.push('\n', this.headingPrefix(tagName), ' ', walk(child), '\n');
+                            } else if (this.isBlock(tagName)) {
+                                parts.push('\n', walk(child), '\n');
+                            } else {
+                                parts.push(walk(child));
+                            }
                     }
                 }
             });
-            return text;
+            return parts.join('');
         };
 
-        let md = walk(temp);
+        let md = walk(root);
         md = md.replace(/\n\s*\n\s*\n/g, '\n\n');
         return md.trim();
     }

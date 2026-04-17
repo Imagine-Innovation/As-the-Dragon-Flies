@@ -3,7 +3,7 @@
 namespace common\widgets;
 
 use yii\widgets\InputWidget;
-use yii\base\Model;
+use yii\helpers\Html;
 
 /**
  * SimpleRichText widget is a minimal rich text editor that inputs and stores Markdown.
@@ -23,12 +23,13 @@ class SimpleRichText extends InputWidget
         $model = $this->model;
         $attribute = (string) $this->attribute;
 
-        if ($model instanceof Model) {
-            $value = (string) $model->$attribute;
-            $name = $this->getInputName($model, $attribute);
+        if ($model !== null) {
+            $attributeValue = Html::getAttributeValue($model, $attribute);
+            $value = is_array($attributeValue) ? '' : (string) $attributeValue;
+            $name = (string) Html::getInputName($model, $attribute);
         } else {
             $value = (string) $this->value;
-            $name = (string) $this->name;
+            $name = (string) ($this->name ?? 'RichText');
         }
 
         $initialHtml = MarkDown::widget(['content' => $value]);
@@ -39,21 +40,6 @@ class SimpleRichText extends InputWidget
                     'value' => $value,
                     'initialHtml' => $initialHtml,
         ]);
-    }
-
-    /**
-     * Helper to get the input name for a model and attribute.
-     * @param Model $model
-     * @param string $attribute
-     * @return string
-     */
-    protected function getInputName(Model $model, string $attribute): string
-    {
-        $formName = $model->formName();
-        if ($formName === '') {
-            return $attribute;
-        }
-        return $formName . '[' . $attribute . ']';
     }
 
     /**
