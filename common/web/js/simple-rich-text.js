@@ -46,6 +46,10 @@ class SimpleRichTextEditor {
             if (url) {
                 document.execCommand(cmd, false, url);
             }
+        } else if (cmd === 'clear') {
+            document.execCommand('removeFormat', false, null);
+            document.execCommand('unlink', false, null);
+            document.execCommand('formatBlock', false, 'P');
         } else {
             document.execCommand(cmd, false, null);
         }
@@ -116,6 +120,20 @@ class SimpleRichTextEditor {
 
         const walk = (node) => {
             const parts = [];
+
+            const wrapWithMarkdownDelimitersPreservingWhitespace = (child, delimiterStart, delimiterEnd) => {
+                const content = walk(child);
+                const leadingSpace = content.match(/^\s*/)[0];
+                const trailingSpace = content.match(/\s*$/)[0];
+                const trimmed = content.trim();
+
+                if (trimmed) {
+                    parts.push(leadingSpace, delimiterStart, trimmed, delimiterEnd, trailingSpace);
+                } else {
+                    parts.push(content);
+                }
+            };
+
             node.childNodes.forEach(child => {
                 if (child.nodeType === 3) {
                     parts.push(child.textContent);
@@ -123,16 +141,18 @@ class SimpleRichTextEditor {
                     const tagName = child.tagName.toLowerCase();
                     switch(tagName) {
                         case 'b':
-                        case 'strong':
-                            parts.push('**', walk(child), '**');
+                        case 'strong': {
+                            wrapWithMarkdownDelimitersPreservingWhitespace(child, '**', '**');
                             break;
+                        }
                         case 'i':
-                        case 'em':
-                            parts.push('*', walk(child), '*');
+                        case 'em': {
+                            wrapWithMarkdownDelimitersPreservingWhitespace(child, '*', '*');
                             break;
+                        }
                         case 'a': {
                             const href = this.sanitizeHref(child.getAttribute('href'));
-                            parts.push('[', walk(child), '](', href, ')');
+                            wrapWithMarkdownDelimitersPreservingWhitespace(child, '[', '](' + href + ')');
                             break;
                         }
                         case 'li': {
