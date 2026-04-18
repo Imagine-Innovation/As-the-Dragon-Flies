@@ -2,6 +2,7 @@
 
 namespace common\widgets;
 
+use common\helpers\RichTextHelper;
 use yii\base\Widget;
 
 /**
@@ -32,19 +33,20 @@ class MarkDown extends Widget
     }
 
     /**
+     * Closes an HTML tag if it is currently marked as open.
+     * Always returns false to indicate the tag is now closed.
      *
-     * @param bool $opened
-     * @param string $tag
-     * @param array<string> $result
-     * @return bool
+     * @param bool $opened Whether the tag is currently open.
+     * @param string $tag The tag name to close.
+     * @param array<string> $result The result array to append the closing tag to.
+     * @return bool Always false.
      */
     protected function closeTag(bool $opened, string $tag, array &$result): bool
     {
         if ($opened) {
             $result[] = "</{$tag}>";
-            return false;
         }
-        return true;
+        return false;
     }
 
     /**
@@ -70,10 +72,13 @@ class MarkDown extends Widget
      */
     protected function renderMarkdown(string $content): string
     {
-        // 1. Escape HTML to prevent XSS as the first security layer
+        // 1. Normalize line breaks: replace <br> tags with newlines
+        $content = RichTextHelper::normalizeLineBreaks($content);
+
+        // 2. Escape HTML to prevent XSS as the first security layer
         $html = htmlspecialchars($content, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
-        // 2. Identify and process blocks
+        // 3. Identify and process blocks
         $lines = explode(PHP_EOL, $html);
         $result = [];
         $ulOpened = false;

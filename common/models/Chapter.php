@@ -43,7 +43,7 @@ class Chapter extends \yii\db\ActiveRecord
             [['story_id', 'name'], 'required'],
             [['story_id', 'chapter_number', 'first_mission_id'], 'integer'],
             [['description'], 'string'],
-            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeMarkdownWithCache']],
             [['name', 'image'], 'string', 'max' => 64],
             [['story_id', 'chapter_number'], 'unique', 'targetAttribute' => ['story_id', 'chapter_number']],
             [

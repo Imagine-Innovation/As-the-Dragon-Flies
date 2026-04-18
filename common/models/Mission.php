@@ -44,7 +44,7 @@ class Mission extends \yii\db\ActiveRecord
             [['chapter_id', 'name'], 'required'],
             [['chapter_id'], 'integer'],
             [['description'], 'string'],
-            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeMarkdownWithCache']],
             [['name', 'image'], 'string', 'max' => 64],
             [
                 ['chapter_id'],
