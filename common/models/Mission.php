@@ -26,6 +26,7 @@ use Yii;
  */
 class Mission extends \yii\db\ActiveRecord
 {
+
     /**
      * {@inheritdoc}
      */
@@ -46,13 +47,7 @@ class Mission extends \yii\db\ActiveRecord
             [['description'], 'string'],
             [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeMarkdownWithCache']],
             [['name', 'image'], 'string', 'max' => 64],
-            [
-                ['chapter_id'],
-                'exist',
-                'skipOnError' => true,
-                'targetClass' => Chapter::class,
-                'targetAttribute' => ['chapter_id' => 'id'],
-            ],
+            [['chapter_id'], 'exist', 'skipOnError' => true, 'targetClass' => Chapter::class, 'targetAttribute' => ['chapter_id' => 'id'],],
         ];
     }
 

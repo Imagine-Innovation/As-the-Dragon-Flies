@@ -1,0 +1,55 @@
+<?php
+
+use common\helpers\WebResourcesHelper;
+use common\widgets\SimpleRichText;
+use yii\helpers\Html;
+use yii\widgets\ActiveForm;
+
+/** @var yii\web\View $this */
+/** @var common\models\Chapter $model */
+/** @var yii\widgets\ActiveForm $form */
+$storyRoot = WebResourcesHelper::storyRootPath($model->story_id);
+?>
+
+<?php $form = ActiveForm::begin(); ?>
+<div class="row mb-3">
+    <div class="col-4 col-lg-2 col-3xl-1">
+        <?= $form->field($model, 'chapter_number')->textInput() ?>
+    </div>
+    <div class="col-8 col-lg-10 col-3xl-11">
+        <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+    </div>
+</div>
+<?php if ($model->image): ?>
+    <div class="row">
+        <div class="col-2">
+            <img src="<?= $storyRoot ?>/img/<?= $model->image ?>" alt="<?= $model->name ?>" class="w-100 h-100" style="object-fit: cover;" />
+        </div>
+        <div class="col-10">
+        <?php endif; ?>
+
+        <?= $form->field($model, 'description')->widget(SimpleRichText::class) ?>
+
+        <?=
+                $form->field($model, 'image')->dropdownList(
+                        $model->image ? [$model->image => $model->image] : [],
+                        [
+                            'class' => 'select2-container w-100',
+                            'data-minimum-results-for-search' => -1,
+                            'data-placeholder' => 'Select an image',
+                            'maxlength' => true,
+                        ],
+                )
+                ->label('Chapter image')
+        ?>
+
+        <?php if ($model->image): ?>
+        </div>
+    </div>
+<?php endif; ?>
+
+<div class="form-group">
+    <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+</div>
+
+<?php ActiveForm::end(); ?>

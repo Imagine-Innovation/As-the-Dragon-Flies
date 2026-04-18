@@ -3,7 +3,6 @@
 use common\components\NarrativeComponent;
 use common\helpers\WebResourcesHelper;
 use common\widgets\Button;
-use common\widgets\MarkDown;
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */
@@ -58,7 +57,7 @@ $missionDescription = $narrative->missionDecription();
                 <div class="card-body flex-grow-1"> <!-- Add flex-grow-1 -->
                     <?php
                     foreach ($missionDescription as $description) {
-                        echo MarkDown::widget(['content' => $description]);
+                        echo $description;
                     }
                     ?>
                     <br>

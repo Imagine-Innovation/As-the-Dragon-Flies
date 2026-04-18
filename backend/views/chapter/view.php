@@ -2,6 +2,7 @@
 
 use common\helpers\WebResourcesHelper;
 use common\widgets\Button;
+use common\widgets\MarkDown;
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */
@@ -43,7 +44,7 @@ $this->params['breadcrumbs'] = $breadcrumbs;
                     <h3 class="card-title">Chapter <?= $model->chapter_number ?>: <?= $model->name ?></h3>
                 </div>
                 <div class="card-body flex-grow-1"> <!-- Add flex-grow-1 -->
-                    <p class="card-text"><?= nl2br($model->description ?? '') ?></p>
+                    <p class="card-text"><?= MarkDown::widget(['content' => $model->description]) ?></p>
                     <br>
                     <?php foreach ($model->missions as $mission): ?>
                         <p><a href="<?= Url::toRoute(['mission/view', 'id' => $mission->id]) ?>"><?= $mission->name ?></a></p>
