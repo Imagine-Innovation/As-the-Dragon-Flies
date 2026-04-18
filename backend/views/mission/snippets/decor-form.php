@@ -1,6 +1,7 @@
 <?php
 
 use common\helpers\WebResourcesHelper;
+use common\widgets\SimpleRichText;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -25,8 +26,6 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
 
 <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
-<?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
-
 <?php if ($model->image): ?>
     <div class="row">
         <div class="col-2">
@@ -34,6 +33,8 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
         </div>
         <div class="col-10">
         <?php endif; ?>
+
+        <?= $form->field($model, 'description')->widget(SimpleRichText::class) ?>
 
         <?=
                 $form->field($model, 'image')->dropdownList(

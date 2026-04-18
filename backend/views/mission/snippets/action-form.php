@@ -1,6 +1,7 @@
 <?php
 
 use common\helpers\WebResourcesHelper;
+use common\widgets\SimpleRichText;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -69,18 +70,14 @@ $actionType = $model->action_type_id ? $model->actionType : null;
     </div>
 </div>
 
-<div class="row row-cols-1 row-cols-lg-2 row-cols-xl-4 g-3">
+<div class="row row-cols-1 row-cols-lg-2 row-cols-3xl-4 g-3">
     <div class="col">
         <article class="card mb-3 h-100">
             <div class="card-header">
                 <h6 class="card-title">Short description</h6>
             </div>
             <div class="card-body">
-                <?=
-                $form->field($model, 'description', [
-                    'labelOptions' => ['style' => 'display: none;'],
-                ])->textarea(['rows' => 6])
-                ?>
+                <?= $form->field($model, 'description')->widget(SimpleRichText::class) ?>
             </div>
         </article>
     </div>
@@ -222,7 +219,7 @@ $actionType = $model->action_type_id ? $model->actionType : null;
 </div>
 
 <div class="form-group">
-    <?= Html::submitButton('Save', ['class' => 'btn btn-success bi-floppy']) ?>
+    <?= Html::submitButton('&nbsp;Save', ['class' => 'btn btn-success bi-floppy']) ?>
 </div>
 
 <?php ActiveForm::end(); ?>

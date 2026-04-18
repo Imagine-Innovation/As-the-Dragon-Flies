@@ -3336,16 +3336,16 @@
         },
         {
             "name": "carthage-software/mago",
-            "version": "1.21.0",
+            "version": "1.22.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/carthage-software/mago.git",
-                "reference": "2e0aee3579acfb23db99c2f7c5f21645d964f894"
+                "reference": "88c4170fb16e5aa941f035b6a924017505c934ce"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/carthage-software/mago/zipball/2e0aee3579acfb23db99c2f7c5f21645d964f894",
-                "reference": "2e0aee3579acfb23db99c2f7c5f21645d964f894",
+                "url": "https://api.github.com/repos/carthage-software/mago/zipball/88c4170fb16e5aa941f035b6a924017505c934ce",
+                "reference": "88c4170fb16e5aa941f035b6a924017505c934ce",
                 "shasum": ""
             },
             "require": {
@@ -3380,7 +3380,7 @@
             ],
             "support": {
                 "issues": "https://github.com/carthage-software/mago/issues",
-                "source": "https://github.com/carthage-software/mago/tree/1.21.0"
+                "source": "https://github.com/carthage-software/mago/tree/1.22.0"
             },
             "funding": [
                 {
@@ -3388,7 +3388,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-04-17T06:44:23+00:00"
+            "time": "2026-04-18T06:49:40+00:00"
         },
         {
             "name": "codeception/codeception",
@@ -4422,11 +4422,11 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "2.1.49",
+            "version": "2.1.50",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/d0082955396e7f5ba19cf298224b85e1099f0ed8",
-                "reference": "d0082955396e7f5ba19cf298224b85e1099f0ed8",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/d452086fb4cf648c6b2d8cf3b639351f79e4f3e2",
+                "reference": "d452086fb4cf648c6b2d8cf3b639351f79e4f3e2",
                 "shasum": ""
             },
             "require": {
@@ -4471,7 +4471,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-04-16T21:10:58+00:00"
+            "time": "2026-04-17T13:10:32+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",

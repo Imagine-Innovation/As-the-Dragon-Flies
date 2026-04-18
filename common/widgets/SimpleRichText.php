@@ -2,6 +2,7 @@
 
 namespace common\widgets;
 
+use common\helpers\RichTextHelper;
 use yii\widgets\InputWidget;
 use yii\helpers\Html;
 
@@ -51,6 +52,6 @@ class SimpleRichText extends InputWidget
      */
     public static function sanitize(?string $markdown): string
     {
-        return \common\helpers\RichTextHelper::sanitizeMarkdown($markdown);
+        return RichTextHelper::sanitizeMarkdown($markdown);
     }
 }

@@ -79,12 +79,12 @@ class RichTextHelper
         $cacheKey = 'purified_md_' . md5($markdown);
 
         return Yii::$app->cache->getOrSet(
-            $cacheKey,
-            function () use ($markdown) {
-                return self::sanitizeMarkdown($markdown);
-            },
-            $duration,
-        );
+                        $cacheKey,
+                        function () use ($markdown) {
+                            return self::sanitizeMarkdown($markdown);
+                        },
+                        $duration,
+                );
     }
 
     /**

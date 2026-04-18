@@ -74,27 +74,27 @@ class MarkDown extends Widget
         $html = htmlspecialchars($content, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
         // 2. Identify and process blocks
-        $lines = explode("\n", $html);
+        $lines = explode(PHP_EOL, $html);
         $result = [];
-        $ulOpen = false;
-        $olOpen = false;
-        $pOpen = false;
+        $ulOpened = false;
+        $olOpened = false;
+        $pOpened = false;
 
         foreach ($lines as $line) {
             $trimmed = trim($line);
 
             if (empty($trimmed)) {
-                $ulOpen = $this->closeTag($ulOpen, 'ul', $result);
-                $olOpen = $this->closeTag($olOpen, 'ol', $result);
-                $pOpen = $this->closeTag($pOpen, 'p', $result);
+                $ulOpened = $this->closeTag($ulOpened, 'ul', $result);
+                $olOpened = $this->closeTag($olOpened, 'ol', $result);
+                $pOpened = $this->closeTag($pOpened, 'p', $result);
                 continue;
             }
 
             // Headers (H1 - H6)
             if (preg_match('/^(#{1,6})\s+(.+)$/', $trimmed, $matches)) {
-                $ulOpen = $this->closeTag($ulOpen, 'ul', $result);
-                $olOpen = $this->closeTag($olOpen, 'ol', $result);
-                $pOpen = $this->closeTag($pOpen, 'p', $result);
+                $ulOpened = $this->closeTag($ulOpened, 'ul', $result);
+                $olOpened = $this->closeTag($olOpened, 'ol', $result);
+                $pOpened = $this->closeTag($pOpened, 'p', $result);
 
                 $level = strlen($matches[1]);
                 $innerContent = $this->applyInlineStyles($matches[2]);
@@ -104,9 +104,9 @@ class MarkDown extends Widget
 
             // Unordered List item (*, -, +)
             if (preg_match('/^[\*\-\+]\s+(.+)$/', $trimmed, $matches)) {
-                $ulOpen = $this->openTag($ulOpen, 'ul', $result);
-                $olOpen = $this->closeTag($olOpen, 'ol', $result);
-                $pOpen = $this->closeTag($pOpen, 'p', $result);
+                $ulOpened = $this->openTag($ulOpened, 'ul', $result);
+                $olOpened = $this->closeTag($olOpened, 'ol', $result);
+                $pOpened = $this->closeTag($pOpened, 'p', $result);
 
                 $innerContent = $this->applyInlineStyles($matches[1]);
                 $result[] = "<li>{$innerContent}</li>";
@@ -115,9 +115,9 @@ class MarkDown extends Widget
 
             // Ordered List item (1., 2., etc.)
             if (preg_match('/^\d+\.\s+(.+)$/', $trimmed, $matches)) {
-                $ulOpen = $this->closeTag($ulOpen, 'ul', $result);
-                $olOpen = $this->openTag($olOpen, 'ol', $result);
-                $pOpen = $this->closeTag($pOpen, 'p', $result);
+                $ulOpened = $this->closeTag($ulOpened, 'ul', $result);
+                $olOpened = $this->openTag($olOpened, 'ol', $result);
+                $pOpened = $this->closeTag($pOpened, 'p', $result);
 
                 $innerContent = $this->applyInlineStyles($matches[1]);
                 $result[] = "<li>{$innerContent}</li>";
@@ -125,12 +125,12 @@ class MarkDown extends Widget
             }
 
             // Paragraph
-            $ulOpen = $this->closeTag($ulOpen, 'ul', $result);
-            $olOpen = $this->closeTag($olOpen, 'ol', $result);
+            $ulOpened = $this->closeTag($ulOpened, 'ul', $result);
+            $olOpened = $this->closeTag($olOpened, 'ol', $result);
 
-            if (!$pOpen) {
+            if (!$pOpened) {
                 $result[] = '<p class="mb-3">' . $this->applyInlineStyles($trimmed);
-                $pOpen = true;
+                $pOpened = true;
             } else {
                 $lastIdx = count($result) - 1;
                 $result[$lastIdx] .= ' ' . $this->applyInlineStyles($trimmed);
@@ -138,11 +138,11 @@ class MarkDown extends Widget
         }
 
         // Close any remaining tags
-        $this->closeTag($ulOpen, 'ul', $result);
-        $this->closeTag($olOpen, 'ol', $result);
-        $this->closeTag($pOpen, 'p', $result);
+        $this->closeTag($ulOpened, 'ul', $result);
+        $this->closeTag($olOpened, 'ol', $result);
+        $this->closeTag($pOpened, 'p', $result);
 
-        return implode("\n", $result);
+        return implode(PHP_EOL, $result);
     }
 
     /**

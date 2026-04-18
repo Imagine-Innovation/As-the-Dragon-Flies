@@ -3,11 +3,13 @@
 namespace common\components;
 
 use common\models\Mission;
+use common\widgets\MarkDown;
 use Yii;
 use yii\base\Component;
 
 class NarrativeComponent extends Component
 {
+
     const DETAILS = ['decors', 'npcs', 'passages', 'monsters'];
 
     public ?Mission $mission = null;
@@ -33,7 +35,7 @@ class NarrativeComponent extends Component
 
         $narrative = ["Mission: {$this->mission->name}"];
         if ($this->mission->description) {
-            $narrative[] = nl2br($this->mission->description);
+            $narrative[] = MarkDown::widget(['content' => $this->mission->description]);
         }
 
         foreach (self::DETAILS as $details) {
@@ -50,12 +52,7 @@ class NarrativeComponent extends Component
     public function renderDescription(): string
     {
         $descriptions = $this->missionDecription();
-        $text = '';
-        $i = 0;
-        foreach ($descriptions as $description) {
-            $tag = $i++ === 0 ? 'h3' : 'p';
-            $text .= "<{$tag} class=\"card-text\">{$description}</{$tag}>";
-        }
+        $text = implode(PHP_EOL, $descriptions);
         return $text;
     }
 
@@ -69,7 +66,7 @@ class NarrativeComponent extends Component
         $narrative = [];
         $detailList = $this->mission->$details;
         foreach ($detailList as $detail) {
-            $narrative[] = $detail->description ? nl2br($detail->description) : $detail->name;
+            $narrative[] = $detail->description ? MarkDown::widget(['content' => $detail->description]) : $detail->name;
         }
         return $narrative;
     }

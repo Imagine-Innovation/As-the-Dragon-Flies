@@ -3,6 +3,7 @@
 use common\components\NarrativeComponent;
 use common\helpers\WebResourcesHelper;
 use common\widgets\Button;
+use common\widgets\MarkDown;
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */
@@ -24,7 +25,6 @@ $this->params['breadcrumbs'] = $breadcrumbs;
 
 $narrative = new NarrativeComponent(['mission' => $model]);
 $missionDescription = $narrative->missionDecription();
-\yii\web\YiiAsset::register($this);
 ?>
 <div class="container-fluid">
     <div class="card mb-3">
@@ -38,18 +38,29 @@ $missionDescription = $narrative->missionDecription();
             ])
             ?>
         </div>
-        <div class="row g-0 d-flex">
-            <div class="col-0 col-md-4 d-flex align-items-stretch">
-                <img src="<?= $storyRoot ?>/img/<?= $model->image ?>" class="img-fluid object-fit-cover rounded-start w-100" alt="<?= $model->name ?>">
-            </div>
-            <div class="col-12 col-md-8 d-flex flex-column"> <!-- Add d-flex and flex-column -->
+        <?php if ($model->image): ?>
+            <div class="row">
+                <div class="col-2">
+                    <img src="<?= $storyRoot ?>/img/<?= $model->image ?>" alt="<?= $model->name ?>" class="w-100 h-100" style="object-fit: cover;" />
+                </div>
+                <div class="col-10">
+                <?php endif; ?>
+                <!--
+            <div class="row g-0 d-flex">
+                <div class="col-0 col-md-4 d-flex align-items-stretch">
+                    <img src="<?= $storyRoot ?>/img/<?= $model->image ?>" class="img-fluid object-fit-cover rounded-start w-100" alt="<?= $model->name ?>">
+                </div>
+                <div class="col-12 col-md-8 d-flex flex-column">
+                -->
                 <div class="card-header">
                     <h3 class="card-title">Mission: <?= $model->name ?></h3>
                 </div>
                 <div class="card-body flex-grow-1"> <!-- Add flex-grow-1 -->
-                    <?php foreach ($missionDescription as $description): ?>
-                        <p class="card-text text-decoration"><?= $description ?></p>
-                    <?php endforeach; ?>
+                    <?php
+                    foreach ($missionDescription as $description) {
+                        echo MarkDown::widget(['content' => $description]);
+                    }
+                    ?>
                     <br>
                     <section id="MissionEnvironment">
                         <div class="row row-cols-1 row-cols-xl-2 row-cols-xxl-4 g-4">
@@ -98,5 +109,7 @@ $missionDescription = $narrative->missionDecription();
                 </div>
             </div>
         </div>
+        <?php if ($model->image): ?>
+        </div>
     </div>
-</div>
+<?php endif; ?>
