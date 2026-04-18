@@ -42,9 +42,8 @@ class MarkDown extends Widget
     {
         if ($opened) {
             $result[] = "</{$tag}>";
-            return false;
         }
-        return true;
+        return false;
     }
 
     /**
@@ -70,10 +69,13 @@ class MarkDown extends Widget
      */
     protected function renderMarkdown(string $content): string
     {
-        // 1. Escape HTML to prevent XSS as the first security layer
+        // 1. Normalize line breaks: replace <br> tags with newlines
+        $content = (string) preg_replace('/<br\s*\/?>/i', PHP_EOL, $content);
+
+        // 2. Escape HTML to prevent XSS as the first security layer
         $html = htmlspecialchars($content, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
-        // 2. Identify and process blocks
+        // 3. Identify and process blocks
         $lines = explode(PHP_EOL, $html);
         $result = [];
         $ulOpened = false;

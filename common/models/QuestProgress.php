@@ -51,7 +51,7 @@ class QuestProgress extends \yii\db\ActiveRecord
             [['mission_id', 'quest_id', 'current_player_id', 'status'], 'required'],
             [['mission_id', 'quest_id', 'current_player_id', 'status', 'started_at', 'completed_at'], 'integer'],
             [['description'], 'string'],
-            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeMarkdownWithCache']],
             [
                 ['quest_id'],
                 'exist',

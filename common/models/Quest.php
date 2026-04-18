@@ -91,7 +91,7 @@ class Quest extends \yii\db\ActiveRecord
                 'integer',
             ],
             [['description'], 'string'],
-            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeMarkdownWithCache']],
             [['name', 'image'], 'string', 'max' => 64],
             [
                 ['story_id'],

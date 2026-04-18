@@ -60,7 +60,7 @@ class RichTextHelper
             'HTML.DefinitionRev' => 1,
         ]);
 
-        return nl2br($html);
+        return $html;
     }
 
     /**
@@ -99,7 +99,10 @@ class RichTextHelper
             return '';
         }
 
-        // 1. Strip any HTML tags.
+        // 1. Replace <br> with newlines before stripping tags
+        $markdown = (string) preg_replace('/<br\s*\/?>/i', "\n", $markdown);
+
+        // 2. Strip any HTML tags.
         $markdown = strip_tags($markdown);
 
         // 2. Basic cleanup: normalize newlines and trim
