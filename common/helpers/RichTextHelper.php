@@ -88,6 +88,17 @@ class RichTextHelper
     }
 
     /**
+     * Normalizes line breaks by replacing <br> tags with PHP_EOL.
+     *
+     * @param string $text
+     * @return string
+     */
+    public static function normalizeLineBreaks(string $text): string
+    {
+        return (string) preg_replace('/<br\s*\/?>/i', PHP_EOL, $text);
+    }
+
+    /**
      * Sanitizes Markdown by stripping HTML tags and normalizing newlines.
      *
      * @param string|null $markdown
@@ -100,7 +111,7 @@ class RichTextHelper
         }
 
         // 1. Replace <br> with newlines before stripping tags
-        $markdown = (string) preg_replace('/<br\s*\/?>/i', "\n", $markdown);
+        $markdown = self::normalizeLineBreaks($markdown);
 
         // 2. Strip any HTML tags.
         $markdown = strip_tags($markdown);
