@@ -120,6 +120,20 @@ class SimpleRichTextEditor {
 
         const walk = (node) => {
             const parts = [];
+
+            const wrapWithMarkdownDelimitersPreservingWhitespace = (child, delimiterStart, delimiterEnd) => {
+                const content = walk(child);
+                const leadingSpace = content.match(/^\s*/)[0];
+                const trailingSpace = content.match(/\s*$/)[0];
+                const trimmed = content.trim();
+
+                if (trimmed) {
+                    parts.push(leadingSpace, delimiterStart, trimmed, delimiterEnd, trailingSpace);
+                } else {
+                    parts.push(content);
+                }
+            };
+
             node.childNodes.forEach(child => {
                 if (child.nodeType === 3) {
                     parts.push(child.textContent);
@@ -128,41 +142,17 @@ class SimpleRichTextEditor {
                     switch(tagName) {
                         case 'b':
                         case 'strong': {
-                            const content = walk(child);
-                            const leadingSpace = content.match(/^\s*/)[0];
-                            const trailingSpace = content.match(/\s*$/)[0];
-                            const trimmed = content.trim();
-                            if (trimmed) {
-                                parts.push(leadingSpace, '**', trimmed, '**', trailingSpace);
-                            } else {
-                                parts.push(content);
-                            }
+                            wrapWithMarkdownDelimitersPreservingWhitespace(child, '**', '**');
                             break;
                         }
                         case 'i':
                         case 'em': {
-                            const content = walk(child);
-                            const leadingSpace = content.match(/^\s*/)[0];
-                            const trailingSpace = content.match(/\s*$/)[0];
-                            const trimmed = content.trim();
-                            if (trimmed) {
-                                parts.push(leadingSpace, '*', trimmed, '*', trailingSpace);
-                            } else {
-                                parts.push(content);
-                            }
+                            wrapWithMarkdownDelimitersPreservingWhitespace(child, '*', '*');
                             break;
                         }
                         case 'a': {
-                            const content = walk(child);
-                            const leadingSpace = content.match(/^\s*/)[0];
-                            const trailingSpace = content.match(/\s*$/)[0];
-                            const trimmed = content.trim();
                             const href = this.sanitizeHref(child.getAttribute('href'));
-                            if (trimmed) {
-                                parts.push(leadingSpace, '[', trimmed, '](', href, ')', trailingSpace);
-                            } else {
-                                parts.push(content);
-                            }
+                            wrapWithMarkdownDelimitersPreservingWhitespace(child, '[', '](' + href + ')');
                             break;
                         }
                         case 'li': {

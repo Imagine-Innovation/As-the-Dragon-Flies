@@ -198,18 +198,18 @@ class MarkDown extends Widget
         $text = (string) preg_replace('/\*\*\*(?=\S)(.*?)(?<=\S)\*\*\*/', '<strong><em>$1</em></strong>', $text);
         $text = (string) preg_replace('/___(?=\S)(.*?)(?<=\S)___/', '<strong><em>$1</em></strong>', $text);
 
-        // 2. Bold (**text** or __text__)
+        // 2. Handle mixed cases like **_text_** or __*text*__ (must run before plain bold/italic)
+        $text = (string) preg_replace('/\*\*_(?=\S)(.*?)(?<=\S)_\*\*/', '<strong><em>$1</em></strong>', $text);
+        $text = (string) preg_replace('/__\*(?=\S)(.*?)(?<=\S)\*__/', '<strong><em>$1</em></strong>', $text);
+
+        // 3. Bold (**text** or __text__)
         $text = (string) preg_replace('/\*\*(?=\S)(.*?)(?<=\S)\*\*/', '<strong>$1</strong>', $text);
         $text = (string) preg_replace('/__(?=\S)(.*?)(?<=\S)__/', '<strong>$1</strong>', $text);
 
-        // 3. Italic (*text* or _text_)
+        // 4. Italic (*text* or _text_)
         // Avoid matching markers inside words unless it's *
         $text = (string) preg_replace('/(?<!\w)\*([^\s\*](?:[^*]*[^\s\*])?)\*(?!\w)/', '<em>$1</em>', $text);
         $text = (string) preg_replace('/(?<!\w)_([^\s_](?:[^_]*[^\s_])?)_(?!\w)/', '<em>$1</em>', $text);
-
-        // 4. Handle mixed cases like **_text_** or __*text*__
-        $text = (string) preg_replace('/\*\*_(?=\S)(.*?)(?<=\S)_\*\*/', '<strong><em>$1</em></strong>', $text);
-        $text = (string) preg_replace('/__\*(?=\S)(.*?)(?<=\S)\*__/', '<strong><em>$1</em></strong>', $text);
 
         return $text;
     }
