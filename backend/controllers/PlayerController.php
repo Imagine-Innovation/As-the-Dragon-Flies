@@ -48,6 +48,7 @@ class PlayerController extends Controller
                             'validate',
                             'view',
                             'ajax',
+                            'ajax-top10',
                         ],
                         'allow' => AccessRightsManager::isRouteAllowed($this),
                         'roles' => ['@'],
@@ -166,6 +167,26 @@ class PlayerController extends Controller
             return $this->redirect(['index']);
         }
         throw new NotFoundHttpException('Could not restore this player');
+    }
+
+    /**
+     * @return array{error: bool, msg: string, content?: string}
+     */
+    public function actionAjaxTop10(): array
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        if (!Yii::$app->request->isAjax) {
+            return ['error' => true, 'msg' => 'Not an Ajax request'];
+        }
+
+        return [
+            'error' => false,
+            'msg' => '',
+            'content' => $this->renderPartial('/site/ajax/top10-players', [
+                'topPlayers' => Player::getTop10Players(),
+            ]),
+        ];
     }
 
     /**

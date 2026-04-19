@@ -76,6 +76,7 @@ use Yii;
  * @property string|null $avatar
  * @property string $description
  * @property Notification[] $unreadNotifications
+ * @property int|null $quest_count
  *
  * *********** Custom Methods **********
  *
@@ -87,6 +88,10 @@ use Yii;
  */
 class Player extends \yii\db\ActiveRecord
 {
+    /**
+     * @var int|null
+     */
+    public $quest_count;
 
     /**
      * ENUM field values
@@ -749,6 +754,27 @@ class Player extends \yii\db\ActiveRecord
                 ])->via('notificationPlayers', function ($query) {
                     $query->andWhere(['is_read' => 0]);
                 });
+    }
+
+    /**
+     * @return Player[]
+     */
+    public static function getTop10Players(): array
+    {
+        return self::find()
+                        ->select(['player.*', 'COUNT(quest_player.quest_id) AS quest_count'])
+                        ->joinWith(['questPlayers' => function ($query) {
+                                $query->onCondition(['<>', 'quest_player.status', AppStatus::LEFT->value]);
+                            }], false)
+                        ->with(['level', 'class', 'race'])
+                        ->groupBy('player.id')
+                        ->orderBy([
+                            'quest_count' => SORT_DESC,
+                            'experience_points' => SORT_DESC,
+                            'name' => SORT_ASC,
+                        ])
+                        ->limit(10)
+                        ->all();
     }
 
     /**

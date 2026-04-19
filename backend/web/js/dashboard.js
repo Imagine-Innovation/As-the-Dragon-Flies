@@ -21,13 +21,15 @@ class DashboardManager {
             console.log(`KPI Refresh initialized. Interval: ${this.kpiDelay / 1000}s`);
         }
 
-        // Active Quests Refresh
+        // Active Quests & Top 10 Players Refresh
         if (DOMUtils.exists('#activeQuestsTable') && !this.activeQuestsTimer) {
             this.updateActiveQuests();
+            this.updateTop10Players();
             this.activeQuestsTimer = setInterval(() => {
                 this.updateActiveQuests();
+                this.updateTop10Players();
             }, this.activeQuestsDelay);
-            console.log(`Active Quests Refresh initialized. Interval: ${this.activeQuestsDelay / 1000}s`);
+            console.log(`Active Quests & Top 10 Players Refresh initialized. Interval: ${this.activeQuestsDelay / 1000}s`);
         }
     }
 
@@ -54,6 +56,28 @@ class DashboardManager {
                     Object.entries(response.content).forEach(([container, value]) => {
                         this.updateKpi(container, value);
                     });
+                }
+            }
+        });
+    }
+
+    /**
+     * Updates the top 10 players table.
+     */
+    updateTop10Players() {
+        Logger.log(1, 'updateTop10Players', `Refreshing Top 10 Players`);
+
+        const target = '#top10PlayersTable';
+        if (!DOMUtils.exists(target))
+            return;
+
+        AjaxUtils.request({
+            url: 'player/ajax-top10',
+            method: 'GET',
+            successCallback: (response) => {
+                if (!response.error && response.content) {
+                    $(target).html(response.content);
+                    Logger.log(2, 'updateTop10Players', `Top 10 Players refreshed`);
                 }
             }
         });

@@ -6,6 +6,7 @@ use common\components\AccessRightsManager;
 use common\components\AppStatus;
 use common\helpers\Utilities;
 use common\models\LoginForm;
+use common\models\Player;
 use common\models\Quest;
 use Yii;
 use yii\filters\VerbFilter;
@@ -34,7 +35,15 @@ class SiteController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout', 'index', 'colors', 'fonts', 'icons', 'ajax-toast', 'ajax-active-quests'],
+                        'actions' => [
+                            'logout',
+                            'index',
+                            'colors',
+                            'fonts',
+                            'icons',
+                            'ajax-toast',
+                            'ajax-active-quests',
+                        ],
                         'allow' => AccessRightsManager::isRouteAllowed($this),
                         'roles' => ['@'],
                     ],
@@ -91,6 +100,7 @@ class SiteController extends Controller
     {
         return $this->render('index', [
                     'activeQuests' => Quest::getActiveQuests(),
+                    'topPlayers' => Player::getTop10Players(),
         ]);
     }
 
