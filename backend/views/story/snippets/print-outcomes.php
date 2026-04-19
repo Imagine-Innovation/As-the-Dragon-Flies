@@ -1,7 +1,8 @@
 <?php
 
-use yii\helpers\Html;
 use common\components\AppStatus;
+use common\widgets\MarkDown;
+use yii\helpers\Html;
 
 /* @var yii\web\View $this */
 /* @var common\models\Outcome[] $outcomes */
@@ -13,7 +14,7 @@ use common\components\AppStatus;
     <div class="outcome-item border p-2 mb-2">
         <span class="fw-bold"><?= Html::encode($outcome->name) ?></span> (status: <?= AppStatus::from($outcome->status)->getLabel() ?>)
         <?php if ($outcome->description): ?>
-            <p><?= Html::encode($outcome->description) ?></p>
+            <?= MarkDown::widget(['content' => $outcome->description]) ?>
         <?php endif; ?>
         <?php if ($outcome->gained_xp): ?>
             <span class="badge text-bg-warning"><?= $t['gained_xp'] ?>: <?= $outcome->gained_xp ?></span>

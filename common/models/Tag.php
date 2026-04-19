@@ -34,7 +34,7 @@ class Tag extends \yii\db\ActiveRecord
             [['description'], 'default', 'value' => null],
             [['name'], 'required'],
             [['description'], 'string'],
-            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeMarkdownWithCache']],
             [['name'], 'string', 'max' => 64],
             [['name'], 'unique'],
         ];

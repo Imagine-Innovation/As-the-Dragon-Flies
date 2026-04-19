@@ -42,7 +42,7 @@ class Monster extends \yii\db\ActiveRecord
             [['mission_id', 'creature_id', 'name'], 'required'],
             [['mission_id', 'creature_id', 'found', 'identified'], 'integer'],
             [['description'], 'string'],
-            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeMarkdownWithCache']],
             [['name', 'image'], 'string', 'max' => 64],
             [
                 ['creature_id'],

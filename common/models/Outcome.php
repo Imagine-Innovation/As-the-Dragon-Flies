@@ -47,7 +47,7 @@ class Outcome extends \yii\db\ActiveRecord
             [['action_id', 'status', 'name'], 'required'],
             [['action_id', 'next_mission_id', 'item_id', 'status', 'gained_gp', 'gained_xp', 'can_replay'], 'integer'],
             [['description'], 'string'],
-            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeMarkdownWithCache']],
             [['name'], 'string', 'max' => 64],
             [['hp_loss_dice'], 'string', 'max' => 8],
             [

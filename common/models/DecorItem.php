@@ -43,7 +43,7 @@ class DecorItem extends \yii\db\ActiveRecord
             [['decor_id', 'item_id', 'name'], 'required'],
             [['decor_id', 'item_id', 'found', 'identified'], 'integer'],
             [['description'], 'string'],
-            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeMarkdownWithCache']],
             [['name', 'image'], 'string', 'max' => 64],
             [
                 ['item_id'],

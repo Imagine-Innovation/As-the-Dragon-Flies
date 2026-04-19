@@ -44,7 +44,7 @@ class Trap extends \yii\db\ActiveRecord
             [['decor_id', 'damage_type_id', 'name', 'damage'], 'required'],
             [['decor_id', 'damage_type_id', 'is_team_trap', 'found'], 'integer'],
             [['description'], 'string'],
-            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeMarkdownWithCache']],
             [['name', 'image'], 'string', 'max' => 64],
             [['damage'], 'string', 'max' => 8],
             [
