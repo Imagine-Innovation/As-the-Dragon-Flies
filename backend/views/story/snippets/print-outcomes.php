@@ -14,7 +14,7 @@ use yii\helpers\Html;
     <div class="outcome-item border p-2 mb-2">
         <span class="fw-bold"><?= Html::encode($outcome->name) ?></span> (status: <?= AppStatus::from($outcome->status)->getLabel() ?>)
         <?php if ($outcome->description): ?>
-            <?= MarkDown::widget(['content' => $outcome->description]) ?>
+            <?= MarkDown::widget(['content' => $outcome->description ?? '']) ?>
         <?php endif; ?>
         <?php if ($outcome->gained_xp): ?>
             <span class="badge text-bg-warning"><?= $t['gained_xp'] ?>: <?= $outcome->gained_xp ?></span>

@@ -141,7 +141,7 @@ $t = match ($lang) {
                     <img src="<?= $storyRoot ?>/img/<?= $chapter->image ?>" class="img-fluid object-fit-cover rounded" alt="<?= $chapter->name ?>" style="max-height:150px;">
                 </div>
             <?php endif; ?>
-            <?= MarkDown::widget(['content' => $chapter->description]) ?>
+            <?= MarkDown::widget(['content' => $chapter->description ?? '']) ?>
 
             <?php
             $missions = $chapter->missions;
@@ -161,7 +161,7 @@ $t = match ($lang) {
                             <img src="<?= $storyRoot ?>/img/<?= $mission->image ?>" class="img-fluid object-fit-cover rounded" alt="<?= $mission->name ?>" style="max-height:150px;">
                         </div>
                     <?php endif; ?>
-                    <?= MarkDown::widget(['content' => $mission->description]) ?>
+                    <?= MarkDown::widget(['content' => $mission->description ?? '']) ?>
 
                     <!-- NPCs -->
                     <?php if ($npcs): ?>
@@ -172,7 +172,7 @@ $t = match ($lang) {
                                 <?php if ($npc->image): ?>
                                     <?= Html::img(Url::to('@web/images/' . $npc->image), ['class' => 'img-thumbnail float-end', 'style' => 'max-width:100px;']) ?>
                                 <?php endif; ?>
-                                <?= MarkDown::widget(['content' => $npc->description]) ?>
+                                <?= MarkDown::widget(['content' => $npc->description ?? '']) ?>
                                 <ul>
                                     <li><span class="fw-bold">Type:</span> <?= Html::encode($npc->npcType->name ?? 'Commoner') ?></li>
                                     <li><span class="fw-bold">Language:</span> <?= Html::encode($npc->language->name ?? 'Common') ?></li>
@@ -188,7 +188,7 @@ $t = match ($lang) {
                             <hr />
                             <div class="mb-3">
                                 <h5><?= Html::encode($action->name) ?></h5>
-                                <?= MarkDown::widget(['content' => $action->description]) ?>
+                                <?= MarkDown::widget(['content' => $action->description ?? '']) ?>
                                 <ul class="list-unstyled">
                                     <li><span class="fw-bold"><?= $t['action_type'] ?>:</span>
                                         <?= Html::encode($action->actionType->name ?? 'N/A') ?></li>
@@ -256,7 +256,7 @@ $t = match ($lang) {
                                 <?php if ($decor->image): ?>
                                     <?= Html::img(Url::to('@web/images/' . $decor->image), ['class' => 'img-thumbnail float-end', 'style' => 'max-width:100px;']) ?>
                                 <?php endif; ?>
-                                <?= MarkDown::widget(['content' => $decor->description]) ?>
+                                <?= MarkDown::widget(['content' => $decor->description ?? '']) ?>
 
                                 <!-- Hidden Items -->
                                 <?php if ($decor->decorItems): ?>
@@ -267,7 +267,7 @@ $t = match ($lang) {
                                                 <span class="fw-bold"><?= Html::encode($decorItem->name) ?></span>
                                                 (<?= $t['found_chance'] ?>: <?= $decorItem->found ?>%,
                                                 <?= $t['identified_chance'] ?>: <?= $decorItem->identified ?>%)
-                                                <?php if ($decorItem->description): ?><br><?= MarkDown::widget(['content' => $decorItem->description]) ?><?php endif; ?>
+                                                <?php if ($decorItem->description): ?><div><?= MarkDown::widget(['content' => $decorItem->description]) ?></div><?php endif; ?>
                                                 <?php if ($decorItem->item): ?>
                                                     <br>Item: <?= Html::encode($decorItem->item->name) ?>
                                                 <?php endif; ?>
@@ -292,7 +292,7 @@ $t = match ($lang) {
                                             </li>
                                             <li>
                                                 <?php if ($trap->description): ?>
-                                                    <?= MarkDown::widget(['content' => $trap->description]) ?>
+                                                    <?= MarkDown::widget(['content' => $trap->description ?? '']) ?>
                                                 <?php endif; ?>
                                             </li>
                                         <?php endforeach; ?>
@@ -311,7 +311,7 @@ $t = match ($lang) {
                                 <?php if ($monster->image): ?>
                                     <?= Html::img(Url::to('@web/images/' . $monster->image), ['class' => 'img-thumbnail float-end', 'style' => 'max-width:100px;']) ?>
                                 <?php endif; ?>
-                                <?= MarkDown::widget(['content' => $monster->description]) ?>
+                                <?= MarkDown::widget(['content' => $monster->description ?? '']) ?>
                                 <p>
                                     <?= $t['found_chance'] ?>: <?= $monster->found ?>% |
                                     <?= $t['identified_chance'] ?>: <?= $monster->identified ?>%

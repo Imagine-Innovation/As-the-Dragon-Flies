@@ -44,7 +44,7 @@ $this->params['breadcrumbs'] = $breadcrumbs;
                     <h3 class="card-title">Chapter <?= $model->chapter_number ?>: <?= $model->name ?></h3>
                 </div>
                 <div class="card-body flex-grow-1"> <!-- Add flex-grow-1 -->
-                    <div class="card-text"><?= MarkDown::widget(['content' => $model->description]) ?></div>
+                    <div class="card-text"><?= MarkDown::widget(['content' => $model->description ?? '']) ?></div>
                     <br>
                     <?php foreach ($model->missions as $mission): ?>
                         <p><a href="<?= Url::toRoute(['mission/view', 'id' => $mission->id]) ?>"><?= $mission->name ?></a></p>
