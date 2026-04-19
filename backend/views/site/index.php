@@ -4,6 +4,7 @@ use backend\widgets\ActivityGraph;
 
 /** @var yii\web\View $this */
 /** @var common\models\Quest[] $activeQuests */
+/** @var common\models\Player[] $topPlayers */
 
 $this->title = Yii::$app->name;
 ?>
@@ -15,7 +16,7 @@ $this->title = Yii::$app->name;
     </div>
 
     <div class="col-12 col-xxl-6" id="top10PlayersTable">
-        <?= $this->renderFile('@app/views/site/ajax/top10-players.php') ?>
+        <?= $this->renderFile('@app/views/site/ajax/top10-players.php', ['topPlayers' => $topPlayers]) ?>
     </div>
 
     <div class="col-12" id="activityGraph">

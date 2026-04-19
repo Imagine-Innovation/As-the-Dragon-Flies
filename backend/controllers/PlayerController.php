@@ -8,6 +8,7 @@ use common\components\AccessRightsManager;
 use common\helpers\SaveHelper;
 use common\helpers\Status;
 use common\models\Player;
+use common\models\QuestPlayer;
 use common\models\User;
 use common\components\AjaxRequest;
 use Yii;
@@ -48,6 +49,7 @@ class PlayerController extends Controller
                             'validate',
                             'view',
                             'ajax',
+                            'ajax-top10',
                         ],
                         'allow' => AccessRightsManager::isRouteAllowed($this),
                         'roles' => ['@'],
@@ -166,6 +168,49 @@ class PlayerController extends Controller
             return $this->redirect(['index']);
         }
         throw new NotFoundHttpException('Could not restore this player');
+    }
+
+    /**
+     * @return array{error: bool, msg: string, content?: string}
+     */
+    public function actionAjaxTop10(): array
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        if (!Yii::$app->request->isAjax) {
+            return ['error' => true, 'msg' => 'Not an Ajax request'];
+        }
+
+        return [
+            'error' => false,
+            'msg' => '',
+            'content' => $this->renderPartial('/site/ajax/top10-players', [
+                'topPlayers' => self::getTop10Players(),
+            ]),
+        ];
+    }
+
+    /**
+     * @return Player[]
+     */
+    public static function getTop10Players(): array
+    {
+        $subQuery = QuestPlayer::find()
+                ->select(['player_id', 'COUNT(quest_id) AS quest_count'])
+                ->where(['<>', 'status', AppStatus::LEFT->value])
+                ->groupBy('player_id');
+
+        return Player::find()
+                        ->select(['player.*', 'IFNULL(stats.quest_count, 0) AS quest_count'])
+                        ->leftJoin(['stats' => $subQuery], 'stats.player_id = player.id')
+                        ->with(['level', 'class', 'race'])
+                        ->orderBy([
+                            'quest_count' => SORT_DESC,
+                            'experience_points' => SORT_DESC,
+                            'name' => SORT_ASC,
+                        ])
+                        ->limit(10)
+                        ->all();
     }
 
     /**
