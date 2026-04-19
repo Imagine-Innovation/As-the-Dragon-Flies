@@ -38,12 +38,12 @@ use Yii;
  * @property Ability[] $abilities
  * @property Alignment|null $alignment
  * @property Background $background
- * @property CharacterClass $class
+ * @property CharacterClass|null $class
  * @property Image|null $image
  * @property Item[] $cartItems
  * @property Item[] $items
  * @property Language[] $languages
- * @property Level $level
+ * @property Level|null $level
  * @property NotificationPlayer[] $notificationPlayers
  * @property Notification[] $triggeredNotifications
  * @property Notification[] $notifications
@@ -63,7 +63,7 @@ use Yii;
  * @property Quest[] $initiatedQuests
  * @property Quest $questToPlay
  * @property Quest[] $quests
- * @property Race $race
+ * @property Race|null $race
  * @property Skill[] $skills
  * @property Spell[] $spells
  * @property CharacterTrait[] $traits
@@ -738,7 +738,10 @@ class Player extends \yii\db\ActiveRecord
         };
         $age = $this->age ? "{$this->age}-years-old" : '';
         $alignment = $this->alignment ? $this->alignment->name : '';
-        $description = "{$age} {$gender} {$this->race->name}, {$this->level->name} {$alignment} {$this->class->name}";
+        $raceName = $this->race->name ?? '';
+        $levelName = $this->level->name ?? '';
+        $className = $this->class->name ?? '';
+        $description = "{$age} {$gender} {$raceName}, {$levelName} {$alignment} {$className}";
         return strtolower($description);
     }
 
@@ -756,26 +759,6 @@ class Player extends \yii\db\ActiveRecord
                 });
     }
 
-    /**
-     * @return Player[]
-     */
-    public static function getTop10Players(): array
-    {
-        return self::find()
-                        ->select(['player.*', 'COUNT(quest_player.quest_id) AS quest_count'])
-                        ->joinWith(['questPlayers' => function ($query) {
-                                $query->onCondition(['<>', 'quest_player.status', AppStatus::LEFT->value]);
-                            }], false)
-                        ->with(['level', 'class', 'race'])
-                        ->groupBy('player.id')
-                        ->orderBy([
-                            'quest_count' => SORT_DESC,
-                            'experience_points' => SORT_DESC,
-                            'name' => SORT_ASC,
-                        ])
-                        ->limit(10)
-                        ->all();
-    }
 
     /**
      * ************************

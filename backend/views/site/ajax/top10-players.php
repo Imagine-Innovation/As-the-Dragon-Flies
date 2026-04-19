@@ -33,9 +33,9 @@ $imgPath = WebResourcesHelper::imagePath();
                         </td>
                         <td><strong><?= Utilities::encode($player->name ?? '') ?></strong></td>
                         <td class="text-center"><span class="badge bg-info text-dark"><?= $player->quest_count ?></span></td>
-                        <td class="text-center"><?= Utilities::encode($player->level->name) ?></td>
-                        <td><small><?= Utilities::encode($player->class->name) ?></small></td>
-                        <td><small><?= Utilities::encode($player->race->name) ?></small></td>
+                        <td class="text-center"><?= Utilities::encode($player->level->name ?? 'Unknown') ?></td>
+                        <td><small><?= Utilities::encode($player->class->name ?? 'Unknown') ?></small></td>
+                        <td><small><?= Utilities::encode($player->race->name ?? 'Unknown') ?></small></td>
                         <td class="text-end"><span class="text-success"><?= number_format($player->experience_points) ?></span></td>
                     </tr>
                 <?php endforeach; ?>

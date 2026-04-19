@@ -100,7 +100,7 @@ class SiteController extends Controller
     {
         return $this->render('index', [
                     'activeQuests' => Quest::getActiveQuests(),
-                    'topPlayers' => Player::getTop10Players(),
+                    'topPlayers' => PlayerController::getTop10Players(),
         ]);
     }
 

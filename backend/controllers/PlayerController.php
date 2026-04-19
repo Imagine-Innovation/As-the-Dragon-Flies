@@ -8,6 +8,7 @@ use common\components\AccessRightsManager;
 use common\helpers\SaveHelper;
 use common\helpers\Status;
 use common\models\Player;
+use common\models\QuestPlayer;
 use common\models\User;
 use common\components\AjaxRequest;
 use Yii;
@@ -184,9 +185,32 @@ class PlayerController extends Controller
             'error' => false,
             'msg' => '',
             'content' => $this->renderPartial('/site/ajax/top10-players', [
-                'topPlayers' => Player::getTop10Players(),
+                'topPlayers' => self::getTop10Players(),
             ]),
         ];
+    }
+
+    /**
+     * @return Player[]
+     */
+    public static function getTop10Players(): array
+    {
+        $subQuery = QuestPlayer::find()
+                ->select(['player_id', 'COUNT(quest_id) AS quest_count'])
+                ->where(['<>', 'status', AppStatus::LEFT->value])
+                ->groupBy('player_id');
+
+        return Player::find()
+                        ->select(['player.*', 'IFNULL(stats.quest_count, 0) AS quest_count'])
+                        ->leftJoin(['stats' => $subQuery], 'stats.player_id = player.id')
+                        ->with(['level', 'class', 'race'])
+                        ->orderBy([
+                            'quest_count' => SORT_DESC,
+                            'experience_points' => SORT_DESC,
+                            'name' => SORT_ASC,
+                        ])
+                        ->limit(10)
+                        ->all();
     }
 
     /**

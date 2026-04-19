@@ -22,7 +22,7 @@ class DashboardManager {
         }
 
         // Active Quests & Top 10 Players Refresh
-        if (DOMUtils.exists('#activeQuestsTable') && !this.activeQuestsTimer) {
+        if (!this.activeQuestsTimer && (DOMUtils.exists('#activeQuestsTable') || DOMUtils.exists('#top10PlayersTable'))) {
             this.updateActiveQuests();
             this.updateTop10Players();
             this.activeQuestsTimer = setInterval(() => {
