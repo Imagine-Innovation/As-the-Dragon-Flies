@@ -4,6 +4,7 @@ namespace common\widgets;
 
 use common\helpers\RichTextHelper;
 use yii\base\Widget;
+use Yii;
 
 /**
  * MarkDown widget renders markdown content from a database field.
@@ -79,13 +80,13 @@ class MarkDown extends Widget
         $html = htmlspecialchars($content, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
         // 3. Identify and process blocks
-        $lines = explode(PHP_EOL, $html);
+        $lines = explode("\n", $html);
         $result = [];
         $ulOpened = false;
         $olOpened = false;
-        $pOpened = false;
 
         foreach ($lines as $line) {
+            $pOpened = false;
             $trimmed = trim($line);
 
             if (empty($trimmed)) {
@@ -133,19 +134,18 @@ class MarkDown extends Widget
             $ulOpened = $this->closeTag($ulOpened, 'ul', $result);
             $olOpened = $this->closeTag($olOpened, 'ol', $result);
 
-            if (!$pOpened) {
+            if ($pOpened === false) {
                 $result[] = '<p class="mb-3">' . $this->applyInlineStyles($trimmed);
                 $pOpened = true;
             } else {
                 $lastIdx = count($result) - 1;
                 $result[$lastIdx] .= ' ' . $this->applyInlineStyles($trimmed);
             }
+            // Close any remaining tags
+            $this->closeTag($ulOpened, 'ul', $result);
+            $this->closeTag($olOpened, 'ol', $result);
+            $this->closeTag($pOpened, 'p', $result);
         }
-
-        // Close any remaining tags
-        $this->closeTag($ulOpened, 'ul', $result);
-        $this->closeTag($olOpened, 'ol', $result);
-        $this->closeTag($pOpened, 'p', $result);
 
         return implode(PHP_EOL, $result);
     }

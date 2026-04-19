@@ -23,7 +23,6 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
 <?php $form = ActiveForm::begin(); ?>
 
 <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
-<?= $form->field($model, 'description')->widget(SimpleRichText::class) ?>
 
 <?php if ($model->image): ?>
     <div class="row">
@@ -33,6 +32,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
         <div class="col-10">
         <?php endif; ?>
 
+        <?= $form->field($model, 'description')->widget(SimpleRichText::class) ?>
 
         <?=
                 $form->field($model, 'image')->dropdownList(
