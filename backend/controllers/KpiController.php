@@ -122,7 +122,7 @@ class KpiController extends Controller
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        if (!$this->request->isAjax) {
+        if (!Yii::$app->request->isAjax) {
             return ['error' => true, 'msg' => 'Not an Ajax request'];
         }
 
@@ -132,6 +132,6 @@ class KpiController extends Controller
             $KPIs = empty($KPIs) ? $KPI : [...$KPIs, ...$KPI];
         }
 
-        return ['error' => true, 'msg' => 'Not an Ajax request', 'content' => $KPIs];
+        return ['error' => false, 'msg' => '', 'content' => $KPIs];
     }
 }

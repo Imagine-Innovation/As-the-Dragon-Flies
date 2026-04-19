@@ -99,8 +99,8 @@ $currentUser = Yii::$app->user->identity;
         if (DOMUtils.exists('#ajaxHiddenParams')) {
             LayoutInitializer.initAjaxPage();
         }
-        const kpiManager = new KpiManager(60);
-        kpiManager.init();
+        const dashboardManager = new DashboardManager(60, 300);
+        dashboardManager.init();
 
         // Sidebar manual toggle for Large screens
         const sidebar = document.getElementById('sidebar');

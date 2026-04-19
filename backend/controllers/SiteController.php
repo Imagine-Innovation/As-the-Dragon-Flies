@@ -3,8 +3,10 @@
 namespace backend\controllers;
 
 use common\components\AccessRightsManager;
+use common\components\AppStatus;
 use common\helpers\Utilities;
 use common\models\LoginForm;
+use common\models\Quest;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
@@ -32,7 +34,7 @@ class SiteController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout', 'index', 'colors', 'fonts', 'icons', 'ajax-toast'],
+                        'actions' => ['logout', 'index', 'colors', 'fonts', 'icons', 'ajax-toast', 'ajax-active-quests'],
                         'allow' => AccessRightsManager::isRouteAllowed($this),
                         'roles' => ['@'],
                     ],
@@ -61,14 +63,35 @@ class SiteController extends Controller
     }
 
     /**
+     * @return array{error: bool, msg: string, content?: string}
+     */
+    public function actionAjaxActiveQuests(): array
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        if (!Yii::$app->request->isAjax) {
+            return ['error' => true, 'msg' => 'Not an Ajax request'];
+        }
+
+        return [
+            'error' => false,
+            'msg' => '',
+            'content' => $this->renderPartial('ajax/active-quests', [
+                'activeQuests' => Quest::getActiveQuests(),
+            ]),
+        ];
+    }
+
+    /**
      * Displays homepage.
      *
      * @return string
      */
     public function actionIndex()
     {
-        //$this->layout = 'dashboard';
-        return $this->render('index');
+        return $this->render('index', [
+                    'activeQuests' => Quest::getActiveQuests(),
+        ]);
     }
 
     /**
