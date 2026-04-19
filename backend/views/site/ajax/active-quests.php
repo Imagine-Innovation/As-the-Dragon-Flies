@@ -42,7 +42,7 @@
                             <td>
                                 <span class="badge bg-secondary">
                                     <i class="bi bi-person-fill me-1"></i>
-                                    <?= yii\helpers\Html::encode($quest->initiator->fullname ?? $quest->initiator->username ?? 'Unknown') ?>
+                                    <?= yii\helpers\Html::encode($quest->initiator?->fullname ?? $quest->initiator?->username ?? 'Unknown') ?>
                                 </span>
                             </td>
                         </tr>

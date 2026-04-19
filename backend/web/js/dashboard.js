@@ -12,8 +12,8 @@ class DashboardManager {
     init() {
         CoreLibrary.init();
 
-        // KPI Refresh
-        if (!this.kpiTimer) {
+        // KPI Refresh - check for one of the KPI containers
+        if (DOMUtils.exists('#active-users') && !this.kpiTimer) {
             this.updateKpis();
             this.kpiTimer = setInterval(() => {
                 this.updateKpis();
@@ -22,7 +22,7 @@ class DashboardManager {
         }
 
         // Active Quests Refresh
-        if (!this.activeQuestsTimer) {
+        if (DOMUtils.exists('#activeQuestsTable') && !this.activeQuestsTimer) {
             this.updateActiveQuests();
             this.activeQuestsTimer = setInterval(() => {
                 this.updateActiveQuests();
@@ -34,7 +34,7 @@ class DashboardManager {
     /**
      * Iterates through the KPI list and triggers updates.
      */
-    async updateKpis() {
+    updateKpis() {
         Logger.log(1, 'updateKpis', `Refreshing KPIs`);
         try {
             this.updateEveryKpi();

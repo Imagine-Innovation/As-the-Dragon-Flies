@@ -291,6 +291,21 @@ class Quest extends \yii\db\ActiveRecord
      */
     public function getTotalMissionsCount(): int
     {
+        if ($this->isRelationPopulated('story') && $this->story->isRelationPopulated('chapters')) {
+            $count = 0;
+            foreach ($this->story->chapters as $chapter) {
+                if ($chapter->isRelationPopulated('missions')) {
+                    $count += count($chapter->missions);
+                } else {
+                    return (int) Mission::find()
+                                    ->innerJoinWith('chapter')
+                                    ->where(['chapter.story_id' => $this->story_id])
+                                    ->count();
+                }
+            }
+            return $count;
+        }
+
         return (int) Mission::find()
                         ->innerJoinWith('chapter')
                         ->where(['chapter.story_id' => $this->story_id])
@@ -305,6 +320,16 @@ class Quest extends \yii\db\ActiveRecord
      */
     public function getCompletedMissionsCount(): int
     {
+        if ($this->isRelationPopulated('questProgresses')) {
+            $count = 0;
+            foreach ($this->questProgresses as $progress) {
+                if ($progress->status === AppStatus::TERMINATED->value) {
+                    $count++;
+                }
+            }
+            return $count;
+        }
+
         return (int) $this->getQuestProgresses()
                         ->andWhere(['status' => AppStatus::TERMINATED->value])
                         ->count();
@@ -333,6 +358,7 @@ class Quest extends \yii\db\ActiveRecord
     {
         return self::find()
                         ->where(['status' => [AppStatus::WAITING->value, AppStatus::PLAYING->value, AppStatus::PAUSED->value]])
+                        ->with(['initiator', 'story.chapters.missions', 'questProgresses'])
                         ->orderBy(['started_at' => SORT_ASC])
                         ->all();
     }
