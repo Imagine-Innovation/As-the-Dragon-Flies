@@ -38,12 +38,12 @@ use Yii;
  * @property Ability[] $abilities
  * @property Alignment|null $alignment
  * @property Background $background
- * @property CharacterClass $class
+ * @property CharacterClass|null $class
  * @property Image|null $image
  * @property Item[] $cartItems
  * @property Item[] $items
  * @property Language[] $languages
- * @property Level $level
+ * @property Level|null $level
  * @property NotificationPlayer[] $notificationPlayers
  * @property Notification[] $triggeredNotifications
  * @property Notification[] $notifications
@@ -63,7 +63,7 @@ use Yii;
  * @property Quest[] $initiatedQuests
  * @property Quest $questToPlay
  * @property Quest[] $quests
- * @property Race $race
+ * @property Race|null $race
  * @property Skill[] $skills
  * @property Spell[] $spells
  * @property CharacterTrait[] $traits
@@ -76,6 +76,7 @@ use Yii;
  * @property string|null $avatar
  * @property string $description
  * @property Notification[] $unreadNotifications
+ * @property int|null $quest_count
  *
  * *********** Custom Methods **********
  *
@@ -87,6 +88,10 @@ use Yii;
  */
 class Player extends \yii\db\ActiveRecord
 {
+    /**
+     * @var int|null
+     */
+    public $quest_count;
 
     /**
      * ENUM field values
@@ -733,7 +738,10 @@ class Player extends \yii\db\ActiveRecord
         };
         $age = $this->age ? "{$this->age}-years-old" : '';
         $alignment = $this->alignment ? $this->alignment->name : '';
-        $description = "{$age} {$gender} {$this->race->name}, {$this->level->name} {$alignment} {$this->class->name}";
+        $raceName = $this->race->name ?? '';
+        $levelName = $this->level->name ?? '';
+        $className = $this->class->name ?? '';
+        $description = "{$age} {$gender} {$raceName}, {$levelName} {$alignment} {$className}";
         return strtolower($description);
     }
 
@@ -750,6 +758,7 @@ class Player extends \yii\db\ActiveRecord
                     $query->andWhere(['is_read' => 0]);
                 });
     }
+
 
     /**
      * ************************
