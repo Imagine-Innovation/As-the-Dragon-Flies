@@ -320,10 +320,11 @@ class Quest extends \yii\db\ActiveRecord
      */
     public function getCompletedMissionsCount(): int
     {
+        $completedStatuses = [AppStatus::COMPLETED->value, AppStatus::TERMINATED->value];
         if ($this->isRelationPopulated('questProgresses')) {
             $count = 0;
             foreach ($this->questProgresses as $progress) {
-                if ($progress->status === AppStatus::TERMINATED->value) {
+                if (in_array($progress->status, $completedStatuses)) {
                     $count++;
                 }
             }
@@ -331,7 +332,7 @@ class Quest extends \yii\db\ActiveRecord
         }
 
         return (int) $this->getQuestProgresses()
-                        ->andWhere(['status' => AppStatus::TERMINATED->value])
+                        ->andWhere(['status' => $completedStatuses])
                         ->count();
     }
 
