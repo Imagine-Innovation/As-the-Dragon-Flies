@@ -4,6 +4,7 @@ namespace common\models;
 
 use common\components\AppStatus;
 use common\helpers\RichTextHelper;
+use common\models\Mission;
 use Yii;
 
 /**
@@ -281,5 +282,85 @@ class Quest extends \yii\db\ActiveRecord
         return $this->hasOne(QuestProgress::class, ['quest_id' => 'id'])->andWhere([
                     'status' => AppStatus::IN_PROGRESS->value,
         ]);
+    }
+
+    /**
+     * Gets the total number of missions in the story associated with the quest.
+     *
+     * @return int
+     */
+    public function getTotalMissionsCount(): int
+    {
+        if ($this->isRelationPopulated('story') && $this->story->isRelationPopulated('chapters')) {
+            $count = 0;
+            foreach ($this->story->chapters as $chapter) {
+                if ($chapter->isRelationPopulated('missions')) {
+                    $count += count($chapter->missions);
+                } else {
+                    return (int) Mission::find()
+                                    ->innerJoinWith('chapter')
+                                    ->where(['chapter.story_id' => $this->story_id])
+                                    ->count();
+                }
+            }
+            return $count;
+        }
+
+        return (int) Mission::find()
+                        ->innerJoinWith('chapter')
+                        ->where(['chapter.story_id' => $this->story_id])
+                        ->count();
+    }
+
+    /**
+     * Gets the number of completed missions in the quest.
+     * A mission is considered completed if its progress status is TERMINATED.
+     *
+     * @return int
+     */
+    public function getCompletedMissionsCount(): int
+    {
+        $completedStatuses = [AppStatus::COMPLETED->value, AppStatus::TERMINATED->value];
+        if ($this->isRelationPopulated('questProgresses')) {
+            $count = 0;
+            foreach ($this->questProgresses as $progress) {
+                if (in_array($progress->status, $completedStatuses)) {
+                    $count++;
+                }
+            }
+            return $count;
+        }
+
+        return (int) $this->getQuestProgresses()
+                        ->andWhere(['status' => $completedStatuses])
+                        ->count();
+    }
+
+    /**
+     * Gets the progress percentage of the quest.
+     *
+     * @return int
+     */
+    public function getProgress(): int
+    {
+        $total = $this->getTotalMissionsCount();
+        if ($total === 0) {
+            return 0;
+        }
+
+        $progress = ($this->getCompletedMissionsCount() / $total) * 100;
+        return (int) round($progress);
+    }
+
+    /**
+     * @return Quest[]
+     */
+    public static function getActiveQuests(): array
+    {
+        return self::find()
+                        ->where(['status' => [AppStatus::WAITING->value, AppStatus::PLAYING->value, AppStatus::PAUSED->value]])
+                        ->with(['initiator', 'story.chapters.missions', 'questProgresses'])
+                        ->orderBy(['started_at' => SORT_ASC])
+                        ->all();
     }
 }
