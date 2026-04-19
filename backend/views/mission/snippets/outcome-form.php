@@ -2,6 +2,7 @@
 
 use common\components\AppStatus;
 use common\helpers\WebResourcesHelper;
+use common\widgets\SimpleRichText;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -26,7 +27,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
 
 <?= $form->field($model, 'status')->radioList(AppStatus::getActionStatus())->label('Select a status') ?>
 <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
-<?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
+<?= $form->field($model, 'description')->widget(SimpleRichText::class) ?>
 <div class="row">
     <div class="col-12 col-sm-4">
         <?= $form->field($model, 'hp_loss_dice')->textInput(['maxlength' => true]) ?>

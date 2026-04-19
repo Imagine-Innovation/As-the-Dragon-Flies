@@ -1,5 +1,6 @@
 <?php
 
+use common\widgets\SimpleRichText;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -16,7 +17,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
+    <?= $form->field($model, 'description')->widget(SimpleRichText::class) ?>
 
     <?= $form->field($model, 'image')->textInput(['maxlength' => true]) ?>
 

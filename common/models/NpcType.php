@@ -40,7 +40,7 @@ class NpcType extends \yii\db\ActiveRecord
             [['xp'], 'default', 'value' => 0],
             [['name'], 'required'],
             [['description'], 'string'],
-            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeMarkdownWithCache']],
             [['hp', 'bonus', 'xp'], 'integer'],
             [['cr'], 'number'],
             [['name'], 'string', 'max' => 64],

@@ -36,7 +36,7 @@ class ActionType extends \yii\db\ActiveRecord
             [['description', 'icon'], 'default', 'value' => null],
             [['name'], 'required'],
             [['description'], 'string'],
-            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeMarkdownWithCache']],
             [['name', 'icon'], 'string', 'max' => 64],
         ];
     }
