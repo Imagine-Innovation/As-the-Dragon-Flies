@@ -12,7 +12,6 @@ $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Stories', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 $storyRoot = WebResourcesHelper::storyRootPath($model->id);
-\yii\web\YiiAsset::register($this);
 ?>
 <div class="container">
 
