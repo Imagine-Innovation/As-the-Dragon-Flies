@@ -174,7 +174,11 @@ $t = match ($lang) {
                                 <?php endif; ?>
                                 <?= MarkDown::widget(['content' => $npc->description ?? '']) ?>
                                 <ul>
-                                    <li><span class="fw-bold">Type:</span> <?= Html::encode($npc->npcType->name ?? 'Commoner') ?></li>
+                                    <li><span class="fw-bold">Type:</span> <?= Html::encode($npc->npcType?->name ?? 'Commoner') ?>
+                                        <?php if (!empty($npc->npcType?->description)): ?>
+                                            <div class="ms-3 small"><?= MarkDown::widget(['content' => $npc->npcType->description ?? '']) ?></div>
+                                        <?php endif; ?>
+                                    </li>
                                     <li><span class="fw-bold">Language:</span> <?= Html::encode($npc->language->name ?? 'Common') ?></li>
                                 </ul>
                             </div>
@@ -191,37 +195,41 @@ $t = match ($lang) {
                                 <?= MarkDown::widget(['content' => $action->description ?? '']) ?>
                                 <ul class="list-unstyled">
                                     <li><span class="fw-bold"><?= $t['action_type'] ?>:</span>
-                                        <?= Html::encode($action->actionType->name ?? 'N/A') ?></li>
+                                        <?= Html::encode($action->actionType?->name ?? 'N/A') ?>
+                                        <?php if (!empty($action->actionType?->description)): ?>
+                                            <div class="ms-3 small"><?= MarkDown::widget(['content' => $action->actionType->description ?? '']) ?></div>
+                                        <?php endif; ?>
+                                    </li>
                                     <li><span class="fw-bold"><?= $t['dc'] ?>:</span> <?= $action->dc ?>
                                         <?php if ($action->partial_dc): ?> (<?= $t['partial_dc'] ?>: <?= $action->partial_dc ?>)<?php endif; ?></li>
                                     <li><span class="fw-bold">Free action:</span> <?= $action->is_free ? 'Yes' : 'No' ?></li>
                                     <?php
                                     // Show related elements
                                     if ($action->passage_id) {
-                                        echo '<li>Passage: ' . Html::encode($action->passage->name) . '</li>';
+                                        echo '<li>Passage: ' . Html::encode($action->passage?->name ?? '') . '</li>';
                                     }
                                     if ($action->decor_id) {
-                                        echo '<li>Decor: ' . Html::encode($action->decor->name) . '</li>';
+                                        echo '<li>Decor: ' . Html::encode($action->decor?->name ?? '') . '</li>';
                                     }
                                     if ($action->decor_item_id) {
-                                        echo '<li>Hidden item: ' . Html::encode($action->decorItem->name) . '</li>';
+                                        echo '<li>Hidden item: ' . Html::encode($action->decorItem?->name ?? '') . '</li>';
                                     }
                                     if ($action->npc_id) {
-                                        echo '<li>NPC: ' . Html::encode($action->npc->name) . '</li>';
-                                        if ($action->npc->first_dialog_id) {
+                                        echo '<li>NPC: ' . Html::encode($action->npc?->name ?? '') . '</li>';
+                                        if ($action->npc?->first_dialog_id) {
                                             echo "<h6>{$t['dialog']}</h6><div class=\"dialog-tree\">";
                                             echo $this->renderFile('@app/views/mission/snippets/dialog.php', ['dialog' => $action->npc->firstDialog]);
                                             echo "</div>";
                                         }
                                     }
                                     if ($action->reply_id) {
-                                        echo '<li>First reply: ' . Html::encode($action->reply->text) . '</li>';
+                                        echo '<li>First reply: ' . Html::encode($action->reply?->text ?? '') . '</li>';
                                     }
                                     if ($action->trap_id) {
-                                        echo '<li>Trap: ' . Html::encode($action->trap->name) . '</li>';
+                                        echo '<li>Trap: ' . Html::encode($action->trap?->name ?? '') . '</li>';
                                     }
                                     if ($action->required_item_id) {
-                                        echo '<li>' . $t['required_item'] . ': ' . Html::encode($action->requiredItem->name) . '</li>';
+                                        echo '<li>' . $t['required_item'] . ': ' . Html::encode($action->requiredItem?->name ?? '') . '</li>';
                                     }
                                     // Skills via action_type_skill
                                     $skills = $action->actionType ? $action->actionType->skills : [];
@@ -283,7 +291,7 @@ $t = match ($lang) {
                                         <?php foreach ($decor->traps as $trap): ?>
                                             <li>
                                                 <span class="fw-bold"><?= Html::encode($trap->name) ?></span>
-                                                <?= $t['damage'] ?>: <?= $trap->damage ?> <?= Html::encode($trap->damageType->name ?? '') ?>
+                                                <?= $t['damage'] ?>: <?= $trap->damage ?> <?= Html::encode($trap->damageType?->name ?? '') ?>
                                                 <?= $t['found_chance'] ?>: <?= $trap->found ?>%
                                                 <?= $t['is_team_trap'] ?>:
                                                 <?=
@@ -331,7 +339,12 @@ $t = match ($lang) {
                         <h4>Passages</h4>
                         <ul>
                             <?php foreach ($passages as $passage): ?>
-                                <li><?= Html::encode($passage->name) ?> (found: <?= $passage->found ?>%)</li>
+                                <li>
+                                    <span class="fw-bold"><?= Html::encode($passage->name) ?></span> (found: <?= $passage->found ?>%)
+                                    <?php if ($passage->description): ?>
+                                        <?= MarkDown::widget(['content' => $passage->description ?? '']) ?>
+                                    <?php endif; ?>
+                                </li>
                             <?php endforeach; ?>
                         </ul>
                     <?php endif; ?>

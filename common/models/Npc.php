@@ -46,7 +46,7 @@ class Npc extends \yii\db\ActiveRecord
             [['mission_id', 'name'], 'required'],
             [['mission_id', 'npc_type_id', 'language_id', 'first_dialog_id'], 'integer'],
             [['description'], 'string'],
-            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeMarkdownWithCache']],
             [['name', 'image'], 'string', 'max' => 64],
             [
                 ['npc_type_id'],
