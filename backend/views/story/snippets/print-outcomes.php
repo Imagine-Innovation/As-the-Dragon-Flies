@@ -23,13 +23,13 @@ use yii\helpers\Html;
             <span class="badge text-bg-warning"><?= $t['gained_gp'] ?>: <?= $outcome->gained_gp ?></span>
         <?php endif; ?>
         <?php if ($outcome->item_id): ?>
-            <span class="badge text-bg-info"><?= $t['gained_item'] ?>: <?= Html::encode($outcome->item->name) ?></span>
+            <span class="badge text-bg-info"><?= $t['gained_item'] ?>: <?= Html::encode($outcome->item?->name ?? '') ?></span>
         <?php endif; ?>
         <?php if ($outcome->hp_loss_dice && $outcome->hp_loss_dice != '0'): ?>
             <span class="badge text-bg-danger"><?= $t['hp_loss'] ?>: <?= $outcome->hp_loss_dice ?></span>
         <?php endif; ?>
         <?php if ($outcome->next_mission_id): ?>
-            <p><span class="fw-bold"><?= $t['next_mission'] ?></span>: <?= Html::encode($outcome->nextMission->name) ?></p>
+            <p><span class="fw-bold"><?= $t['next_mission'] ?></span>: <?= Html::encode($outcome->nextMission?->name ?? '') ?></p>
         <?php endif; ?>
     </div>
 <?php endforeach; ?>
