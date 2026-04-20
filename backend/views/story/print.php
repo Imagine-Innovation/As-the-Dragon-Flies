@@ -174,7 +174,11 @@ $t = match ($lang) {
                                 <?php endif; ?>
                                 <?= MarkDown::widget(['content' => $npc->description ?? '']) ?>
                                 <ul>
-                                    <li><span class="fw-bold">Type:</span> <?= Html::encode($npc->npcType->name ?? 'Commoner') ?></li>
+                                    <li><span class="fw-bold">Type:</span> <?= Html::encode($npc->npcType->name ?? 'Commoner') ?>
+                                        <?php if (!empty($npc->npcType->description)): ?>
+                                            <div class="ms-3 small"><?= MarkDown::widget(['content' => $npc->npcType->description ?? '']) ?></div>
+                                        <?php endif; ?>
+                                    </li>
                                     <li><span class="fw-bold">Language:</span> <?= Html::encode($npc->language->name ?? 'Common') ?></li>
                                 </ul>
                             </div>
@@ -191,7 +195,11 @@ $t = match ($lang) {
                                 <?= MarkDown::widget(['content' => $action->description ?? '']) ?>
                                 <ul class="list-unstyled">
                                     <li><span class="fw-bold"><?= $t['action_type'] ?>:</span>
-                                        <?= Html::encode($action->actionType->name ?? 'N/A') ?></li>
+                                        <?= Html::encode($action->actionType->name ?? 'N/A') ?>
+                                        <?php if (!empty($action->actionType->description)): ?>
+                                            <div class="ms-3 small"><?= MarkDown::widget(['content' => $action->actionType->description ?? '']) ?></div>
+                                        <?php endif; ?>
+                                    </li>
                                     <li><span class="fw-bold"><?= $t['dc'] ?>:</span> <?= $action->dc ?>
                                         <?php if ($action->partial_dc): ?> (<?= $t['partial_dc'] ?>: <?= $action->partial_dc ?>)<?php endif; ?></li>
                                     <li><span class="fw-bold">Free action:</span> <?= $action->is_free ? 'Yes' : 'No' ?></li>
@@ -331,7 +339,12 @@ $t = match ($lang) {
                         <h4>Passages</h4>
                         <ul>
                             <?php foreach ($passages as $passage): ?>
-                                <li><?= Html::encode($passage->name) ?> (found: <?= $passage->found ?>%)</li>
+                                <li>
+                                    <span class="fw-bold"><?= Html::encode($passage->name) ?></span> (found: <?= $passage->found ?>%)
+                                    <?php if ($passage->description): ?>
+                                        <?= MarkDown::widget(['content' => $passage->description ?? '']) ?>
+                                    <?php endif; ?>
+                                </li>
                             <?php endforeach; ?>
                         </ul>
                     <?php endif; ?>

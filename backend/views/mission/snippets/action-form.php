@@ -1,6 +1,7 @@
 <?php
 
 use common\helpers\WebResourcesHelper;
+use common\widgets\MarkDown;
 use common\widgets\SimpleRichText;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -36,7 +37,10 @@ $actionType = $model->action_type_id ? $model->actionType : null;
     <article>
         <p>Action:
             <?php if ($actionType): ?>
-                <?= $actionType->name ?> <?= $actionType->description ? "({$actionType->description})" : '' ?>
+                <?= $actionType->name ?>
+                <?php if ($actionType->description): ?>
+                    (<?= MarkDown::widget(['content' => $actionType->description ?? '']) ?>)
+                <?php endif; ?>
             <?php endif; ?>
             <?= $model->passage?->name ?>
             <?= $model->trap?->name ?>
