@@ -94,7 +94,7 @@ class Action extends \yii\db\ActiveRecord
                 'integer',
             ],
             [['description'], 'string'],
-            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
+            [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeMarkdownWithCache']],
             [['name'], 'string', 'max' => 64],
             [
                 ['mission_id'],

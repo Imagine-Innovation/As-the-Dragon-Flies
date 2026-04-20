@@ -1,6 +1,7 @@
 <?php
 
 use common\helpers\WebResourcesHelper;
+use common\widgets\SimpleRichText;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -25,7 +26,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
 
 <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
-<?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
+<?= $form->field($model, 'description')->widget(SimpleRichText::class) ?>
 
 <?php if ($model->image): ?>
     <div class="row row-cols-1 row-cols-md-2">

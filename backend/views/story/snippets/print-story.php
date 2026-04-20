@@ -1,6 +1,7 @@
 <?php
 
 use common\components\AppStatus;
+use common\widgets\MarkDown;
 use yii\helpers\Html;
 
 /* @var yii\web\View $this */
@@ -19,7 +20,7 @@ use yii\helpers\Html;
             <div class="col-12 text-decoration"> <!-- Add d-flex and flex-column -->
             <?php endif; ?>
             <div class="mb-3">
-                <?= \common\widgets\MarkDown::widget(['content' => $story->description]) ?>
+                <?= MarkDown::widget(['content' => $story->description ?? '']) ?>
             </div>
             <div class="mb-4">
                 <ul>
@@ -34,6 +35,9 @@ use yii\helpers\Html;
                     <span class="fw-bold"><?= $t['tags'] ?>:</span>
                     <?php foreach ($story->tags as $tag): ?>
                         <span class="badge text-bg-secondary"><?= Html::encode($tag->name) ?></span>
+                        <?php if (!empty($tag->description)): ?>
+                            <div class="ms-3 small text-muted"><?= MarkDown::widget(['content' => $tag->description ?? '']) ?></div>
+                        <?php endif; ?>
                     <?php endforeach; ?>
                 </div>
             <?php endif; ?>

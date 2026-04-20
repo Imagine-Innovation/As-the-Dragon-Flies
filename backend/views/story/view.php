@@ -4,6 +4,7 @@ use common\helpers\StoryNeededClass;
 use common\helpers\WebResourcesHelper;
 use common\widgets\Button;
 use common\widgets\MarkDown;
+use yii\helpers\Html;
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */
@@ -36,7 +37,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($model->id);
                     <h3 class="card-title"><?= $model->name ?></h3>
                 </div>
                 <div class="card-body flex-grow-1"> <!-- Add flex-grow-1 -->
-                    <div class="card-text"><?= MarkDown::widget(['content' => $model->description]) ?></div>
+                    <div class="card-text"><?= MarkDown::widget(['content' => $model->description ?? '']) ?></div>
                     <br>
                     <?= StoryNeededClass::classList($model); ?>
                     <p>
@@ -54,7 +55,10 @@ $storyRoot = WebResourcesHelper::storyRootPath($model->id);
                         <div class="listview__attrs">
                             Tags:
                             <?php foreach ($model->tags as $tag): ?>
-                                <span><?= $tag->name ?></span>
+                                <span class="badge text-bg-secondary"><?= Html::encode($tag->name) ?></span>
+                                <?php if (!empty($tag->description)): ?>
+                                    <div class="ms-3 small text-muted"><?= MarkDown::widget(['content' => $tag->description ?? '']) ?></div>
+                                <?php endif; ?>
                             <?php endforeach; ?>
                         </div>
                     <?php endif; ?>
