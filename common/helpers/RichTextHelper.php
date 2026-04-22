@@ -48,7 +48,7 @@ class RichTextHelper
         }
 
         $html = HtmlPurifier::process($content, [
-            'HTML.Allowed' => 'div[class],p[class],span[class|style],h1,h2,h3,h4,h5,h6,br,b,strong,i,em,u,a[href|title|target],ul,ol,li,img[src|alt|width|height],table,thead,tbody,tr,th,td',
+            'HTML.Allowed' => 'div[class],p[class],span[class|style],h1,h2,h3,h4,h5,h6,hr,br,b,strong,i,em,u,a[href|title|target],ul,ol,li,img[src|alt|width|height],table,thead,tbody,tr,th,td',
             // Allows any class name string
             'Attr.AllowedClasses' => null,
             'CSS.AllowedProperties' => 'font,font-size,font-weight,font-style,font-family,text-decoration,padding-left,color,background-color,text-align,width,height,border,border-collapse,border-spacing',
@@ -120,7 +120,7 @@ class RichTextHelper
         $markdown = str_replace(["\r\n", "\r"], "\n", $markdown);
 
         // 3. Ensure we don't have too many consecutive newlines
-        $markdown = preg_replace("/\n{3,}/", "\n\n", $markdown);
+        $markdown = (string) preg_replace("/\n{3,}/", "\n\n", $markdown);
 
         return trim($markdown);
     }

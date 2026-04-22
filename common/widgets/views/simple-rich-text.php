@@ -11,6 +11,7 @@ $buttons = [
     ['icon' => 'bi-link-45deg', 'cmd' => 'createLink', 'title' => 'Link'],
     ['icon' => 'bi-list-ul', 'cmd' => 'insertUnorderedList', 'title' => 'Unordered List'],
     ['icon' => 'bi-list-ol', 'cmd' => 'insertOrderedList', 'title' => 'Ordered List'],
+    ['icon' => 'bi-hr', 'cmd' => 'insertHorizontalRule', 'title' => 'Horizontal Rule'],
     ['icon' => 'bi-type-h1', 'cmd' => 'h1', 'title' => 'Heading 1'],
     ['icon' => 'bi-type-h2', 'cmd' => 'h2', 'title' => 'Heading 2'],
     ['icon' => 'bi-type-h3', 'cmd' => 'h3', 'title' => 'Heading 3'],
