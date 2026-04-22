@@ -85,14 +85,23 @@ class MarkDown extends Widget
         $ulOpened = false;
         $olOpened = false;
 
+        $pOpened = false;
         foreach ($lines as $line) {
-            $pOpened = false;
             $trimmed = trim($line);
 
             if (empty($trimmed)) {
                 $ulOpened = $this->closeTag($ulOpened, 'ul', $result);
                 $olOpened = $this->closeTag($olOpened, 'ol', $result);
                 $pOpened = $this->closeTag($pOpened, 'p', $result);
+                continue;
+            }
+
+            // Horizontal Rule (---, ***, ___)
+            if (preg_match('/^([-*_])\1{2,}$/', $trimmed)) {
+                $ulOpened = $this->closeTag($ulOpened, 'ul', $result);
+                $olOpened = $this->closeTag($olOpened, 'ol', $result);
+                $pOpened = $this->closeTag($pOpened, 'p', $result);
+                $result[] = '<hr class="my-4">';
                 continue;
             }
 
@@ -134,7 +143,7 @@ class MarkDown extends Widget
             $ulOpened = $this->closeTag($ulOpened, 'ul', $result);
             $olOpened = $this->closeTag($olOpened, 'ol', $result);
 
-            if ($pOpened === false) {
+            if (!$pOpened) {
                 $result[] = '<p class="mb-3">' . $this->applyInlineStyles($trimmed);
                 $pOpened = true;
             } else {
