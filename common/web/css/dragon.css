@@ -256,12 +256,6 @@ template {
     display: none;
 }
 
-hr {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    border-top: 1px solid var(--light-10);
-}
-
 .small,small {
     font-size: 80%;
     font-weight: 400;
