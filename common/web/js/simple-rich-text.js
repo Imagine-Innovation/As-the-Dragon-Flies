@@ -41,6 +41,8 @@ class SimpleRichTextEditor {
 
         if (cmd.match(/^(h[1-6]|p)$/)) {
             document.execCommand('formatBlock', false, cmd.toUpperCase());
+        } else if (cmd === 'insertHorizontalRule') {
+            document.execCommand('insertHorizontalRule', false, null);
         } else if (cmd === 'createLink') {
             const url = prompt('Enter the URL:');
             if (url) {
@@ -164,6 +166,9 @@ class SimpleRichTextEditor {
                         }
                         case 'br':
                             parts.push('\n');
+                            break;
+                        case 'hr':
+                            parts.push('\n---\n');
                             break;
                         default:
                             if (this.isList(tagName)) {
