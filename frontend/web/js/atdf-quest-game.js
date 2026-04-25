@@ -148,6 +148,14 @@ class VirtualTableTop {
 
     _updateTurn(playerId, nextPlayerId, nextPlayerName) {
         Logger.log(2, '_updateTurn', `playerId=${playerId}, nextPlayerId=${nextPlayerId}, nextPlayerName=${nextPlayerName}`);
+
+        if (nextPlayerId && nextPlayerName) {
+            this.updateContext({
+                currentPlayerId: nextPlayerId,
+                currentPlayerName: nextPlayerName
+            });
+        }
+
         const target = `#turnDescription`;
         if (!DOMUtils.exists(target))
             return;
