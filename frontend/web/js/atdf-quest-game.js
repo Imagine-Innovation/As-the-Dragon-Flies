@@ -171,7 +171,19 @@ class VirtualTableTop {
         if (!DOMUtils.exists(target))
             return;
 
-        if (parseInt(playerId) !== parseInt(currentPlayerId)) {
+        const numericPlayerId = Number(playerId);
+        const numericCurrentPlayerId = Number(currentPlayerId);
+
+        // Guard against invalid or missing IDs to avoid hiding the action card
+        if (Number.isNaN(numericPlayerId) || Number.isNaN(numericCurrentPlayerId)) {
+            console.warn('Invalid player ID(s) when deciding whether to hide the action card', {
+                playerId,
+                currentPlayerId
+            });
+            return;
+        }
+
+        if (numericPlayerId !== numericCurrentPlayerId) {
             // The player is not the one who is playing, 
             // the action card is hidden, and we stop there.
             $(target).addClass('d-none');
