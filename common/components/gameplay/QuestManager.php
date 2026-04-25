@@ -109,7 +109,18 @@ class QuestManager extends BaseManager
      */
     private function getNextQuestPlayer(): ?QuestPlayer
     {
-        $currentTurn = $this->quest?->currentQuestPlayer?->player_turn;
+        $quest = $this->getQuest();
+
+        if ($quest->current_player_id === null) {
+            // If there's no current player, we start from the beginning of the turn queue
+            return $this->getActiveQuestPlayer();
+        }
+
+        $currentQuestPlayer = QuestPlayer::findOne([
+            'quest_id' => $quest->id,
+            'player_id' => $quest->current_player_id
+        ]);
+        $currentTurn = $currentQuestPlayer?->player_turn;
 
         // Find the next active player
         $nextQuestPlayer = $this->getActiveQuestPlayer($currentTurn);
@@ -138,10 +149,12 @@ class QuestManager extends BaseManager
 
         $quest->current_player_id = $playerId;
         $this->save($quest);
+        unset($quest->currentPlayer);
         $quest->refresh();
 
         $progress->current_player_id = $playerId;
         $this->save($progress);
+        unset($progress->currentPlayer);
         $progress->refresh();
     }
 
@@ -176,7 +189,12 @@ class QuestManager extends BaseManager
 
         // Refresh context
         $quest = $this->getQuest();
-        $this->player = $quest->currentPlayer;
+        $this->player = Player::findOne($nextPlayerId);
+
+        if ($this->player === null) {
+            throw new RuntimeException("QuestManager context error: Player #{$nextPlayerId} not found.");
+        }
+
         $this->nextSequence = $this->getLastTurnSequence() + 1;
 
         /** @var QuestTurn $questTurn */
