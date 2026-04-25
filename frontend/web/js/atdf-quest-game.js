@@ -171,7 +171,7 @@ class VirtualTableTop {
         if (!DOMUtils.exists(target))
             return;
 
-        if (String(playerId) !== String(currentPlayerId)) {
+        if (parseInt(playerId) !== parseInt(currentPlayerId)) {
             // The player is not the one who is playing, 
             // the action card is hidden, and we stop there.
             $(target).addClass('d-none');

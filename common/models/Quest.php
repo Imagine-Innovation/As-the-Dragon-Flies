@@ -39,7 +39,6 @@ use Yii;
  *
  * Custom properties
  *
- * @property QuestPlayer $currentQuestPlayer
  * @property QuestProgress $currentQuestProgress
  *
  */
@@ -261,16 +260,6 @@ class Quest extends \yii\db\ActiveRecord
     /**
      * Custom porperties
      */
-
-    /**
-     * Gets query for [[CurrentQuestPlayer]].
-     *
-     * @return \yii\db\ActiveQuery<QuestPlayer>
-     */
-    public function getCurrentQuestPlayer()
-    {
-        return $this->hasOne(QuestPlayer::class, ['quest_id' => 'id', 'player_id' => 'current_player_id']);
-    }
 
     /**
      * Gets query for [[CurrentQuestProgress]].
