@@ -154,6 +154,12 @@ const config = [
                 imagePath: null
             },
             {
+                field: 'decor-passage_id',
+                valueType: 'passage',
+                minChar: 0,
+                imagePath: null
+            },
+            {
                 field: 'decor-image',
                 valueType: 'image',
                 minChar: 1,

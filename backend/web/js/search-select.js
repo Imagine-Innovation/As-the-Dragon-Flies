@@ -17,6 +17,18 @@ const config = [
         form: 'passage',
         params: [
             {
+                field: 'passage-decor_id',
+                valueType: 'decor',
+                minChar: 0,
+                imagePath: null
+            },
+            {
+                field: 'passage-to_decor_id',
+                valueType: 'decor',
+                minChar: 0,
+                imagePath: null
+            },
+            {
                 field: 'passage-image',
                 valueType: 'image',
                 minChar: 1,

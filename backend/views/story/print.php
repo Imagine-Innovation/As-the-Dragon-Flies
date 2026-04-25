@@ -151,7 +151,6 @@ $t = match ($lang) {
                 $actions = $mission->actions;
                 $decors = $mission->decors;
                 $monsters = $mission->monsters;
-                $passages = $mission->passages;
                 // Traps are linked via decor, but we can also list them directly from decor
                 ?>
                 <article class="mission mb-4">
@@ -258,7 +257,10 @@ $t = match ($lang) {
                     <!-- Decor and Traps -->
                     <?php if ($decors): ?>
                         <h4><?= $t['decor'] ?></h4>
-                        <?php foreach ($decors as $decor): ?>
+                        <?php
+                        foreach ($decors as $decor):
+                            $passages = $decor->passages;
+                            ?>
                             <div class="mb-3">
                                 <h5><?= Html::encode($decor->name) ?></h5>
                                 <?php if ($decor->image): ?>
@@ -279,6 +281,21 @@ $t = match ($lang) {
                                                 <?php if ($decorItem->item): ?>
                                                     <br>Item: <?= Html::encode($decorItem->item->name) ?>
                                                 <?php endif; ?>
+                                                <!-- Passages (if any) -->
+                                                <?php if ($passages): ?>
+                                                    <h4>Passages</h4>
+                                                    <ul>
+                                                        <?php foreach ($passages as $passage): ?>
+                                                            <li>
+                                                                <span class="fw-bold"><?= Html::encode($passage->name) ?></span>
+                                                                <?php if ($passage->description): ?>
+                                                                    <?= MarkDown::widget(['content' => $passage->description ?? '']) ?>
+                                                                <?php endif; ?>
+                                                            </li>
+                                                        <?php endforeach; ?>
+                                                    </ul>
+                                                <?php endif; ?>
+
                                             </li>
                                         <?php endforeach; ?>
                                     </ul>
@@ -332,21 +349,6 @@ $t = match ($lang) {
                                 <?php endif; ?>
                             </div>
                         <?php endforeach; ?>
-                    <?php endif; ?>
-
-                    <!-- Passages (if any) -->
-                    <?php if ($passages): ?>
-                        <h4>Passages</h4>
-                        <ul>
-                            <?php foreach ($passages as $passage): ?>
-                                <li>
-                                    <span class="fw-bold"><?= Html::encode($passage->name) ?></span> (found: <?= $passage->found ?>%)
-                                    <?php if ($passage->description): ?>
-                                        <?= MarkDown::widget(['content' => $passage->description ?? '']) ?>
-                                    <?php endif; ?>
-                                </li>
-                            <?php endforeach; ?>
-                        </ul>
                     <?php endif; ?>
 
                 </article>

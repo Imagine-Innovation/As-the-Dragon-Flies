@@ -133,7 +133,7 @@ class MissionController extends Controller
         return match ($type) {
             'NPC' => ['className' => 'Npc', 'snippet' => 'npc-form', 'childOf' => 'mission'],
             'Monster' => ['className' => 'Monster', 'snippet' => 'monster-form', 'childOf' => 'mission'],
-            'Passage' => ['className' => 'Passage', 'snippet' => 'passage-form', 'childOf' => 'mission'],
+            'Passage' => ['className' => 'Passage', 'snippet' => 'passage-form', 'childOf' => 'decor'],
             'Action' => ['className' => 'Action', 'snippet' => 'action-form', 'childOf' => 'mission'],
             'Decor' => ['className' => 'Decor', 'snippet' => 'decor-form', 'childOf' => 'mission'],
             'Item' => ['className' => 'DecorItem', 'snippet' => 'item-form', 'childOf' => 'decor'],

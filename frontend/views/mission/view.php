@@ -69,13 +69,6 @@ $missionDescription = $narrative->missionDecription();
                             ?>
                             <?=
                             $this->renderFile('@app/views/mission/snippets/card.php', [
-                                'properties' => $model->passages,
-                                'parentId' => $model->id,
-                                'type' => 'Passage',
-                            ])
-                            ?>
-                            <?=
-                            $this->renderFile('@app/views/mission/snippets/card.php', [
                                 'properties' => $model->monsters,
                                 'parentId' => $model->id,
                                 'type' => 'Monster',

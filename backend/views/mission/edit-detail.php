@@ -19,11 +19,12 @@ $story = $chapter->story;
 
 $parentId = match ($type) {
     'Item' => $model->decor_id,
-    'Trap' => $model->decor_id,
-    'Prerequisite' => $model->next_action_id,
-    'Trigger' => $model->previous_action_id,
     'Outcome' => $model->action_id,
-    default => $model->mission_id,
+    'Prerequisite' => $model->next_action_id,
+    'Trap' => $model->decor_id,
+    'Trigger' => $model->previous_action_id,
+    //default => $model->mission_id,
+    default => $mission->id,
 };
 
 $breadcrumbs = [

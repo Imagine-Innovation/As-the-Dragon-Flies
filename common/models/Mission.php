@@ -21,7 +21,6 @@ use Yii;
  * @property Monster[] $monsters
  * @property Npc[] $npcs
  * @property Outcome[] $outcomes
- * @property Passage[] $passages
  * @property QuestProgress[] $questProgresses
  */
 class Mission extends \yii\db\ActiveRecord
@@ -47,7 +46,7 @@ class Mission extends \yii\db\ActiveRecord
             [['description'], 'string'],
             [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeMarkdownWithCache']],
             [['name', 'image'], 'string', 'max' => 64],
-            [['chapter_id'], 'exist', 'skipOnError' => true, 'targetClass' => Chapter::class, 'targetAttribute' => ['chapter_id' => 'id'],],
+            [['chapter_id'], 'exist', 'skipOnError' => true, 'targetClass' => Chapter::class, 'targetAttribute' => ['chapter_id' => 'id']],
         ];
     }
 
@@ -133,16 +132,6 @@ class Mission extends \yii\db\ActiveRecord
     public function getOutcomes()
     {
         return $this->hasMany(Outcome::class, ['next_mission_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[Passages]].
-     *
-     * @return \yii\db\ActiveQuery<Passage>
-     */
-    public function getPassages()
-    {
-        return $this->hasMany(Passage::class, ['mission_id' => 'id']);
     }
 
     /**

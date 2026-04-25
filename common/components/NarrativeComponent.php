@@ -10,7 +10,7 @@ use yii\base\Component;
 class NarrativeComponent extends Component
 {
 
-    const DETAILS = ['decors', 'npcs', 'passages', 'monsters'];
+    const DETAILS = ['decors', 'npcs', 'monsters'];
 
     public ?Mission $mission = null;
 

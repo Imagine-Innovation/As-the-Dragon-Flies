@@ -49,7 +49,28 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
                 ->label('Passage image')
         ?>
 
-        <?= $form->field($model, 'found')->textInput() ?>
+        <?=
+                $form->field($model, 'decor_id')->dropdownList(
+                        $model->decor_id ? [$model->decor_id => $model->decor?->name] : [],
+                        [
+                            'class' => 'select2-container w-100',
+                            'data-minimum-results-for-search' => -1,
+                            'data-placeholder' => 'Select a decor',
+                        ],
+                )
+                ->label('Original decor of the Passage')
+        ?>
+        <?=
+                $form->field($model, 'to_decor_id')->dropdownList(
+                        $model->to_decor_id ? [$model->to_decor_id => $model->decorTo?->name] : [],
+                        [
+                            'class' => 'select2-container w-100',
+                            'data-minimum-results-for-search' => -1,
+                            'data-placeholder' => 'Select a decor',
+                        ],
+                )
+                ->label('Destination decor for the passage')
+        ?>
 
         <?php if ($model->image): ?>
         </div>

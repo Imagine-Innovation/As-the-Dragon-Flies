@@ -17,10 +17,13 @@ use Yii;
  * @property Action[] $actions
  * @property DecorItem[] $decorItems
  * @property Mission $mission
+ * @property Passage[] $passages
+ * @property Passage[] $passagesFrom
  * @property Trap[] $traps
  */
 class Decor extends \yii\db\ActiveRecord
 {
+
     /**
      * {@inheritdoc}
      */
@@ -41,13 +44,7 @@ class Decor extends \yii\db\ActiveRecord
             [['description'], 'string'],
             [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeMarkdownWithCache']],
             [['name', 'image'], 'string', 'max' => 64],
-            [
-                ['mission_id'],
-                'exist',
-                'skipOnError' => true,
-                'targetClass' => Mission::class,
-                'targetAttribute' => ['mission_id' => 'id'],
-            ],
+            [['mission_id'], 'exist', 'skipOnError' => true, 'targetClass' => Mission::class, 'targetAttribute' => ['mission_id' => 'id']],
         ];
     }
 
@@ -93,6 +90,26 @@ class Decor extends \yii\db\ActiveRecord
     public function getMission()
     {
         return $this->hasOne(Mission::class, ['id' => 'mission_id']);
+    }
+
+    /**
+     * Gets query for [[Passages]].
+     *
+     * @return \yii\db\ActiveQuery<Passage>
+     */
+    public function getPassages()
+    {
+        return $this->hasMany(Passage::class, ['decor_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[PassagesFrom]].
+     *
+     * @return \yii\db\ActiveQuery<Passage>
+     */
+    public function getPassagesFrom()
+    {
+        return $this->hasMany(Passage::class, ['to_decor_id' => 'id']);
     }
 
     /**

@@ -1,10 +1,8 @@
 <?php
-
 /** @var string $id */
 /** @var string $name */
 /** @var string $value */
 /** @var string $initialHtml */
-
 $buttons = [
     ['icon' => 'bi-type-bold', 'cmd' => 'bold', 'title' => 'Bold'],
     ['icon' => 'bi-type-italic', 'cmd' => 'italic', 'title' => 'Italic'],
@@ -22,6 +20,7 @@ $buttons = [
 ];
 ?>
 
+<input type="hidden" id="<?= $id ?>" name="<?= $name ?>" value="<?= htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
 <div class="simple-rich-text-container">
     <div class="btn-toolbar mb-2 rounded shadow-sm" role="toolbar" aria-label="Layout toolbar">
         <div class="btn-group me-2" role="group" aria-label="Layout buttons">
@@ -41,6 +40,4 @@ $buttons = [
          style="min-height: 150px; height: auto; overflow-y: auto;">
         <?= $initialHtml ?>
     </div>
-
-    <input type="hidden" id="<?= $id ?>" name="<?= $name ?>" value="<?= htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
 </div>

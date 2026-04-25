@@ -62,7 +62,7 @@ $missionDescription = $narrative->missionDecription();
                     ?>
                     <br>
                     <section id="MissionEnvironment">
-                        <div class="row row-cols-1 row-cols-xl-2 row-cols-xxl-4 g-4">
+                        <div class="row row-cols-1 row-cols-xl-3 g-4">
                             <?=
                             $this->renderFile('@app/views/mission/snippets/card.php', [
                                 'properties' => $model->npcs,
@@ -75,13 +75,6 @@ $missionDescription = $narrative->missionDecription();
                                 'properties' => $model->decors,
                                 'parentId' => $model->id,
                                 'type' => 'Decor',
-                            ])
-                            ?>
-                            <?=
-                            $this->renderFile('@app/views/mission/snippets/card.php', [
-                                'properties' => $model->passages,
-                                'parentId' => $model->id,
-                                'type' => 'Passage',
                             ])
                             ?>
                             <?=
