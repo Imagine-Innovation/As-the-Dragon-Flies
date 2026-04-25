@@ -171,7 +171,7 @@ class VirtualTableTop {
         if (!DOMUtils.exists(target))
             return;
 
-        if (playerId !== currentPlayerId) {
+        if (String(playerId) !== String(currentPlayerId)) {
             // The player is not the one who is playing, 
             // the action card is hidden, and we stop there.
             $(target).addClass('d-none');
@@ -394,7 +394,7 @@ class VirtualTableTop {
                     this._showModal('#gameModal');
                     $(target).html(response.content);
                     // update action list
-                    this._updateActions(this.context.playerId, this.context.playerId, this.context.questProgressId);
+                    this._updateActions(this.context.playerId, this.context.currentPlayerId, this.context.questProgressId);
                 }
                 this._updatePlayer(this.context.playerId);
                 if (typeof notificationClient !== 'undefined') {
