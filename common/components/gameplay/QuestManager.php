@@ -138,9 +138,11 @@ class QuestManager extends BaseManager
 
         $quest->current_player_id = $playerId;
         $this->save($quest);
+        unset($quest->currentPlayer, $quest->currentQuestPlayer);
 
         $progress->current_player_id = $playerId;
         $this->save($progress);
+        unset($progress->currentPlayer);
     }
 
     /**
