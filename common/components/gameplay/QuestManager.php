@@ -506,7 +506,7 @@ class QuestManager extends BaseManager
 
         // Check if the new mission is empty
         if (empty($nextQuestProgress->remainingActions)) {
-            Yii::debug("*** debug *** setNextMission - Mission #{$nextMissionId} is empty, skipping.");
+            Yii::debug("setNextMission - Mission #{$nextMissionId} is empty, skipping.");
             // End this empty mission progress
             $this->endCurrentQuestProgress($nextQuestProgress, AppStatus::COMPLETED);
             // Try to move to the next mission
@@ -536,16 +536,18 @@ class QuestManager extends BaseManager
      */
     public function moveToNextMission(?int $nextMissionId = null): array
     {
-        Yii::debug('*** debug *** moveToNextMission nextMissionId=' . ($nextMissionId ? $nextMissionId : 'null'));
+        Yii::debug('moveToNextMission nextMissionId=' . ($nextMissionId !== null ? $nextMissionId : 'null'));
+
+        $questProgress = $this->getQuestProgress();
 
         // If nextMissionId is the current one, we ignore it and look for the next default one.
         // This avoids infinite loops or trying to restart the current mission when it's finished.
-        if ($nextMissionId && $nextMissionId === $this->getQuestProgress()->mission_id) {
+        if ($nextMissionId !== null && $nextMissionId === $questProgress->mission_id) {
             Yii::debug("QuestManager::moveToNextMission - nextMissionId is current mission, ignoring.");
             $nextMissionId = null;
         }
 
-        if ($nextMissionId) {
+        if ($nextMissionId !== null) {
             return $this->setNextMission($this->getQuest(), $nextMissionId);
         }
 
@@ -608,7 +610,7 @@ class QuestManager extends BaseManager
             array $detail = [],
     ): \common\models\events\Event
     {
-        Yii::debug("*** debug *** createQuestEvent - initiator={$initiator?->name}");
+        Yii::debug("createQuestEvent - initiator={$initiator?->name}");
 
         try {
             $sessionId = Yii::$app->session->get('sessionId');
