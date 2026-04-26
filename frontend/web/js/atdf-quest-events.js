@@ -468,8 +468,14 @@ class NotificationClient {
      */
     updateConnectionStatus(status) {
         let severity = '';
-        //const statusIcon = $(#eventHandlerStatus);
+        // Optional status icon displayed on pages that include the quest event handler badge.
         const statusIcon = document.getElementById('eventHandlerStatus');
+        if (!statusIcon) {
+            Logger.log(1, 'updateConnectionStatus', `Status icon #eventHandlerStatus not found, skipping visual update for status: ${status}`);
+            const fallbackSeverity = status === 'Connected' ? 'info' : (status === 'Error' || status === 'Connection Error') ? 'error' : 'warning';
+            ToastManager.show('Connection status', status, fallbackSeverity);
+            return;
+        }
         switch (status) {
             case 'Connected':
                 statusIcon.classList.remove('blink');
@@ -478,6 +484,7 @@ class NotificationClient {
                 severity = 'info';
                 break;
             case 'Error':
+            case 'Connection Error':
                 statusIcon.classList.add('blink');
                 statusIcon.style.color = 'var(--error)';
 
