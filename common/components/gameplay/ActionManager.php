@@ -226,7 +226,7 @@ class ActionManager extends BaseManager
             'canReplay' => $canReplay,
             'questProgressId' => $this->questProgress?->id,
             'missionId' => $missionId,
-            'nextMissionId' => $this->nextMissionId ?? $missionId,
+            'nextMissionId' => $this->nextMissionId,
         ];
     }
 

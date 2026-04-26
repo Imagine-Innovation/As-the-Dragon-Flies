@@ -500,7 +500,8 @@ class QuestManager extends BaseManager
         $nextQuestProgress = $this->addQuestProgress($nextMissionId);
 
         if (!$nextQuestProgress) {
-            throw new Exception('Could not initialize next quest progress.');
+            $currentPlayerId = $quest->current_player_id ?? 'null';
+            throw new Exception("Could not initialize next quest progress for Quest #{$quest->id}, Player #{$currentPlayerId}, Mission #{$nextMissionId}");
         }
 
         // Check if the new mission is empty
@@ -536,6 +537,13 @@ class QuestManager extends BaseManager
     public function moveToNextMission(?int $nextMissionId = null): array
     {
         Yii::debug('*** debug *** moveToNextMission nextMissionId=' . ($nextMissionId ? $nextMissionId : 'null'));
+
+        // If nextMissionId is the current one, we ignore it and look for the next default one.
+        // This avoids infinite loops or trying to restart the current mission when it's finished.
+        if ($nextMissionId && $nextMissionId === $this->getQuestProgress()->mission_id) {
+            Yii::debug("QuestManager::moveToNextMission - nextMissionId is current mission, ignoring.");
+            $nextMissionId = null;
+        }
 
         if ($nextMissionId) {
             return $this->setNextMission($this->getQuest(), $nextMissionId);

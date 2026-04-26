@@ -325,7 +325,7 @@ class GameController extends Controller
 
         // Set the context of the QuestManager to the current QuestProgress
         $questManager = new QuestManager(['questProgress' => $questProgress]);
-        $nextMissionId = (int) $request->post('nextMissionId');
+        $nextMissionId = $request->post('nextMissionId') ? (int) $request->post('nextMissionId') : null;
         $currentMissionId = (int) $request->post('missionId');
         $remainingActions = $questProgress->remainingActions;
 
