@@ -28,7 +28,7 @@ ActionOutcomes::widget([
 Button::widget([
     'icon' => $isFree ? 'bi-arrow-repeat' : 'bi-escape',
     'title' => $isFree ? 'Try another action' : 'Finish your turn',
-    'onclick' => $isFree ? null : "vtt.moveToNextPlayer({$questProgressId}, {$nextMissionId}); return false;",
+    'onclick' => $isFree ? null : "vtt.moveToNextPlayer({$questProgressId}, " . ($nextMissionId ?? 'null') . "); return false;",
     'isCta' => true,
     'ariaParams' => ['data-bs-dismiss' => 'modal'],
 ])
