@@ -89,7 +89,7 @@ class QuestManagerTest extends \Codeception\Test\Unit
 
         $manager->expects($this->once())
             ->method('gameOver')
-            ->with(AppStatus::COMPLETED)
+            ->with(AppStatus::ABORTED)
             ->willReturn(['error' => false, 'msg' => 'Game Over Success']);
 
         $result = $manager->moveToNextMission(101); // Triggering setNextMission through moveToNextMission
