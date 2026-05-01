@@ -168,11 +168,11 @@ class SimpleRichTextEditor {
                             parts.push('\n');
                             break;
                         case 'hr':
-                            parts.push('\n---\n');
+                            parts.push('\n---\n\n');
                             break;
                         default:
                             if (this.isList(tagName)) {
-                                parts.push('\n\n', walk(child), '\n');
+                                parts.push('\n', walk(child), '\n');
                             } else if (/^h[1-6]$/.test(tagName)) {
                                 parts.push('\n', this.headingPrefix(tagName), ' ', walk(child), '\n');
                             } else if (this.isBlock(tagName)) {
@@ -187,7 +187,21 @@ class SimpleRichTextEditor {
         };
 
         let md = walk(root);
-        md = md.replace(/\n\s*\n\s*\n/g, '\n\n');
+        // Normalize: if we have 3 or more newlines, keep 2 (for HR)
+        md = md.replace(/\n{3,}/g, '\n\n');
+        // Collapse double newlines into single ones for text blocks,
+        // but keep them around HRs.
+        // Use a loop to handle overlapping matches like A\n\nB\n\nC
+        let lastMd;
+        do {
+            lastMd = md;
+            md = md.replace(/([^\n])\n{2}([^\n])/g, (match, p1, p2) => {
+                // If it looks like an HR boundary, keep it
+                if (p2 === '-' || p1 === '-') return match;
+                return p1 + '\n' + p2;
+            });
+        } while (md !== lastMd);
+
         return md.trim();
     }
 }
