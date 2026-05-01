@@ -2,17 +2,23 @@
 
 use frontend\widgets\ActionOutcomes;
 use common\widgets\Button;
+use common\widgets\MarkDown;
 
 /** @var yii\web\View $this */
-/** @var string $diceRoll */
+/** @var common\models\Action $action */
 /** @var common\components\AppStatus $status */
 /** @var common\models\Outcome[] $outcomes */
+/** @var string $diceRoll */
 /** @var int $hpLoss */
 /** @var bool $isFree */
+/** @var bool $canReplay */
 /** @var int $questProgressId */
+/** @var int $missionId */
 /** @var int|null $nextMissionId */
 ?>
-
+<div class="card text-decoration">
+    <?= MarkDown::widget(['content' => $action->description]) ?>
+</div>
 <?=
 ActionOutcomes::widget([
     'outcomes' => $outcomes,

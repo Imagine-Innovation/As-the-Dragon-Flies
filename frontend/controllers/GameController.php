@@ -272,7 +272,7 @@ class GameController extends Controller
      * @param Request $postRequest
      * @return array<string, mixed> An associative array that contains what should be displayed
      */
-    protected function getOutcome(Request $postRequest): array
+    protected function getOutcomeArray(Request $postRequest): array
     {
         $param = [
             'quest_progress_id' => $postRequest->post('questProgressId'),
@@ -280,11 +280,11 @@ class GameController extends Controller
         ];
         $questAction = FindModelHelper::findQuestAction($param);
         $actionManager = new ActionManager(['questAction' => $questAction]);
-        $outcome = $actionManager->evaluateActionOutcome();
+        $outcomeArray = $actionManager->evaluateActionOutcome();
 
-        $this->createEvent('game-action', $postRequest, $questAction->action->name, $outcome);
+        $this->createEvent('game-action', $postRequest, $questAction->action->name, $outcomeArray);
 
-        return $outcome;
+        return $outcomeArray;
     }
 
     /**
@@ -300,9 +300,9 @@ class GameController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
-        $outcome = $this->getOutcome(Yii::$app->request);
+        $outcomeArray = $this->getOutcomeArray(Yii::$app->request);
 
-        $content = $this->renderPartial('ajax/outcomes', $outcome);
+        $content = $this->renderPartial('ajax/outcomes', $outcomeArray);
         return ['error' => false, 'msg' => '', 'content' => $content];
     }
 
