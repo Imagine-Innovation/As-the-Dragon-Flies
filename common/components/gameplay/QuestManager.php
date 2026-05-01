@@ -48,7 +48,7 @@ class QuestManager extends BaseManager
      * @return Quest
      * @throws RuntimeException
      */
-    private function getQuest(): Quest
+    protected function getQuest(): Quest
     {
         if ($this->quest === null) {
             throw new RuntimeException('QuestManager context error: Quest is missing.');
@@ -61,7 +61,7 @@ class QuestManager extends BaseManager
      * @return QuestProgress
      * @throws RuntimeException
      */
-    private function getQuestProgress(): QuestProgress
+    protected function getQuestProgress(): QuestProgress
     {
         if ($this->questProgress === null) {
             throw new RuntimeException('QuestManager context error: QuestProgress is missing.');
@@ -74,7 +74,7 @@ class QuestManager extends BaseManager
      * @return Player
      * @throws RuntimeException
      */
-    private function getPlayer(): Player
+    protected function getPlayer(): Player
     {
         if ($this->player === null) {
             throw new RuntimeException('QuestManager context error: Player is missing.');
@@ -501,7 +501,8 @@ class QuestManager extends BaseManager
 
         if (!$nextQuestProgress) {
             $currentPlayerId = $quest->current_player_id ?? 'null';
-            throw new Exception("Could not initialize next quest progress for Quest #{$quest->id}, Player #{$currentPlayerId}, Mission #{$nextMissionId}");
+            Yii::error("Could not initialize next quest progress for Quest #{$quest->id}, Player #{$currentPlayerId}, Mission #{$nextMissionId}. Forcing game over.");
+            return $this->gameOver(AppStatus::ABORTED);
         }
 
         // Check if the new mission is empty
@@ -537,6 +538,15 @@ class QuestManager extends BaseManager
     public function moveToNextMission(?int $nextMissionId = null): array
     {
         Yii::debug('moveToNextMission nextMissionId=' . ($nextMissionId !== null ? $nextMissionId : 'null'));
+
+        $quest = $this->getQuest();
+        $status = AppStatus::from($quest->status);
+        if ($status === AppStatus::COMPLETED || $status === AppStatus::ABORTED) {
+            return [
+                'error' => false,
+                'msg' => "Quest #{$quest->id} is already over with status " . $status->getLabel(),
+            ];
+        }
 
         $questProgress = $this->getQuestProgress();
 
