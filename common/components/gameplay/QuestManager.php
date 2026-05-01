@@ -500,7 +500,8 @@ class QuestManager extends BaseManager
         $nextQuestProgress = $this->addQuestProgress($nextMissionId);
 
         if (!$nextQuestProgress) {
-            Yii::error("Could not initialize next quest progress for Quest #{$quest->id}, Mission #{$nextMissionId}. Forcing game over.");
+            $currentPlayerId = $quest->current_player_id ?? 'null';
+            Yii::error("Could not initialize next quest progress for Quest #{$quest->id}, Player #{$currentPlayerId}, Mission #{$nextMissionId}. Forcing game over.");
             return $this->gameOver(AppStatus::COMPLETED);
         }
 
@@ -539,10 +540,11 @@ class QuestManager extends BaseManager
         Yii::debug('moveToNextMission nextMissionId=' . ($nextMissionId !== null ? $nextMissionId : 'null'));
 
         $quest = $this->getQuest();
-        if ($quest->status === AppStatus::COMPLETED->value || $quest->status === AppStatus::ABORTED->value) {
+        $status = AppStatus::from($quest->status);
+        if ($status === AppStatus::COMPLETED || $status === AppStatus::ABORTED) {
             return [
                 'error' => false,
-                'msg' => "Quest #{$quest->id} is already over with status " . AppStatus::from($quest->status)->getLabel(),
+                'msg' => "Quest #{$quest->id} is already over with status " . $status->getLabel(),
             ];
         }
 
