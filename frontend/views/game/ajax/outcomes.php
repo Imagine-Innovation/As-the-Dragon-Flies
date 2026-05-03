@@ -16,9 +16,9 @@ use common\widgets\MarkDown;
 /** @var int $missionId */
 /** @var int|null $nextMissionId */
 ?>
-<div class="card text-decoration">
+<article class="text-decoration">
     <?= MarkDown::widget(['content' => $action->description]) ?>
-</div>
+</article>
 <?=
 ActionOutcomes::widget([
     'outcomes' => $outcomes,

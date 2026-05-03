@@ -7,15 +7,16 @@ use common\widgets\MarkDown;
 /** @var string $description */
 /** @var int $maxLength */
 /** @var string $name */
+/** @var string $style */
 $shortDesc = Utilities::trim($description, $maxLength);
 ?>
 <div class="container g-0 p-0">
-    <a data-bs-toggle="modal" data-bs-target="#modal-<?= $UUID ?>">
+    <a<?= $style ? " class=\"{$style}\"" : '' ?> data-bs-toggle="modal" data-bs-target="#modal-<?= $UUID ?>">
         <?= MarkDown::widget(['content' => $shortDesc]) ?>
     </a>
     <div class="modal fade" id="modal-<?= $UUID ?>" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content">
+            <div class="modal-content <?= $style ?>">
                 <?php if ($name): ?>
                     <div class="modal-header">
                         <h5 class="modal-title"><?= Utilities::encode($name) ?></h5>

@@ -15,6 +15,7 @@ class ModalDesc extends Widget
     public ?int $maxLength = null;
     public ?string $type = null;
     public ?int $id = null;
+    public ?string $style = null;
 
     public function run()
     {
@@ -27,6 +28,7 @@ class ModalDesc extends Widget
         if (mb_strlen($this->description) <= $maxLength) {
             return $this->render('modal-desc-raw', [
                         'description' => $this->description,
+                        'style' => $this->style,
             ]);
         }
 
@@ -37,6 +39,7 @@ class ModalDesc extends Widget
                     'description' => $this->description,
                     'maxLength' => $maxLength,
                     'name' => $this->name,
+                    'style' => $this->style,
         ]);
     }
 }

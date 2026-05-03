@@ -4,9 +4,8 @@ use common\widgets\Button;
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */
-/** @var yii\data\ActiveDataProvider $dataProvider */
+/** @var common\models\Story[] $stories */
 /** @var integer $questId */
-$stories = $dataProvider->getModels();
 $user = Yii::$app->user->identity;
 $player = Yii::$app->session->get('currentPlayer');
 $quest = Yii::$app->session->get('quest');

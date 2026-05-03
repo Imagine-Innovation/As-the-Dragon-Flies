@@ -20,37 +20,16 @@ $canJoin = $tavernManager->canPlayerJoinQuest($player);
 
 $randomFileName = random_int(1, 8) . '.jpg';
 $imgPath = WebResourcesHelper::imagePath();
-$fileName = "{$imgPath}/sm/{$randomFileName}";
+$randomImage = "{$imgPath}/sm/{$randomFileName}";
 $storyRoot = WebResourcesHelper::storyRootPath($story->id);
 
-$image = $story->image ? "{$storyRoot}/img/{$story->image}" : $fileName;
+$image = $story->image ? "{$storyRoot}/img/{$story->image}" : $randomImage;
 ?>
 
 <div class="card h-100">
     <div class="card-header">
-        <h4 class="card-title"><?= $story->name ?></h4>
+        <h4 class="card-title text-decoration"><?= $story->name ?></h4>
     </div>
-    <?php if ($user->is_designer): ?>
-        <div class="actions">
-            <?=
-            Button::widget([
-                'mode' => 'icon',
-                'url' => Url::toRoute(['story/view', 'id' => $story->id]),
-                'icon' => 'bi-journal',
-                'tooltip' => 'View story details',
-            ])
-            ?>
-            <?=
-            Button::widget([
-                'mode' => 'icon',
-                'url' => Url::toRoute(['story/update', 'id' => $story->id]),
-                'icon' => 'bi-journal-code',
-                'tooltip' => 'Edit story',
-            ])
-            ?>
-        </div>
-    <?php endif; ?>
-
     <img class="card-img-top" src="<?= $image ?>">
 
     <div class="card-body">
@@ -69,12 +48,9 @@ $image = $story->image ? "{$storyRoot}/img/{$story->image}" : $fileName;
             </p>
         <?php endif; ?>
 
-        <?php if ($user->is_player): ?>
-            <p class="lead">
-                <?= StoryPlayers::exists($story, $user->players); ?>
-            </p>
-        <?php endif; ?>
-
+        <p class="lead">
+            <?= StoryPlayers::exists($story, $user->players); ?>
+        </p>
         <p>
             <span class="badge badge-info"><?= $story->getRequiredLevels() ?></span>
             <span class="badge badge-info"><?= $story->companySize ?></span>
@@ -90,6 +66,7 @@ $image = $story->image ? "{$storyRoot}/img/{$story->image}" : $fileName;
                 'description' => $story->description,
                 'maxLength' => 300,
                 'id' => $story->id,
+                'style' => 'text-decoration',
             ])
             ?>
         </p>
