@@ -44,6 +44,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select an image',
                             'maxlength' => true,
+                            'prompt' => '',
                         ],
                 )
                 ->label('Passage image')
@@ -56,6 +57,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select a decor',
+                            'prompt' => '',
                         ],
                 )
                 ->label('Original decor of the Passage')
@@ -67,6 +69,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select a decor',
+                            'prompt' => '',
                         ],
                 )
                 ->label('Destination decor for the passage')

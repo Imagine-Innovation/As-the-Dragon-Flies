@@ -46,6 +46,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select a monster to appear',
+                            'prompt' => '',
                         ],
                 )
                 ->label('Creature')
@@ -61,6 +62,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select an image',
                             'maxlength' => true,
+                            'prompt' => '',
                         ],
                 )
                 ->label('Monster image')

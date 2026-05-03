@@ -40,6 +40,7 @@ $form = ActiveForm::begin([
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select an action',
+                            'prompt' => '',
                         ],
                 )
                 ->label('Previous action');
@@ -73,6 +74,7 @@ $form = ActiveForm::begin([
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select an action',
+                            'prompt' => '',
                         ],
                 )
                 ->label('Next action');

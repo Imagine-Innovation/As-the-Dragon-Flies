@@ -55,6 +55,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select an item',
+                            'prompt' => '',
                         ],
                 )
                 ->label('Item gained')
@@ -68,6 +69,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select a mission',
+                            'prompt' => '',
                         ],
                 )
                 ->label('Next mission')

@@ -43,6 +43,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select an image',
+                            'prompt' => '',
                         //'maxlength' => true,
                         ],
                 )
@@ -56,6 +57,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select a damage type',
+                            'prompt' => '',
                         ],
                 )
                 ->label('Damage type')

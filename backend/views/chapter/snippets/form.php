@@ -38,6 +38,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($model->story_id);
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select an image',
                             'maxlength' => true,
+                            'prompt' => '',
                         ],
                 )
                 ->label('Chapter image')
