@@ -36,6 +36,7 @@ $languages = [
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select an image',
                             'maxlength' => true,
+                            'prompt' => '',
                         ],
                 )
                 ->label('Item image')

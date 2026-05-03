@@ -66,6 +66,7 @@ $actionType = $model->action_type_id ? $model->actionType : null;
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select an action type',
+                            'prompt' => '',
                         ],
                 )
                 ->label('Action type')
@@ -135,6 +136,7 @@ $actionType = $model->action_type_id ? $model->actionType : null;
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select an item',
+                            'prompt' => '',
                         ],
                 )
                 ->label('Object required to carry out the action')
@@ -149,6 +151,7 @@ $actionType = $model->action_type_id ? $model->actionType : null;
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select a passage',
+                            'prompt' => '',
                         ],
                 )
                 ->label('Passage affected by the action')
@@ -162,6 +165,7 @@ $actionType = $model->action_type_id ? $model->actionType : null;
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select a decor',
+                            'prompt' => '',
                         ],
                 )
                 ->label('Decor affected by the action')
@@ -175,6 +179,7 @@ $actionType = $model->action_type_id ? $model->actionType : null;
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select a trap',
+                            'prompt' => '',
                         ],
                 )
                 ->label('Trap affected by the action')
@@ -188,6 +193,7 @@ $actionType = $model->action_type_id ? $model->actionType : null;
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select an item',
+                            'prompt' => '',
                         ],
                 )
                 ->label('Object affected by the action')
@@ -201,6 +207,7 @@ $actionType = $model->action_type_id ? $model->actionType : null;
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select a NPC',
+                            'prompt' => '',
                         ],
                 )
                 ->label('NPC involved in the action')
@@ -214,6 +221,7 @@ $actionType = $model->action_type_id ? $model->actionType : null;
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select a reply',
+                            'prompt' => '',
                         ],
                 )
                 ->label('First reply of the player')

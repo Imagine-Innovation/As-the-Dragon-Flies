@@ -42,6 +42,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select an image',
                             'maxlength' => true,
+                            'prompt' => '',
                         ],
                 )
                 ->label('Mission image')

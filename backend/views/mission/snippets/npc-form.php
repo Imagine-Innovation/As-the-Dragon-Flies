@@ -43,6 +43,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select the type of NPC',
+                            'prompt' => '',
                         ],
                 )
                 ->label('NPC type');
@@ -54,6 +55,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
                             'data-minimum-results-for-search' => -1,
                             'data-placeholder' => 'Select an image',
                             'maxlength' => true,
+                            'prompt' => '',
                         ],
                 )
                 ->label('NPC image');
@@ -65,6 +67,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
                                 'class' => 'select2-container w-100',
                                 'data-minimum-results-for-search' => -1,
                                 'data-placeholder' => 'Select the first dialog of the NPC',
+                                'prompt' => '',
                             ],
                     )
                     ->label('First dialog')
@@ -76,6 +79,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
                                 'class' => 'select2-container w-100',
                                 'data-minimum-results-for-search' => -1,
                                 'data-placeholder' => 'Select a language',
+                                'prompt' => '',
                             ],
                     )
                     ->label('Language spoken')
