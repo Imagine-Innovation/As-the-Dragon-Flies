@@ -188,7 +188,7 @@ class TavernManager extends BaseManager
         if (!$this->isPlayerLevelValid($player)) {
             return [
                 'denied' => true,
-                'reason' => "canPlayerJoinQuest->Player {$player->name}'s level ({$player->level->name}) is not within story requirements ({$story?->min_level} to {$story?->max_level})",
+                'reason' => "canPlayerJoinQuest->Player {$player->name}'s level ({$player->level?->name}) is not within story requirements ({$story?->min_level} to {$story?->max_level})",
             ];
         }
 
@@ -203,7 +203,7 @@ class TavernManager extends BaseManager
         if (!$this->isPlayerClassValid($player)) {
             return [
                 'denied' => true,
-                'reason' => "canPlayerJoinQuest->Cannot welcome more players of class {$player->class->name}",
+                'reason' => "canPlayerJoinQuest->Cannot welcome more players of class {$player->class?->name}",
             ];
         }
 
@@ -470,8 +470,7 @@ class TavernManager extends BaseManager
         if ($successfullySaved) {
             return [
                 'error' => false,
-                'message' => 'Player successfully ' . ($reasonWhyPlayerQuit ? 'left'
-                    : 'joined') . ' on the quest',
+                'message' => 'Player successfully ' . ($reasonWhyPlayerQuit ? 'left' : 'joined') . ' on the quest',
             ];
         }
         return [

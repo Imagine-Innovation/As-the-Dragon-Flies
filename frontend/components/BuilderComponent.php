@@ -197,8 +197,7 @@ class BuilderComponent
                 $attempts++;
             } while (in_array($name, $names) && $attempts < $maxAttempts);
 
-            $names[$i] = in_array($name, $names) ? "The {$ethnicity->name} #{$i}"
-                        : $name;
+            $names[$i] = in_array($name, $names) ? "The {$ethnicity->name} #{$i}" : $name;
         }
 
         return $names;
@@ -380,8 +379,7 @@ class BuilderComponent
             $playerCoin = new PlayerCoin([
                 'player_id' => $player->id,
                 'coin' => $coin,
-                'quantity' => $coin === 'gp' ? self::getFundingFromBackground($player)
-                    : 0,
+                'quantity' => $coin === 'gp' ? self::getFundingFromBackground($player) : 0,
             ]);
 
             // Save the player coin and track success status
@@ -578,7 +576,7 @@ class BuilderComponent
         PlayerTrait::deleteAll(['player_id' => $player->id]);
 
         $traits = CharacterTrait::find()->all();
-        $background_id = $player->background->id;
+        $background_id = $player->background_id;
         foreach ($traits as $trait) {
             $score = DiceRoller::roll($trait->dice);
             $backgroundTrait = BackgroundTrait::findOne([
@@ -656,7 +654,7 @@ class BuilderComponent
     {
         $defaultAbilities = AbilityDefault::findAll([
             'race_group_id' => $player->race->race_group_id,
-            'class_id' => $player->class->id,
+            'class_id' => $player->class_id,
         ]);
 
         foreach ($defaultAbilities as $defaultAbility) {

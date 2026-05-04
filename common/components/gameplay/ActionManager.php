@@ -17,6 +17,7 @@ use Yii;
 
 class ActionManager extends BaseManager
 {
+
     // Context data
     // Public facade
     public ?QuestAction $questAction = null;
@@ -58,9 +59,9 @@ class ActionManager extends BaseManager
     {
         Yii::debug("*** debug *** getModifier - action={$this->action?->name}, player={$this->player?->name}");
         $skillIds = ActionTypeSkill::find()
-            ->select('skill_id')
-            ->where(['action_type_id' => $this->action?->action_type_id])
-            ->column();
+                ->select('skill_id')
+                ->where(['action_type_id' => $this->action?->action_type_id])
+                ->column();
 
         if (!$skillIds) {
             // No skill required, no modifier to apply
@@ -68,7 +69,7 @@ class ActionManager extends BaseManager
         }
 
         $modifier = PlayerSkill::find()->where(['player_id' => $this->player?->id, 'skill_id' => $skillIds])->max(
-            'bonus',
+                'bonus',
         );
 
         return is_numeric($modifier) ? (int) $modifier : 0;
@@ -79,9 +80,9 @@ class ActionManager extends BaseManager
      * @param int $diceRoll
      * @return AppStatus
      */
-    private function determineActionStatus(int $diceRoll): AppStatus
+    private function getActionStatus(int $diceRoll): AppStatus
     {
-        Yii::debug("*** debug *** determineActionStatus - action={$this->action?->name}, diceRoll={$diceRoll}");
+        Yii::debug("*** debug *** getActionStatus - action={$this->action?->name}, diceRoll={$diceRoll}");
         $dc = $this->action?->dc;
         $partialDc = $this->action?->partial_dc;
 
@@ -139,7 +140,7 @@ class ActionManager extends BaseManager
             }
         }
         Yii::debug(
-            '*** debug *** unlockNextActions - isEligible: ' . count($unlockedQuestActions) . ' triggered action(s)',
+                '*** debug *** unlockNextActions - isEligible: ' . count($unlockedQuestActions) . ' triggered action(s)',
         );
         return $unlockedQuestActions;
     }
@@ -163,7 +164,7 @@ class ActionManager extends BaseManager
         foreach ($outcomes as $outcome) {
             $bitwiseComparison = $outcome->status & $status->value;
             Yii::debug(
-                "*** debug *** getOutcomes - outcome->status={$outcome->status}, status->value={$status->value}, bitwiseComparison={$bitwiseComparison}",
+                    "*** debug *** getOutcomes - outcome->status={$outcome->status}, status->value={$status->value}, bitwiseComparison={$bitwiseComparison}",
             );
 
             if ($bitwiseComparison) {
@@ -193,9 +194,7 @@ class ActionManager extends BaseManager
         $canReplay = true;
         foreach ($outcomes as $outcome) {
             $canReplay = $canReplay && $outcome->can_replay === 1;
-            $nextMissionId = $outcome->next_mission_id === $this->questProgress?->mission_id
-                ? null
-                : $outcome->next_mission_id;
+            $nextMissionId = $outcome->next_mission_id === $this->questProgress?->mission_id ? null : $outcome->next_mission_id;
         }
         $this->nextMissionId = $nextMissionId;
         return $canReplay;
@@ -210,11 +209,12 @@ class ActionManager extends BaseManager
      * @return array<string, mixed>
      */
     private function returnOutcomeEvaluation(
-        AppStatus &$status,
-        array $outcomes,
-        string $diceRollLabel,
-        bool $canReplay,
-    ): array {
+            AppStatus &$status,
+            array $outcomes,
+            string $diceRollLabel,
+            bool $canReplay,
+    ): array
+    {
         $missionId = $this->questProgress?->mission_id;
         return [
             'action' => $this->action,
@@ -247,7 +247,7 @@ class ActionManager extends BaseManager
         $diceToRoll = $modifier ? "1d20+{$modifier}" : 'd20';
         $diceRoll = DiceRoller::roll($diceToRoll);
 
-        $status = $this->determineActionStatus($diceRoll);
+        $status = $this->getActionStatus($diceRoll);
 
         // Get outcome details
         $outcomes = $this->getOutcomes($status);
@@ -270,9 +270,7 @@ class ActionManager extends BaseManager
      */
     private function isActionPrerequisiteMet(ActionFlow &$prerequisite, int $questProgressId): bool
     {
-        Yii::debug(
-            "*** debug *** isActionPrerequisiteMet - prequisite={$prerequisite->previousAction->name}, questProgressId={$questProgressId}",
-        );
+        Yii::debug("*** debug *** isActionPrerequisiteMet - prequisite={$prerequisite->previousAction->name}, questProgressId={$questProgressId}");
         $questAction = QuestAction::findOne([
             'quest_progress_id' => $questProgressId,
             'action_id' => $prerequisite->previous_action_id,
@@ -282,9 +280,7 @@ class ActionManager extends BaseManager
             $questActionStatus = $questAction->status;
             $criterionMask = $prerequisite->status;
             $bitwiseComparison = $questActionStatus & $criterionMask;
-            Yii::debug(
-                "*** debug *** isActionPrerequisiteMet - criterionMask={$criterionMask}, questActionStatus={$questActionStatus}, bitwiseComparison={$bitwiseComparison}",
-            );
+            Yii::debug("*** debug *** isActionPrerequisiteMet - criterionMask={$criterionMask}, questActionStatus={$questActionStatus}, bitwiseComparison={$bitwiseComparison}");
 
             // Bitwise comparison
             return $bitwiseComparison === $questActionStatus;

@@ -74,7 +74,7 @@ class StoryNeededClass
         if ($tavern) {
             foreach ($tavern->currentPlayers as $player) {
                 // Check if the player's class ID matches the specified class ID
-                if ($player->class->id === $class->id) {
+                if ($player->class_id === $class->id) {
                     return 'checked';
                 }
             }

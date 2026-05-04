@@ -30,6 +30,11 @@ abstract class BaseManager extends Component
         $this->trigger($name, $event);
     }
 
+    /**
+     *
+     * @param \yii\db\ActiveRecord $model
+     * @return bool
+     */
     protected function save(\yii\db\ActiveRecord $model): bool
     {
         return SaveHelper::save($model);
