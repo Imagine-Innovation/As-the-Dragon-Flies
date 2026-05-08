@@ -95,22 +95,29 @@ $currentUser = Yii::$app->user->identity;
 
 
     <script type="text/javascript">
+        $(document).ready(function () {
+            if (DOMUtils.exists('#ajaxHiddenParams')) {
+                LayoutInitializer.initAjaxPage();
+            }
+            const dashboardManager = new DashboardManager(60, 300);
+            dashboardManager.init();
 
-        if (DOMUtils.exists('#ajaxHiddenParams')) {
-            LayoutInitializer.initAjaxPage();
-        }
-        const dashboardManager = new DashboardManager(60, 300);
-        dashboardManager.init();
+            // Sidebar manual toggle for Large screens
+            const sidebar = document.getElementById('sidebar');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', () => {
+                    sidebar.classList.toggle('manual-shrink');
+                });
+            }
 
-        // Sidebar manual toggle for Large screens
-        const sidebar = document.getElementById('sidebar');
-        const sidebarToggle = document.getElementById('sidebarToggle');
-        sidebarToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('manual-shrink');
+            // Clone menu for mobile offcanvas on load
+            const mobileSidebarContent = document.getElementById('mobileSidebarContent');
+            const mainNavContent = document.getElementById('mainNavContent');
+            if (mobileSidebarContent && mainNavContent) {
+                mobileSidebarContent.innerHTML = mainNavContent.innerHTML;
+            }
         });
-
-        // Clone menu for mobile offcanvas on load
-        document.getElementById('mobileSidebarContent').innerHTML = document.getElementById('mainNavContent').innerHTML;
     </script>
 </html>
 <?php $this->endPage() ?>
