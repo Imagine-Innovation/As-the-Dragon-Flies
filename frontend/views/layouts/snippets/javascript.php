@@ -30,17 +30,20 @@ $jsSnippet = match ($controllerId) {
 
 <script type="text/javascript">
     var currentPlayerId = <?= Yii::$app->session->get('playerId') ?? 'null' ?>;
-    PlayerSelector.initializeFromDOM();
-    LayoutInitializer.initNavbarLobby();
 
-    if (DOMUtils.exists('#ajaxHiddenParams')) {
-        LayoutInitializer.initAjaxPage();
-    }
+    $(document).ready(function () {
+        PlayerSelector.initializeFromDOM();
+        LayoutInitializer.initNavbarLobby();
 
-<?=
-$jsSnippet ? $this->renderFile("@app/views/layouts/snippets/js/{$jsSnippet}.php", [
-            'controllerId' => $controllerId,
-            'actionId' => $actionId,
-        ]) : ''
-?>
+        if (DOMUtils.exists('#ajaxHiddenParams')) {
+            LayoutInitializer.initAjaxPage();
+        }
+    });
+
+    <?=
+    $jsSnippet ? $this->renderFile("@app/views/layouts/snippets/js/{$jsSnippet}.php", [
+                'controllerId' => $controllerId,
+                'actionId' => $actionId,
+            ]) : ''
+    ?>
 </script>
