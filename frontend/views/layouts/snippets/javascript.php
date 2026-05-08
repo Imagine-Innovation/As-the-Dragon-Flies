@@ -38,12 +38,12 @@ $jsSnippet = match ($controllerId) {
         if (DOMUtils.exists('#ajaxHiddenParams')) {
             LayoutInitializer.initAjaxPage();
         }
-
-        <?=
-        $jsSnippet ? $this->renderFile("@app/views/layouts/snippets/js/{$jsSnippet}.php", [
-                    'controllerId' => $controllerId,
-                    'actionId' => $actionId,
-                ]) : ''
-        ?>
     });
+
+    <?=
+    $jsSnippet ? $this->renderFile("@app/views/layouts/snippets/js/{$jsSnippet}.php", [
+                'controllerId' => $controllerId,
+                'actionId' => $actionId,
+            ]) : ''
+    ?>
 </script>

@@ -95,6 +95,13 @@ $currentUser = Yii::$app->user->identity;
 
 
     <script type="text/javascript">
+        // Clone menu for mobile offcanvas on load (must be immediate for ActionButtonManager)
+        const mobileSidebarContent = document.getElementById('mobileSidebarContent');
+        const mainNavContent = document.getElementById('mainNavContent');
+        if (mobileSidebarContent && mainNavContent) {
+            mobileSidebarContent.innerHTML = mainNavContent.innerHTML;
+        }
+
         $(document).ready(function () {
             if (DOMUtils.exists('#ajaxHiddenParams')) {
                 LayoutInitializer.initAjaxPage();
@@ -105,17 +112,10 @@ $currentUser = Yii::$app->user->identity;
             // Sidebar manual toggle for Large screens
             const sidebar = document.getElementById('sidebar');
             const sidebarToggle = document.getElementById('sidebarToggle');
-            if (sidebarToggle) {
+            if (sidebar && sidebarToggle) {
                 sidebarToggle.addEventListener('click', () => {
                     sidebar.classList.toggle('manual-shrink');
                 });
-            }
-
-            // Clone menu for mobile offcanvas on load
-            const mobileSidebarContent = document.getElementById('mobileSidebarContent');
-            const mainNavContent = document.getElementById('mainNavContent');
-            if (mobileSidebarContent && mainNavContent) {
-                mobileSidebarContent.innerHTML = mainNavContent.innerHTML;
             }
         });
     </script>
