@@ -11,7 +11,6 @@ $javascriptLibraries = match ($controllerId) {
     'item' => ['atdf-item-manager'],
     'player-item' => ['atdf-player-item-manager'],
     'image' => ['atdf-image-manager'],
-    'mission' => ['atdf-search-select'],
     default => []
 };
 

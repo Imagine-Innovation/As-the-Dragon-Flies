@@ -41,7 +41,6 @@ class PlayerController extends Controller
                     [
                         'actions' => [
                             'ajax',
-                            'ajax-lite',
                             'ajax-set-context',
                             'index',
                             'set-current',
@@ -92,34 +91,6 @@ class PlayerController extends Controller
         $ajaxRequest = new AjaxRequest($param);
 
         if ($ajaxRequest->makeResponse(Yii::$app->request)) {
-            return $ajaxRequest->response;
-        }
-        return ['error' => true, 'msg' => 'Error encountered'];
-    }
-
-    /**
-     *
-     * @return array{error: bool, msg: string, content?: string}
-     */
-    public function actionAjaxLite(): array
-    {
-        Yii::$app->response->format = Response::FORMAT_JSON;
-
-        if (!$this->request->isPost || !$this->request->isAjax) {
-            return ['error' => true, 'msg' => 'Not an Ajax POST request'];
-        }
-
-        $request = Yii::$app->request;
-        $userId = $request->post('userId');
-
-        $param = [
-            'modelName' => 'Player',
-            'render' => 'lite',
-            'filter' => ['user_id' => $userId],
-        ];
-        $ajaxRequest = new AjaxRequest($param);
-
-        if ($ajaxRequest->makeResponse($request)) {
             return $ajaxRequest->response;
         }
         return ['error' => true, 'msg' => 'Error encountered'];
