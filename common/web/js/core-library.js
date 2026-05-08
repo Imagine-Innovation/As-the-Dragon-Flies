@@ -517,11 +517,10 @@ class ActionButtonManager {
     }
 }
 
-// Initialize library when DOM is ready
-// $(document).ready(() => CoreLibrary.init());
+// Initialize library immediately
+CoreLibrary.init();
 
 $(document).ready(() => {
-    CoreLibrary.init();
     ActionButtonManager.initActionButton();
 });
 
