@@ -6,6 +6,7 @@ use Yii;
 
 enum AppStatus: int
 {
+
     // Global/User/Player statuses
     case DELETED = 0;
     case INACTIVE = 9;
@@ -29,12 +30,13 @@ enum AppStatus: int
     case IN_PROGRESS = 401;
     case TERMINATED = 402;
     // Action status used for bitwise comparison as a status bit mask
-    case SUCCESS = 2; // Binary: 010=2
     case PARTIAL = 1; // Binary: 001=1
+    case SUCCESS = 2; // Binary: 010=2
     case FAILURE = 4; // Binary: 100=4
     case NOT_FAILED = 3; // Binary: 011=3 (2 | 1)
     case NOT_SUCCEEDED = 5; // Binary: 101=5 (4 | 1)
     case ANY_OUTCOME = 7; // Binary: 111=7 (4 | 2 | 1)
+    case ITEM_MISSING = 8;
 
     /**
      *
@@ -65,13 +67,14 @@ enum AppStatus: int
             self::IN_PROGRESS => 'In progress',
             self::TERMINATED => 'Terminated',
             // Action status
-            self::SUCCESS => 'Success',
             self::PARTIAL => 'Partial success',
+            self::SUCCESS => 'Success',
             self::FAILURE => 'Failure',
             self::NOT_FAILED => 'Total or partial success',
             self::NOT_SUCCEEDED => 'Partial success or failure',
-            self::ANY_OUTCOME => 'Any outcome', // @phpstan-ignore-line
-            default => 'Unknown Status',
+            self::ANY_OUTCOME => 'Any outcome',
+            self::ITEM_MISSING => 'A required item is missing',
+//            default => 'Unknown Status',
         };
     }
 
@@ -107,13 +110,14 @@ enum AppStatus: int
             self::IN_PROGRESS => ['icon' => 'dnd-d20', 'tooltip' => 'In progress'],
             self::TERMINATED => ['icon' => 'dnd-diamond', 'tooltip' => 'Terminated'],
             // Action status
-            self::SUCCESS => ['icon' => 'dnd-badge', 'tooltip' => 'Success'],
             self::PARTIAL => ['icon' => 'bi-star-half', 'tooltip' => 'Partial success'],
+            self::SUCCESS => ['icon' => 'dnd-badge', 'tooltip' => 'Success'],
             self::FAILURE => ['icon' => 'dnd-danger', 'tooltip' => 'Failure'],
             self::NOT_FAILED => ['icon' => 'bi-star-fill', 'tooltip' => 'Total or partial success'],
             self::NOT_SUCCEEDED => ['icon' => 'bi-star', 'tooltip' => 'Partial success or failure'],
-            self::ANY_OUTCOME => ['icon' => 'bi-stars', 'tooltip' => 'Any outcome'], // @phpstan-ignore-line
-            default => ['icon' => 'bi-exclamation-square', 'tooltip' => 'Undefined'],
+            self::ANY_OUTCOME => ['icon' => 'bi-stars', 'tooltip' => 'Any outcome'],
+            self::ITEM_MISSING => ['icon' => 'dnd-key2', 'tooltip' => 'You\'re missing an item'],
+//            default => ['icon' => 'bi-exclamation-square', 'tooltip' => 'Undefined'],
         };
     }
 
@@ -124,8 +128,8 @@ enum AppStatus: int
     public function getActionStatusFilter(): array
     {
         return match ($this) {
-            self::SUCCESS => [self::SUCCESS->value],
             self::PARTIAL => [self::PARTIAL->value],
+            self::SUCCESS => [self::SUCCESS->value],
             self::FAILURE => [self::FAILURE->value],
             self::NOT_FAILED => [self::SUCCESS->value, self::PARTIAL->value],
             self::NOT_SUCCEEDED => [self::PARTIAL->value, self::FAILURE->value],
@@ -141,8 +145,8 @@ enum AppStatus: int
     public function getActionAdjective(): string
     {
         return match ($this) {
-            self::SUCCESS => 'succeeded',
             self::PARTIAL => 'partialy succeeded',
+            self::SUCCESS => 'succeeded',
             self::FAILURE => 'failed',
             default => 'did something, but I don\'t know what',
         };
@@ -236,6 +240,7 @@ enum AppStatus: int
             self::NOT_FAILED->value,
             self::NOT_SUCCEEDED->value,
             self::ANY_OUTCOME->value,
+            self::ITEM_MISSING->value,
         ];
     }
 
@@ -252,6 +257,7 @@ enum AppStatus: int
             self::NOT_FAILED->value => self::NOT_FAILED->getLabel(),
             self::NOT_SUCCEEDED->value => self::NOT_SUCCEEDED->getLabel(),
             self::ANY_OUTCOME->value => self::ANY_OUTCOME->getLabel(),
+            self::ITEM_MISSING->value => self::ITEM_MISSING->getLabel(),
         ];
     }
 

@@ -10,6 +10,7 @@ use common\models\ActionFlow;
 use common\models\ActionTypeSkill;
 use common\models\Outcome;
 use common\models\Player;
+use common\models\PlayerItem;
 use common\models\PlayerSkill;
 use common\models\QuestAction;
 use common\models\QuestProgress;
@@ -73,6 +74,23 @@ class ActionManager extends BaseManager
         );
 
         return is_numeric($modifier) ? (int) $modifier : 0;
+    }
+
+    /**
+     *
+     * @param int|null $playerId
+     * @param int|null $itemId
+     * @return bool
+     */
+    private function playerHasRequiredItem(?int $playerId, ?int $itemId): bool
+    {
+        if ($itemId === null) {
+            return true; // no item is required, consider that the player has the required item
+        }
+
+        $playerItem = PlayerItem::findOne(['player_id' => $playerId, 'item_id' => $itemId]);
+
+        return $playerItem !== null && $playerItem->quantity > 0;
     }
 
     /**
@@ -247,7 +265,11 @@ class ActionManager extends BaseManager
         $diceToRoll = $modifier ? "1d20+{$modifier}" : 'd20';
         $diceRoll = DiceRoller::roll($diceToRoll);
 
-        $status = $this->getActionStatus($diceRoll);
+        if ($this->playerHasRequiredItem($this->player?->id, $this->action->required_item_id)) {
+            $status = $this->getActionStatus($diceRoll);
+        } else {
+            $status = AppStatus::ITEM_MISSING;
+        }
 
         // Get outcome details
         $outcomes = $this->getOutcomes($status);
