@@ -5,6 +5,7 @@
 /** @var string $actionId */
 ?>
 
+$(document).ready(function () {
 <?php if ($actionId === 'create'): ?>
     PlayerBuilder.initCreatePage();
 <?php elseif ($actionId === 'update'): ?>
@@ -18,4 +19,5 @@
     PlayerBuilder.initAbilitiesTab();
     PlayerBuilder.initAvatarTab();
     PlayerBuilder.initSkillsTab();
-<?php endif;
+<?php endif; ?>
+});
