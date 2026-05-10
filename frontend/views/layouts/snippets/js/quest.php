@@ -22,13 +22,14 @@ let questName;
 
 $(document).ready(function () {
     const currentHost = window.location.hostname;
-    const url = `ws://${currentHost}:8082`;
-    sessionId = `<?= $sessionId ?>`;
-    playerId = <?= $playerId ?>;
-    avatar = `<?= $avatar ?>`;
-    playerName = `<?= $playerName ?>`;
-    questId = <?= $questId ?>;
-    questName = `<?= $questName ?>`;
+    const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+    const url = `${protocol}://${currentHost}:8082`;
+    sessionId = <?= json_encode($sessionId) ?>;
+    playerId = <?= json_encode($playerId) ?>;
+    avatar = <?= json_encode($avatar) ?>;
+    playerName = <?= json_encode($playerName) ?>;
+    questId = <?= json_encode($questId) ?>;
+    questName = <?= json_encode($questName) ?>;
 
     vtt = new VirtualTableTop(); // defined in "atdf-quest-<?= $controllerId === 'game' ? 'game' : 'tavern' ?>.js"
     vtt.init();
