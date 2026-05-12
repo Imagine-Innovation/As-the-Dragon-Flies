@@ -118,16 +118,24 @@ class AjaxRequest
             $query = $modelName::find()->select($this->select ?? '*');
 
             foreach ($this->innerJoin as $join) {
-                $query->innerJoin($join['table'], $join['clause']);
+                $query->innerJoin($join);
             }
 
             if ($this->filter) {
                 $query->andWhere($this->filter);
             }
+
+            if ($this->with) {
+                $query->with($this->with);
+            }
             return $query;
         }
 
-        return $this->filter ? $modelName::find()->where($this->filter) : $modelName::find();
+        $query = $this->filter ? $modelName::find()->where($this->filter) : $modelName::find();
+        if ($this->with) {
+            $query->with($this->with);
+        }
+        return $query;
     }
 
     /**

@@ -211,9 +211,10 @@ class QuestController extends Controller
 
         // Prepare Ajax request parameters
         $param = [
-            'modelName' => 'QuestPlayer',
+            'modelName' => 'Player',
             'render' => $render ?? 'tavern-members',
             'filter' => ['quest_id' => $questId],
+            'with' => ['questPlayers', 'class', 'race', 'image', 'alignment', 'level'],
         ];
 
         // Process request and return response
