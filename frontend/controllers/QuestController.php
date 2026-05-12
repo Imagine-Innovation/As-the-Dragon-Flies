@@ -215,6 +215,7 @@ class QuestController extends Controller
             'render' => $render ?? 'tavern-members',
             'filter' => ['quest_id' => $questId],
             'with' => ['questPlayers', 'class', 'race', 'image', 'alignment', 'level'],
+            'param' => ['questId' => $questId],
         ];
 
         // Process request and return response
