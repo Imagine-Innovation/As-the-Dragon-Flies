@@ -593,7 +593,7 @@ class PlayerBuilderController extends Controller
         $param = [
             'modelName' => 'ItemCategory',
             'render' => 'item-category',
-            'with' => ['item', 'image'],
+            'with' => ['item'],
             'param' => [
                 'choice' => $choice,
                 'alreadySelectedItems' => $alreadySelectedItems,
