@@ -195,21 +195,27 @@ class SiteController extends Controller
     public function actionLogin(): string|Response
     {
         if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
+            $user = Yii::$app->user->identity;
+            if ($user && $user->is_player) {
+                return $this->goHome();
+            }
+            Yii::$app->user->logout();
+            Yii::$app->session->setFlash('error', 'You do not have permission to access the game.');
         }
-
         $this->layout = 'blank';
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+            $user = Yii::$app->user->identity;
+            if ($user && $user->is_player) {
+                return $this->goBack();
+            }
+            Yii::$app->user->logout();
+            Yii::$app->session->setFlash('error', 'You do not have permission to access the game.');
         }
 
         $model->password = '';
-
-        return $this->render('login', [
-                    'model' => $model,
-        ]);
+        return $this->render('login', ['model' => $model]);
     }
 
     /**
