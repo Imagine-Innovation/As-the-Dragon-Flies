@@ -61,7 +61,6 @@ $status = AppStatus::from($model->status);
 
             <div class="d-grid gap-2">
                 <?= Html::a('Back to Stories', ['story/index'], ['class' => 'btn btn-primary']) ?>
-                <?= Html::a('View All Quests', ['quest/index'], ['class' => 'btn btn-outline-secondary']) ?>
             </div>
         </div>
     </div>

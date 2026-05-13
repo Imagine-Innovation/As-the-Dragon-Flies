@@ -581,6 +581,7 @@ class PlayerBuilderController extends Controller
      */
     private function getItemsCategoryAjaxParam(string $idList, string $choice, string $alreadySelectedItems): array
     {
+        Yii::debug("*** debug *** getItemsCategoryAjaxParam - idList={$idList}, choice={$choice}, alreadySelectedItems={$alreadySelectedItems}");
         $pairs = explode(',', $idList);
         $quantity = explode('|', $pairs[0])[1];
 
@@ -601,6 +602,8 @@ class PlayerBuilderController extends Controller
             'filter' => ['category_id' => $categoryIds],
         ];
 
+        Yii::debug($param);
+
         return $param;
     }
 
@@ -618,7 +621,11 @@ class PlayerBuilderController extends Controller
 
         $request = Yii::$app->request;
         $idList = $request->post('categoryIds');
-        if (is_string($idList) && $idList <> '') {
+        if (is_string($idList)) {
+            if ($idList === '') {
+                return ['error' => false, 'msg' => '', 'content' => ''];
+            }
+
             $choice = $request->post('choice');
             $alreadySelectedItems = $request->post('alreadySelectedItems');
             $param = $this->getItemsCategoryAjaxParam(
@@ -763,14 +770,11 @@ class PlayerBuilderController extends Controller
      */
     protected function findModel(int $id): PlayerBuilder
     {
-        $query = PlayerBuilder::find()
-                ->with(['race', 'class', 'background', 'playerAbilities', 'playerSkills', 'playerTraits'])
-                ->where(['id' => $id]);
-
         $user = Yii::$app->user->identity;
-        if (!$user->is_admin) {
-            $query->andWhere(['user_id' => $user->id]);
-        }
+
+        $query = PlayerBuilder::find()
+                ->where(['id' => $id, 'user_id' => $user->id])
+                ->with(['race', 'class', 'background', 'playerAbilities', 'playerSkills', 'playerTraits']);
 
         if (($model = $query->one()) !== null) {
             return $model;

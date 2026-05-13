@@ -654,8 +654,7 @@ class PlayerBuilder {
                 ToastManager.show('Initial equipment', response.msg, response.error ? 'error' : 'info');
                 this.setProperty('items', selectedCount === max ? 'ok' : '');
             }
-        }
-        );
+        });
     }
 
     /**
@@ -668,23 +667,28 @@ class PlayerBuilder {
     static _loadCategoryModal(choice, alreadySelectedItems, categoryIds) {
         Logger.log(2, '_loadCategoryModal', `choice=${choice}, alreadySelectedItems=${alreadySelectedItems}, categoryIds=${categoryIds}`);
 
-        AjaxUtils.getContent({
-            target: '#ajaxCategoryItems',
+        const target = '#ajaxCategoryItems';
+        if (!DOMUtils.exists(target))
+            return;
+
+        AjaxUtils.request({
             url: 'player-builder/ajax-item-category',
             data: {
                 choice: choice,
                 alreadySelectedItems: alreadySelectedItems,
                 categoryIds: categoryIds
             },
-            callback: () => {
-                var modalElement = document.getElementById('builderEquipmentModal');
-                if (modalElement) {
-                    var modal = bootstrap.Modal.getOrCreateInstance(modalElement);
-                    modal.show();
+            successCallback: (response) => {
+                $(target).html(response.content);
+                if (response.content !== '') {
+                    var modalElement = document.getElementById('builderEquipmentModal');
+                    if (modalElement) {
+                        var modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+                        modal.show();
+                    }
                 }
             }
-        }
-        );
+        });
     }
 
     /**
@@ -713,7 +717,7 @@ class PlayerBuilder {
     static setCategoryItem(choice, itemIds) {
         Logger.log(1, 'setCategoryItem', `choice=${choice}, itemIds=${itemIds}`);
 //        const target = `#ajaxItemChoice-${choice}`;
-        let safeChoice = (typeof $.escapeSelector === "function") ? $.escapeSelector(choice) : choice.replace(/([ !"#$%&'()*+,./:;<=>?@[\\\]^`{|}~])/g,"\\$1");
+        let safeChoice = (typeof $.escapeSelector === "function") ? $.escapeSelector(choice) : choice.replace(/([ !"#$%&'()*+,./:;<=>?@[\\\]^`{|}~])/g, "\\$1");
         const target = `#ajaxItemChoice-${safeChoice}`;
 
 

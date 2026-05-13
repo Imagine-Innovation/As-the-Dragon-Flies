@@ -1,29 +1,19 @@
 <?php
-
 /** @var yii\web\View $this */
 /** @var array $endowments */
 /** @var integer $choices */
 $choiceLabels = ['', '(a)', '(b)', '(c)', '(d)', '(e)'];
-?>
-<?php
 
-for ($choice = 1; $choice <= $choices; $choice++):
+for ($choice = 1; $choice <= $choices; $choice++) {
     $endowment = $endowments[$choice];
     /** @phpstan-ignore-next-line */
     $options = max(array_keys($endowment));
-    ?>
-    <p>
-        <?php for ($option = 1; $option <= $options; $option++): ?>
+    echo "<p>\n";
+    for ($option = 1; $option <= $options; $option++) {
+        ?>
         <div class="custom-control custom-radio custom-control-inline">
-            <input type="radio" class="custom-control-input"
-                   id="endowmentRadio-<?= $endowment[$option]['id'] ?>"
-                   name="builderEndowment-<?= $choice ?>"
-                   <?php if ($options === 1): ?>
-                       checked disabled
-                   <?php else: ?>
-                       onclick="PlayerBuilder.chooseEquipment(<?= $choice ?>, <?= $endowment[$option]['id'] ?>);"
-                   <?php endif; ?>
-                   />
+            <input type="radio" class="custom-control-input" id="endowmentRadio-<?= $endowment[$option]['id'] ?>" name="builderEndowment-<?= $choice ?>"
+                   <?= ($options === 1) ? 'checked disabled' : "onclick=\"PlayerBuilder.chooseEquipment({$choice}, {$endowment[$option]['id']});\"" ?> />
             <label class="custom-control-label" for="endowmentRadio-<?= $endowment[$option]['id'] ?>">
                 <?php if ($options === 1): ?>
                     <?= $endowment[$option]['name'] ?>&nbsp;
@@ -35,6 +25,7 @@ for ($choice = 1; $choice <= $choices; $choice++):
                 <?php endif; ?>
             </label>
         </div>
-    <?php endfor; ?>
-    </p>
-<?php endfor;
+        <?php
+    }
+    echo "</p>\n";
+}

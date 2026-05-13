@@ -30,12 +30,10 @@ use common\helpers\UserErrorMessage;
 use common\models\events\EventFactory;
 use common\models\Player;
 use common\models\Quest;
-use common\models\QuestPlayer;
 use common\models\Story;
 use common\components\AjaxRequest;
 use Yii;
 use yii\data\ActiveDataProvider;
-use yii\db\Query;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -68,7 +66,7 @@ class QuestController extends Controller
                     ],
                     [
                         'actions' => [
-                            'create', 'delete', 'index', 'join', 'quit', 'resume', 'start', 'tavern', 'update', 'view', 'summarize',
+                            'index', 'join', 'quit', 'resume', 'start', 'summarize', 'tavern',
                             'ajax-can-start', 'ajax-get-messages', 'ajax-quest-members', 'ajax-send-message', 'ajax-welcome-messages',
                         ],
                         'allow' => AccessRightsManager::isRouteAllowed($this),
@@ -100,43 +98,19 @@ class QuestController extends Controller
     {
         $user = Yii::$app->user->identity;
 
-        // Admin users get full quest access
-        if ($user->is_admin) {
-            Yii::debug('*** Debug *** quest/index is_admin', __METHOD__);
-            $dataProvider = new ActiveDataProvider([
-                'query' => Quest::find(),
-            ]);
-        }
-        // Regular users only see their quests
-        else {
-            $subQuery = (new Query())
-                    ->select('quest_id')
-                    ->from('quest_player')
-                    ->where(['player_id' => $user->current_player_id ?? 0]);
-            $dataProvider = new ActiveDataProvider([
-                'query' => Quest::find()->where(['id' => $subQuery]),
-            ]);
-        }
+        $playerId = $user->current_player_id ?? 0;
 
-        return $this->render('index', [
-                    'dataProvider' => $dataProvider,
-        ]);
-    }
+        $query = Quest::find()
+                ->alias('q')
+                ->innerJoin(
+                        'quest_player qp',
+                        'qp.quest_id = q.id AND qp.player_id = :playerId',
+                        [':playerId' => $playerId]
+                );
 
-    /**
-     * Displays quest details
-     *
-     * Shows comprehensive information about a specific quest instance.
-     *
-     * @param int $id Quest ID to view
-     * @return string Rendered view page
-     * @throws NotFoundHttpException if quest not found
-     */
-    public function actionView(int $id): string
-    {
-        return $this->render('view', [
-                    'model' => $this->findModel($id),
-        ]);
+        $dataProvider = new ActiveDataProvider(['query' => $query]);
+
+        return $this->render('index', ['dataProvider' => $dataProvider]);
     }
 
     /**     * ***************************************** */
@@ -423,7 +397,7 @@ class QuestController extends Controller
         $withdraw = $tavernManager->withdrawPlayerFromQuest($player, $reason);
         if ($withdraw['error']) {
             Yii::$app->session->setFlash('error', $withdraw['message']);
-            return $this->redirect(['quest/view', 'id' => $quest->id]);
+            return $this->redirect(['story/index', 'id' => $quest->id]);
         }
 
         $success = $this->createEvent('player-quitting', $player, $quest, ['reason' => $reason]);
@@ -452,74 +426,6 @@ class QuestController extends Controller
         }
 
         return $this->redirect(['tavern', 'id' => $quest->id]);
-    }
-
-    /**
-     * Creates a new Quest instance
-     *
-     * Handles form submission and model creation with validation.
-     * Redirects to view page on successful creation.
-     *
-     * @return string|Response Rendered create form or redirect to view
-     */
-    public function actionCreate(): string|Response
-    {
-        $model = new Quest();
-
-        // Handle form submission
-        if ($this->request->isPost) {
-            $post = (array) $this->request->post();
-            if ($model->load($post) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
-            }
-        } else {
-            $model->loadDefaultValues();
-        }
-
-        return $this->render('create', [
-                    'model' => $model,
-        ]);
-    }
-
-    /**
-     * Updates an existing Quest model
-     *
-     * Handles form submission for quest updates with validation.
-     * Maintains data integrity through model validation rules.
-     *
-     * @param int $id Quest ID to update
-     * @return string|Response Rendered update form or redirect to view
-     * @throws NotFoundHttpException if quest not found
-     */
-    public function actionUpdate(int $id): string|Response
-    {
-        $model = $this->findModel($id);
-
-        // Process form submission
-        $post = (array) $this->request->post();
-        if ($this->request->isPost && $model->load($post) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        }
-
-        return $this->render('update', [
-                    'model' => $model,
-        ]);
-    }
-
-    /**
-     * Deletes a Quest instance
-     *
-     * Removes quest and related data with proper cleanup.
-     * Requires POST request for security.
-     *
-     * @param int $id Quest ID to delete
-     * @return Response Redirect to index page
-     * @throws NotFoundHttpException if quest not found
-     */
-    public function actionDelete(int $id): Response
-    {
-        $this->findModel($id)->delete();
-        return $this->redirect(['index']);
     }
 
     /**
@@ -559,16 +465,18 @@ class QuestController extends Controller
     {
         $questId = $id ?? Yii::$app->session->get('questId');
         $user = Yii::$app->user->identity;
+        $playerId = $user->current_player_id ?? 0;
 
-        if (!$user->is_admin) {
-            // For non-administrator users, limit access to quests in which their player participates.
-            $quesPlayer = QuestPlayer::findOne(['quest_id' => $questId, 'player_id' => $user->current_player_id ?? 0]);
-            if ($quesPlayer === null) {
-                throw new NotFoundHttpException("You are not a member of this quest (id={$questId}).");
-            }
-        }
+        $model = Quest::find()
+                ->alias('q')
+                ->innerJoin(
+                        'quest_player qp',
+                        'qp.quest_id = q.id AND qp.player_id = :playerId',
+                        [':playerId' => $playerId]
+                )
+                ->where(['q.id' => $questId])
+                ->one();
 
-        $model = Quest::findOne(['id' => $questId]);
         if ($model !== null) {
             return $model;
         }
