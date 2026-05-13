@@ -17,7 +17,7 @@ $jsSnippet = match ($controllerId) {
     'player-cart' => 'player-cart',
     'quest' => 'quest',
     'game' => 'quest',
-    default => null,
+    default => null
 };
 ?>
 
