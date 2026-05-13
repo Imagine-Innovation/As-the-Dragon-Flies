@@ -39,7 +39,6 @@ class BuilderComponent
                 'Race significantly impacts your character. It influences abilities, traits, and backstory. Halflings might be sneaky rogues, dwarves tough warriors, and elves potent magic users. Race also offers roleplaying cues for personality, appearance, culture, and alignment, though individuals can deviate from these norms, creating interesting character possibilities.',
             ],
             'field_name' => 'race',
-            'admin' => 0,
         ],
         'classes' => [
             'name' => 'Choose a Class',
@@ -51,7 +50,6 @@ class BuilderComponent
                 'You also gain a number of proficiencies: armor, weapons, skills, saving throws, and sometimes tools. Your proficiencies define many of the things your character can do particularly well, from using certain weapons to telling a convincing lie.',
             ],
             'field_name' => 'class',
-            'admin' => 0,
         ],
         'backgrounds' => [
             'name' => 'Choose your background',
@@ -63,7 +61,6 @@ class BuilderComponent
                 'A background gives your character a background feature (a general benefit) and proficiency in two skills, and it might also give you additional languages or proficiency with certain kinds of tools.',
             ],
             'field_name' => 'background',
-            'admin' => 0,
         ],
         'history' => [
             'name' => 'Choose your history',
@@ -75,7 +72,6 @@ class BuilderComponent
                 'A background gives your character a background feature (a general benefit) and proficiency in two skills, and it might also give you additional languages or proficiency with certain kinds of tools.',
             ],
             'field_name' => null,
-            'admin' => 0,
         ],
         'form' => [
             'name' => 'form',
@@ -84,7 +80,6 @@ class BuilderComponent
             'model_name' => null,
             'paragraphs' => [],
             'field_name' => null,
-            'admin' => 1, // Only for admins
         ],
     ];
     const UPDATE_TABS = [
@@ -95,7 +90,6 @@ class BuilderComponent
             'model_name' => null,
             'paragraphs' => [],
             'field_name' => null,
-            'admin' => 0,
             'onclick' => null,
         ],
         'avatar' => [
@@ -105,7 +99,6 @@ class BuilderComponent
             'model_name' => null,
             'paragraphs' => [],
             'field_name' => null,
-            'admin' => 0,
             'onclick' => null,
         ],
         'abilities' => [
@@ -118,7 +111,6 @@ class BuilderComponent
                 'The Ability Score Summary table provides a quick reference for what qualities are measured by each ability, what races increases which abilities, and what classes consider each ability particularly important.',
             ],
             'field_name' => null,
-            'admin' => 0,
             'update' => 1, // Only at update time
             'onclick' => null,
         ],
@@ -131,7 +123,6 @@ class BuilderComponent
                 "A skill represents a specific aspect of an ability score, and an individual's proficiency in a skill demonstrates a focus on that aspect.",
             ],
             'field_name' => null,
-            'admin' => 0,
             'onclick' => null,
         ],
         'equipment' => [
@@ -144,7 +135,6 @@ class BuilderComponent
                 'For example, a fighter might start with chain mail, a longsword, and a shield, while a wizard might begin with a spellbook and a component pouch.',
             ],
             'field_name' => null,
-            'admin' => 0,
             'onclick' => 'loadEquipmentTab',
         ],
         'form' => [
@@ -154,7 +144,6 @@ class BuilderComponent
             'model_name' => null,
             'paragraphs' => [],
             'field_name' => null,
-            'admin' => 1, // Only for admins
             'onclick' => null,
         ],
     ];

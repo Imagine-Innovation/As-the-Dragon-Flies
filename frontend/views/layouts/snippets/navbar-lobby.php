@@ -4,8 +4,6 @@ use common\helpers\WebResourcesHelper;
 use common\widgets\Button;
 use frontend\assets\AppAsset;
 use frontend\helpers\Caligraphy;
-use frontend\widgets\CurrentPlayer;
-use frontend\widgets\ToolMenu;
 use yii\bootstrap5\Html;
 use yii\helpers\Url;
 
@@ -13,7 +11,6 @@ use yii\helpers\Url;
 $imgPath = WebResourcesHelper::imagePath();
 $currentUser = Yii::$app->user->identity;
 AppAsset::register($this);
-$isAdmin = $currentUser->is_admin;
 ?>
 <header class="header">
 
@@ -26,13 +23,6 @@ $isAdmin = $currentUser->is_admin;
     </div>
 
     <ul class="top-nav">
-        <?=
-        CurrentPlayer::widget([
-            'user' => $currentUser,
-            'mode' => 'navbar',
-        ])
-        ?>
-
         <li class="dropdown top-nav__notifications">
             <a class="top-nav position-relative" href="#" data-bs-toggle="dropdown">
                 <i class="bi bi-envelope"></i>
@@ -107,8 +97,6 @@ $isAdmin = $currentUser->is_admin;
                 </div>
             </div>
         </li>
-
-        <?= ToolMenu::widget(['isAdmin' => $isAdmin]) ?>
 
         <li class="dropdown top-nav__notifications">
             <a href="<?= Url::toRoute(['site/about']) ?>"

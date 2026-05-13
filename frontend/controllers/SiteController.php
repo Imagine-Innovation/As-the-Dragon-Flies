@@ -164,10 +164,6 @@ class SiteController extends Controller
         // Get players sorted by creation date
         $user = Yii::$app->user->identity;
 
-        if ($user->is_admin) {
-            return $this->render('admin');
-        }
-
         $playersQuery = $user->getPlayers()->orderBy(['created_at' => SORT_DESC]);
         $players = $playersQuery->all();
         $player = $user->current_player_id ? $user->currentPlayer : null;

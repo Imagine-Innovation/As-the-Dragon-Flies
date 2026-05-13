@@ -1,16 +1,12 @@
 <?php
 
 use common\helpers\WebResourcesHelper;
-use frontend\assets\AppAsset;
-use frontend\widgets\ToolMenu;
 use yii\helpers\Url;
 
 /** @var \yii\web\View $this */
 $imgPath = WebResourcesHelper::imagePath();
 $currentUser = Yii::$app->user->identity;
 $questName = Yii::$app->session->get('questName');
-AppAsset::register($this);
-$isAdmin = $currentUser->is_admin;
 ?>
 <header class="header d-none d-md-flex">
 
@@ -23,8 +19,6 @@ $isAdmin = $currentUser->is_admin;
     </div>
 
     <ul class="top-nav">
-        <?= ToolMenu::widget(['isAdmin' => $isAdmin]) ?>
-
         <li class="dropdown top-nav__notifications">
             <i class="bi bi-circle-fill blink" id="eventHandlerStatus"></i>
         </li>

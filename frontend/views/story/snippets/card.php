@@ -13,8 +13,6 @@ use yii\helpers\Url;
 /** @var common\models\Player $player */
 /** @var common\models\Story $story */
 /** @var common\models\Quest $quest */
-/** @var integer $isDesigner */
-/** @var integer $isPlayer */
 $tavernManager = new TavernManager(['quest' => $quest]);
 $canJoin = $tavernManager->canPlayerJoinQuest($player);
 

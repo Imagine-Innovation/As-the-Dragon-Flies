@@ -10,7 +10,6 @@ use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
-use yii\web\UnauthorizedHttpException;
 
 /**
  * ItemController implements the CRUD actions for Item model.
@@ -34,26 +33,13 @@ class ItemController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['index', 'shop', 'ajax', 'ajax-images', 'view'],
+                        'actions' => ['shop', 'ajax', 'ajax-images', 'view'],
                         'allow' => AccessRightsManager::isRouteAllowed($this),
                         'roles' => ['@'],
                     ],
                 ],
             ],
         ]);
-    }
-
-    /**
-     * Lists all Item models.
-     *
-     * @return string
-     */
-    public function actionIndex(): string
-    {
-        if (Yii::$app->user->identity->is_designer) {
-            return $this->render('index');
-        }
-        throw new UnauthorizedHttpException('Only designer users can see this page');
     }
 
     /**
