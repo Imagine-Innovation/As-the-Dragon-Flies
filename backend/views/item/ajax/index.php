@@ -1,6 +1,6 @@
 <?php
 
-use frontend\widgets\ItemTable;
+use backend\widgets\ItemTable;
 use common\widgets\Pagination;
 use common\widgets\RecordCount;
 
