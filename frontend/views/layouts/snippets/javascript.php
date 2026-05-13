@@ -4,13 +4,11 @@ $controllerId = Yii::$app->controller->id;
 $actionId = Yii::$app->controller->action->id;
 
 $javascriptLibraries = match ($controllerId) {
-    'player-builder' => ['atdf-player-builder', 'atdf-chart-drawer'],
-    'player-cart' => ['atdf-shop-manager'],
-    'quest' => ['atdf-quest-tavern', 'atdf-quest-events'],
-    'game' => ['atdf-quest-game', 'atdf-quest-events', 'atdf-equipment-manager'],
-    'item' => ['atdf-item-manager'],
-    'player-item' => ['atdf-player-item-manager'],
-    'image' => ['atdf-image-manager'],
+    'player-builder' => ['player-builder', 'chart-drawer'],
+    'player-cart' => ['shop-manager'],
+    'quest' => ['quest-tavern', 'quest-events'],
+    'game' => ['quest-game', 'quest-events', 'equipment-manager'],
+    'player-item' => ['player-item-manager'],
     default => []
 };
 
@@ -39,10 +37,10 @@ $jsSnippet = match ($controllerId) {
         }
     });
 
-    <?=
-    $jsSnippet ? $this->renderFile("@app/views/layouts/snippets/js/{$jsSnippet}.php", [
-                'controllerId' => $controllerId,
-                'actionId' => $actionId,
-            ]) : ''
-    ?>
+<?=
+$jsSnippet ? $this->renderFile("@app/views/layouts/snippets/js/{$jsSnippet}.php", [
+            'controllerId' => $controllerId,
+            'actionId' => $actionId,
+        ]) : ''
+?>
 </script>

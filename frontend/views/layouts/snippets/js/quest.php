@@ -21,21 +21,21 @@ let questId;
 let questName;
 
 $(document).ready(function () {
-    const currentHost = window.location.hostname;
-    const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-    const url = `${protocol}://${currentHost}:8082`;
-    sessionId = <?= json_encode($sessionId) ?>;
-    playerId = <?= json_encode($playerId) ?>;
-    avatar = <?= json_encode($avatar) ?>;
-    playerName = <?= json_encode($playerName) ?>;
-    questId = <?= json_encode($questId) ?>;
-    questName = <?= json_encode($questName) ?>;
+const currentHost = window.location.hostname;
+const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+const url = `${protocol}://${currentHost}:8082`;
+sessionId = <?= json_encode($sessionId) ?>;
+playerId = <?= json_encode($playerId) ?>;
+avatar = <?= json_encode($avatar) ?>;
+playerName = <?= json_encode($playerName) ?>;
+questId = <?= json_encode($questId) ?>;
+questName = <?= json_encode($questName) ?>;
 
-    vtt = new VirtualTableTop(); // defined in "atdf-quest-<?= $controllerId === 'game' ? 'game' : 'tavern' ?>.js"
-    vtt.init();
+vtt = new VirtualTableTop(); // defined in "quest-<?= $controllerId === 'game' ? 'game' : 'tavern' ?>.js"
+vtt.init();
 
-    notificationClient = new NotificationClient(url, sessionId, playerId, playerName, avatar, questId, questName, vtt);
-    notificationClient.init();
+notificationClient = new NotificationClient(url, sessionId, playerId, playerName, avatar, questId, questName, vtt);
+notificationClient.init();
 
 <?php if ($controllerId === 'game'): ?>
     equipmentHandler = new EquipmentHandler();
