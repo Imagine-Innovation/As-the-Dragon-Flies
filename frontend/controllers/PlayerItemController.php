@@ -49,7 +49,9 @@ class PlayerItemController extends Controller
                             'ajax-equip-player',
                             'ajax-disarm-player',
                         ],
-                        'allow' => AccessRightsManager::isRouteAllowed($this),
+                        'allow' => function ($rule, $action) {
+                            return AccessRightsManager::isRouteAllowed($action->controller);
+                        },
                         'roles' => ['@'],
                     ],
                 ],

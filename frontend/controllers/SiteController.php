@@ -49,7 +49,9 @@ class SiteController extends Controller
                     ],
                     [
                         'actions' => ['logout', 'ajax-toast', 'about', 'contact', 'index'],
-                        'allow' => AccessRightsManager::isRouteAllowed($this),
+                        'allow' => function ($rule, $action) {
+                            return AccessRightsManager::isRouteAllowed($action->controller);
+                        },
                         'roles' => ['@'],
                     ],
                 ],
@@ -159,7 +161,6 @@ class SiteController extends Controller
         if (Yii::$app->user->isGuest) {
             return $this->render('guest');
         }
-        ContextManager::initContext();
 
         // Get players sorted by creation date
         $user = Yii::$app->user->identity;

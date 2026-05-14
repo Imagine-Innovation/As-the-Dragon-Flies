@@ -40,7 +40,9 @@ class WizardController extends Controller
                     ],
                     [
                         'actions' => ['index', 'ajax-question', 'ajax-alignment', 'ajax-character-class', 'ajax-race', 'view'],
-                        'allow' => AccessRightsManager::isRouteAllowed($this),
+                        'allow' => function ($rule, $action) {
+                            return AccessRightsManager::isRouteAllowed($action->controller);
+                        },
                         'roles' => ['@'],
                     ],
                 ],

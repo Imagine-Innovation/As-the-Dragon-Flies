@@ -40,7 +40,7 @@ class AccessRightController extends Controller
                         'actions' => ['index', 'create', 'view', 'update',
                             'ajax', 'ajax-set-access-right',
                         ],
-                        'allow' => AccessRightsManager::isRouteAllowed($this),
+                        'allow' => function ($rule, $action) { return AccessRightsManager::isRouteAllowed($action->controller); },
                         'roles' => ['@'],
                     ],
                 ],

@@ -48,7 +48,9 @@ class PlayerCartController extends Controller
                             'ajax-info',
                             'ajax-item-count',
                         ],
-                        'allow' => AccessRightsManager::isRouteAllowed($this),
+                        'allow' => function ($rule, $action) {
+                            return AccessRightsManager::isRouteAllowed($action->controller);
+                        },
                         'roles' => ['@'],
                     ],
                 ],

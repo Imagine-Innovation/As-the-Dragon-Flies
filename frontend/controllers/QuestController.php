@@ -69,7 +69,9 @@ class QuestController extends Controller
                             'index', 'join', 'quit', 'resume', 'start', 'summarize', 'tavern',
                             'ajax-can-start', 'ajax-get-messages', 'ajax-quest-members', 'ajax-send-message', 'ajax-welcome-messages',
                         ],
-                        'allow' => AccessRightsManager::isRouteAllowed($this),
+                        'allow' => function ($rule, $action) {
+                            return AccessRightsManager::isRouteAllowed($action->controller);
+                        },
                         'roles' => ['@'],
                     ],
                 ],

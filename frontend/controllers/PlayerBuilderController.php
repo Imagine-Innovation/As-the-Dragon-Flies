@@ -67,7 +67,9 @@ class PlayerBuilderController extends Controller
                             'ajax-save-equipment',
                             'ajax-update-language',
                         ],
-                        'allow' => AccessRightsManager::isRouteAllowed($this),
+                        'allow' => function ($rule, $action) {
+                            return AccessRightsManager::isRouteAllowed($action->controller);
+                        },
                         'roles' => ['@'],
                     ],
                 ],

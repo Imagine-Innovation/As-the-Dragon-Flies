@@ -44,7 +44,7 @@ class SiteController extends Controller
                             'ajax-toast',
                             'ajax-active-quests',
                         ],
-                        'allow' => AccessRightsManager::isRouteAllowed($this),
+                        'allow' => function ($rule, $action) { return AccessRightsManager::isRouteAllowed($action->controller); },
                         'roles' => ['@'],
                     ],
                 ],

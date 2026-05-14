@@ -40,7 +40,7 @@ class ChapterController extends Controller
                             'view',
                             'update',
                         ],
-                        'allow' => AccessRightsManager::isRouteAllowed($this),
+                        'allow' => function ($rule, $action) { return AccessRightsManager::isRouteAllowed($action->controller); },
                         'roles' => ['@'],
                     ],
                 ],
