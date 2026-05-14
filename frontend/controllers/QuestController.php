@@ -271,7 +271,7 @@ class QuestController extends Controller
 
         $message = Yii::$app->request->post('message');
         Yii::debug(
-                . ($message ?? 'empty'),
+                "*** Debug *** actionAjaxSendMessage - Player: {$player->name}, Quest: {$quest->name}, Message: " . ($message ?? 'empty'),
         );
         if (empty($message)) {
             return ['error' => true, 'msg' => 'Message cannot be empty'];

@@ -582,6 +582,7 @@ class PlayerBuilderController extends Controller
         // Extract first elements (ids) using array_map
         $categoryIds = array_map(function ($pair) {
             return explode('|', $pair)[0];
+        }, $pairs);
 
         $param = [
             'modelName' => 'ItemCategory',
