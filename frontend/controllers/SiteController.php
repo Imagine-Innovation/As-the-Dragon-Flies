@@ -49,9 +49,7 @@ class SiteController extends Controller
                     ],
                     [
                         'actions' => ['logout', 'ajax-toast', 'about', 'contact', 'index'],
-                        'allow' => function ($rule, $action) {
-                            return AccessRightsManager::isRouteAllowed($action->controller);
-                        },
+                        'allow' => [AccessRightsManager::class, 'isRouteAllowedCallback'],
                         'roles' => ['@'],
                     ],
                 ],

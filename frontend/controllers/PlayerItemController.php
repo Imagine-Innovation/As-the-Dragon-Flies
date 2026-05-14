@@ -49,9 +49,7 @@ class PlayerItemController extends Controller
                             'ajax-equip-player',
                             'ajax-disarm-player',
                         ],
-                        'allow' => function ($rule, $action) {
-                            return AccessRightsManager::isRouteAllowed($action->controller);
-                        },
+                        'allow' => [AccessRightsManager::class, 'isRouteAllowedCallback'],
                         'roles' => ['@'],
                     ],
                 ],
@@ -419,7 +417,6 @@ class PlayerItemController extends Controller
     ): array
     {
         $weaponName = $weapon->name;
-        Yii::debug("*** debug *** equipPlayerWithWeapon - bodyZone={$bodyZone}, item={$weaponName}");
         if ($bodyZone !== PlayerItem::BODY_RIGHT_HAND_ZONE && $bodyZone !== PlayerItem::BODY_LEFT_HAND_ZONE) {
             return [
                 'error' => true,
@@ -483,7 +480,6 @@ class PlayerItemController extends Controller
      */
     private function holdWeapon(Item &$weapon, PlayerBody &$playerBody, string $bodyZone): array
     {
-        Yii::debug("*** debug *** holdWeapon - bodyZone={$bodyZone}, weapon={$weapon->name}");
 
         $handProperties = PlayerItem::HAND_PROPERTIES[$bodyZone];
 
@@ -523,7 +519,6 @@ class PlayerItemController extends Controller
         $playerBody = FindModelHelper::findPlayerBody(['player_id' => $playerItem->player_id]);
         $item = $playerItem->item;
         $itemType = $playerItem->item_type;
-        Yii::debug("*** debug *** equipPlayer - itemType={$itemType}, bodyZone={$bodyZone}");
 
         return match ($itemType) {
             'Armor' => $this->equipPlayerWithArmor($playerItem, $playerBody, $bodyZone),
@@ -555,7 +550,6 @@ class PlayerItemController extends Controller
 
         $bodyZone = $request->post('bodyZone') ?? '';
         Yii::debug(
-                "*** debug *** actionAjaxEquipPlayer - playerId={$playerId}, itemId={$itemId}, bodyZone={$bodyZone}",
         );
 
         return $this->equipPlayer($playerItem, $bodyZone);
@@ -576,7 +570,6 @@ class PlayerItemController extends Controller
             string $weaponName,
     ): void
     {
-        Yii::debug("*** debug *** disarmWeapon - bodyZone={$bodyZone}, weaponName={$weaponName}");
         $haystack = strtolower($weaponName);
 
         if (str_contains($haystack, 'bow')) {
@@ -617,7 +610,6 @@ class PlayerItemController extends Controller
         $bodyProperties = PlayerItem::BODY_PROPERTIES[$bodyZone];
         $property = $bodyProperties['property'];
         $field = $bodyProperties['itemIdField'];
-        Yii::debug("*** debug *** disarmPreviousItem - bodyZone={$bodyZone}, property={$property}, field={$field}");
 
         if ($playerBody->$field === null) {
             return;
@@ -625,7 +617,6 @@ class PlayerItemController extends Controller
         $playerItem = $playerBody->$property;
 
         $previousItemName = $playerItem->item_name;
-        Yii::debug("*** debug *** disarmPreviousItem - bodyZone={$bodyZone}, previousItem={$previousItemName}");
         if ($playerItem->item_type === 'Weapon') {
             $this->disarmWeapon($playerItem, $playerBody, $bodyZone, $previousItemName);
         }
@@ -645,7 +636,6 @@ class PlayerItemController extends Controller
 
         $property = $bodyProperties['property'];
         $field = $bodyProperties['itemIdField'];
-        Yii::debug("*** debug *** disarmPlayer - bodyZone={$bodyZone}, property={$property}, field={$field}");
 
         if ($playerBody->$field === null) {
             return [

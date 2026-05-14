@@ -37,7 +37,7 @@ class KpiController extends Controller
                     ],
                     [
                         'actions' => ['update'],
-                        'allow' => function ($rule, $action) { return AccessRightsManager::isRouteAllowed($action->controller); },
+                       'allow' => [AccessRightsManager::class, 'isRouteAllowedCallback'],
                         // 'allow' => true,
                         'roles' => ['@'],
                     ],

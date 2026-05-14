@@ -67,9 +67,7 @@ class PlayerBuilderController extends Controller
                             'ajax-save-equipment',
                             'ajax-update-language',
                         ],
-                        'allow' => function ($rule, $action) {
-                            return AccessRightsManager::isRouteAllowed($action->controller);
-                        },
+                        'allow' => [AccessRightsManager::class, 'isRouteAllowedCallback'],
                         'roles' => ['@'],
                     ],
                 ],
@@ -92,7 +90,6 @@ class PlayerBuilderController extends Controller
         $request = Yii::$app->request;
         $raceId = $request->post('raceId');
         $age = $request->post('age', 0);
-        Yii::debug("*** Debug *** actionAjaxAge raceId={$raceId}, age={$age}", __METHOD__);
 
         $ageTable = BuilderComponent::loadAgeTable($raceId);
 
@@ -180,7 +177,6 @@ class PlayerBuilderController extends Controller
         $classId = $request->post('classId');
         $gender = $request->post('gender');
 
-        Yii::debug("*** debug *** actionAjaxImages - raceId={$raceId}, classId={$classId}, gender={$gender}");
         if ($raceId > 0 && $classId > 0 && $gender) {
             $imageId = $request->post('imageId');
             Yii::debug("*** debug *** actionAjaxImages - imageId={$imageId}");
@@ -274,7 +270,6 @@ class PlayerBuilderController extends Controller
         $languageId = $request->post('languageId');
         $selected = $request->post('selected');
         Yii::debug(
-                "*** debug *** actionAjaxUpdateLanguage - playerId={$playerId}, languageId=[$languageId}, selected={$selected}",
         );
         if ($selected) {
             $this->addLanguage($playerId, $languageId);
@@ -296,7 +291,6 @@ class PlayerBuilderController extends Controller
      */
     private function saveLanguages(int $playerId, array $languages): void
     {
-        Yii::debug("*** debug *** saveLanguages - playerId={$playerId}, languageId=" . print_r($languages, true));
         foreach ($languages as $lang) {
             $this->addLanguage($playerId, $lang['language_id']);
         }
@@ -310,7 +304,6 @@ class PlayerBuilderController extends Controller
      */
     private function addLanguage(int $playerId, int $languageId): void
     {
-        Yii::debug("*** debug *** addLanguage - playerId={$playerId}, languageId=[$languageId}");
         $playerLanguage = PlayerLanguage::findOne([
             'player_id' => $playerId,
             'language_id' => $languageId,
@@ -583,14 +576,12 @@ class PlayerBuilderController extends Controller
      */
     private function getItemsCategoryAjaxParam(string $idList, string $choice, string $alreadySelectedItems): array
     {
-        Yii::debug("*** debug *** getItemsCategoryAjaxParam - idList={$idList}, choice={$choice}, alreadySelectedItems={$alreadySelectedItems}");
         $pairs = explode(',', $idList);
         $quantity = explode('|', $pairs[0])[1];
 
         // Extract first elements (ids) using array_map
         $categoryIds = array_map(function ($pair) {
             return explode('|', $pair)[0];
-        }, $pairs);
 
         $param = [
             'modelName' => 'ItemCategory',

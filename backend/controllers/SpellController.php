@@ -37,7 +37,7 @@ class SpellController extends Controller
                     ],
                     [
                         'actions' => ['index', 'ajax', 'view'],
-                        'allow' => function ($rule, $action) { return AccessRightsManager::isRouteAllowed($action->controller); },
+                       'allow' => [AccessRightsManager::class, 'isRouteAllowedCallback'],
                         'roles' => ['@'],
                     ],
                 ],
