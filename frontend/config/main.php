@@ -1,6 +1,7 @@
 <?php
 
 use common\components\AccessRightsManager;
+use common\components\ContextManager;
 
 $params = array_merge(
         require __DIR__ . '/../../common/config/params.php',
@@ -86,7 +87,7 @@ return [
             'enableAutoLogin' => true,
             'identityCookie' => ['name' => '_identity-frontend', 'httpOnly' => true],
             'on afterLogin' => function ($event) {
-                \common\components\ContextManager::initContext($event->identity);
+                ContextManager::initContext($event->identity);
             },
         ],
         'session' => [

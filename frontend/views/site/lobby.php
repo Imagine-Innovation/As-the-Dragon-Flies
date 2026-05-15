@@ -13,12 +13,13 @@ $row = 'row d-flex justify-content-center g-3';
 $col = 'col-12 col-lg-9 col-xl-8 col-xxl-7';
 $viewParameters['row'] = $row;
 $viewParameters['col'] = $col;
+$welcomed = $state < 2 ? $user->fullname ?? $user->username : $player->name;
 ?>
 
 <div class="<?= $row ?>">
     <div class="<?= $col ?>">
         <header class="content__title h3 text-decoration">
-            Welcome back <?= $state < 2 ? $user->fullname ?? $user->username : $player->name ?>
+            Welcome back <?= $welcomed ?>
         </header>
     </div>
     <?= $this->render($snippet, $viewParameters) ?>

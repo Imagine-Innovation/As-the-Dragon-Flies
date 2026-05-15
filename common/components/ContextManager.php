@@ -12,6 +12,7 @@ use yii\base\Component;
 
 class ContextManager extends Component
 {
+
     /**
      *
      * @return User
@@ -19,6 +20,19 @@ class ContextManager extends Component
     private static function getUser(): User
     {
         return Yii::$app->user->identity;
+        /** @var \yii\web\User|null $userComponent */
+        //$userComponent = Yii::$app->get('user', false);
+        //return $userComponent?->getIdentity(false);
+    }
+
+    /**
+     * @return void
+     */
+    private static function isGuest(): bool
+    {
+        /** @var \yii\web\User|null $userComponent */
+        $userComponent = Yii::$app->get('user', false);
+        return $userComponent?->getIdentity(false) === null;
     }
 
     /**
@@ -27,18 +41,15 @@ class ContextManager extends Component
      */
     public static function initContext(?User $user = null): void
     {
-        /** @var \yii\web\User|null $userComponent */
-        $userComponent = Yii::$app->get('user', false);
-        $user = $user ?? $userComponent?->getIdentity(false);
-        if (!$user) {
+        $loggedUser = $user ?? self::getUser();
+        if (!$loggedUser) {
             return;
         }
-        Yii::debug('*** debug *** ContextManager - initContext');
 
-        Yii::$app->session->set('user', $user);
-        Yii::$app->session->set('userId', $user->id);
+        Yii::$app->session->set('user', $loggedUser);
+        Yii::$app->session->set('userId', $loggedUser->id);
 
-        self::updatePlayerContext($user->current_player_id, $user);
+        self::updatePlayerContext($loggedUser->current_player_id);
     }
 
     /**
@@ -55,16 +66,41 @@ class ContextManager extends Component
 
     /**
      *
-     * @param int|null $playerId
-     * @param User|null $user
+     * @param Player $currentPlayer
      * @return void
      */
-    public static function updatePlayerContext(?int $playerId = null, ?User $user = null): void
+    private static function setPlayerContext(Player $currentPlayer): void
     {
-        /** @var \yii\web\User|null $userComponent */
-        $userComponent = Yii::$app->get('user', false);
-        $user = $user ?? $userComponent?->getIdentity(false);
-        if (!$user) {
+        Yii::$app->session->set('hasPlayerSelected', true);
+        Yii::$app->session->set('playerId', $currentPlayer->id);
+        Yii::$app->session->set('playerName', $currentPlayer->name);
+        Yii::$app->session->set('avatar', $currentPlayer->image?->file_name);
+        Yii::$app->session->set('currentPlayer', $currentPlayer);
+        self::updateQuestContext($currentPlayer->quest_id);
+    }
+
+    /**
+     *
+     * @return void
+     */
+    private static function clearPlayerContext(): void
+    {
+        Yii::$app->session->set('hasPlayerSelected', false);
+        Yii::$app->session->set('playerId', null);
+        Yii::$app->session->set('playerName', null);
+        Yii::$app->session->set('avatar', null);
+        Yii::$app->session->set('currentPlayer', null);
+        self::updateQuestContext(null);
+    }
+
+    /**
+     *
+     * @param int|null $playerId
+     * @return void
+     */
+    public static function updatePlayerContext(?int $playerId = null): void
+    {
+        if (self::isGuest()) {
             return;
         }
 
@@ -74,34 +110,45 @@ class ContextManager extends Component
         $currentPlayer = $playerId ? Player::findOne(['id' => $playerId]) : null;
 
         if ($currentPlayer) {
-            Yii::$app->session->set('hasPlayerSelected', true);
-            Yii::$app->session->set('playerId', $currentPlayer->id);
-            Yii::$app->session->set('playerName', $currentPlayer->name);
-            Yii::$app->session->set('avatar', $currentPlayer->image?->file_name);
-            Yii::$app->session->set('currentPlayer', $currentPlayer);
-            self::updateQuestContext($currentPlayer->quest_id, $user);
+            self::setPlayerContext($currentPlayer);
         } else {
-            Yii::$app->session->set('hasPlayerSelected', false);
-            Yii::$app->session->set('playerId', null);
-            Yii::$app->session->set('playerName', null);
-            Yii::$app->session->set('avatar', null);
-            Yii::$app->session->set('currentPlayer', null);
-            self::updateQuestContext(null, $user);
+            self::clearPlayerContext();
         }
     }
 
     /**
      *
-     * @param int|null $questId
-     * @param User|null $user
+     * @param Quest $quest
      * @return void
      */
-    public static function updateQuestContext(?int $questId = null, ?User $user = null): void
+    private static function setQuestContext(Quest $quest): void
     {
-        /** @var \yii\web\User|null $userComponent */
-        $userComponent = Yii::$app->get('user', false);
-        $user = $user ?? $userComponent?->getIdentity(false);
-        if (!$user) {
+        Yii::$app->session->set('inQuest', true);
+        Yii::$app->session->set('questId', $quest->id);
+        Yii::$app->session->set('questName', $quest->name);
+        Yii::$app->session->set('currentQuest', $quest);
+    }
+
+    /**
+     *
+     * @return void
+     */
+    private static function clearQuestContext(): void
+    {
+        Yii::$app->session->set('inQuest', false);
+        Yii::$app->session->set('questId', null);
+        Yii::$app->session->set('questName', null);
+        Yii::$app->session->set('currentQuest', null);
+    }
+
+    /**
+     *
+     * @param int|null $questId
+     * @return void
+     */
+    public static function updateQuestContext(?int $questId = null): void
+    {
+        if (self::isGuest()) {
             return;
         }
 
@@ -111,15 +158,9 @@ class ContextManager extends Component
         $quest = $questId ? Quest::findOne(['id' => $questId]) : null;
 
         if ($quest && ($quest->status === AppStatus::WAITING->value || $quest->status === AppStatus::PLAYING->value)) {
-            Yii::$app->session->set('inQuest', true);
-            Yii::$app->session->set('questId', $quest->id);
-            Yii::$app->session->set('questName', $quest->name);
-            Yii::$app->session->set('currentQuest', $quest);
+            self::setQuestContext($quest);
         } else {
-            Yii::$app->session->set('inQuest', false);
-            Yii::$app->session->set('questId', null);
-            Yii::$app->session->set('questName', null);
-            Yii::$app->session->set('currentQuest', null);
+            self::clearQuestContext();
         }
     }
 
@@ -131,7 +172,7 @@ class ContextManager extends Component
     {
         $user = self::getUser();
         return [
-            'isGuest' => Yii::$app->user->isGuest,
+            'isGuest' => self::isGuest(),
             'isAdmin' => $user->is_admin,
             'isDesigner' => $user->is_designer,
             'userId' => Yii::$app->session->get('userId'),

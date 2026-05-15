@@ -3,13 +3,10 @@
 namespace backend\controllers;
 
 use common\components\AppStatus;
-use common\components\ContextManager;
 use common\components\AccessRightsManager;
-use common\helpers\SaveHelper;
 use common\helpers\Status;
 use common\models\Player;
 use common\models\QuestPlayer;
-use common\models\User;
 use common\components\AjaxRequest;
 use Yii;
 use yii\filters\AccessControl;
@@ -51,7 +48,7 @@ class PlayerController extends Controller
                             'ajax',
                             'ajax-top10',
                         ],
-                       'allow' => [AccessRightsManager::class, 'isRouteAllowedCallback'],
+                        'allow' => [AccessRightsManager::class, 'isRouteAllowedCallback'],
                         'roles' => ['@'],
                     ],
                 ],
