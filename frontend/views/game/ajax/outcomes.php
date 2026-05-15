@@ -1,5 +1,6 @@
 <?php
 
+use common\models\Mission;
 use frontend\widgets\ActionOutcomes;
 use common\widgets\Button;
 use common\widgets\MarkDown;
@@ -30,14 +31,29 @@ ActionOutcomes::widget([
     'nextMissionId' => $nextMissionId,
 ]);
 ?>
-<?=
-Button::widget([
-    'icon' => $isFree ? 'bi-arrow-repeat' : 'bi-escape',
-    'title' => $isFree ? 'Try another action' : 'Finish your turn',
-    'onclick' => $isFree ? null : "vtt.moveToNextPlayer({$questProgressId}, " . ($nextMissionId ?? 'null') . "); return false;",
+<?php
+$nextMission = $nextMissionId ? Mission::findOne($nextMissionId) : null;
+if ($nextMission) {
+    $buttonTitle = "Move to {$nextMission->name}";
+    $buttonIcon = 'bi-chevron-double-right';
+    $buttonOnclick = "vtt.moveToNextPlayer({$questProgressId}, {$nextMissionId}); return false;";
+} elseif ($isFree) {
+    $buttonTitle = 'Try another action';
+    $buttonIcon = 'bi-arrow-repeat';
+    $buttonOnclick = null;
+} else {
+    $buttonTitle = 'Finish your turn';
+    $buttonIcon = 'bi-escape';
+    $buttonOnclick = "vtt.moveToNextPlayer({$questProgressId}, null); return false;";
+}
+
+echo Button::widget([
+    'icon' => $buttonIcon,
+    'title' => $buttonTitle,
+    'onclick' => $buttonOnclick,
     'isCta' => true,
     'ariaParams' => ['data-bs-dismiss' => 'modal'],
-])
+]);
 ?>
 <p>
     isFree=<?= $isFree ? 'true' : 'false' ?>,
