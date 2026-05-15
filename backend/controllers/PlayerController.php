@@ -51,7 +51,7 @@ class PlayerController extends Controller
                             'ajax',
                             'ajax-top10',
                         ],
-                        'allow' => AccessRightsManager::isRouteAllowed($this),
+                       'allow' => [AccessRightsManager::class, 'isRouteAllowedCallback'],
                         'roles' => ['@'],
                     ],
                 ],

@@ -69,7 +69,7 @@ class QuestController extends Controller
                             'index', 'join', 'quit', 'resume', 'start', 'summarize', 'tavern',
                             'ajax-can-start', 'ajax-get-messages', 'ajax-quest-members', 'ajax-send-message', 'ajax-welcome-messages',
                         ],
-                        'allow' => AccessRightsManager::isRouteAllowed($this),
+                        'allow' => [AccessRightsManager::class, 'isRouteAllowedCallback'],
                         'roles' => ['@'],
                     ],
                 ],
@@ -271,8 +271,7 @@ class QuestController extends Controller
 
         $message = Yii::$app->request->post('message');
         Yii::debug(
-                "*** Debug *** actionAjaxSendMessage - Player: {$player->name}, Quest: {$quest->name}, Message: "
-                . ($message ?? 'empty'),
+                "*** Debug *** actionAjaxSendMessage - Player: {$player->name}, Quest: {$quest->name}, Message: " . ($message ?? 'empty'),
         );
         if (empty($message)) {
             return ['error' => true, 'msg' => 'Message cannot be empty'];

@@ -40,7 +40,7 @@ class CharacterClassController extends Controller
                     ],
                     [
                         'actions' => ['index', 'view'],
-                        'allow' => AccessRightsManager::isRouteAllowed($this),
+                       'allow' => [AccessRightsManager::class, 'isRouteAllowedCallback'],
                         'roles' => ['@'],
                     ],
                 ],

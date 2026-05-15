@@ -48,7 +48,7 @@ class PlayerController extends Controller
                             'validate',
                             'view',
                         ],
-                        'allow' => AccessRightsManager::isRouteAllowed($this),
+                        'allow' => [AccessRightsManager::class, 'isRouteAllowedCallback'],
                         'roles' => ['@'],
                     ],
                 ],

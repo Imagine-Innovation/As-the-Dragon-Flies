@@ -94,6 +94,18 @@ class AccessRightsManager extends Component
     }
 
     /**
+     * Callback method for Yii2 AccessControl rules.
+     *
+     * @param \yii\filters\AccessRule $rule The access rule
+     * @param \yii\base\Action $action The action being performed
+     * @return bool True if access is granted, false otherwise
+     */
+    public static function isRouteAllowedCallback($rule, $action): bool
+    {
+        return self::isRouteAllowed($action->controller);
+    }
+
+    /**
      * Checks if a user is authorized to access a specific route
      *
      * @param T $controller The source controller

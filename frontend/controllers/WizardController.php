@@ -40,7 +40,7 @@ class WizardController extends Controller
                     ],
                     [
                         'actions' => ['index', 'ajax-question', 'ajax-alignment', 'ajax-character-class', 'ajax-race', 'view'],
-                        'allow' => AccessRightsManager::isRouteAllowed($this),
+                        'allow' => [AccessRightsManager::class, 'isRouteAllowedCallback'],
                         'roles' => ['@'],
                     ],
                 ],
@@ -98,7 +98,6 @@ class WizardController extends Controller
         $request = Yii::$app->request;
         $id = $request->post('id', 1);
         $topic = $request->post('topic', 'Unknown');
-        Yii::debug("*** Debug *** actionAjaxQuestion - id={$id}, topic={$topic}");
         $propertyMap = [
             'class' => 'class_id',
             'race' => 'race_id',

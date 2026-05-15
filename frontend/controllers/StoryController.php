@@ -33,7 +33,7 @@ class StoryController extends Controller
                     ],
                     [
                         'actions' => ['index'],
-                        'allow' => AccessRightsManager::isRouteAllowed($this),
+                        'allow' => [AccessRightsManager::class, 'isRouteAllowedCallback'],
                         'roles' => ['@'],
                     ],
                 ],

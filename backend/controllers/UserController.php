@@ -51,7 +51,7 @@ class UserController extends Controller
                             'ajax',
                             'ajax-set-role',
                         ],
-                        'allow' => AccessRightsManager::isRouteAllowed($this),
+                       'allow' => [AccessRightsManager::class, 'isRouteAllowedCallback'],
                         'roles' => ['@'],
                     ],
                 ],

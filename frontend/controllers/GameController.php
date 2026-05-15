@@ -48,7 +48,7 @@ class GameController extends Controller
                             'ajax-quit',
                             'ajax-turn',
                         ],
-                        'allow' => AccessRightsManager::isRouteAllowed($this),
+                        'allow' => [AccessRightsManager::class, 'isRouteAllowedCallback'],
                         'roles' => ['@'],
                     ],
                 ],
@@ -330,7 +330,6 @@ class GameController extends Controller
         $currentMissionId = (int) $request->post('missionId');
         $remainingActions = $questProgress->remainingActions;
 
-        Yii::debug("actionAjaxNextTurn - currentMissionId={$currentMissionId}, nextMissionId={$nextMissionId}, remainingAction=" . count($remainingActions),);
 
         if ($remainingActions) {
             if ($nextMissionId && $nextMissionId !== $currentMissionId) {

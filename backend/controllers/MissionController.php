@@ -44,7 +44,7 @@ class MissionController extends Controller
                             'add-detail',
                             'edit-detail',
                         ],
-                        'allow' => AccessRightsManager::isRouteAllowed($this),
+                       'allow' => [AccessRightsManager::class, 'isRouteAllowedCallback'],
                         'roles' => ['@'],
                     ],
                 ],

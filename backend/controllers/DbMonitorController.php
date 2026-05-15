@@ -35,7 +35,7 @@ final class DbMonitorController extends Controller
                     ],
                     [
                         'actions' => ['index', 'ajax-explain'],
-                        'allow' => AccessRightsManager::isRouteAllowed($this),
+                       'allow' => [AccessRightsManager::class, 'isRouteAllowedCallback'],
                         'roles' => ['@'],
                     ],
                 ],

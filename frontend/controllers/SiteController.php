@@ -49,7 +49,7 @@ class SiteController extends Controller
                     ],
                     [
                         'actions' => ['logout', 'ajax-toast', 'about', 'contact', 'index'],
-                        'allow' => AccessRightsManager::isRouteAllowed($this),
+                        'allow' => [AccessRightsManager::class, 'isRouteAllowedCallback'],
                         'roles' => ['@'],
                     ],
                 ],
@@ -156,14 +156,14 @@ class SiteController extends Controller
      */
     public function actionIndex(): string
     {
-        if (Yii::$app->user->isGuest) {
+        $user = Yii::$app->user->getIdentity();
+        if (!$user) {
             return $this->render('guest');
         }
-        ContextManager::initContext();
+
+        ContextManager::initContext($user);
 
         // Get players sorted by creation date
-        $user = Yii::$app->user->identity;
-
         $playersQuery = $user->getPlayers()->orderBy(['created_at' => SORT_DESC]);
         $players = $playersQuery->all();
         $player = $user->current_player_id ? $user->currentPlayer : null;

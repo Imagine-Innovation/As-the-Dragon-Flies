@@ -35,7 +35,7 @@ class ItemController extends Controller
                     ],
                     [
                         'actions' => ['index', 'ajax', 'ajax-images', 'view'],
-                        'allow' => AccessRightsManager::isRouteAllowed($this),
+                       'allow' => [AccessRightsManager::class, 'isRouteAllowedCallback'],
                         'roles' => ['@'],
                     ],
                 ],
