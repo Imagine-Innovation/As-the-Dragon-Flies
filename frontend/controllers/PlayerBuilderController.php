@@ -269,8 +269,6 @@ class PlayerBuilderController extends Controller
         $playerId = $request->post('playerId');
         $languageId = $request->post('languageId');
         $selected = $request->post('selected');
-        Yii::debug(
-        );
         if ($selected) {
             $this->addLanguage($playerId, $languageId);
         } else {

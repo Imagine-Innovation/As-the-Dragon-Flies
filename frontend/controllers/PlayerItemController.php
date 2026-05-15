@@ -549,8 +549,6 @@ class PlayerItemController extends Controller
         $playerItem = FindModelHelper::findPlayerItem(['player_id' => $playerId, 'item_id' => $itemId]);
 
         $bodyZone = $request->post('bodyZone') ?? '';
-        Yii::debug(
-        );
 
         return $this->equipPlayer($playerItem, $bodyZone);
     }
