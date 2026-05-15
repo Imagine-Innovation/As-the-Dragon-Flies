@@ -28,7 +28,7 @@ return [
             'enableAutoLogin' => true,
             'identityCookie' => ['name' => '_identity-backend', 'httpOnly' => true],
             'on afterLogin' => function ($event) {
-                \common\components\ContextManager::initContext();
+                \common\components\ContextManager::initContext($event->identity);
             },
         ],
         'session' => [

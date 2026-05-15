@@ -22,21 +22,21 @@ class ContextManager extends Component
     }
 
     /**
-     *
+     * @param User|null $user
      * @return void
      */
-    public static function initContext(): void
+    public static function initContext(?User $user = null): void
     {
-        if (Yii::$app->user->isGuest) {
+        $user = $user ?? Yii::$app->user->getIdentity(false);
+        if (!$user) {
             return;
         }
         Yii::debug('*** debug *** ContextManager - initContext');
 
-        $user = self::getUser();
         Yii::$app->session->set('user', $user);
         Yii::$app->session->set('userId', $user->id);
 
-        self::updatePlayerContext($user->current_player_id);
+        self::updatePlayerContext($user->current_player_id, $user);
     }
 
     /**
@@ -54,11 +54,13 @@ class ContextManager extends Component
     /**
      *
      * @param int|null $playerId
+     * @param User|null $user
      * @return void
      */
-    public static function updatePlayerContext(?int $playerId = null): void
+    public static function updatePlayerContext(?int $playerId = null, ?User $user = null): void
     {
-        if (Yii::$app->user->isGuest) {
+        $user = $user ?? Yii::$app->user->getIdentity(false);
+        if (!$user) {
             return;
         }
 
@@ -73,25 +75,27 @@ class ContextManager extends Component
             Yii::$app->session->set('playerName', $currentPlayer->name);
             Yii::$app->session->set('avatar', $currentPlayer->image?->file_name);
             Yii::$app->session->set('currentPlayer', $currentPlayer);
-            self::updateQuestContext($currentPlayer->quest_id);
+            self::updateQuestContext($currentPlayer->quest_id, $user);
         } else {
             Yii::$app->session->set('hasPlayerSelected', false);
             Yii::$app->session->set('playerId', null);
             Yii::$app->session->set('playerName', null);
             Yii::$app->session->set('avatar', null);
             Yii::$app->session->set('currentPlayer', null);
-            self::updateQuestContext(null);
+            self::updateQuestContext(null, $user);
         }
     }
 
     /**
      *
      * @param int|null $questId
+     * @param User|null $user
      * @return void
      */
-    public static function updateQuestContext(?int $questId = null): void
+    public static function updateQuestContext(?int $questId = null, ?User $user = null): void
     {
-        if (Yii::$app->user->isGuest) {
+        $user = $user ?? Yii::$app->user->getIdentity(false);
+        if (!$user) {
             return;
         }
 

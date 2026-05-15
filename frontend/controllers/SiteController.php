@@ -161,7 +161,7 @@ class SiteController extends Controller
         }
 
         $user = Yii::$app->user->identity;
-        ContextManager::updatePlayerContext($user->current_player_id);
+        ContextManager::initContext($user);
 
         // Get players sorted by creation date
         $playersQuery = $user->getPlayers()->orderBy(['created_at' => SORT_DESC]);
