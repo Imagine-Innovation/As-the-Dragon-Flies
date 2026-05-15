@@ -10,7 +10,7 @@ use Yii;
  *
  * @property int $id Primary key
  * @property int $mission_id Foreign key to “mission” table
- * @property int $npc_type_id Foreign key to “npc_type” table. Defaulted to “Commoner” (id=7)
+ * @property int $type_id Foreign key to “npc_type” table. Defaulted to “Commoner” (id=7)
  * @property int $language_id Foreign key to “language” table. Defaulted to “Common” (id=1)
  * @property string $name NPC name
  * @property string|null $description Short description
@@ -41,19 +41,19 @@ class Npc extends \yii\db\ActiveRecord
     {
         return [
             [['description', 'image', 'first_dialog_id'], 'default', 'value' => null],
-            [['npc_type_id'], 'default', 'value' => 7],
+            [['type_id'], 'default', 'value' => 7],
             [['language_id'], 'default', 'value' => 1],
             [['mission_id', 'name'], 'required'],
-            [['mission_id', 'npc_type_id', 'language_id', 'first_dialog_id'], 'integer'],
+            [['mission_id', 'type_id', 'language_id', 'first_dialog_id'], 'integer'],
             [['description'], 'string'],
             [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeMarkdownWithCache']],
             [['name', 'image'], 'string', 'max' => 64],
             [
-                ['npc_type_id'],
+                ['type_id'],
                 'exist',
                 'skipOnError' => true,
                 'targetClass' => NpcType::class,
-                'targetAttribute' => ['npc_type_id' => 'id'],
+                'targetAttribute' => ['type_id' => 'id'],
             ],
             [
                 ['mission_id'],
@@ -87,7 +87,7 @@ class Npc extends \yii\db\ActiveRecord
         return [
             'id' => 'Primary key',
             'mission_id' => 'Foreign key to “mission” table',
-            'npc_type_id' => 'Foreign key to “npc_type” table. Defaulted to “Commoner” (id=7)',
+            'type_id' => 'Foreign key to “npc_type” table. Defaulted to “Commoner” (id=7)',
             'language_id' => 'Foreign key to “language” table. Defaulted to “Common” (id=1)',
             'name' => 'NPC name',
             'description' => 'Short description',
@@ -153,6 +153,6 @@ class Npc extends \yii\db\ActiveRecord
      */
     public function getNpcType()
     {
-        return $this->hasOne(NpcType::class, ['id' => 'npc_type_id']);
+        return $this->hasOne(NpcType::class, ['id' => 'type_id']);
     }
 }
