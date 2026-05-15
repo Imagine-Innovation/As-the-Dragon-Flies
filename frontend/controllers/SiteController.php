@@ -156,11 +156,11 @@ class SiteController extends Controller
      */
     public function actionIndex(): string
     {
-        if (Yii::$app->user->isGuest) {
+        $user = Yii::$app->user->getIdentity();
+        if (!$user) {
             return $this->render('guest');
         }
 
-        $user = Yii::$app->user->identity;
         ContextManager::initContext($user);
 
         // Get players sorted by creation date

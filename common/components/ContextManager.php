@@ -27,7 +27,9 @@ class ContextManager extends Component
      */
     public static function initContext(?User $user = null): void
     {
-        $user = $user ?? Yii::$app->user->getIdentity(false);
+        /** @var \yii\web\User|null $userComponent */
+        $userComponent = Yii::$app->get('user', false);
+        $user = $user ?? $userComponent?->getIdentity(false);
         if (!$user) {
             return;
         }
@@ -59,7 +61,9 @@ class ContextManager extends Component
      */
     public static function updatePlayerContext(?int $playerId = null, ?User $user = null): void
     {
-        $user = $user ?? Yii::$app->user->getIdentity(false);
+        /** @var \yii\web\User|null $userComponent */
+        $userComponent = Yii::$app->get('user', false);
+        $user = $user ?? $userComponent?->getIdentity(false);
         if (!$user) {
             return;
         }
@@ -94,7 +98,9 @@ class ContextManager extends Component
      */
     public static function updateQuestContext(?int $questId = null, ?User $user = null): void
     {
-        $user = $user ?? Yii::$app->user->getIdentity(false);
+        /** @var \yii\web\User|null $userComponent */
+        $userComponent = Yii::$app->get('user', false);
+        $user = $user ?? $userComponent?->getIdentity(false);
         if (!$user) {
             return;
         }
