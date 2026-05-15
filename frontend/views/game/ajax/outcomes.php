@@ -1,9 +1,9 @@
 <?php
 
-use common\models\Mission;
 use frontend\widgets\ActionOutcomes;
 use common\widgets\Button;
 use common\widgets\MarkDown;
+use yii\helpers\Html;
 
 /** @var yii\web\View $this */
 /** @var common\models\Action $action */
@@ -16,6 +16,7 @@ use common\widgets\MarkDown;
 /** @var int $questProgressId */
 /** @var int $missionId */
 /** @var int|null $nextMissionId */
+/** @var string|null $nextMissionName */
 ?>
 <article class="text-decoration">
     <?= MarkDown::widget(['content' => $action->description]) ?>
@@ -32,9 +33,8 @@ ActionOutcomes::widget([
 ]);
 ?>
 <?php
-$nextMission = $nextMissionId ? Mission::findOne($nextMissionId) : null;
-if ($nextMission) {
-    $buttonTitle = "Move to {$nextMission->name}";
+if ($nextMissionId) {
+    $buttonTitle = 'Move to ' . Html::encode($nextMissionName ?? "Mission #{$nextMissionId}");
     $buttonIcon = 'bi-chevron-double-right';
     $buttonOnclick = "vtt.moveToNextPlayer({$questProgressId}, {$nextMissionId}); return false;";
 } elseif ($isFree) {

@@ -8,6 +8,7 @@ use common\helpers\DiceRoller;
 use common\models\Action;
 use common\models\ActionFlow;
 use common\models\ActionTypeSkill;
+use common\models\Mission;
 use common\models\Outcome;
 use common\models\Player;
 use common\models\PlayerItem;
@@ -234,6 +235,8 @@ class ActionManager extends BaseManager
     ): array
     {
         $missionId = $this->questProgress?->mission_id;
+        $nextMission = $this->nextMissionId ? Mission::findOne($this->nextMissionId) : null;
+
         return [
             'action' => $this->action,
             'status' => $status,
@@ -245,6 +248,7 @@ class ActionManager extends BaseManager
             'questProgressId' => $this->questProgress?->id,
             'missionId' => $missionId,
             'nextMissionId' => $this->nextMissionId,
+            'nextMissionName' => $nextMission?->name,
         ];
     }
 
