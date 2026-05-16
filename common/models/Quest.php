@@ -22,8 +22,6 @@ use Yii;
  * @property int $created_at Created at
  * @property int|null $started_at Started at
  * @property int|null $completed_at Completed at
- * @property int $local_time Local time
- * @property int $elapsed_time Elapsed time (minute)
  *
  * @property Chapter|null $currentChapter
  * @property Player|null $currentPlayer

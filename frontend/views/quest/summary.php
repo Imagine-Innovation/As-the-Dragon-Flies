@@ -1,6 +1,7 @@
 <?php
 
 use common\components\AppStatus;
+use common\helpers\DateTimeHelper;
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
@@ -30,7 +31,7 @@ $status = AppStatus::from($model->status);
                     </p>
                     <p><strong>Started at:</strong> <?= Yii::$app->formatter->asDatetime($model->started_at) ?></p>
                     <p><strong>Completed at:</strong> <?= Yii::$app->formatter->asDatetime($model->completed_at) ?></p>
-                    <p><strong>Elapsed time:</strong> <?= $model->elapsed_time ?> minutes</p>
+                    <p><strong>Elapsed time:</strong> <?= DateTimeHelper::elapsedTime($model->started_at, $model->completed_at ?? 0) ?></p>
                 </div>
             </div>
 

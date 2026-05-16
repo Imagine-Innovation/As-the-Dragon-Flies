@@ -3,15 +3,16 @@
 namespace common\components\gameplay;
 
 use common\components\ContextManager;
+use common\helpers\DateTimeHelper;
 use common\helpers\JsonHelper;
 use common\helpers\PayloadHelper;
-use common\helpers\Utilities;
 use common\models\Notification;
 use Yii;
 use yii\helpers\Html;
 
 class ChatManager extends BaseManager
 {
+
     const CHAT_NOTIFICATION_TYPE = 'new-message';
     const ROUNDED_SECONDS = 60; // rounded to the same minute by default
     const DEFAULT_AVATAR = 'human-male-1.png';
@@ -78,7 +79,7 @@ class ChatManager extends BaseManager
         $avatar = PayloadHelper::extractStringFromPayload('avatar', $payload, self::DEFAULT_AVATAR);
         return [
             'isAuthor' => $chatNotification->initiator_id === $playerId, // defines is the current player is the one who initiate the chat message
-            'displayedDateTime' => Utilities::formatDate($roundedTime),
+            'displayedDateTime' => DateTimeHelper::formatDate($roundedTime),
             'sender' => $sender,
             'messages' => [$message], // first entry of the message array
             'avatar' => $avatar,
@@ -95,10 +96,10 @@ class ChatManager extends BaseManager
     public function getLastMessages(?int $since = null, ?int $limit = null): array
     {
         $chatNotifications = $this->getNotifications(
-            (int) $this->questId,
-            self::CHAT_NOTIFICATION_TYPE,
-            $since,
-            $limit,
+                (int) $this->questId,
+                self::CHAT_NOTIFICATION_TYPE,
+                $since,
+                $limit,
         );
 
         if (!$chatNotifications) {

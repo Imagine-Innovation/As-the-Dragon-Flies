@@ -112,26 +112,6 @@ class Utilities extends Html
     }
 
     /**
-     * Formats a datetime value according to the user's browser language
-     *
-     * Detects browser language preference between English and French,
-     * then formats the date accordingly using Yii's formatter.
-     *
-     * @param mixed $dateTime The datetime value to format
-     * @return string Formatted datetime string in 'short' format
-     */
-    public static function formatDate($dateTime)
-    {
-        // Get browser language preference (supports en-US or fr-FR)
-        $browserLanguage = Yii::$app->request->getPreferredLanguage(['en-US', 'fr-FR']);
-
-        // Configure formatter locale based on browser language
-        Yii::$app->formatter->locale = $browserLanguage;
-
-        return Yii::$app->formatter->asDateTime($dateTime, 'short');
-    }
-
-    /**
      *
      * @param string[] $paragraphs
      * @return string

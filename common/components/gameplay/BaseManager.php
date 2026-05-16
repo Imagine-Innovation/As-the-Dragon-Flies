@@ -2,8 +2,8 @@
 
 namespace common\components\gameplay;
 
+use common\helpers\DateTimeHelper;
 use common\helpers\SaveHelper;
-use common\helpers\Utilities;
 use common\models\Notification;
 use Yii;
 use yii\base\Component;
@@ -53,7 +53,7 @@ abstract class BaseManager extends Component
     {
         Yii::debug(
                 "*** Debug *** getNotifications - questId={$questId}, type={$type}, since="
-                . ($since ? Utilities::formatDate($since) : 'null')
+                . ($since ? DateTimeHelper::formatDate($since) : 'null')
                 . ', limit='
                 . ($limit ?? 'null'),
         );
