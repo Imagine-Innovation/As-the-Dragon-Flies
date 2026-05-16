@@ -4,6 +4,11 @@ include:
     - frontend
     - backend
 paths:
-    output: console/runtime/output
+    output: tests/_output
+    data: tests/_data
+    support: tests/_support # Base structure
+    envs: tests/_envs
 settings:
     colors: true
+    shuffle: false
+    lint: true

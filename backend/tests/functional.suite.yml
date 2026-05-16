@@ -1,5 +1,6 @@
-suite_namespace: backend\tests\functional
 actor: FunctionalTester
+namespace: backtend\tests   # Codeception uses this as the base prefix
 modules:
     enabled:
+        - Asserts
         - Yii2

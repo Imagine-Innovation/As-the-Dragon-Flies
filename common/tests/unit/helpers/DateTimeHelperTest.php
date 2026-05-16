@@ -1,6 +1,7 @@
 <?php
 
 use common\helpers\DateTimeHelper;
+use common\tests\UnitTester;
 use Codeception\Test\Unit;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\TestWith;
@@ -47,23 +48,36 @@ final class DateTimeHelperTest extends Unit
     // Singular vs plural labels
     // -------------------------------------------------------------------------
 
-    #[TestWith([1, '1 second'])]
-    #[TestWith([2, '2 seconds'])]
-    #[TestWith([60, '1 minute'])]
-    #[TestWith([120, '2 minutes'])]
-    #[TestWith([3_600, '1 hour'])]
-    #[TestWith([7_200, '2 hours'])]
-    #[TestWith([86_400, '1 day'])]
-    #[TestWith([172_800, '2 days'])]
-    #[TestWith([604_800, '1 week'])]
-    #[TestWith([1_209_600, '2 weeks'])]
-    #[TestWith([2_592_000, '1 month'])]
-    #[TestWith([5_184_000, '2 months'])]
-    #[TestWith([31_536_000, '1 year'])]
-    #[TestWith([63_072_000, '2 years'])]
+    /**
+     * @dataProvider elapsedSecondsProvider
+     *
+     * @param int $seconds
+     * @param string $expected
+     * @return void
+     */
     public function testHandlesSingularAndPluralCorrectly(int $seconds, string $expected): void
     {
         self::assertSame($expected, DateTimeHelper::elapsedTime(0, $seconds, 1));
+    }
+
+    public function elapsedSecondsProvider(): array
+    {
+        return [
+            '1 second' => [1, '1 second'],
+            '2 seconds' => [2, '2 seconds'],
+            '1 minute' => [60, '1 minute'],
+            '2 minutes' => [120, '2 minutes'],
+            '1 hour' => [3_600, '1 hour'],
+            '2 hours' => [7_200, '2 hours'],
+            '1 day' => [86_400, '1 day'],
+            '2 days' => [172_800, '2 days'],
+            '1 week' => [604_800, '1 week'],
+            '2 weeks' => [1_209_600, '2 weeks'],
+            '1 month' => [2_592_000, '1 month'],
+            '2 months' => [5_184_000, '2 months'],
+            '1 year' => [31_536_000, '1 year'],
+            '2 years' => [63_072_000, '2 years'],
+        ];
     }
 
     // -------------------------------------------------------------------------
@@ -126,7 +140,13 @@ final class DateTimeHelperTest extends Unit
         ];
     }
 
-    #[DataProvider('exactBoundaryProvider')]
+    /**
+     * @dataProvider exactBoundaryProvider
+     *
+     * @param int $seconds
+     * @param string $expected
+     * @return void
+     */
     public function testHandlesExactUnitBoundariesCorrectly(int $seconds, string $expected): void
     {
         self::assertSame($expected, DateTimeHelper::elapsedTime(0, $seconds));
