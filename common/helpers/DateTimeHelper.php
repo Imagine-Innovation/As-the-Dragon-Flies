@@ -7,21 +7,6 @@ use Yii;
 final class DateTimeHelper
 {
 
-    /**
-     * Time units mapped to their equivalent value in seconds, ordered from largest to smallest.
-     *
-     * @var array<string, int>
-     */
-    private const UNITS = [
-        'year' => 31_536_000,
-        'month' => 2_592_000,
-        'week' => 604_800,
-        'day' => 86_400,
-        'hour' => 3_600,
-        'minute' => 60,
-        'second' => 1,
-    ];
-
     // Utility class — disallow instantiation.
     private function __construct()
     {
@@ -59,26 +44,32 @@ final class DateTimeHelper
      */
     public static function elapsedTime(int $startTime, int $endTime = 0, int $precision = 2): string
     {
-        $diff = abs(($endTime === 0 ? time() : $endTime) - $startTime);
+        $finalEndTime = $endTime === 0 ? time() : $endTime;
+        $start = (new \DateTime())->setTimestamp($startTime);
+        $end = (new \DateTime())->setTimestamp($finalEndTime);
 
-        if ($diff === 0) {
-            return '0 seconds';
-        }
+        $interval = $start->diff($end);
+
+        $units = [
+            'year' => $interval->y,
+            'month' => $interval->m,
+            'week' => intdiv($interval->d, 7),
+            'day' => $interval->d % 7,
+            'hour' => $interval->h,
+            'minute' => $interval->i,
+            'second' => $interval->s,
+        ];
 
         /** @var list<string> $parts */
         $parts = [];
 
-        foreach (self::UNITS as $label => $seconds) {
-            if ($diff < $seconds) {
-                continue;
-            }
+        foreach ($units as $label => $value) {
+            if ($value > 0) {
+                $parts[] = $value . ' ' . $label . ($value > 1 ? 's' : '');
 
-            $value = intdiv($diff, $seconds);
-            $diff = $diff % $seconds;
-            $parts[] = $value . ' ' . $label . ($value > 1 ? 's' : '');
-
-            if (count($parts) === $precision) {
-                break;
+                if (count($parts) === $precision) {
+                    break;
+                }
             }
         }
 
