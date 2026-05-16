@@ -221,6 +221,23 @@ class ActionManager extends BaseManager
 
     /**
      *
+     * @param bool $isFree
+     * @param int|null $nextMissionId
+     * @return string
+     */
+    private function nextActionButtonType(bool $isFree, ?int $nextMissionId): string
+    {
+        if ($nextMissionId) {
+            return 'nextMission';
+        }
+        if ($isFree) {
+            return 'samePlayer';
+        }
+        return 'nextPlayer';
+    }
+
+    /**
+     *
      * @param AppStatus $status
      * @param Outcome[] $outcomes
      * @param string $diceRollLabel
@@ -236,6 +253,7 @@ class ActionManager extends BaseManager
     {
         $missionId = $this->questProgress?->mission_id;
         $nextMission = $this->nextMissionId ? Mission::findOne($this->nextMissionId) : null;
+        $isFree = $this->action?->is_free ?? false;
 
         return [
             'action' => $this->action,
@@ -243,12 +261,13 @@ class ActionManager extends BaseManager
             'outcomes' => $outcomes,
             'diceRoll' => $diceRollLabel,
             'hpLoss' => $this->hpLoss,
-            'isFree' => $this->action?->is_free,
+            'isFree' => $isFree,
             'canReplay' => $canReplay,
             'questProgressId' => $this->questProgress?->id,
             'missionId' => $missionId,
             'nextMissionId' => $this->nextMissionId,
             'nextMissionName' => $nextMission?->name,
+            'nextActionButtonType' => $this->nextActionButtonType($isFree || $canReplay, $this->nextMissionId),
         ];
     }
 

@@ -17,12 +17,13 @@ use yii\helpers\Html;
 /** @var int $missionId */
 /** @var int|null $nextMissionId */
 /** @var string|null $nextMissionName */
+/** @var string $nextActionButtonType */
 ?>
 <article class="text-decoration">
     <?= MarkDown::widget(['content' => $action->description]) ?>
 </article>
-<?=
-ActionOutcomes::widget([
+<?php
+echo ActionOutcomes::widget([
     'outcomes' => $outcomes,
     'diceRoll' => $diceRoll,
     'status' => $status,
@@ -31,29 +32,32 @@ ActionOutcomes::widget([
     'questProgressId' => $questProgressId,
     'nextMissionId' => $nextMissionId,
 ]);
-?>
-<?php
-if ($nextMissionId) {
-    $buttonTitle = 'Move to ' . Html::encode($nextMissionName ?? "Mission #{$nextMissionId}");
-    $buttonIcon = 'bi-chevron-double-right';
-    $buttonOnclick = "vtt.moveToNextPlayer({$questProgressId}, {$nextMissionId}); return false;";
-} elseif ($isFree) {
-    $buttonTitle = 'Try another action';
-    $buttonIcon = 'bi-arrow-repeat';
-    $buttonOnclick = null;
-} else {
-    $buttonTitle = 'Finish your turn';
-    $buttonIcon = 'bi-escape';
-    $buttonOnclick = "vtt.moveToNextPlayer({$questProgressId}, null); return false;";
-}
 
-echo Button::widget([
-    'icon' => $buttonIcon,
-    'title' => $buttonTitle,
-    'onclick' => $buttonOnclick,
-    'isCta' => true,
-    'ariaParams' => ['data-bs-dismiss' => 'modal'],
-]);
+$nextActionButtonParam = match ($nextActionButtonType) {
+    'nextMission' => [
+        'icon' => 'bi-chevron-double-right',
+        'title' => 'Move to ' . ($nextMissionName ?? "Mission #{$nextMissionId}"),
+        'onclick' => "vtt.moveToNextPlayer({$questProgressId}, {$nextMissionId}); return false;",
+        'isCta' => true,
+        'ariaParams' => ['data-bs-dismiss' => 'modal'],
+    ],
+    'samePlayer' => [
+        'icon' => 'bi-arrow-repeat',
+        'title' => 'Try another action',
+        'onclick' => null,
+        'isCta' => true,
+        'ariaParams' => ['data-bs-dismiss' => 'modal'],
+    ],
+    default => [
+        'icon' => 'bi-escape',
+        'title' => 'Finish your turn',
+        'onclick' => "vtt.moveToNextPlayer({$questProgressId}, null); return false;",
+        'isCta' => true,
+        'ariaParams' => ['data-bs-dismiss' => 'modal'],
+    ],
+};
+
+echo Button::widget($nextActionButtonParam);
 ?>
 <p>
     isFree=<?= $isFree ? 'true' : 'false' ?>,
