@@ -45,8 +45,9 @@ final class DateTimeHelper
     public static function elapsedTime(int $startTime, int $endTime = 0, int $precision = 2): string
     {
         $finalEndTime = $endTime === 0 ? time() : $endTime;
-        $start = (new \DateTime())->setTimestamp($startTime);
-        $end = (new \DateTime())->setTimestamp($finalEndTime);
+
+        $start = (new \DateTime())->setTimestamp(min($startTime, $finalEndTime));
+        $end = (new \DateTime())->setTimestamp(max($startTime, $finalEndTime));
 
         $interval = $start->diff($end);
 
