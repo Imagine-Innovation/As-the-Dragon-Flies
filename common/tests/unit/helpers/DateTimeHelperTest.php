@@ -6,11 +6,6 @@ use common\helpers\DateTimeHelper;
 use common\tests\UnitTester;
 use Codeception\Test\Unit;
 use ReflectionClass;
-use common\helpers\DateTimeHelper;
-use common\tests\UnitTester;
-use Codeception\Test\Unit;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\TestWith;
 
 /**
  * Run with:
@@ -84,25 +79,38 @@ final class DateTimeHelperTest extends Unit
     // Precision parameter
     // -------------------------------------------------------------------------
 
-    public function testRespectsDefaultPrecisionOfTwo(): void
+    /**
+     * @dataProvider respectsPrecisionProvider
+     */
+    public function testRespectsPrecision(int $precision, string $expected): void
     {
-        // 1 hour + 1 minute + 1 second — default precision = 2
-        self::assertSame('1 hour, 1 minute', DateTimeHelper::elapsedTime(0, 3_661));
+        $start = '2025-01-01 00:00:00';
+        $end = '2026-02-09 01:01:01'; // 1 year, 1 month, 1 week, 1 day, 1 hour, 1 minute, and 1 second later
+        $s = (int) strtotime($start);
+        $e = (int) strtotime($end);
+
+        self::assertSame($expected, DateTimeHelper::elapsedTime($s, $e, $precision));
     }
 
-    public function testRespectsExplicitPrecisionOfOne(): void
+    /**
+     *
+     * @return array<int, string>
+     */
+    public function respectsPrecisionProvider(): array
     {
-        self::assertSame('1 hour', DateTimeHelper::elapsedTime(0, 3_661, 1));
-    }
-
-    public function testRespectsExplicitPrecisionOfThree(): void
-    {
-        self::assertSame('1 hour, 1 minute, 1 second', DateTimeHelper::elapsedTime(0, 3_661, 3));
-    }
-
-    public function testDoesNotExceedAvailableUnitsWhenPrecisionIsVeryHigh(): void
-    {
-        self::assertSame('1 hour', DateTimeHelper::elapsedTime(0, 3_600, PHP_INT_MAX));
+        return [
+            'Precision -1' => [-1, '1 year'],
+            'Precision 0' => [0, '1 year'],
+            'Precision 1' => [1, '1 year'],
+            'Precision 2' => [2, '1 year, 1 month'],
+            'Precision 3' => [3, '1 year, 1 month, 1 week'],
+            'Precision 4' => [4, '1 year, 1 month, 1 week, 1 day'],
+            'Precision 5' => [5, '1 year, 1 month, 1 week, 1 day, 1 hour'],
+            'Precision 6' => [6, '1 year, 1 month, 1 week, 1 day, 1 hour, 1 minute'],
+            'Precision 7' => [7, '1 year, 1 month, 1 week, 1 day, 1 hour, 1 minute, 1 second'],
+            'Precision 8' => [8, '1 year, 1 month, 1 week, 1 day, 1 hour, 1 minute, 1 second'],
+            'Precision PHP_INT_MAX' => [PHP_INT_MAX, '1 year, 1 month, 1 week, 1 day, 1 hour, 1 minute, 1 second'],
+        ];
     }
 
     // -------------------------------------------------------------------------
@@ -126,15 +134,12 @@ final class DateTimeHelperTest extends Unit
             '31-day month range' => ['2026-01-01 00:00:00', '2026-01-31 00:00:00', '4 weeks, 2 days'],
             'exactly 1 month' => ['2026-01-01 00:00:00', '2026-02-01 00:00:00', '1 month'],
             '1 month 1 second' => ['2026-01-01 00:00:00', '2026-02-01 00:00:01', '1 month, 1 second'],
-
             // 28-day month (Feb 2026)
             '28-day month range' => ['2026-02-01 00:00:00', '2026-03-01 00:00:00', '1 month'],
             '28-day month partial' => ['2026-02-01 00:00:00', '2026-02-28 00:00:00', '3 weeks, 6 days'],
-
             // Leap year (2024)
             'leap year month' => ['2024-02-01 00:00:00', '2024-03-01 00:00:00', '1 month'],
             'leap year full' => ['2024-01-01 00:00:00', '2025-01-01 00:00:00', '1 year'],
-
             // The original problematic case (approx 1 year)
             '1 second below 1 year' => ['1970-01-01 00:00:00', '1970-12-31 23:59:59', '11 months, 4 weeks'],
             'exactly 1 year' => ['1970-01-01 00:00:00', '1971-01-01 00:00:00', '1 year'],
