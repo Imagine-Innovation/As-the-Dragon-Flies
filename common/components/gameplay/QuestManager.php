@@ -296,8 +296,6 @@ class QuestManager extends BaseManager
         $this->endCurrentQuestProgress($progress, $status);
         $this->endQuestPlayers($quest->id, $message);
         $this->detachPlayersFromQuest($quest->id);
-        $this->deleteQuestSessions($quest->id);
-        $this->deleteNotifications($quest->id);
 
         $detail = [
             'status' => $status->getLabel(),
@@ -307,6 +305,10 @@ class QuestManager extends BaseManager
         ];
 
         $event = $this->createQuestEvent('game-over', $message, $player, $detail);
+
+        $this->deleteQuestSessions($quest->id);
+        $this->deleteNotifications($quest->id);
+
         return [
             'error' => false,
             'msg' => $message,
