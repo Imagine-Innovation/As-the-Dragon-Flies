@@ -30,6 +30,9 @@ class DateTimeHelperTest extends Unit
 
         // Negative difference (reversed order)
         $this->assertEquals("11 months, 4 weeks", DateTimeHelper::elapsedTime(31535999, 1, 2));
+
+        // Null endTime
+        $this->assertEquals("1 year", DateTimeHelper::elapsedTime(time() - 31536000, null, 2));
     }
 
     public function testElapsedTimeLeapYear()

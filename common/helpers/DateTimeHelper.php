@@ -37,14 +37,14 @@ final class DateTimeHelper
      * Converts the difference between two Unix timestamps into a human-readable string.
      *
      * @param int $startTime Unix timestamp for the start of the interval
-     * @param int $endTime   Unix timestamp for the end of the interval (defaults to now)
+     * @param int|null $endTime   Unix timestamp for the end of the interval (defaults to now)
      * @param int $precision Maximum number of time units to include in the output
      *
      * @return non-empty-string e.g. "1 day", "2 hours, 35 minutes", "45 seconds"
      */
-    public static function elapsedTime(int $startTime, int $endTime = 0, int $precision = 2): string
+    public static function elapsedTime(int $startTime, ?int $endTime = null, int $precision = 2): string
     {
-        $finalEndTime = $endTime === 0 ? time() : $endTime;
+        $finalEndTime = ($endTime === 0 || $endTime === null) ? time() : $endTime;
 
         $start = (new \DateTime())->setTimestamp(min($startTime, $finalEndTime));
         $end = (new \DateTime())->setTimestamp(max($startTime, $finalEndTime));
