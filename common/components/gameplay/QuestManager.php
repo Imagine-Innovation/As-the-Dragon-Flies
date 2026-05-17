@@ -8,10 +8,12 @@ use common\helpers\SaveHelper;
 use common\models\Chapter;
 use common\models\events\EventFactory;
 use common\models\Mission;
+use common\models\Notification;
 use common\models\Player;
 use common\models\Quest;
 use common\models\QuestPlayer;
 use common\models\QuestProgress;
+use common\models\QuestSession;
 use common\models\QuestTurn;
 use Exception;
 use RuntimeException;
@@ -243,6 +245,7 @@ class QuestManager extends BaseManager
     }
 
     /**
+     * Delete quest sessions for a quest.
      *
      * @param int $questId
      * @return int
@@ -250,6 +253,27 @@ class QuestManager extends BaseManager
     private function detachPlayersFromQuest(int $questId): int
     {
         return Player::updateAll(['quest_id' => null], ['quest_id' => $questId]);
+    }
+
+    /**
+     * Delete notifications for a quest.
+     *
+     * @param int $questId
+     * @return int
+     */
+    private function deleteQuestSessions(int $questId): int
+    {
+        return QuestSession::deleteAll(['quest_id' => $questId]);
+    }
+
+    /**
+     *
+     * @param int $questId
+     * @return int
+     */
+    private function deleteNotifications(int $questId): int
+    {
+        return Notification::deleteAll(['quest_id' => $questId]);
     }
 
     /**
@@ -272,6 +296,8 @@ class QuestManager extends BaseManager
         $this->endCurrentQuestProgress($progress, $status);
         $this->endQuestPlayers($quest->id, $message);
         $this->detachPlayersFromQuest($quest->id);
+        $this->deleteQuestSessions($quest->id);
+        $this->deleteNotifications($quest->id);
 
         $detail = [
             'status' => $status->getLabel(),
