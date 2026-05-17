@@ -6,9 +6,9 @@ use common\extensions\EventHandler\contracts\BroadcastServiceInterface;
 use common\extensions\EventHandler\contracts\SpecificMessageHandlerInterface;
 use common\extensions\EventHandler\factories\BroadcastMessageFactory;
 use common\extensions\EventHandler\LoggerService;
+use common\extensions\EventHandler\NotificationService;
+use common\extensions\EventHandler\QuestSessionManager;
 use common\helpers\PayloadHelper;
-use common\models\Notification;
-use common\models\QuestSession;
 use Ratchet\ConnectionInterface;
 
 class GameOverHandler implements SpecificMessageHandlerInterface
@@ -16,29 +16,29 @@ class GameOverHandler implements SpecificMessageHandlerInterface
     private LoggerService $logger;
     private BroadcastServiceInterface $broadcastService;
     private BroadcastMessageFactory $messageFactory;
-    private QuestSession $questSession;
-    private Notification $notification;
+    private QuestSessionManager $questSessionManager;
+    private NotificationService $notificationService;
 
     /**
      *
      * @param LoggerService $logger
      * @param BroadcastServiceInterface $broadcastService
      * @param BroadcastMessageFactory $messageFactory
-     * @param QuestSession $questSession
-     * @param Notification $notification
+     * @param QuestSessionManager $questSessionManager
+     * @param NotificationService $notificationService
      */
     public function __construct(
         LoggerService $logger,
         BroadcastServiceInterface $broadcastService,
         BroadcastMessageFactory $messageFactory,
-        QuestSession $questSession,
-        Notification $notification,
+        QuestSessionManager $questSessionManager,
+        NotificationService $notificationService,
     ) {
         $this->logger = $logger;
         $this->broadcastService = $broadcastService;
         $this->messageFactory = $messageFactory;
-        $this->questSession = $questSession;
-        $this->notification = $notification;
+        $this->questSessionManager = $questSessionManager;
+        $this->notificationService = $notificationService;
     }
 
     /**
@@ -73,36 +73,12 @@ class GameOverHandler implements SpecificMessageHandlerInterface
 
         $this->broadcastService->broadcastToQuest($questId, $gameOverDto, $sessionId);
 
-        $this->deleteQuestSessions($questId);
-        $this->deleteNotifications($questId);
+        $this->questSessionManager->deleteByQuestId($questId);
+        $this->notificationService->deleteByQuestId($questId);
 
         $this->logger->log('GameOverHandler: GameOverDto broadcasted', ['quest_id' => $questId, 'payload' => $payload]);
         $this->broadcastService->sendBack($from, 'ack', ['type' => 'game-over_processed', 'detail' => $detail]);
 
         $this->logger->logEnd('GameOverHandler: handle');
-    }
-
-    /**
-     * Delete quest sessions for a quest.
-     *
-     * @param int $questId
-     * @return void
-     */
-    private function deleteQuestSessions(int $questId): void
-    {
-        $rows = $this->questSession::deleteAll(['quest_id' => $questId]);
-        $this->logger->log("GameOverHandler: deleteQuestSessions result: {$rows} row(s) deleted for questId={$questId}");
-    }
-
-    /**
-     * Delete notifications for a quest.
-     *
-     * @param int $questId
-     * @return void
-     */
-    private function deleteNotifications(int $questId): void
-    {
-        $rows = $this->notification::deleteAll(['quest_id' => $questId]);
-        $this->logger->log("GameOverHandler: deleteNotifications result: {$rows} row(s) deleted for questId={$questId}");
     }
 }

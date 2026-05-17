@@ -344,6 +344,34 @@ class QuestSessionManager
     }
 
     /**
+     * Deletes all quest sessions for a specific quest.
+     *
+     * @param int $questId The ID of the quest.
+     * @return int The number of rows deleted.
+     */
+    public function deleteByQuestId(int $questId): int
+    {
+        $this->logger->logStart("QuestSessionManager: deleteByQuestId questId=[{$questId}]");
+
+        try {
+            $rowsDeleted = QuestSession::deleteAll(['quest_id' => $questId]);
+            $this->logger->log(
+                "QuestSessionManager: Successfully deleted {$rowsDeleted} session(s) for questId=[{$questId}]",
+            );
+            $this->logger->logEnd('QuestSessionManager: deleteByQuestId');
+            return $rowsDeleted;
+        } catch (\Exception $e) {
+            $this->logger->log(
+                "QuestSessionManager: Exception during deleteByQuestId for questId=[{$questId}]: " . $e->getMessage(),
+                $e->getTraceAsString(),
+                'error',
+            );
+            $this->logger->logEnd('QuestSessionManager: deleteByQuestId');
+            return 0;
+        }
+    }
+
+    /**
      * Updates the last_ts of a QuestSession.
      * @param string $sessionId The ID of the session to update.
      * @param int $timestamp The new timestamp.

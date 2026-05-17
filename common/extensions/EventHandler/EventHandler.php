@@ -13,8 +13,6 @@ use common\extensions\EventHandler\handlers\QuestStartingHandler;
 use common\extensions\EventHandler\handlers\RegistrationHandler;
 use common\extensions\EventHandler\handlers\SendingMessageHandler;
 use common\helpers\JsonHelper;
-use common\models\Notification;
-use common\models\QuestSession;
 use common\helpers\PayloadHelper;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -137,8 +135,8 @@ class EventHandler extends Component
                 $this->loggerService,
                 $this->broadcastService,
                 new BroadcastMessageFactory(),
-                new QuestSession(),
-                new Notification(),
+                $this->questSessionManager,
+                $this->notificationService,
             ),
             'quest-starting' => new QuestStartingHandler(
                 $this->loggerService,
