@@ -8,12 +8,10 @@ use common\helpers\SaveHelper;
 use common\models\Chapter;
 use common\models\events\EventFactory;
 use common\models\Mission;
-use common\models\Notification;
 use common\models\Player;
 use common\models\Quest;
 use common\models\QuestPlayer;
 use common\models\QuestProgress;
-use common\models\QuestSession;
 use common\models\QuestTurn;
 use Exception;
 use RuntimeException;
@@ -29,18 +27,12 @@ class QuestManager extends BaseManager
     // Internal use
     private ?Player $player = null;
     private ?int $nextSequence = null;
-    private QuestSession $questSession;
-    private Notification $notification;
 
     /**
      * @param array<string, mixed> $config
      */
     public function __construct($config = [])
     {
-        $this->questSession = $config['questSession'] ?? new QuestSession();
-        $this->notification = $config['notification'] ?? new Notification();
-        unset($config['questSession'], $config['notification']);
-
         parent::__construct($config);
 
         if ($this->questProgress) {
@@ -261,28 +253,6 @@ class QuestManager extends BaseManager
     }
 
     /**
-     * Delete quest sessions for a quest.
-     *
-     * @param int $questId
-     * @return int
-     */
-    private function deleteQuestSessions(int $questId): int
-    {
-        return $this->questSession::deleteAll(['quest_id' => $questId]);
-    }
-
-    /**
-     * Delete notifications for a quest.
-     *
-     * @param int $questId
-     * @return int
-     */
-    private function deleteNotifications(int $questId): int
-    {
-        return $this->notification::deleteAll(['quest_id' => $questId]);
-    }
-
-    /**
      *
      * @param AppStatus $status
      * @return array{error: bool, msg: string, event?: string, payload?: array<string, mixed>}
@@ -311,9 +281,6 @@ class QuestManager extends BaseManager
         ];
 
         $event = $this->createQuestEvent('game-over', $message, $player, $detail);
-
-        $this->deleteQuestSessions($quest->id);
-        $this->deleteNotifications($quest->id);
 
         return [
             'error' => false,
