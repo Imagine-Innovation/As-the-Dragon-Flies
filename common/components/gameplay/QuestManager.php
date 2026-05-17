@@ -29,12 +29,18 @@ class QuestManager extends BaseManager
     // Internal use
     private ?Player $player = null;
     private ?int $nextSequence = null;
+    private QuestSession $questSession;
+    private Notification $notification;
 
     /**
      * @param array<string, mixed> $config
      */
     public function __construct($config = [])
     {
+        $this->questSession = $config['questSession'] ?? new QuestSession();
+        $this->notification = $config['notification'] ?? new Notification();
+        unset($config['questSession'], $config['notification']);
+
         parent::__construct($config);
 
         if ($this->questProgress) {
@@ -245,7 +251,6 @@ class QuestManager extends BaseManager
     }
 
     /**
-     * Delete quest sessions for a quest.
      *
      * @param int $questId
      * @return int
@@ -256,24 +261,25 @@ class QuestManager extends BaseManager
     }
 
     /**
-     * Delete notifications for a quest.
+     * Delete quest sessions for a quest.
      *
      * @param int $questId
      * @return int
      */
     private function deleteQuestSessions(int $questId): int
     {
-        return QuestSession::deleteAll(['quest_id' => $questId]);
+        return $this->questSession::deleteAll(['quest_id' => $questId]);
     }
 
     /**
+     * Delete notifications for a quest.
      *
      * @param int $questId
      * @return int
      */
     private function deleteNotifications(int $questId): int
     {
-        return Notification::deleteAll(['quest_id' => $questId]);
+        return $this->notification::deleteAll(['quest_id' => $questId]);
     }
 
     /**
