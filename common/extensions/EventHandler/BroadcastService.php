@@ -2,9 +2,11 @@
 
 namespace common\extensions\EventHandler;
 
+use common\components\AppStatus;
 use common\extensions\EventHandler\contracts\BroadcastMessageInterface;
 use common\extensions\EventHandler\contracts\BroadcastServiceInterface;
 use common\extensions\EventHandler\dtos\GameOverDto;
+use common\models\Quest;
 use common\models\QuestSession;
 use LogicException;
 use Ratchet\ConnectionInterface;
@@ -300,6 +302,22 @@ class BroadcastService implements BroadcastServiceInterface
      */
     private function handleGameOverCleanup(int $questId): void
     {
+        $quest = Quest::findOne($questId);
+        if (!$quest) {
+            $this->logger->log("BroadcastService: Cleanup skipped - Quest #{$questId} not found.", null, 'warning');
+            return;
+        }
+
+        $terminalStatuses = [AppStatus::COMPLETED->value, AppStatus::ABORTED->value];
+        if (!in_array($quest->status, $terminalStatuses)) {
+            $this->logger->log(
+                "BroadcastService: Cleanup skipped - Quest #{$questId} is in status {$quest->status} (not terminal).",
+                null,
+                'info',
+            );
+            return;
+        }
+
         $this->logger->log("BroadcastService: game-over detected, triggering cleanup for questId={$questId}");
         $this->questSessionManager->deleteByQuestId($questId);
 

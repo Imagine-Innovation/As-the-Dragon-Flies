@@ -135,8 +135,6 @@ class EventHandler extends Component
                 $this->loggerService,
                 $this->broadcastService,
                 new BroadcastMessageFactory(),
-                $this->questSessionManager,
-                $this->notificationService,
             ),
             'quest-starting' => new QuestStartingHandler(
                 $this->loggerService,

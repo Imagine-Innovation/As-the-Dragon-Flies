@@ -6,8 +6,6 @@ use common\extensions\EventHandler\contracts\BroadcastServiceInterface;
 use common\extensions\EventHandler\contracts\SpecificMessageHandlerInterface;
 use common\extensions\EventHandler\factories\BroadcastMessageFactory;
 use common\extensions\EventHandler\LoggerService;
-use common\extensions\EventHandler\NotificationService;
-use common\extensions\EventHandler\QuestSessionManager;
 use common\helpers\PayloadHelper;
 use Ratchet\ConnectionInterface;
 
@@ -16,29 +14,21 @@ class GameOverHandler implements SpecificMessageHandlerInterface
     private LoggerService $logger;
     private BroadcastServiceInterface $broadcastService;
     private BroadcastMessageFactory $messageFactory;
-    private QuestSessionManager $questSessionManager;
-    private NotificationService $notificationService;
 
     /**
      *
      * @param LoggerService $logger
      * @param BroadcastServiceInterface $broadcastService
      * @param BroadcastMessageFactory $messageFactory
-     * @param QuestSessionManager $questSessionManager
-     * @param NotificationService $notificationService
      */
     public function __construct(
         LoggerService $logger,
         BroadcastServiceInterface $broadcastService,
         BroadcastMessageFactory $messageFactory,
-        QuestSessionManager $questSessionManager,
-        NotificationService $notificationService,
     ) {
         $this->logger = $logger;
         $this->broadcastService = $broadcastService;
         $this->messageFactory = $messageFactory;
-        $this->questSessionManager = $questSessionManager;
-        $this->notificationService = $notificationService;
     }
 
     /**
