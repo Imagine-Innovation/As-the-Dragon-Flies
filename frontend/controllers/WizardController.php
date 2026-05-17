@@ -121,7 +121,6 @@ class WizardController extends Controller
     /**
      *
      * @return array{error: bool, msg: string, content?: string}
-     * }
      */
     public function actionAjaxAlignment(): array
     {
@@ -146,7 +145,7 @@ class WizardController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxCharacterClass()
+    public function actionAjaxCharacterClass(): array
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -245,7 +244,7 @@ class WizardController extends Controller
      * If the model is not found, a 404 HTTP exception will be thrown.
      *
      * @param int $id ID
-     * @return Race the loaded model
+     * @return CharacterClass the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findCharacterClass(int $id): CharacterClass
@@ -254,7 +253,7 @@ class WizardController extends Controller
             return $model;
         }
 
-        throw new NotFoundHttpException('The requested race does not exist.');
+        throw new NotFoundHttpException('The requested class does not exist.');
     }
 
     /**

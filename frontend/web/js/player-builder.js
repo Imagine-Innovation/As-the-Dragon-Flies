@@ -792,7 +792,7 @@ class PlayerBuilder {
     static initLangages() {
         Logger.log(1, 'initLangages', ``);
 
-        target = `#ajaxLanguageSelection`;
+        const target = `#ajaxLanguageSelection`;
         if (!DOMUtils.exists(target))
             return;
 
@@ -805,11 +805,7 @@ class PlayerBuilder {
 
         AjaxUtils.request({
             url: 'player-builder/ajax-langages',
-            data: {
-                playerId: $('#hiddenPlayerId').html(),
-                raceId: $('#playerbuilder-race_id').val(),
-                backgroundId: $('#playerbuilder-background_id').val()
-            },
+            data: params,
             successCallback: (response) => {
                 if (response.error === false) {
                     Logger.log(10, 'initLangages', `response.content.n=${response.content.n}`);

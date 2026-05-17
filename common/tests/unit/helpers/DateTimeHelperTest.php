@@ -61,6 +61,10 @@ final class DateTimeHelperTest extends Unit
         self::assertSame($expected, DateTimeHelper::elapsedTime(0, $seconds, 1));
     }
 
+    /**
+     *
+     * @return array<string, array{int, string}>
+     */
     public function elapsedSecondsProvider(): array
     {
         return [
@@ -85,7 +89,7 @@ final class DateTimeHelperTest extends Unit
     public function testRespectsPrecision(int $precision, string $expected): void
     {
         $start = '2025-01-01 00:00:00';
-        $end = '2026-02-09 01:01:01'; // 1 year, 1 month, 1 week, 1 day, 1 hour, 1 minute, and 1 second later
+        $end = '2026-02-09 01:01:01'; // = 2025-01-01 + 1 year + 1 month + 1 week + 1 day (to 2026-02-08) + 1 hour + 1 minute + 1 second
         $s = (int) strtotime($start);
         $e = (int) strtotime($end);
 
@@ -94,7 +98,7 @@ final class DateTimeHelperTest extends Unit
 
     /**
      *
-     * @return array<int, string>
+     * @return array<string, array{int, string}>
      */
     public function respectsPrecisionProvider(): array
     {
@@ -127,6 +131,10 @@ final class DateTimeHelperTest extends Unit
         self::assertSame($expected, DateTimeHelper::elapsedTime($s, $e, $precision));
     }
 
+    /**
+     *
+     * @return array<string, array{string, string, string, int?}>
+     */
     public function dateBoundaryProvider(): array
     {
         return [

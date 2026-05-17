@@ -12,9 +12,9 @@ use Yii;
  *
  * @property int $id Primary key
  * @property int $story_id Foreign key to “story” table
- * @property int|null $current_chapter_id Optionnal foreign key to “chapter” table
- * @property int|null $current_player_id Optionnal foreign key to “player” table
- * @property int|null $initiator_id Optionnal foreign key to “player” table
+ * @property int|null $current_chapter_id Optional foreign key to “chapter” table
+ * @property int|null $current_player_id Optional foreign key to “player” table
+ * @property int|null $initiator_id Optional foreign key to “player” table
  * @property string $name Quest name
  * @property string|null $description Description
  * @property string|null $image Image
@@ -130,9 +130,9 @@ class Quest extends \yii\db\ActiveRecord
         return [
             'id' => 'Primary key',
             'story_id' => 'Foreign key to “story” table',
-            'current_chapter_id' => 'Optionnal foreign key to “chapter” table',
-            'current_player_id' => 'Optionnal foreign key to “player” table',
-            'initiator_id' => 'Optionnal foreign key to “player” table',
+            'current_chapter_id' => 'Optional foreign key to “chapter” table',
+            'current_player_id' => 'Optional foreign key to “player” table',
+            'initiator_id' => 'Optional foreign key to “player” table',
             'name' => 'Quest name',
             'description' => 'Description',
             'image' => 'Image',

@@ -9,15 +9,16 @@ $player = $viewParameters['player'];
 
 $snippet = "snippets/_state_{$state}";
 
-$row = 'row d-flex justify-content-center g-3';
-$col = 'col-12 col-lg-9 col-xl-8 col-xxl-7';
-$viewParameters['row'] = $row;
-$viewParameters['col'] = $col;
-$welcomed = $state < 2 ? $user->fullname ?? $user->username : $player->name;
+$rowCss = 'row d-flex justify-content-center g-3';
+$colCss = 'col-12 col-lg-9 col-xl-8 col-xxl-7';
+$viewParameters['row'] = $rowCss;
+$viewParameters['col'] = $colCss;
+$userName = $user->fullname ?? $user->username;
+$welcomed = $state < 2 ? $userName : ($player !== null ? $player->name : $userName);
 ?>
 
-<div class="<?= $row ?>">
-    <div class="<?= $col ?>">
+<div class="<?= $rowCss ?>">
+    <div class="<?= $colCss ?>">
         <header class="content__title h3 text-decoration">
             Welcome back <?= $welcomed ?>
         </header>

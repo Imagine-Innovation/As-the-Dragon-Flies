@@ -21,6 +21,7 @@ use Yii;
  */
 class NpcType extends \yii\db\ActiveRecord
 {
+
     /**
      * {@inheritdoc}
      */
@@ -36,8 +37,9 @@ class NpcType extends \yii\db\ActiveRecord
     {
         return [
             [['description', 'hp', 'hit_dice'], 'default', 'value' => null],
-            [['cr'], 'default', 'value' => 0.000],
+            [['cr'], 'default', 'value' => 0.0],
             [['xp'], 'default', 'value' => 0],
+            [['bonus'], 'default', 'value' => 0],
             [['name'], 'required'],
             [['description'], 'string'],
             [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeMarkdownWithCache']],
