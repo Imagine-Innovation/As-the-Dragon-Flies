@@ -1,7 +1,7 @@
-suite_namespace: frontend\tests\functional
+namespace: frontend\tests   # Codeception uses this as the base prefix
 actor: FunctionalTester
 modules:
     enabled:
+        - Asserts
         - Filesystem
         - Yii2
-        - Asserts

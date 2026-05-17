@@ -1,2 +1,6 @@
-suite_namespace: backend\tests\unit
 actor: UnitTester
+namespace: backtend\tests   # Codeception uses this as the base prefix
+modules:
+    enabled:
+        - Asserts
+        - Yii2

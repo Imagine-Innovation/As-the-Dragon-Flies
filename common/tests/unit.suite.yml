@@ -1,7 +1,7 @@
-suite_namespace: common\tests\unit
 actor: UnitTester
-bootstrap: false
+namespace: common\tests   # Codeception uses this as the base prefix
 modules:
     enabled:
+        - Asserts
         - Yii2:
-            part: fixtures
+            part: [Models]

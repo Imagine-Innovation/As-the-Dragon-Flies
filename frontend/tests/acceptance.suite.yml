@@ -1,9 +1,9 @@
-suite_namespace: frontend\tests\acceptance
+namespace: frontend\tests   # Codeception uses this as the base prefix
 actor: AcceptanceTester
 modules:
     enabled:
         - WebDriver:
             url: http://localhost:8080
-            browser: firefox
+            browser: chrome
         - Yii2:
             part: init

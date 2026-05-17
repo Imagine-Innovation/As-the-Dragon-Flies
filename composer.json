@@ -40,13 +40,19 @@
         "codeception/verify": "^3.0 || ^2.2",
         "symfony/browser-kit": "^6.0 || >=2.7 <=4.2.4",
         "phpstan/phpstan": "^2.1",
-        "carthage-software/mago": "^1.5.0"
+        "carthage-software/mago": "^1.5.0",
+        "codeception/module-webdriver": "^3.2"
     },
     "autoload-dev": {
         "psr-4": {
-            "common\\tests\\": ["common/tests/", "common/tests/_support"],
-            "backend\\tests\\": ["backend/tests/", "backend/tests/_support"],
-            "frontend\\tests\\": ["frontend/tests/", "frontend/tests/_support"]
+            "common\\tests\\": "common/tests/_support/",
+            "common\\tests\\_generated\\": "common/tests/_support/_generated/",
+
+            "frontend\\tests\\": "frontend/tests/_support/",
+            "frontend\\tests\\_generated\\": "frontend/tests/_support/_generated/",
+
+            "backend\\tests\\": "backend/tests/_support/",
+            "backend\\tests\\_generated\\": "backend/tests/_support/_generated/"
         }
     },
     "config": {

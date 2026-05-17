@@ -6,6 +6,11 @@ use common\helpers\DateTimeHelper;
 use common\tests\UnitTester;
 use Codeception\Test\Unit;
 use ReflectionClass;
+use common\helpers\DateTimeHelper;
+use common\tests\UnitTester;
+use Codeception\Test\Unit;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\TestWith;
 
 /**
  * Run with:
@@ -27,6 +32,7 @@ final class DateTimeHelperTest extends Unit
 
     public function testReturnsZeroSecondsWhenEndTimeDefaultsToNowAndStartTimeIsNow(): void
     {
+        // Both time() calls happen within the same second — diff is 0.
         self::assertSame('0 seconds', DateTimeHelper::elapsedTime(time()));
     }
 
@@ -50,6 +56,10 @@ final class DateTimeHelperTest extends Unit
 
     /**
      * @dataProvider elapsedSecondsProvider
+     *
+     * @param int $seconds
+     * @param string $expected
+     * @return void
      */
     public function testHandlesSingularAndPluralCorrectly(int $seconds, string $expected): void
     {
@@ -76,6 +86,7 @@ final class DateTimeHelperTest extends Unit
 
     public function testRespectsDefaultPrecisionOfTwo(): void
     {
+        // 1 hour + 1 minute + 1 second — default precision = 2
         self::assertSame('1 hour, 1 minute', DateTimeHelper::elapsedTime(0, 3_661));
     }
 
@@ -137,18 +148,20 @@ final class DateTimeHelperTest extends Unit
     public function testUsesCurrentTimeWhenEndTimeIsOmitted(): void
     {
         $startTime = time() - 3_600; // 1 hour ago
+        // Allow a 1-second drift for slow CI runners.
         self::assertMatchesRegularExpression(
                 '/^1 hour(, \d+ seconds?)?$/',
-                DateTimeHelper::elapsedTime($startTime)
+                DateTimeHelper::elapsedTime($startTime),
         );
     }
 
-    public function testUsesCurrentTimeWhenEndTimeIsExplicitlyPassedAsNull(): void
+    public function testUsesCurrentTimeWhenEndTimeIsExplicitlyPassedAsZero(): void
     {
         $startTime = time() - 60; // 1 minute ago
+
         self::assertMatchesRegularExpression(
                 '/^1 minute(, \d+ seconds?)?$/',
-                DateTimeHelper::elapsedTime($startTime, null)
+                DateTimeHelper::elapsedTime($startTime, 0),
         );
     }
 
