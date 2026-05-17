@@ -283,6 +283,13 @@ class BroadcastService implements BroadcastServiceInterface
             . $message->getType()
             . ") broadcasted to {$sentCount} sessions in quest {$questId}",
         );
+
+        if ($message->getType() === 'game-over') {
+            $this->logger->log("BroadcastService: game-over detected, triggering cleanup for questId={$questId}");
+            $this->questSessionManager->deleteByQuestId($questId);
+            $this->getNotificationService()->deleteByQuestId($questId);
+        }
+
         $this->logger->logEnd('BroadcastService: broadcastToQuest type=' . $message->getType());
     }
 

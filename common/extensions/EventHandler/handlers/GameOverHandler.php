@@ -73,9 +73,6 @@ class GameOverHandler implements SpecificMessageHandlerInterface
 
         $this->broadcastService->broadcastToQuest($questId, $gameOverDto, $sessionId);
 
-        $this->questSessionManager->deleteByQuestId($questId);
-        $this->notificationService->deleteByQuestId($questId);
-
         $this->logger->log('GameOverHandler: GameOverDto broadcasted', ['quest_id' => $questId, 'payload' => $payload]);
         $this->broadcastService->sendBack($from, 'ack', ['type' => 'game-over_processed', 'detail' => $detail]);
 
