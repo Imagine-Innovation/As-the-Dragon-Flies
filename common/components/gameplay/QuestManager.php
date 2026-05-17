@@ -281,6 +281,7 @@ class QuestManager extends BaseManager
         ];
 
         $event = $this->createQuestEvent('game-over', $message, $player, $detail);
+
         return [
             'error' => false,
             'msg' => $message,

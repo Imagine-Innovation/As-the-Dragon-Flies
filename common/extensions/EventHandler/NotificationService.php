@@ -136,6 +136,34 @@ class NotificationService
     }
 
     /**
+     * Deletes all notifications for a specific quest.
+     *
+     * @param int $questId The ID of the quest.
+     * @return int The number of rows deleted.
+     */
+    public function deleteByQuestId(int $questId): int
+    {
+        $this->logger->logStart("NotificationService: deleteByQuestId questId=[{$questId}]");
+
+        try {
+            $rowsDeleted = Notification::deleteAll(['quest_id' => $questId]);
+            $this->logger->log(
+                "NotificationService: Successfully deleted {$rowsDeleted} notification(s) for questId=[{$questId}]",
+            );
+            $this->logger->logEnd('NotificationService: deleteByQuestId');
+            return $rowsDeleted;
+        } catch (\Exception $e) {
+            $this->logger->log(
+                "NotificationService: Exception during deleteByQuestId for questId=[{$questId}]: " . $e->getMessage(),
+                $e->getTraceAsString(),
+                'error',
+            );
+            $this->logger->logEnd('NotificationService: deleteByQuestId');
+            return 0;
+        }
+    }
+
+    /**
      * Prepares a NewMessageDto from a Notification model.
      *
      * @param Notification $notification

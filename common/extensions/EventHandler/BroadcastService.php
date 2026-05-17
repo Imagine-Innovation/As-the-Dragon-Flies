@@ -2,8 +2,11 @@
 
 namespace common\extensions\EventHandler;
 
+use common\components\AppStatus;
 use common\extensions\EventHandler\contracts\BroadcastMessageInterface;
 use common\extensions\EventHandler\contracts\BroadcastServiceInterface;
+use common\extensions\EventHandler\dtos\GameOverDto;
+use common\models\Quest;
 use common\models\QuestSession;
 use LogicException;
 use Ratchet\ConnectionInterface;
@@ -283,7 +286,51 @@ class BroadcastService implements BroadcastServiceInterface
             . $message->getType()
             . ") broadcasted to {$sentCount} sessions in quest {$questId}",
         );
+
+        if ($message->getType() === GameOverDto::TYPE) {
+            $this->handleGameOverCleanup($questId);
+        }
+
         $this->logger->logEnd('BroadcastService: broadcastToQuest type=' . $message->getType());
+    }
+
+    /**
+     * Handles cleanup of quest-related transient data when a quest ends.
+     *
+     * @param int $questId
+     * @return void
+     */
+    private function handleGameOverCleanup(int $questId): void
+    {
+        $quest = Quest::findOne($questId);
+        if (!$quest) {
+            $this->logger->log("BroadcastService: Cleanup skipped - Quest #{$questId} not found.", null, 'warning');
+            return;
+        }
+
+        $terminalStatuses = [AppStatus::COMPLETED->value, AppStatus::ABORTED->value];
+        if (!in_array($quest->status, $terminalStatuses)) {
+            $this->logger->log(
+                "BroadcastService: Cleanup skipped - Quest #{$questId} is in status {$quest->status} (not terminal).",
+                null,
+                'info',
+            );
+            return;
+        }
+
+        $this->logger->log("BroadcastService: game-over detected, triggering cleanup for questId={$questId}");
+        $this->questSessionManager->deleteByQuestId($questId);
+
+        try {
+            $this->getNotificationService()->deleteByQuestId($questId);
+        } catch (LogicException $e) {
+            $this->logger->log(
+                "BroadcastService: Cleanup failed for notifications - NotificationService not available: "
+                . $e->getMessage(),
+                null,
+                'error',
+            );
+        }
     }
 
     /**
