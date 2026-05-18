@@ -7,14 +7,6 @@ use yii\helpers\Url;
 /** @var array $players */
 /** @var int $selectedPlayerId */
 /** @var int $userId */
-$ids = [];
-$initials = [];
-$tooltips = [];
-foreach ($players as $player) {
-    $ids[] = $player['id'];
-    $initials[] = $player['initial'];
-    $tooltips[] = $player['name'] . ', a ' . $player['tooltip'];
-}
 ?>
 <li class="dropdown top-nav__notifications">
     <a class="top-nav position-relative" href="#" data-bs-toggle="dropdown">
@@ -64,9 +56,6 @@ foreach ($players as $player) {
 
                     <div class="d-none">
                         <span id="hiddenSelectedPlayerId"><?= $selectedPlayerId ?></span>
-                        <span id="ids"><?= implode(';', $ids) ?></span>
-                        <span id="initials"><?= implode(';', $initials) ?></span>
-                        <span id="tooltips"><?= implode(';', $tooltips) ?></span>
                     </div>
                 </div>
             </div>
