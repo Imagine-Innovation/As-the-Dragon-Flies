@@ -68,6 +68,7 @@ class QuestController extends Controller
                         'actions' => [
                             'index', 'join', 'quit', 'resume', 'start', 'summarize', 'tavern',
                             'ajax-can-start', 'ajax-get-messages', 'ajax-quest-members', 'ajax-send-message', 'ajax-welcome-messages',
+                            'ajax-clear-session',
                         ],
                         'allow' => [AccessRightsManager::class, 'isRouteAllowedCallback'],
                         'roles' => ['@'],
@@ -252,6 +253,24 @@ class QuestController extends Controller
     }
 
     /**
+     * Clears the current session ID.
+     *
+     * @return array{error: bool, msg: string}
+     */
+    public function actionAjaxClearSession(): array
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        if (!Yii::$app->request->isPost || !Yii::$app->request->isAjax) {
+            return ['error' => true, 'msg' => 'Not an Ajax POST request'];
+        }
+
+        ContextManager::clearSessionId();
+
+        return ['error' => false, 'msg' => 'Session ID cleared'];
+    }
+
+    /**
      *
      * @return array{error: bool, msg: string, content?: string}
      */
@@ -401,6 +420,7 @@ class QuestController extends Controller
 
         $success = $this->createEvent('player-quitting', $player, $quest, ['reason' => $reason]);
         if ($success) {
+            ContextManager::clearSessionId();
             return $this->redirect(['story/index']);
         }
         UserErrorMessage::throw($this, 'error', 'Could not trigger event', self::DEFAULT_REDIRECT);

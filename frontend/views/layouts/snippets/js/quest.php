@@ -2,6 +2,19 @@
 /** @var \yii\web\View $this */
 /** @var string $controllerId */
 /** @var string $actionId */
+
+// Only load real-time gameplay components for active gaming/tavern routes.
+// Other routes (like summary) return early with an empty JS response.
+$activeRoutes = [
+    'game/view',
+    'quest/tavern',
+];
+$currentRoute = "$controllerId/$actionId";
+
+if (!in_array($currentRoute, $activeRoutes)) {
+    return;
+}
+
 $sessionId = Yii::$app->session->get('sessionId');
 $playerId = Yii::$app->session->get('playerId');
 $playerName = Yii::$app->session->get('playerName');
