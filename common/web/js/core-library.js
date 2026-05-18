@@ -53,7 +53,6 @@ class Logger {
     }
 
     static getCallerStack(msg) {
-        return;
         console.log(`-----------------------------------------`);
         console.trace(`Error returned with message ${msg} from:`);
         console.log(`-----------------------------------------`);
@@ -178,105 +177,6 @@ class TableManager {
 }
 
 /**
- * PlayerSelector Class
- * Manages player selection and badge display functionality
- */
-class PlayerSelector {
-    /**
-     * Sets the current player badge in the UI
-     * @param {number} id - Player identifier in the tooltips/initials arrays
-     */
-    static ids = [];
-    static initials = [];
-    static tooltips = [];
-
-    static initializeFromDOM() {
-        Logger.log(1, 'initializeFromDOM', 'Initializing PlayerSelector from DOM elements.');
-        this.ids = this.getDivValue("ids");
-        this.initials = this.getDivValue("initials");
-        this.tooltips = this.getDivValue("tooltips");
-
-        const selectedPlayerId = $('#hiddenSelectedPlayerId')?.html();
-        if (selectedPlayerId && this.ids.length > 0) {
-            const playerId = String(selectedPlayerId);
-            const id = this.ids.indexOf(playerId);
-            if (id !== -1) {
-                this.setBadge(id);
-            } else {
-                Logger.log(5, 'initializeFromDOM', `Player ID ${playerId} not found in available IDs.`);
-                this.setBadge(-1); // Or handle as appropriate if playerId not in list
-            }
-        } else if (this.ids.length === 0 && selectedPlayerId) {
-            Logger.log(5, 'initializeFromDOM', 'Player IDs array is empty, cannot set badge based on hiddenSelectedPlayerId.');
-            this.setBadge(-1);
-        } else {
-            Logger.log(5, 'initializeFromDOM', '#hiddenSelectedPlayerId element not found or empty, or no player IDs loaded. Not setting initial badge.');
-            this.setBadge(-1); // No player selected or data available
-        }
-    }
-
-    static getDivValue(divName) {
-        Logger.log(2, 'getDivValue', `divName=${divName}`);
-        const div = `#${divName}`;
-        const str = $(div)?.html();
-        if (str) {
-            return str.split(';');
-        } else {
-            Logger.log(5, 'getDivValue', `${div} element not found or empty.`);
-            return [];
-        }
-    }
-
-    static setBadge(id) {
-        Logger.log(1, 'setBadge', `id=${id}`);
-        const target = '#currentPlayerBadge';
-
-        if (!DOMUtils.exists(target))
-            return;
-
-        // Generate badge HTML if valid ID provided
-        let badge = "";
-        if (id >= 0) {
-            const tooltip = this.tooltips[id];
-            const initial = this.initials[id];
-            badge = `<a title="${tooltip}" data-bs-toggle="tooltip" data-placement="top">
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                            ${initial}
-                        </span>
-                    </a>`;
-        }
-
-        $(target).html(badge);
-    }
-
-    /**
-     * Selects a player and updates the application context
-     * 
-     * @param {number} userId - User identifier
-     * @param {number} playerId - Player identifier
-     */
-    static select(userId, playerId) {
-        Logger.log(1, 'select', `userId=${userId}, playerId=${playerId}`);
-
-        AjaxUtils.request({
-            url: 'player/ajax-set-context',
-            data: {userId: userId, playerId: playerId},
-            successCallback: (response) => {
-                console.log(`response=${Object.values(response)}`);
-                Logger.log(4, 'select', `response=${Object.values(response)}`);
-                // Update badge and redirect
-                const playerIds = this.ids;
-                const id = playerIds.indexOf(String(playerId));
-                this.setBadge(id);
-                console.log("************");
-                window.location.href = '/frontend/web/';
-                console.log("************");
-            }
-        });
-    }
-}
-
-/**
  * ToastManager Class
  * Handles creation, display, and cleanup of toast notifications
  */
@@ -354,7 +254,7 @@ class UserManager {
         Logger.log(1, 'setRole', `userId=${userId}, role=${role}`);
 
         const inputControl = $(`#user-${role}-${userId}`);
-        if (!inputControl)
+        if (!inputControl.length)
             return;
 
         const checked = inputControl.is(":checked");
@@ -384,7 +284,7 @@ class UserManager {
         Logger.log(1, 'setAccessRight', `id=${id}, access=${access}`);
 
         const inputControl = $(`#access-right-${access}-${id}`);
-        if (!inputControl)
+        if (!inputControl.length)
             return;
 
         const checked = inputControl.is(":checked");
@@ -408,7 +308,7 @@ class UserManager {
 
 class LayoutInitializer {
     static initAjaxPage() {
-        $(document).ready(function () {
+        $(document).ready(() => {
             if (typeof TableManager !== 'undefined' && TableManager.loadGenericAjaxTable) {
                 TableManager.loadGenericAjaxTable(0);
             } else {
@@ -418,10 +318,10 @@ class LayoutInitializer {
     }
 
     static initNavbarLobby() {
-        $(document).ready(function () {
-            $('#notificationDropdown').on('show.bs.dropdown', function () {
+        $(document).ready(() => {
+            $('#notificationDropdown').on('show.bs.dropdown', () => {
                 let n = $('#notificationCounter').text();
-                // Assuming playerId is globally available or accessible here. 
+                // Assuming playerId is globally available or accessible here.
                 // This might need adjustment based on how playerId is set in your actual application.
                 let playerId = typeof currentPlayerId !== 'undefined' ? currentPlayerId : null;
 
@@ -475,14 +375,14 @@ class ActionButtonManager {
 
     static initActionButton() {
         Logger.log(1, 'initActionButton', ``);
-        $(document).ready(function () {
+        $(document).ready(() => {
 
             // Select all elements with an ID that starts with 'actionButton-'
             const buttons = document.querySelectorAll('[id^="actionButton-"]');
 
             // Loop through each button and add the event listener
             buttons.forEach(button => {
-                button.addEventListener('click', function (event) {
+                button.addEventListener('click', (event) => {
                     Logger.log(10, 'initActionButton', `Click on button ${button.getAttribute('id')}`);
                     // Prevent the default action
                     event.preventDefault();
@@ -522,4 +422,3 @@ CoreLibrary.init();
 $(document).ready(() => {
     ActionButtonManager.initActionButton();
 });
-
