@@ -2,7 +2,6 @@
 
 use common\components\Shopping;
 use common\widgets\Button;
-use frontend\widgets\CurrentPlayer;
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */
@@ -73,12 +72,6 @@ $firstType = $itemTypes[0];
             </div>
         </div>
     </div>
-    <?=
-    CurrentPlayer::widget([
-        'user' => $user,
-        'mode' => 'modal',
-    ])
-    ?>
     <div class="modal fade" id="somethingWrongModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
