@@ -249,31 +249,6 @@ class PlayerSelector {
         $(target).html(badge);
     }
 
-    /**
-     * Selects a player and updates the application context
-     * 
-     * @param {number} userId - User identifier
-     * @param {number} playerId - Player identifier
-     */
-    static select(userId, playerId) {
-        Logger.log(1, 'select', `userId=${userId}, playerId=${playerId}`);
-
-        AjaxUtils.request({
-            url: 'player/ajax-set-context',
-            data: {userId: userId, playerId: playerId},
-            successCallback: (response) => {
-                console.log(`response=${Object.values(response)}`);
-                Logger.log(4, 'select', `response=${Object.values(response)}`);
-                // Update badge and redirect
-                const playerIds = this.ids;
-                const id = playerIds.indexOf(String(playerId));
-                this.setBadge(id);
-                console.log("************");
-                window.location.href = '/frontend/web/';
-                console.log("************");
-            }
-        });
-    }
 }
 
 /**
@@ -340,72 +315,6 @@ class ToastManager {
     }
 }
 
-/**
- * UserManager Class
- * Handles user role management and access rights
- */
-class UserManager {
-    /**
-     * Updates user role status
-     * @param {number} userId - User identifier
-     * @param {string} role - Role to set
-     */
-    static setRole(userId, role) {
-        Logger.log(1, 'setRole', `userId=${userId}, role=${role}`);
-
-        const inputControl = $(`#user-${role}-${userId}`);
-        if (!inputControl)
-            return;
-
-        const checked = inputControl.is(":checked");
-        const status = checked ? 1 : 0;
-
-        Logger.log(10, 'setRole', `checked=${checked}, status=${status}`);
-
-        AjaxUtils.request({
-            url: 'user/ajax-set-role',
-            data: {id: userId, role, status},
-            successCallback: (response) => {
-                ToastManager.show(
-                        response.error ? "Error" : "User role",
-                        response.msg,
-                        response.error ? 'error' : 'info'
-                        );
-            }
-        });
-    }
-
-    /**
-     * Updates access right status
-     * @param {number} id - Access right identifier
-     * @param {string} access - Access type to set
-     */
-    static setAccessRight(id, access) {
-        Logger.log(1, 'setAccessRight', `id=${id}, access=${access}`);
-
-        const inputControl = $(`#access-right-${access}-${id}`);
-        if (!inputControl)
-            return;
-
-        const checked = inputControl.is(":checked");
-        const status = checked ? 1 : 0;
-
-        Logger.log(10, 'setAccessRight', `checked=${checked}, status=${status}`);
-
-        AjaxUtils.request({
-            url: 'access-right/ajax-set-access-right',
-            data: {id, access, status},
-            successCallback: (response) => {
-                ToastManager.show(
-                        response.error ? "Error" : "Access right",
-                        response.msg,
-                        response.error ? 'error' : 'info'
-                        );
-            }
-        });
-    }
-}
-
 class LayoutInitializer {
     static initAjaxPage() {
         $(document).ready(function () {
@@ -421,7 +330,7 @@ class LayoutInitializer {
         $(document).ready(function () {
             $('#notificationDropdown').on('show.bs.dropdown', function () {
                 let n = $('#notificationCounter').text();
-                // Assuming playerId is globally available or accessible here. 
+                // Assuming playerId is globally available or accessible here.
                 // This might need adjustment based on how playerId is set in your actual application.
                 let playerId = typeof currentPlayerId !== 'undefined' ? currentPlayerId : null;
 
@@ -522,4 +431,3 @@ CoreLibrary.init();
 $(document).ready(() => {
     ActionButtonManager.initActionButton();
 });
-

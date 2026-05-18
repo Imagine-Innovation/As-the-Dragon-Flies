@@ -23,7 +23,7 @@ foreach ($players as $player) {
     </a>
     <div class="dropdown-menu dropdown-menu-right dropdown-menu--block">
         <div class="dropdown-header">
-            Select your current Player
+            Current Player
 
             <div class="actions">
                 <?=
@@ -41,24 +41,27 @@ foreach ($players as $player) {
                 <div class="card-body">
 
                     <?php foreach ($players as $player): ?>
-                        <div class="custom-control custom-radio mb-2">
-                            <input type="radio" class="custom-control-input"
-                                   id="playerNav-<?= $player['id'] ?>" name="playerNav"
-                                   <?= $player['id'] === $selectedPlayerId ? 'checked' : '' ?>
-                                   onclick="PlayerSelector.select(<?= $userId ?>, <?= $player['id'] ?>);">
-                            <label class="custom-control-label" for="playerNav-<?= $player['id'] ?>">
+                        <?php if ($player['id'] === $selectedPlayerId): ?>
+                            <div class="mb-2">
+                                <i class="bi bi-person-check text-primary mr-2"></i>
                                 <span data-bs-toggle="tooltip" title="<?= ucfirst($player['tooltip']) ?>" data-placement="bottom">
-                                    <?= $player['name'] ?></span>
-                            </label>
-                        </div>
+                                    <?= $player['name'] ?>
+                                </span>
+                            </div>
+                        <?php endif; ?>
                     <?php endforeach; ?>
-                    <div class="custom-control custom-radio mb-2">
-                        <input type="radio" class="custom-control-input"
-                               id="playerNav-void" name="playerNav"
-                               <?= $selectedPlayerId ? '' : 'checked' ?>
-                               onclick="PlayerSelector.select(<?= $userId ?>, null);">
-                        <label class="custom-control-label" for="playerNav-void">Select no player</label>
+
+                    <div class="mt-3">
+                        <?=
+    Button::widget([
+        'url' => Url::toRoute(['site/index']),
+        'icon' => 'bi-arrow-left-circle',
+        'title' => 'Back to Lobby',
+        'style' => 'btn-sm w-100',
+    ])
+?>
                     </div>
+
                     <div class="d-none">
                         <span id="hiddenSelectedPlayerId"><?= $selectedPlayerId ?></span>
                         <span id="ids"><?= implode(';', $ids) ?></span>

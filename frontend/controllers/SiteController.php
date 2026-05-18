@@ -166,6 +166,16 @@ class SiteController extends Controller
         // Get players sorted by creation date
         $playersQuery = $user->getPlayers()->orderBy(['created_at' => SORT_DESC]);
         $players = $playersQuery->all();
+
+        // If only one player exists and none is selected, automatically select it
+        if (count($players) === 1 && !$user->current_player_id) {
+            $user->current_player_id = $players[0]->id;
+            SaveHelper::save($user);
+            ContextManager::updatePlayerContext($players[0]->id);
+            // Refresh identity to reflect change
+            $user = Yii::$app->user->identity;
+        }
+
         $player = $user->current_player_id ? $user->currentPlayer : null;
         $inQuest = Yii::$app->session->get('questId') !== null;
 

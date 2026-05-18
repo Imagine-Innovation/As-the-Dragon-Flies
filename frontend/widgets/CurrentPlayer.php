@@ -20,16 +20,15 @@ class CurrentPlayer extends Widget
     {
         $currentUser = $this->user;
         $displayMode = $this->mode ?? 'navbar';
-        $render = $displayMode === 'navbar' ? 'current-player-navbar' : 'current-player-modal';
 
         $selectedPlayerId = $currentUser->current_player_id;
 
         $players = $this->loadPlayers($currentUser->id);
         if ($players) {
-            return $this->render($render, [
-                'players' => $players,
-                'selectedPlayerId' => $selectedPlayerId,
-                'userId' => $currentUser->id,
+            return $this->render('current-player-navbar', [
+                        'players' => $players,
+                        'selectedPlayerId' => $selectedPlayerId,
+                        'userId' => $currentUser->id,
             ]);
         } else {
             $html = $displayMode === 'navbar' ? '' : $this->render('current-player-empty');

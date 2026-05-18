@@ -41,7 +41,6 @@ class PlayerController extends Controller
                     [
                         'actions' => [
                             'ajax',
-                            'ajax-set-context',
                             'index',
                             'set-current',
                             'update',
@@ -96,33 +95,6 @@ class PlayerController extends Controller
         return ['error' => true, 'msg' => 'Error encountered'];
     }
 
-    /**
-     *
-     * @return array{error: bool, msg: string, content?: string}
-     */
-    public function actionAjaxSetContext(): array
-    {
-        Yii::$app->response->format = Response::FORMAT_JSON;
-
-        if (!$this->request->isPost || !$this->request->isAjax) {
-            return ['error' => true, 'msg' => 'Not an Ajax POST request'];
-        }
-
-        $request = Yii::$app->request;
-
-        $userId = $request->post('userId');
-        $postPlayerId = $request->post('playerId');
-        $playerId = is_numeric($postPlayerId) ? (int) $postPlayerId : null;
-
-        $success = User::updateAll(['current_player_id' => $playerId], ['id' => $userId]);
-
-        ContextManager::updatePlayerContext($playerId);
-
-        return [
-            'error' => !$success,
-            'msg' => $success ? 'Context is saved' : 'Could not save context',
-        ];
-    }
 
     /**
      *

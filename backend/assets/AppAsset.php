@@ -20,6 +20,7 @@ class AppAsset extends AssetBundle
     public $js = [
         '/common/web/js/core-library.js',
         '/common/web/js/simple-rich-text.js',
+        'js/user-manager.js',
         'js/dashboard.js',
         'js/search-select.js',
     ];
