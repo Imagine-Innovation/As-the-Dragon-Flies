@@ -169,21 +169,26 @@ class NotificationClient {
 
             ToastManager.show('Game Over', message, 'info');
 
+            const redirectAction = () => {
+                // Preserve current origin/base path/front controller and only change the route/query
+                const url = new URL(window.location.href);
+                url.search = `r=quest/summarize&id=${encodeURIComponent(this.questId)}`;
+                window.location.href = url.toString();
+            };
+
             AjaxUtils.request({
                 url: 'quest/ajax-clear-session',
                 method: 'POST',
                 successCallback: (response) => {
                     Logger.log(1, 'game-over', 'Session ID cleared');
+                    // Redirect all participants to the summary page after a short delay
+                    setTimeout(redirectAction, 3000);
+                },
+                errorCallback: (error) => {
+                    Logger.log(1, 'game-over', 'Failed to clear session ID, redirecting anyway');
+                    setTimeout(redirectAction, 3000);
                 }
             });
-
-            // Redirect all participants to the summary page after a short delay
-            setTimeout(() => {
-                // Preserve current origin/base path/front controller and only change the route/query
-                const url = new URL(window.location.href);
-                url.search = `r=quest/summarize&id=${encodeURIComponent(this.questId)}`;
-                window.location.href = url.toString();
-            }, 3000);
         });
 
         this.on('player-joined', (data) => {
