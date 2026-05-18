@@ -26,7 +26,7 @@ class ContextManager extends Component
     }
 
     /**
-     * @return void
+     * @return bool
      */
     private static function isGuest(): bool
     {
@@ -62,6 +62,14 @@ class ContextManager extends Component
             $sessionId = Utilities::newUUID();
             Yii::$app->session->set('sessionId', $sessionId);
         }
+    }
+
+    /**
+     * @return void
+     */
+    public static function clearSessionId(): void
+    {
+        Yii::$app->session->set('sessionId', null);
     }
 
     /**

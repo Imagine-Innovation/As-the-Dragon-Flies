@@ -169,6 +169,14 @@ class NotificationClient {
 
             ToastManager.show('Game Over', message, 'info');
 
+            AjaxUtils.request({
+                url: 'quest/ajax-clear-session',
+                method: 'POST',
+                successCallback: (response) => {
+                    Logger.log(1, 'game-over', 'Session ID cleared');
+                }
+            });
+
             // Redirect all participants to the summary page after a short delay
             setTimeout(() => {
                 // Preserve current origin/base path/front controller and only change the route/query
