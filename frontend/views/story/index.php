@@ -4,7 +4,7 @@
 /** @var integer $questId */
 $user = Yii::$app->user->identity;
 $player = Yii::$app->session->get('currentPlayer');
-$quest = Yii::$app->session->get('quest');
+$quest = Yii::$app->session->get('currentQuest');
 
 $this->title = 'Stories';
 $this->params['breadcrumbs'][] = $this->title;
