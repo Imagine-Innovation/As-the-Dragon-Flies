@@ -404,7 +404,7 @@ class NotificationClient {
     /**
      * Send a message to the server
      * 
-     * @param {string} messageArray
+     * @param {Object} messageArray
      * @returns {void}
      */
     send(messageArray) {
@@ -435,7 +435,7 @@ class NotificationClient {
      * 
      * @param {string} eventType
      * @param {function} callback
-     * @returns {undefined}
+     * @returns {void}
      */
     on(eventType, callback)
     {
@@ -450,7 +450,7 @@ class NotificationClient {
      * 
      * @param {string} eventType
      * @param {object} data
-     * @returns {undefined}
+     * @returns {void}
      */
     triggerEvent(eventType, data) {
         if (this.eventListeners[eventType]) {
@@ -521,7 +521,7 @@ class NotificationClient {
     /**
      * Send a chat message
      * 
-     * @param {control} chatInput
+     * @param {HTMLInputElement} chatInput
      * @returns {void}
      */
     sendChatMessage(chatInput) {
@@ -547,7 +547,7 @@ class NotificationClient {
     /**
      * Format a timestamp
      * 
-     * @param {timestamp} timestamp
+     * @param {number} timestamp
      * @returns {String}
      */
     formatTimestamp(timestamp) {

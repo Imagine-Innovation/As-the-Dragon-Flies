@@ -44,19 +44,17 @@ $firstType = $itemTypes[0];
                 <ul class="nav nav-tabs" role="tablist">
                     <?php foreach ($itemTypes as $itemType): ?>
                         <li class="nav-item">
-                            <a class="nav-link<?= $itemType === $firstType ? ' active'
-                                : '' ?>"
-                               data-bs-toggle="tab" href="#tab-<?= $itemType ?>" role="tab" href="#">
-    <?= $itemType ?>
+                            <a class="nav-link<?= $itemType === $firstType ? ' active' : '' ?>"
+                               data-bs-toggle="tab" href="#tab-<?= $itemType ?>" role="tab">
+                                   <?= $itemType ?>
                             </a>
                         </li>
-<?php endforeach; ?>
+                    <?php endforeach; ?>
                 </ul>
 
                 <div class="tab-content">
-<?php foreach ($itemTypes as $itemType): ?>
-                        <div class="tab-pane <?= $itemType === $firstType ? 'active fade show'
-                : 'fade' ?>"
+                    <?php foreach ($itemTypes as $itemType): ?>
+                        <div class="tab-pane <?= $itemType === $firstType ? 'active fade show' : 'fade' ?>"
                              id="tab-<?= $itemType ?>" role="tabpanel">
                                  <?=
                                  $this->render('snippets/shop-items', [
@@ -67,7 +65,7 @@ $firstType = $itemTypes[0];
                                  ;
                                  ?>
                         </div>
-<?php endforeach; ?>
+                    <?php endforeach; ?>
                 </div>
             </div>
         </div>

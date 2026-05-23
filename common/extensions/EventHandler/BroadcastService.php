@@ -15,6 +15,7 @@ use Ratchet\ConnectionInterface;
 
 class BroadcastService implements BroadcastServiceInterface
 {
+
     private LoggerService $logger;
     private WebSocketServerManager $webSocketServerManager;
     private QuestSessionManager $questSessionManager;
@@ -27,10 +28,11 @@ class BroadcastService implements BroadcastServiceInterface
      * @param QuestSessionManager $questSessionManager
      */
     public function __construct(
-        LoggerService $logger,
-        WebSocketServerManager $webSocketServerManager,
-        QuestSessionManager $questSessionManager,
-    ) {
+            LoggerService $logger,
+            WebSocketServerManager $webSocketServerManager,
+            QuestSessionManager $questSessionManager,
+    )
+    {
         $this->logger = $logger;
         $this->webSocketServerManager = $webSocketServerManager;
         $this->questSessionManager = $questSessionManager;
@@ -73,16 +75,16 @@ class BroadcastService implements BroadcastServiceInterface
         ]);
 
         if ($jsonData === false) {
-            $this->logger->log('BroadcastService: Exception: Json encoding problem', 'error');
+            $this->logger->log('BroadcastService: Exception: Json encoding problem', null, 'error');
             return;
         }
         try {
             $connection->send($jsonData);
         } catch (\Exception $e) {
             $this->logger->log(
-                'BroadcastService: Exception during sendToConnection: ' . $e->getMessage(),
-                ['remoteAddress' => $connection->remoteAddress],
-                'error',
+                    'BroadcastService: Exception during sendToConnection: ' . $e->getMessage(),
+                    ['remoteAddress' => $connection->remoteAddress],
+                    'error',
             );
         }
     }
@@ -125,11 +127,12 @@ class BroadcastService implements BroadcastServiceInterface
      * @return bool
      */
     public function sendToClient(
-        string $clientId,
-        BroadcastMessageInterface $message,
-        bool $updateTimestamp = true,
-        ?string $sessionId = null,
-    ): bool {
+            string $clientId,
+            BroadcastMessageInterface $message,
+            bool $updateTimestamp = true,
+            ?string $sessionId = null,
+    ): bool
+    {
         $this->logger->logStart("BroadcastService: sendToClient clientId=[{$clientId}] type=" . $message->getType(), [
             'updateTimestamp' => $updateTimestamp,
             'sessionId' => $sessionId,
@@ -138,9 +141,9 @@ class BroadcastService implements BroadcastServiceInterface
 
         if (!$clientConnection) {
             $this->logger->log(
-                "BroadcastService: Client [{$clientId}] not found for sendToClient (type=" . $message->getType() . ').',
-                null,
-                'warning',
+                    "BroadcastService: Client [{$clientId}] not found for sendToClient (type=" . $message->getType() . ').',
+                    null,
+                    'warning',
             );
             $this->logger->logEnd("BroadcastService: sendToClient clientId=[{$clientId}] type=" . $message->getType());
             return false;
@@ -164,26 +167,27 @@ class BroadcastService implements BroadcastServiceInterface
      * @return bool
      */
     public function sendToSession(
-        QuestSession $session,
-        BroadcastMessageInterface $message,
-        bool $updateTimestamp = true,
-    ): bool {
+            QuestSession $session,
+            BroadcastMessageInterface $message,
+            bool $updateTimestamp = true,
+    ): bool
+    {
         $this->logger->logStart(
-            "BroadcastService: sendToSession sessionId={$session->id} type=" . $message->getType(),
-            ['updateTimestamp' => $updateTimestamp],
+                "BroadcastService: sendToSession sessionId={$session->id} type=" . $message->getType(),
+                ['updateTimestamp' => $updateTimestamp],
         );
 
         $clientId = $session->client_id;
         if (!$clientId) {
             $this->logger->log(
-                "BroadcastService: QuestSession id=[{$session->id}] has no clientId. Cannot send (type="
-                . $message->getType()
-                . ').',
-                null,
-                'warning',
+                    "BroadcastService: QuestSession id=[{$session->id}] has no clientId. Cannot send (type="
+                    . $message->getType()
+                    . ').',
+                    null,
+                    'warning',
             );
             $this->logger->logEnd(
-                "BroadcastService: sendToSession sessionId={$session->id} type=" . $message->getType(),
+                    "BroadcastService: sendToSession sessionId={$session->id} type=" . $message->getType(),
             );
             return false;
         }
@@ -210,11 +214,11 @@ class BroadcastService implements BroadcastServiceInterface
             $this->sendToConnection($client, $jsonData);
         }
         $this->logger->log(
-            'BroadcastService: Message (type='
-            . $message->getType()
-            . ') broadcasted to '
-            . count($allClients)
-            . ' clients',
+                'BroadcastService: Message (type='
+                . $message->getType()
+                . ') broadcasted to '
+                . count($allClients)
+                . ' clients',
         );
         $this->logger->logEnd('BroadcastService: broadcast type=' . $message->getType());
     }
@@ -228,7 +232,7 @@ class BroadcastService implements BroadcastServiceInterface
     private function findOtherSessions(int $questId, ?string $excludeSessionId = null): array
     {
         $this->logger->logStart(
-            "BroadcastService: findOtherSessions for questId={$questId}, excluding=[{$excludeSessionId}]",
+                "BroadcastService: findOtherSessions for questId={$questId}, excluding=[{$excludeSessionId}]",
         );
 
         $query = QuestSession::find()->where(['quest_id' => $questId])->andWhere(['is not', 'client_id', null]); // Only sessions with an active client
@@ -251,12 +255,13 @@ class BroadcastService implements BroadcastServiceInterface
      * @return void
      */
     public function broadcastToQuest(
-        int $questId,
-        BroadcastMessageInterface $message,
-        ?string $excludeSessionId = null,
-    ): void {
+            int $questId,
+            BroadcastMessageInterface $message,
+            ?string $excludeSessionId = null,
+    ): void
+    {
         $this->logger->logStart(
-            "BroadcastService: broadcastToQuest questId={$questId}, excluding=[{$excludeSessionId}] type="
+                "BroadcastService: broadcastToQuest questId={$questId}, excluding=[{$excludeSessionId}] type="
                 . $message->getType(),
         );
 
@@ -264,11 +269,11 @@ class BroadcastService implements BroadcastServiceInterface
 
         if (empty($otherSessions)) {
             $this->logger->log(
-                "BroadcastService: Quest {$questId} has no other connected clients to broadcast (type="
-                . $message->getType()
-                . ').',
-                null,
-                'info',
+                    "BroadcastService: Quest {$questId} has no other connected clients to broadcast (type="
+                    . $message->getType()
+                    . ').',
+                    null,
+                    'info',
             );
             $this->logger->logEnd('BroadcastService: broadcastToQuest type=' . $message->getType());
             return;
@@ -282,9 +287,9 @@ class BroadcastService implements BroadcastServiceInterface
             }
         }
         $this->logger->log(
-            'BroadcastService: Message (type='
-            . $message->getType()
-            . ") broadcasted to {$sentCount} sessions in quest {$questId}",
+                'BroadcastService: Message (type='
+                . $message->getType()
+                . ") broadcasted to {$sentCount} sessions in quest {$questId}",
         );
 
         if ($message->getType() === GameOverDto::TYPE) {
@@ -311,9 +316,9 @@ class BroadcastService implements BroadcastServiceInterface
         $terminalStatuses = [AppStatus::COMPLETED->value, AppStatus::ABORTED->value];
         if (!in_array($quest->status, $terminalStatuses)) {
             $this->logger->log(
-                "BroadcastService: Cleanup skipped - Quest #{$questId} is in status {$quest->status} (not terminal).",
-                null,
-                'info',
+                    "BroadcastService: Cleanup skipped - Quest #{$questId} is in status {$quest->status} (not terminal).",
+                    null,
+                    'info',
             );
             return;
         }
@@ -325,10 +330,10 @@ class BroadcastService implements BroadcastServiceInterface
             $this->getNotificationService()->deleteByQuestId($questId);
         } catch (LogicException $e) {
             $this->logger->log(
-                "BroadcastService: Cleanup failed for notifications - NotificationService not available: "
-                . $e->getMessage(),
-                null,
-                'error',
+                    "BroadcastService: Cleanup failed for notifications - NotificationService not available: "
+                    . $e->getMessage(),
+                    null,
+                    'error',
             );
         }
     }
@@ -350,9 +355,9 @@ class BroadcastService implements BroadcastServiceInterface
         $session = QuestSession::findOne(['id' => $sessionId]);
         if (!$session || !$session->client_id) {
             $this->logger->log(
-                "BroadcastService: QuestSession not found for sessionId=[{$sessionId}] or no client_id. Cannot recover history.",
-                null,
-                'warning',
+                    "BroadcastService: QuestSession not found for sessionId=[{$sessionId}] or no client_id. Cannot recover history.",
+                    null,
+                    'warning',
             );
             $this->logger->logEnd('BroadcastService: recoverMessageHistory');
             return;
@@ -363,9 +368,9 @@ class BroadcastService implements BroadcastServiceInterface
         $clientConnection = $this->webSocketServerManager->getClient($session->client_id);
         if (!$clientConnection) {
             $this->logger->log(
-                "BroadcastService: Client connection not found for clientId=[{$session->client_id}] (sessionId=[{$sessionId}]). Cannot send history.",
-                null,
-                'warning',
+                    "BroadcastService: Client connection not found for clientId=[{$session->client_id}] (sessionId=[{$sessionId}]). Cannot send history.",
+                    null,
+                    'warning',
             );
             $this->logger->logEnd('BroadcastService: recoverMessageHistory');
             return;
@@ -379,7 +384,7 @@ class BroadcastService implements BroadcastServiceInterface
         }
 
         $this->logger->log(
-            "BroadcastService: Finished recovering history for session [{$sessionId}]. Sent {$recoveredMessagesCount} message(s).",
+                "BroadcastService: Finished recovering history for session [{$sessionId}]. Sent {$recoveredMessagesCount} message(s).",
         );
         $this->logger->logEnd('BroadcastService: recoverMessageHistory');
     }
@@ -394,19 +399,19 @@ class BroadcastService implements BroadcastServiceInterface
     {
         $notificationService = $this->getNotificationService();
         $chatNotifications = $notificationService->getNotifications(
-            (int) $session->quest_id,
-            'new-message',
-            $session->last_ts,
+                (int) $session->quest_id,
+                'new-message',
+                $session->last_ts,
         );
         $notificationCount = count($chatNotifications);
         $this->logger->log(
-            "BroadcastService: Processing {$notificationCount} 'new-message' notifications for history recovery.",
+                "BroadcastService: Processing {$notificationCount} 'new-message' notifications for history recovery.",
         );
 
         $recoveredMessagesCount = 0;
         foreach ($chatNotifications as $notification) {
             $this->logger->log(
-                "BroadcastService: Preparing historical chat message: Notification.id=[{$notification->id}]",
+                    "BroadcastService: Preparing historical chat message: Notification.id=[{$notification->id}]",
             );
             // Use the new DTO method from NotificationService
             $newMessageDto = $notificationService->prepareNewMessageDto($notification, $session->id);
