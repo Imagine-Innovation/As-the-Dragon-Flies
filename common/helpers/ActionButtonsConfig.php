@@ -28,7 +28,7 @@ class ActionButtonsConfig
      */
     public static function getActions(string $controller, int $status): array
     {
-        $actions = [
+        return match ($status) {
             AppStatus::DELETED->value => [
                 [
                     'tooltip' => 'Restore',
@@ -126,9 +126,6 @@ class ActionButtonsConfig
                     'view' => true,
                 ],
             ],
-        ];
-
-        /** @phpstan-ignore-next-line */
-        return $actions[$status] ?? [];
+        };
     }
 }

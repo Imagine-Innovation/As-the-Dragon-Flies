@@ -56,6 +56,20 @@ class StoryNeededClass
         return '<ul class="list list--check">Expected character classes:' . $checkboxes . '</ul>';
     }
 
+    public static function classBadge(Story $story): string
+    {
+        if (!$story->classes) {
+            return '&nbsp;';
+        }
+
+        $badges = [];
+        foreach ($story->classes as $class) {
+            $badges[] = "<span class=\"badge badge-warning\">{$class->name}</span>";
+        }
+
+        return implode("\n", $badges);
+    }
+
     /**
      * Checks if a character class should be marked as checked based on players in the tavern.
      * A checkbox is marked as checked if a player in the tavern has the specified class.

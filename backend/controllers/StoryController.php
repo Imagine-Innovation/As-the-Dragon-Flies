@@ -2,8 +2,9 @@
 
 namespace backend\controllers;
 
-use common\components\AppStatus;
 use common\components\AccessRightsManager;
+use common\components\AppStatus;
+use common\components\AjaxRequest;
 use common\helpers\Status;
 use common\models\Chapter;
 use common\models\Story;
@@ -38,8 +39,8 @@ class StoryController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['index', 'create', 'view', 'update', 'delete', 'validate', 'restore', 'print'],
-                       'allow' => [AccessRightsManager::class, 'isRouteAllowedCallback'],
+                        'actions' => ['index', 'create', 'view', 'update', 'delete', 'validate', 'restore', 'print', 'ajax'],
+                        'allow' => [AccessRightsManager::class, 'isRouteAllowedCallback'],
                         'roles' => ['@'],
                     ],
                 ],
@@ -72,6 +73,29 @@ class StoryController extends Controller
         return $this->render('index', [
                     'dataProvider' => $dataProvider,
         ]);
+    }
+
+    /**
+     *
+     * @return array{error: bool, msg: string, content?: string}
+     */
+    public function actionAjax(): array
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        if (!$this->request->isPost || !$this->request->isAjax) {
+            return ['error' => true, 'msg' => 'Not an Ajax POST request'];
+        }
+
+        $param = [
+            'modelName' => 'Story',
+        ];
+        $ajaxRequest = new AjaxRequest($param);
+
+        if ($ajaxRequest->makeResponse(Yii::$app->request)) {
+            return $ajaxRequest->response;
+        }
+        return ['error' => true, 'msg' => 'Error encountered'];
     }
 
     /**

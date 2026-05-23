@@ -489,7 +489,7 @@ pre code {
 }
 
 .table-dark,.table-dark>td,.table-dark>th {
-    background-color: var(--secondary);
+    --bs-table-bg: var(--light-05);
 }
 
 .table-dark tbody+tbody,.table-dark td,.table-dark th,.table-dark thead th {
@@ -497,7 +497,7 @@ pre code {
 }
 
 .table-hover .table-dark:hover {
-    background-color: var(--secondary);
+    background-color: var(--light-25);
 }
 
 .table-hover .table-dark:hover>td,.table-hover .table-dark:hover>th {
@@ -528,13 +528,8 @@ pre code {
     border-color: var(--light-10);
 }
 
-.table-dark {
-    color: var(--white);
-    background-color: var(--dark-25);
-}
-
 .table-dark td,.table-dark th,.table-dark thead th {
-    color: var(--light-50);
+    color: var(--light-75);
     border-color: var(--light-10);
 }
 
