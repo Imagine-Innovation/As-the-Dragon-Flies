@@ -10,7 +10,7 @@ $webRoot = Url::base();
 <head>
     <meta charset="<?= Yii::$app->charset ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link href="img/favicon.png" rel="icon">
+    <link href="<?= $webRoot ?>/img/Dragonfly.svg" rel="icon" type="image/svg+xml" sizes="32x32">
     <meta content="<?= Yii::$app->request->scriptUrl ?>" name="script-url">
 
     <?= $this->registerCsrfMetaTags() ?>
