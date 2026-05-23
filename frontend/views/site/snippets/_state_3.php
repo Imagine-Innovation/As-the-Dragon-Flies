@@ -21,19 +21,19 @@ $storyRoot = WebResourcesHelper::storyRootPath($quest->story_id);
         <!-- Section 1: Resume the quest -->
         <?=
         $this->render('section1', [
-            'title' => "Resume the quest '{$quest->name}'",
+            'title' => Yii::t('app', "Resume the quest '{name}'", ['name' => $quest->name]),
             'img' => Url::to("{$storyRoot}/img/{$quest->image}"),
             'paragraphs' => [
-                'Your player is currently on a quest.',
+                Yii::t('app', 'Your player is currently on a quest.'),
                 $iconInfo['tooltip'],
-                'Jump back into the action!',
+                Yii::t('app', 'Jump back into the action!'),
             ],
             'button' => [
                 'url' => Url::toRoute(['quest/resume', 'id' => $quest->id]),
                 'icon' => 'dnd-tower"',
                 'style' => 'text-decoration mt-auto',
                 'tooltip' => null,
-                'title' => 'Resume the quest',
+                'title' => Yii::t('app', 'Resume the quest'),
                 'isCta' => true,
             ],
         ])
