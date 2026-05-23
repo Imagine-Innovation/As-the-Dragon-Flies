@@ -75,17 +75,13 @@ $imgPath = WebResourcesHelper::imagePath();
     <div class="container position-relative z-index-1">
         <div class="row align-items-center g-5">
             <div class="col-lg-6">
-                <h1 class="text-warning text-decoration">Venture into a Realm of Dragons!</h1>
+                <h1 class="text-warning text-decoration"><?= Yii::t('app', 'Venture into a Realm of Dragons!') ?></h1>
                 <br />
                 <p style="font-weight: 100">
                     <?=
                     Caligraphy::illuminate([
-                        'Embark on an epic adventure with '
-                        . Caligraphy::appName()
-                        . ',
-                                     where you can create your character, explore a vast interactive map,
-                                     and connect with fellow adventurers.',
-                        'Join our community and weave your legend today!',
+                        Yii::t('app', 'Embark on an epic adventure with {appName}, where you can create your character, explore a vast interactive map, and connect with fellow adventurers.', ['appName' => Caligraphy::appName()]),
+                        Yii::t('app', 'Join our community and weave your legend today!'),
                             ], 'lead text-decoration'
                             //style
                     )
@@ -98,7 +94,7 @@ $imgPath = WebResourcesHelper::imagePath();
                     Button::widget([
                         'icon' => 'dnd-logo h2',
                         'url' => Url::toRoute(['site/login']),
-                        'title' => 'Come and join us!',
+                        'title' => Yii::t('app', 'Come and join us!'),
                         'style' => 'btn-lg text-decoration w-auto',
                         'isCta' => true,
                     ])
@@ -106,7 +102,7 @@ $imgPath = WebResourcesHelper::imagePath();
                     <?=
                     Button::widget([
                         'icon' => 'bi-hand-index',
-                        'title' => 'Learn More',
+                        'title' => Yii::t('app', 'Learn More'),
                         'style' => 'btn-lg text-decoration w-auto',
                     ])
                     ?>
@@ -125,17 +121,12 @@ $imgPath = WebResourcesHelper::imagePath();
             <!-- Mission and Values -->
             <div class="col-lg-6">
                 <div class="card p-5 h-100">
-                    <h2 class="text-warning text-decoration">Our Mission and Values</h2>
+                    <h2 class="text-warning text-decoration"><?= Yii::t('app', 'Our Mission and Values') ?></h2>
                     <?=
                     Caligraphy::illuminate(
                             [
-                                'The As the Dragon Flies game was imagined in 2021 by a passionate'
-                                . ' team of Dungeons and Dragons enthusiasts. Our mission is to provide'
-                                . ' an engaging and interactive online gaming experience that captures'
-                                . ' the essence of epic gaming.',
-                                'We believe in creativity, fostering a welcoming community, and maintaining'
-                                . ' integrity in gameplay. Our team is dedicated to building a vibrant platform'
-                                . ' where players can explore, create, and connect in a rich fantasy world.',
+                                Yii::t('app', 'The As the Dragon Flies game was imagined in 2021 by a passionate team of Dungeons and Dragons enthusiasts. Our mission is to provide an engaging and interactive online gaming experience that captures the essence of epic gaming.'),
+                                Yii::t('app', 'We believe in creativity, fostering a welcoming community, and maintaining integrity in gameplay. Our team is dedicated to building a vibrant platform where players can explore, create, and connect in a rich fantasy world.'),
                             ],
                             'text-decoration',
                             //style
@@ -147,7 +138,7 @@ $imgPath = WebResourcesHelper::imagePath();
                         Button::widget([
                             'icon' => 'dnd-logo',
                             'url' => Url::toRoute(['site/login']),
-                            'title' => 'Come and join us!',
+                            'title' => Yii::t('app', 'Come and join us!'),
                             'style' => 'text-decoration',
                         ])
                         ?>
@@ -158,14 +149,14 @@ $imgPath = WebResourcesHelper::imagePath();
             <!-- Epic Adventure -->
             <div class="col-lg-6">
                 <div class="card p-5 h-100">
-                    <h2 class="text-warning text-decoration">Embark on an Epic Adventure with As the Dragon Flies!</h2>
+                    <h2 class="text-warning text-decoration"><?= Yii::t('app', 'Embark on an Epic Adventure with As the Dragon Flies!') ?></h2>
 
                     <?=
                     Caligraphy::illuminate(
                             [
-                                'Dive into a world of fantasy and adventure with an online role game experience.',
-                                'Create your character, explore a vast map, and interact with fellow adventurers in real-time.',
-                                'Experience the thrill of collaborative storytelling and strategic gameplay from the comfort of your home.',
+                                Yii::t('app', 'Dive into a world of fantasy and adventure with an online role game experience.'),
+                                Yii::t('app', 'Create your character, explore a vast map, and interact with fellow adventurers in real-time.'),
+                                Yii::t('app', 'Experience the thrill of collaborative storytelling and strategic gameplay from the comfort of your home.'),
                             ],
                             'text-decoration',
                             //style
@@ -177,7 +168,7 @@ $imgPath = WebResourcesHelper::imagePath();
                         Button::widget([
                             'icon' => 'dnd-logo',
                             'url' => Url::toRoute(['site/login']),
-                            'title' => 'Come and join us!',
+                            'title' => Yii::t('app', 'Come and join us!'),
                             'style' => 'text-decoration',
                         ])
                         ?>

@@ -11,13 +11,21 @@ class LanguageSelector implements BootstrapInterface
     {
         $session = $app->session;
         $language = $session->get('language');
-        if ($language !== null) {
-            $app->language = $language;
-        } else {
+        if ($language === null) {
             $user = $app->user->identity;
             if ($user !== null && isset($user->language)) {
-                $app->language = $user->language;
-                $session->set('language', $user->language);
+                $language = $user->language;
+            }
+        }
+
+        if ($language !== null) {
+            $supportedLanguages = ['en', 'fr'];
+            if (in_array($language, $supportedLanguages, true)) {
+                $app->language = $language;
+                $session->set('language', $language);
+            } else {
+                $app->language = $app->sourceLanguage;
+                $session->set('language', $app->sourceLanguage);
             }
         }
     }

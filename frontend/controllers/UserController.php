@@ -33,8 +33,13 @@ class UserController extends Controller
         /** @var User $user */
         $user = Yii::$app->user->identity;
 
-        if ($this->request->isPost) {
-            if ($user->load($this->request->post()) && $user->save()) {
+        $request = Yii::$app->request;
+        if ($request->isPost) {
+            $post = $request->post('User');
+            $user->fullname = $post['fullname'] ?? $user->fullname;
+            $user->language = $post['language'] ?? $user->language;
+
+            if ($user->save()) {
                 ContextManager::initContext($user);
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Profile updated successfully.'));
                 return $this->refresh();

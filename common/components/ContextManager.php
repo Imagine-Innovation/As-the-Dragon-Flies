@@ -48,8 +48,15 @@ class ContextManager extends Component
 
         Yii::$app->session->set('user', $loggedUser);
         Yii::$app->session->set('userId', $loggedUser->id);
-        Yii::$app->session->set('language', $loggedUser->language);
-        Yii::$app->language = $loggedUser->language;
+
+        $language = $loggedUser->language ?: Yii::$app->sourceLanguage;
+        $supportedLanguages = ['en', 'fr'];
+        if (!in_array($language, $supportedLanguages, true)) {
+            $language = Yii::$app->sourceLanguage;
+        }
+
+        Yii::$app->session->set('language', $language);
+        Yii::$app->language = $language;
 
         self::updatePlayerContext($loggedUser->current_player_id);
     }
