@@ -21,8 +21,8 @@ $route = $current ? 'player/update' : 'player/set-current';
                 <div class="image-card-label">
                     <h5><?= $player->name ?></h5>
                     <p class="small mb-1">
-                        <?= $player->age ?>-year-old
-                        <?= $player->gender === 'M' ? 'male' : 'female' ?>
+                        <?= Yii::t('app', '{age}-year-old', ['age' => $player->age]) ?>
+                        <?= Yii::t('app', $player->gender === 'M' ? 'male' : 'female') ?>
                         <?= $player->race->name ?>
                     </p>
                     <p class="small mb-0">
@@ -35,7 +35,7 @@ $route = $current ? 'player/update' : 'player/set-current';
                         'icon' => 'dnd-tower',
                         'style' => 'text-decoration mt-auto',
                         'tooltip' => null,
-                        'title' => $current ? 'Edit' : 'Select',
+                        'title' => Yii::t('app', $current ? 'Edit' : 'Select'),
                         'isCta' => false,
                     ])
                     ;
@@ -44,7 +44,7 @@ $route = $current ? 'player/update' : 'player/set-current';
             </div>
             <?php if ($current): ?>
                 <span class="position-absolute top-0 start-0 badge rounded-pill bg-primary">
-                    current
+                    <?= Yii::t('app', 'current') ?>
                 </span>
             <?php endif; ?>
         </div>

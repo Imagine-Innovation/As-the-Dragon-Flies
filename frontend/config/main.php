@@ -73,7 +73,9 @@ return [
     'id' => AccessRightsManager::APP_FRONTEND,
     'name' => 'As the Dragon Flies',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log'],
+    'bootstrap' => ['log', 'common\components\LanguageSelector'],
+    'language' => 'en',
+    'sourceLanguage' => 'en',
     'controllerNamespace' => 'frontend\controllers',
     'components' => [
         'request' => [
@@ -118,6 +120,19 @@ return [
             'errorAction' => 'site/error',
         ],
         'assetManager' => $assetManager,
+        'i18n' => [
+            'translations' => [
+                'app*' => [
+                    'class' => 'yii\i18n\PhpMessageSource',
+                    'basePath' => '@app/messages',
+                    'sourceLanguage' => 'en',
+                    'fileMap' => [
+                        'app' => 'app.php',
+                        'app/error' => 'error.php',
+                    ],
+                ],
+            ],
+        ],
         'httpclient' => [
             'class' => 'yii\httpclient\Client',
             // Optional: Configure default options

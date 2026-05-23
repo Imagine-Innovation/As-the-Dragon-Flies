@@ -36,7 +36,7 @@ AppAsset::register($this);
 
             <div class="dropdown-menu dropdown-menu-right dropdown-menu--block">
                 <div class="dropdown-header">
-                    Messages
+                    <?= Yii::t('app', 'Messages') ?>
 
                     <div class="actions">
                         <a href="<?= Url::toRoute(['site/index']) ?>" role="button" class="actions__item bi-envelope"></a>
@@ -68,7 +68,7 @@ AppAsset::register($this);
                         </div>
                     </a>
                     -->
-                    <?= Html::a('View all messages', ['site/index'], ['class' => 'view-more']) ?>
+                    <?= Html::a(Yii::t('app', 'View all messages'), ['site/index'], ['class' => 'view-more']) ?>
                 </div>
             </div>
         </li>
@@ -83,7 +83,7 @@ AppAsset::register($this);
 
             <div class="dropdown-menu dropdown-menu-right dropdown-menu--block">
                 <div class="dropdown-header">
-                    Notifications
+                    <?= Yii::t('app', 'Notifications') ?>
 
                     <div class="actions">
                         <a href="<?= Url::toRoute(['site/index']) ?>" role="button" class="actions__item bi-bell" data-sa-action="notifications-clear"></a>
@@ -99,8 +99,8 @@ AppAsset::register($this);
         </li>
 
         <li class="dropdown top-nav__notifications">
-            <a href="<?= Url::toRoute(['site/about']) ?>"
-               data-bs-toggle="tooltip" title="<?= $currentUser->username ?> user profile" data-placement="bottom">
+            <a href="<?= Url::toRoute(['user/profile']) ?>"
+               data-bs-toggle="tooltip" title="<?= Yii::t('app', '{username} user profile', ['username' => $currentUser->username]) ?>" data-placement="bottom">
                 <i class="bi bi-person-circle"></i>
             </a>
         </li>
@@ -110,7 +110,7 @@ AppAsset::register($this);
                 'isPost' => true,
                 'url' => Url::toRoute(['site/logout']),
                 'icon' => 'dnd-power-off',
-                'tooltip' => 'logout',
+                'tooltip' => Yii::t('app', 'logout'),
             ])
             ?>
         </li>
