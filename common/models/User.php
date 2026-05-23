@@ -15,6 +15,7 @@ use yii\web\IdentityInterface;
  * @property int $id Primary key
  * @property string $username Username
  * @property string|null $fullname Fullname
+ * @property string $language User language
  * @property string|null $auth_key Auth Key
  * @property string $password_hash Password hash
  * @property string|null $password_reset_token Password reset token
@@ -29,11 +30,10 @@ use yii\web\IdentityInterface;
  * @property int|null $updated_at Updated at
  * @property string $password write-only password
  *
- * @property AccessRight[] $accessRights
- * @property int $hasPlayers
- * @property Player $currentPlayer
- * @property Player[] $players
  * @property AccessLog[] $accessLogs
+ * @property Player $currentPlayer
+ * @property bool $hasPlayers
+ * @property Player[] $players
  */
 class User extends ActiveRecord implements IdentityInterface
 {
@@ -65,12 +65,14 @@ class User extends ActiveRecord implements IdentityInterface
             [['fullname', 'auth_key', 'password_reset_token', 'current_player_id', 'created_at', 'updated_at'], 'default', 'value' => null],
             [['status'], 'default', 'value' => AppStatus::INACTIVE->value],
             [['status'], 'in', 'range' => AppStatus::getValuesForUser()],
+            [['language'], 'default', 'value' => 'en'],
             [['is_designer'], 'default', 'value' => 0],
             [['is_player'], 'default', 'value' => 1],
             [['username', 'password_hash', 'verification_token', 'email'], 'required'],
             [['status', 'is_admin', 'is_designer', 'is_player', 'current_player_id', 'created_at', 'updated_at'], 'integer'],
             [['username', 'password_hash', 'password_reset_token', 'verification_token', 'email'], 'string', 'max' => 255],
             [['fullname', 'auth_key'], 'string', 'max' => 64],
+            [['language'], 'string', 'max' => 8],
             [['username'], 'unique'],
             [['current_player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['current_player_id' => 'id']],
         ];
@@ -85,6 +87,7 @@ class User extends ActiveRecord implements IdentityInterface
             'id' => 'Primary key',
             'username' => 'Username',
             'fullname' => 'Fullname',
+            'language' => 'User language',
             'auth_key' => 'Auth Key',
             'password_hash' => 'Password hash',
             'password_reset_token' => 'Password reset token',
@@ -273,13 +276,23 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * Gets query for [[AccessRights]].
+     * Gets query for [[AccessLogs]].
      *
-     * @return \yii\db\ActiveQuery<AccessRight>
+     * @return \yii\db\ActiveQuery<AccessLog>
      */
-    public function getAccessRights()
+    public function getAccessLogs()
     {
-        return $this->hasOne(AccessRight::class, ['user_id' => 'id']);
+        return $this->hasMany(AccessLog::class, ['user_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[HasPlayers]].
+     *
+     * @return bool
+     */
+    public function hasPlayers(): bool
+    {
+        return $this->getPlayers()->count() > 0;
     }
 
     /**
@@ -300,25 +313,5 @@ class User extends ActiveRecord implements IdentityInterface
     public function getPlayers()
     {
         return $this->hasMany(Player::class, ['user_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[AccessLogs]].
-     *
-     * @return \yii\db\ActiveQuery<AccessLog>
-     */
-    public function getAccessLogs()
-    {
-        return $this->hasMany(AccessLog::class, ['user_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[HasPlayers]].
-     *
-     * @return bool
-     */
-    public function hasPlayers(): bool
-    {
-        return $this->getPlayers()->count() > 0;
     }
 }
