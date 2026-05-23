@@ -413,7 +413,7 @@ class TavernManager extends BaseManager
                 . implode('\n', \yii\helpers\ArrayHelper::getColumn($player->errors, 0, false)),
             ];
         }
-        ContextManager::updateQuestContext($questId);
+        ContextManager::updatePlayerContext($player->id);
         return ['error' => false, 'message' => "Player's quest_id updated to {$questId}"];
     }
 
