@@ -2,7 +2,6 @@
 
 namespace common\components\gameplay;
 
-use common\components\ContextManager;
 use common\helpers\DateTimeHelper;
 use common\helpers\JsonHelper;
 use common\helpers\PayloadHelper;
@@ -40,7 +39,6 @@ class ChatManager extends BaseManager
         }
         if (!empty($missingParam)) {
             Yii::debug($config);
-            Yii::debug(ContextManager::getContext());
             throw new \Exception('Missing params: ' . implode(', ', $missingParam) . '!!!');
         }
     }
