@@ -46,14 +46,14 @@ $isCurrentPlayer = $currentQuestProgress->current_player_id === $playerId;
                     <!-- Equipement -->
                     <div class="actions">
                         <?=
-    Button::widget([
-        'id' => 'showEquipmentModal-Button',
-        'mode' => 'icon',
-        'icon' => 'dnd-equipment',
-        'tooltip' => "Player's equipement",
-        'modal' => 'equipmentModal',
-    ])
-?>
+                        Button::widget([
+                            'id' => 'showEquipmentModal-Button',
+                            'mode' => 'icon',
+                            'icon' => 'dnd-equipment',
+                            'tooltip' => "Player's equipement",
+                            'modal' => 'equipmentModal',
+                        ])
+                        ?>
                     </div>
                     <div class="m-3">
                         <h6 class="text-warning">Equipment</h6>
@@ -76,14 +76,14 @@ $isCurrentPlayer = $currentQuestProgress->current_player_id === $playerId;
                 <!-- Equipement -->
                 <div class="actions">
                     <?=
-    Button::widget([
-        'id' => 'showEquipmentModal-Button',
-        'mode' => 'icon',
-        'icon' => 'dnd-equipment',
-        'tooltip' => "Player's equipement",
-        'modal' => 'equipmentModal',
-    ])
-?>
+                    Button::widget([
+                        'id' => 'showEquipmentModal-Button',
+                        'mode' => 'icon',
+                        'icon' => 'dnd-equipment',
+                        'tooltip' => "Player's equipement",
+                        'modal' => 'equipmentModal',
+                    ])
+                    ?>
                 </div>
                 <div class="m-3">
                     <h6 class="text-warning">Equipment</h6>
@@ -108,39 +108,42 @@ $isCurrentPlayer = $currentQuestProgress->current_player_id === $playerId;
                             <i class="bi bi-person-square"></i>
                         </a>
                         <?=
-    Button::widget([
-        'mode' => 'icon',
-        'url' => Url::toRoute(['site/index']),
-        'style' => 'd-md-none',
-        'icon' => 'bi-box-arrow-right',
-        'tooltip' => 'Back to lobby',
-    ])
-?>
+                        Button::widget([
+                            'mode' => 'icon',
+                            'url' => Url::toRoute(['site/index']),
+                            'style' => 'd-md-none',
+                            'icon' => 'bi-box-arrow-right',
+                            'tooltip' => 'Back to lobby',
+                        ])
+                        ?>
                     </div>
 
                     <div class="card-header">
                         <?=
-    AjaxContainer::widget([
-        'tag' => 'h2',
-        'name' => 'missionTitle',
-        'options' => ['class' => 'text-warning text-decoration mb-3 h5'],
-    ])
-?>
+                        AjaxContainer::widget([
+                            'tag' => 'h2',
+                            'name' => 'missionTitle',
+                            'options' => ['class' => 'text-warning text-decoration mb-3 h5'],
+                        ])
+                        ?>
                     </div>
 
                     <div class="card-body">
                         <article class="flex-grow-1 h-auto mb-3">
                             <?=
-    AjaxContainer::widget(['name' => 'missionDescription', 'options' => ['class' => 'text-decoration']])
-?>
+                            AjaxContainer::widget([
+                                'name' => 'missionDescription',
+                                'options' => ['class' => 'text-decoration']
+                            ])
+                            ?>
                             <br />
                             <?=
-    AjaxContainer::widget([
-        'tag' => 'div',
-        'name' => 'turnDescription',
-        'options' => ['class' => 'text-warning text-decoration'],
-    ])
-?>
+                            AjaxContainer::widget([
+                                'tag' => 'div',
+                                'name' => 'turnDescription',
+                                'options' => ['class' => 'text-warning text-decoration'],
+                            ])
+                            ?>
                             <br />
                             <div id="actionList" class="<?= $isCurrentPlayer ? '' : 'd-none' ?>"></div>
                             <div id="actionFeedback"></div>
@@ -148,19 +151,19 @@ $isCurrentPlayer = $currentQuestProgress->current_player_id === $playerId;
                     </div>
                 </div>
             </div>
-<?php if ($nbPlayers > 1): ?>
+            <?php if ($nbPlayers > 1): ?>
                 <!-- Chat System -->
                 <div class="col-12 col-xl-5 col-3xl-3">
                     <div class="h-100 d-flex flex-column">
                         <?=
-    $this->renderFile('@app/views/quest/snippets/chat.php', [
-        'questId' => $quest->id,
-        'playerId' => $playerId,
-    ])
-?>
+                        $this->renderFile('@app/views/quest/snippets/chat.php', [
+                            'questId' => $quest->id,
+                            'playerId' => $playerId,
+                        ])
+                        ?>
                     </div>
                 </div>
-<?php endif; ?>
+            <?php endif; ?>
         </div>
     </section>
 </main>

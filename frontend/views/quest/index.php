@@ -26,8 +26,6 @@ $this->params['breadcrumbs'][] = $this->title;
             'story_id',
             'status',
             'created_at',
-            'local_time',
-            //'elapsed_time:datetime',
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Quest $model, $key, $index, $column) {
@@ -36,6 +34,6 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ],
     ])
-;
-?>
+    ;
+    ?>
 </div>

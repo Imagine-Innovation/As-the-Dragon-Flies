@@ -13,6 +13,7 @@ class NarrativeComponent extends Component
     const DETAILS = ['decors', 'npcs', 'monsters'];
 
     public ?Mission $mission = null;
+    public ?bool $title = true;
 
     /**
      *
@@ -33,7 +34,10 @@ class NarrativeComponent extends Component
             return ['The mission has not been found, even by the most learned magicians'];
         }
 
-        $narrative = ["Mission: {$this->mission->name}"];
+        $narrative = [];
+        if ($this->title) {
+            $narrative[] = "Mission: {$this->mission->name}";
+        }
         if ($this->mission->description) {
             $narrative[] = MarkDown::widget(['content' => $this->mission->description]);
         }

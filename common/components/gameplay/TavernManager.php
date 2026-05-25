@@ -557,7 +557,6 @@ class TavernManager extends BaseManager
             'image' => $story->image,
             'status' => AppStatus::WAITING->value,
             'created_at' => time(),
-            'local_time' => time(),
         ]);
 
         SaveHelper::save($newTavern);

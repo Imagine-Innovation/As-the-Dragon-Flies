@@ -71,7 +71,6 @@ class Quest extends \yii\db\ActiveRecord
                 'value' => null,
             ],
             [['status'], 'default', 'value' => AppStatus::WAITING->value],
-            [['elapsed_time'], 'default', 'value' => 0],
             [['story_id', 'name'], 'required'],
             [
                 [
@@ -83,8 +82,6 @@ class Quest extends \yii\db\ActiveRecord
                     'created_at',
                     'started_at',
                     'completed_at',
-                    'local_time',
-                    'elapsed_time',
                 ],
                 'integer',
             ],
@@ -140,8 +137,6 @@ class Quest extends \yii\db\ActiveRecord
             'created_at' => 'Created at',
             'started_at' => 'Started at',
             'completed_at' => 'Completed at',
-            'local_time' => 'Local time',
-            'elapsed_time' => 'Elapsed time (minute)',
         ];
     }
 
