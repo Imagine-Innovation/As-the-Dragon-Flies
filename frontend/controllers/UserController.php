@@ -2,30 +2,39 @@
 
 namespace frontend\controllers;
 
-use Yii;
-use yii\web\Controller;
-use yii\filters\AccessControl;
-use common\models\User;
+use common\components\AccessRightsManager;
 use common\components\ContextManager;
+use common\models\User;
+use Yii;
+use yii\filters\AccessControl;
+use yii\web\Controller;
 
 class UserController extends Controller
 {
+
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function behaviors()
     {
-        return [
+        /** @phpstan-ignore-next-line */
+        return array_merge(parent::behaviors(), [
             'access' => [
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'allow' => true,
+                        'actions' => ['*'],
+                        'allow' => false,
+                        'roles' => ['?'],
+                    ],
+                    [
+                        'actions' => ['profile'],
+                        'allow' => [AccessRightsManager::class, 'isRouteAllowedCallback'],
                         'roles' => ['@'],
                     ],
                 ],
             ],
-        ];
+        ]);
     }
 
     public function actionProfile()
@@ -47,7 +56,7 @@ class UserController extends Controller
         }
 
         return $this->render('profile', [
-            'model' => $user,
+                    'model' => $user,
         ]);
     }
 }
