@@ -87,7 +87,6 @@ class NotificationClient {
         // Handle incoming notifications
         this.on('notification', (data) => {
             Logger.log(2, 'setupDefaultHandlers', 'Received notification:', data);
-            // this.displayNotification(data);
             const message = data.message ?? null;
             if (this.vtt) {
                 this.vtt.refresh(this.questId, this.sessionId, message);
@@ -196,7 +195,6 @@ class NotificationClient {
             if (data.playerName && data.questName) {
                 // Construct the message from the payload
                 const message = `Player ${data.playerName} has joined quest "${data.questName}".`;
-                //this.refreshTavern(message);
                 if (this.vtt) {
                     this.vtt.refresh(this.questId, this.sessionId, message);
                 }
@@ -210,7 +208,6 @@ class NotificationClient {
             if (data.playerName && data.questName) {
                 // Construct the message from the payload
                 const message = `Player ${data.playerName} has left the quest`;
-                // this.refreshTavern(message);
                 if (this.vtt) {
                     this.vtt.refresh(this.questId, this.sessionId, message);
                 }
@@ -258,7 +255,6 @@ class NotificationClient {
             }
 
             this.triggerEvent('open');
-            //this.refreshTavern();
             if (this.vtt) {
                 this.vtt.refresh(this.questId, this.sessionId);
             }
@@ -279,7 +275,7 @@ class NotificationClient {
         };
 
         this.socket.onclose = (event) => {
-            Logger.log(2, 'connect', `'WebSocket connection closed. Code:${event.code}, Reason: ${event.reason}`);
+            Logger.log(2, 'connect', `WebSocket connection closed. Code:${event.code}, Reason: ${event.reason}`);
             this.connected = false;
             this.triggerEvent('close');
             // Attempt to reconnect after a delay
@@ -290,64 +286,6 @@ class NotificationClient {
             console.error('WebSocket error:', error);
             this.triggerEvent('error', error);
         };
-    }
-
-    refreshTavern(message = null) {
-        Logger.log(1, 'refreshTavern', `message=${message}`);
-
-        if (message)
-            ToastManager.show('Event Handler', message, 'info');
-
-        this.updateTavernMembers();
-        this.updateWelcomeMessages();
-    }
-
-    updateTavernMembers() {
-        Logger.log(2, 'updateTavernMembers', ``);
-
-        const target = `#tavernPlayersContainer`;
-        if (!DOMUtils.exists(target))
-            return;
-
-        AjaxUtils.request({
-            url: 'quest/ajax-tavern',
-            method: 'GET',
-            successCallback: (response) => {
-                if (!response.error) {
-                    $(target).html(response.content);
-                    this.checkIfQuestCanStart();
-                }
-            }
-        });
-
-    }
-
-    updateWelcomeMessages() {
-        Logger.log(1, 'updateWelcomeMessages', ``);
-        let target = `#tavernWelcomeMessage`;
-        if (!DOMUtils.exists(target))
-            return;
-
-        AjaxUtils.request({
-            url: 'quest/ajax-welcome-messages',
-            method: 'GET',
-            successCallback: (response) => {
-                if (!response.error) {
-                    target = `#tavernWelcomeMessage`;
-                    if (DOMUtils.exists(target))
-                        $(target).html(response.welcomeMessage);
-
-                    target = `#tavernMissingPlayers`;
-                    if (DOMUtils.exists(target))
-                        $(target).html(response.missingPlayers);
-
-                    target = `#tavernMissingClasses`;
-                    if (DOMUtils.exists(target))
-                        $(target).html(response.missingClasses);
-                }
-            }
-        });
-
     }
 
     updateChatMessages() {
@@ -375,27 +313,6 @@ class NotificationClient {
                         console.warn("Autoplay blocked:", error);
                         // You could show a visual notification instead
                     });
-                }
-            }
-        });
-    }
-
-    checkIfQuestCanStart() {
-        Logger.log(2, 'checkIfQuestCanStart', ``);
-
-        const button = `#startQuestButton`;
-        if (!DOMUtils.exists(button))
-            return;
-
-        AjaxUtils.request({
-            url: 'quest/ajax-can-start',
-            data: {sessionId: this.sessionId},
-            successCallback: (response) => {
-                Logger.log(3, 'checkIfQuestCanStart', `Can start? ${JSON.stringify(response, null, 2)}`);
-                if (response.canStart) {
-                    $(button).removeClass('d-none');
-                } else {
-                    $(button).addClass('d-none');
                 }
             }
         });
@@ -553,35 +470,6 @@ class NotificationClient {
     formatTimestamp(timestamp) {
         const date = new Date(timestamp * 1000);
         return date.toLocaleTimeString();
-    }
-
-    /**
-     * Executes AJAX request based on configuration
-     * @param {Object} config - Request configuration
-     * @param {Object} data - Request data
-     */
-    executeRequest(config, data) {
-        Logger.log(1, 'executeRequest', `config=${JSON.stringify(config, null, 2)}, data=${JSON.stringify(data, null, 2)}`);
-
-        const target = `#${config.placeholder}`;
-        if (!DOMUtils.exists(target))
-            return;
-
-        const fixedData = {
-            playerId: this.playerId,
-            questId: this.questId
-        };
-
-        AjaxUtils.request({
-            url: config.route,
-            method: config.method,
-            data: fixedData,
-            successCallback: (response) => {
-                if (!response.error) {
-                    this._updateTarget(target, response, config.badge);
-                }
-            }
-        });
     }
 
     /**

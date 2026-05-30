@@ -379,9 +379,7 @@ class BroadcastService implements BroadcastServiceInterface
         $recoveredMessagesCount = $this->sendChatHistory($clientConnection, $session);
 
         // After sending all historical messages, update the session's last_ts to the current time.
-        if ($recoveredMessagesCount > 0) { // Update even if no messages, to prevent re-fetch of nothing
-            $this->questSessionManager->updateLastTimestamp($sessionId, time());
-        }
+        $this->questSessionManager->updateLastTimestamp($sessionId, time());
 
         $this->logger->log(
                 "BroadcastService: Finished recovering history for session [{$sessionId}]. Sent {$recoveredMessagesCount} message(s).",

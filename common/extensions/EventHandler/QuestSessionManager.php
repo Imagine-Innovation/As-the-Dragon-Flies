@@ -34,7 +34,7 @@ class QuestSessionManager
 
         $questId = PayloadHelper::extractIntFromPayload('questId', $data);
         // Validate input parameters
-        if ($sessionId === '' || !$questId) {
+        if ($sessionId === '' || $questId === null) {
             $this->logger->log(
                     'QuestSessionManager: Invalid sessionId or quest ID',
                     ['sessionId' => $sessionId, 'questId' => $questId],
