@@ -3146,10 +3146,10 @@ button.close {
 
 @media (max-width: 767.98px) {
     .content--full {
-        padding: 87px 15px 30px 15px;
+        padding: 87px 15px 30px;
     }
     .content:not(.content--boxed):not(.content--full) {
-        padding: 102px 15px 30px 15px;
+        padding: 102px 15px 30px;
     }
     .content__title .actions {
         display: none;
@@ -3231,7 +3231,7 @@ button.close {
         max-width: 100%;
     }
     .content:not(.content--boxed):not(.content--full) {
-        padding: 102px 30px 30px 30px;
+        padding: 102px 30px 30px;
     }
     .d-xl-inline {
         display: inline !important;
@@ -3587,13 +3587,13 @@ button.close {
 
 @media (min-width: 576px) {
     .content--full {
-        padding: 102px 30px 30px 30px;
+        padding: 102px 30px 30px;
     }
 }
 
 @media (min-width: 576px) and (max-width: 1199.98px) {
     .content:not(.content--boxed):not(.content--full) {
-        padding: 102px 30px 30px 30px;
+        padding: 102px 30px 30px;
     }
 }
 
