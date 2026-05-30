@@ -1,5 +1,6 @@
 /* Generated from dragon.css by retaining selectors used by the frontend and backend applications.
-   Source: common/web/css/dragon.css */
+   Source: common/web/css/dragon.css
+   Regenerate with: python tools/generate_dragon_lite.py */
 
 /* ==============================
    VARIABLES
@@ -291,9 +292,6 @@
     content: "";
     background-color: transparent;
     border: var(--light-25) solid 1px;
-}
-
-.custom-control-label::before {
     -webkit-transition: background-color .15s ease-in-out,border-color .15s ease-in-out,-webkit-box-shadow .15s ease-in-out;
     transition: background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out,-webkit-box-shadow .15s ease-in-out;
 }
@@ -306,7 +304,7 @@
     background-color: var(--blue-50);
 }
 
-.custom-radio .custom-control-input:hover~::after {
+.custom-radio .custom-control-input:hover~.custom-control-label::after {
     border-radius: 50%;
     border-color: var(--light-50);
     background-color: var(--light-10);
@@ -960,8 +958,7 @@ textarea.form-control {
 }
 
 .page-link {
-    padding: 0 0;
-    margin-left: 0;
+    padding: 0;
     color: var(--light-85);
     background-color: var(--light-10);
     border: 0 solid var(--gray-e);
@@ -1617,7 +1614,7 @@ button.close {
 }
 
 .bg-success {
-    background-color: var(--sucess)!important;
+    background-color: var(--success)!important;
 }
 
 .bg-transparent {
@@ -1726,7 +1723,7 @@ a.bg-success:focus,
 a.bg-success:hover,
 button.bg-success:focus,
 button.bg-success:hover {
-    background-color: var(--sucess)!important;
+    background-color: var(--success)!important;
 }
 
 a.bg-warning:focus,
@@ -1940,7 +1937,7 @@ button.bg-warning:hover {
 
 .error_msg {
     text-align: center;
-    color: var(--error);
+    color: var(--danger);
 }
 
 .file_remove {
@@ -2269,8 +2266,8 @@ small {
     content: '';
     position: absolute;
     left: 0;
-    -webkit-transition: left .2s,background-color,.2s;
-    transition: left .2s,background-color,.2s;
+    -webkit-transition: left .2s, background-color .2s;
+    transition: left .2s, background-color .2s;
 }
 
 .toggle-switch__helper:before {
@@ -2349,7 +2346,7 @@ vertical flow */
 
 @media (max-width: 767.98px) {
 .virtual-tabletop {
-        padding: 15px 15px 15px 15px;
+        padding: 15px;
     }
 }
 
@@ -2557,8 +2554,7 @@ button:focus {
 }
 
 caption {
-    padding-top: 1rem 1.5rem;
-    padding-bottom: 1rem 1.5rem;
+    padding: 1rem 1.5rem;
     color: var(--light-50);
     caption-side: bottom;
 }
@@ -2662,7 +2658,7 @@ textarea {
 
 @media (min-width: 768px) {
 .virtual-tabletop {
-        padding: 102px 15px 15px 15px;
+        padding: 102px 15px 15px;
     }
 }
 
