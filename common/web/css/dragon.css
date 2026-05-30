@@ -67,7 +67,7 @@
     --success-bg: var(--light-green);
     --info: var(--cyan);
     --warning: var(--yellow);
-    --warning-bg: var(--ligth-yellow);
+    --warning-bg: var(--light-yellow);
     --danger: var(--red);
     --light: var(--light-gray);
     --dark: var(--dark-gray);
@@ -5035,7 +5035,7 @@ a.bg-warning:focus, a.bg-warning:hover, button.bg-warning:focus, button.bg-warni
 
 .simple-rich-text-editor:focus {
     outline: none;
-    border-color: var(--ligth-yellow);
+    border-color: var(--light-yellow);
     box-shadow: 0 0 0 0.25rem var(--blue-25);
 }
 
