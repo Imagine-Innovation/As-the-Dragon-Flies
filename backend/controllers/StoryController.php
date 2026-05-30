@@ -216,7 +216,6 @@ class StoryController extends Controller
                     'missions',
                     'missions.decors',
                     'missions.decors.traps',
-                    'missions.decors.decorItems',
                     'missions.decors.actions',
                     'missions.decors.passages',
                     'missions.npcs',

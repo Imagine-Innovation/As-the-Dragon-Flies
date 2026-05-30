@@ -31,7 +31,6 @@ use Yii;
  * @property Category[] $categories
  * @property ClassEquipment[] $classEquipments
  * @property ClassItemProficiency[] $classItemProficiencies
- * @property DecorItem[] $decorItems
  * @property ItemCategory[] $itemCategories
  * @property ItemType $itemType
  * @property Item[] $packItems
@@ -183,16 +182,6 @@ class Item extends \yii\db\ActiveRecord
     public function getClassItemProficiencies()
     {
         return $this->hasMany(ClassItemProficiency::class, ['item_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[DecorItems]].
-     *
-     * @return \yii\db\ActiveQuery<DecorItem>
-     */
-    public function getDecorItems()
-    {
-        return $this->hasMany(DecorItem::class, ['item_id' => 'id']);
     }
 
     /**

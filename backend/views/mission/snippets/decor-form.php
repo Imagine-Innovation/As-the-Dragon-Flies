@@ -62,14 +62,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
 <?php ActiveForm::end(); ?>
 
 <?php if ($model->id): ?>
-    <div class="row row-cols-1 row-cols-xl-3 g-4">
-        <?=
-        $this->renderFile('@app/views/mission/snippets/card.php', [
-            'properties' => $model->decorItems,
-            'parentId' => $model->id,
-            'type' => 'Item',
-        ])
-        ?>
+    <div class="row row-cols-1 row-cols-lg-2 g-4">
         <?=
         $this->renderFile('@app/views/mission/snippets/card.php', [
             'properties' => $model->passages,

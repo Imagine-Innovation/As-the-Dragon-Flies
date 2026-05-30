@@ -37,8 +37,8 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
         <?php endif; ?>
 
         <?php
-        echo $form->field($model, 'npc_type_id')->dropdownList(
-                        $model->npc_type_id ? [$model->npc_type_id => $model->npcType->name] : [],
+        echo $form->field($model, 'type_id')->dropdownList(
+                        $model->type_id ? [$model->type_id => $model->npcType->name] : [],
                         [
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,

@@ -210,9 +210,6 @@ $t = match ($lang) {
                                     if ($action->decor_id) {
                                         echo '<li>Decor: ' . Html::encode($action->decor?->name ?? '') . '</li>';
                                     }
-                                    if ($action->decor_item_id) {
-                                        echo '<li>Hidden item: ' . Html::encode($action->decorItem?->name ?? '') . '</li>';
-                                    }
                                     if ($action->npc_id) {
                                         echo '<li>NPC: ' . Html::encode($action->npc?->name ?? '') . '</li>';
                                         if ($action->npc?->first_dialog_id) {
@@ -267,39 +264,6 @@ $t = match ($lang) {
                                     <?= Html::img(Url::to('@web/images/' . $decor->image), ['class' => 'img-thumbnail float-end', 'style' => 'max-width:100px;']) ?>
                                 <?php endif; ?>
                                 <?= MarkDown::widget(['content' => $decor->description ?? '']) ?>
-
-                                <!-- Hidden Items -->
-                                <?php if ($decor->decorItems): ?>
-                                    <h6><?= $t['hidden_items'] ?></h6>
-                                    <ul>
-                                        <?php foreach ($decor->decorItems as $decorItem): ?>
-                                            <li>
-                                                <span class="fw-bold"><?= Html::encode($decorItem->name) ?></span>
-                                                (<?= $t['found_chance'] ?>: <?= $decorItem->found ?>%,
-                                                <?= $t['identified_chance'] ?>: <?= $decorItem->identified ?>%)
-                                                <?php if ($decorItem->description): ?><div><?= MarkDown::widget(['content' => $decorItem->description]) ?></div><?php endif; ?>
-                                                <?php if ($decorItem->item): ?>
-                                                    <br>Item: <?= Html::encode($decorItem->item->name) ?>
-                                                <?php endif; ?>
-                                                <!-- Passages (if any) -->
-                                                <?php if ($passages): ?>
-                                                    <h4>Passages</h4>
-                                                    <ul>
-                                                        <?php foreach ($passages as $passage): ?>
-                                                            <li>
-                                                                <span class="fw-bold"><?= Html::encode($passage->name) ?></span>
-                                                                <?php if ($passage->description): ?>
-                                                                    <?= MarkDown::widget(['content' => $passage->description ?? '']) ?>
-                                                                <?php endif; ?>
-                                                            </li>
-                                                        <?php endforeach; ?>
-                                                    </ul>
-                                                <?php endif; ?>
-
-                                            </li>
-                                        <?php endforeach; ?>
-                                    </ul>
-                                <?php endif; ?>
 
                                 <!-- Traps -->
                                 <?php if ($decor->traps): ?>

@@ -13,7 +13,6 @@ use Yii;
  * @property int|null $action_type_id Optional foreign key to “action_type” table
  * @property int|null $passage_id Optional foreign key to “passage” table. Passage targeted by the action
  * @property int|null $decor_id Optional foreign key to “decor” table. Decor element involved in the action
- * @property int|null $decor_item_id Optional foreign key to “decor_item” table. Hidden item in the decor involved in the action
  * @property int|null $npc_id Optional foreign key to “npc” table. NPC involved in the action
  * @property int|null $reply_id Optional foreign key to “reply” table. First reply the player says
  * @property int|null $trap_id Optional foreign key to “trap” table. Trap involved in the action
@@ -28,7 +27,6 @@ use Yii;
  * @property ActionFlow[] $prerequisites
  * @property ActionType $actionType
  * @property Decor|null $decor
- * @property DecorItem|null $decorItem
  * @property Mission $mission
  * @property Action[] $nextActions
  * @property Npc|null $npc
@@ -43,6 +41,7 @@ use Yii;
  */
 class Action extends \yii\db\ActiveRecord
 {
+
     /**
      * {@inheritdoc}
      */
@@ -62,7 +61,6 @@ class Action extends \yii\db\ActiveRecord
                     'action_type_id',
                     'passage_id',
                     'decor_id',
-                    'decor_item_id',
                     'npc_id',
                     'reply_id',
                     'trap_id',
@@ -82,7 +80,6 @@ class Action extends \yii\db\ActiveRecord
                     'action_type_id',
                     'passage_id',
                     'decor_id',
-                    'decor_item_id',
                     'npc_id',
                     'reply_id',
                     'trap_id',
@@ -146,13 +143,6 @@ class Action extends \yii\db\ActiveRecord
                 'targetAttribute' => ['decor_id' => 'id'],
             ],
             [
-                ['decor_item_id'],
-                'exist',
-                'skipOnError' => true,
-                'targetClass' => DecorItem::class,
-                'targetAttribute' => ['decor_item_id' => 'id'],
-            ],
-            [
                 ['action_type_id'],
                 'exist',
                 'skipOnError' => true,
@@ -173,7 +163,6 @@ class Action extends \yii\db\ActiveRecord
             'action_type_id' => 'Optional foreign key to “action_type” table',
             'passage_id' => 'Optional foreign key to “passage” table. Passage targeted by the action',
             'decor_id' => 'Optional foreign key to “decor” table. Decor element involved in the action',
-            'decor_item_id' => 'Optional foreign key to “decor_item” table. Hidden item in the decor involved in the action',
             'npc_id' => 'Optional foreign key to “npc” table. NPC involved in the action',
             'reply_id' => 'Optional foreign key to “reply” table. First reply the player says',
             'trap_id' => 'Optional foreign key to “trap” table. Trap involved in the action',
@@ -227,16 +216,6 @@ class Action extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[DecorItem]].
-     *
-     * @return \yii\db\ActiveQuery<DecorItem>
-     */
-    public function getDecorItem()
-    {
-        return $this->hasOne(DecorItem::class, ['id' => 'decor_item_id']);
-    }
-
-    /**
      * Gets query for [[Mission]].
      *
      * @return \yii\db\ActiveQuery<Mission>
@@ -254,7 +233,7 @@ class Action extends \yii\db\ActiveRecord
     public function getNextActions()
     {
         return $this->hasMany(Action::class, ['id' => 'next_action_id'])->viaTable('action_flow', [
-            'previous_action_id' => 'id',
+                    'previous_action_id' => 'id',
         ]);
     }
 
@@ -296,7 +275,7 @@ class Action extends \yii\db\ActiveRecord
     public function getPreviousActions()
     {
         return $this->hasMany(Action::class, ['id' => 'previous_action_id'])->viaTable('action_flow', [
-            'next_action_id' => 'id',
+                    'next_action_id' => 'id',
         ]);
     }
 
@@ -318,7 +297,7 @@ class Action extends \yii\db\ActiveRecord
     public function getQuestProgresses()
     {
         return $this->hasMany(QuestProgress::class, ['id' => 'quest_progress_id'])->viaTable('quest_action', [
-            'action_id' => 'id',
+                    'action_id' => 'id',
         ]);
     }
 

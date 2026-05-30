@@ -251,7 +251,6 @@ class SearchController extends Controller
             'action' => $this->genericSearch('Action', $search, ['mission_id' => $parentId]),
             // Search in decor related data
             'nested-trap' => $this->searchInDecor('Trap', $search, $parentId),
-            'nested-item' => $this->searchInDecor('DecorItem', $search, $parentId),
             // Search in text
             'dialog' => $this->searchInTextColumn('Dialog', $search),
             'reply' => $this->searchInTextColumn('Reply', $search),

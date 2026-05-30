@@ -27,58 +27,85 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
 
 <?= $form->field($model, 'status')->radioList(AppStatus::getActionStatus())->label('Select a status') ?>
 <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
-<?= $form->field($model, 'description')->widget(SimpleRichText::class) ?>
-<div class="row">
-    <div class="col-12 col-sm-4">
-        <?= $form->field($model, 'hp_loss_dice')->textInput(['maxlength' => true]) ?>
-    </div>
-    <div class="col-12 col-sm-4">
-        <?= $form->field($model, 'gained_gp') ?>
-    </div>
-    <div class="col-12 col-sm-4">
-        <?= $form->field($model, 'gained_xp') ?>
-    </div>
-    <div class="col-12 col-sm-4">
-        <?=
-                $form->field($model, 'can_replay')->radioList([1 => 'Action can be played again', 0 => 'Action is not available anymore'])
-                ->label('How many time this action can be triggered')
-        ?>
-    </div>
-</div>
 
-<div class="row">
-    <div class="col-12 col-sm-6">
+<?php if ($model->image): ?>
+    <div class="row">
+        <div class="col-2">
+            <img src="<?= $storyRoot ?>/img/<?= $model->image ?>" alt="<?= $model->name ?>" class="w-100 h-100" style="object-fit: cover;" />
+        </div>
+        <div class="col-10">
+        <?php endif; ?>
+        <?= $form->field($model, 'description')->widget(SimpleRichText::class) ?>
+
         <?=
-                $form->field($model, 'item_id')->dropdownList(
-                        $model->item_id ? [$model->item_id => $model->item?->name] : [],
+                $form->field($model, 'image')->dropdownList(
+                        $model->image ? [$model->image => $model->image] : [],
                         [
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
-                            'data-placeholder' => 'Select an item',
+                            'data-placeholder' => 'Select an image',
+                            'maxlength' => true,
                             'prompt' => '',
                         ],
                 )
-                ->label('Item gained')
+                ->label('Item image')
         ?>
-    </div>
-    <div class="col-12 col-sm-6">
-        <?=
-                $form->field($model, 'next_mission_id')->dropdownList(
-                        $model->next_mission_id ? [$model->next_mission_id => $model->nextMission?->name] : [],
-                        [
-                            'class' => 'select2-container w-100',
-                            'data-minimum-results-for-search' => -1,
-                            'data-placeholder' => 'Select a mission',
-                            'prompt' => '',
-                        ],
-                )
-                ->label('Next mission')
-        ?>
-    </div>
-</div>
 
-<div class="form-group">
-    <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
-</div>
+        <div class="row">
+            <div class="col-12 col-sm-4">
+                <?= $form->field($model, 'hp_loss_dice')->textInput(['maxlength' => true]) ?>
+            </div>
+            <div class="col-12 col-sm-4">
+                <?= $form->field($model, 'gained_gp') ?>
+            </div>
+            <div class="col-12 col-sm-4">
+                <?= $form->field($model, 'gained_xp') ?>
+            </div>
+            <div class="col-12 col-sm-4">
+                <?=
+                        $form->field($model, 'can_replay')->radioList([1 => 'Action can be played again', 0 => 'Action is not available anymore'])
+                        ->label('How many time this action can be triggered')
+                ?>
+            </div>
+        </div>
 
+        <div class="row">
+            <div class="col-12 col-sm-6">
+                <?=
+                        $form->field($model, 'item_id')->dropdownList(
+                                $model->item_id ? [$model->item_id => $model->item?->name] : [],
+                                [
+                                    'class' => 'select2-container w-100',
+                                    'data-minimum-results-for-search' => -1,
+                                    'data-placeholder' => 'Select an item',
+                                    'prompt' => '',
+                                ],
+                        )
+                        ->label('Item gained')
+                ?>
+            </div>
+            <div class="col-12 col-sm-6">
+                <?=
+                        $form->field($model, 'next_mission_id')->dropdownList(
+                                $model->next_mission_id ? [$model->next_mission_id => $model->nextMission?->name] : [],
+                                [
+                                    'class' => 'select2-container w-100',
+                                    'data-minimum-results-for-search' => -1,
+                                    'data-placeholder' => 'Select a mission',
+                                    'prompt' => '',
+                                ],
+                        )
+                        ->label('Next mission')
+                ?>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+        </div>
+
+        <?php if ($model->image): ?>
+        </div>
+    </div>
+<?php endif; ?>
 <?php ActiveForm::end(); ?>

@@ -50,6 +50,12 @@ const config = [
                 valueType: 'mission',
                 minChar: 3,
                 imagePath: null
+            },
+            {
+                field: 'outcome-image',
+                valueType: 'image',
+                minChar: 1,
+                imagePath: imagePath
             }
         ]
     },
@@ -69,7 +75,7 @@ const config = [
                 imagePath: imagePath
             },
             {
-                field: 'npc-npc_type_id',
+                field: 'npc-type_id',
                 valueType: 'npc-type',
                 minChar: 1,
                 imagePath: null
@@ -112,23 +118,6 @@ const config = [
                 field: 'trap-image',
                 valueType: 'image',
                 minChar: 0,
-                imagePath: imagePath
-            }
-        ]
-    },
-    {
-        form: 'decoritem',
-        params: [
-            {
-                field: 'decoritem-item_id',
-                valueType: 'item',
-                minChar: 3,
-                imagePath: null
-            },
-            {
-                field: 'decoritem-image',
-                valueType: 'image',
-                minChar: 1,
                 imagePath: imagePath
             }
         ]
@@ -191,12 +180,6 @@ const config = [
             {
                 field: 'action-decor_id',
                 valueType: 'decor',
-                minChar: 0,
-                imagePath: null
-            },
-            {
-                field: 'action-decor_item_id',
-                valueType: 'nested-item',
                 minChar: 0,
                 imagePath: null
             },

@@ -43,7 +43,6 @@ $actionType = $model->action_type_id ? $model->actionType : null;
             <?php endif; ?>
             <?= $model->passage?->name ?>
             <?= $model->trap?->name ?>
-            <?= $model->decorItem?->name ?>
             <?= $model->decor ? "in {$model->decor->name}" : '' ?>
             <?= $model->npc ? "with {$model->npc->name}" : '' ?>
             <?= $model->reply ? "saying “{$model->reply->text}”" : '' ?>
@@ -183,20 +182,6 @@ $actionType = $model->action_type_id ? $model->actionType : null;
                         ],
                 )
                 ->label('Trap affected by the action')
-        ?>
-    </div>
-    <div class="col">
-        <?=
-                $form->field($model, 'decor_item_id')->dropdownList(
-                        $model->decor_item_id ? [$model->decor_item_id => $model->decorItem?->name] : [],
-                        [
-                            'class' => 'select2-container w-100',
-                            'data-minimum-results-for-search' => -1,
-                            'data-placeholder' => 'Select an item',
-                            'prompt' => '',
-                        ],
-                )
-                ->label('Object affected by the action')
         ?>
     </div>
     <div class="col">

@@ -15,7 +15,6 @@ use Yii;
  * @property string|null $image Image
  *
  * @property Action[] $actions
- * @property DecorItem[] $decorItems
  * @property Mission $mission
  * @property Passage[] $passages
  * @property Passage[] $passagesFrom
@@ -70,16 +69,6 @@ class Decor extends \yii\db\ActiveRecord
     public function getActions()
     {
         return $this->hasMany(Action::class, ['decor_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[DecorItems]].
-     *
-     * @return \yii\db\ActiveQuery<DecorItem>
-     */
-    public function getDecorItems()
-    {
-        return $this->hasMany(DecorItem::class, ['decor_id' => 'id']);
     }
 
     /**

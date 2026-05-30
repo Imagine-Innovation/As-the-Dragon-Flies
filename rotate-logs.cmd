@@ -15,6 +15,7 @@ if "%n%"=="" (
 :: V‚rification si le fichier source existe
 if not exist "%fichierSource%" (
     echo Le fichier %fichierSource% est introuvable.
+	type nul > "%fichierSource%"
 	pause
     exit /b
 )
@@ -35,6 +36,6 @@ for /L %%i in (%n%, -1, 2) do (
 ren "%fichierSource%" "%fichierSource%.1"
 
 :: 4. Cr‚ation d'un nouveau fichier vide (optionnel, … d‚commenter si besoin)
-:: type nul > "%fichierSource%"
+type nul > "%fichierSource%"
 
 echo Rotation fichier %fichierSource% termin‚e : %n% versions conserv‚es.
