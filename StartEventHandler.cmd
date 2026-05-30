@@ -16,10 +16,11 @@ set PHP_PEAR_WWW_DIR=C:\xampp\php\www
 set MIBDIRS=C:/xampp/php/extras/mibs
 set MYSQL_HOME=C:\xampp\mysql\bin
 
+cd C:\Users\franc\OneDrive\devenv\htdocs\DnD
+
 call rotate-logs EventHandler.log 10
 call rotate-logs BroadcastMessage.log 10
 
-cd C:\Users\franc\OneDrive\devenv\htdocs\DnD
 rem cls
 
 php yii event-server/start

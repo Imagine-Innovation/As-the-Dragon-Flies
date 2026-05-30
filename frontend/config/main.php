@@ -104,13 +104,6 @@ return [
                     'levels' => ['error', 'warning', 'info'],
                     'logFile' => '@runtime/logs/app.log',
                 ],
-                [
-                    'class' => 'yii\log\FileTarget',
-                    'levels' => ['info'],
-                    'categories' => ['websocket'],
-                    'logFile' => '@runtime/logs/websocket.log',
-                    'logVars' => [],
-                ],
             // You can add a DbTarget to log to database
             // or other targets as needed
             ],
@@ -125,7 +118,7 @@ return [
                 'app*' => [
                     'class' => 'yii\i18n\PhpMessageSource',
                     'basePath' => '@app/messages',
-                    'sourceLanguage' => 'en',
+                    'sourceLanguage' => 'default', // if set to 'en', il8n uses keys, not translated values
                     'fileMap' => [
                         'app' => 'app.php',
                         'app/error' => 'error.php',

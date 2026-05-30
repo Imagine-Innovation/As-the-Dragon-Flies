@@ -2,11 +2,10 @@
 
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
-use Yii;
 
 /** @var yii\web\View $this */
 /** @var common\models\User $model */
-$this->title = Yii::t('app', 'Profile', ['username' => $model->username]) . " [{$model->username}], [{$model->language}]";
+$this->title = Yii::t('app', 'Profile', ['username' => $model->username]);
 ?>
 <div class="user-profile">
     <div class="row d-flex justify-content-center">

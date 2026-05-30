@@ -6,7 +6,7 @@ return [
     'View all messages' => 'View all messages',
     'Notifications' => 'Notifications',
     'logout' => 'logout',
-    'Profile' => 'xxx profile',
+    'Profile' => '{username}\'s profile',
     'Username' => 'User name',
     'Language' => 'Language',
     'Save' => 'Save',
