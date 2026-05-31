@@ -12,6 +12,7 @@ use common\models\Outcome;
 use common\models\Player;
 use common\models\PlayerItem;
 use common\models\PlayerSkill;
+use common\models\Quest;
 use common\models\QuestAction;
 use common\models\QuestProgress;
 use Yii;
@@ -26,6 +27,7 @@ class ActionManager extends BaseManager
     // internal use
     private ?Action $action = null;
     private ?Player $player = null;
+    private ?Quest $quest = null;
     private ?int $nextMissionId = null;
     private int $hpLoss = 0;
 
@@ -50,6 +52,7 @@ class ActionManager extends BaseManager
 
         $this->action ??= $this->questAction?->action;
         $this->player ??= $this->questProgress->currentPlayer;
+        $this->quest ??= $this->questProgress->quest;
     }
 
     /**
@@ -245,6 +248,7 @@ class ActionManager extends BaseManager
             'questProgressId' => $this->questProgress?->id,
             'missionId' => $missionId,
             'nextMissionId' => $this->nextMissionId,
+            'storyId' => $this->quest?->story_id,
         ];
     }
 

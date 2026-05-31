@@ -3,9 +3,9 @@
 namespace frontend\widgets;
 
 use common\components\AppStatus;
+use common\helpers\WebResourcesHelper;
 use common\models\Outcome;
 use common\helpers\RichTextHelper;
-use common\widgets\Button;
 use yii\base\Widget;
 
 class ActionOutcomes extends Widget
@@ -21,6 +21,7 @@ class ActionOutcomes extends Widget
     public ?bool $isFree = true;
     public ?int $questProgressId = null;
     public ?int $nextMissionId = null;
+    public ?int $storyId = null;
 
     /**
      *
@@ -28,26 +29,27 @@ class ActionOutcomes extends Widget
      */
     public function run(): string
     {
-        $canReplay = false;
+        // $canReplay = false;
         $status = $this->status ?? AppStatus::SUCCESS;
         $html = "<p>{$this->diceRoll}: the action {$status->getActionAdjective()}</p>" . PHP_EOL;
-        $html .= $this->hpLoss > 0 ? "<p>You lost {$this->hpLoss} hit points</p>" . PHP_EOL
-                    : '';
+        $html .= $this->hpLoss > 0 ? "<p>You lost {$this->hpLoss} hit points</p>" . PHP_EOL : '';
 
         if (empty($this->outcomes)) {
             $html .= "Something happened, that's for sure, but I don't really know what" . PHP_EOL;
         } else {
+            $storyRoot = WebResourcesHelper::storyRootPath($this->storyId);
             foreach ($this->outcomes as $outcome) {
                 $html .= self::HR;
                 $description = RichTextHelper::sanitizeWithCache($outcome->description);
-                //$description = nl2br($outcome->description);
                 $actionOutcome = $this->getActionOutcome($outcome);
                 $html .= $this->render('action-outcome', [
                     'outcomeName' => $outcome->name,
+                    'image' => $outcome->image,
                     'description' => $description,
-                    'actionOutcome' => $actionOutcome
+                    'actionOutcome' => $actionOutcome,
+                    'storyRoot' => $storyRoot,
                 ]);
-                $canReplay = $canReplay || $outcome->can_replay;
+                // $canReplay = $canReplay || $outcome->can_replay;
             }
         }
         $html .= self::HR;
