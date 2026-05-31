@@ -16,18 +16,20 @@ use yii\db\ActiveQuery;
  * @property int $status Outcome status: 2=success, 1=partial, 4=failure, 3=not failed, 5=not succeeded, 7=any status
  * @property string $name Outcome title
  * @property string|null $description Short description
+ * @property string|null $image Image
  * @property int $gained_gp Gained Gold Pieces (GP) when succeeded
  * @property int $gained_xp Gained Experience Points (XP) when succeeded
  * @property string $hp_loss_dice Dice to throw to determine the HP loss when failed
  * @property int $can_replay Can be played again
  *
- * @property Action|null $action
+ * @property Action $action
  * @property Dialog[] $dialogs
  * @property Item|null $item
  * @property Mission|null $nextMission
  */
 class Outcome extends \yii\db\ActiveRecord
 {
+
     /**
      * {@inheritdoc}
      */
@@ -42,35 +44,17 @@ class Outcome extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['next_mission_id', 'item_id', 'description'], 'default', 'value' => null],
+            [['next_mission_id', 'item_id', 'description', 'image'], 'default', 'value' => null],
             [['can_replay'], 'default', 'value' => 0],
             [['action_id', 'status', 'name'], 'required'],
             [['action_id', 'next_mission_id', 'item_id', 'status', 'gained_gp', 'gained_xp', 'can_replay'], 'integer'],
             [['description'], 'string'],
             [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeMarkdownWithCache']],
-            [['name'], 'string', 'max' => 64],
+            [['name', 'image'], 'string', 'max' => 64],
             [['hp_loss_dice'], 'string', 'max' => 8],
-            [
-                ['action_id'],
-                'exist',
-                'skipOnError' => true,
-                'targetClass' => Action::class,
-                'targetAttribute' => ['action_id' => 'id'],
-            ],
-            [
-                ['next_mission_id'],
-                'exist',
-                'skipOnError' => true,
-                'targetClass' => Mission::class,
-                'targetAttribute' => ['next_mission_id' => 'id'],
-            ],
-            [
-                ['item_id'],
-                'exist',
-                'skipOnError' => true,
-                'targetClass' => Item::class,
-                'targetAttribute' => ['item_id' => 'id'],
-            ],
+            [['action_id'], 'exist', 'skipOnError' => true, 'targetClass' => Action::class, 'targetAttribute' => ['action_id' => 'id']],
+            [['next_mission_id'], 'exist', 'skipOnError' => true, 'targetClass' => Mission::class, 'targetAttribute' => ['next_mission_id' => 'id']],
+            [['item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Item::class, 'targetAttribute' => ['item_id' => 'id']],
         ];
     }
 
@@ -87,6 +71,7 @@ class Outcome extends \yii\db\ActiveRecord
             'status' => 'Outcome status: 2=success, 1=partial, 4=failure, 3=not failed, 5=not succeeded, 7=any status',
             'name' => 'Outcome title',
             'description' => 'Short description',
+            'image' => 'Image',
             'gained_gp' => 'Gained Gold Pieces (GP) when succeeded',
             'gained_xp' => 'Gained Experience Points (XP) when succeeded',
             'hp_loss_dice' => 'Dice to throw to determine the HP loss when failed',
@@ -97,9 +82,9 @@ class Outcome extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Action]].
      *
-     * @return \yii\db\ActiveQuery<Action>|null
+     * @return \yii\db\ActiveQuery<Action>
      */
-    public function getAction(): ?ActiveQuery
+    public function getAction(): ActiveQuery
     {
         return $this->hasOne(Action::class, ['id' => 'action_id']);
     }
