@@ -81,6 +81,7 @@ return [
     'Pending' => 'Pending',
     'In progress' => 'In progress',
     'Terminated' => 'Terminated',
+    'Skipped' => 'Skipped',
     'Partial success' => 'Partial success',
     'Success' => 'Success',
     'Failure' => 'Failure',

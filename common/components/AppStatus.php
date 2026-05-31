@@ -29,6 +29,7 @@ enum AppStatus: int
     case PENDING = 400;
     case IN_PROGRESS = 401;
     case TERMINATED = 402;
+    case SKIPPED = 403;
     // Action status used for bitwise comparison as a status bit mask
     case PARTIAL = 1; // Binary: 001=1
     case SUCCESS = 2; // Binary: 010=2
@@ -66,6 +67,7 @@ enum AppStatus: int
             self::PENDING => Yii::t('app', 'Pending'),
             self::IN_PROGRESS => Yii::t('app', 'In progress'),
             self::TERMINATED => Yii::t('app', 'Terminated'),
+            self::SKIPPED => Yii::t('app', 'Skipped'),
             // Action status
             self::PARTIAL => Yii::t('app', 'Partial success'),
             self::SUCCESS => Yii::t('app', 'Success'),
@@ -109,6 +111,7 @@ enum AppStatus: int
             self::PENDING => ['icon' => 'bi-hourglass-split', 'tooltip' => Yii::t('app', 'Waiting to start')],
             self::IN_PROGRESS => ['icon' => 'dnd-d20', 'tooltip' => Yii::t('app', 'In progress')],
             self::TERMINATED => ['icon' => 'dnd-diamond', 'tooltip' => Yii::t('app', 'Terminated')],
+            self::SKIPPED => ['icon' => 'bi-skip-forward', 'tooltip' => Yii::t('app', 'Skipped')],
             // Action status
             self::PARTIAL => ['icon' => 'bi-star-half', 'tooltip' => Yii::t('app', 'Partial success')],
             self::SUCCESS => ['icon' => 'dnd-badge', 'tooltip' => Yii::t('app', 'Success')],
@@ -224,6 +227,7 @@ enum AppStatus: int
             self::PENDING->value,
             self::IN_PROGRESS->value,
             self::TERMINATED->value,
+            self::SKIPPED->value,
         ];
     }
 

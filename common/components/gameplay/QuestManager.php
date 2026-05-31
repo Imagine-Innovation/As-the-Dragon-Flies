@@ -218,10 +218,16 @@ class QuestManager extends BaseManager
      */
     private function endCurrentTurn(?int $questProgressId = null, AppStatus $status = AppStatus::TERMINATED): int
     {
-        return QuestTurn::updateAll(['status' => $status->value], [
-                    'status' => AppStatus::IN_PROGRESS->value,
-                    'quest_progress_id' => $questProgressId ?? $this->getQuestProgress()->id,
-        ]);
+        return QuestTurn::updateAll(
+                        [
+                            'status' => $status->value,
+                            'ended_at' => time(),
+                        ],
+                        [
+                            'status' => AppStatus::IN_PROGRESS->value,
+                            'quest_progress_id' => $questProgressId ?? $this->getQuestProgress()->id,
+                        ]
+                );
     }
 
     /**
@@ -510,7 +516,7 @@ class QuestManager extends BaseManager
         if (empty($nextQuestProgress->remainingActions)) {
             Yii::debug("setNextMission - Mission #{$nextMissionId} is empty, skipping.");
             // End this empty mission progress
-            $this->endCurrentQuestProgress($nextQuestProgress, AppStatus::COMPLETED);
+            $this->endCurrentQuestProgress($nextQuestProgress, AppStatus::TERMINATED);
             // Try to move to the next mission
             return $this->moveToNextMission();
         }
