@@ -353,8 +353,13 @@ class ActionManager extends BaseManager
 
         if ($questAction) {
             Yii::debug('*** debug *** addQuestAction - Previously existing QuestAction');
-            $questAction->status = null;
-            $questAction->eligible = 1;
+            if ($questAction->eligible) {
+                $questAction->status = null;
+                $questAction->eligible = 1;
+            } else {
+                Yii::debug('*** debug *** addQuestAction - Action is no longer eligible, state preserved.');
+                return $questAction;
+            }
         } else {
             Yii::debug('*** debug *** addQuestAction - Create new QuestAction');
             $questAction = new QuestAction([
