@@ -344,19 +344,17 @@ class ActionManager extends BaseManager
      */
     private function addOneQuestAction(int $actionId, int $questProgressId): QuestAction
     {
-        Yii::debug("*** debug *** addQuestAction - actionId={$actionId}, questProgressId={$questProgressId}");
-
         $questAction = QuestAction::findOne([
             'action_id' => $actionId,
             'quest_progress_id' => $questProgressId,
         ]);
 
         if ($questAction) {
-            Yii::debug('*** debug *** addQuestAction - Previously existing QuestAction');
+            if (!$questAction->eligible) {
+                return $questAction;
+            }
             $questAction->status = null;
-            $questAction->eligible = 1;
         } else {
-            Yii::debug('*** debug *** addQuestAction - Create new QuestAction');
             $questAction = new QuestAction([
                 'quest_progress_id' => $questProgressId,
                 'action_id' => $actionId,

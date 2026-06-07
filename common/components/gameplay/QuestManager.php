@@ -351,7 +351,22 @@ class QuestManager extends BaseManager
             return null;
         }
 
-        $questProgress = $this->newQuestProgress($mission, $nextQuestPlayer->player_id);
+        $questId = $this->getQuest()->id;
+        $questProgress = QuestProgress::findOne([
+            'quest_id' => $questId,
+            'mission_id' => $missionId,
+        ]);
+
+        if ($questProgress) {
+            // Reactivate existing progress
+            $questProgress->status = AppStatus::IN_PROGRESS->value;
+            $questProgress->current_player_id = $nextQuestPlayer->player_id;
+            $questProgress->completed_at = null;
+            $this->save($questProgress);
+            $this->questProgress = $questProgress;
+        } else {
+            $questProgress = $this->newQuestProgress($mission, $nextQuestPlayer->player_id);
+        }
 
         $actionManager = new ActionManager(['questProgress' => $questProgress]);
         $actionManager->addQuestActions($missionId);
