@@ -72,10 +72,10 @@ class MarkDown extends Widget
     protected function applySpecialParagraphStyles(string $text): string
     {
         $class = 'mb-3';
-        if (str_starts_with($text, '++')) {
+        if (substr($text, 0, 2) === '++') {
             $class .= ' text-scroll';
             $text = substr($text, 2);
-        } elseif (str_starts_with($text, '--')) {
+        } elseif (substr($text, 0, 2) === '--') {
             $class .= ' text-dwarvish';
             $text = substr($text, 2);
         }

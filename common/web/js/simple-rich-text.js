@@ -104,27 +104,29 @@ class SimpleRichTextEditor {
         if (!selection.rangeCount) return;
 
         const range = selection.getRangeAt(0);
+        if (!editor.contains(range.commonAncestorContainer)) return;
+
         let container = range.commonAncestorContainer;
         if (container.nodeType === 3) container = container.parentNode;
 
         const scrollDiv = container.closest('div.scroll');
 
-        if (scrollDiv) {
-            // Unwrap
+        if (scrollDiv && editor.contains(scrollDiv)) {
+            // Unwrap: move children out and remove the div
+            const fragment = document.createDocumentFragment();
             while (scrollDiv.firstChild) {
-                scrollDiv.parentNode.insertBefore(scrollDiv.firstChild, scrollDiv);
+                fragment.appendChild(scrollDiv.firstChild);
             }
-            scrollDiv.remove();
+            scrollDiv.parentNode.replaceChild(fragment, scrollDiv);
         } else {
-            // Wrap
+            // Wrap the selected range in a scroll div
             const div = document.createElement('div');
             div.className = 'scroll';
             try {
                 range.surroundContents(div);
             } catch (e) {
-                // surroundContents can fail if range intersects partial nodes
-                const content = range.extractContents();
-                div.appendChild(content);
+                // If selection spans multiple nodes, extract and wrap
+                div.appendChild(range.extractContents());
                 range.insertNode(div);
             }
         }
@@ -140,11 +142,13 @@ class SimpleRichTextEditor {
         if (!selection.rangeCount) return;
 
         const range = selection.getRangeAt(0);
+        if (!editor.contains(range.commonAncestorContainer)) return;
+
         let container = range.commonAncestorContainer;
         if (container.nodeType === 3) container = container.parentNode;
 
         const p = container.closest('p');
-        if (p) {
+        if (p && editor.contains(p)) {
             if (p.classList.contains(className)) {
                 p.classList.remove(className);
             } else {
@@ -152,9 +156,20 @@ class SimpleRichTextEditor {
                 p.classList.add(className);
             }
         } else {
-            // If not in a P, maybe we can wrap current line/selection in a P first
+            // Ensure we are inside a paragraph first
             document.execCommand('formatBlock', false, 'P');
-            this.toggleTextClass(editor, className);
+            // Re-fetch the paragraph after formatting
+            const newSelection = window.getSelection();
+            if (newSelection.rangeCount) {
+                const newRange = newSelection.getRangeAt(0);
+                let newContainer = newRange.commonAncestorContainer;
+                if (newContainer.nodeType === 3) newContainer = newContainer.parentNode;
+                const newP = newContainer.closest('p');
+                if (newP && editor.contains(newP)) {
+                    newP.classList.remove('text-scroll', 'text-dwarvish');
+                    newP.classList.add(className);
+                }
+            }
         }
     }
 
