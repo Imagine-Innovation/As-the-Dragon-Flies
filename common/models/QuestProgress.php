@@ -73,6 +73,7 @@ class QuestProgress extends \yii\db\ActiveRecord
                 'targetClass' => QuestPlayer::class,
                 'targetAttribute' => ['quest_id' => 'quest_id', 'current_player_id' => 'player_id'],
             ],
+            [['quest_id', 'mission_id'], 'unique', 'targetAttribute' => ['quest_id', 'mission_id']],
         ];
     }
 
