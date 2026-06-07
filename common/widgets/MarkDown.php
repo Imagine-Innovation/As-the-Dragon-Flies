@@ -66,6 +66,23 @@ class MarkDown extends Widget
     }
 
     /**
+     * @param string $text
+     * @return string
+     */
+    protected function applySpecialParagraphStyles(string $text): string
+    {
+        $class = 'mb-3';
+        if (str_starts_with($text, '++')) {
+            $class .= ' text-scroll';
+            $text = substr($text, 2);
+        } elseif (str_starts_with($text, '--')) {
+            $class .= ' text-dwarvish';
+            $text = substr($text, 2);
+        }
+        return "<p class=\"{$class}\">" . $this->applyInlineStyles($text);
+    }
+
+    /**
      * Renders markdown content to HTML.
      *
      * @param string $content
@@ -84,6 +101,7 @@ class MarkDown extends Widget
         $result = [];
         $ulOpened = false;
         $olOpened = false;
+        $scrollOpened = false;
 
         $pOpened = false;
         foreach ($lines as $line) {
@@ -93,6 +111,22 @@ class MarkDown extends Widget
                 $ulOpened = $this->closeTag($ulOpened, 'ul', $result);
                 $olOpened = $this->closeTag($olOpened, 'ol', $result);
                 $pOpened = $this->closeTag($pOpened, 'p', $result);
+                continue;
+            }
+
+            // Scroll block marker (§§)
+            if ($trimmed === '§§') {
+                $ulOpened = $this->closeTag($ulOpened, 'ul', $result);
+                $olOpened = $this->closeTag($olOpened, 'ol', $result);
+                $pOpened = $this->closeTag($pOpened, 'p', $result);
+
+                if (!$scrollOpened) {
+                    $result[] = '<div class="scroll">';
+                    $scrollOpened = true;
+                } else {
+                    $result[] = '</div>';
+                    $scrollOpened = false;
+                }
                 continue;
             }
 
@@ -144,17 +178,19 @@ class MarkDown extends Widget
             $olOpened = $this->closeTag($olOpened, 'ol', $result);
 
             if (!$pOpened) {
-                $result[] = '<p class="mb-3">' . $this->applyInlineStyles($trimmed);
+                $result[] = $this->applySpecialParagraphStyles($trimmed);
                 $pOpened = true;
             } else {
                 $lastIdx = count($result) - 1;
                 $result[$lastIdx] .= ' ' . $this->applyInlineStyles($trimmed);
             }
-            // Close any remaining tags
-            $this->closeTag($ulOpened, 'ul', $result);
-            $this->closeTag($olOpened, 'ol', $result);
-            $this->closeTag($pOpened, 'p', $result);
         }
+
+        // Close any remaining tags
+        $this->closeTag($ulOpened, 'ul', $result);
+        $this->closeTag($olOpened, 'ol', $result);
+        $this->closeTag($pOpened, 'p', $result);
+        $this->closeTag($scrollOpened, 'div', $result);
 
         return implode(PHP_EOL, $result);
     }

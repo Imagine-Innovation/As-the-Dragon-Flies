@@ -16,6 +16,9 @@ $buttons = [
     ['icon' => 'bi-type-h4', 'cmd' => 'h4', 'title' => 'Heading 4'],
     ['icon' => 'bi-type-h5', 'cmd' => 'h5', 'title' => 'Heading 5'],
     ['icon' => 'bi-type-h6', 'cmd' => 'h6', 'title' => 'Heading 6'],
+    ['icon' => 'dnd-scroll', 'cmd' => 'scroll', 'title' => 'Scroll block'],
+    ['icon' => 'bi-bookmark-heart', 'cmd' => 'text-scroll', 'title' => 'Scroll text'],
+    ['icon' => 'bi-bookmark-x', 'cmd' => 'text-dwarvish', 'title' => 'Dwarvish text'],
     ['icon' => 'bi-eraser-fill', 'cmd' => 'clear', 'title' => 'Clear format'],
 ];
 ?>

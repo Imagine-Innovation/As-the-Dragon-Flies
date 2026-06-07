@@ -41,6 +41,10 @@ class SimpleRichTextEditor {
 
         if (cmd.match(/^(h[1-6]|p)$/)) {
             document.execCommand('formatBlock', false, cmd.toUpperCase());
+        } else if (cmd === 'scroll') {
+            this.toggleScrollBlock(editor);
+        } else if (cmd === 'text-scroll' || cmd === 'text-dwarvish') {
+            this.toggleTextClass(editor, cmd);
         } else if (cmd === 'insertHorizontalRule') {
             document.execCommand('insertHorizontalRule', false, null);
         } else if (cmd === 'createLink') {
@@ -89,6 +93,69 @@ class SimpleRichTextEditor {
     static headingPrefix(tagName) {
         const level = parseInt(tagName[1], 10);
         return '#'.repeat(level);
+    }
+
+    /**
+     * Toggles a scroll div block around the current selection.
+     * @param {HTMLElement} editor
+     */
+    static toggleScrollBlock(editor) {
+        const selection = window.getSelection();
+        if (!selection.rangeCount) return;
+
+        const range = selection.getRangeAt(0);
+        let container = range.commonAncestorContainer;
+        if (container.nodeType === 3) container = container.parentNode;
+
+        const scrollDiv = container.closest('div.scroll');
+
+        if (scrollDiv) {
+            // Unwrap
+            while (scrollDiv.firstChild) {
+                scrollDiv.parentNode.insertBefore(scrollDiv.firstChild, scrollDiv);
+            }
+            scrollDiv.remove();
+        } else {
+            // Wrap
+            const div = document.createElement('div');
+            div.className = 'scroll';
+            try {
+                range.surroundContents(div);
+            } catch (e) {
+                // surroundContents can fail if range intersects partial nodes
+                const content = range.extractContents();
+                div.appendChild(content);
+                range.insertNode(div);
+            }
+        }
+    }
+
+    /**
+     * Toggles a class on the current paragraph.
+     * @param {HTMLElement} editor
+     * @param {string} className
+     */
+    static toggleTextClass(editor, className) {
+        const selection = window.getSelection();
+        if (!selection.rangeCount) return;
+
+        const range = selection.getRangeAt(0);
+        let container = range.commonAncestorContainer;
+        if (container.nodeType === 3) container = container.parentNode;
+
+        const p = container.closest('p');
+        if (p) {
+            if (p.classList.contains(className)) {
+                p.classList.remove(className);
+            } else {
+                p.classList.remove('text-scroll', 'text-dwarvish');
+                p.classList.add(className);
+            }
+        } else {
+            // If not in a P, maybe we can wrap current line/selection in a P first
+            document.execCommand('formatBlock', false, 'P');
+            this.toggleTextClass(editor, className);
+        }
     }
 
     /**
@@ -175,6 +242,16 @@ class SimpleRichTextEditor {
                                 parts.push('\n\n', walk(child), '\n');
                             } else if (/^h[1-6]$/.test(tagName)) {
                                 parts.push('\n', this.headingPrefix(tagName), ' ', walk(child), '\n');
+                            } else if (tagName === 'div' && child.classList.contains('scroll')) {
+                                parts.push('\n§§\n', walk(child), '\n§§\n');
+                            } else if (tagName === 'p') {
+                                let prefix = '';
+                                if (child.classList.contains('text-scroll')) {
+                                    prefix = '++';
+                                } else if (child.classList.contains('text-dwarvish')) {
+                                    prefix = '--';
+                                }
+                                parts.push('\n', prefix, walk(child), '\n');
                             } else if (this.isBlock(tagName)) {
                                 parts.push('\n', walk(child), '\n');
                             } else {
