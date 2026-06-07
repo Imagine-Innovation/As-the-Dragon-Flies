@@ -41,6 +41,10 @@ class SimpleRichTextEditor {
 
         if (cmd.match(/^(h[1-6]|p)$/)) {
             document.execCommand('formatBlock', false, cmd.toUpperCase());
+        } else if (cmd === 'scroll') {
+            this.toggleScrollBlock(editor);
+        } else if (cmd === 'text-scroll' || cmd === 'text-dwarvish') {
+            this.toggleTextClass(editor, cmd);
         } else if (cmd === 'insertHorizontalRule') {
             document.execCommand('insertHorizontalRule', false, null);
         } else if (cmd === 'createLink') {
@@ -89,6 +93,84 @@ class SimpleRichTextEditor {
     static headingPrefix(tagName) {
         const level = parseInt(tagName[1], 10);
         return '#'.repeat(level);
+    }
+
+    /**
+     * Toggles a scroll div block around the current selection.
+     * @param {HTMLElement} editor
+     */
+    static toggleScrollBlock(editor) {
+        const selection = window.getSelection();
+        if (!selection.rangeCount) return;
+
+        const range = selection.getRangeAt(0);
+        if (!editor.contains(range.commonAncestorContainer)) return;
+
+        let container = range.commonAncestorContainer;
+        if (container.nodeType === 3) container = container.parentNode;
+
+        const scrollDiv = container.closest('div.scroll');
+
+        if (scrollDiv && editor.contains(scrollDiv)) {
+            // Unwrap: move children out and remove the div
+            const fragment = document.createDocumentFragment();
+            while (scrollDiv.firstChild) {
+                fragment.appendChild(scrollDiv.firstChild);
+            }
+            scrollDiv.parentNode.replaceChild(fragment, scrollDiv);
+        } else {
+            // Wrap the selected range in a scroll div
+            const div = document.createElement('div');
+            div.className = 'scroll';
+            try {
+                range.surroundContents(div);
+            } catch (e) {
+                // If selection spans multiple nodes, extract and wrap
+                div.appendChild(range.extractContents());
+                range.insertNode(div);
+            }
+        }
+    }
+
+    /**
+     * Toggles a class on the current paragraph.
+     * @param {HTMLElement} editor
+     * @param {string} className
+     */
+    static toggleTextClass(editor, className) {
+        const selection = window.getSelection();
+        if (!selection.rangeCount) return;
+
+        const range = selection.getRangeAt(0);
+        if (!editor.contains(range.commonAncestorContainer)) return;
+
+        let container = range.commonAncestorContainer;
+        if (container.nodeType === 3) container = container.parentNode;
+
+        const p = container.closest('p');
+        if (p && editor.contains(p)) {
+            if (p.classList.contains(className)) {
+                p.classList.remove(className);
+            } else {
+                p.classList.remove('text-scroll', 'text-dwarvish');
+                p.classList.add(className);
+            }
+        } else {
+            // Ensure we are inside a paragraph first
+            document.execCommand('formatBlock', false, 'P');
+            // Re-fetch the paragraph after formatting
+            const newSelection = window.getSelection();
+            if (newSelection.rangeCount) {
+                const newRange = newSelection.getRangeAt(0);
+                let newContainer = newRange.commonAncestorContainer;
+                if (newContainer.nodeType === 3) newContainer = newContainer.parentNode;
+                const newP = newContainer.closest('p');
+                if (newP && editor.contains(newP)) {
+                    newP.classList.remove('text-scroll', 'text-dwarvish');
+                    newP.classList.add(className);
+                }
+            }
+        }
     }
 
     /**
@@ -175,6 +257,16 @@ class SimpleRichTextEditor {
                                 parts.push('\n\n', walk(child), '\n');
                             } else if (/^h[1-6]$/.test(tagName)) {
                                 parts.push('\n', this.headingPrefix(tagName), ' ', walk(child), '\n');
+                            } else if (tagName === 'div' && child.classList.contains('scroll')) {
+                                parts.push('\n§§\n', walk(child), '\n§§\n');
+                            } else if (tagName === 'p') {
+                                let prefix = '';
+                                if (child.classList.contains('text-scroll')) {
+                                    prefix = '++';
+                                } else if (child.classList.contains('text-dwarvish')) {
+                                    prefix = '--';
+                                }
+                                parts.push('\n', prefix, walk(child), '\n');
                             } else if (this.isBlock(tagName)) {
                                 parts.push('\n', walk(child), '\n');
                             } else {
