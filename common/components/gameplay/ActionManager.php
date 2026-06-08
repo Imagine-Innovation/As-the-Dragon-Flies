@@ -213,9 +213,13 @@ class ActionManager extends BaseManager
 
         $nextMissionId = null;
         $canReplay = true;
+        $currentMissionId = (int) $this->questProgress?->mission_id;
+
         foreach ($outcomes as $outcome) {
             $canReplay = $canReplay && $outcome->can_replay === 1;
-            $nextMissionId = $outcome->next_mission_id === $this->questProgress?->mission_id ? null : $outcome->next_mission_id;
+            if ($outcome->next_mission_id !== null && (int) $outcome->next_mission_id !== $currentMissionId) {
+                $nextMissionId = (int) $outcome->next_mission_id;
+            }
         }
         $this->nextMissionId = $nextMissionId;
         return $canReplay;

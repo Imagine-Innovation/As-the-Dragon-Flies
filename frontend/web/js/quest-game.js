@@ -124,12 +124,7 @@ class VirtualTableTop {
         Logger.log(2, '_updateMission', `missionId=${missionId}`);
 
         const targetTitle = `#missionTitle`;
-        if (!DOMUtils.exists(targetTitle))
-            return;
-
         const targetDescription = `#missionDescription`;
-        if (!DOMUtils.exists(targetDescription))
-            return;
 
         AjaxUtils.request({
             url: 'game/ajax-mission',
@@ -138,9 +133,14 @@ class VirtualTableTop {
             successCallback: (response) => {
                 if (!response.error) {
                     const content = response.content;
-                    $(targetDescription).html(content);
-                    $(targetTitle).html(response.title);
+                    if (DOMUtils.exists(targetDescription)) {
+                        $(targetDescription).html(content);
+                    }
+                    if (DOMUtils.exists(targetTitle)) {
+                        $(targetTitle).html(response.title);
+                    }
                     this.updateContext({missionId: missionId});
+                    $('#hiddenQuestMissionId').html(missionId);
                 }
             }
         });
@@ -154,6 +154,9 @@ class VirtualTableTop {
                 currentPlayerId: nextPlayerId,
                 currentPlayerName: nextPlayerName
             });
+            // Also update the hidden inputs for immediate consistency if they exist
+            $('#hiddenCurrentPlayerId').html(nextPlayerId);
+            $('#hiddenCurrentPlayerName').html(nextPlayerName);
         }
 
         const target = `#turnDescription`;
@@ -200,6 +203,7 @@ class VirtualTableTop {
                 const content = response.error ? response.msg : response.content;
                 if (!response.error) {
                     this.updateContext({questProgressId: questProgressId});
+                    $('#hiddenQuestProgressId').html(questProgressId);
                 }
                 $(target).html(content);
             }

@@ -330,17 +330,21 @@ class GameController extends Controller
         $currentMissionId = (int) $request->post('missionId');
         $remainingActions = $questProgress->remainingActions;
 
+        Yii::debug("*** debug *** actionAjaxNextTurn - questProgressId={$questProgressId}, nextMissionId=" . ($nextMissionId ?? 'null') . ", currentMissionId={$currentMissionId}, remainingActionsCount=" . count($remainingActions));
 
         if ($remainingActions) {
-            if ($nextMissionId && $nextMissionId !== $currentMissionId) {
+            if ($nextMissionId && (int) $nextMissionId !== $currentMissionId) {
                 // One of the results of the previous action indicates
                 // that you should move on to another mission.
                 // This takes over the processing of the remaining actions.
-                return $questManager->moveToNextMission($nextMissionId);
+                Yii::debug("*** debug *** actionAjaxNextTurn - branching to moveToNextMission({$nextMissionId}) despite remaining actions");
+                return $questManager->moveToNextMission((int) $nextMissionId);
             }
+            Yii::debug("*** debug *** actionAjaxNextTurn - remaining actions exist, moving to nextPlayer()");
             return $questManager->nextPlayer();
         }
         // Move to the default mission
+        Yii::debug("*** debug *** actionAjaxNextTurn - no remaining actions, calling moveToNextMission(" . ($nextMissionId ?? 'null') . ")");
         return $questManager->moveToNextMission($nextMissionId);
     }
 
