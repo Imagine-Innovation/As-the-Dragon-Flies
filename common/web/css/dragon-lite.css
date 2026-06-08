@@ -95,6 +95,16 @@ TYPOGRAPHY
     text-decoration: none!important;
 }
 
+.text-dwarvish {
+    font-family: 'Glagolitsa', sans-serif;
+    font-style: oblique;
+}
+
+.text-scroll {
+    font-family: 'Bastarda', serif;
+    font-size-adjust: 0.8;
+}
+
 /* ==============================
 TABLES
 ============================== */
