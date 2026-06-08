@@ -217,7 +217,7 @@ class ActionManager extends BaseManager
 
         foreach ($outcomes as $outcome) {
             $canReplay = $canReplay && $outcome->can_replay === 1;
-            if ($outcome->next_mission_id !== null && (int) $outcome->next_mission_id !== $currentMissionId) {
+            if ($nextMissionId === null && $outcome->next_mission_id !== null && (int) $outcome->next_mission_id !== $currentMissionId) {
                 $nextMissionId = (int) $outcome->next_mission_id;
             }
         }

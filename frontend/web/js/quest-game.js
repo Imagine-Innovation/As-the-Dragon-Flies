@@ -10,14 +10,14 @@ class VirtualTableTop {
 
     init() {
         this.context = {
-            storyId: $('#hiddenStoryId').html(),
-            questId: $('#hiddenQuestId').html(),
-            playerId: $('#hiddenPlayerId').html(),
-            currentPlayerId: $('#hiddenCurrentPlayerId').html(),
-            currentPlayerName: $('#hiddenCurrentPlayerName').html(),
-            missionId: $('#hiddenQuestMissionId').html(),
-            questProgressId: $('#hiddenQuestProgressId').html(),
-            actionId: $('#hiddenQuestActionId').html()
+            storyId: DOMUtils.getParam('hiddenStoryId'),
+            questId: DOMUtils.getParam('hiddenQuestId'),
+            playerId: DOMUtils.getParam('hiddenPlayerId'),
+            currentPlayerId: DOMUtils.getParam('hiddenCurrentPlayerId'),
+            currentPlayerName: DOMUtils.getParam('hiddenCurrentPlayerName'),
+            missionId: DOMUtils.getParam('hiddenQuestMissionId'),
+            questProgressId: DOMUtils.getParam('hiddenQuestProgressId'),
+            actionId: DOMUtils.getParam('hiddenQuestActionId')
         };
         Logger.log(1, 'init', `context=${JSON.stringify(this.context, null, 2)}`);
 
@@ -140,7 +140,7 @@ class VirtualTableTop {
                         $(targetTitle).html(response.title);
                     }
                     this.updateContext({missionId: missionId});
-                    $('#hiddenQuestMissionId').html(missionId);
+                    $('#hiddenQuestMissionId').val(missionId);
                 }
             }
         });
@@ -155,8 +155,8 @@ class VirtualTableTop {
                 currentPlayerName: nextPlayerName
             });
             // Also update the hidden inputs for immediate consistency if they exist
-            $('#hiddenCurrentPlayerId').html(nextPlayerId);
-            $('#hiddenCurrentPlayerName').html(nextPlayerName);
+            $('#hiddenCurrentPlayerId').val(nextPlayerId);
+            $('#hiddenCurrentPlayerName').val(nextPlayerName);
         }
 
         const target = `#turnDescription`;
@@ -203,7 +203,7 @@ class VirtualTableTop {
                 const content = response.error ? response.msg : response.content;
                 if (!response.error) {
                     this.updateContext({questProgressId: questProgressId});
-                    $('#hiddenQuestProgressId').html(questProgressId);
+                    $('#hiddenQuestProgressId').val(questProgressId);
                 }
                 $(target).html(content);
             }
