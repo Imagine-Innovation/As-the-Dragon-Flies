@@ -5,7 +5,7 @@ namespace frontend\widgets;
 use common\components\AppStatus;
 use common\helpers\WebResourcesHelper;
 use common\models\Outcome;
-use common\helpers\RichTextHelper;
+use common\widgets\MarkDown;
 use yii\base\Widget;
 
 class ActionOutcomes extends Widget
@@ -40,7 +40,7 @@ class ActionOutcomes extends Widget
             $storyRoot = WebResourcesHelper::storyRootPath($this->storyId);
             foreach ($this->outcomes as $outcome) {
                 $html .= self::HR;
-                $description = RichTextHelper::sanitizeWithCache($outcome->description);
+                $description = MarkDown::widget(['content' => $outcome->description]);
                 $actionOutcome = $this->getActionOutcome($outcome);
                 $html .= $this->render('action-outcome', [
                     'outcomeName' => $outcome->name,
