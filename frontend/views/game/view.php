@@ -132,7 +132,7 @@ $isCurrentPlayer = $currentQuestProgress->current_player_id === $playerId;
                         <article class="flex-grow-1 h-auto mb-3">
                             <?=
                             AjaxContainer::widget([
-                                'name' => 'missionDescription',
+                                'name' => 'description',
                                 'options' => ['class' => 'text-decoration']
                             ])
                             ?>

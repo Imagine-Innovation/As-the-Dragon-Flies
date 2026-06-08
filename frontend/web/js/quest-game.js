@@ -127,7 +127,7 @@ class VirtualTableTop {
         if (!DOMUtils.exists(targetTitle))
             return;
 
-        const targetDescription = `#missionDescription`;
+        const targetDescription = `#description`;
         if (!DOMUtils.exists(targetDescription))
             return;
 
@@ -266,6 +266,15 @@ class VirtualTableTop {
         }
     }
 
+    yyytalk(actionId, replyId) {
+        Logger.log(1, 'talk', `actionId=${actionId}, replyId=${replyId}`);
+        const target = `#desciption`;
+        $(target).html(`Talk: actionId=${actionId}, replyId=${replyId}`);
+        // Store the current action in the context
+        this.context.actionId = actionId;
+        this._dialog(replyId);
+    }
+
     talk(actionId, replyId) {
         Logger.log(1, 'talk', `actionId=${actionId}, replyId=${replyId}`);
         const target = `#actionFeedback`;
@@ -382,6 +391,35 @@ class VirtualTableTop {
                     if (!this._handleResponseEvent(response)) {
                         window.location.reload();
                     }
+                }
+            }
+        });
+    }
+    
+    zzzevaluateAction(actionId) {
+        Logger.log(1, 'evaluateAction', `actionId=${actionId ?? 'null'}`);
+
+        // Store the current action in the context
+        if (actionId)
+            this.context.actionId = actionId;
+
+        const target = `#description`;
+        if (!DOMUtils.exists(target))
+            return;
+
+        AjaxUtils.request({
+            url: 'game/ajax-evaluate',
+            method: 'POST',
+            data: this.context,
+            successCallback: (response) => {
+                if (!response.error) {
+                    $(target).html(response.content);
+                    // update action list
+                    this._updateActions(this.context.playerId, this.context.currentPlayerId, this.context.questProgressId);
+                }
+                this._updatePlayer(this.context.playerId);
+                if (typeof notificationClient !== 'undefined') {
+                    notificationClient.updateChatMessages();
                 }
             }
         });

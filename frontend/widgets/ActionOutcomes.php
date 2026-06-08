@@ -6,6 +6,7 @@ use common\components\AppStatus;
 use common\helpers\WebResourcesHelper;
 use common\models\Outcome;
 use common\helpers\RichTextHelper;
+use Yii;
 use yii\base\Widget;
 
 class ActionOutcomes extends Widget
@@ -40,7 +41,9 @@ class ActionOutcomes extends Widget
             $storyRoot = WebResourcesHelper::storyRootPath($this->storyId);
             foreach ($this->outcomes as $outcome) {
                 $html .= self::HR;
+                Yii::debug("*** debug *** ActionOutcomes widget - MD description = " . implode("<br>", explode("\n", $outcome->description)));
                 $description = RichTextHelper::sanitizeWithCache($outcome->description);
+                Yii::debug("*** debug *** ActionOutcomes widget - sanitizeWithCache description = " . implode("<br>", explode("\n", $description)));
                 $actionOutcome = $this->getActionOutcome($outcome);
                 $html .= $this->render('action-outcome', [
                     'outcomeName' => $outcome->name,
