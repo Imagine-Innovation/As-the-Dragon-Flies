@@ -79,7 +79,7 @@ class MarkDown extends Widget
             $class .= ' text-dwarvish';
             $text = substr($text, 2);
         }
-        return "<p class=\"{$class}\">" . $this->applyInlineStyles($text);
+        return "<p class=\"{$class}\">" . $this->applyInlineStyles($text) . "</p>";
     }
 
     /**
@@ -103,14 +103,12 @@ class MarkDown extends Widget
         $olOpened = false;
         $scrollOpened = false;
 
-        $pOpened = false;
         foreach ($lines as $line) {
             $trimmed = trim($line);
 
             if (empty($trimmed)) {
                 $ulOpened = $this->closeTag($ulOpened, 'ul', $result);
                 $olOpened = $this->closeTag($olOpened, 'ol', $result);
-                $pOpened = $this->closeTag($pOpened, 'p', $result);
                 continue;
             }
 
@@ -118,7 +116,6 @@ class MarkDown extends Widget
             if ($trimmed === '§§') {
                 $ulOpened = $this->closeTag($ulOpened, 'ul', $result);
                 $olOpened = $this->closeTag($olOpened, 'ol', $result);
-                $pOpened = $this->closeTag($pOpened, 'p', $result);
 
                 if (!$scrollOpened) {
                     $result[] = '<div class="scroll">';
@@ -134,7 +131,6 @@ class MarkDown extends Widget
             if (preg_match('/^([-*_])\1{2,}$/', $trimmed)) {
                 $ulOpened = $this->closeTag($ulOpened, 'ul', $result);
                 $olOpened = $this->closeTag($olOpened, 'ol', $result);
-                $pOpened = $this->closeTag($pOpened, 'p', $result);
                 $result[] = '<hr class="my-4">';
                 continue;
             }
@@ -143,7 +139,6 @@ class MarkDown extends Widget
             if (preg_match('/^(#{1,6})\s+(.+)$/', $trimmed, $matches)) {
                 $ulOpened = $this->closeTag($ulOpened, 'ul', $result);
                 $olOpened = $this->closeTag($olOpened, 'ol', $result);
-                $pOpened = $this->closeTag($pOpened, 'p', $result);
 
                 $level = strlen($matches[1]);
                 $innerContent = $this->applyInlineStyles($matches[2]);
@@ -155,7 +150,6 @@ class MarkDown extends Widget
             if (preg_match('/^[\*\-\+]\s+(.+)$/', $trimmed, $matches)) {
                 $ulOpened = $this->openTag($ulOpened, 'ul', $result);
                 $olOpened = $this->closeTag($olOpened, 'ol', $result);
-                $pOpened = $this->closeTag($pOpened, 'p', $result);
 
                 $innerContent = $this->applyInlineStyles($matches[1]);
                 $result[] = "<li>{$innerContent}</li>";
@@ -166,7 +160,6 @@ class MarkDown extends Widget
             if (preg_match('/^\d+\.\s+(.+)$/', $trimmed, $matches)) {
                 $ulOpened = $this->closeTag($ulOpened, 'ul', $result);
                 $olOpened = $this->openTag($olOpened, 'ol', $result);
-                $pOpened = $this->closeTag($pOpened, 'p', $result);
 
                 $innerContent = $this->applyInlineStyles($matches[1]);
                 $result[] = "<li>{$innerContent}</li>";
@@ -176,16 +169,13 @@ class MarkDown extends Widget
             // Paragraph - treat every non-empty line as a separate paragraph
             $ulOpened = $this->closeTag($ulOpened, 'ul', $result);
             $olOpened = $this->closeTag($olOpened, 'ol', $result);
-            $pOpened = $this->closeTag($pOpened, 'p', $result);
 
             $result[] = $this->applySpecialParagraphStyles($trimmed);
-            $pOpened = true;
         }
 
         // Close any remaining tags
         $this->closeTag($ulOpened, 'ul', $result);
         $this->closeTag($olOpened, 'ol', $result);
-        $this->closeTag($pOpened, 'p', $result);
         $this->closeTag($scrollOpened, 'div', $result);
 
         return implode(PHP_EOL, $result);
