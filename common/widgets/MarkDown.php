@@ -173,17 +173,13 @@ class MarkDown extends Widget
                 continue;
             }
 
-            // Paragraph
+            // Paragraph - treat every non-empty line as a separate paragraph
             $ulOpened = $this->closeTag($ulOpened, 'ul', $result);
             $olOpened = $this->closeTag($olOpened, 'ol', $result);
+            $pOpened = $this->closeTag($pOpened, 'p', $result);
 
-            if (!$pOpened) {
-                $result[] = $this->applySpecialParagraphStyles($trimmed);
-                $pOpened = true;
-            } else {
-                $lastIdx = count($result) - 1;
-                $result[$lastIdx] .= ' ' . $this->applyInlineStyles($trimmed);
-            }
+            $result[] = $this->applySpecialParagraphStyles($trimmed);
+            $pOpened = true;
         }
 
         // Close any remaining tags
