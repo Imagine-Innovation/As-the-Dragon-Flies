@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SimpleRichText Test</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .scroll { border: 1px solid blue; padding: 10px; }
+        .text-scroll { font-style: italic; color: green; }
+        .text-dwarvish { font-family: monospace; color: red; }
+        .simple-rich-text-editor { border: 1px solid #ccc; padding: 10px; min-height: 100px; }
+    </style>
+</head>
+<body>
+    <div id="test-container">
+        <input type="hidden" id="editor1" value="">
+        <div class="simple-rich-text-container">
+            <button onclick="SimpleRichTextEditor.exec('editor1', 'scroll')">Scroll Block</button>
+            <button onclick="SimpleRichTextEditor.exec('editor1', 'text-scroll')">Scroll Text</button>
+            <button onclick="SimpleRichTextEditor.exec('editor1', 'text-dwarvish')">Dwarvish Text</button>
+            <button id="clear-btn" onclick="SimpleRichTextEditor.exec('editor1', 'clear')">Clear Format</button>
+
+            <div id="editor1-editor" class="simple-rich-text-editor" contenteditable="true">
+                <p>Normal text</p>
+                <div class="scroll"><p>Scroll block text</p></div>
+                <p class="text-scroll">Scroll text paragraph</p>
+                <p class="text-dwarvish">Dwarvish text paragraph</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock jQuery since we're loading it from CDN in the head
+        // and our script expects it to be available.
+    </script>
+    <script src="../common/web/js/simple-rich-text.js"></script>
+</body>
+</html>

@@ -53,6 +53,7 @@ class SimpleRichTextEditor {
                 document.execCommand(cmd, false, url);
             }
         } else if (cmd === 'clear') {
+            this.removeCustomFormatting(editor);
             document.execCommand('removeFormat', false, null);
             document.execCommand('unlink', false, null);
             document.execCommand('formatBlock', false, 'P');
@@ -171,6 +172,37 @@ class SimpleRichTextEditor {
                 }
             }
         }
+    }
+
+    /**
+     * Removes custom formatting (Scroll blocks, Scroll text, Dwarvish text) from the current selection.
+     * @param {HTMLElement} editor
+     */
+    static removeCustomFormatting(editor) {
+        const selection = window.getSelection();
+        if (!selection.rangeCount) return;
+
+        const range = selection.getRangeAt(0);
+        if (!editor.contains(range.commonAncestorContainer)) return;
+
+        const commonAncestor = range.commonAncestorContainer;
+        const commonAncestorElement = commonAncestor.nodeType === 1 ? commonAncestor : commonAncestor.parentNode;
+
+        // Handle paragraphs with custom classes
+        $(editor).find('p.text-scroll, p.text-dwarvish').each(function() {
+            if (selection.containsNode(this, true) || (commonAncestorElement && this.contains(commonAncestorElement))) {
+                $(this).removeClass('text-scroll text-dwarvish');
+            }
+        });
+
+        // Handle scroll blocks
+        $(editor).find('div.scroll').each(function() {
+            if (selection.containsNode(this, true) || (commonAncestorElement && this.contains(commonAncestorElement))) {
+                if (document.contains(this)) {
+                    $(this).contents().unwrap();
+                }
+            }
+        });
     }
 
     /**
