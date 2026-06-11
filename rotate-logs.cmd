@@ -4,38 +4,38 @@ c:
 cd \temp
 
 :: --- Configuration ---
-set "fichierSource=%1"
+set "sourceFile=%1"
 set "n=%2"
 
-:: V‚rification des arguments
+:: Check argument count
 if "%n%"=="" (
    set "n=5"
 )
 
-:: V‚rification si le fichier source existe
-if not exist "%fichierSource%" (
-    echo Le fichier %fichierSource% est introuvable.
-	type nul > "%fichierSource%"
+:: Check if source file exists
+if not exist "%sourceFile%" (
+    echo Le fichier %sourceFile% est introuvable.
+	type nul > "%sourceFile%"
 	pause
     exit /b
 )
 
-:: --- Rotation ---
-:: 1. Suppression de la version la plus ancienne (n)
-if exist "%fichierSource%.%n%" del "%fichierSource%.%n%"
+:: --- Rotate ---
+:: 1. Delete oldest version (n)
+if exist "%sourceFile%.%n%" del "%sourceFile%.%n%"
 
-:: 2. D‚calage des versions (de n-1 vers n, n-2 vers n-1, etc.)
+:: 2. Version shift (from n-1 to n, from n-2 to n-1, etc.)
 for /L %%i in (%n%, -1, 2) do (
     set /a prev=%%i-1
-    if exist "%fichierSource%.!prev!" (
-        ren "%fichierSource%.!prev!" "%fichierSource%.%%i"
+    if exist "%sourceFile%.!prev!" (
+        ren "%sourceFile%.!prev!" "%sourceFile%.%%i"
     )
 )
 
-:: 3. Renommage du fichier actuel en version 1
-ren "%fichierSource%" "%fichierSource%.1"
+:: 3. Rename the current file to Version 1
+ren "%sourceFile%" "%sourceFile%.1"
 
-:: 4. Cr‚ation d'un nouveau fichier vide (optionnel, … d‚commenter si besoin)
-type nul > "%fichierSource%"
+:: 4. Create a new empty file (optional; uncomment if necessary)
+type nul > "%sourceFile%"
 
-echo Rotation fichier %fichierSource% termin‚e : %n% versions conserv‚es.
+echo Cycle %sourceFile% completed: %n% versions retained.
