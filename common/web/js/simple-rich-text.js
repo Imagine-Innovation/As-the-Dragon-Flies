@@ -97,36 +97,57 @@ class SimpleRichTextEditor {
     }
 
     /**
-     * Toggles a scroll div block around the current selection.
+     * Returns the current selection context if it is within the editor.
      * @param {HTMLElement} editor
+     * @returns {{selection: Selection, range: Range, container: HTMLElement}|null}
+     * @private
      */
-    static toggleScrollBlock(editor) {
+    static _getSelectionContext(editor) {
         const selection = window.getSelection();
-        if (!selection.rangeCount) return;
+        if (!selection.rangeCount) return null;
 
         const range = selection.getRangeAt(0);
-        if (!editor.contains(range.commonAncestorContainer)) return;
+        if (!editor.contains(range.commonAncestorContainer)) return null;
 
         let container = range.commonAncestorContainer;
         if (container.nodeType === 3) container = container.parentNode;
 
+        return { selection, range, container };
+    }
+
+    /**
+     * Unwraps the children of an element.
+     * @param {HTMLElement} el
+     * @private
+     */
+    static _unwrap(el) {
+        const parent = el.parentNode;
+        if (!parent) return;
+        while (el.firstChild) {
+            parent.insertBefore(el.firstChild, el);
+        }
+        parent.removeChild(el);
+    }
+
+    /**
+     * Toggles a scroll div block around the current selection.
+     * @param {HTMLElement} editor
+     */
+    static toggleScrollBlock(editor) {
+        const context = SimpleRichTextEditor._getSelectionContext(editor);
+        if (!context) return;
+
+        const { range, container } = context;
         const scrollDiv = container.closest('div.scroll');
 
         if (scrollDiv && editor.contains(scrollDiv)) {
-            // Unwrap: move children out and remove the div
-            const fragment = document.createDocumentFragment();
-            while (scrollDiv.firstChild) {
-                fragment.appendChild(scrollDiv.firstChild);
-            }
-            scrollDiv.parentNode.replaceChild(fragment, scrollDiv);
+            SimpleRichTextEditor._unwrap(scrollDiv);
         } else {
-            // Wrap the selected range in a scroll div
             const div = document.createElement('div');
             div.className = 'scroll';
             try {
                 range.surroundContents(div);
             } catch (e) {
-                // If selection spans multiple nodes, extract and wrap
                 div.appendChild(range.extractContents());
                 range.insertNode(div);
             }
@@ -139,37 +160,25 @@ class SimpleRichTextEditor {
      * @param {string} className
      */
     static toggleTextClass(editor, className) {
-        const selection = window.getSelection();
-        if (!selection.rangeCount) return;
+        const context = SimpleRichTextEditor._getSelectionContext(editor);
+        if (!context) return;
 
-        const range = selection.getRangeAt(0);
-        if (!editor.contains(range.commonAncestorContainer)) return;
+        let { container } = context;
+        let p = container.closest('p');
 
-        let container = range.commonAncestorContainer;
-        if (container.nodeType === 3) container = container.parentNode;
+        if (!p || !editor.contains(p)) {
+            document.execCommand('formatBlock', false, 'P');
+            const newContext = SimpleRichTextEditor._getSelectionContext(editor);
+            if (!newContext) return;
+            p = newContext.container.closest('p');
+        }
 
-        const p = container.closest('p');
         if (p && editor.contains(p)) {
             if (p.classList.contains(className)) {
                 p.classList.remove(className);
             } else {
                 p.classList.remove('text-scroll', 'text-dwarvish');
                 p.classList.add(className);
-            }
-        } else {
-            // Ensure we are inside a paragraph first
-            document.execCommand('formatBlock', false, 'P');
-            // Re-fetch the paragraph after formatting
-            const newSelection = window.getSelection();
-            if (newSelection.rangeCount) {
-                const newRange = newSelection.getRangeAt(0);
-                let newContainer = newRange.commonAncestorContainer;
-                if (newContainer.nodeType === 3) newContainer = newContainer.parentNode;
-                const newP = newContainer.closest('p');
-                if (newP && editor.contains(newP)) {
-                    newP.classList.remove('text-scroll', 'text-dwarvish');
-                    newP.classList.add(className);
-                }
             }
         }
     }
@@ -179,28 +188,22 @@ class SimpleRichTextEditor {
      * @param {HTMLElement} editor
      */
     static removeCustomFormatting(editor) {
-        const selection = window.getSelection();
-        if (!selection.rangeCount) return;
+        const context = SimpleRichTextEditor._getSelectionContext(editor);
+        if (!context) return;
 
-        const range = selection.getRangeAt(0);
-        if (!editor.contains(range.commonAncestorContainer)) return;
-
-        const commonAncestor = range.commonAncestorContainer;
-        const commonAncestorElement = commonAncestor.nodeType === 1 ? commonAncestor : commonAncestor.parentNode;
+        const { selection, container } = context;
 
         // Handle paragraphs with custom classes
-        $(editor).find('p.text-scroll, p.text-dwarvish').each(function() {
-            if (selection.containsNode(this, true) || (commonAncestorElement && this.contains(commonAncestorElement))) {
-                $(this).removeClass('text-scroll text-dwarvish');
+        editor.querySelectorAll('p.text-scroll, p.text-dwarvish').forEach(p => {
+            if (selection.containsNode(p, true) || p.contains(container)) {
+                p.classList.remove('text-scroll', 'text-dwarvish');
             }
         });
 
         // Handle scroll blocks
-        $(editor).find('div.scroll').each(function() {
-            if (selection.containsNode(this, true) || (commonAncestorElement && this.contains(commonAncestorElement))) {
-                if (document.contains(this)) {
-                    $(this).contents().unwrap();
-                }
+        editor.querySelectorAll('div.scroll').forEach(div => {
+            if (selection.containsNode(div, true) || div.contains(container)) {
+                SimpleRichTextEditor._unwrap(div);
             }
         });
     }
