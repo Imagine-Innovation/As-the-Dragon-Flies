@@ -80,7 +80,7 @@ class DOMUtils {
 
         const element = $(`#${parameterId}`);
         if (element.length) {
-            const value = element.html();
+            const value = element.is('input, select, textarea') ? element.val() : element.html();
             if (value) {
                 Logger.log(10, 'getParam', `--> return element: ${value}`);
                 return value;

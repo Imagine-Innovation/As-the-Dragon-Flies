@@ -10,14 +10,14 @@ class VirtualTableTop {
 
     init() {
         this.context = {
-            storyId: $('#hiddenStoryId').html(),
-            questId: $('#hiddenQuestId').html(),
-            playerId: $('#hiddenPlayerId').html(),
-            currentPlayerId: $('#hiddenCurrentPlayerId').html(),
-            currentPlayerName: $('#hiddenCurrentPlayerName').html(),
-            missionId: $('#hiddenQuestMissionId').html(),
-            questProgressId: $('#hiddenQuestProgressId').html(),
-            actionId: $('#hiddenQuestActionId').html()
+            storyId: DOMUtils.getParam('hiddenStoryId'),
+            questId: DOMUtils.getParam('hiddenQuestId'),
+            playerId: DOMUtils.getParam('hiddenPlayerId'),
+            currentPlayerId: DOMUtils.getParam('hiddenCurrentPlayerId'),
+            currentPlayerName: DOMUtils.getParam('hiddenCurrentPlayerName'),
+            missionId: DOMUtils.getParam('hiddenQuestMissionId'),
+            questProgressId: DOMUtils.getParam('hiddenQuestProgressId'),
+            actionId: DOMUtils.getParam('hiddenQuestActionId')
         };
         Logger.log(1, 'init', `context=${JSON.stringify(this.context, null, 2)}`);
 
@@ -138,9 +138,14 @@ class VirtualTableTop {
             successCallback: (response) => {
                 if (!response.error) {
                     const content = response.content;
-                    $(targetDescription).html(content);
-                    $(targetTitle).html(response.title);
+                    if (DOMUtils.exists(targetDescription)) {
+                        $(targetDescription).html(content);
+                    }
+                    if (DOMUtils.exists(targetTitle)) {
+                        $(targetTitle).html(response.title);
+                    }
                     this.updateContext({missionId: missionId});
+                    $('#hiddenQuestMissionId').val(missionId);
                 }
             }
         });
@@ -154,6 +159,9 @@ class VirtualTableTop {
                 currentPlayerId: nextPlayerId,
                 currentPlayerName: nextPlayerName
             });
+            // Also update the hidden inputs for immediate consistency if they exist
+            $('#hiddenCurrentPlayerId').val(nextPlayerId);
+            $('#hiddenCurrentPlayerName').val(nextPlayerName);
         }
 
         const target = `#turnDescription`;
@@ -162,7 +170,7 @@ class VirtualTableTop {
 
         const nextPlayer = (playerId === nextPlayerId) ? 'your' : `${nextPlayerName}'s`;
         const message = `It's ${nextPlayer} turn to play`;
-        $(target).html(message);
+        $(target).text(message);
     }
 
     _updateActions(playerId, currentPlayerId, questProgressId) {
@@ -200,6 +208,7 @@ class VirtualTableTop {
                 const content = response.error ? response.msg : response.content;
                 if (!response.error) {
                     this.updateContext({questProgressId: questProgressId});
+                    $('#hiddenQuestProgressId').val(questProgressId);
                 }
                 $(target).html(content);
             }
@@ -278,7 +287,7 @@ class VirtualTableTop {
     talk(actionId, replyId) {
         Logger.log(1, 'talk', `actionId=${actionId}, replyId=${replyId}`);
         const target = `#actionFeedback`;
-        $(target).html(`Talk: actionId=${actionId}, replyId=${replyId}`);
+        $(target).text(`Talk: actionId=${actionId}, replyId=${replyId}`);
         this._showModal('#gameModal');
         // Store the current action in the context
         this.context.actionId = actionId;
@@ -288,7 +297,7 @@ class VirtualTableTop {
     reply(replyId) {
         Logger.log(1, 'reply', `replyId=${replyId}`);
         const target = `#actionFeedback`;
-        $(target).html(`Reply: replyId=${replyId}`);
+        $(target).text(`Reply: replyId=${replyId}`);
         this._dialog(replyId);
     }
 
@@ -371,7 +380,7 @@ class VirtualTableTop {
     makeAction(actionId) {
         Logger.log(1, 'makeAction', `actionId=${actionId}`);
         const target = `#actionFeedback`;
-        $(target).html(`Action: actionId=${actionId}`);
+        $(target).text(`Action: actionId=${actionId}`);
     }
 
     moveToNextPlayer(questProgressId, nextMissionId) {

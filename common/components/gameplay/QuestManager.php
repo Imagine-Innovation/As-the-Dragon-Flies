@@ -511,6 +511,7 @@ class QuestManager extends BaseManager
      */
     private function setNextMission(Quest $quest, int $nextMissionId): array
     {
+        Yii::debug("*** debug *** QuestManager::setNextMission nextMissionId={$nextMissionId}");
         $currentQuestProgress = $this->getQuestProgress();
         $currentPlayer = $quest->currentPlayer;
 
@@ -541,6 +542,7 @@ class QuestManager extends BaseManager
         $this->synchronizeChapterId($quest, $nextChapterId);
 
         $detail = $this->getNextMissionDetail($currentQuestProgress, $nextQuestProgress);
+        Yii::debug("*** debug *** QuestManager::setNextMission - detail=" . print_r($detail, true));
         $message = "The mission '{$detail['currentMissionName']}' is over, let's move to '{$detail['nextMissionName']}'!!!";
 
         $event = $this->createQuestEvent('next-mission', $message, $currentPlayer, $detail);
@@ -559,11 +561,12 @@ class QuestManager extends BaseManager
      */
     public function moveToNextMission(?int $nextMissionId = null): array
     {
-        Yii::debug('moveToNextMission nextMissionId=' . ($nextMissionId !== null ? $nextMissionId : 'null'));
+        Yii::debug('*** debug *** QuestManager::moveToNextMission nextMissionId=' . ($nextMissionId !== null ? $nextMissionId : 'null'));
 
         $quest = $this->getQuest();
         $status = AppStatus::from($quest->status);
         if ($status === AppStatus::COMPLETED || $status === AppStatus::ABORTED) {
+            Yii::debug("*** debug *** QuestManager::moveToNextMission - Quest #{$quest->id} is already over with status " . $status->getLabel());
             return [
                 'error' => false,
                 'msg' => "Quest #{$quest->id} is already over with status " . $status->getLabel(),
@@ -571,23 +574,28 @@ class QuestManager extends BaseManager
         }
 
         $questProgress = $this->getQuestProgress();
+        $currentMissionId = (int) $questProgress->mission_id;
+        Yii::debug("*** debug *** QuestManager::moveToNextMission - currentMissionId={$currentMissionId}");
 
         // If nextMissionId is the current one, we ignore it and look for the next default one.
         // This avoids infinite loops or trying to restart the current mission when it's finished.
-        if ($nextMissionId !== null && $nextMissionId === $questProgress->mission_id) {
+        if ($nextMissionId !== null && (int) $nextMissionId === $currentMissionId) {
             Yii::debug("QuestManager::moveToNextMission - nextMissionId is current mission, ignoring.");
             $nextMissionId = null;
         }
 
         if ($nextMissionId !== null) {
+            Yii::debug("*** debug *** QuestManager::moveToNextMission - Calling setNextMission with nextMissionId={$nextMissionId}");
             return $this->setNextMission($this->getQuest(), $nextMissionId);
         }
 
         $nextDefaultMissionId = $this->getNextDefaultMissionId();
+        Yii::debug("*** debug *** QuestManager::moveToNextMission - nextDefaultMissionId=" . ($nextDefaultMissionId ?? 'null'));
         if ($nextDefaultMissionId) {
             return $this->moveToNextMission($nextDefaultMissionId);
         }
 
+        Yii::debug("*** debug *** QuestManager::moveToNextMission - No more missions, game over.");
         return $this->gameOver(AppStatus::COMPLETED);
     }
 
