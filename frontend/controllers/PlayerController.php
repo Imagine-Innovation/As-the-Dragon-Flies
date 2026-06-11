@@ -47,7 +47,10 @@ class PlayerController extends Controller
                             'validate',
                             'view',
                         ],
-                        'allow' => [AccessRightsManager::class, 'isRouteAllowedCallback'],
+                        'allow' => true,
+                        'matchCallback' => function ($rule, $action) {
+                            return AccessRightsManager::isRouteAllowed($action->controller);
+                        },
                         'roles' => ['@'],
                     ],
                 ],
@@ -94,7 +97,6 @@ class PlayerController extends Controller
         }
         return ['error' => true, 'msg' => 'Error encountered'];
     }
-
 
     /**
      *

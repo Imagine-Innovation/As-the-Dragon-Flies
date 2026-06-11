@@ -48,7 +48,10 @@ class PlayerCartController extends Controller
                             'ajax-info',
                             'ajax-item-count',
                         ],
-                        'allow' => [AccessRightsManager::class, 'isRouteAllowedCallback'],
+                        'allow' => true,
+                        'matchCallback' => function ($rule, $action) {
+                            return AccessRightsManager::isRouteAllowed($action->controller);
+                        },
                         'roles' => ['@'],
                     ],
                 ],
@@ -258,8 +261,7 @@ class PlayerCartController extends Controller
             'msg' => '',
             'count' => $count,
             'cartString' =>
-            'You have ' . ($count > 0 ? $count : 'no') . ' article' . ($count > 1
-                ? 's' : '') . ' in your cart',
+            'You have ' . ($count > 0 ? $count : 'no') . ' article' . ($count > 1 ? 's' : '') . ' in your cart',
             'cartValueString' => $shopping->getCartValueString($this->findPlayerCartContent()),
             'purseString' => $purseMsg,
         ];
@@ -287,8 +289,7 @@ class PlayerCartController extends Controller
         $model = PlayerCart::findOne(['player_id' => $player->id, 'item_id' => $itemId]);
 
         // Construct the response containing the count of the item and return it
-        return ['error' => false, 'msg' => '', 'count' => $model ? $model->quantity
-                : 0];
+        return ['error' => false, 'msg' => '', 'count' => $model ? $model->quantity : 0];
     }
 
     /**

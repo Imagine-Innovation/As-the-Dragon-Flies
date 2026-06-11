@@ -40,7 +40,10 @@ class StoryController extends Controller
                     ],
                     [
                         'actions' => ['index', 'create', 'view', 'update', 'delete', 'validate', 'restore', 'print', 'ajax'],
-                        'allow' => [AccessRightsManager::class, 'isRouteAllowedCallback'],
+                        'allow' => true,
+                        'matchCallback' => function ($rule, $action) {
+                            return AccessRightsManager::isRouteAllowed($action->controller);
+                        },
                         'roles' => ['@'],
                     ],
                 ],
