@@ -53,7 +53,7 @@ class SimpleRichTextEditor {
                 document.execCommand(cmd, false, url);
             }
         } else if (cmd === 'clear') {
-            this.removeCustomFormatting(editor);
+            SimpleRichTextEditor.removeCustomFormatting(editor);
             document.execCommand('removeFormat', false, null);
             document.execCommand('unlink', false, null);
             document.execCommand('formatBlock', false, 'P');
