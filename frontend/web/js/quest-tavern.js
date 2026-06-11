@@ -9,8 +9,11 @@ class VirtualTableTop {
 
     init() {
         this.context = {
-            questId: $('#hiddenQuestId').html(),
-            playerId: $('#hiddenPlayerId').html()
+            storyId: DOMUtils.getParam('hiddenStoryId'),
+            questId: DOMUtils.getParam('hiddenQuestId'),
+            playerId: DOMUtils.getParam('hiddenPlayerId'),
+            currentPlayerId: DOMUtils.getParam('hiddenCurrentPlayerId'),
+            currentPlayerName: DOMUtils.getParam('hiddenCurrentPlayerName')
         };
         Logger.log(1, 'init', `context=${JSON.stringify(this.context, null, 2)}`);
     }
