@@ -26,6 +26,14 @@ $storyRoot = WebResourcesHelper::storyRootPath($model->id);
                 'tooltip' => 'Edit story',
             ])
             ?>
+            <?=
+            Button::widget([
+                'mode' => 'icon',
+                'url' => Url::toRoute(['story/export', 'id' => $model->id]),
+                'icon' => 'bi-filetype-json',
+                'tooltip' => 'Export story',
+            ])
+            ?>
         </div>
         <div class="row g-0 d-flex"> <!-- Add d-flex to the row -->
             <div class="col-md-4 d-flex align-items-stretch"> <!-- Add d-flex and align-items-stretch -->

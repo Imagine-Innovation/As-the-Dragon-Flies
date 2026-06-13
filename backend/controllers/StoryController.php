@@ -39,7 +39,7 @@ class StoryController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['index', 'create', 'view', 'update', 'delete', 'validate', 'restore', 'print', 'ajax'],
+                        'actions' => ['index', 'create', 'view', 'update', 'delete', 'validate', 'restore', 'print', 'ajax', 'export'],
                         'allow' => true,
                         'matchCallback' => function ($rule, $action) {
                             return AccessRightsManager::isRouteAllowed($action->controller);
@@ -230,6 +230,52 @@ class StoryController extends Controller
         return $this->render('print', [
                     'story' => $story,
                     'chapters' => $chapters,
+        ]);
+    }
+
+    /**
+     * Exports a story to a JSON file.
+     * @param int $id Primary key
+     * @return Response
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionExport(int $id): Response
+    {
+        $model = $this->findModel($id);
+        $data = Story::find()
+                ->where(['id' => $id])
+                ->with([
+                    'storyClasses',
+                    'storyTags',
+                    'chapters',
+                    'chapters.missions',
+                    'chapters.missions.decors',
+                    'chapters.missions.decors.traps',
+                    'chapters.missions.decors.passages',
+                    'chapters.missions.npcs',
+                    'chapters.missions.npcs.npcType',
+                    'chapters.missions.npcs.dialogs',
+                    'chapters.missions.npcs.dialogs.replies',
+                    'chapters.missions.monsters',
+                    'chapters.missions.actions',
+                    'chapters.missions.actions.actionType',
+                    'chapters.missions.actions.actionType.actionTypeSkills',
+                    'chapters.missions.actions.outcomes',
+                    'chapters.missions.actions.outcomes.dialogs',
+                    'chapters.missions.actions.outcomes.dialogs.replies',
+                    'chapters.missions.actions.triggers',
+                ])
+                ->asArray()
+                ->one();
+
+        $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+
+        $sanitizedName = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $model->name);
+        $filename = "story_{$model->id}_{$sanitizedName}.json";
+
+        return Yii::$app->response->sendContentAsFile($json, $filename, [
+                    'mimeType' => 'application/json',
+                    'inline' => false,
         ]);
     }
 
