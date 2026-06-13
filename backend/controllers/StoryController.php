@@ -15,6 +15,7 @@ use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
+use yii\web\ServerErrorHttpException;
 
 /**
  * StoryController implements the CRUD actions for Story model.
@@ -238,10 +239,10 @@ class StoryController extends Controller
      * @param int $id Primary key
      * @return Response
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws ServerErrorHttpException if JSON encoding fails
      */
     public function actionExport(int $id): Response
     {
-        $model = $this->findModel($id);
         $data = Story::find()
                 ->where(['id' => $id])
                 ->with([
@@ -268,10 +269,18 @@ class StoryController extends Controller
                 ->asArray()
                 ->one();
 
+        if ($data === null) {
+            throw new NotFoundHttpException('The story your are looking for does not exist.');
+        }
+
         $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
-        $sanitizedName = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $model->name);
-        $filename = "story_{$model->id}_{$sanitizedName}.json";
+        if ($json === false) {
+            throw new ServerErrorHttpException('Error encountered during JSON encoding: ' . json_last_error_msg());
+        }
+
+        $sanitizedName = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $data['name']);
+        $filename = "story_{$data['id']}_{$sanitizedName}.json";
 
         return Yii::$app->response->sendContentAsFile($json, $filename, [
                     'mimeType' => 'application/json',
