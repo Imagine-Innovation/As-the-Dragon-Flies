@@ -25,7 +25,7 @@ $rowCol = $rowCols[$maxCard];
 $n = 0;
 ?>
 
-<h4 class="text-decoration text-yellow"><?= Yii::t('app', 'Your players') ?></h4>
+<h4 class="text-decoration text-yellow"><?= Yii::t('lobby', 'Your players') ?></h4>
 <div class="row <?= $rowCol ?> g-4">
     <?php
     if ($currentPlayer !== null) {
@@ -55,7 +55,7 @@ $n = 0;
                     <h1 class="display-5">
                         <i class="bi bi-plus-circle"></i>
                     </h1>
-                    <h5><?= Yii::t('app', 'Create a new player') ?></h5>
+                    <h5><?= Yii::t('lobby', 'Create a new player') ?></h5>
                     <p></p>
                     <?=
                     Button::widget([
@@ -75,6 +75,6 @@ $n = 0;
 </div>
 <?php if ($n >= $maxCard): ?>
     <div class="lead text-decoration text-end">
-        <a href="<?= Url::toRoute('player/index') ?>"><?= Yii::t('app', 'See more...') ?></a>
+        <a href="<?= Url::toRoute('player/index') ?>"><?= Yii::t('lobby', 'See more...') ?></a>
     </div>
 <?php endif; ?>

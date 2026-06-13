@@ -15,10 +15,10 @@ use yii\helpers\Url;
         <!-- Section 1: Last created player -->
         <?=
     $this->render('section1', [
-        'title' => Yii::t('app', 'Continue with {name}', ['name' => $lastPlayer->name]),
+        'title' => Yii::t('lobby', 'Continue with {name}', ['name' => $lastPlayer->name]),
         'img' => $lastPlayer->image?->getImageUrl(),
         'paragraphs' => [
-            Yii::t('app', 'Select this player to start a new adventure'),
+            Yii::t('lobby', 'Select this player to start a new adventure'),
         ],
         'button' => [
             'url' => Url::toRoute(['player/set-current', 'id' => $lastPlayer->id]),

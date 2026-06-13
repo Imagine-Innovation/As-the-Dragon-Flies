@@ -11,7 +11,7 @@ use yii\helpers\Url;
 /** @var ActiveForm $form */
 /** @var ResetPasswordForm $model */
 $imgPath = WebResourcesHelper::imagePath();
-$this->title = 'Reset password';
+$this->title = Yii::t('guest', 'Reset password');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <section class="vh-100">
@@ -27,7 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <img src="<?= $imgPath ?>/Dragonfly32White.png" alt="Logo">
                                 <?= Caligraphy::appName() ?>
                             </h2>
-                            <p class="mb-5">Choose your new password!</p>
+                            <p class="mb-5"><?= Yii::t('guest', 'Choose your new password!') ?></p>
 
                             <?php $form = ActiveForm::begin(['id' => 'reset-password-form']); ?>
                             <div class="form-group last mb-3">
@@ -38,15 +38,15 @@ $this->params['breadcrumbs'][] = $this->title;
                                                 'class' => 'form-control',
                                                 'autocomplete' => 'current-password',
                                     ]])
-                                        ->passwordInput(['placeholder' => 'Your password'])
-                                        ->label('Password')
+                                        ->passwordInput(['placeholder' => Yii::t('guest', 'Your password')])
+                                        ->label(Yii::t('guest', 'Password'))
                                 ?>
                             </div>
 
 
                             <div class="form-group">
                                 <?=
-                                Html::submitButton('<img src="' . $imgPath . '/Dragonfly.svg" style="height:32px;" alt=""> Set new password', [
+                                Html::submitButton('<img src="' . $imgPath . '/Dragonfly.svg" style="height:32px;" alt=""> ' . Yii::t('guest', 'Set new password'), [
                                     'class' => 'form-control btn btn-lg btn-warning text-decoration',
                                     'name' => 'reset-button',
                                 ])
@@ -55,8 +55,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
                             <?php ActiveForm::end(); ?>
                             <p class="mb-0">
-                                You've found your password ?
-                                <a class="fw-bold" href="<?= Url::toRoute(['site/login']) ?>">Log in</a>
+                                <?= Yii::t('guest', "You've found your password ?") ?>
+                                <a class="fw-bold" href="<?= Url::toRoute(['site/login']) ?>"><?= Yii::t('guest', 'Log in') ?></a>
                             </p>
                             </form>
                         </div>

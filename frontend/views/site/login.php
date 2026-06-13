@@ -11,7 +11,7 @@ use yii\helpers\Url;
 /** @var ActiveForm $form */
 /** @var LoginForm $model */
 $imgPath = WebResourcesHelper::imagePath();
-$this->title = 'Login';
+$this->title = Yii::t('guest', 'Login');
 $this->params['breadcrumbs'][] = $this->title;
 
 $v1 = false;
@@ -29,7 +29,7 @@ $v1 = false;
                                 <img src="<?= $imgPath ?>/Dragonfly32White.png" alt="Logo">
                                 <?= Caligraphy::appName() ?>
                             </h2>
-                            <p class="mb-5">Please enter your login and password!</p>
+                            <p class="mb-5"><?= Yii::t('guest', 'Please enter your login and password!') ?></p>
 
                             <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
                             <div class="form-group first">
@@ -40,8 +40,8 @@ $v1 = false;
                                                 'class' => 'form-control',
                                                 'autocomplete' => 'username',
                                     ]])
-                                        ->textInput(['placeholder' => 'Your user name'])
-                                        ->label('Username')
+                                        ->textInput(['placeholder' => Yii::t('guest', 'Your user name')])
+                                        ->label(Yii::t('guest', 'Username'))
                                 ?>
                             </div>
                             <div class="form-group last mb-3">
@@ -52,23 +52,23 @@ $v1 = false;
                                                 'class' => 'form-control',
                                                 'autocomplete' => 'current-password',
                                     ]])
-                                        ->passwordInput(['placeholder' => 'Your password'])
-                                        ->label('Password')
+                                        ->passwordInput(['placeholder' => Yii::t('guest', 'Your password')])
+                                        ->label(Yii::t('guest', 'Password'))
                                 ?>
                             </div>
 
                             <div class="d-flex mb-5 align-items-center">
-                                <label class="custom-control custom-checkbox mb-0"><span class="caption">Remember me </span>
+                                <label class="custom-control custom-checkbox mb-0"><span class="caption"><?= Yii::t('guest', 'Remember me') ?> </span>
                                     <input type="checkbox" checked="checked"/>
                                 </label>
                                 <span style="margin-left: auto;">
-                                    <a class="fw-bold" href="<?= Url::toRoute(['site/request-password-reset']) ?>">Forgot Password</a>
+                                    <a class="fw-bold" href="<?= Url::toRoute(['site/request-password-reset']) ?>"><?= Yii::t('guest', 'Forgot Password') ?></a>
                                 </span>
                             </div>
 
                             <div class="form-group">
                                 <?=
-                                Html::submitButton('<img src="' . $imgPath . '/Dragonfly.svg" style="height:32px;" alt=""> Log In', [
+                                Html::submitButton('<img src="' . $imgPath . '/Dragonfly.svg" style="height:32px;" alt=""> ' . Yii::t('guest', 'Log In'), [
                                     'class' => 'form-control btn btn-lg btn-warning text-decoration',
                                     'name' => 'login-button',
                                 ])
@@ -77,8 +77,8 @@ $v1 = false;
 
                             <?php ActiveForm::end(); ?>
                             <p class="mb-0">
-                                Don't have an account?
-                                <a class="fw-bold" href="<?= Url::toRoute(['site/signup']) ?>">Sign Up</a>
+                                <?= Yii::t('guest', "Don't have an account?") ?>
+                                <a class="fw-bold" href="<?= Url::toRoute(['site/signup']) ?>"><?= Yii::t('guest', 'Sign Up') ?></a>
                             </p>
                             </form>
                         </div>

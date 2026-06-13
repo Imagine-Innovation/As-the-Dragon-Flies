@@ -11,7 +11,7 @@ use yii\helpers\Url;
 /** @var ActiveForm $form */
 /** @var PasswordResetRequestForm $model */
 $imgPath = WebResourcesHelper::imagePath();
-$this->title = 'Request password reset';
+$this->title = Yii::t('guest', 'Request password reset');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <section class="vh-100">
@@ -25,7 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <img src="<?= $imgPath ?>/Dragonfly32White.png" alt="Logo">
                                 <?= Caligraphy::appName() ?>
                             </h2>
-                            <p class="mb-5">Reset your password</p>
+                            <p class="mb-5"><?= Yii::t('guest', 'Reset your password') ?></p>
 
                             <?php $form = ActiveForm::begin(['id' => 'request-password-reset-form']); ?>
                             <div class="form-group first">
@@ -35,21 +35,21 @@ $this->params['breadcrumbs'][] = $this->title;
                                                 'autofocus' => 'autofocus',
                                                 'class' => 'form-control',
                                     ]])
-                                        ->textInput(['placeholder' => 'Your email'])
-                                        ->label('Email')
+                                        ->textInput(['placeholder' => Yii::t('guest', 'Your email')])
+                                        ->label(Yii::t('guest', 'Email'))
                                 ?>
                             </div>
 
                             <div class="form-group">
                                 <?=
-                                Html::submitButton('<img src="' . $imgPath . '/Dragonfly.svg" style="height:32px;" alt=""> Send request', [
+                                Html::submitButton('<img src="' . $imgPath . '/Dragonfly.svg" style="height:32px;" alt=""> ' . Yii::t('guest', 'Send request'), [
                                     'class' => 'form-control btn btn-lg btn-warning text-decoration',
                                     'name' => 'Send',
                                 ])
                                 ?>
                             </div>
                             <p class="mb-0">
-                                Back to <a class="fw-bold" href="<?= Url::toRoute(['site/login']) ?>">Login</a>
+                                <?= Yii::t('guest', 'Back to') ?> <a class="fw-bold" href="<?= Url::toRoute(['site/login']) ?>"><?= Yii::t('guest', 'Login') ?></a>
                             </p>
                             <?php ActiveForm::end(); ?>
                         </div>
