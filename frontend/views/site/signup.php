@@ -10,7 +10,7 @@ use yii\helpers\Url;
 /** @var yii\bootstrap5\ActiveForm $form */
 /** @var \frontend\models\SignupForm $model */
 $imgPath = WebResourcesHelper::imagePath();
-$this->title = 'Signup';
+$this->title = Yii::t('guest', 'Signup');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
@@ -27,7 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <img src="<?= $imgPath ?>/Dragonfly32White.png" alt="Logo">
                                 <?= Caligraphy::appName() ?>
                             </h2>
-                            <p class="mb-5">Define your login and password to signup!</p>
+                            <p class="mb-5"><?= Yii::t('guest', 'Define your login and password to signup!') ?></p>
 
                             <?php $form = ActiveForm::begin(['id' => 'form-signup']); ?>
                             <div class="form-group first">
@@ -37,8 +37,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                                 'autofocus' => 'autofocus',
                                                 'class' => 'form-control',
                                     ]])
-                                        ->textInput(['placeholder' => 'The username you will use to connect'])
-                                        ->label('User name')
+                                        ->textInput(['placeholder' => Yii::t('guest', 'The username you will use to connect')])
+                                        ->label(Yii::t('guest', 'User name'))
                                 ?>
                             </div>
                             <div class="form-group">
@@ -48,8 +48,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                                 'autofocus' => 'autofocus',
                                                 'class' => 'form-control',
                                     ]])
-                                        ->textInput(['placeholder' => 'The name that will be displayed in the game'])
-                                        ->label('Full name')
+                                        ->textInput(['placeholder' => Yii::t('guest', 'The name that will be displayed in the game')])
+                                        ->label(Yii::t('guest', 'Full name'))
                                 ?>
                             </div>
                             <div class="form-group">
@@ -58,8 +58,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                         ->field($model, 'email', ['inputOptions' => [
                                                 'class' => 'form-control',
                                     ]])
-                                        ->textInput(['placeholder' => 'Your email use to validate your login and reset your password'])
-                                        ->label('Email')
+                                        ->textInput(['placeholder' => Yii::t('guest', 'Your email use to validate your login and reset your password')])
+                                        ->label(Yii::t('guest', 'Email'))
                                 ?>
                             </div>
                             <div class="form-group last">
@@ -69,22 +69,22 @@ $this->params['breadcrumbs'][] = $this->title;
                                                 'autofocus' => 'autofocus',
                                                 'class' => 'form-control',
                                     ]])
-                                        ->passwordInput(['placeholder' => 'Your new password'])
-                                        ->label('Password')
+                                        ->passwordInput(['placeholder' => Yii::t('guest', 'Your new password')])
+                                        ->label(Yii::t('guest', 'Password'))
                                 ?>
                             </div>
 
                             <div class="form-group">
                                 <?=
-                                Html::submitButton('<img src="' . $imgPath . '/Dragonfly.svg" style="height:32px;" alt=""> Signup', [
+                                Html::submitButton('<img src="' . $imgPath . '/Dragonfly.svg" style="height:32px;" alt=""> ' . Yii::t('guest', 'Signup'), [
                                     'class' => 'form-control btn btn-lg btn-warning text-decoration',
                                     'name' => 'signup-button',
                                 ])
                                 ?>
                             </div>
                             <p class="mb-0">
-                                Already have an account?
-                                <a class="fw-bold" href="<?= Url::toRoute(['site/login']) ?>">Login</a>
+                                <?= Yii::t('guest', 'Already have an account?') ?>
+                                <a class="fw-bold" href="<?= Url::toRoute(['site/login']) ?>"><?= Yii::t('guest', 'Login') ?></a>
                             </p>
                             <?php ActiveForm::end(); ?>
                         </div>

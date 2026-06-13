@@ -17,18 +17,18 @@ $imgPath = WebResourcesHelper::imagePath();
         <!-- Section 1: Find a quest -->
         <?=
         $this->render('section1', [
-            'title' => Yii::t('app', 'Find a quest'),
+            'title' => Yii::t('lobby', 'Find a quest'),
             'img' => Url::to($imgPath . '/sm/story.png'),
             'paragraphs' => [
-                Yii::t('app', 'Your player is ready for a new adventure.'),
-                Yii::t('app', 'Visit the tavern to find a quest.'),
+                Yii::t('lobby', 'Your player is ready for a new adventure.'),
+                Yii::t('lobby', 'Visit the tavern to find a quest.'),
             ],
             'button' => [
                 'url' => Url::toRoute(['story/index']),
                 'icon' => 'dnd-scroll"',
                 'style' => 'text-decoration mt-auto',
                 'tooltip' => null,
-                'title' => Yii::t('app', 'Browse the stories'),
+                'title' => Yii::t('lobby', 'Browse the stories'),
                 'isCta' => true,
             ],
         ])
