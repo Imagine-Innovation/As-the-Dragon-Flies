@@ -14,7 +14,7 @@ return [
     'Browse the stories' => 'Parcourir les histoires',
     'Resume the quest \'{name}\'' => 'Continuer la quête \'{name}\'',
     'Your player is currently on a quest.' => 'Votre joueur est actuellement lancé dans une quête.',
-    'Jump back into the action !' => 'Replongez dans l\'action !',
+    'Jump back into the action!' => 'Replongez dans l\'action !',
     'Resume the quest' => 'Rejoindre la quête en cours',
     'Your players' => 'Vos joueurs',
     'See more...' => 'Voir plus...',
