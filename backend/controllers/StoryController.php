@@ -40,10 +40,19 @@ class StoryController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['index', 'create', 'view', 'update', 'delete', 'validate', 'restore', 'print', 'ajax', 'export'],
+                        'actions' => ['index', 'create', 'view', 'update', 'delete', 'validate', 'restore', 'print', 'ajax'],
                         'allow' => true,
                         'matchCallback' => function ($rule, $action) {
                             return AccessRightsManager::isRouteAllowed($action->controller);
+                        },
+                        'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['export'],
+                        'allow' => true,
+                        'matchCallback' => function ($rule, $action) {
+                            $user = Yii::$app->user->identity;
+                            return $user && ($user->is_admin || $user->is_designer);
                         },
                         'roles' => ['@'],
                     ],

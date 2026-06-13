@@ -23,6 +23,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($model->id);
                 'mode' => 'icon',
                 'url' => Url::toRoute(['story/update', 'id' => $model->id]),
                 'icon' => 'dnd-spell',
+                'style' => 'actions__item',
                 'tooltip' => 'Edit story',
             ])
             ?>
@@ -31,7 +32,9 @@ $storyRoot = WebResourcesHelper::storyRootPath($model->id);
                 'mode' => 'icon',
                 'url' => Url::toRoute(['story/export', 'id' => $model->id]),
                 'icon' => 'bi-filetype-json',
+                'style' => 'actions__item',
                 'tooltip' => 'Export story',
+                'ariaParams' => ['data-pjax' => '0'],
             ])
             ?>
         </div>
