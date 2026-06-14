@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use common\components\AccessRightsManager;
 use common\components\ContextManager;
 
@@ -118,9 +120,11 @@ return [
                 'app*' => [
                     'class' => 'yii\i18n\PhpMessageSource',
                     'basePath' => '@app/messages',
-                    'sourceLanguage' => 'default', // if set to 'en', il8n uses keys, not translated values
+                    'sourceLanguage' => 'en', // if set to 'en', il8n uses keys, not translated values
                     'fileMap' => [
                         'app' => 'app.php',
+                        'app/guest' => 'guest.php',
+                        'app/lobby' => 'lobby.php',
                         'app/error' => 'error.php',
                     ],
                 ],
