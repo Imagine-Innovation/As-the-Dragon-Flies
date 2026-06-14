@@ -123,23 +123,9 @@ return [
                     'sourceLanguage' => 'en', // if set to 'en', il8n uses keys, not translated values
                     'fileMap' => [
                         'app' => 'app.php',
+                        'app/guest' => 'guest.php',
+                        'app/lobby' => 'lobby.php',
                         'app/error' => 'error.php',
-                    ],
-                ],
-                'lobby*' => [
-                    'class' => 'yii\i18n\PhpMessageSource',
-                    'basePath' => '@app/messages',
-                    'sourceLanguage' => 'en',
-                    'fileMap' => [
-                        'lobby' => 'lobby.php',
-                    ],
-                ],
-                'guest*' => [
-                    'class' => 'yii\i18n\PhpMessageSource',
-                    'basePath' => '@app/messages',
-                    'sourceLanguage' => 'en',
-                    'fileMap' => [
-                        'guest' => 'guest.php',
                     ],
                 ],
             ],
