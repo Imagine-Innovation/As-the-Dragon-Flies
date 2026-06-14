@@ -4,7 +4,6 @@ use common\components\AccessRightsManager;
 use yii\helpers\Url;
 
 /** @var \yii\web\View $this */
-/** @var string|null $currentMenu */
 $menuConfig = [
     'void' => [// No heading for the first group
         ['label' => 'Dashboard', 'icon' => 'bi-speedometer2', 'route' => 'site/index'],
@@ -38,23 +37,25 @@ $menuConfig = [
 ];
 
 $allowedMenus = [];
-
+$firstHeading = '';
+$appName = AccessRightsManager::APP_BACKEND;
 foreach ($menuConfig as $chapter => $menus) {
     $chapterMenu = [];
     foreach ($menus as $menu) {
         $url = explode('/', $menu['route']);
-        $accessRight = AccessRightsManager::getAccessRight(AccessRightsManager::APP_BACKEND, $url[0], $url[1]);
-        if (!empty($accessRight) || AccessRightsManager::isPublic($url[0], $url[1])) {
+        if (AccessRightsManager::isMenuAllowed($appName, $url[0], $url[1])) {
             $chapterMenu[] = $menu;
         }
     }
     if (!empty($chapterMenu)) {
         $allowedMenus[$chapter] = $chapterMenu;
+        if ($firstHeading === '') {
+            $firstHeading = $chapter;
+        }
     }
 }
-$chapters = array_keys($allowedMenus);
-$firstHeading = $chapters[0];
-$currentMenu = $currentMenu ?? $firstHeading;
+/** @var string|null $currentMenu */
+$currentMenu = $firstHeading;
 ?>
 
 <nav id="sidebar" class="border-end min-vh-100 d-none d-sm-block">

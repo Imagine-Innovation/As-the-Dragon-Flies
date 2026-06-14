@@ -289,6 +289,46 @@ class AccessRightsManager extends Component
     }
 
     /**
+     * Checks that the underlying requested action is an authorised menu
+     *
+     * @param string $application
+     * @param string $route
+     * @param string $action
+     * @return bool
+     */
+    public static function isMenuAllowed(string $application, string $route, string $action): bool
+    {
+        $accessRight = self::getAccessRight($application, $route, $action);
+        if (empty($accessRight)) {
+            return self::isPublic($route, $action);
+        }
+
+        $user = Yii::$app->user->identity;
+        if (!$user) {
+            return false;
+        }
+
+        // If user is admin and route allows admin access, allow menu
+        if (($user->is_admin ?? false) && $accessRight['is_admin']) {
+            return true;
+        }
+
+        // If user is designer and route allows designer access, allow menu
+        if (($user->is_designer ?? false) && $accessRight['is_designer']) {
+            return true;
+        }
+
+        // Check player-specific access conditions
+        if (($user->is_player ?? false) && $accessRight['is_player']) {
+            $playerAccess = self::checkPlayerAccess($accessRight);
+            return $playerAccess['denied'] ? false : true;
+        }
+
+        // Deny access by default
+        return false;
+    }
+
+    /**
      * Check player-specific access conditions
      *
      * @param  array{id: int, application: string, route: string, action: string, is_admin: bool, is_designer: bool, is_player: bool, has_player: bool, in_quest: bool} $accessRight

@@ -52,7 +52,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
 
         <?=
                 $form->field($model, 'decor_id')->dropdownList(
-                        $model->decor_id ? [$model->decor_id => $model->decor?->name] : [],
+                        $model->decor_id ? [$model->decor_id => $model->decor->name] : [],
                         [
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,
@@ -64,7 +64,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
         ?>
         <?=
                 $form->field($model, 'to_decor_id')->dropdownList(
-                        $model->to_decor_id ? [$model->to_decor_id => $model->decorTo?->name] : [],
+                        $model->to_decor_id ? [$model->to_decor_id => $model->decorTo->name] : [],
                         [
                             'class' => 'select2-container w-100',
                             'data-minimum-results-for-search' => -1,

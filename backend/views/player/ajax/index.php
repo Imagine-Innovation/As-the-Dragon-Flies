@@ -56,11 +56,11 @@ $imgPath = WebResourcesHelper::imagePath();
                                 </a>
                             </td>
                             <td class="text-center"><?= Status::icon($model->status) ?></td>
-                            <td><?= $model->level->name ?></td>
-                            <td><?= $model->race->name ?></td>
-                            <td><?= $model->class->name ?></td>
+                            <td><?= $model->level->name ?? 'Unknown level' ?></td>
+                            <td><?= $model->race->name ?? 'Unknown race' ?></td>
+                            <td><?= $model->class->name ?? 'Unknown class' ?></td>
                             <td><?= $model->background->name ?></td>
-                            <td><?= $model->alignment->name ?? 'Unkown' ?></td>
+                            <td><?= $model->alignment->name ?? 'Unkown alignment' ?></td>
                             <td>
                                 <?=
                                 ActionButtons::widget([

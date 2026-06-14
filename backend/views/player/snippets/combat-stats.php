@@ -1,14 +1,13 @@
 <?php
-
 /** @var yii\web\View $this */
 /** @var common\models\Player $model */
 /** @var string $cardHeaderClass */
 /** @var int $proficiencyBonus */
 $combatStat = [
     ['label' => 'AC', 'value' => $model->armor_class],
-    ['label' => 'Speed', 'value' => ($model->speed ?? $model->race->speed) . ' ft'],
+    ['label' => 'Speed', 'value' => ($model->speed ?? $model->race->speed ?? 0) . ' ft'],
     ['label' => 'Prof. Bonus', 'value' => "+{$proficiencyBonus}"],
-    ['label' => 'Hit Dice', 'value' => $model->class->hit_die],
+    ['label' => 'Hit Dice', 'value' => $model->class->hit_die ?? ''],
 ];
 ?>
 <!--Combat Stats-->

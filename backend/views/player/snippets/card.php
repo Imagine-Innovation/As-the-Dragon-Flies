@@ -34,19 +34,15 @@ $route = $player->status === AppStatus::ACTIVE->value ? 'player/view' : 'player/
         <?php if ($player->age): ?>
             <h4 class="card-subtitle"><?= $player->age ?>-year-old
                 <?= $player->gender === 'M' ? 'male' : 'female' ?>
-                <?= $player->race_id ? $player->race->name : 'Undefined' ?>
+                <?= $player->race->name ?? 'Undefined race' ?>
             </h4>
         <?php endif; ?>
 
         <div>
             <p>
-                <span class="badge badge-warning"><?= $player->level->name ?></span>
-                <span class="badge badge-warning"><?=
-                    $player->alignment_id ? $player->alignment?->name : 'Undefined'
-                    ?></span>
-                <span class="badge badge-warning"><?=
-                    $player->class_id ? $player->class->name : 'Undefined'
-                    ?></span>
+                <span class="badge badge-warning"><?= $player->level->name ?? 'Undefined level' ?></span>
+                <span class="badge badge-warning"><?= $player->alignment->name ?? 'Undefined alignment' ?></span>
+                <span class="badge badge-warning"><?= $player->class->name ?? 'Undefined class' ?></span>
             </p>
         </div>
 

@@ -5,16 +5,16 @@ use frontend\components\PlayerComponent;
 /** @var yii\web\View $this */
 /** @var common\models\Player $model */
 /** @var string $cardHeaderClass */
-$proficiencyBonus = $model->level->proficiency_bonus;
+$proficiencyBonus = $model->level->proficiency_bonus ?? 0;
 
 /** @var non-empty-array<string, array{code: string, name: string, score: int, modifier: int, savingThrow: int}> */
 $playerAbilities = PlayerComponent::getAbilitiesAndSavingThrow($model->playerAbilities, $proficiencyBonus);
 
 $combatStat = [
     ['label' => 'AC', 'value' => $model->armor_class],
-    ['label' => 'Speed', 'value' => ($model->speed ?? $model->race->speed) . ' ft'],
+    ['label' => 'Speed', 'value' => ($model->speed ?? $model->race->speed ?? 0) . ' ft'],
     ['label' => 'Prof. Bonus', 'value' => "+{$proficiencyBonus}"],
-    ['label' => 'Hit Dice', 'value' => $model->class->hit_die],
+    ['label' => 'Hit Dice', 'value' => $model->class->hit_die ?? ''],
 ];
 ?>
 <section class="card mb-4">
@@ -39,10 +39,8 @@ $combatStat = [
                         <?php if ($playerAbility['modifier']): ?>
                             <span class="badge bg-danger w-75">
                                 <?=
-                            $playerAbility['modifier'] >= 0
-                                ? "+{$playerAbility['modifier']}"
-                                : $playerAbility['modifier']
-                        ?>
+                                $playerAbility['modifier'] >= 0 ? "+{$playerAbility['modifier']}" : $playerAbility['modifier']
+                                ?>
                             </span>
                         <?php else: ?>
                             &nbsp;
@@ -51,8 +49,8 @@ $combatStat = [
                     <td class="text-center">
                         <span class="badge bg-secondary w-75">
                             <?=
-                $playerAbility['savingThrow'] >= 0 ? "+{$playerAbility['savingThrow']}" : $playerAbility['savingThrow']
-            ?>
+                            $playerAbility['savingThrow'] >= 0 ? "+{$playerAbility['savingThrow']}" : $playerAbility['savingThrow']
+                            ?>
                         </span>
                     </td>
                 </tr>

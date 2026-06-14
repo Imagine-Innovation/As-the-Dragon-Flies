@@ -29,7 +29,9 @@
                             <td style="width: 40%;">
                                 <div class="d-flex align-items-center">
                                     <div class="progress flex-grow-1" style="height: 8px;">
-                                        <div class="progress-bar <?= $progress < 30 ? 'bg-danger' : ($progress < 70 ? 'bg-warning' : 'bg-success') ?>"
+                                        <div class="progress-bar <?=
+                                        $progress < 30 ? 'bg-danger' : ($progress < 70 ? 'bg-warning' : 'bg-success')
+                                        ?>"
                                              role="progressbar"
                                              style="width: <?= $progress ?>%"
                                              aria-valuenow="<?= $progress ?>"
@@ -42,7 +44,7 @@
                             <td>
                                 <span class="badge bg-secondary">
                                     <i class="bi bi-person-fill me-1"></i>
-                                    <?= yii\helpers\Html::encode($quest->initiator?->name ?? $quest->initiator?->user?->fullname ?? $quest->initiator?->user?->username ?? 'Unknown') ?>
+                                    <?= yii\helpers\Html::encode($quest->initiator->name ?? $quest->initiator->user->fullname ?? $quest->initiator->user->username ?? 'Unknown') ?>
                                 </span>
                             </td>
                         </tr>

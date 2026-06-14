@@ -7,10 +7,8 @@ use common\models\Race;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
-use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\Response;
 
 /**
  * RaceController implements the CRUD actions for Race model.
@@ -24,7 +22,6 @@ class RaceController extends Controller
      */
     public function behaviors()
     {
-        /** @phpstan-ignore-next-line */
         return array_merge(parent::behaviors(), [
             'access' => [
                 'class' => AccessControl::class,
