@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 return [
     'Game lobby' => 'Lobby du jeu',
     'Welcome back {name}' => 'Content de te revoir, {name}',

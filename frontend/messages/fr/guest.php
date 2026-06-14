@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 return [
     'Please enter your login and password!' => 'Veuillez entrer votre identifiant et votre mot de passe !',
     'Your user name' => 'Votre nom d\'utilisateur',

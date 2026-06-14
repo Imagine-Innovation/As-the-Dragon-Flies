@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 return [
     'Please enter your login and password!' => 'Please enter your login and password!',
     'Your user name' => 'Your user name',
@@ -40,7 +42,7 @@ return [
     'Come and join us!' => 'Come and join us!',
     'Learn More' => 'Learn More',
     'Our Mission and Values' => 'Our Mission and Values',
-    'The As the Dragon Flies game was imagined in 2021 by a passionate team of Dungeons and Dragons enthusiasts. Our mission is to provide an engaging and interactive online gaming experience that captures the essence of epic gaming.' => 'The As the Dragon Flies game was imagined in 2021 by a passionate team of Dungeons and Dragons enthusiasts. Our mission is to provide an engaging and interactive online gaming experience that captures the essence of epic gaming.',
+    'The As the Dragon Flies game was imagined in 2021 by a passionate team of Dungeons and Dragons enthusiasts. Our mission is to provide an engaging and interactive online gaming experience that capture the essence of epic gaming.' => 'The As the Dragon Flies game was imagined in 2021 by a passionate team of Dungeons and Dragons enthusiasts. Our mission is to provide an engaging and interactive online gaming experience that capture the essence of epic gaming.',
     'We believe in creativity, fostering a welcoming community, and maintaining integrity in gameplay. Our team is dedicated to building a vibrant platform where players can explore, create, and connect in a rich fantasy world.' => 'We believe in creativity, fostering a welcoming community, and maintaining integrity in gameplay. Our team is dedicated to building a vibrant platform where players can explore, create, and connect in a rich fantasy world.',
     'Embark on an Epic Adventure with As the Dragon Flies!' => 'Embark on an Epic Adventure with As the Dragon Flies!',
     'Dive into a world of fantasy and adventure with an online role game experience.' => 'Dive into a world of fantasy and adventure with an online role game experience.',

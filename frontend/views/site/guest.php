@@ -125,7 +125,7 @@ $imgPath = WebResourcesHelper::imagePath();
                     <?=
                     Caligraphy::illuminate(
                             [
-                                Yii::t('guest', 'The As the Dragon Flies game was imagined in 2021 by a passionate team of Dungeons and Dragons enthusiasts. Our mission is to provide an engaging and interactive online gaming experience that captures the essence of epic gaming.'),
+                                Yii::t('guest', 'The As the Dragon Flies game was imagined in 2021 by a passionate team of Dungeons and Dragons enthusiasts. Our mission is to provide an engaging and interactive online gaming experience that capture the essence of epic gaming.'),
                                 Yii::t('guest', 'We believe in creativity, fostering a welcoming community, and maintaining integrity in gameplay. Our team is dedicated to building a vibrant platform where players can explore, create, and connect in a rich fantasy world.'),
                             ],
                             'text-decoration',

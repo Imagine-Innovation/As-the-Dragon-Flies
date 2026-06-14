@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 return [
     'Messages' => 'Messages',
     'View all messages' => 'Voir tous les messages',
