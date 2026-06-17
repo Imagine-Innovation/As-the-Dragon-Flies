@@ -5,9 +5,9 @@ use common\widgets\MarkDown;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
-/* @var yii\web\View $this */
-/* @var common\models\Story $story */
-/* @var common\models\Chapter[] $chapters */
+/** @var yii\web\View $this */
+/** @var common\models\Story $story */
+/** @var common\models\Chapter[] $chapters */
 $this->title = $story->name ?? 'Undefined story';
 $this->params['breadcrumbs'][] = ['label' => 'Stories', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
@@ -99,226 +99,219 @@ $t = match ($lang) {
     default => $labels['en'],
 };
 ?>
-<?php if (isset($story) && isset($chapters)): ?>
-
-    <style>
-        /* Print Optimization */
-        @media print {
-            .no-print, .main-nav, nav, footer, header, .offcanvas, .navbar, #mainNavContent, #sidebar {
-                display: none !important;
-            }
-            .container {
-                width: 100% !important;
-                max-width: none !important;
-                padding: 0 !important;
-                margin: 0 !important;
-            }
-            body {
-                background-color: white !important;
-                color: black;
-                font-size: 12pt;
-            }
-            article, h1, h2, h3, h4, h5, h6, p, div {
-                color: black;
-            }
-            .chapter {
-                break-before: page;
-            }
+<style>
+    /* Print Optimization */
+    @media print {
+        .no-print, .main-nav, nav, footer, header, .offcanvas, .navbar, #mainNavContent, #sidebar {
+            display: none !important;
         }
-    </style>
-    <div class="story-view container-fluid py-4">
-        <?=
-        $this->renderFile('@app/views/story/snippets/print-story.php', [
-            'story' => $story,
-            'storyRoot' => $storyRoot,
-            't' => $t,
-        ])
-        ?>
+        .container {
+            width: 100% !important;
+            max-width: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        body {
+            background-color: white !important;
+            color: black;
+            font-size: 12pt;
+        }
+        article, h1, h2, h3, h4, h5, h6, p, div {
+            color: black;
+        }
+        .chapter {
+            break-before: page;
+        }
+    }
+</style>
+<div class="story-view container-fluid py-4">
+    <?=
+    $this->renderFile('@app/views/story/snippets/print-story.php', [
+        'story' => $story,
+        'storyRoot' => $storyRoot,
+        't' => $t,
+    ])
+    ?>
 
-        <?php foreach ($chapters as $chapter): ?>
-            <section class="chapter mb-5">
-                <h2><?= $t['chapter'] ?> <?= $chapter->chapter_number ?> - <?= Html::encode($chapter->name) ?></h2>
-                <?php if ($chapter->image): ?>
-                    <div class="mb-2">
-                        <img src="<?= $storyRoot ?>/img/<?= $chapter->image ?>" class="img-fluid object-fit-cover rounded" alt="<?= $chapter->name ?>" style="max-height:150px;">
-                    </div>
-                <?php endif; ?>
-                <?= MarkDown::widget(['content' => $chapter->description ?? 'Unknown']) ?>
+    <?php foreach ($chapters as $chapter): ?>
+        <section class="chapter mb-5">
+            <h2><?= $t['chapter'] ?> <?= $chapter->chapter_number ?> - <?= Html::encode($chapter->name) ?></h2>
+            <?php if ($chapter->image): ?>
+                <div class="mb-2">
+                    <img src="<?= $storyRoot ?>/img/<?= $chapter->image ?>" class="img-fluid object-fit-cover rounded" alt="<?= $chapter->name ?>" style="max-height:150px;">
+                </div>
+            <?php endif; ?>
+            <?= MarkDown::widget(['content' => $chapter->description ?? 'Unknown']) ?>
 
-                <?php
-                $missions = $chapter->missions;
-                foreach ($missions as $mission):
-                    // Load mission details
-                    $npcs = $mission->npcs;
-                    $actions = $mission->actions;
-                    $decors = $mission->decors;
-                    $monsters = $mission->monsters;
-                    // Traps are linked via decor, but we can also list them directly from decor
-                    ?>
-                    <article class="mission mb-4">
-                        <h3><?= $t['mission'] ?>: <?= Html::encode($mission->name) ?></h3>
-                        <?php if ($mission->image): ?>
-                            <div class="mb-2">
-                                <img src="<?= $storyRoot ?>/img/<?= $mission->image ?>" class="img-fluid object-fit-cover rounded" alt="<?= $mission->name ?>" style="max-height:150px;">
+            <?php
+            $missions = $chapter->missions;
+            foreach ($missions as $mission):
+                // Load mission details
+                $npcs = $mission->npcs;
+                $actions = $mission->actions;
+                $decors = $mission->decors;
+                $monsters = $mission->monsters;
+                // Traps are linked via decor, but we can also list them directly from decor
+                ?>
+                <article class="mission mb-4">
+                    <h3><?= $t['mission'] ?>: <?= Html::encode($mission->name) ?></h3>
+                    <?php if ($mission->image): ?>
+                        <div class="mb-2">
+                            <img src="<?= $storyRoot ?>/img/<?= $mission->image ?>" class="img-fluid object-fit-cover rounded" alt="<?= $mission->name ?>" style="max-height:150px;">
+                        </div>
+                    <?php endif; ?>
+                    <?= MarkDown::widget(['content' => $mission->description ?? 'Unknown']) ?>
+
+                    <!-- NPCs -->
+                    <?php if ($npcs): ?>
+                        <h4><?= $t['npcs'] ?></h4>
+                        <?php foreach ($npcs as $npc): ?>
+                            <div class="mb-3">
+                                <h5><?= Html::encode($npc->name) ?></h5>
+                                <?php if ($npc->image): ?>
+                                    <?= Html::img(Url::to('@web/images/' . $npc->image), ['class' => 'img-thumbnail float-end', 'style' => 'max-width:100px;']) ?>
+                                <?php endif; ?>
+                                <?= MarkDown::widget(['content' => $npc->description ?? 'Unknown']) ?>
+                                <ul>
+                                    <li><span class="fw-bold">Type:</span> <?= Html::encode($npc->npcType->name ?? 'Commoner') ?>
+                                        <?php if (!empty($npc->npcType->description)): ?>
+                                            <div class="ms-3 small"><?= MarkDown::widget(['content' => $npc->npcType->description ?? 'Unknown']) ?></div>
+                                        <?php endif; ?>
+                                    </li>
+                                    <li><span class="fw-bold">Language:</span> <?= Html::encode($npc->language->name ?? 'Common') ?></li>
+                                </ul>
                             </div>
-                        <?php endif; ?>
-                        <?= MarkDown::widget(['content' => $mission->description ?? 'Unknown']) ?>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
 
-                        <!-- NPCs -->
-                        <?php if ($npcs): ?>
-                            <h4><?= $t['npcs'] ?></h4>
-                            <?php foreach ($npcs as $npc): ?>
-                                <div class="mb-3">
-                                    <h5><?= Html::encode($npc->name) ?></h5>
-                                    <?php if ($npc->image): ?>
-                                        <?= Html::img(Url::to('@web/images/' . $npc->image), ['class' => 'img-thumbnail float-end', 'style' => 'max-width:100px;']) ?>
-                                    <?php endif; ?>
-                                    <?= MarkDown::widget(['content' => $npc->description ?? 'Unknown']) ?>
-                                    <ul>
-                                        <li><span class="fw-bold">Type:</span> <?= Html::encode($npc->npcType->name ?? 'Commoner') ?>
-                                            <?php if (!empty($npc->npcType->description)): ?>
-                                                <div class="ms-3 small"><?= MarkDown::widget(['content' => $npc->npcType->description ?? 'Unknown']) ?></div>
-                                            <?php endif; ?>
-                                        </li>
-                                        <li><span class="fw-bold">Language:</span> <?= Html::encode($npc->language->name ?? 'Common') ?></li>
-                                    </ul>
-                                </div>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-
-                        <!-- Actions -->
-                        <?php if ($actions): ?>
-                            <h4><?= $t['actions'] ?></h4>
-                            <?php foreach ($actions as $action): ?>
-                                <hr />
-                                <div class="mb-3">
-                                    <h5><?= Html::encode($action->name) ?></h5>
-                                    <?= MarkDown::widget(['content' => $action->description ?? 'Unknown']) ?>
-                                    <ul class="list-unstyled">
-                                        <li><span class="fw-bold"><?= $t['action_type'] ?>:</span>
-                                            <?= Html::encode($action->actionType->name ?? 'N/A') ?>
-                                            <?php if (!empty($action->actionType->description)): ?>
-                                                <div class="ms-3 small"><?= MarkDown::widget(['content' => $action->actionType->description ?? 'Unknown']) ?></div>
-                                            <?php endif; ?>
-                                        </li>
-                                        <li><span class="fw-bold"><?= $t['dc'] ?>:</span> <?= $action->dc ?>
-                                            <?php if ($action->partial_dc): ?> (<?= $t['partial_dc'] ?>: <?= $action->partial_dc ?>)<?php endif; ?></li>
-                                        <li><span class="fw-bold">Free action:</span> <?= $action->is_free ? 'Yes' : 'No' ?></li>
-                                        <?php
-                                        // Show related elements
-                                        if ($action->passage_id) {
-                                            echo '<li>Passage: ' . Html::encode($action->passage->name ?? 'Unknown') . '</li>';
-                                        }
-                                        if ($action->decor_id) {
-                                            echo '<li>Decor: ' . Html::encode($action->decor->name ?? 'Unknown') . '</li>';
-                                        }
-                                        if ($action->npc_id) {
-                                            echo '<li>NPC: ' . Html::encode($action->npc->name ?? 'Unknown') . '</li>';
-                                            if ($action->npc?->first_dialog_id) {
-                                                echo "<h6>{$t['dialog']}</h6><div class=\"dialog-tree\">";
-                                                echo $this->renderFile('@app/views/mission/snippets/dialog.php', ['dialog' => $action->npc->firstDialog]);
-                                                echo "</div>";
-                                            }
-                                        }
-                                        if ($action->reply_id) {
-                                            echo '<li>First reply: ' . Html::encode($action->reply->text ?? 'Unknown') . '</li>';
-                                        }
-                                        if ($action->trap_id) {
-                                            echo '<li>Trap: ' . Html::encode($action->trap->name ?? 'Unknown') . '</li>';
-                                        }
-                                        if ($action->required_item_id) {
-                                            echo '<li>' . $t['required_item'] . ': ' . Html::encode($action->requiredItem->name ?? 'Unknown') . '</li>';
-                                        }
-                                        // Skills via action_type_skill
-                                        $skills = $action->actionType ? $action->actionType->skills : [];
-                                        if ($skills) {
-                                            echo '<li>' . $t['skills'] . ': ' . implode(', ', array_map(function ($s) {
-                                                        return $s->name;
-                                                    }, $skills)) . '</li>';
-                                        }
-                                        ?>
-                                    </ul>
-
-                                    <!-- Outcomes -->
-                                    <?php if ($action->outcomes): ?>
-                                        <h6><?= $t['outcome'] ?>s</h6>
-                                        <?=
-                                        $this->renderFile('@app/views/story/snippets/print-outcomes.php', [
-                                            'outcomes' => $action->outcomes,
-                                            't' => $t,
-                                        ])
-                                        ?>
-                                    <?php endif; ?>
-                                </div>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-
-                        <!-- Decor and Traps -->
-                        <?php if ($decors): ?>
-                            <h4><?= $t['decor'] ?></h4>
-                            <?php
-                            foreach ($decors as $decor):
-                                $passages = $decor->passages;
-                                ?>
-                                <div class="mb-3">
-                                    <h5><?= Html::encode($decor->name) ?></h5>
-                                    <?php if ($decor->image): ?>
-                                        <?= Html::img(Url::to('@web/images/' . $decor->image), ['class' => 'img-thumbnail float-end', 'style' => 'max-width:100px;']) ?>
-                                    <?php endif; ?>
-                                    <?= MarkDown::widget(['content' => $decor->description ?? 'Unknown']) ?>
-
-                                    <!-- Traps -->
-                                    <?php if ($decor->traps): ?>
-                                        <h6><?= $t['traps'] ?></h6>
-                                        <ul>
-                                            <?php foreach ($decor->traps as $trap): ?>
-                                                <li>
-                                                    <span class="fw-bold"><?= Html::encode($trap->name) ?></span>
-                                                    <?= $t['damage'] ?>: <?= $trap->damage ?> <?= Html::encode($trap->damageType->name ?? 'Unknown') ?>
-                                                    <?= $t['found_chance'] ?>: <?= $trap->found ?>%
-                                                    <?= $t['is_team_trap'] ?>:
-                                                    <?=
-                                                    $trap->is_team_trap ? 'Yes' : 'No'
-                                                    ?>
-                                                </li>
-                                                <li>
-                                                    <?php if ($trap->description): ?>
-                                                        <?= MarkDown::widget(['content' => $trap->description ?? 'Unknown']) ?>
-                                                    <?php endif; ?>
-                                                </li>
-                                            <?php endforeach; ?>
-                                        </ul>
-                                    <?php endif; ?>
-                                </div>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-
-                        <!-- Monsters -->
-                        <?php if ($monsters): ?>
-                            <h4><?= $t['monsters'] ?></h4>
-                            <?php foreach ($monsters as $monster): ?>
-                                <div class="mb-3">
-                                    <h5><?= Html::encode($monster->name) ?></h5>
-                                    <?php if ($monster->image): ?>
-                                        <?= Html::img(Url::to('@web/images/' . $monster->image), ['class' => 'img-thumbnail float-end', 'style' => 'max-width:100px;']) ?>
-                                    <?php endif; ?>
-                                    <?= MarkDown::widget(['content' => $monster->description ?? 'Unknown']) ?>
-                                    <p>
-                                        <?= $t['found_chance'] ?>: <?= $monster->found ?>% |
-                                        <?= $t['identified_chance'] ?>: <?= $monster->identified ?>%
-                                    </p>
+                    <!-- Actions -->
+                    <?php if ($actions): ?>
+                        <h4><?= $t['actions'] ?></h4>
+                        <?php foreach ($actions as $action): ?>
+                            <hr />
+                            <div class="mb-3">
+                                <h5><?= Html::encode($action->name) ?></h5>
+                                <?= MarkDown::widget(['content' => $action->description ?? 'Unknown']) ?>
+                                <ul class="list-unstyled">
+                                    <li><span class="fw-bold"><?= $t['action_type'] ?>:</span>
+                                        <?= Html::encode($action->actionType->name ?? 'N/A') ?>
+                                        <?php if (!empty($action->actionType->description)): ?>
+                                            <div class="ms-3 small"><?= MarkDown::widget(['content' => $action->actionType->description ?? 'Unknown']) ?></div>
+                                        <?php endif; ?>
+                                    </li>
+                                    <li><span class="fw-bold"><?= $t['dc'] ?>:</span> <?= $action->dc ?>
+                                        <?php if ($action->partial_dc): ?> (<?= $t['partial_dc'] ?>: <?= $action->partial_dc ?>)<?php endif; ?></li>
+                                    <li><span class="fw-bold">Free action:</span> <?= $action->is_free ? 'Yes' : 'No' ?></li>
                                     <?php
-                                    $creature = $monster->creature;
-                                    if ($creature):
-                                        ?>
-                                        <p><span class="fw-bold">Creature:</span> <?= Html::encode($creature->name) ?> (CR <?= $creature->cr ?>)</p>
-                                    <?php endif; ?>
-                                </div>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-                    </article>
-                <?php endforeach; ?>
-            </section>
-        <?php endforeach; ?>
-    </div>
-<?php endif; ?>
+                                    // Show related elements
+                                    if ($action->passage_id) {
+                                        echo '<li>Passage: ' . Html::encode($action->passage->name ?? 'Unknown') . '</li>';
+                                    }
+                                    if ($action->decor_id) {
+                                        echo '<li>Decor: ' . Html::encode($action->decor->name ?? 'Unknown') . '</li>';
+                                    }
+                                    if ($action->npc_id) {
+                                        echo '<li>NPC: ' . Html::encode($action->npc->name ?? 'Unknown') . '</li>';
+                                        if ($action->npc?->first_dialog_id) {
+                                            echo "<h6>{$t['dialog']}</h6><div class=\"dialog-tree\">";
+                                            echo $this->renderFile('@app/views/mission/snippets/dialog.php', ['dialog' => $action->npc->firstDialog]);
+                                            echo "</div>";
+                                        }
+                                    }
+                                    if ($action->reply_id) {
+                                        echo '<li>First reply: ' . Html::encode($action->reply->text ?? 'Unknown') . '</li>';
+                                    }
+                                    if ($action->trap_id) {
+                                        echo '<li>Trap: ' . Html::encode($action->trap->name ?? 'Unknown') . '</li>';
+                                    }
+                                    if ($action->required_item_id) {
+                                        echo '<li>' . $t['required_item'] . ': ' . Html::encode($action->requiredItem->name ?? 'Unknown') . '</li>';
+                                    }
+                                    // Skills via action_type_skill
+                                    $skills = $action->actionType->skills ?? [];
+                                    if ($skills) {
+                                        echo '<li>' . $t['skills'] . ': ' . implode(', ', array_map(function ($s) {
+                                                    return $s->name;
+                                                }, $skills)) . '</li>';
+                                    }
+                                    ?>
+                                </ul>
+
+                                <!-- Outcomes -->
+                                <?php if ($action->outcomes): ?>
+                                    <h6><?= $t['outcome'] ?>s</h6>
+                                    <?=
+                                    $this->renderFile('@app/views/story/snippets/print-outcomes.php', [
+                                        'outcomes' => $action->outcomes,
+                                        't' => $t,
+                                    ])
+                                    ?>
+                                <?php endif; ?>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+
+                    <!-- Decor and Traps -->
+                    <?php if ($decors): ?>
+                        <h4><?= $t['decor'] ?></h4>
+                        <?php
+                        foreach ($decors as $decor):
+                            $passages = $decor->passages;
+                            ?>
+                            <div class="mb-3">
+                                <h5><?= Html::encode($decor->name) ?></h5>
+                                <?php if ($decor->image): ?>
+                                    <?= Html::img(Url::to('@web/images/' . $decor->image), ['class' => 'img-thumbnail float-end', 'style' => 'max-width:100px;']) ?>
+                                <?php endif; ?>
+                                <?= MarkDown::widget(['content' => $decor->description ?? 'Unknown']) ?>
+
+                                <!-- Traps -->
+                                <?php if ($decor->traps): ?>
+                                    <h6><?= $t['traps'] ?></h6>
+                                    <ul>
+                                        <?php foreach ($decor->traps as $trap): ?>
+                                            <li>
+                                                <span class="fw-bold"><?= Html::encode($trap->name) ?></span>
+                                                <?= $t['damage'] ?>: <?= $trap->damage ?> <?= Html::encode($trap->damageType->name ?? 'Unknown') ?>
+                                                <?= $t['found_chance'] ?>: <?= $trap->found ?>%
+                                                <?= $t['is_team_trap'] ?>:
+                                                <?=
+                                                $trap->is_team_trap ? 'Yes' : 'No'
+                                                ?>
+                                            </li>
+                                            <li>
+                                                <?php if ($trap->description): ?>
+                                                    <?= MarkDown::widget(['content' => $trap->description ?? 'Unknown']) ?>
+                                                <?php endif; ?>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                <?php endif; ?>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+
+                    <!-- Monsters -->
+                    <?php if ($monsters): ?>
+                        <h4><?= $t['monsters'] ?></h4>
+                        <?php foreach ($monsters as $monster): ?>
+                            <div class="mb-3">
+                                <h5><?= Html::encode($monster->name) ?></h5>
+                                <?php if ($monster->image): ?>
+                                    <?= Html::img(Url::to('@web/images/' . $monster->image), ['class' => 'img-thumbnail float-end', 'style' => 'max-width:100px;']) ?>
+                                <?php endif; ?>
+                                <?= MarkDown::widget(['content' => $monster->description ?? 'Unknown']) ?>
+                                <p>
+                                    <?= $t['found_chance'] ?>: <?= $monster->found ?>% |
+                                    <?= $t['identified_chance'] ?>: <?= $monster->identified ?>%
+                                </p>
+                                <?php $creature = $monster->creature; ?>
+                                <p><span class="fw-bold">Creature:</span> <?= Html::encode($creature->name) ?> (CR <?= $creature->cr ?>)</p>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </article>
+            <?php endforeach; ?>
+        </section>
+    <?php endforeach; ?>
+</div>
