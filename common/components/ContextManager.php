@@ -38,10 +38,10 @@ class ContextManager extends Component
      */
     public static function initContext(?User $user = null): void
     {
-        $loggedUser = $user ?? self::getUser();
-        if (!$loggedUser) {
+        if (self::isGuest()) {
             return;
         }
+        $loggedUser = $user ?? self::getUser();
 
         Yii::$app->session->set('user', $loggedUser);
         Yii::$app->session->set('userId', $loggedUser->id);

@@ -13,14 +13,14 @@ class ActionButtonsConfig
      * @param int $status
      * @return array<int,array{
      *      tooltip: string,
-     *      route: string,
-     *      verb: string,
+     *      controller: string,
+     *      action: string,
      *      mode: string,
      *      icon: string,
      *      admin: bool,
      *      player: bool,
      *      owner: bool,
-     *      modelName: array<string>,
+     *      controllers: array<string>,
      *      table: bool,
      *      view: bool
      * }> $action An associative array containing the action details and requirements.
@@ -126,6 +126,7 @@ class ActionButtonsConfig
                     'view' => true,
                 ],
             ],
+            default => []
         };
     }
 }
