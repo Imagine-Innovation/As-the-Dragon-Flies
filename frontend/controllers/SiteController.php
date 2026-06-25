@@ -40,15 +40,15 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['logout', 'signup', 'login', 'ajax-set-language'],
+                'only' => ['logout', 'signup', 'login'],
                 'rules' => [
                     [
-                        'actions' => ['signup', 'login', 'about', 'contact', 'request-password-reset', 'resend-verification-email', 'reset-password', 'index', 'ajax-set-language'],
+                        'actions' => ['signup', 'login', 'about', 'contact', 'request-password-reset', 'resend-verification-email', 'reset-password', 'index'],
                         'allow' => true,
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['logout', 'ajax-toast', 'about', 'contact', 'index', 'ajax-set-language'],
+                        'actions' => ['logout', 'ajax-toast', 'about', 'contact', 'index'],
                         'allow' => true,
                         'matchCallback' => function ($rule, $action) {
                             return AccessRightsManager::isRouteAllowed($action->controller);
@@ -152,41 +152,6 @@ class SiteController extends Controller
         return $state;
     }
 
-    /**
-     * Sets the language for the current session via AJAX.
-     *
-     * @return array{error: bool, msg: string}
-     */
-    public function actionAjaxSetLanguage(): array
-    {
-        Yii::$app->response->format = Response::FORMAT_JSON;
-
-        if (!$this->request->isPost || !$this->request->isAjax) {
-            return ['error' => true, 'msg' => 'Not an Ajax POST request'];
-        }
-
-        $lang = Yii::$app->request->post('lang');
-
-        if (array_key_exists($lang, \common\components\LanguageSelector::SUPPORTED_LANGUAGES)) {
-            Yii::$app->session->set('language', $lang);
-
-            $cookie = new \yii\web\Cookie([
-                'name' => 'language',
-                'value' => $lang,
-                'expire' => time() + 86400 * 30, // 30 days
-            ]);
-            Yii::$app->response->cookies->add($cookie);
-
-            $user = Yii::$app->user->identity;
-            if ($user) {
-                $user->language = $lang;
-                SaveHelper::save($user);
-            }
-            return ['error' => false, 'msg' => "Language successfully set to {$lang}"];
-        }
-
-        return ['error' => true, 'msg' => 'Invalid language code'];
-    }
 
     /**
      * Displays homepage.

@@ -150,7 +150,7 @@ class LanguageManager {
         Logger.log(1, 'setLanguage', `lang=${lang}`);
 
         AjaxUtils.request({
-            url: 'site/ajax-set-language',
+            url: 'user/ajax-set-language',
             data: {lang},
             successCallback: (response) => {
                 if (!response.error) {
