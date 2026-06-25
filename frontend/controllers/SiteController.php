@@ -40,10 +40,10 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['logout', 'signup', 'login'],
+                'only' => ['logout', 'signup', 'login', 'language'],
                 'rules' => [
                     [
-                        'actions' => ['signup', 'login', 'about', 'contact', 'request-password-reset', 'resend-verification-email', 'reset-password', 'index'],
+                        'actions' => ['signup', 'login', 'about', 'contact', 'request-password-reset', 'resend-verification-email', 'reset-password', 'index', 'language'],
                         'allow' => true,
                         'roles' => ['?'],
                     ],
@@ -150,6 +150,21 @@ class SiteController extends Controller
             $state = 1;
         }
         return $state;
+    }
+
+    /**
+     * Sets the language for the current session.
+     *
+     * @param string $lang
+     * @return Response
+     */
+    public function actionLanguage(string $lang): Response
+    {
+        if (in_array($lang, \common\components\LanguageSelector::SUPPORTED_LANGUAGES, true)) {
+            Yii::$app->session->set('language', $lang);
+        }
+
+        return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
     }
 
     /**
