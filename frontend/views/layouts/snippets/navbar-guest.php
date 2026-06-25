@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use common\helpers\WebResourcesHelper;
 use frontend\helpers\Caligraphy;
 use yii\helpers\Url;
@@ -11,7 +13,9 @@ $languages = [
     'en' => 'English',
     'fr' => 'Français',
 ];
-$currentLanguageLabel = $languages[Yii::$app->language] ?? 'English';
+$supported = \common\components\LanguageSelector::SUPPORTED_LANGUAGES;
+$filteredLanguages = array_filter($languages, fn($key) => in_array($key, $supported), ARRAY_FILTER_USE_KEY);
+$currentLanguageLabel = $filteredLanguages[Yii::$app->language] ?? ($filteredLanguages[\common\components\LanguageSelector::DEFAULT_LANGUAGE] ?? 'English');
 ?>
 <header class="header">
 
@@ -28,7 +32,7 @@ $currentLanguageLabel = $languages[Yii::$app->language] ?? 'English';
                 <i class="bi bi-translate me-2"></i> <?= $currentLanguageLabel ?>
             </a>
             <div class="dropdown-menu dropdown-menu-end">
-                <?php foreach ($languages as $code => $label): ?>
+                <?php foreach ($filteredLanguages as $code => $label): ?>
                     <a href="<?= Url::toRoute(['site/language', 'lang' => $code]) ?>" class="dropdown-item"><?= $label ?></a>
                 <?php endforeach; ?>
             </div>

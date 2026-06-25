@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace frontend\controllers;
 
 use common\components\AppStatus;
@@ -48,7 +50,7 @@ class SiteController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['logout', 'ajax-toast', 'about', 'contact', 'index'],
+                        'actions' => ['logout', 'ajax-toast', 'about', 'contact', 'index', 'language'],
                         'allow' => true,
                         'matchCallback' => function ($rule, $action) {
                             return AccessRightsManager::isRouteAllowed($action->controller);
@@ -162,6 +164,11 @@ class SiteController extends Controller
     {
         if (in_array($lang, \common\components\LanguageSelector::SUPPORTED_LANGUAGES, true)) {
             Yii::$app->session->set('language', $lang);
+            $user = Yii::$app->user->identity;
+            if ($user) {
+                $user->language = $lang;
+                SaveHelper::save($user);
+            }
         }
 
         return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
