@@ -164,6 +164,14 @@ class SiteController extends Controller
     {
         if (array_key_exists($lang, \common\components\LanguageSelector::SUPPORTED_LANGUAGES)) {
             Yii::$app->session->set('language', $lang);
+
+            $cookie = new \yii\web\Cookie([
+                'name' => 'language',
+                'value' => $lang,
+                'expire' => time() + 86400 * 30, // 30 days
+            ]);
+            Yii::$app->response->cookies->add($cookie);
+
             $user = Yii::$app->user->identity;
             if ($user) {
                 $user->language = $lang;
