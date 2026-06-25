@@ -162,7 +162,7 @@ class SiteController extends Controller
      */
     public function actionLanguage(string $lang): Response
     {
-        if (in_array($lang, \common\components\LanguageSelector::SUPPORTED_LANGUAGES, true)) {
+        if (array_key_exists($lang, \common\components\LanguageSelector::SUPPORTED_LANGUAGES)) {
             Yii::$app->session->set('language', $lang);
             $user = Yii::$app->user->identity;
             if ($user) {

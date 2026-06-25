@@ -10,7 +10,10 @@ class LanguageSelector implements BootstrapInterface
 {
 
     const DEFAULT_LANGUAGE = 'en';
-    const SUPPORTED_LANGUAGES = ['en', 'fr'];
+    const SUPPORTED_LANGUAGES = [
+        'en' => 'English',
+        'fr' => 'Français',
+    ];
 
     /**
      *
@@ -44,7 +47,7 @@ class LanguageSelector implements BootstrapInterface
         $session = $application->session;
         $language = $this->getLanguage($application);
 
-        if (!in_array($language, self::SUPPORTED_LANGUAGES, true)) {
+        if (!array_key_exists($language, self::SUPPORTED_LANGUAGES)) {
             $language = self::DEFAULT_LANGUAGE;
         }
         $application->language = $language;

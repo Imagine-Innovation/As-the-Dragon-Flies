@@ -9,13 +9,8 @@ use yii\helpers\Url;
 /** @var \yii\web\View $this */
 $imgPath = WebResourcesHelper::imagePath();
 
-$languages = [
-    'en' => 'English',
-    'fr' => 'Français',
-];
-$supported = \common\components\LanguageSelector::SUPPORTED_LANGUAGES;
-$filteredLanguages = array_filter($languages, fn($key) => in_array($key, $supported), ARRAY_FILTER_USE_KEY);
-$currentLanguageLabel = $filteredLanguages[Yii::$app->language] ?? ($filteredLanguages[\common\components\LanguageSelector::DEFAULT_LANGUAGE] ?? 'English');
+$languages = \common\components\LanguageSelector::SUPPORTED_LANGUAGES;
+$currentLanguageLabel = $languages[Yii::$app->language] ?? ($languages[\common\components\LanguageSelector::DEFAULT_LANGUAGE] ?? 'English');
 ?>
 <header class="header">
 
@@ -32,7 +27,7 @@ $currentLanguageLabel = $filteredLanguages[Yii::$app->language] ?? ($filteredLan
                 <i class="bi bi-translate me-2"></i> <?= $currentLanguageLabel ?>
             </a>
             <div class="dropdown-menu dropdown-menu-end">
-                <?php foreach ($filteredLanguages as $code => $label): ?>
+                <?php foreach ($languages as $code => $label): ?>
                     <a href="<?= Url::toRoute(['site/language', 'lang' => $code]) ?>" class="dropdown-item"><?= $label ?></a>
                 <?php endforeach; ?>
             </div>
