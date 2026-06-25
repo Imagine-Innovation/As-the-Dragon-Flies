@@ -26,7 +26,7 @@ $currentLanguageLabel = $languages[Yii::$app->language] ?? ($languages[\common\c
             </a>
             <div class="dropdown-menu dropdown-menu-end">
                 <?php foreach ($languages as $code => $label): ?>
-                    <a href="<?= Url::toRoute(['site/language', 'lang' => $code]) ?>" class="dropdown-item"><?= $label ?></a>
+                    <a href="#" class="dropdown-item" onclick="LanguageManager.setLanguage('<?= $code ?>'); return false;"><?= $label ?></a>
                 <?php endforeach; ?>
             </div>
         </li>

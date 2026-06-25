@@ -40,15 +40,15 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['logout', 'signup', 'login', 'language'],
+                'only' => ['logout', 'signup', 'login', 'ajax-set-language'],
                 'rules' => [
                     [
-                        'actions' => ['signup', 'login', 'about', 'contact', 'request-password-reset', 'resend-verification-email', 'reset-password', 'index', 'language'],
+                        'actions' => ['signup', 'login', 'about', 'contact', 'request-password-reset', 'resend-verification-email', 'reset-password', 'index', 'ajax-set-language'],
                         'allow' => true,
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['logout', 'ajax-toast', 'about', 'contact', 'index', 'language'],
+                        'actions' => ['logout', 'ajax-toast', 'about', 'contact', 'index', 'ajax-set-language'],
                         'allow' => true,
                         'matchCallback' => function ($rule, $action) {
                             return AccessRightsManager::isRouteAllowed($action->controller);
@@ -153,13 +153,20 @@ class SiteController extends Controller
     }
 
     /**
-     * Sets the language for the current session.
+     * Sets the language for the current session via AJAX.
      *
-     * @param string $lang
-     * @return Response
+     * @return array{error: bool, msg: string}
      */
-    public function actionLanguage(string $lang): Response
+    public function actionAjaxSetLanguage(): array
     {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        if (!$this->request->isPost || !$this->request->isAjax) {
+            return ['error' => true, 'msg' => 'Not an Ajax POST request'];
+        }
+
+        $lang = Yii::$app->request->post('lang');
+
         if (array_key_exists($lang, \common\components\LanguageSelector::SUPPORTED_LANGUAGES)) {
             Yii::$app->session->set('language', $lang);
 
@@ -175,9 +182,10 @@ class SiteController extends Controller
                 $user->language = $lang;
                 SaveHelper::save($user);
             }
+            return ['error' => false, 'msg' => "Language successfully set to {$lang}"];
         }
 
-        return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
+        return ['error' => true, 'msg' => 'Invalid language code'];
     }
 
     /**
