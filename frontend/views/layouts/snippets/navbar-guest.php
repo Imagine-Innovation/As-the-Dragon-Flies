@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 use common\helpers\WebResourcesHelper;
 use frontend\helpers\Caligraphy;
 use yii\helpers\Url;

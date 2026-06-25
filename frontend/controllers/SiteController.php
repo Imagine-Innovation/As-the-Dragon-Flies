@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace frontend\controllers;
 
 use common\components\AppStatus;
