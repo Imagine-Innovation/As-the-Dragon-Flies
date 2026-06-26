@@ -50,15 +50,30 @@ class StoryController extends Controller
      *
      * @return string
      */
-    public function actionIndex(): string
+    /**
+     * Lists all Story models.
+     *
+     * @return string|Response
+     */
+    public function actionIndex(): string|Response
     {
-        $langFilter = Yii::$app->request->cookies->getValue('story-lang-filter', 'false') === 'true';
+        $lang = Yii::$app->request->get('lang');
+
+        // If lang param is missing, check the cookie for persistence and redirect if needed
+        if ($lang === null) {
+            $cookieLang = Yii::$app->request->cookies->getValue('story-lang-filter');
+            if ($cookieLang && array_key_exists($cookieLang, \common\components\LanguageSelector::SUPPORTED_LANGUAGES)) {
+                return $this->redirect(['story/index', 'lang' => $cookieLang]);
+            }
+        }
 
         $query = Story::find()
                 ->where(['status' => AppStatus::PUBLISHED->value]);
 
-        if ($langFilter) {
-            $query->andWhere(['language' => Yii::$app->language]);
+        if ($lang && array_key_exists($lang, \common\components\LanguageSelector::SUPPORTED_LANGUAGES)) {
+            $query->andWhere(['language' => $lang]);
+        } else {
+            $lang = null;
         }
 
         $stories = $query->orderBy(['id' => SORT_DESC])
@@ -67,7 +82,7 @@ class StoryController extends Controller
 
         return $this->render('index', [
                     'stories' => $stories,
-                    'langFilter' => $langFilter,
+                    'langFilter' => $lang,
         ]);
     }
 
@@ -84,16 +99,21 @@ class StoryController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
-        $filter = Yii::$app->request->post('filter');
-        $value = $filter === 'true' ? 'true' : 'false';
+        $lang = Yii::$app->request->post('lang');
 
-        $cookie = new \yii\web\Cookie([
-            'name' => 'story-lang-filter',
-            'value' => $value,
-            'expire' => time() + 86400 * 30, // 30 days
-        ]);
-        Yii::$app->response->cookies->add($cookie);
+        if ($lang && array_key_exists($lang, \common\components\LanguageSelector::SUPPORTED_LANGUAGES)) {
+            $cookie = new \yii\web\Cookie([
+                'name' => 'story-lang-filter',
+                'value' => $lang,
+                'expire' => time() + 86400 * 30, // 30 days
+            ]);
+            Yii::$app->response->cookies->add($cookie);
+            $msg = "Filter successfully set to {$lang}";
+        } else {
+            Yii::$app->response->cookies->remove('story-lang-filter');
+            $msg = "Filter successfully cleared";
+        }
 
-        return ['error' => false, 'msg' => "Filter successfully set to {$value}"];
+        return ['error' => false, 'msg' => $msg];
     }
 }

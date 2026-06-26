@@ -1,7 +1,7 @@
 <?php
 /** @var yii\web\View $this */
 /** @var common\models\Story[] $stories */
-/** @var bool $langFilter */
+/** @var string|null $langFilter */
 /** @var integer $questId */
 $user = Yii::$app->user->identity;
 $player = Yii::$app->session->get('currentPlayer');
@@ -17,11 +17,17 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="form-group mb-0 d-flex align-items-center">
                     <span class="me-2"><?= Yii::t('app', 'Any language') ?></span>
                     <div class="toggle-switch">
-                        <input type="checkbox" class="toggle-switch__checkbox" id="lang-filter-toggle" <?= $langFilter ? 'checked' : '' ?>
+                        <input type="checkbox" class="toggle-switch__checkbox" id="lang-filter-toggle" <?= $langFilter === Yii::$app->language ? 'checked' : '' ?>
                                onchange="AjaxUtils.request({
-                                           url: 'story/ajax-set-lang-filter',
-                                           data: {filter: this.checked},
-                                           successCallback: () => { window.location.reload(); }
+                                           url: '<?= yii\helpers\Url::to(['story/ajax-set-lang-filter']) ?>',
+                                           data: {lang: this.checked ? '<?= Yii::$app->language ?>' : ''},
+                                           successCallback: () => {
+                                               if (this.checked) {
+                                                   window.location.href = '<?= yii\helpers\Url::to(['story/index', 'lang' => Yii::$app->language]) ?>';
+                                               } else {
+                                                   window.location.href = '<?= yii\helpers\Url::to(['story/index']) ?>';
+                                               }
+                                           }
                                        });">
                         <i class="toggle-switch__helper"></i>
                     </div>
