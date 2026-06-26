@@ -28,6 +28,7 @@ class PlayerController extends Controller
      */
     public function behaviors()
     {
+        /** @phpstan-ignore-next-line */
         return array_merge(parent::behaviors(), [
             'access' => [
                 'class' => AccessControl::class,

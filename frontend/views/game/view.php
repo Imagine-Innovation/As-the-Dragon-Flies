@@ -26,7 +26,7 @@ $isCurrentPlayer = $currentQuestProgress->current_player_id === $playerId;
     <input type="hidden" id="hiddenQuestProgressId" value="<?= $currentQuestProgress->id ?>" />
     <input type="hidden" id="hiddenQuestMissionId" value="<?= $currentQuestProgress->mission_id ?>" />
     <input type="hidden" id="hiddenCurrentPlayerId" value="<?= $currentPlayer->id ?>" />
-    <input type="hidden" id="hiddenCurrentPlayerName" value="<?= Html::encode($currentPlayer?->name ?? 'Unknown player') ?>" />
+    <input type="hidden" id="hiddenCurrentPlayerName" value="<?= Html::encode($currentPlayer->name) ?>" />
     <input type="hidden" id="hiddenPlayerId" value="<?= $playerId ?>" />
 </div>
 

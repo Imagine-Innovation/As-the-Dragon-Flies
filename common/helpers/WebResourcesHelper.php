@@ -25,14 +25,10 @@ class WebResourcesHelper
 
     /**
      *
-     * @param int|null $storyId
      * @return string
      */
-    public static function storyRootPath(?int $storyId = null): string
+    public static function storyRootPath(int $storyId): string
     {
-        if ($storyId) {
-            return "/common/web/resources/story-{$storyId}";
-        }
-        return '/common/web/img';
+        return "/common/web/resources/story-{$storyId}";
     }
 }

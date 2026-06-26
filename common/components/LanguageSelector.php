@@ -55,6 +55,14 @@ class LanguageSelector implements BootstrapInterface
         if (!array_key_exists($language, self::SUPPORTED_LANGUAGES)) {
             $language = self::DEFAULT_LANGUAGE;
         }
+
+        // Synchronize cookie with user profile if authenticated
+        $user = $application->user->identity;
+        if ($user !== null && isset($user->language) && $user->language !== $language) {
+            $user->language = $language;
+            \common\helpers\SaveHelper::save($user);
+        }
+
         $application->language = $language;
         $session->set('language', $language);
     }
