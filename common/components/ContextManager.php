@@ -46,10 +46,15 @@ class ContextManager extends Component
         Yii::$app->session->set('user', $loggedUser);
         Yii::$app->session->set('userId', $loggedUser->id);
 
-        $language = $loggedUser->language ?: Yii::$app->sourceLanguage;
-        $supportedLanguages = ['en', 'fr'];
-        if (!in_array($language, $supportedLanguages, true)) {
-            $language = Yii::$app->sourceLanguage;
+        $language = Yii::$app->request->cookies->getValue('language') ?: $loggedUser->language;
+        $supportedLanguages = \common\components\LanguageSelector::SUPPORTED_LANGUAGES;
+        if (!array_key_exists($language, $supportedLanguages)) {
+            $language = \common\components\LanguageSelector::DEFAULT_LANGUAGE;
+        }
+
+        if ($loggedUser->language !== $language) {
+            $loggedUser->language = $language;
+            \common\helpers\SaveHelper::save($loggedUser);
         }
 
         Yii::$app->session->set('language', $language);

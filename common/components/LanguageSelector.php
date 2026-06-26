@@ -10,7 +10,10 @@ class LanguageSelector implements BootstrapInterface
 {
 
     const DEFAULT_LANGUAGE = 'en';
-    const SUPPORTED_LANGUAGES = ['en', 'fr'];
+    const SUPPORTED_LANGUAGES = [
+        'en' => 'English',
+        'fr' => 'Français',
+    ];
 
     /**
      *
@@ -19,6 +22,11 @@ class LanguageSelector implements BootstrapInterface
      */
     private function getLanguage(Application $app): string
     {
+        $language = $app->request->cookies->getValue('language');
+        if ($language !== null) {
+            return $language;
+        }
+
         $language = $app->session->get('language');
         if ($language !== null) {
             return $language;
@@ -44,9 +52,17 @@ class LanguageSelector implements BootstrapInterface
         $session = $application->session;
         $language = $this->getLanguage($application);
 
-        if (!in_array($language, self::SUPPORTED_LANGUAGES, true)) {
+        if (!array_key_exists($language, self::SUPPORTED_LANGUAGES)) {
             $language = self::DEFAULT_LANGUAGE;
         }
+
+        // Synchronize cookie with user profile if authenticated
+        $user = $application->user->identity;
+        if ($user !== null && isset($user->language) && $user->language !== $language) {
+            $user->language = $language;
+            \common\helpers\SaveHelper::save($user);
+        }
+
         $application->language = $language;
         $session->set('language', $language);
     }

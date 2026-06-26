@@ -152,6 +152,7 @@ class SiteController extends Controller
         return $state;
     }
 
+
     /**
      * Displays homepage.
      *

@@ -137,6 +137,32 @@ class AjaxUtils {
     }
 }
 
+/**
+ * LanguageManager Class
+ * Handles application language switching via AJAX
+ */
+class LanguageManager {
+    /**
+     * Sets the application language and reloads the page
+     * @param {string} lang - Language code (e.g., 'en', 'fr')
+     */
+    static setLanguage(lang) {
+        Logger.log(1, 'setLanguage', `lang=${lang}`);
+
+        AjaxUtils.request({
+            url: 'user/ajax-set-language',
+            data: {lang},
+            successCallback: (response) => {
+                if (!response.error) {
+                    window.location.reload();
+                } else {
+                    ToastManager.show('Language', response.msg, 'error');
+                }
+            }
+        });
+    }
+}
+
 // Add this new class to handle table operations
 class TableManager {
     static loadGenericAjaxTable(pageNumber) {
