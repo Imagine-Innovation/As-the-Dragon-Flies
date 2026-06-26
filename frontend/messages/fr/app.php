@@ -49,6 +49,8 @@ return [
     'Total or partial success' => 'Succès total ou partiel',
     'Partial success or failure' => 'Succès partiel ou échec',
     'Any outcome' => 'Toute issue',
+    'Any language' => 'N\'importe quelle langue',
+    'Current language' => 'Seulement en français',
     'A required item is missing' => 'Un objet requis est manquant',
     'Deleted, only adminstrators can restore' => 'Supprimé, seuls les administrateurs peuvent restaurer',
     'Inactive. Need to be validated to be used' => 'Inactif. Doit être validé pour être utilisé',

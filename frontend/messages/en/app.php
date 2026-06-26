@@ -49,6 +49,8 @@ return [
     'Total or partial success' => 'Total or partial success',
     'Partial success or failure' => 'Partial success or failure',
     'Any outcome' => 'Any outcome',
+    'Any language' => 'Any language',
+    'Current language' => 'English only',
     'A required item is missing' => 'A required item is missing',
     'Deleted, only adminstrators can restore' => 'Deleted, only adminstrators can restore',
     'Inactive. Need to be validated to be used' => 'Inactive. Need to be validated to be used',
