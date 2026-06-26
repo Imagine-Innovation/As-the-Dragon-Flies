@@ -10,6 +10,22 @@ $quest = Yii::$app->session->get('currentQuest');
 $this->title = 'Stories';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+<script>
+    (function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (!urlParams.has('lang')) {
+            const cookieValue = document.cookie
+                    .split('; ')
+                    .find(row => row.startsWith('story-lang-filter='))
+                    ?.split('=')[1];
+
+            if (cookieValue) {
+                urlParams.set('lang', cookieValue);
+                window.location.search = urlParams.toString();
+            }
+        }
+    })();
+</script>
 <div class="container-fluid">
     <div class="card">
         <div class="card-body">

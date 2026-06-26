@@ -50,22 +50,9 @@ class StoryController extends Controller
      *
      * @return string
      */
-    /**
-     * Lists all Story models.
-     *
-     * @return string|Response
-     */
-    public function actionIndex(): string|Response
+    public function actionIndex(): string
     {
         $lang = Yii::$app->request->get('lang');
-
-        // If lang param is missing, check the cookie for persistence and redirect if needed
-        if ($lang === null) {
-            $cookieLang = Yii::$app->request->cookies->getValue('story-lang-filter');
-            if ($cookieLang && array_key_exists($cookieLang, \common\components\LanguageSelector::SUPPORTED_LANGUAGES)) {
-                return $this->redirect(['story/index', 'lang' => $cookieLang]);
-            }
-        }
 
         $query = Story::find()
                 ->where(['status' => AppStatus::PUBLISHED->value]);
