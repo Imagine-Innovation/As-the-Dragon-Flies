@@ -642,7 +642,7 @@ class BuilderComponent
     private static function addDefaultAbilityScore(Player $player, array &$initAbilityArray): array
     {
         $defaultAbilities = AbilityDefault::findAll([
-            'race_group_id' => $player->race->race_group_id,
+            'race_group_id' => $player->race?->race_group_id,
             'class_id' => $player->class_id,
         ]);
 
@@ -666,7 +666,7 @@ class BuilderComponent
     private static function addRaceAbilities(Player $player, array &$initAbilityArray): void
     {
         // Retrieve abilities associated with the player's race
-        $raceAbilities = $player->race->raceAbilities;
+        $raceAbilities = $player->race->raceAbilities ?? [];
 
         foreach ($raceAbilities as $raceAbility) {
             $id = $raceAbility->ability_id;
@@ -683,7 +683,7 @@ class BuilderComponent
     private static function addClassSavingThrow(Player $player, array &$initAbilityArray): void
     {
         // Retrieve abilities associated with the player's class
-        $classAbilities = $player->class->classAbilities;
+        $classAbilities = $player->class->classAbilities ?? [];
 
         foreach ($classAbilities as $classAbility) {
             $id = $classAbility->ability_id;
@@ -739,7 +739,7 @@ class BuilderComponent
     {
         $languageList = ['RaceLanguages' => [], 'OtherLanguages' => []];
 
-        $raceLanguages = RaceGroupLanguage::findAll(['race_group_id' => $player->race->race_group_id]);
+        $raceLanguages = RaceGroupLanguage::findAll(['race_group_id' => $player->race?->race_group_id]);
 
         $languageIds = [];
         foreach ($raceLanguages as $raceLanguage) {

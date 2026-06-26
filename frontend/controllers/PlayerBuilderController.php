@@ -219,7 +219,7 @@ class PlayerBuilderController extends Controller
                 'player' => $player,
                 'backgroundSkills' => $skills['BackgroundSkills'],
                 'classSkills' => $skills['ClassSkills'],
-                'n' => $player->class->max_skills,
+                'n' => $player->class->max_skills ?? 0,
             ]),
         ];
     }
@@ -497,8 +497,7 @@ class PlayerBuilderController extends Controller
     private function newPlayerItem(Player &$player, Item &$item, int $quantity): PlayerItem
     {
         $isProficient = $player->isProficient($item->id) ? 1 : 0;
-        $proficiencyModifier = $isProficient ?
-                $player->level->proficiency_bonus : 0;
+        $proficiencyModifier = $isProficient ? ($player->level->proficiency_bonus ?? 0) : 0;
 
         $weaponProperties = PlayerComponent::getPlayerWeaponProperties($player->id, $item->id, $proficiencyModifier);
         $itemType = $item->itemType->name;

@@ -17,7 +17,6 @@ class UserController extends Controller
      */
     public function behaviors()
     {
-        /** @phpstan-ignore-next-line */
         return array_merge(parent::behaviors(), [
             'access' => [
                 'class' => AccessControl::class,
@@ -40,7 +39,11 @@ class UserController extends Controller
         ]);
     }
 
-    public function actionProfile()
+    /**
+     *
+     * @return string|yii\web\Response
+     */
+    public function actionProfile(): string|yii\web\Response
     {
         /** @var User $user */
         $user = Yii::$app->user->identity;
