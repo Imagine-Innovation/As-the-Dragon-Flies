@@ -3,6 +3,16 @@
 /** @var common\models\Story[] $stories */
 /** @var string|null $langFilter */
 /** @var integer $questId */
+
+// Handle persistence and redirection
+if ($langFilter === null) {
+    $sessionLang = Yii::$app->session->get('story-lang-filter');
+    if ($sessionLang && array_key_exists($sessionLang, \common\components\LanguageSelector::SUPPORTED_LANGUAGES)) {
+        Yii::$app->response->redirect(['story/index', 'lang' => $sessionLang])->send();
+        exit;
+    }
+}
+
 $user = Yii::$app->user->identity;
 $player = Yii::$app->session->get('currentPlayer');
 $quest = Yii::$app->session->get('currentQuest');
