@@ -22,6 +22,11 @@ class LanguageSelector implements BootstrapInterface
      */
     private function getLanguage(Application $app): string
     {
+        $language = $app->request->cookies->getValue('language');
+        if ($language !== null) {
+            return $language;
+        }
+
         $language = $app->session->get('language');
         if ($language !== null) {
             return $language;
@@ -30,11 +35,6 @@ class LanguageSelector implements BootstrapInterface
         $user = $app->user->identity;
         if ($user !== null && isset($user->language)) {
             return $user->language;
-        }
-
-        $language = $app->request->cookies->getValue('language');
-        if ($language !== null) {
-            return $language;
         }
 
         return self::DEFAULT_LANGUAGE;

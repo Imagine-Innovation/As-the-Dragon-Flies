@@ -91,6 +91,13 @@ class UserController extends Controller
             $user->language = $post['language'] ?? $user->language;
 
             if ($user->save()) {
+                $cookie = new \yii\web\Cookie([
+                    'name' => 'language',
+                    'value' => $user->language,
+                    'expire' => time() + 86400 * 30, // 30 days
+                ]);
+                Yii::$app->response->cookies->add($cookie);
+
                 ContextManager::initContext($user);
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Profile updated successfully.'));
                 return $this->refresh();
