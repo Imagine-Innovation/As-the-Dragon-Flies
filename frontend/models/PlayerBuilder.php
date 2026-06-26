@@ -13,6 +13,7 @@ use Yii;
  */
 class PlayerBuilder extends Player
 {
+
     /**
      * {@inheritdoc}
      * Saves the advanced properties of the Player model.
@@ -64,7 +65,7 @@ class PlayerBuilder extends Player
      */
     public function getInitialEndowment(): array
     {
-        $endowments = $this->class->classEndowments;
+        $endowments = $this->class->classEndowments ?? [];
         $endowmentTable = [];
         foreach ($endowments as $endowment) {
             $endowmentTable[$endowment->choice][$endowment->sort_order] = [
