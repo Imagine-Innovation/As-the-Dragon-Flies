@@ -50,9 +50,22 @@ class StoryController extends Controller
      *
      * @return string
      */
-    public function actionIndex(): string
+    /**
+     * Lists all Story models.
+     *
+     * @return string|Response
+     */
+    public function actionIndex(): string|Response
     {
         $lang = Yii::$app->request->get('lang');
+
+        // If lang param is missing, check the session for persistence and redirect if needed
+        if ($lang === null) {
+            $sessionLang = Yii::$app->session->get('story-lang-filter');
+            if ($sessionLang && array_key_exists($sessionLang, \common\components\LanguageSelector::SUPPORTED_LANGUAGES)) {
+                return $this->redirect(['story/index', 'lang' => $sessionLang]);
+            }
+        }
 
         $query = Story::find()
                 ->where(['status' => AppStatus::PUBLISHED->value]);
@@ -89,15 +102,10 @@ class StoryController extends Controller
         $lang = Yii::$app->request->post('lang');
 
         if ($lang && array_key_exists($lang, \common\components\LanguageSelector::SUPPORTED_LANGUAGES)) {
-            $cookie = new \yii\web\Cookie([
-                'name' => 'story-lang-filter',
-                'value' => $lang,
-                'expire' => time() + 86400 * 30, // 30 days
-            ]);
-            Yii::$app->response->cookies->add($cookie);
+            Yii::$app->session->set('story-lang-filter', $lang);
             $msg = "Filter successfully set to {$lang}";
         } else {
-            Yii::$app->response->cookies->remove('story-lang-filter');
+            Yii::$app->session->remove('story-lang-filter');
             $msg = "Filter successfully cleared";
         }
 
