@@ -34,7 +34,7 @@ class StoryController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['index', 'ajax-set-lang-filter'],
+                        'actions' => ['index'],
                         'allow' => true,
                         'matchCallback' => function ($rule, $action) {
                             return AccessRightsManager::isRouteAllowed($action->controller);
@@ -55,11 +55,27 @@ class StoryController extends Controller
     {
         $lang = Yii::$app->request->get('lang');
 
+        if ($lang !== null) {
+            if (array_key_exists($lang, LanguageSelector::SUPPORTED_LANGUAGES)) {
+                Yii::$app->session->set('story-lang-filter', $lang);
+            } else {
+                Yii::$app->session->remove('story-lang-filter');
+                return $this->redirect(['story/index']);
+            }
+        } else {
+            $sessionLang = Yii::$app->session->get('story-lang-filter');
+            if ($sessionLang && array_key_exists($sessionLang, LanguageSelector::SUPPORTED_LANGUAGES)) {
+                return $this->redirect(['story/index', 'lang' => $sessionLang]);
+            }
+        }
+
         $query = Story::find()
                 ->where(['status' => AppStatus::PUBLISHED->value]);
 
         if ($lang && array_key_exists($lang, LanguageSelector::SUPPORTED_LANGUAGES)) {
             $query->andWhere(['language' => $lang]);
+        } else {
+            $lang = null;
         }
 
         $stories = $query->orderBy(['id' => SORT_DESC])
@@ -70,31 +86,5 @@ class StoryController extends Controller
                     'stories' => $stories,
                     'langFilter' => $lang,
         ]);
-    }
-
-    /**
-     * Sets the story language filter session via AJAX.
-     *
-     * @return array{error: bool, msg: string}
-     */
-    public function actionAjaxSetLangFilter(): array
-    {
-        Yii::$app->response->format = Response::FORMAT_JSON;
-
-        if (!$this->request->isPost || !$this->request->isAjax) {
-            return ['error' => true, 'msg' => 'Not an Ajax POST request'];
-        }
-
-        $lang = Yii::$app->request->post('lang');
-
-        if ($lang && array_key_exists($lang, LanguageSelector::SUPPORTED_LANGUAGES)) {
-            Yii::$app->session->set('story-lang-filter', $lang);
-            $msg = "Filter successfully set to {$lang}";
-        } else {
-            Yii::$app->session->remove('story-lang-filter');
-            $msg = "Filter successfully cleared";
-        }
-
-        return ['error' => false, 'msg' => $msg];
     }
 }

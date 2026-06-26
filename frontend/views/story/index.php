@@ -3,16 +3,6 @@
 /** @var common\models\Story[] $stories */
 /** @var string|null $langFilter */
 /** @var integer $questId */
-
-// Handle persistence and redirection
-if ($langFilter === null) {
-    $sessionLang = Yii::$app->session->get('story-lang-filter');
-    if ($sessionLang && array_key_exists($sessionLang, \common\components\LanguageSelector::SUPPORTED_LANGUAGES)) {
-        Yii::$app->response->redirect(['story/index', 'lang' => $sessionLang])->send();
-        exit;
-    }
-}
-
 $user = Yii::$app->user->identity;
 $player = Yii::$app->session->get('currentPlayer');
 $quest = Yii::$app->session->get('currentQuest');
@@ -28,17 +18,11 @@ $this->params['breadcrumbs'][] = $this->title;
                     <span class="me-2"><?= Yii::t('app', 'Any language') ?></span>
                     <div class="toggle-switch">
                         <input type="checkbox" class="toggle-switch__checkbox" id="lang-filter-toggle" <?= $langFilter === Yii::$app->language ? 'checked' : '' ?>
-                               onchange="AjaxUtils.request({
-                                           url: '<?= yii\helpers\Url::to(['story/ajax-set-lang-filter']) ?>',
-                                           data: {lang: this.checked ? '<?= Yii::$app->language ?>' : ''},
-                                           successCallback: () => {
-                                               if (this.checked) {
-                                                   window.location.href = '<?= yii\helpers\Url::to(['story/index', 'lang' => Yii::$app->language]) ?>';
-                                               } else {
-                                                   window.location.href = '<?= yii\helpers\Url::to(['story/index']) ?>';
-                                               }
-                                           }
-                                       });">
+                               onchange="if (this.checked) {
+                                           window.location.href = '<?= yii\helpers\Url::to(['story/index', 'lang' => Yii::$app->language]) ?>';
+                                       } else {
+                                           window.location.href = '<?= yii\helpers\Url::to(['story/index', 'lang' => '']) ?>';
+                                       }">
                         <i class="toggle-switch__helper"></i>
                     </div>
                     <span class="ms-2"><?= Yii::t('app', 'Current language') ?></span>
