@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use common\components\AppStatus;
 use common\components\AccessRightsManager;
+use common\components\LanguageSelector;
 use common\models\Story;
 use Yii;
 use yii\filters\AccessControl;
@@ -48,32 +49,17 @@ class StoryController extends Controller
     /**
      * Lists all Story models.
      *
-     * @return string
-     */
-    /**
-     * Lists all Story models.
-     *
      * @return string|Response
      */
     public function actionIndex(): string|Response
     {
         $lang = Yii::$app->request->get('lang');
 
-        // If lang param is missing, check the session for persistence and redirect if needed
-        if ($lang === null) {
-            $sessionLang = Yii::$app->session->get('story-lang-filter');
-            if ($sessionLang && array_key_exists($sessionLang, \common\components\LanguageSelector::SUPPORTED_LANGUAGES)) {
-                return $this->redirect(['story/index', 'lang' => $sessionLang]);
-            }
-        }
-
         $query = Story::find()
                 ->where(['status' => AppStatus::PUBLISHED->value]);
 
-        if ($lang && array_key_exists($lang, \common\components\LanguageSelector::SUPPORTED_LANGUAGES)) {
+        if ($lang && array_key_exists($lang, LanguageSelector::SUPPORTED_LANGUAGES)) {
             $query->andWhere(['language' => $lang]);
-        } else {
-            $lang = null;
         }
 
         $stories = $query->orderBy(['id' => SORT_DESC])
@@ -101,7 +87,7 @@ class StoryController extends Controller
 
         $lang = Yii::$app->request->post('lang');
 
-        if ($lang && array_key_exists($lang, \common\components\LanguageSelector::SUPPORTED_LANGUAGES)) {
+        if ($lang && array_key_exists($lang, LanguageSelector::SUPPORTED_LANGUAGES)) {
             Yii::$app->session->set('story-lang-filter', $lang);
             $msg = "Filter successfully set to {$lang}";
         } else {
