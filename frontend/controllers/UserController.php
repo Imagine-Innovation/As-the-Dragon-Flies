@@ -61,7 +61,7 @@ class UserController extends Controller
 
         if (array_key_exists($lang, LanguageSelector::SUPPORTED_LANGUAGES)) {
             Yii::$app->session->set('language', $lang);
-
+            LanguageSelector::setLangCookie($lang);
             $user = Yii::$app->user->identity;
             if ($user) {
                 $user->language = $lang;
@@ -85,6 +85,7 @@ class UserController extends Controller
             $user->language = $post['language'] ?? $user->language;
 
             if ($user->save()) {
+                LanguageSelector::setLangCookie($user->language);
                 ContextManager::initContext($user);
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Profile updated successfully.'));
                 return $this->refresh();

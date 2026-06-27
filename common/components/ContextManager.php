@@ -3,6 +3,7 @@
 namespace common\components;
 
 use common\components\AppStatus;
+use common\components\LanguageSelector;
 use common\helpers\Utilities;
 use common\models\Player;
 use common\models\Quest;
@@ -46,10 +47,10 @@ class ContextManager extends Component
         Yii::$app->session->set('user', $loggedUser);
         Yii::$app->session->set('userId', $loggedUser->id);
 
-        $language = Yii::$app->request->cookies->getValue('language') ?: $loggedUser->language;
-        $supportedLanguages = \common\components\LanguageSelector::SUPPORTED_LANGUAGES;
+        $language = LanguageSelector::getLangCookie() ?: $loggedUser->language;
+        $supportedLanguages = LanguageSelector::SUPPORTED_LANGUAGES;
         if (!array_key_exists($language, $supportedLanguages)) {
-            $language = \common\components\LanguageSelector::DEFAULT_LANGUAGE;
+            $language = LanguageSelector::DEFAULT_LANGUAGE;
         }
 
         if ($loggedUser->language !== $language) {
