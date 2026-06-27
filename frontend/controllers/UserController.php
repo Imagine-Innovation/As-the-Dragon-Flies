@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use common\components\AccessRightsManager;
 use common\components\ContextManager;
+use common\components\LanguageSelector;
 use common\helpers\SaveHelper;
 use common\models\User;
 use Yii;
@@ -58,15 +59,8 @@ class UserController extends Controller
 
         $lang = Yii::$app->request->post('lang');
 
-        if (array_key_exists($lang, \common\components\LanguageSelector::SUPPORTED_LANGUAGES)) {
+        if (array_key_exists($lang, LanguageSelector::SUPPORTED_LANGUAGES)) {
             Yii::$app->session->set('language', $lang);
-
-            $cookie = new \yii\web\Cookie([
-                'name' => 'language',
-                'value' => $lang,
-                'expire' => time() + 86400 * 30, // 30 days
-            ]);
-            Yii::$app->response->cookies->add($cookie);
 
             $user = Yii::$app->user->identity;
             if ($user) {
@@ -91,13 +85,6 @@ class UserController extends Controller
             $user->language = $post['language'] ?? $user->language;
 
             if ($user->save()) {
-                $cookie = new \yii\web\Cookie([
-                    'name' => 'language',
-                    'value' => $user->language,
-                    'expire' => time() + 86400 * 30, // 30 days
-                ]);
-                Yii::$app->response->cookies->add($cookie);
-
                 ContextManager::initContext($user);
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Profile updated successfully.'));
                 return $this->refresh();
