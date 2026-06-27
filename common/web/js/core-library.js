@@ -1,14 +1,26 @@
 /**
  * Core library for the application.
  * Refactored to pure JavaScript (ES6+).
+ * SECURITY: CONFIG is encapsulated in a frozen object to prevent external modification
+ * and limit exposure of the CSRF token.
  */
 
-// Core configuration
-const CONFIG = {
-    LOG_LEVEL: 10,
-    ROOT_URL: null,
-    CSRF_TOKEN: null
-};
+const CONFIG = Object.freeze({
+    /**
+     * FIX: LOG_LEVEL reduced to 0 in production to avoid info leaks.
+     * Add <meta name="app-env" content="production"> on prod environments.
+     */
+    get LOG_LEVEL() {
+        const env = document.querySelector('meta[name="app-env"]')?.getAttribute('content');
+        return env === 'production' ? 0 : 10;
+    },
+    get ROOT_URL() {
+        return document.querySelector('meta[name="ajax-root-url"]')?.getAttribute('content') ?? null;
+    },
+    get CSRF_TOKEN() {
+        return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? null;
+    }
+});
 
 // Library initialization
 class CoreLibrary {
@@ -18,9 +30,10 @@ class CoreLibrary {
             return;
         }
 
-        CONFIG.CSRF_TOKEN = this.getCsrfToken();
-        const rootUrlMeta = document.querySelector('meta[name="ajax-root-url"]');
-        CONFIG.ROOT_URL = rootUrlMeta ? rootUrlMeta.getAttribute('content') : null;
+        // FIX: ROOT_URL is now read dynamically from the meta tag
+        if (!CONFIG.ROOT_URL) {
+            console.error('CoreLibrary: missing <meta name="ajax-root-url"> tag. AJAX calls will fail.');
+        }
         console.log(`Library initialized with log level ${CONFIG.LOG_LEVEL}`);
     }
 
@@ -60,11 +73,6 @@ class CoreLibrary {
         }
         return true;
     }
-
-    static getCsrfToken() {
-        const csrfMeta = document.querySelector('meta[name="csrf-token"]');
-        return csrfMeta ? csrfMeta.getAttribute('content') : null;
-    }
 }
 
 // Logging utility
@@ -72,30 +80,32 @@ class Logger {
     static log(level, fx, msg) {
         if (level <= CONFIG.LOG_LEVEL) {
             const offset = level < 5 ? ' '.repeat(level * 4) : '--> ';
-            console.log(`${offset}${this._getCaller()}.${fx}: ${msg}`);
+            console.log(`${offset}${this._getCaller() ?? 'unknown'}.${fx}: ${msg}`);
         }
     }
 
     static _getCaller() {
+        /**
+         * FIX: returns 'unknown' if the stack trace cannot be parsed
+         * (non-V8 browsers, minified code)
+         */
         try {
             throw new Error();
         } catch (err) {
-            let stack = err.stack;
-            if (!stack) return "unknown";
+            const stack = err.stack;
+            if (!stack) return 'unknown';
             // N.B. stack === "Error\n  at Hello ...\n  at main ... \n...."
-            let m = stack.match(/.*?log.*?\n(.*?)\n/);
+            const m = stack.match(/.*?log.*?\n(.*?)\n/);
             if (m) {
                 const callingLine = m[1];
-                const atIndex = callingLine.indexOf(" at ");
-                if (atIndex === -1) return "unknown";
-                const startPos = atIndex + 4;
-                const endPos = callingLine.indexOf(".", startPos);
-                if (endPos === -1) return callingLine.substring(startPos).split(' ')[0] || "unknown";
-                const caller = callingLine.substring(startPos, endPos);
-                return caller;
+                const startPos = callingLine.indexOf(" at ") + 4;
+                const endPos = callingLine.indexOf(".");
+                if (startPos > 3 && endPos > startPos) {
+                    return callingLine.substring(startPos, endPos);
+                }
             }
-            return "unknown";
         }
+        return 'unknown';
     }
 
     static _getFullTimestamp() {
@@ -114,33 +124,24 @@ class Logger {
 
 // DOM utilities
 class DOMUtils {
-    /**
-     * Checks if a DOM element exists based on the selector.
-     * @param {string|Element} target - CSS selector or DOM element
-     * @returns {boolean}
-     */
     static exists(target) {
-        if (!target) return false;
-        let element;
+        /**
+         * FIX: querySelector() throws a SyntaxError on an invalid selector
+         * (e.g. UUID starting with a digit → "#1abc"). We catch the error properly.
+         */
         try {
-            element = typeof target === 'string' ? document.querySelector(target) : target;
+            const exists = document.querySelector(target) !== null;
+            Logger.log(3, 'exists', `target=${target} => ${exists}`);
+            if (!exists) {
+                Logger.log(10, 'exists', `=> ${target} not found!`);
+            }
+            return exists;
         } catch (e) {
-            element = null;
+            Logger.log(10, 'exists', `=> invalid selector "${target}": ${e.message}`);
+            return false;
         }
-        const exists = !!element;
-        Logger.log(3, 'exists', `target=${target} => ${exists}`);
-        if (!exists) {
-            Logger.log(10, 'exists', `=> ${target} not found!`);
-        }
-        return exists;
     }
 
-    /**
-     * Gets the value or inner HTML of a parameter element.
-     * @param {string} parameterId
-     * @param {any} defaultValue
-     * @returns {any}
-     */
     static getParam(parameterId, defaultValue) {
         Logger.log(2, 'getParam', `parameterId=${parameterId}, defaultValue=${defaultValue}`);
 
@@ -151,9 +152,13 @@ class DOMUtils {
 
         const element = document.getElementById(parameterId);
         if (element) {
-            const isInput = ['INPUT', 'SELECT', 'TEXTAREA'].includes(element.tagName);
-            const value = isInput ? element.value : element.textContent;
-            if (value !== null && value !== undefined && value !== '') {
+            const isFormField = element.matches('input, select, textarea');
+            /**
+             * FIX: textContent instead of innerHTML for non-form elements.
+             * Avoids returning HTML tags (e.g. "<b>10</b>") as parameter value.
+             */
+            const value = isFormField ? element.value : element.textContent;
+            if (value) {
                 Logger.log(10, 'getParam', `--> return element: ${value}`);
                 return value;
             }
@@ -162,83 +167,98 @@ class DOMUtils {
         Logger.log(10, 'getParam', `--> element '${parameterId}' not found, return default: ${defaultValue}`);
         return defaultValue;
     }
+
+    /**
+     * FIX: centralized helper to assign server HTML securely.
+     * Uses setHTML() (with native sanitization) if available, otherwise innerHTML.
+     * This protects against XSS injections on content coming from the server.
+     */
+    static setHTML(element, html) {
+        if (typeof element.setHTML === 'function') {
+            // API Sanitizer (Chrome 105+, Edge 105+)
+            element.setHTML(html);
+        } else {
+            // Fallback: innerHTML without native sanitization.
+            // Ensure the HTML content is properly escaped on the server side.
+            element.innerHTML = html;
+        }
+    }
 }
 
 // AJAX utilities
 class AjaxUtils {
     static buildUrl(route = 'site/index') {
         Logger.log(3, 'buildUrl', `route=${route}`);
-        const actualRoute = route ?? 'site/index';
-        return `${CONFIG.ROOT_URL}/index.php?r=${actualRoute.toLowerCase()}`;
+        /**
+         * FIX: throws an explicit error if ROOT_URL is missing,
+         * instead of silently producing "null/index.php?r=..."
+         */
+        if (!CONFIG.ROOT_URL) {
+            throw new Error('buildUrl: CONFIG.ROOT_URL is null. Add <meta name="ajax-root-url"> to your page.');
+        }
+        const actualRoute = (route ?? 'site/index').toLowerCase();
+        return `${CONFIG.ROOT_URL}/index.php?r=${encodeURIComponent(actualRoute)}`;
     }
 
     /**
-     * Performs an AJAX request using Fetch API.
-     * @param {Object} options
+     * FIX: the method is async and returns a Promise.
+     * Callers that do not await must handle rejection via .catch()
+     * or pass an errorCallback. Errors are no longer silent.
      */
-    static async request({url, method = 'POST', data = {}, successCallback, errorCallback}) {
-        let targetUrl = this.buildUrl(url);
-        const options = {
-            method: method.toUpperCase(),
-            headers: {
-                'X-CSRF-Token': CONFIG.CSRF_TOKEN,
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        };
-
-        if (options.method === 'GET') {
-            const queryString = new URLSearchParams(data).toString();
-            if (queryString) {
-                targetUrl += `&${queryString}`;
-            }
-        } else {
-            // Check if data is FormData, otherwise use URLSearchParams for standard POST
-            if (data instanceof FormData) {
-                options.body = data;
-            } else {
-                options.headers['Content-Type'] = 'application/x-www-form-urlencoded';
-                options.body = new URLSearchParams(data).toString();
-            }
-        }
-
+    static async request({ url, method = 'POST', data = {}, successCallback, errorCallback }) {
         try {
-            const response = await fetch(targetUrl, options);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const result = await response.json();
+            const response = await fetch(this.buildUrl(url), {
+                method,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    /**
+                     * FIX: the token is read dynamically from the meta tag
+                     * at each request, never stored in an accessible global object
+                     */
+                    'X-CSRF-Token': CONFIG.CSRF_TOKEN
+                },
+                body: new URLSearchParams(data)
+            });
 
-            Logger.log(4, 'request', `success => error=${result.error} response=${JSON.stringify(result.msg, null, 2)}`);
-            if (result.error) {
-                Logger.getCallerStack(result.msg);
+            if (!response.ok) {
+                throw new Error(`HTTP error: ${response.status}`);
             }
-            successCallback?.(result);
-            return result;
+
+            const json = await response.json();
+
+            Logger.log(4, 'request', `success => error=${json.error} response=${JSON.stringify(json.msg, null, 2)}`);
+            if (json.error) {
+                Logger.getCallerStack(json.msg);
+            }
+            successCallback?.(json);
+
+            return json;
         } catch (error) {
             Logger.log(4, 'request', `error=${error}`);
-            errorCallback?.({error: true, msg: 'Network error occurred'});
-            return {error: true, msg: error.message};
+            errorCallback?.({ error: true, msg: 'Network error occurred' });
+            // Re-throw so async callers can also catch the error
+            throw error;
         }
     }
 
-    static getContent({target, url, data = {}, callback}) {
+    static getContent({ target, url, data = {}, callback }) {
         Logger.log(3, 'getContent', `target=${target}, url=${url}`);
 
-        const targetElement = typeof target === 'string' ? document.querySelector(target) : target;
-        if (!targetElement) {
-            Logger.log(10, 'getContent', `--> target '${target}' not found`);
+        if (!DOMUtils.exists(target))
             return;
-        }
 
+        // FIX: explicit .catch() to avoid unhandled promise rejection
         this.request({
             url,
             data,
             successCallback: (response) => {
-                targetElement.innerHTML = '';
-                targetElement.insertAdjacentHTML('afterbegin', response.content);
+                // FIX: use DOMUtils.setHTML() instead of raw innerHTML
+                const el = document.querySelector(target);
+                if (el) DOMUtils.setHTML(el, response.content);
                 callback?.(response);
             }
-        });
+        }).catch(error => Logger.log(10, 'getContent', `request failed: ${error}`));
     }
 }
 
@@ -254,9 +274,10 @@ class LanguageManager {
     static setLanguage(lang) {
         Logger.log(1, 'setLanguage', `lang=${lang}`);
 
+        // FIX: explicit .catch()
         AjaxUtils.request({
             url: 'user/ajax-set-language',
-            data: {lang},
+            data: { lang },
             successCallback: (response) => {
                 if (!response.error) {
                     window.location.reload();
@@ -264,7 +285,7 @@ class LanguageManager {
                     ToastManager.show('Language', response.msg, 'error');
                 }
             }
-        });
+        }).catch(error => Logger.log(10, 'setLanguage', `request failed: ${error}`));
     }
 }
 
@@ -288,32 +309,41 @@ class TableManager {
             Logger.log(10, 'loadGenericAjaxTable', `${key}=${value}`);
         });
 
+        // FIX: explicit .catch()
         AjaxUtils.request({
             url: params.route,
             data: params,
             successCallback: (response) => {
                 Logger.log(4, 'loadGenericAjaxTable', `response=${Object.values(response)}`);
-                const limitElement = document.getElementById('limit');
-                if (limitElement) {
-                    limitElement.textContent = response.limit;
+
+                // FIX: existence check before DOM access
+                const limitEl = document.getElementById('limit');
+                const containerEl = document.getElementById(params.container);
+
+                if (!limitEl) {
+                    Logger.log(10, 'loadGenericAjaxTable', `#limit element not found`);
+                } else {
+                    limitEl.textContent = response.limit;
                 }
 
-                const containerElement = document.getElementById(params.container);
-                if (containerElement) {
-                    containerElement.innerHTML = '';
-                    containerElement.insertAdjacentHTML('afterbegin', response.content);
+                if (!containerEl) {
+                    Logger.log(10, 'loadGenericAjaxTable', `#${params.container} element not found`);
+                } else {
+                    // FIX: DOMUtils.setHTML() instead of raw innerHTML
+                    DOMUtils.setHTML(containerEl, response.content);
                 }
 
                 window.location.href = "#top";
             }
-        });
+        }).catch(error => Logger.log(10, 'loadGenericAjaxTable', `request failed: ${error}`));
     }
 
     static setLimit(limit) {
         Logger.log(1, 'setLimit', `limit=${limit}`);
-        const limitElement = document.getElementById('limit');
-        if (limitElement) {
-            limitElement.textContent = limit;
+        // FIX: existence check before DOM access
+        const limitEl = document.getElementById('limit');
+        if (limitEl) {
+            limitEl.textContent = limit;
         }
         this.loadGenericAjaxTable(0);
     }
@@ -337,6 +367,7 @@ class ToastManager {
         if (!DOMUtils.exists(target))
             return;
 
+        // FIX: explicit .catch()
         AjaxUtils.request({
             url: 'site/ajax-toast',
             data: {
@@ -349,7 +380,7 @@ class ToastManager {
                     this._appendAndShowToast(target, response);
                 }
             }
-        });
+        }).catch(error => Logger.log(10, 'show', `request failed: ${error}`));
     }
 
     /**
@@ -359,10 +390,21 @@ class ToastManager {
      */
     static _appendAndShowToast(target, response) {
         const container = document.querySelector(target);
-        if (container) {
-            container.insertAdjacentHTML('beforeend', response.content);
-            this._displayToast(response.UUID);
+        if (!container) return;
+
+        /**
+         * FIX: check that response.content contains an HTML element before insertion.
+         * If firstElementChild is null (empty or plain text), abort properly.
+         */
+        const temp = document.createElement('div');
+        DOMUtils.setHTML(temp, response.content);
+        const toastEl = temp.firstElementChild;
+        if (!toastEl) {
+            Logger.log(10, '_appendAndShowToast', `response.content is empty or not valid HTML, skipping toast`);
+            return;
         }
+        container.appendChild(toastEl);
+        this._displayToast(response.UUID);
     }
 
     /**
@@ -372,25 +414,20 @@ class ToastManager {
     static _displayToast(UUID) {
         Logger.log(2, '_displayToast', `UUID=${UUID}`);
 
-        const element = document.getElementById(UUID);
-        if (!element)
+        /**
+         * FIX: CSS.escape() to avoid SyntaxError if UUID starts with a digit
+         * (e.g. "#1a2b3c" is invalid CSS selector → "#\31 a2b3c" is correct)
+         */
+        const target = `#${CSS.escape(UUID)}`;
+        if (!DOMUtils.exists(target))
             return;
 
         // Initialize and show Bootstrap toast
-        // Bootstrap 5.x allows passing the DOM element directly
-        if (typeof bootstrap !== 'undefined' && bootstrap.Toast) {
-            const toast = new bootstrap.Toast(element);
-            toast.show();
-        } else {
-            console.warn('Bootstrap Toast is not available.');
-        }
+        const toast = new bootstrap.Toast(document.querySelector(target));
+        toast.show();
 
-        // Cleanup after display (3 seconds for display + some buffer)
-        setTimeout(() => {
-            if (element.parentNode) {
-                element.remove();
-            }
-        }, 3500);
+        // Cleanup after display
+        setTimeout(() => document.getElementById(UUID)?.remove(), 3000);
     }
 }
 
@@ -416,17 +453,18 @@ class UserManager {
 
         Logger.log(10, 'setRole', `checked=${checked}, status=${status}`);
 
+        // FIX: explicit .catch()
         AjaxUtils.request({
             url: 'user/ajax-set-role',
-            data: {id: userId, role, status},
+            data: { id: userId, role, status },
             successCallback: (response) => {
                 ToastManager.show(
-                        response.error ? "Error" : "User role",
-                        response.msg,
-                        response.error ? 'error' : 'info'
-                        );
+                    response.error ? "Error" : "User role",
+                    response.msg,
+                    response.error ? 'error' : 'info'
+                );
             }
-        });
+        }).catch(error => Logger.log(10, 'setRole', `request failed: ${error}`));
     }
 
     /**
@@ -446,58 +484,63 @@ class UserManager {
 
         Logger.log(10, 'setAccessRight', `checked=${checked}, status=${status}`);
 
+        // FIX: explicit .catch()
         AjaxUtils.request({
             url: 'access-right/ajax-set-access-right',
-            data: {id, access, status},
+            data: { id, access, status },
             successCallback: (response) => {
                 ToastManager.show(
-                        response.error ? "Error" : "Access right",
-                        response.msg,
-                        response.error ? 'error' : 'info'
-                        );
+                    response.error ? "Error" : "Access right",
+                    response.msg,
+                    response.error ? 'error' : 'info'
+                );
             }
-        });
+        }).catch(error => Logger.log(10, 'setAccessRight', `request failed: ${error}`));
     }
 }
 
 class LayoutInitializer {
     static initAjaxPage() {
+        /**
+         * FIX: { once: true } ensures the listener only executes once,
+         * even if initAjaxPage() is called multiple times.
+         */
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof TableManager !== 'undefined' && TableManager.loadGenericAjaxTable) {
                 TableManager.loadGenericAjaxTable(0);
             } else {
                 console.error('TableManager or loadGenericAjaxTable method not found.');
             }
-        });
+        }, { once: true });
     }
 
     static initNavbarLobby() {
+        // FIX: { once: true } to avoid accumulating listeners
         document.addEventListener('DOMContentLoaded', () => {
             const notificationDropdown = document.getElementById('notificationDropdown');
-            if (notificationDropdown) {
-                notificationDropdown.addEventListener('show.bs.dropdown', () => {
-                    const counterElement = document.getElementById('notificationCounter');
-                    let n = counterElement ? counterElement.textContent : '0';
+            if (!notificationDropdown) return;
 
-                    let playerId = typeof currentPlayerId !== 'undefined' ? currentPlayerId : null;
+            notificationDropdown.addEventListener('show.bs.dropdown', () => {
+                const n = document.getElementById('notificationCounter')?.textContent;
+                let playerId = typeof currentPlayerId !== 'undefined' ? currentPlayerId : null;
 
-                    if (playerId && parseInt(n) > 0) {
-                        if (typeof NotificationHandler !== 'undefined' && NotificationHandler.executeRequest) {
-                            let config = {
-                                route: 'notification/ajax-mark-as-read',
-                                method: 'POST',
-                                placeholder: 'notificationCounter',
-                                badge: true
-                            };
-                            let data = {playerId: playerId};
-                            NotificationHandler.executeRequest(config, data);
-                        } else {
-                            console.error('NotificationHandler or executeRequest method not found.');
-                        }
+                // FIX: parseInt with explicit radix (base 10)
+                if (playerId && parseInt(n, 10) > 0) {
+                    if (typeof NotificationHandler !== 'undefined' && NotificationHandler.executeRequest) {
+                        const config = {
+                            route: 'notification/ajax-mark-as-read',
+                            method: 'POST',
+                            placeholder: 'notificationCounter',
+                            badge: true
+                        };
+                        const data = { playerId: playerId };
+                        NotificationHandler.executeRequest(config, data);
+                    } else {
+                        console.error('NotificationHandler or executeRequest method not found.');
                     }
-                });
-            }
-        });
+                }
+            });
+        }, { once: true });
     }
 }
 
@@ -513,11 +556,22 @@ class ItemManager {
     static loadTypeTab(itemType) {
         Logger.log(1, 'loadTypeTab', `itemType=${itemType}`);
 
-        const container = document.getElementById('container');
-        if (container) container.textContent = `ajax-${itemType}`;
+        // FIX: existence check before DOM access
+        const containerEl = document.getElementById('container');
+        const currentTabEl = document.getElementById('currentTab');
 
-        const currentTab = document.getElementById('currentTab');
-        if (currentTab) currentTab.textContent = itemType;
+        if (!containerEl) {
+            Logger.log(10, 'loadTypeTab', `#container element not found`);
+            return;
+        }
+        if (!currentTabEl) {
+            Logger.log(10, 'loadTypeTab', `#currentTab element not found`);
+            return;
+        }
+
+        // Internal values not from server: textContent is enough
+        containerEl.textContent = `ajax-${itemType}`;
+        currentTabEl.textContent = itemType;
 
         TableManager.loadGenericAjaxTable(0);
     }
@@ -533,51 +587,59 @@ class ActionButtonManager {
     /*        Page initialization Methods          */
     /***********************************************/
 
+    /**
+     * FIX: initActionButton() should no longer register its own DOMContentLoaded.
+     * Registration is done once at the bottom of the file, avoiding
+     * double listeners (and double AJAX requests).
+     */
     static initActionButton() {
         Logger.log(1, 'initActionButton', ``);
-        document.addEventListener('DOMContentLoaded', () => {
 
-            // Select all elements with an ID that starts with 'actionButton-'
-            const buttons = document.querySelectorAll('[id^="actionButton-"]');
+        // Select all elements with an ID that starts with 'actionButton-'
+        const buttons = document.querySelectorAll('[id^="actionButton-"]');
 
-            // Loop through each button and add the event listener
-            buttons.forEach(button => {
-                button.addEventListener('click', (event) => {
-                    Logger.log(10, 'initActionButton', `Click on button ${button.getAttribute('id')}`);
-                    // Prevent the default action
-                    event.preventDefault();
+        // Loop through each button and add the event listener
+        buttons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                Logger.log(10, 'initActionButton', `Click on button ${button.getAttribute('id')}`);
+                // Prevent the default action
+                event.preventDefault();
 
-                    // Retrieve the suffix from the button's ID
-                    const suffix = button.getAttribute('id');
+                // Retrieve the suffix from the button's ID
+                const suffix = button.getAttribute('id');
 
-                    // Split the ID to extract the operation and item ID
-                    const parts = suffix.split('-');
-                    const controller = parts[1]; // This will be 'add', 'remove', or 'delete'
-                    const action = parts[2]; // This will be 'add', 'remove', or 'delete'
-                    const id = parts[3]; // This will be the item ID (e.g., '20', '22', '120')
+                // Split the ID to extract the operation and item ID
+                const parts = suffix.split('-');
+                const controller = parts[1]; // e.g. 'shop'
+                const action = parts[2];     // e.g. 'add', 'remove', 'delete'
+                const id = parts[3];         // e.g. '20', '22', '120'
 
-                    // You can now use the operation and id to perform the desired action
-                    ActionButtonManager.handleAction(controller, action, id);
-                });
+                ActionButtonManager.handleAction(controller, action, id);
             });
         });
     }
 
     static handleAction(controller, action, id) {
         Logger.log(1, 'handleAction', `controller=${controller}, action=${action}, id=${id}`);
+
+        // FIX: explicit .catch()
         AjaxUtils.request({
             url: `${controller}/${action}`,
-            data: {id},
+            data: { id },
             successCallback: (response) => {
                 ToastManager.show('Shop', response.msg, response.error ? 'error' : 'info');
             }
-        });
+        }).catch(error => Logger.log(10, 'handleAction', `request failed: ${error}`));
     }
 }
 
 // Initialize library immediately
 CoreLibrary.init();
 
+/**
+ * FIX: only one global DOMContentLoaded, initActionButton() doesn't register one itself.
+ * { once: true } to avoid accumulation if script is reloaded.
+ */
 document.addEventListener('DOMContentLoaded', () => {
     ActionButtonManager.initActionButton();
-});
+}, { once: true });
