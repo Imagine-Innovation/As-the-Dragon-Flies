@@ -1,5 +1,6 @@
 <?php
 
+use common\components\LanguageSelector;
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
 
@@ -23,10 +24,7 @@ $this->title = Yii::t('app', 'Profile', ['username' => $model->username]);
                     ?>
                     <?=
                             $form->field($model, 'language')
-                            ->dropDownList([
-                                'en' => 'English',
-                                'fr' => 'Français',
-                            ])
+                            ->dropDownList(LanguageSelector::SUPPORTED_LANGUAGES)
                             ->label(Yii::t('app', 'Language'))
                     ?>
 

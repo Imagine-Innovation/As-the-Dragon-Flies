@@ -29,11 +29,6 @@ class LanguageSelector implements BootstrapInterface
             return $langCookie;
         }
 
-        $language = $app->session->get('language');
-        if ($language !== null) {
-            return $language;
-        }
-
         $user = $app->user->identity;
         if ($user !== null && isset($user->language)) {
             return $user->language;

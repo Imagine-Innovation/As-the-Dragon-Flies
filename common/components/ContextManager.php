@@ -58,7 +58,7 @@ class ContextManager extends Component
             \common\helpers\SaveHelper::save($loggedUser);
         }
 
-        Yii::$app->session->set('language', $language);
+        //Yii::$app->session->set('language', $language);
         Yii::$app->language = $language;
 
         self::updatePlayerContext($loggedUser->current_player_id);
@@ -195,7 +195,7 @@ class ContextManager extends Component
             'isGuest' => self::isGuest(),
             'isAdmin' => $user->is_admin,
             'isDesigner' => $user->is_designer,
-            'language' => Yii::$app->session->get('language'),
+            //'language' => Yii::$app->session->get('language'),
             'userId' => Yii::$app->session->get('userId'),
             'sessionId' => Yii::$app->session->get('sessionId'),
             'hasPlayerSelected' => Yii::$app->session->get('hasPlayerSelected'),

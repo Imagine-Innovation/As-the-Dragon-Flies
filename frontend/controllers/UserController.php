@@ -60,7 +60,6 @@ class UserController extends Controller
         $lang = Yii::$app->request->post('lang');
 
         if (array_key_exists($lang, LanguageSelector::SUPPORTED_LANGUAGES)) {
-            Yii::$app->session->set('language', $lang);
             LanguageSelector::setLangCookie($lang);
             $user = Yii::$app->user->identity;
             if ($user) {
