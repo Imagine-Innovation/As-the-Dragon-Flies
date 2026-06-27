@@ -178,9 +178,10 @@ class DOMUtils {
             // API Sanitizer (Chrome 105+, Edge 105+)
             element.setHTML(html);
         } else {
-            // Fallback: innerHTML without native sanitization.
+            // Fallback: clear and insert.
             // Ensure the HTML content is properly escaped on the server side.
-            element.innerHTML = html;
+            element.innerHTML = '';
+            element.insertAdjacentHTML('afterbegin', html);
         }
     }
 }
@@ -207,19 +208,32 @@ class AjaxUtils {
      */
     static async request({ url, method = 'POST', data = {}, successCallback, errorCallback }) {
         try {
-            const response = await fetch(this.buildUrl(url), {
-                method,
+            let targetUrl = this.buildUrl(url);
+            const options = {
+                method: method.toUpperCase(),
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
                     'X-Requested-With': 'XMLHttpRequest',
                     /**
                      * FIX: the token is read dynamically from the meta tag
                      * at each request, never stored in an accessible global object
                      */
                     'X-CSRF-Token': CONFIG.CSRF_TOKEN
-                },
-                body: new URLSearchParams(data)
-            });
+                }
+            };
+
+            const params = new URLSearchParams(data);
+
+            if (options.method === 'GET') {
+                const queryString = params.toString();
+                if (queryString) {
+                    targetUrl += `&${queryString}`;
+                }
+            } else {
+                options.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+                options.body = params;
+            }
+
+            const response = await fetch(targetUrl, options);
 
             if (!response.ok) {
                 throw new Error(`HTTP error: ${response.status}`);
