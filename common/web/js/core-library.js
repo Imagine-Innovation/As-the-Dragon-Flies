@@ -152,7 +152,7 @@ class DOMUtils {
         const element = document.getElementById(parameterId);
         if (element) {
             const isInput = ['INPUT', 'SELECT', 'TEXTAREA'].includes(element.tagName);
-            const value = isInput ? element.value : element.innerHTML;
+            const value = isInput ? element.value : element.textContent;
             if (value !== null && value !== undefined && value !== '') {
                 Logger.log(10, 'getParam', `--> return element: ${value}`);
                 return value;
@@ -234,7 +234,8 @@ class AjaxUtils {
             url,
             data,
             successCallback: (response) => {
-                targetElement.innerHTML = response.content;
+                targetElement.innerHTML = '';
+                targetElement.insertAdjacentHTML('afterbegin', response.content);
                 callback?.(response);
             }
         });
@@ -294,12 +295,13 @@ class TableManager {
                 Logger.log(4, 'loadGenericAjaxTable', `response=${Object.values(response)}`);
                 const limitElement = document.getElementById('limit');
                 if (limitElement) {
-                    limitElement.innerHTML = response.limit;
+                    limitElement.textContent = response.limit;
                 }
 
                 const containerElement = document.getElementById(params.container);
                 if (containerElement) {
-                    containerElement.innerHTML = response.content;
+                    containerElement.innerHTML = '';
+                    containerElement.insertAdjacentHTML('afterbegin', response.content);
                 }
 
                 window.location.href = "#top";
@@ -311,7 +313,7 @@ class TableManager {
         Logger.log(1, 'setLimit', `limit=${limit}`);
         const limitElement = document.getElementById('limit');
         if (limitElement) {
-            limitElement.innerHTML = limit;
+            limitElement.textContent = limit;
         }
         this.loadGenericAjaxTable(0);
     }
@@ -512,10 +514,10 @@ class ItemManager {
         Logger.log(1, 'loadTypeTab', `itemType=${itemType}`);
 
         const container = document.getElementById('container');
-        if (container) container.innerHTML = `ajax-${itemType}`;
+        if (container) container.textContent = `ajax-${itemType}`;
 
         const currentTab = document.getElementById('currentTab');
-        if (currentTab) currentTab.innerHTML = itemType;
+        if (currentTab) currentTab.textContent = itemType;
 
         TableManager.loadGenericAjaxTable(0);
     }
