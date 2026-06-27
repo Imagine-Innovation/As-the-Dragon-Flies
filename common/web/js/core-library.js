@@ -1,3 +1,8 @@
+/**
+ * Core library for the application.
+ * Refactored to pure JavaScript (ES6+).
+ */
+
 // Core configuration
 const CONFIG = {
     LOG_LEVEL: 10,
@@ -8,13 +13,57 @@ const CONFIG = {
 // Library initialization
 class CoreLibrary {
     static init() {
+        if (!this.checkCompatibility()) {
+            console.error("Browser is not compatible with required JavaScript features.");
+            return;
+        }
+
         CONFIG.CSRF_TOKEN = this.getCsrfToken();
-        CONFIG.ROOT_URL = $('meta[name="ajax-root-url"]').attr('content');
+        const rootUrlMeta = document.querySelector('meta[name="ajax-root-url"]');
+        CONFIG.ROOT_URL = rootUrlMeta ? rootUrlMeta.getAttribute('content') : null;
         console.log(`Library initialized with log level ${CONFIG.LOG_LEVEL}`);
     }
 
+    /**
+     * Checks if the browser supports required ES6+ features.
+     * @returns {boolean}
+     */
+    static checkCompatibility() {
+        const requiredFeatures = {
+            'Fetch API': window.fetch,
+            'Promises': window.Promise,
+            'Arrow Functions': (() => {
+                try {
+                    eval('() => {}');
+                    return true;
+                } catch (e) {
+                    return false;
+                }
+            })(),
+            'Classes': typeof class {} === 'function',
+            'Template Literals': (() => {
+                try {
+                    eval('`test`');
+                    return true;
+                } catch (e) {
+                    return false;
+                }
+            })(),
+            'querySelector': document.querySelector && document.querySelectorAll
+        };
+
+        for (const [feature, supported] of Object.entries(requiredFeatures)) {
+            if (!supported) {
+                console.warn(`Feature ${feature} is not supported by this browser.`);
+                return false;
+            }
+        }
+        return true;
+    }
+
     static getCsrfToken() {
-        return $('meta[name="csrf-token"]').attr('content') || null;
+        const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+        return csrfMeta ? csrfMeta.getAttribute('content') : null;
     }
 }
 
@@ -23,7 +72,6 @@ class Logger {
     static log(level, fx, msg) {
         if (level <= CONFIG.LOG_LEVEL) {
             const offset = level < 5 ? ' '.repeat(level * 4) : '--> ';
-            //console.log(`[${this._getFullTimestamp()}] ${offset}${this._getCaller()}.${fx}: ${msg}`);
             console.log(`${offset}${this._getCaller()}.${fx}: ${msg}`);
         }
     }
@@ -33,20 +81,25 @@ class Logger {
             throw new Error();
         } catch (err) {
             let stack = err.stack;
+            if (!stack) return "unknown";
             // N.B. stack === "Error\n  at Hello ...\n  at main ... \n...."
             let m = stack.match(/.*?log.*?\n(.*?)\n/);
             if (m) {
                 const callingLine = m[1];
-                const startPos = callingLine.indexOf(" at ") + 4;
-                const endPos = callingLine.indexOf(".");
+                const atIndex = callingLine.indexOf(" at ");
+                if (atIndex === -1) return "unknown";
+                const startPos = atIndex + 4;
+                const endPos = callingLine.indexOf(".", startPos);
+                if (endPos === -1) return callingLine.substring(startPos).split(' ')[0] || "unknown";
                 const caller = callingLine.substring(startPos, endPos);
                 return caller;
             }
+            return "unknown";
         }
     }
 
     static _getFullTimestamp() {
-        const pad = (n, s = 2) => (`${new Array(s).fill(0)}${n}`).slice(-s);
+        const pad = (n, s = 2) => (`${new Array(s).fill(0).join('')}${n}`).slice(-s);
         const d = new Date();
 
         return `${pad(d.getFullYear(), 4)}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}.${pad(d.getMilliseconds(), 3)}`;
@@ -61,8 +114,20 @@ class Logger {
 
 // DOM utilities
 class DOMUtils {
+    /**
+     * Checks if a DOM element exists based on the selector.
+     * @param {string|Element} target - CSS selector or DOM element
+     * @returns {boolean}
+     */
     static exists(target) {
-        const exists = $(target).length > 0;
+        if (!target) return false;
+        let element;
+        try {
+            element = typeof target === 'string' ? document.querySelector(target) : target;
+        } catch (e) {
+            element = null;
+        }
+        const exists = !!element;
         Logger.log(3, 'exists', `target=${target} => ${exists}`);
         if (!exists) {
             Logger.log(10, 'exists', `=> ${target} not found!`);
@@ -70,6 +135,12 @@ class DOMUtils {
         return exists;
     }
 
+    /**
+     * Gets the value or inner HTML of a parameter element.
+     * @param {string} parameterId
+     * @param {any} defaultValue
+     * @returns {any}
+     */
     static getParam(parameterId, defaultValue) {
         Logger.log(2, 'getParam', `parameterId=${parameterId}, defaultValue=${defaultValue}`);
 
@@ -78,10 +149,11 @@ class DOMUtils {
             return defaultValue;
         }
 
-        const element = $(`#${parameterId}`);
-        if (element.length) {
-            const value = element.is('input, select, textarea') ? element.val() : element.html();
-            if (value) {
+        const element = document.getElementById(parameterId);
+        if (element) {
+            const isInput = ['INPUT', 'SELECT', 'TEXTAREA'].includes(element.tagName);
+            const value = isInput ? element.value : element.innerHTML;
+            if (value !== null && value !== undefined && value !== '') {
                 Logger.log(10, 'getParam', `--> return element: ${value}`);
                 return value;
             }
@@ -100,37 +172,69 @@ class AjaxUtils {
         return `${CONFIG.ROOT_URL}/index.php?r=${actualRoute.toLowerCase()}`;
     }
 
-    static request( {url, method = 'POST', data = {}, successCallback, errorCallback}) {
-        return $.ajax({
-            url: this.buildUrl(url),
-            method,
-            dataType: 'json',
-            headers: {'X-CSRF-Token': CONFIG.CSRF_TOKEN},
-            data
-        })
-                .done(response => {
-                    Logger.log(4, 'request', `success => error=${response.error} response=${JSON.stringify(response.msg, null, 2)}`);
-                    if (response.error)
-                        Logger.getCallerStack(response.msg);
-                    successCallback?.(response);
-                })
-                .fail(error => {
-                    Logger.log(4, 'request', `error=${error}`);
-                    errorCallback?.({error: true, msg: 'Network error occurred'});
-                });
+    /**
+     * Performs an AJAX request using Fetch API.
+     * @param {Object} options
+     */
+    static async request({url, method = 'POST', data = {}, successCallback, errorCallback}) {
+        let targetUrl = this.buildUrl(url);
+        const options = {
+            method: method.toUpperCase(),
+            headers: {
+                'X-CSRF-Token': CONFIG.CSRF_TOKEN,
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        };
+
+        if (options.method === 'GET') {
+            const queryString = new URLSearchParams(data).toString();
+            if (queryString) {
+                targetUrl += `&${queryString}`;
+            }
+        } else {
+            // Check if data is FormData, otherwise use URLSearchParams for standard POST
+            if (data instanceof FormData) {
+                options.body = data;
+            } else {
+                options.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+                options.body = new URLSearchParams(data).toString();
+            }
+        }
+
+        try {
+            const response = await fetch(targetUrl, options);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const result = await response.json();
+
+            Logger.log(4, 'request', `success => error=${result.error} response=${JSON.stringify(result.msg, null, 2)}`);
+            if (result.error) {
+                Logger.getCallerStack(result.msg);
+            }
+            successCallback?.(result);
+            return result;
+        } catch (error) {
+            Logger.log(4, 'request', `error=${error}`);
+            errorCallback?.({error: true, msg: 'Network error occurred'});
+            return {error: true, msg: error.message};
+        }
     }
 
-    static getContent( {target, url, data = {}, callback}) {
+    static getContent({target, url, data = {}, callback}) {
         Logger.log(3, 'getContent', `target=${target}, url=${url}`);
 
-        if (!DOMUtils.exists(target))
+        const targetElement = typeof target === 'string' ? document.querySelector(target) : target;
+        if (!targetElement) {
+            Logger.log(10, 'getContent', `--> target '${target}' not found`);
             return;
+        }
 
         this.request({
             url,
             data,
             successCallback: (response) => {
-                $(target).html(response.content);
+                targetElement.innerHTML = response.content;
                 callback?.(response);
             }
         });
@@ -188,8 +292,16 @@ class TableManager {
             data: params,
             successCallback: (response) => {
                 Logger.log(4, 'loadGenericAjaxTable', `response=${Object.values(response)}`);
-                $("#limit").html(response.limit);
-                $(`#${params.container}`).html(response.content);
+                const limitElement = document.getElementById('limit');
+                if (limitElement) {
+                    limitElement.innerHTML = response.limit;
+                }
+
+                const containerElement = document.getElementById(params.container);
+                if (containerElement) {
+                    containerElement.innerHTML = response.content;
+                }
+
                 window.location.href = "#top";
             }
         });
@@ -197,7 +309,10 @@ class TableManager {
 
     static setLimit(limit) {
         Logger.log(1, 'setLimit', `limit=${limit}`);
-        $("#limit").html(limit);
+        const limitElement = document.getElementById('limit');
+        if (limitElement) {
+            limitElement.innerHTML = limit;
+        }
         this.loadGenericAjaxTable(0);
     }
 }
@@ -241,9 +356,11 @@ class ToastManager {
      * @param {Object} response - Server response containing toast data
      */
     static _appendAndShowToast(target, response) {
-        const currentContent = $(target).html();
-        $(target).html(currentContent + response.content);
-        this._displayToast(response.UUID);
+        const container = document.querySelector(target);
+        if (container) {
+            container.insertAdjacentHTML('beforeend', response.content);
+            this._displayToast(response.UUID);
+        }
     }
 
     /**
@@ -253,16 +370,25 @@ class ToastManager {
     static _displayToast(UUID) {
         Logger.log(2, '_displayToast', `UUID=${UUID}`);
 
-        const target = `#${UUID}`;
-        if (!DOMUtils.exists(target))
+        const element = document.getElementById(UUID);
+        if (!element)
             return;
 
         // Initialize and show Bootstrap toast
-        const toast = new bootstrap.Toast($(target));
-        toast.show();
+        // Bootstrap 5.x allows passing the DOM element directly
+        if (typeof bootstrap !== 'undefined' && bootstrap.Toast) {
+            const toast = new bootstrap.Toast(element);
+            toast.show();
+        } else {
+            console.warn('Bootstrap Toast is not available.');
+        }
 
-        // Cleanup after display
-        setTimeout(() => $(target).remove(), 3000);
+        // Cleanup after display (3 seconds for display + some buffer)
+        setTimeout(() => {
+            if (element.parentNode) {
+                element.remove();
+            }
+        }, 3500);
     }
 }
 
@@ -279,11 +405,11 @@ class UserManager {
     static setRole(userId, role) {
         Logger.log(1, 'setRole', `userId=${userId}, role=${role}`);
 
-        const inputControl = $(`#user-${role}-${userId}`);
-        if (!inputControl.length)
+        const inputControl = document.getElementById(`user-${role}-${userId}`);
+        if (!inputControl)
             return;
 
-        const checked = inputControl.is(":checked");
+        const checked = inputControl.checked;
         const status = checked ? 1 : 0;
 
         Logger.log(10, 'setRole', `checked=${checked}, status=${status}`);
@@ -309,11 +435,11 @@ class UserManager {
     static setAccessRight(id, access) {
         Logger.log(1, 'setAccessRight', `id=${id}, access=${access}`);
 
-        const inputControl = $(`#access-right-${access}-${id}`);
-        if (!inputControl.length)
+        const inputControl = document.getElementById(`access-right-${access}-${id}`);
+        if (!inputControl)
             return;
 
-        const checked = inputControl.is(":checked");
+        const checked = inputControl.checked;
         const status = checked ? 1 : 0;
 
         Logger.log(10, 'setAccessRight', `checked=${checked}, status=${status}`);
@@ -334,7 +460,7 @@ class UserManager {
 
 class LayoutInitializer {
     static initAjaxPage() {
-        $(document).ready(() => {
+        document.addEventListener('DOMContentLoaded', () => {
             if (typeof TableManager !== 'undefined' && TableManager.loadGenericAjaxTable) {
                 TableManager.loadGenericAjaxTable(0);
             } else {
@@ -344,28 +470,31 @@ class LayoutInitializer {
     }
 
     static initNavbarLobby() {
-        $(document).ready(() => {
-            $('#notificationDropdown').on('show.bs.dropdown', () => {
-                let n = $('#notificationCounter').text();
-                // Assuming playerId is globally available or accessible here.
-                // This might need adjustment based on how playerId is set in your actual application.
-                let playerId = typeof currentPlayerId !== 'undefined' ? currentPlayerId : null;
+        document.addEventListener('DOMContentLoaded', () => {
+            const notificationDropdown = document.getElementById('notificationDropdown');
+            if (notificationDropdown) {
+                notificationDropdown.addEventListener('show.bs.dropdown', () => {
+                    const counterElement = document.getElementById('notificationCounter');
+                    let n = counterElement ? counterElement.textContent : '0';
 
-                if (playerId && parseInt(n) > 0) {
-                    if (typeof NotificationHandler !== 'undefined' && NotificationHandler.executeRequest) {
-                        let config = {
-                            route: 'notification/ajax-mark-as-read',
-                            method: 'POST',
-                            placeholder: 'notificationCounter',
-                            badge: true
-                        };
-                        let data = {playerId: playerId};
-                        NotificationHandler.executeRequest(config, data);
-                    } else {
-                        console.error('NotificationHandler or executeRequest method not found.');
+                    let playerId = typeof currentPlayerId !== 'undefined' ? currentPlayerId : null;
+
+                    if (playerId && parseInt(n) > 0) {
+                        if (typeof NotificationHandler !== 'undefined' && NotificationHandler.executeRequest) {
+                            let config = {
+                                route: 'notification/ajax-mark-as-read',
+                                method: 'POST',
+                                placeholder: 'notificationCounter',
+                                badge: true
+                            };
+                            let data = {playerId: playerId};
+                            NotificationHandler.executeRequest(config, data);
+                        } else {
+                            console.error('NotificationHandler or executeRequest method not found.');
+                        }
                     }
-                }
-            });
+                });
+            }
         });
     }
 }
@@ -382,8 +511,11 @@ class ItemManager {
     static loadTypeTab(itemType) {
         Logger.log(1, 'loadTypeTab', `itemType=${itemType}`);
 
-        $("#container").html(`ajax-${itemType}`);
-        $("#currentTab").html(itemType);
+        const container = document.getElementById('container');
+        if (container) container.innerHTML = `ajax-${itemType}`;
+
+        const currentTab = document.getElementById('currentTab');
+        if (currentTab) currentTab.innerHTML = itemType;
 
         TableManager.loadGenericAjaxTable(0);
     }
@@ -401,7 +533,7 @@ class ActionButtonManager {
 
     static initActionButton() {
         Logger.log(1, 'initActionButton', ``);
-        $(document).ready(() => {
+        document.addEventListener('DOMContentLoaded', () => {
 
             // Select all elements with an ID that starts with 'actionButton-'
             const buttons = document.querySelectorAll('[id^="actionButton-"]');
@@ -417,13 +549,12 @@ class ActionButtonManager {
                     const suffix = button.getAttribute('id');
 
                     // Split the ID to extract the operation and item ID
-                    var parts = suffix.split('-');
-                    var controller = parts[1]; // This will be 'add', 'remove', or 'delete'
-                    var action = parts[2]; // This will be 'add', 'remove', or 'delete'
-                    var id = parts[3]; // This will be the item ID (e.g., '20', '22', '120')
+                    const parts = suffix.split('-');
+                    const controller = parts[1]; // This will be 'add', 'remove', or 'delete'
+                    const action = parts[2]; // This will be 'add', 'remove', or 'delete'
+                    const id = parts[3]; // This will be the item ID (e.g., '20', '22', '120')
 
                     // You can now use the operation and id to perform the desired action
-                    // For example, call a function to handle the cart operation
                     ActionButtonManager.handleAction(controller, action, id);
                 });
             });
@@ -445,6 +576,6 @@ class ActionButtonManager {
 // Initialize library immediately
 CoreLibrary.init();
 
-$(document).ready(() => {
+document.addEventListener('DOMContentLoaded', () => {
     ActionButtonManager.initActionButton();
 });
