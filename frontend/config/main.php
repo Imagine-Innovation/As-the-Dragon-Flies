@@ -59,7 +59,7 @@ if ($offline) {
             'yii\\web\\JqueryAsset' => [
                 'sourcePath' => null, // do not publish the bundle from default path
                 'js' => [
-                    'https://cdn.jsdelivr.net/npm/jquery@4.0.0/dist/jquery.min.js',
+                    'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js',
                 ],
             // Optional: Add integrity and crossorigin attributes if needed
             // 'jsOptions' => [
