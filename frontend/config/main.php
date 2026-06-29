@@ -40,11 +40,9 @@ if ($offline) {
                 'css' => [
                     'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css',
                     'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css',
-                //'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css',
                 ],
                 'js' => [
                     'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js',
-                //'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js',
                 ],
             // Optional: Add integrity and crossorigin attributes if needed
             // 'cssOptions' => [
@@ -59,7 +57,9 @@ if ($offline) {
             'yii\\web\\JqueryAsset' => [
                 'sourcePath' => null, // do not publish the bundle from default path
                 'js' => [
-                    'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js',
+                    // JQuery 4.0 is not compatible with yii.validation.js
+                    //'https://cdn.jsdelivr.net/npm/jquery@4.0.0/dist/jquery.min.js',
+                    'https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js',
                 ],
             // Optional: Add integrity and crossorigin attributes if needed
             // 'jsOptions' => [
