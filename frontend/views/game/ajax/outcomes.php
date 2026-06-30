@@ -33,8 +33,8 @@ ActionOutcomes::widget([
 ]);
 ?>
 <?php
-$shouldTransition = $nextMissionId !== null;
-$isFreeAndNoTransition = $isFree && !$shouldTransition;
+$stayInCurrentMission = ($nextMissionId === null || $nextMissionId === 0);
+$isFreeAndNoTransition = $isFree && $stayInCurrentMission;
 ?>
 <?=
 Button::widget([
