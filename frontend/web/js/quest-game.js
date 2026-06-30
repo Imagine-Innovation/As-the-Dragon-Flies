@@ -275,15 +275,6 @@ class VirtualTableTop {
         }
     }
 
-    yyytalk(actionId, replyId) {
-        Logger.log(1, 'talk', `actionId=${actionId}, replyId=${replyId}`);
-        const target = `#desciption`;
-        $(target).html(`Talk: actionId=${actionId}, replyId=${replyId}`);
-        // Store the current action in the context
-        this.context.actionId = actionId;
-        this._dialog(replyId);
-    }
-
     talk(actionId, replyId) {
         Logger.log(1, 'talk', `actionId=${actionId}, replyId=${replyId}`);
         const target = `#actionFeedback`;
@@ -385,7 +376,8 @@ class VirtualTableTop {
 
     moveToNextPlayer(questProgressId, nextMissionId) {
         Logger.log(1, 'moveToNextPlayer', `questProgressId=${questProgressId}, nextMissionId=${nextMissionId}`);
-        //return;
+        // the action card is hidden, and we stop there.
+        $(`#actionList`).addClass('d-none');
         AjaxUtils.request({
             url: 'game/ajax-next-turn',
             method: 'POST',
@@ -404,35 +396,7 @@ class VirtualTableTop {
             }
         });
     }
-    
-    zzzevaluateAction(actionId) {
-        Logger.log(1, 'evaluateAction', `actionId=${actionId ?? 'null'}`);
 
-        // Store the current action in the context
-        if (actionId)
-            this.context.actionId = actionId;
-
-        const target = `#description`;
-        if (!DOMUtils.exists(target))
-            return;
-
-        AjaxUtils.request({
-            url: 'game/ajax-evaluate',
-            method: 'POST',
-            data: this.context,
-            successCallback: (response) => {
-                if (!response.error) {
-                    $(target).html(response.content);
-                    // update action list
-                    this._updateActions(this.context.playerId, this.context.currentPlayerId, this.context.questProgressId);
-                }
-                this._updatePlayer(this.context.playerId);
-                if (typeof notificationClient !== 'undefined') {
-                    notificationClient.updateChatMessages();
-                }
-            }
-        });
-    }
     evaluateAction(actionId) {
         Logger.log(1, 'evaluateAction', `actionId=${actionId ?? 'null'}`);
 
