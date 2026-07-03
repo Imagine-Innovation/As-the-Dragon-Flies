@@ -1,5 +1,5 @@
 actor: FunctionalTester
-namespace: backtend\tests   # Codeception uses this as the base prefix
+namespace: backend\tests   # Codeception uses this as the base prefix
 modules:
     enabled:
         - Asserts

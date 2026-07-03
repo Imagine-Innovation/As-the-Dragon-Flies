@@ -24,13 +24,18 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
 
 <?php $form = ActiveForm::begin(); ?>
 
-<?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
-
-<?= $form->field($model, 'description')->widget(SimpleRichText::class) ?>
+<div class="row g-3">
+    <div class="col-12">
+        <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+    </div>
+    <div class="col-12">
+        <?= $form->field($model, 'description')->widget(SimpleRichText::class) ?>
+    </div>
+</div>
 
 <?php if ($model->image): ?>
-    <div class="row row-cols-1 row-cols-md-2">
-        <div class="col col-md-2 d-none d-md-block ">
+    <div class="row g-3">
+        <div class="col-md-2 d-none d-md-block">
             <img src="<?= $storyRoot ?>/img/<?= $model->image ?>" alt="<?= $model->name ?>" class="w-100 h-100" style="object-fit: cover;" />
         </div>
         <div class="col-12 col-md-10">
