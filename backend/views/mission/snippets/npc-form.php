@@ -24,7 +24,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
 
 <?php $form = ActiveForm::begin(); ?>
 
-<div class="row">
+<div class="row g-3">
     <div class="col-12">
         <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
     </div>
@@ -34,7 +34,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
 </div>
 
 <?php if ($model->image): ?>
-    <div class="row">
+    <div class="row g-3">
         <div class="col-md-2 d-none d-md-block">
             <img src="<?= $storyRoot ?>/img/<?= $model->image ?>" alt="<?= $model->name ?>" class="w-100 h-100" style="object-fit: cover;" />
         </div>
