@@ -574,7 +574,7 @@ FORMS
     background: transparent url(/common/web/img/select-caret.svg) no-repeat bottom 5px right 5px;
     border-color: var(--light-25);
     height: auto;
-    max-width: 80%;
+    width: 100%;
     overflow: hidden;
 }
 

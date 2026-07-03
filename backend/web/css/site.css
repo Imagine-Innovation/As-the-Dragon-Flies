@@ -83,3 +83,8 @@ body {
   text-overflow: ellipsis;
   padding-right: 2.5rem;
 }
+
+.flex-grow-min-0 {
+    flex-grow: 1;
+    min-width: 0;
+}

@@ -25,16 +25,21 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
 
 <?php $form = ActiveForm::begin(); ?>
 
-<?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
-
-<?= $form->field($model, 'description')->widget(SimpleRichText::class) ?>
+<div class="row g-3">
+    <div class="col-12">
+        <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+    </div>
+    <div class="col-12">
+        <?= $form->field($model, 'description')->widget(SimpleRichText::class) ?>
+    </div>
+</div>
 
 <?php if ($model->image): ?>
-    <div class="row">
-        <div class="col-2">
+    <div class="row g-3">
+        <div class="col-md-2 d-none d-md-block">
             <img src="<?= $imgPath ?>/monsters/<?= $model->image ?>" alt="<?= $model->name ?>" class="w-100 h-100" style="object-fit: cover;" />
         </div>
-        <div class="col-10">
+        <div class="col-12 col-md-10">
         <?php endif; ?>
 
         <?=
