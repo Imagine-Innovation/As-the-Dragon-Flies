@@ -104,7 +104,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
             <h3 class="card-title">Dialog with "<?= $model->name ?>"</h3>
         </div>
         <div class="card-body">
-            <?= $this->renderFile('@app/views/mission/snippets/dialog.php', ['dialog' => $model->firstDialog]) ?>
+            <?= $this->renderFile('@app/views/mission/snippets/dialog-tree.php', ['dialog' => $model->firstDialog]) ?>
         </div>
     </section>
 <?php endif; ?>
