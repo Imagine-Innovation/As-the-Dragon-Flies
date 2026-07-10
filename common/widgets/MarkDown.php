@@ -22,6 +22,30 @@ class MarkDown extends Widget
     public ?string $content = null;
 
     /**
+     * @var array<string, mixed> Arbitrary placeholders passed to the widget.
+     */
+    public array $placeholders = [];
+
+    /**
+     * MarkDown constructor.
+     * Overloaded to extract custom placeholder properties that do not map to defined widget properties.
+     *
+     * @param array<string, mixed> $config name-value pairs that will be used to initialize the object properties
+     */
+    public function __construct($config = [])
+    {
+        $stdConfig = [];
+        foreach ($config as $key => $value) {
+            if ($this->canSetProperty($key) || property_exists($this, $key)) {
+                $stdConfig[$key] = $value;
+            } else {
+                $this->placeholders[$key] = $value;
+            }
+        }
+        parent::__construct($stdConfig);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function run()
@@ -178,7 +202,25 @@ class MarkDown extends Widget
         $this->closeTag($olOpened, 'ol', $result);
         $this->closeTag($scrollOpened, 'div', $result);
 
-        return implode(PHP_EOL, $result);
+        $html = implode(PHP_EOL, $result);
+
+        // Perform placeholder replacements if placeholders were specified
+        if (!empty($this->placeholders)) {
+            $replaced = preg_replace_callback('/\{([a-zA-Z0-9_\-]+)\}/', function ($matches) {
+                $placeholderKey = $matches[1];
+                if (array_key_exists($placeholderKey, $this->placeholders) && $this->placeholders[$placeholderKey] !== null) {
+                    $val = $this->placeholders[$placeholderKey];
+                    $strVal = is_scalar($val) || (is_object($val) && method_exists($val, '__toString')) ? (string) $val : '';
+                    return htmlspecialchars($strVal, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                }
+                return '';
+            }, $html);
+            if ($replaced !== null) {
+                $html = $replaced;
+            }
+        }
+
+        return $html;
     }
 
     /**

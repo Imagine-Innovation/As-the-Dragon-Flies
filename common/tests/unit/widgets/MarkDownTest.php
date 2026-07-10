@@ -57,4 +57,44 @@ class MarkDownTest extends \Codeception\Test\Unit
         $this->assertStringContainsString('&lt;script&gt;', $html);
         $this->assertStringNotContainsString('href="javascript:', $html);
     }
+
+    public function testPlaceholderReplacements()
+    {
+        // 1. Example from user: It is *{playerName}'s* turn -> It is <em>Gandalf&#039;s</em> turn (or <strong> with **).
+        // Let's test standard emphasis * and ** to be thorough.
+        $content = "It is *{playerName}'s* turn";
+        $html = MarkDown::widget(['content' => $content, 'playerName' => 'Gandalf']);
+        $this->assertStringContainsString("It is <em>Gandalf&#039;s</em> turn", $html);
+
+        $contentBold = "It is **{playerName}'s** turn";
+        $htmlBold = MarkDown::widget(['content' => $contentBold, 'playerName' => 'Gandalf']);
+        $this->assertStringContainsString("It is <strong>Gandalf&#039;s</strong> turn", $htmlBold);
+
+        // 2. No placeholder provided
+        $content = "It is *{playerName}'s* turn";
+        $html = MarkDown::widget(['content' => $content]);
+        // Since no placeholders were configured at all, return converted markdown as is (leaving {playerName})
+        $this->assertStringContainsString("It is <em>{playerName}&#039;s</em> turn", $html);
+
+        // 3. Null placeholder (should remove it if placeholders are configured)
+        $content = "It is *{playerName}'s* turn for {questName}";
+        $html = MarkDown::widget(['content' => $content, 'playerName' => null, 'questName' => 'Ring']);
+        $this->assertStringContainsString("It is <em>&#039;s</em> turn for Ring", $html);
+
+        // 4. Secure placeholder values (XSS protection)
+        $content = "Hello {playerName}";
+        $html = MarkDown::widget(['content' => $content, 'playerName' => "<script>alert('XSS')</script>"]);
+        $this->assertStringNotContainsString("<script>", $html);
+        $this->assertStringContainsString("&lt;script&gt;alert(&#039;XSS&#039;)&lt;/script&gt;", $html);
+
+        // 5. Arbitrary, multiple placeholders and case-sensitivity
+        $content = "Hello {playerName}, welcome to {placeName}. Do you like {playername}?";
+        $html = MarkDown::widget([
+            'content' => $content,
+            'playerName' => 'Frodo',
+            'placeName' => 'the Shire',
+            'playername' => 'Sam'
+        ]);
+        $this->assertStringContainsString("Hello Frodo, welcome to the Shire. Do you like Sam?", $html);
+    }
 }
