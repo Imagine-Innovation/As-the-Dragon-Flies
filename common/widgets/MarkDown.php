@@ -15,6 +15,18 @@ use Yii;
  */
 class MarkDown extends Widget
 {
+    /**
+     * List of possible/typical placeholders supported by the system.
+     * Clients should configure these prefixed with 'placeholder:' (e.g. 'placeholder:playerName' => 'Gandalf').
+     */
+    public const POSSIBLE_PLACEHOLDERS = [
+        'playerName',
+        'questName',
+        'turnOwner',
+        'placeName',
+        'npcName',
+        'monsterName',
+    ];
 
     /**
      * @var string|null The markdown content to render.
