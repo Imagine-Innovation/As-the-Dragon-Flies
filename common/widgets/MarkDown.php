@@ -15,11 +15,79 @@ use Yii;
  */
 class MarkDown extends Widget
 {
+    /**
+     * List of possible/typical placeholders supported by the system.
+     * Clients should configure these prefixed with 'placeholder:' (e.g. 'placeholder:playerName' => 'Gandalf').
+     */
+    public const POSSIBLE_PLACEHOLDERS = [
+        'playerName',
+        'questName',
+        'turnOwner',
+        'placeName',
+        'npcName',
+        'monsterName',
+    ];
 
     /**
      * @var string|null The markdown content to render.
      */
     public ?string $content = null;
+
+    /**
+     * @var array<string, mixed> Arbitrary placeholders passed to the widget.
+     */
+    public array $placeholders = [];
+
+    /**
+     * MarkDown constructor.
+     * Overloaded to extract custom placeholder properties that do not map to defined widget properties.
+     *
+     * Placeholders must be explicitly namespaced via the "placeholder:" prefix to
+     * avoid hiding configuration mistakes. Any unknown keys that are not
+     * namespaced as placeholders are passed through to the parent constructor so
+     * that base-class validation (e.g. UnknownPropertyException) still applies.
+     *
+     * Example:
+     * [
+     *     'placeholder:title' => 'My custom title',
+     *     'placeholder:foo'   => 'bar',
+     * ]
+     *
+     * @param array<string, mixed> $config name-value pairs that will be used to initialize the object properties
+     */
+    public function __construct(array $config = [])
+    {
+        $stdConfig = [];
+
+        foreach ($config as $key => $value) {
+            // Known properties are passed through to the base class as usual.
+            if ($this->canSetProperty($key) || property_exists($this, $key)) {
+                $stdConfig[$key] = $value;
+                continue;
+            }
+
+            // Only explicitly namespaced keys are treated as placeholders.
+            if (strncmp((string) $key, 'placeholder:', 12) === 0) {
+                $placeholderName = substr((string) $key, 12);
+
+                // Empty placeholder names are not allowed; treat them as normal
+                // config keys so that base-class validation can fail fast.
+                if ($placeholderName === '') {
+                    $stdConfig[$key] = $value;
+                    continue;
+                }
+
+                $this->placeholders[$placeholderName] = $value;
+                continue;
+            }
+
+            // Unknown non-placeholder keys are left in $stdConfig so that the
+            // parent constructor can apply its usual validation logic.
+            $stdConfig[$key] = $value;
+        }
+
+        parent::__construct($stdConfig);
+    }
 
     /**
      * {@inheritdoc}
@@ -98,6 +166,20 @@ class MarkDown extends Widget
 
         // 3. Identify and process blocks
         $lines = explode("\n", $html);
+        $html = $this->processMarkdownBlocks($lines);
+
+        // 4. Perform placeholder replacements if placeholders were specified
+        return $this->replacePlaceholders($html);
+    }
+
+    /**
+     * Processes array of lines and turns them into structural HTML blocks.
+     *
+     * @param array<string> $lines
+     * @return string
+     */
+    protected function processMarkdownBlocks(array $lines): string
+    {
         $result = [];
         $ulOpened = false;
         $olOpened = false;
@@ -179,6 +261,31 @@ class MarkDown extends Widget
         $this->closeTag($scrollOpened, 'div', $result);
 
         return implode(PHP_EOL, $result);
+    }
+
+    /**
+     * Performs dynamic placeholder replacement.
+     *
+     * @param string $html
+     * @return string
+     */
+    protected function replacePlaceholders(string $html): string
+    {
+        if (empty($this->placeholders)) {
+            return $html;
+        }
+
+        $replaced = preg_replace_callback('/\{([a-zA-Z0-9_\-]+)\}/', function ($matches) {
+            $placeholderKey = $matches[1];
+            if (array_key_exists($placeholderKey, $this->placeholders) && $this->placeholders[$placeholderKey] !== null) {
+                $val = $this->placeholders[$placeholderKey];
+                $strVal = is_scalar($val) || (is_object($val) && method_exists($val, '__toString')) ? (string) $val : '';
+                return htmlspecialchars($strVal, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+            }
+            return '';
+        }, $html);
+
+        return $replaced !== null ? $replaced : $html;
     }
 
     /**
