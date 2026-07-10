@@ -30,18 +30,50 @@ class MarkDown extends Widget
      * MarkDown constructor.
      * Overloaded to extract custom placeholder properties that do not map to defined widget properties.
      *
+     * Placeholders must be explicitly namespaced via the "placeholder:" prefix to
+     * avoid hiding configuration mistakes. Any unknown keys that are not
+     * namespaced as placeholders are passed through to the parent constructor so
+     * that base-class validation (e.g. UnknownPropertyException) still applies.
+     *
+     * Example:
+     * [
+     *     'placeholder:title' => 'My custom title',
+     *     'placeholder:foo'   => 'bar',
+     * ]
+     *
      * @param array<string, mixed> $config name-value pairs that will be used to initialize the object properties
      */
-    public function __construct($config = [])
+    public function __construct(array $config = [])
     {
         $stdConfig = [];
+
         foreach ($config as $key => $value) {
+            // Known properties are passed through to the base class as usual.
             if ($this->canSetProperty($key) || property_exists($this, $key)) {
                 $stdConfig[$key] = $value;
-            } else {
-                $this->placeholders[$key] = $value;
+                continue;
             }
+
+            // Only explicitly namespaced keys are treated as placeholders.
+            if (strncmp((string) $key, 'placeholder:', 12) === 0) {
+                $placeholderName = substr((string) $key, 12);
+
+                // Empty placeholder names are not allowed; treat them as normal
+                // config keys so that base-class validation can fail fast.
+                if ($placeholderName === '') {
+                    $stdConfig[$key] = $value;
+                    continue;
+                }
+
+                $this->placeholders[$placeholderName] = $value;
+                continue;
+            }
+
+            // Unknown non-placeholder keys are left in $stdConfig so that the
+            // parent constructor can apply its usual validation logic.
+            $stdConfig[$key] = $value;
         }
+
         parent::__construct($stdConfig);
     }
 
