@@ -122,6 +122,20 @@ class MarkDown extends Widget
 
         // 3. Identify and process blocks
         $lines = explode("\n", $html);
+        $html = $this->processMarkdownBlocks($lines);
+
+        // 4. Perform placeholder replacements if placeholders were specified
+        return $this->replacePlaceholders($html);
+    }
+
+    /**
+     * Processes array of lines and turns them into structural HTML blocks.
+     *
+     * @param array<string> $lines
+     * @return string
+     */
+    protected function processMarkdownBlocks(array $lines): string
+    {
         $result = [];
         $ulOpened = false;
         $olOpened = false;
@@ -202,25 +216,32 @@ class MarkDown extends Widget
         $this->closeTag($olOpened, 'ol', $result);
         $this->closeTag($scrollOpened, 'div', $result);
 
-        $html = implode(PHP_EOL, $result);
+        return implode(PHP_EOL, $result);
+    }
 
-        // Perform placeholder replacements if placeholders were specified
-        if (!empty($this->placeholders)) {
-            $replaced = preg_replace_callback('/\{([a-zA-Z0-9_\-]+)\}/', function ($matches) {
-                $placeholderKey = $matches[1];
-                if (array_key_exists($placeholderKey, $this->placeholders) && $this->placeholders[$placeholderKey] !== null) {
-                    $val = $this->placeholders[$placeholderKey];
-                    $strVal = is_scalar($val) || (is_object($val) && method_exists($val, '__toString')) ? (string) $val : '';
-                    return htmlspecialchars($strVal, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-                }
-                return '';
-            }, $html);
-            if ($replaced !== null) {
-                $html = $replaced;
-            }
+    /**
+     * Performs dynamic placeholder replacement.
+     *
+     * @param string $html
+     * @return string
+     */
+    protected function replacePlaceholders(string $html): string
+    {
+        if (empty($this->placeholders)) {
+            return $html;
         }
 
-        return $html;
+        $replaced = preg_replace_callback('/\{([a-zA-Z0-9_\-]+)\}/', function ($matches) {
+            $placeholderKey = $matches[1];
+            if (array_key_exists($placeholderKey, $this->placeholders) && $this->placeholders[$placeholderKey] !== null) {
+                $val = $this->placeholders[$placeholderKey];
+                $strVal = is_scalar($val) || (is_object($val) && method_exists($val, '__toString')) ? (string) $val : '';
+                return htmlspecialchars($strVal, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+            }
+            return '';
+        }, $html);
+
+        return $replaced !== null ? $replaced : $html;
     }
 
     /**
