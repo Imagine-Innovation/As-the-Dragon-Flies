@@ -1,0 +1,957 @@
+/* ==========================================================================
+   VTT — styles spécifiques à l'écran de jeu
+   S'appuie exclusivement sur les variables définies dans dragon.css
+   ========================================================================== */
+
+/* ---- Accessibilité : dragon.css neutralise l'outline global, on le
+   restaure proprement pour le clavier ---- */
+:focus-visible {
+    outline: 2px solid var(--yellow) !important;
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+        animation: none !important;
+    }
+}
+
+html, body {
+    height: 100%;
+}
+
+body.vtt {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.vtt-skip-link {
+    position: absolute;
+    left: -999px;
+    top: 0;
+    background: var(--yellow);
+    color: var(--gray-1);
+    padding: .6rem 1rem;
+    z-index: 999;
+    font-weight: 600;
+    border-radius: 0 0 4px 0;
+}
+
+.vtt-skip-link:focus {
+    left: 0;
+}
+
+/* ==========================================================================
+   BARRE SUPÉRIEURE
+   ========================================================================== */
+
+.vtt-topbar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: .65rem 1rem;
+    background: var(--dark-25);
+    border-bottom: 1px solid var(--light-10);
+    position: sticky;
+    top: 0;
+    z-index: 60;
+    box-shadow: 0 2px 12px var(--dark-25);
+}
+
+.vtt-topbar__brand {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    min-width: 0;
+}
+
+.vtt-topbar__crest {
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 32% 28%, var(--yellow), var(--dark-gray) 72%);
+    border: 2px solid var(--yellow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Berenika', serif;
+    font-weight: 700;
+    color: var(--gray-1);
+    font-size: 1rem;
+}
+
+.vtt-topbar__title {
+    min-width: 0;
+    line-height: 1.15;
+}
+
+.vtt-topbar__title strong {
+    display: block;
+    font-size: 1rem;
+    color: var(--white);
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.vtt-topbar__title span {
+    display: block;
+    font-size: .78rem;
+    color: var(--light-50);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.vtt-topbar__meta {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    flex: none;
+}
+
+.vtt-turn-pill {
+    background: var(--yellow);
+    color: var(--gray-1);
+    font-weight: 700;
+    padding: .4rem .85rem;
+    border-radius: 2rem;
+    font-size: .78rem;
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+}
+
+.vtt-round {
+    font-size: .78rem;
+    color: var(--light-50);
+    white-space: nowrap;
+    display: none;
+}
+
+/* boutons ronds d'accès rapide (équipe sur smartphone, journal sur
+   petits/moyens écrans) */
+.vtt-topbar__jump {
+    display: flex;
+    gap: .4rem;
+    flex: none;
+}
+
+.vtt-icon-btn {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--light-10);
+    color: var(--light-85);
+    border: 0;
+    font-size: 1.05rem;
+    flex: none;
+    cursor: pointer;
+}
+
+.vtt-icon-btn:hover {
+    background: var(--light-25);
+    color: var(--white);
+}
+
+/* le raccourci vers le journal n'a plus de raison d'être dès que la
+   colonne latérale devient visible en permanence (>=992px) */
+@media (min-width: 992px) {
+    .vtt-icon-btn--journal {
+        display: none;
+    }
+}
+
+/* fil d'ariane / contexte de quête */
+.vtt-context {
+    background: var(--dark-10);
+    border-bottom: 1px solid var(--light-10);
+    padding: .5rem 1rem;
+    font-size: .78rem;
+    color: var(--light-50);
+    display: flex;
+    flex-wrap: wrap;
+    gap: .3rem;
+    align-items: center;
+}
+
+.vtt-context strong {
+    color: var(--light-85);
+    font-weight: 500;
+}
+
+.vtt-context i {
+    font-size: .6rem;
+    margin: 0 .1rem;
+    opacity: .6;
+}
+
+/* ==========================================================================
+   GRILLE PRINCIPALE — mobile first
+   ========================================================================== */
+
+.vtt-shell {
+    display: grid;
+    gap: 1rem;
+    padding: 1rem;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+        "stage"
+        "sidebar";
+    flex: 1;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Par défaut, ce conteneur est transparent pour la grille : le groupe et
+   le journal/tchat restent des zones de grille indépendantes ("party",
+   "sidebar"). Il ne devient un vrai bloc qu'en tablette paysage
+   (voir plus bas), pour coller le groupe au journal/tchat sans espace
+   vide et faire défiler l'ensemble comme un seul panneau collant. */
+.vtt-team-col {
+    display: contents;
+}
+
+#party-panel  {
+    min-width: 0;
+}
+.vtt-stage    {
+    grid-area: stage;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+.vtt-sidebar  {
+    grid-area: sidebar;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+/* --- tablette portrait (768–991px) : le groupe rejoint la grille mais
+   défile normalement avec le reste du contenu (pas de position collante
+   à cette taille, pour éviter tout chevauchement visuel avec le
+   contenu qui défile en dessous). --- */
+@media (min-width: 768px) {
+    .vtt-shell {
+        padding: 1.25rem 1.5rem;
+        gap: 1.25rem;
+        grid-template-areas:
+            "party"
+            "stage"
+            "sidebar";
+    }
+    #party-panel {
+        grid-area: party;
+    }
+    .vtt-round {
+        display: inline;
+    }
+}
+
+/* --- tablette paysage (992–1199px) : le groupe et le journal/tchat
+   partagent une seule colonne de gauche (.vtt-team-col devient un vrai
+   bloc flex) afin qu'ils se suivent sans espace vide. Cette colonne
+   défile normalement avec la page (pas de position collante ici) :
+   un blocage/rognage de toute la colonne piégeait le tchat tout en bas
+   dans un ascenseur interne minuscule et peu visible. --- */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    .vtt-shell {
+        grid-template-columns: 280px minmax(0, 1fr);
+        grid-template-areas: "left stage";
+        align-items: start;
+    }
+    .vtt-team-col {
+        grid-area: left;
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+        min-width: 0;
+    }
+}
+
+/* --- laptop / desktop (>=1200px) : 3 colonnes indépendantes côte à
+   côte, chacune avec son propre comportement collant --- */
+@media (min-width: 1200px) {
+    .vtt-team-col {
+        display: contents;
+    }
+    .vtt-shell {
+        grid-template-columns: 260px minmax(0, 1fr) 320px;
+        grid-template-areas: "party stage sidebar";
+        align-items: start;
+    }
+    #party-panel {
+        grid-area: party;
+        position: sticky;
+        top: 5.5rem;
+        max-height: calc(100vh - 8rem);
+        overflow-y: auto;
+    }
+    .vtt-sidebar {
+        grid-area: sidebar;
+        position: sticky;
+        top: 5.5rem;
+        max-height: calc(100vh - 8rem);
+    }
+}
+
+/* --- Full HD (>=1600px) --- */
+@media (min-width: 1600px) {
+    .vtt-shell {
+        grid-template-columns: 300px minmax(0, 1fr) 360px;
+        gap: 1.5rem;
+        padding: 1.5rem 2.25rem;
+        max-width: 1880px;
+        margin: 0 auto;
+    }
+}
+
+/* --- écrans larges (1200 à 1980px) : journal et discussion restent
+   empilés, mais le journal est plafonné à la moitié de la hauteur de
+   l'espace d'affichage pour laisser de la place à la discussion --- */
+@media (min-width: 1200px) and (max-width: 1980.98px) {
+    #journal-panel {
+        max-height: 50vh;
+    }
+    #journal-panel .journal-feed {
+        flex: 1;
+        min-height: 0;
+        max-height: none;
+    }
+}
+
+/* --- QHD / écrans ultralarges (>=1981px) : journal et discussion sont
+   physiquement deux panneaux distincts, affichés côte à côte --- */
+@media (min-width: 1981px) {
+    .vtt-shell {
+        grid-template-columns: 340px minmax(0, 1180px) 620px;
+        gap: 2rem;
+        padding: 2.25rem 3rem;
+        max-width: 2480px;
+        justify-content: center;
+    }
+    .vtt-context {
+        padding: .6rem 3rem;
+    }
+
+    .vtt-sidebar {
+        flex-direction: row;
+    }
+    #journal-panel,
+    #chat-panel {
+        flex: 1 1 50%;
+        min-width: 0;
+        max-height: none;
+    }
+    #journal-panel .journal-feed,
+    #chat-panel .chat-feed {
+        flex: 1;
+        min-height: 0;
+        max-height: none;
+    }
+}
+
+/* ==========================================================================
+   PANNEAU GROUPE (party) — aside desktop/tablette + contenu dupliqué
+   dans la modale "équipe" sur smartphone
+   ========================================================================== */
+
+.panel-heading {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-size: .78rem;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--light-50);
+    margin-bottom: .75rem;
+}
+
+.panel-heading i {
+    color: var(--yellow);
+}
+
+.party-panel__list {
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+}
+
+.char-card {
+    position: relative;
+    background: var(--dark-25);
+    border: 1px solid var(--light-10);
+    border-radius: 6px;
+    padding: 1rem;
+}
+
+.char-card--active {
+    border-color: var(--yellow);
+    box-shadow: 0 0 0 1px var(--yellow), 0 6px 16px var(--dark-25);
+}
+
+.char-card__head {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    margin-bottom: .8rem;
+}
+
+.char-card__avatar {
+    flex: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--dark-10);
+    border: 2px solid var(--light-25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Berenika', serif;
+    font-size: 1.2rem;
+    color: var(--yellow);
+}
+
+.char-card--active .char-card__avatar {
+    border-color: var(--yellow);
+}
+
+.char-card__name {
+    font-weight: 600;
+    color: var(--white);
+    font-size: .92rem;
+    line-height: 1.2;
+}
+
+.char-card__class {
+    font-size: .76rem;
+    color: var(--light-50);
+}
+
+.char-card__turn-badge {
+    position: absolute;
+    top: .6rem;
+    right: .6rem;
+    font-size: .62rem;
+    background: var(--yellow);
+    color: var(--gray-1);
+    padding: .18rem .55rem;
+    border-radius: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.stat-row {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-size: .7rem;
+    color: var(--light-50);
+    margin-top: .4rem;
+}
+
+.stat-row__label {
+    flex: none;
+    width: 28px;
+    font-weight: 700;
+}
+
+.stat-row .progress {
+    flex: 1;
+    height: 6px;
+    background: var(--light-10);
+    border-radius: 3px;
+}
+
+.stat-row .progress-bar--hp {
+    background: var(--green);
+}
+.stat-row .progress-bar--xp {
+    background: var(--cyan);
+}
+
+.stat-row__value {
+    flex: none;
+    font-variant-numeric: tabular-nums;
+}
+
+.char-card__footer {
+    margin-top: .75rem;
+    display: flex;
+    gap: .4rem;
+    flex-wrap: wrap;
+}
+
+.char-card__footer .badge {
+    font-size: .65rem;
+}
+
+/* Smartphone (et modale sur petit écran) : la carte joueur ne garde
+   que l'essentiel — nom + PV */
+@media (max-width: 575.98px) {
+    .char-card {
+        padding: .8rem;
+    }
+    .char-card__head {
+        margin-bottom: .55rem;
+    }
+    .char-card__avatar {
+        width: 42px;
+        height: 42px;
+        font-size: 1.05rem;
+    }
+    .stat-row--xp,
+    .char-card__footer {
+        display: none;
+    }
+}
+
+/* ==========================================================================
+   SCÈNE
+   ========================================================================== */
+
+.scene-card {
+    background: var(--dark-25);
+    border: 1px solid var(--light-10);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.scene-card__media {
+    position: relative;
+    width: 100%;
+    max-width: 512px;
+    aspect-ratio: 1 / 1;
+    margin: 0 auto;
+    background:
+        linear-gradient(165deg, var(--dark-10), var(--dark-gray) 65%),
+        repeating-linear-gradient(45deg, rgba(255,255,255,.025) 0 2px, transparent 2px 9px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid var(--light-10);
+}
+
+.scene-card__media i {
+    font-size: 3rem;
+    color: var(--light-25);
+}
+
+.scene-card__media figcaption {
+    position: absolute;
+    bottom: .6rem;
+    right: .8rem;
+    font-size: .68rem;
+    color: var(--light-50);
+    background: var(--dark-75);
+    padding: .2rem .55rem;
+    border-radius: 3px;
+}
+
+.scene-card__body {
+    padding: 1.25rem 1.4rem 1.5rem;
+}
+
+.scene-card__crumb {
+    font-size: .76rem;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: var(--yellow);
+    font-weight: 600;
+}
+
+.scene-card__title {
+    font-family: 'Berenika', serif;
+    font-size: 1.55rem;
+    color: var(--white);
+    margin: .3rem 0 .85rem;
+    line-height: 1.2;
+}
+
+.scene-card__text {
+    color: var(--light-75);
+    line-height: 1.7;
+    font-size: .92rem;
+}
+
+.scene-card__text p {
+    margin: 0 0 .85rem;
+}
+.scene-card__text p:last-child {
+    margin-bottom: 0;
+}
+.scene-card__text strong {
+    color: var(--white);
+}
+
+/* ==========================================================================
+   PNJ
+   ========================================================================== */
+
+.npc-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.npc-card {
+    background: var(--dark-25);
+    border: 1px solid var(--light-10);
+    border-radius: 6px;
+    padding: 1rem;
+    display: flex;
+    gap: .9rem;
+}
+
+.npc-card__portrait {
+    flex: none;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: var(--dark-10);
+    border: 2px solid var(--light-25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--light-50);
+    font-size: 1.3rem;
+}
+
+.npc-card__body {
+    min-width: 0;
+}
+
+.npc-card__name {
+    font-weight: 600;
+    color: var(--white);
+    font-size: .92rem;
+    margin-bottom: .25rem;
+}
+
+.npc-card__desc {
+    font-size: .8rem;
+    color: var(--light-50);
+    line-height: 1.55;
+    margin-bottom: .7rem;
+}
+
+.npc-card__talk {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    background: transparent;
+    border: 1px solid var(--light-25);
+    color: var(--light-85);
+    font-size: .76rem;
+    padding: .4rem .8rem;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+}
+
+.npc-card__talk:hover {
+    border-color: var(--yellow);
+    color: var(--yellow);
+}
+
+/* ==========================================================================
+   ACTIONS
+   ========================================================================== */
+
+.actions-panel {
+    background: var(--dark-25);
+    border: 1px solid var(--light-10);
+    border-radius: 6px;
+    padding: 1.1rem 1.25rem 1.35rem;
+}
+
+.actions-panel__grid {
+    display: grid;
+    gap: .65rem;
+    grid-template-columns: repeat(auto-fit, minmax(235px, 1fr));
+}
+
+.action-btn {
+    display: flex;
+    flex-direction: column;
+    gap: .4rem;
+    text-align: left;
+    background: var(--dark-10);
+    border: 1px solid var(--light-10);
+    border-radius: 6px;
+    padding: .8rem .95rem;
+    color: var(--light-85);
+    cursor: pointer;
+    width: 100%;
+    font-family: inherit;
+}
+
+.action-btn:hover {
+    border-color: var(--yellow);
+    background: var(--light-05);
+}
+
+.action-btn__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: .5rem;
+}
+
+.action-btn__name {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-weight: 600;
+    font-size: .86rem;
+    color: var(--white);
+}
+
+.action-btn__name i {
+    color: var(--yellow);
+    font-size: .95rem;
+}
+
+.action-btn__badges {
+    display: flex;
+    gap: .3rem;
+    flex: none;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.action-btn__badges .badge {
+    font-size: .62rem;
+}
+
+.action-btn__desc {
+    font-size: .76rem;
+    color: var(--light-50);
+    line-height: 1.45;
+}
+
+/* ==========================================================================
+   BARRE DE TOUR
+   ========================================================================== */
+
+.turn-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    background: var(--dark-10);
+    border: 1px solid var(--light-10);
+    border-radius: 6px;
+    padding: .85rem 1.1rem;
+    position: sticky;
+    bottom: 0;
+}
+
+.turn-bar__info {
+    font-size: .8rem;
+    color: var(--light-50);
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+.turn-bar__info strong {
+    color: var(--white);
+}
+
+.turn-bar__btn {
+    background: var(--yellow);
+    color: var(--gray-1);
+    border: 0;
+    font-weight: 700;
+    padding: .65rem 1.5rem;
+    border-radius: 3px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-size: .78rem;
+    letter-spacing: .04em;
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+.turn-bar__btn:hover {
+    filter: brightness(1.08);
+}
+
+/* ==========================================================================
+   PANNEAUX LATÉRAUX — JOURNAL ET DISCUSSION
+   Deux composants physiquement distincts (deux <aside> séparés),
+   regroupés visuellement par .vtt-sidebar qui pilote leur agencement
+   (empilés par défaut, côte à côte à partir de 1981px).
+   ========================================================================== */
+
+.side-panel {
+    background: var(--dark-25);
+    border: 1px solid var(--light-10);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
+}
+
+.side-panel__title {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-size: .76rem;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--light-50);
+    padding: .9rem 1rem .6rem;
+    flex: none;
+}
+
+.side-panel__title i {
+    color: var(--yellow);
+}
+
+.journal-feed {
+    padding: 0 1rem .9rem;
+    display: flex;
+    flex-direction: column;
+    gap: .8rem;
+    max-height: 340px;
+    overflow-y: auto;
+}
+
+.journal-entry {
+    font-size: .8rem;
+    color: var(--light-75);
+    line-height: 1.5;
+    padding-left: .7rem;
+    border-left: 2px solid var(--light-10);
+}
+
+.journal-entry time {
+    display: block;
+    font-size: .66rem;
+    color: var(--light-50);
+    margin-bottom: .15rem;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+}
+
+.journal-entry strong {
+    color: var(--yellow);
+}
+
+.chat-feed {
+    padding: 0 1rem .5rem;
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.chat-bubble {
+    max-width: 90%;
+}
+
+.chat-bubble--self {
+    margin-left: auto;
+    text-align: right;
+}
+
+.chat-bubble__author {
+    font-size: .68rem;
+    color: var(--light-50);
+    margin-bottom: .15rem;
+}
+
+.chat-bubble__text {
+    display: inline-block;
+    background: var(--light-10);
+    color: var(--light-85);
+    padding: .5rem .75rem;
+    border-radius: 4px;
+    font-size: .8rem;
+    line-height: 1.4;
+    text-align: left;
+}
+
+.chat-bubble--self .chat-bubble__text {
+    background: var(--light-75);
+    color: var(--gray-1);
+}
+
+.chat-composer {
+    display: flex;
+    gap: .5rem;
+    padding: .85rem 1rem 1rem;
+    border-top: 1px solid var(--light-10);
+    margin-top: auto;
+    flex: none;
+}
+
+.chat-composer textarea {
+    flex: 1;
+    resize: none;
+    height: 40px;
+    background: var(--dark-10);
+    border: 1px solid var(--light-25);
+    border-radius: 4px;
+    color: var(--light-85);
+    padding: .5rem .65rem;
+    font-size: .82rem;
+    font-family: inherit;
+}
+
+.chat-composer button {
+    flex: none;
+    background: var(--yellow);
+    color: var(--gray-1);
+    border: 0;
+    border-radius: 4px;
+    padding: 0 1rem;
+    font-weight: 700;
+    font-size: .78rem;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+/* ==========================================================================
+   MODALE ÉQUIPE (smartphone)
+   ========================================================================== */
+
+#partyModal .modal-body .party-panel__list {
+    gap: .75rem;
+}
+
+/* ==========================================================================
+   PIED DE PAGE
+   ========================================================================== */
+
+.vtt-footer {
+    text-align: center;
+    padding: 1.5rem 1rem;
+    font-size: .76rem;
+    color: var(--light-50);
+    border-top: 1px solid var(--light-10);
+}

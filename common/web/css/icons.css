@@ -665,6 +665,20 @@
     vertical-align: -0.125em;
 }
 
+.dnd-action-dig::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/action-dig.svg') no-repeat center center;
+    mask: url('icons/action-dig.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
 .dnd-action-fight::before {
     content: "";
     font-size: inherit;

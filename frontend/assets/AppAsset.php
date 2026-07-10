@@ -16,6 +16,7 @@ class AppAsset extends AssetBundle
         '/common/web/css/icons.css',
         '/common/web/css/fonts.css',
         '/common/web/css/dragon-lite.css',
+        '/frontend/web/css/vtt.css',
     ];
     public $js = [
         '/common/web/js/core-library.js',

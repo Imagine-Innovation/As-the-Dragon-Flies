@@ -184,13 +184,14 @@ class SiteController extends Controller
     }
 
     /**
-     * Displays homepage.
-     *
+     * render adhoc icons. site/icons&mode=dev will render WIP icons
+     * 
+     * @param string $mode
      * @return string
      */
-    public function actionIcons(): string
+    public function actionIcons(string $mode = null): string
     {
-        return $this->render('icons');
+        return $this->render('icons', ['devMode' => ($mode === 'dev')]);
     }
 
     /**

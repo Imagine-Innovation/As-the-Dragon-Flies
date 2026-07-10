@@ -1,5 +1,7 @@
 :root {
     --icon-color: currentColor; /* This will make icons inherit text color */
+    --icon-size: 1em;
+    --icon-vertical-align: -0.125em;
 }
 
 @font-face {
@@ -8,7 +10,7 @@
 }
 
 .dnd-bad-gnome::before {
-    content: "";
+    content: """";
     font-size: inherit;
     height: 1em;
     width: 1em;
@@ -22,7 +24,7 @@
 }
 
 .dnd-basic-silhouette::before {
-    content: "";
+    content: """";
     font-size: inherit;
     height: 1em;
     width: 1em;
@@ -34,8 +36,9 @@
     mask-size: 100% 100%;
     vertical-align: -0.125em;
 }
+
 .dnd-battle::before {
-    content: "";
+    content: """";
     font-size: inherit;
     height: 1em;
     width: 1em;
@@ -47,8 +50,9 @@
     mask-size: 100% 100%;
     vertical-align: -0.125em;
 }
+
 .dnd-book-solid::before {
-    content: "";
+    content: """";
     font-size: inherit;
     height: 1em;
     width: 1em;
@@ -60,8 +64,9 @@
     mask-size: 100% 100%;
     vertical-align: -0.125em;
 }
+
 .dnd-bookmark::before {
-    content: "";
+    content: """";
     font-size: inherit;
     height: 1em;
     width: 1em;
@@ -74,8 +79,92 @@
     vertical-align: -0.125em;
 }
 
+.dnd-card-pickup::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/card-pickup-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/card-pickup-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-chess-rook::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/chess-rook-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/chess-rook-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-coin-pouch::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/coin-pouch.svg') no-repeat center center;
+    mask: url('icons/draft/coin-pouch.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-coins-stacked-on-a-hand-palm::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/coins-stacked-on-a-hand-palm-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/coins-stacked-on-a-hand-palm-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-coins::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/coins-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/coins-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-compress::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/compress-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/compress-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
 .dnd-crossed-swords::before {
-    content: "";
+    content: """";
     font-size: inherit;
     height: 1em;
     width: 1em;
@@ -87,8 +176,9 @@
     mask-size: 100% 100%;
     vertical-align: -0.125em;
 }
+
 .dnd-crystal-shrine::before {
-    content: "";
+    content: """";
     font-size: inherit;
     height: 1em;
     width: 1em;
@@ -100,8 +190,345 @@
     mask-size: 100% 100%;
     vertical-align: -0.125em;
 }
+
+.dnd-daggers::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/daggers-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/daggers-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-dice::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/dice-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/dice-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-dragon::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/dragon.svg') no-repeat center center;
+    mask: url('icons/draft/dragon.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-dungeon-gate::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/dungeon-gate-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/dungeon-gate-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-falling::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/falling-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/falling-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-gargoyle::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/gargoyle-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/gargoyle-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-ghost::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/ghost-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/ghost-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-gifts::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/gifts-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/gifts-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-goblin-head::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/goblin-head-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/goblin-head-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-guard::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/guard.svg') no-repeat center center;
+    mask: url('icons/draft/guard.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-hand-heart-valentine::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/hand-heart-valentine-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/hand-heart-valentine-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-hand-holding-medical::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/hand-holding-medical-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/hand-holding-medical-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-hand-holding-up-a-book::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/hand-holding-up-a-book-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/hand-holding-up-a-book-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-hand-holding-up-a-gear::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/hand-holding-up-a-gear-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/hand-holding-up-a-gear-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-hand-holding-up-a-hammer::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/hand-holding-up-a-hammer-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/hand-holding-up-a-hammer-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-hand-holding-up-a-key::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/hand-holding-up-a-key-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/hand-holding-up-a-key-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-hand-holding-up-a-pen::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/hand-holding-up-a-pen-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/hand-holding-up-a-pen-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-hand-holding-up-a-sack-of-money::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/hand-holding-up-a-sack-of-money-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/hand-holding-up-a-sack-of-money-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-hand-holding-up-a-wand::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/hand-holding-up-a-wand-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/hand-holding-up-a-wand-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-hand-holding-vote-paper::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/hand-holding-vote-paper-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/hand-holding-vote-paper-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-hand-switch::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/hand-switch-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/hand-switch-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-handle-with-care::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/handle-with-care-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/handle-with-care-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-hands-helping::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/hands-helping-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/hands-helping-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-hatchet::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/hatchet-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/hatchet-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
 .dnd-hood::before {
-    content: "";
+    content: """";
     font-size: inherit;
     height: 1em;
     width: 1em;
@@ -113,8 +540,37 @@
     mask-size: 100% 100%;
     vertical-align: -0.125em;
 }
+
+.dnd-horse-head::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/horse-head-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/horse-head-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-iying-down::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/iying-down-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/iying-down-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
 .dnd-knight-helmet::before {
-    content: "";
+    content: """";
     font-size: inherit;
     height: 1em;
     width: 1em;
@@ -126,8 +582,9 @@
     mask-size: 100% 100%;
     vertical-align: -0.125em;
 }
+
 .dnd-knight::before {
-    content: "";
+    content: """";
     font-size: inherit;
     height: 1em;
     width: 1em;
@@ -139,8 +596,51 @@
     mask-size: 100% 100%;
     vertical-align: -0.125em;
 }
+
+.dnd-man-doing-pushups::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/man-doing-pushups-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/man-doing-pushups-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-man-jumping-up::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/man-jumping-up-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/man-jumping-up-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-man-riding-a-horse::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/man-riding-a-horse-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/man-riding-a-horse-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
 .dnd-pirate-flag::before {
-    content: "";
+    content: """";
     font-size: inherit;
     height: 1em;
     width: 1em;
@@ -152,99 +652,37 @@
     mask-size: 100% 100%;
     vertical-align: -0.125em;
 }
-.dnd-pirate-symbol-mark-svgrepo-com::before {
-    content: "";
+
+.dnd-potion::before {
+    content: """";
     font-size: inherit;
     height: 1em;
     width: 1em;
     display: inline-block;
     background: currentColor;
-    -webkit-mask: url('icons/draft/pirate-symbol-mark-svgrepo-com.svg') no-repeat center center;
-    mask: url('icons/draft/pirate-symbol-mark-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask: url('icons/draft/potion-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/potion-svgrepo-com.svg') no-repeat center center;
     -webkit-mask-size: 100% 100%;
     mask-size: 100% 100%;
     vertical-align: -0.125em;
 }
-.dnd-point-svgrepo-com::before {
-    content: "";
+
+.dnd-praying-hands::before {
+    content: """";
     font-size: inherit;
     height: 1em;
     width: 1em;
     display: inline-block;
     background: currentColor;
-    -webkit-mask: url('icons/draft/point-svgrepo-com.svg') no-repeat center center;
-    mask: url('icons/draft/point-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask: url('icons/draft/praying-hands-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/praying-hands-svgrepo-com.svg') no-repeat center center;
     -webkit-mask-size: 100% 100%;
     mask-size: 100% 100%;
     vertical-align: -0.125em;
 }
-.dnd-potion-of-madness-svgrepo-com::before {
-    content: "";
-    font-size: inherit;
-    height: 1em;
-    width: 1em;
-    display: inline-block;
-    background: currentColor;
-    -webkit-mask: url('icons/draft/potion-of-madness-svgrepo-com.svg') no-repeat center center;
-    mask: url('icons/draft/potion-of-madness-svgrepo-com.svg') no-repeat center center;
-    -webkit-mask-size: 100% 100%;
-    mask-size: 100% 100%;
-    vertical-align: -0.125em;
-}
-.dnd-power-off-svgrepo-com::before {
-    content: "";
-    font-size: inherit;
-    height: 1em;
-    width: 1em;
-    display: inline-block;
-    background: currentColor;
-    -webkit-mask: url('icons/draft/power-off-svgrepo-com.svg') no-repeat center center;
-    mask: url('icons/draft/power-off-svgrepo-com.svg') no-repeat center center;
-    -webkit-mask-size: 100% 100%;
-    mask-size: 100% 100%;
-    vertical-align: -0.125em;
-}
-.dnd-receipt-3-svgrepo-com::before {
-    content: "";
-    font-size: inherit;
-    height: 1em;
-    width: 1em;
-    display: inline-block;
-    background: currentColor;
-    -webkit-mask: url('icons/draft/receipt-3-svgrepo-com.svg') no-repeat center center;
-    mask: url('icons/draft/receipt-3-svgrepo-com.svg') no-repeat center center;
-    -webkit-mask-size: 100% 100%;
-    mask-size: 100% 100%;
-    vertical-align: -0.125em;
-}
-.dnd-ring-svgrepo-com::before {
-    content: "";
-    font-size: inherit;
-    height: 1em;
-    width: 1em;
-    display: inline-block;
-    background: currentColor;
-    -webkit-mask: url('icons/draft/ring-svgrepo-com.svg') no-repeat center center;
-    mask: url('icons/draft/ring-svgrepo-com.svg') no-repeat center center;
-    -webkit-mask-size: 100% 100%;
-    mask-size: 100% 100%;
-    vertical-align: -0.125em;
-}
-.dnd-ring::before {
-    content: "";
-    font-size: inherit;
-    height: 1em;
-    width: 1em;
-    display: inline-block;
-    background: currentColor;
-    -webkit-mask: url('icons/draft/ring.svg') no-repeat center center;
-    mask: url('icons/draft/ring.svg') no-repeat center center;
-    -webkit-mask-size: 100% 100%;
-    mask-size: 100% 100%;
-    vertical-align: -0.125em;
-}
+
 .dnd-robe::before {
-    content: "";
+    content: """";
     font-size: inherit;
     height: 1em;
     width: 1em;
@@ -256,21 +694,9 @@
     mask-size: 100% 100%;
     vertical-align: -0.125em;
 }
-.dnd-rock-svgrepo-com::before {
-    content: "";
-    font-size: inherit;
-    height: 1em;
-    width: 1em;
-    display: inline-block;
-    background: currentColor;
-    -webkit-mask: url('icons/draft/rock-svgrepo-com.svg') no-repeat center center;
-    mask: url('icons/draft/rock-svgrepo-com.svg') no-repeat center center;
-    -webkit-mask-size: 100% 100%;
-    mask-size: 100% 100%;
-    vertical-align: -0.125em;
-}
-.dnd-secret-book-svgrepo-com::before {
-    content: "";
+
+.dnd-secret-book::before {
+    content: """";
     font-size: inherit;
     height: 1em;
     width: 1em;
@@ -282,8 +708,9 @@
     mask-size: 100% 100%;
     vertical-align: -0.125em;
 }
-.dnd-set-kara-svgrepo-com::before {
-    content: "";
+
+.dnd-set-kara::before {
+    content: """";
     font-size: inherit;
     height: 1em;
     width: 1em;
@@ -295,8 +722,23 @@
     mask-size: 100% 100%;
     vertical-align: -0.125em;
 }
-.dnd-skeleton-16-svgrepo-com::before {
-    content: "";
+
+.dnd-silence-silent::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/silence-silent-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/silence-silent-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-skeleton-16::before {
+    content: """";
     font-size: inherit;
     height: 1em;
     width: 1em;
@@ -308,8 +750,23 @@
     mask-size: 100% 100%;
     vertical-align: -0.125em;
 }
-.dnd-stake-hammer-svgrepo-com::before {
-    content: "";
+
+.dnd-smell::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/smell-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/smell-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-stake-hammer::before {
+    content: """";
     font-size: inherit;
     height: 1em;
     width: 1em;
@@ -321,8 +778,9 @@
     mask-size: 100% 100%;
     vertical-align: -0.125em;
 }
-.dnd-stringed-isntrument-violin-viola-cello-svgrepo-com::before {
-    content: "";
+
+.dnd-stringed-isntrument-violin-viola-cello::before {
+    content: """";
     font-size: inherit;
     height: 1em;
     width: 1em;
@@ -334,8 +792,23 @@
     mask-size: 100% 100%;
     vertical-align: -0.125em;
 }
-.dnd-troll-svgrepo-com::before {
-    content: "";
+
+.dnd-swimmer::before {
+    content: """";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/draft/swimmer-svgrepo-com.svg') no-repeat center center;
+    mask: url('icons/draft/swimmer-svgrepo-com.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-troll::before {
+    content: """";
     font-size: inherit;
     height: 1em;
     width: 1em;
@@ -347,8 +820,9 @@
     mask-size: 100% 100%;
     vertical-align: -0.125em;
 }
-.dnd-tshirt-svgrepo-com::before {
-    content: "";
+
+.dnd-tshirt::before {
+    content: """";
     font-size: inherit;
     height: 1em;
     width: 1em;
@@ -360,34 +834,9 @@
     mask-size: 100% 100%;
     vertical-align: -0.125em;
 }
-.dnd-vector-square-svgrepo-com::before {
-    content: "";
-    font-size: inherit;
-    height: 1em;
-    width: 1em;
-    display: inline-block;
-    background: currentColor;
-    -webkit-mask: url('icons/draft/vector-square-svgrepo-com.svg') no-repeat center center;
-    mask: url('icons/draft/vector-square-svgrepo-com.svg') no-repeat center center;
-    -webkit-mask-size: 100% 100%;
-    mask-size: 100% 100%;
-    vertical-align: -0.125em;
-}
-.dnd-walking-1-svgrepo-com::before {
-    content: "";
-    font-size: inherit;
-    height: 1em;
-    width: 1em;
-    display: inline-block;
-    background: currentColor;
-    -webkit-mask: url('icons/draft/walking-1-svgrepo-com.svg') no-repeat center center;
-    mask: url('icons/draft/walking-1-svgrepo-com.svg') no-repeat center center;
-    -webkit-mask-size: 100% 100%;
-    mask-size: 100% 100%;
-    vertical-align: -0.125em;
-}
-.dnd-white-book-svgrepo-com::before {
-    content: "";
+
+.dnd-white-book::before {
+    content: """";
     font-size: inherit;
     height: 1em;
     width: 1em;
@@ -400,112 +849,8 @@
     vertical-align: -0.125em;
 }
 
-.dnd-dungeon-gate-svgrepo-com::before {
-    content: "";
-    font-size: inherit;
-    height: 1em;
-    width: 1em;
-    display: inline-block;
-    background: currentColor;
-    -webkit-mask: url('icons/draft/dungeon-gate-svgrepo-com.svg') no-repeat center center;
-    mask: url('icons/draft/dungeon-gate-svgrepo-com.svg') no-repeat center center;
-    -webkit-mask-size: 100% 100%;
-    mask-size: 100% 100%;
-    vertical-align: -0.125em;
-}
-.dnd-goblin-head-svgrepo-com::before {
-    content: "";
-    font-size: inherit;
-    height: 1em;
-    width: 1em;
-    display: inline-block;
-    background: currentColor;
-    -webkit-mask: url('icons/draft/goblin-head-svgrepo-com.svg') no-repeat center center;
-    mask: url('icons/draft/goblin-head-svgrepo-com.svg') no-repeat center center;
-    -webkit-mask-size: 100% 100%;
-    mask-size: 100% 100%;
-    vertical-align: -0.125em;
-}
-.dnd-gargoyle-svgrepo-com::before {
-    content: "";
-    font-size: inherit;
-    height: 1em;
-    width: 1em;
-    display: inline-block;
-    background: currentColor;
-    -webkit-mask: url('icons/draft/gargoyle-svgrepo-com.svg') no-repeat center center;
-    mask: url('icons/draft/gargoyle-svgrepo-com.svg') no-repeat center center;
-    -webkit-mask-size: 100% 100%;
-    mask-size: 100% 100%;
-    vertical-align: -0.125em;
-}
-.dnd-hatchet-svgrepo-com::before {
-    content: "";
-    font-size: inherit;
-    height: 1em;
-    width: 1em;
-    display: inline-block;
-    background: currentColor;
-    -webkit-mask: url('icons/draft/hatchet-svgrepo-com.svg') no-repeat center center;
-    mask: url('icons/draft/hatchet-svgrepo-com.svg') no-repeat center center;
-    -webkit-mask-size: 100% 100%;
-    mask-size: 100% 100%;
-    vertical-align: -0.125em;
-}
-.dnd-horse-head-svgrepo-com::before {
-    content: "";
-    font-size: inherit;
-    height: 1em;
-    width: 1em;
-    display: inline-block;
-    background: currentColor;
-    -webkit-mask: url('icons/draft/horse-head-svgrepo-com.svg') no-repeat center center;
-    mask: url('icons/draft/horse-head-svgrepo-com.svg') no-repeat center center;
-    -webkit-mask-size: 100% 100%;
-    mask-size: 100% 100%;
-    vertical-align: -0.125em;
-}
-.dnd-man-doing-pushups-svgrepo-com::before {
-    content: "";
-    font-size: inherit;
-    height: 1em;
-    width: 1em;
-    display: inline-block;
-    background: currentColor;
-    -webkit-mask: url('icons/draft/man-doing-pushups-svgrepo-com.svg') no-repeat center center;
-    mask: url('icons/draft/man-doing-pushups-svgrepo-com.svg') no-repeat center center;
-    -webkit-mask-size: 100% 100%;
-    mask-size: 100% 100%;
-    vertical-align: -0.125em;
-}
-.dnd-man-jumping-up-svgrepo-com::before {
-    content: "";
-    font-size: inherit;
-    height: 1em;
-    width: 1em;
-    display: inline-block;
-    background: currentColor;
-    -webkit-mask: url('icons/draft/man-jumping-up-svgrepo-com.svg') no-repeat center center;
-    mask: url('icons/draft/man-jumping-up-svgrepo-com.svg') no-repeat center center;
-    -webkit-mask-size: 100% 100%;
-    mask-size: 100% 100%;
-    vertical-align: -0.125em;
-}
-.dnd-iying-down-svgrepo-com::before {
-    content: "";
-    font-size: inherit;
-    height: 1em;
-    width: 1em;
-    display: inline-block;
-    background: currentColor;
-    -webkit-mask: url('icons/draft/iying-down-svgrepo-com.svg') no-repeat center center;
-    mask: url('icons/draft/iying-down-svgrepo-com.svg') no-repeat center center;
-    -webkit-mask-size: 100% 100%;
-    mask-size: 100% 100%;
-    vertical-align: -0.125em;
-}
-.dnd-woman-looking-by-a-spyglass-svgrepo-com::before {
-    content: "";
+.dnd-woman-looking-by-a-spyglass::before {
+    content: """";
     font-size: inherit;
     height: 1em;
     width: 1em;
@@ -517,47 +862,9 @@
     mask-size: 100% 100%;
     vertical-align: -0.125em;
 }
-.dnd-man-riding-a-horse-svgrepo-com::before {
-    content: "";
-    font-size: inherit;
-    height: 1em;
-    width: 1em;
-    display: inline-block;
-    background: currentColor;
-    -webkit-mask: url('icons/draft/man-riding-a-horse-svgrepo-com.svg') no-repeat center center;
-    mask: url('icons/draft/man-riding-a-horse-svgrepo-com.svg') no-repeat center center;
-    -webkit-mask-size: 100% 100%;
-    mask-size: 100% 100%;
-    vertical-align: -0.125em;
-}
-.dnd-daggers-svgrepo-com::before {
-    content: "";
-    font-size: inherit;
-    height: 1em;
-    width: 1em;
-    display: inline-block;
-    background: currentColor;
-    -webkit-mask: url('icons/draft/daggers-svgrepo-com.svg') no-repeat center center;
-    mask: url('icons/draft/daggers-svgrepo-com.svg') no-repeat center center;
-    -webkit-mask-size: 100% 100%;
-    mask-size: 100% 100%;
-    vertical-align: -0.125em;
-}
-.dnd-falling-svgrepo-com::before {
-    content: "";
-    font-size: inherit;
-    height: 1em;
-    width: 1em;
-    display: inline-block;
-    background: currentColor;
-    -webkit-mask: url('icons/draft/falling-svgrepo-com.svg') no-repeat center center;
-    mask: url('icons/draft/falling-svgrepo-com.svg') no-repeat center center;
-    -webkit-mask-size: 100% 100%;
-    mask-size: 100% 100%;
-    vertical-align: -0.125em;
-}
-.dnd-wyvern-svgrepo-com::before {
-    content: "";
+
+.dnd-wyvern::before {
+    content: """";
     font-size: inherit;
     height: 1em;
     width: 1em;
@@ -569,4 +876,3 @@
     mask-size: 100% 100%;
     vertical-align: -0.125em;
 }
-

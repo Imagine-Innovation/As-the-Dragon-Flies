@@ -48,7 +48,7 @@ class SiteController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['logout', 'ajax-toast', 'about', 'contact', 'index'],
+                        'actions' => ['logout', 'ajax-toast', 'about', 'contact', 'index', 'vtt'],
                         'allow' => true,
                         'matchCallback' => function ($rule, $action) {
                             return AccessRightsManager::isRouteAllowed($action->controller);
@@ -151,7 +151,6 @@ class SiteController extends Controller
         }
         return $state;
     }
-
 
     /**
      * Displays homepage.
@@ -264,6 +263,18 @@ class SiteController extends Controller
         return $this->render('contact', [
                     'model' => $model,
         ]);
+    }
+
+    /**
+     * Displays about page.
+     *
+     * @return string
+     */
+    public function actionVtt(): string
+    {
+        $this->layout = 'game';
+        $quest = \common\models\Quest::findOne(10);
+        return $this->render('vtt', ['quest' => $quest]);
     }
 
     /**
