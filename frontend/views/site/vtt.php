@@ -2,6 +2,7 @@
 
 use common\components\NarrativeComponent;
 use common\helpers\WebResourcesHelper;
+use common\widgets\MarkDown;
 
 /** @var yii\web\View $this */
 /** @var common\models\quest $quest */
@@ -125,7 +126,14 @@ $this->params['breadcrumbs'][] = $this->title;
                                 </span>
                             </span>
                             <span class="action-btn__desc">
-                                <?= $action->description ?>
+                                <?=
+                                MarkDown::widget([
+                                    'content' => $action->description,
+                                    'placeholders' => [
+                                        'playerName' => $currentPlayer->name,
+                                    ],
+                                ])
+                                ?>
                             </span>
                         </button>
                     <?php endforeach; ?>

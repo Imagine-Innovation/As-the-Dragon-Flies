@@ -15,11 +15,12 @@ use Yii;
  */
 class MarkDown extends Widget
 {
+
     /**
      * List of possible/typical placeholders supported by the system.
      * Clients should configure these prefixed with 'placeholder:' (e.g. 'placeholder:playerName' => 'Gandalf').
      */
-    public const POSSIBLE_PLACEHOLDERS = [
+    protected const VALID_PLACEHOLDERS = [
         'playerName',
         'questName',
         'turnOwner',
@@ -39,57 +40,6 @@ class MarkDown extends Widget
     public array $placeholders = [];
 
     /**
-     * MarkDown constructor.
-     * Overloaded to extract custom placeholder properties that do not map to defined widget properties.
-     *
-     * Placeholders must be explicitly namespaced via the "placeholder:" prefix to
-     * avoid hiding configuration mistakes. Any unknown keys that are not
-     * namespaced as placeholders are passed through to the parent constructor so
-     * that base-class validation (e.g. UnknownPropertyException) still applies.
-     *
-     * Example:
-     * [
-     *     'placeholder:title' => 'My custom title',
-     *     'placeholder:foo'   => 'bar',
-     * ]
-     *
-     * @param array<string, mixed> $config name-value pairs that will be used to initialize the object properties
-     */
-    public function __construct(array $config = [])
-    {
-        $stdConfig = [];
-
-        foreach ($config as $key => $value) {
-            // Known properties are passed through to the base class as usual.
-            if ($this->canSetProperty($key) || property_exists($this, $key)) {
-                $stdConfig[$key] = $value;
-                continue;
-            }
-
-            // Only explicitly namespaced keys are treated as placeholders.
-            if (strncmp((string) $key, 'placeholder:', 12) === 0) {
-                $placeholderName = substr((string) $key, 12);
-
-                // Empty placeholder names are not allowed; treat them as normal
-                // config keys so that base-class validation can fail fast.
-                if ($placeholderName === '') {
-                    $stdConfig[$key] = $value;
-                    continue;
-                }
-
-                $this->placeholders[$placeholderName] = $value;
-                continue;
-            }
-
-            // Unknown non-placeholder keys are left in $stdConfig so that the
-            // parent constructor can apply its usual validation logic.
-            $stdConfig[$key] = $value;
-        }
-
-        parent::__construct($stdConfig);
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function run()
@@ -98,7 +48,10 @@ class MarkDown extends Widget
             return '';
         }
 
-        return $this->renderMarkdown($this->content);
+        $html = $this->renderMarkdown($this->content);
+
+        // Perform placeholder replacements if placeholders were specified
+        return $this->replacePlaceholders($html, $this->placeholders);
     }
 
     /**
@@ -159,17 +112,14 @@ class MarkDown extends Widget
     protected function renderMarkdown(string $content): string
     {
         // 1. Normalize line breaks: replace <br> tags with newlines
-        $content = RichTextHelper::normalizeLineBreaks($content);
+        $normalizedContent = RichTextHelper::normalizeLineBreaks($content);
 
         // 2. Escape HTML to prevent XSS as the first security layer
-        $html = htmlspecialchars($content, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $html = $this->sanitize($normalizedContent);
 
         // 3. Identify and process blocks
         $lines = explode("\n", $html);
-        $html = $this->processMarkdownBlocks($lines);
-
-        // 4. Perform placeholder replacements if placeholders were specified
-        return $this->replacePlaceholders($html);
+        return $this->processMarkdownBlocks($lines);
     }
 
     /**
@@ -267,25 +217,80 @@ class MarkDown extends Widget
      * Performs dynamic placeholder replacement.
      *
      * @param string $html
+     * @param array<string, mixed> $placeholders
      * @return string
      */
-    protected function replacePlaceholders(string $html): string
+    protected function replacePlaceholders(string $html, array $placeholders): string
     {
-        if (empty($this->placeholders)) {
-            return $html;
+        // Step 1: find every {placeholder} in the HTML
+        $matches = [];
+        preg_match_all('/\{([a-zA-Z0-9_\-]+)\}/', $html, $matches);
+
+        $placeholderTags = $matches[0]; // e.g. ['{playerName}', '{date}']
+        $placeholderKeys = $matches[1]; // e.g. ['playerName', 'date']
+        // Step 2: build a list of [search => replace] pairs
+        $search = [];
+        $replace = [];
+
+        foreach ($placeholderKeys as $searchString => $placeholder) {
+            $search[] = $placeholderTags[$searchString];
+            $replace[] = $this->getPlaceholderValue($placeholder, $placeholders);
         }
 
-        $replaced = preg_replace_callback('/\{([a-zA-Z0-9_\-]+)\}/', function ($matches) {
-            $placeholderKey = $matches[1];
-            if (array_key_exists($placeholderKey, $this->placeholders) && $this->placeholders[$placeholderKey] !== null) {
-                $val = $this->placeholders[$placeholderKey];
-                $strVal = is_scalar($val) || (is_object($val) && method_exists($val, '__toString')) ? (string) $val : '';
-                return htmlspecialchars($strVal, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-            }
-            return '';
-        }, $html);
+        // Step 3: replace them all in one pass
+        return str_replace($search, $replace, $html);
+    }
 
-        return $replaced !== null ? $replaced : $html;
+    /**
+     *
+     * @param string $placeholder
+     * @param array<string, mixed> $placeholders
+     * @return string
+     */
+    private function getPlaceholderValue(string $placeholder, array $placeholders): string
+    {
+        if (!$this->isValidPlaceholder($placeholder, $placeholders)) {
+            return '{' . $placeholder . '}';
+        }
+
+        $value = $placeholders[$placeholder];
+
+        if ($value === null) {
+            return '';
+        }
+
+        if (is_string($value)) {
+            return $this->sanitize($value);
+        }
+
+        if (is_int($value)) {
+            return (string) $value;
+        }
+
+        // Any other type returns a empty string
+        return '';
+    }
+
+    /**
+     * Check whether the reserved space is valid and whether a replacement value has been provided
+     *
+     * @param string $placeholder
+     * @param array<string, mixed> $placeholders.
+     * @return bool
+     */
+    private function isValidPlaceholder(string $placeholder, array $placeholders): bool
+    {
+        return in_array($placeholder, self::VALID_PLACEHOLDERS, true) && array_key_exists($placeholder, $placeholders);
+    }
+
+    /**
+     *
+     * @param string $value
+     * @return string
+     */
+    private function sanitize(string $value): string
+    {
+        return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     }
 
     /**

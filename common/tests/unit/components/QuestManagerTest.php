@@ -11,6 +11,11 @@ use Yii;
 
 class QuestManagerTest extends \Codeception\Test\Unit
 {
+
+    protected const QUEST_ID = 10;
+    protected const QUEST_PROGRESS_ID = 24;
+    protected const CURRENT_PLAYER_ID = 35;
+
     /**
      * @var \common\tests\UnitTester
      */
@@ -19,16 +24,16 @@ class QuestManagerTest extends \Codeception\Test\Unit
     public function testMoveToNextMissionReturnsEarlyWhenCompleted()
     {
         $quest = $this->getMockBuilder(Quest::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getAttributes'])
-            ->getMock();
-        $quest->id = 99;
+                ->disableOriginalConstructor()
+                ->onlyMethods(['getAttributes'])
+                ->getMock();
+        $quest->id = self::QUEST_ID;
         $quest->status = AppStatus::COMPLETED->value;
 
         $manager = $this->getMockBuilder(QuestManager::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getQuest'])
-            ->getMock();
+                ->disableOriginalConstructor()
+                ->onlyMethods(['getQuest'])
+                ->getMock();
 
         $manager->method('getQuest')->willReturn($quest);
 
@@ -41,16 +46,16 @@ class QuestManagerTest extends \Codeception\Test\Unit
     public function testMoveToNextMissionReturnsEarlyWhenAborted()
     {
         $quest = $this->getMockBuilder(Quest::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getAttributes'])
-            ->getMock();
-        $quest->id = 99;
+                ->disableOriginalConstructor()
+                ->onlyMethods(['getAttributes'])
+                ->getMock();
+        $quest->id = self::QUEST_ID;
         $quest->status = AppStatus::ABORTED->value;
 
         $manager = $this->getMockBuilder(QuestManager::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getQuest'])
-            ->getMock();
+                ->disableOriginalConstructor()
+                ->onlyMethods(['getQuest'])
+                ->getMock();
 
         $manager->method('getQuest')->willReturn($quest);
 
@@ -63,34 +68,34 @@ class QuestManagerTest extends \Codeception\Test\Unit
     public function testSetNextMissionTriggersGameOverWhenAddQuestProgressFails()
     {
         $hero = $this->getMockBuilder(Player::class)->disableOriginalConstructor()->getMock();
-        $hero->id = 5;
+        $hero->id = self::CURRENT_PLAYER_ID;
         $hero->name = 'Hero';
 
         $quest = $this->getMockBuilder(Quest::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getCurrentPlayer'])
-            ->getMock();
-        $quest->id = 99;
-        $quest->current_player_id = 5;
+                ->disableOriginalConstructor()
+                ->onlyMethods(['getCurrentPlayer'])
+                ->getMock();
+        $quest->id = self::QUEST_ID;
+        $quest->current_player_id = self::CURRENT_PLAYER_ID;
         $quest->method('getCurrentPlayer')->willReturn($hero);
         $quest->currentPlayer = $hero;
 
         $progress = $this->getMockBuilder(QuestProgress::class)->disableOriginalConstructor()->getMock();
-        $progress->id = 135;
+        $progress->id = self::QUEST_PROGRESS_ID;
 
         $manager = $this->getMockBuilder(QuestManager::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getQuest', 'getQuestProgress', 'endCurrentQuestProgress', 'addQuestProgress', 'gameOver'])
-            ->getMock();
+                ->disableOriginalConstructor()
+                ->onlyMethods(['getQuest', 'getQuestProgress', 'endCurrentQuestProgress', 'addQuestProgress', 'gameOver'])
+                ->getMock();
 
         $manager->method('getQuest')->willReturn($quest);
         $manager->method('getQuestProgress')->willReturn($progress);
         $manager->method('addQuestProgress')->willReturn(null);
 
         $manager->expects($this->once())
-            ->method('gameOver')
-            ->with(AppStatus::ABORTED)
-            ->willReturn(['error' => false, 'msg' => 'Game Over Success']);
+                ->method('gameOver')
+                ->with(AppStatus::ABORTED)
+                ->willReturn(['error' => false, 'msg' => 'Game Over Success']);
 
         $result = $manager->moveToNextMission(101); // Triggering setNextMission through moveToNextMission
 

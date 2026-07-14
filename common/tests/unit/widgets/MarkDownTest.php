@@ -7,6 +7,7 @@ use common\tests\UnitTester;
 
 class MarkDownTest extends \Codeception\Test\Unit
 {
+
     /**
      * @var UnitTester
      */
@@ -60,63 +61,98 @@ class MarkDownTest extends \Codeception\Test\Unit
 
     public function testPlaceholderReplacements()
     {
-        // 1. Example from user: It is *{playerName}'s* turn -> It is <em>Gandalf&#039;s</em> turn (or <strong> with **).
+        // Example from user: It is *{playerName}'s* turn -> It is <em>Gandalf&#039;s</em> turn (or <strong> with **).
         // Let's test standard emphasis * and ** to be thorough.
         $content = "It is *{playerName}'s* turn";
-        $html = MarkDown::widget(['content' => $content, 'placeholder:playerName' => 'Gandalf']);
+        $html = MarkDown::widget([
+            'content' => $content,
+            'placeholders' => [
+                'playerName' => 'Gandalf',
+            ],
+        ]);
         $this->assertStringContainsString("It is <em>Gandalf&#039;s</em> turn", $html);
 
         $contentBold = "It is **{playerName}'s** turn";
-        $htmlBold = MarkDown::widget(['content' => $contentBold, 'placeholder:playerName' => 'Gandalf']);
+        $htmlBold = MarkDown::widget(['content' => $contentBold, 'placeholders' => ['playerName' => 'Gandalf']]);
         $this->assertStringContainsString("It is <strong>Gandalf&#039;s</strong> turn", $htmlBold);
 
-        // 2. No placeholder provided
+        // No placeholder provided
         $content = "It is *{playerName}'s* turn";
         $html = MarkDown::widget(['content' => $content]);
         // Since no placeholders were configured at all, return converted markdown as is (leaving {playerName})
         $this->assertStringContainsString("It is <em>{playerName}&#039;s</em> turn", $html);
 
-        // 3. Null placeholder (should remove it if placeholders are configured)
+        // Null placeholder (should remove it if placeholders are configured)
         $content = "It is *{playerName}'s* turn for {questName}";
-        $html = MarkDown::widget(['content' => $content, 'placeholder:playerName' => null, 'placeholder:questName' => 'Ring']);
+        $html = MarkDown::widget([
+            'content' => $content,
+            'placeholders' => [
+                'playerName' => null,
+                'questName' => 'Ring',
+            ],
+        ]);
         $this->assertStringContainsString("It is <em>&#039;s</em> turn for Ring", $html);
 
-        // 4. Secure placeholder values (XSS protection)
-        $content = "Hello {playerName}";
-        $html = MarkDown::widget(['content' => $content, 'placeholder:playerName' => "<script>alert('XSS')</script>"]);
+        // Secure placeholder values (XSS protection)
+        $content = "Hello, {playerName}";
+        $html = MarkDown::widget([
+            'content' => $content,
+            'placeholders' => [
+                'playerName' => "<script>alert('XSS')</script>",
+            ],
+        ]);
         $this->assertStringNotContainsString("<script>", $html);
         $this->assertStringContainsString("&lt;script&gt;alert(&#039;XSS&#039;)&lt;/script&gt;", $html);
 
-        // 5. Arbitrary, multiple placeholders and case-sensitivity
-        $content = "Hello {playerName}, welcome to {placeName}. Do you like {playername}?";
+        // Arbitrary, multiple placeholders
+        $content = "Hello, {playerName}, welcome to {placeName}. Do you like {questName}?";
+        $html = MarkDown::widget([
+            'content' => $content, 'placeholders' => [
+                'playerName' => 'Frodo',
+                'placeName' => 'the Shire',
+                'questName' => 'Sam',
+            ],
+        ]);
+        $this->assertStringContainsString("Hello, Frodo, welcome to the Shire. Do you like Sam?", $html);
+
+        // multiple use of a sigle placeholder
+        $content = "Hello, {playerName}. Is that you, {playerName}?";
         $html = MarkDown::widget([
             'content' => $content,
-            'placeholder:playerName' => 'Frodo',
-            'placeholder:placeName' => 'the Shire',
-            'placeholder:playername' => 'Sam'
+            'placeholders' => [
+                'playerName' => 'Frodo',
+            ],
         ]);
-        $this->assertStringContainsString("Hello Frodo, welcome to the Shire. Do you like Sam?", $html);
+        $this->assertStringContainsString("Hello, Frodo. Is that you, Frodo?", $html);
 
-        // 6. Unknown config option without prefix should throw an UnknownPropertyException from Yii base class
-        try {
-            MarkDown::widget([
-                'content' => 'Hello',
-                'invalidConfigKey' => 'Some Value'
-            ]);
-            $this->fail('Expected UnknownPropertyException was not thrown for invalidConfigKey');
-        } catch (\yii\base\UnknownPropertyException $e) {
-            $this->assertStringContainsString('invalidConfigKey', $e->getMessage());
-        }
+        // Case sensitivity
+        $content = "Hello, {playerName}";
+        $html = MarkDown::widget([
+            'content' => $content,
+            'placeholders' => [
+                'PlayerName' => 'Frodo',
+            ],
+        ]);
+        $this->assertStringContainsString("Hello, {playerName}", $html);
 
-        // 7. Empty placeholder name (just "placeholder:") should treat it as invalid config key and throw UnknownPropertyException
-        try {
-            MarkDown::widget([
-                'content' => 'Hello',
-                'placeholder:' => 'Some Value'
-            ]);
-            $this->fail('Expected UnknownPropertyException was not thrown for empty placeholder name');
-        } catch (\yii\base\UnknownPropertyException $e) {
-            $this->assertStringContainsString('placeholder:', $e->getMessage());
-        }
+        // Unsed placeholder
+        $content = "Hello";
+        $html = MarkDown::widget([
+            'content' => $content,
+            'placeholders' => [
+                'playerName' => 'Frodo',
+            ],
+        ]);
+        $this->assertStringContainsString("Hello", $html);
+
+        // Empty placeholder
+        $content = "Hello, {playerName}";
+        $html = MarkDown::widget([
+            'content' => $content,
+            'placeholders' => [
+                '' => 'Frodo',
+            ],
+        ]);
+        $this->assertStringContainsString("Hello, {playerName}", $html);
     }
 }
