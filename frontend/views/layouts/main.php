@@ -18,12 +18,10 @@ $snippet = Yii::$app->user->isGuest ? 'guest' : 'lobby';
     <body>
         <?php $this->beginBody(); ?>
 
-        <?php if (Yii::$app->user->isGuest && Yii::$app->controller->id === 'site' && Yii::$app->controller->action->id === 'index'): ?>
-            <?= $this->renderFile('@app/views/layouts/snippets/navbar-guest.php') ?>
-        <?php endif; ?>
+        <?= $this->renderFile("@app/views/layouts/snippets/navbar-{$snippet}.php") ?>
 
         <main role="main" class="main">
-            <?= $this->renderFile("@app/views/layouts/contents/$snippet.php", ['content' => $content]) ?>
+            <?= $this->renderFile("@app/views/layouts/contents/{$snippet}.php", ['content' => $content]) ?>
         </main>
 
         <?= $this->renderFile('@app/views/layouts/snippets/footer.php') ?>

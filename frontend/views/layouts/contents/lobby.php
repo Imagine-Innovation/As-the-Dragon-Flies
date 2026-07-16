@@ -1,5 +1,4 @@
 <?php
-
 /** @var \yii\web\View $this */
 
 /** @var string $content */
@@ -9,9 +8,6 @@ use yii\bootstrap5\Breadcrumbs;
 
 AppAsset::register($this);
 ?>
-<!--Main Navigation-->
-<?= $this->renderFile('@app/views/layouts/snippets/navbar-lobby.php') ?>
-<!-- End Main Navigation-->
 
 <section class="content">
     <a id="top"></a>
@@ -19,7 +15,7 @@ AppAsset::register($this);
     Breadcrumbs::widget([
         'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
     ])
-?>
+    ?>
 
     <div class="content__inner">
         <?= Alert::widget() ?>

@@ -113,7 +113,9 @@ $this->params['breadcrumbs'][] = $this->title;
                         <button type="button" class="action-btn">
                             <span class="action-btn__top">
                                 <span class="action-btn__name">
-                                    <i class="bi bi-chat-dots" aria-hidden="true"></i>
+                                    <?php if ($action->actionType->icon): ?>
+                                        <i class="bi <?= $action->actionType->icon ?>" aria-hidden="true"></i>
+                                    <?php endif; ?>
                                     <?= $action->name ?>
                                 </span>
                                 <span class="action-btn__badges">
