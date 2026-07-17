@@ -2,10 +2,15 @@
 
 use common\components\NarrativeComponent;
 use common\helpers\WebResourcesHelper;
+use common\widgets\AjaxContainer;
+use common\widgets\Button;
 use common\widgets\MarkDown;
+use yii\helpers\Html;
+use yii\helpers\Url;
 
 /** @var yii\web\View $this */
 /** @var common\models\quest $quest */
+/** @var int $nbPlayers */
 $chapter = $quest->currentChapter;
 $storyRoot = WebResourcesHelper::storyRootPath($chapter->story_id);
 
@@ -37,6 +42,8 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 
     <div class="vtt-topbar__meta">
+        <span class="vtt-round"><i class="bi bi-arrow-repeat" aria-hidden="true"></i> Round 3</span>
+        <span class="vtt-turn-pill"><i class="bi bi-hourglass-split" aria-hidden="true"></i> <?= $currentPlayer->name ?> joue</span>
 
         <nav class="vtt-topbar__jump" aria-label="Accès rapide">
             <!-- Smartphone uniquement : ouvre la liste des joueurs dans une modale -->
