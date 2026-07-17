@@ -3,10 +3,8 @@
 namespace backend\controllers;
 
 use common\components\AccessRightsManager;
-use common\components\AppStatus;
 use common\helpers\Utilities;
 use common\models\LoginForm;
-use common\models\Player;
 use common\models\Quest;
 use Yii;
 use yii\filters\VerbFilter;
@@ -41,6 +39,7 @@ class SiteController extends Controller
                             'colors',
                             'fonts',
                             'icons',
+                            'action-type',
                             'ajax-toast',
                             'ajax-active-quests',
                         ],
@@ -185,7 +184,7 @@ class SiteController extends Controller
 
     /**
      * render adhoc icons. site/icons&mode=dev will render WIP icons
-     * 
+     *
      * @param string $mode
      * @return string
      */
@@ -210,5 +209,14 @@ class SiteController extends Controller
     public function actionColors(): string
     {
         return $this->render('colors');
+    }
+
+    /**
+     *
+     * @return string
+     */
+    public function actionActionType(): string
+    {
+        return $this->render('action-type');
     }
 }

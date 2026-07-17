@@ -125,7 +125,7 @@ class AccessRightsManager extends Component
      */
     public static function isPublic(string $route, string $action): bool
     {
-        $publicSiteActions = [
+        $whiteList = [
             'error',
             'login',
             'logout',
@@ -140,11 +140,12 @@ class AccessRightsManager extends Component
             'icons',
             'fonts',
             'game',
+            'action-type',
         ];
 
         // Allow access to site/error, site/login, site/captcha, site/index,...
         // or to any ajax call (side effect, every ajax call actions should be prefixed with 'ajax'
-        return $route === 'site' && in_array($action, $publicSiteActions) || strncmp($action, 'ajax', 4) === 0;
+        return $route === 'site' && in_array($action, $whiteList) || strncmp($action, 'ajax', 4) === 0;
     }
 
     /**

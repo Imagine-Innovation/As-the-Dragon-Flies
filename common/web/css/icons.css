@@ -749,6 +749,20 @@
     vertical-align: -0.125em;
 }
 
+.dnd-action-pray::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/action-pray.svg') no-repeat center center;
+    mask: url('icons/action-pray.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
 .dnd-action-prepare-spell::before {
     content: "";
     font-size: inherit;
@@ -791,6 +805,20 @@
     vertical-align: -0.125em;
 }
 
+.dnd-action-run::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/action-run.svg') no-repeat center center;
+    mask: url('icons/action-run.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
 .dnd-action-smash-down::before {
     content: "";
     font-size: inherit;
@@ -805,15 +833,43 @@
     vertical-align: -0.125em;
 }
 
-.dnd-action-run::before {
+.dnd-action-swim::before {
     content: "";
     font-size: inherit;
     height: 1em;
     width: 1em;
     display: inline-block;
     background: currentColor;
-    -webkit-mask: url('icons/action-run.svg') no-repeat center center;
-    mask: url('icons/action-run.svg') no-repeat center center;
+    -webkit-mask: url('icons/action-swim.svg') no-repeat center center;
+    mask: url('icons/action-swim.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-action-take::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/action-take.svg') no-repeat center center;
+    mask: url('icons/action-take.svg') no-repeat center center;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    vertical-align: -0.125em;
+}
+
+.dnd-action-touch::before {
+    content: "";
+    font-size: inherit;
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask: url('icons/action-touch.svg') no-repeat center center;
+    mask: url('icons/action-touch.svg') no-repeat center center;
     -webkit-mask-size: 100% 100%;
     mask-size: 100% 100%;
     vertical-align: -0.125em;
