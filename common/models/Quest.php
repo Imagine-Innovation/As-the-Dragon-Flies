@@ -23,21 +23,26 @@ use Yii;
  * @property int|null $started_at Started at
  * @property int|null $completed_at Completed at
  *
+ * @property AccessLog[] $accessLogs
  * @property Chapter|null $currentChapter
+ * @property Notification[] $notifications
  * @property Player|null $currentPlayer
  * @property Player $initiator
- * @property Notification[] $notifications
- * @property Player[] $currentPlayers
+ * @property Player[] $players
  * @property Player[] $allPlayers
+ * @property QuestLog[] $questLogs
  * @property QuestPlayer[] $questPlayers
  * @property QuestProgress[] $questProgresses
  * @property QuestSession[] $questSessions
  * @property Story $story
- * @property AccessLog[] $accessLogs
  *
  * Custom properties
  *
  * @property QuestProgress $currentQuestProgress
+ * @property int $totalMissionsCount
+ * @property int $completedMissionsCount
+ * @property int $progress
+ * @property Quest[] $activeQuests
  *
  */
 class Quest extends \yii\db\ActiveRecord
@@ -57,65 +62,18 @@ class Quest extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [
-                [
-                    'current_chapter_id',
-                    'current_player_id',
-                    'initiator_id',
-                    'description',
-                    'image',
-                    'started_at',
-                    'completed_at',
-                ],
-                'default',
-                'value' => null,
-            ],
+            [['current_chapter_id', 'current_player_id', 'initiator_id', 'description', 'image', 'started_at', 'completed_at'], 'default', 'value' => null],
             [['status'], 'default', 'value' => AppStatus::WAITING->value],
+            [['created_at'], 'default', 'value' => 0],
             [['story_id', 'name'], 'required'],
-            [
-                [
-                    'story_id',
-                    'current_chapter_id',
-                    'current_player_id',
-                    'initiator_id',
-                    'status',
-                    'created_at',
-                    'started_at',
-                    'completed_at',
-                ],
-                'integer',
-            ],
+            [['story_id', 'current_chapter_id', 'current_player_id', 'initiator_id', 'status', 'created_at', 'started_at', 'completed_at'], 'integer'],
             [['description'], 'string'],
             [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeMarkdownWithCache']],
             [['name', 'image'], 'string', 'max' => 64],
-            [
-                ['story_id'],
-                'exist',
-                'skipOnError' => true,
-                'targetClass' => Story::class,
-                'targetAttribute' => ['story_id' => 'id'],
-            ],
-            [
-                ['current_chapter_id'],
-                'exist',
-                'skipOnError' => true,
-                'targetClass' => Chapter::class,
-                'targetAttribute' => ['current_chapter_id' => 'id'],
-            ],
-            [
-                ['current_player_id'],
-                'exist',
-                'skipOnError' => true,
-                'targetClass' => Player::class,
-                'targetAttribute' => ['current_player_id' => 'id'],
-            ],
-            [
-                ['initiator_id'],
-                'exist',
-                'skipOnError' => true,
-                'targetClass' => Player::class,
-                'targetAttribute' => ['initiator_id' => 'id'],
-            ],
+            [['story_id'], 'exist', 'skipOnError' => true, 'targetClass' => Story::class, 'targetAttribute' => ['story_id' => 'id']],
+            [['current_chapter_id'], 'exist', 'skipOnError' => true, 'targetClass' => Chapter::class, 'targetAttribute' => ['current_chapter_id' => 'id']],
+            [['current_player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['current_player_id' => 'id']],
+            [['initiator_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['initiator_id' => 'id']],
         ];
     }
 
@@ -141,6 +99,16 @@ class Quest extends \yii\db\ActiveRecord
     }
 
     /**
+     * Gets query for [[AccessLogs]].
+     *
+     * @return \yii\db\ActiveQuery<AccessLog>
+     */
+    public function getAccessLogs()
+    {
+        return $this->hasMany(AccessLog::class, ['quest_id' => 'id']);
+    }
+
+    /**
      * Gets query for [[CurrentChapter]].
      *
      * @return \yii\db\ActiveQuery<Chapter>|null
@@ -148,6 +116,26 @@ class Quest extends \yii\db\ActiveRecord
     public function getCurrentChapter()
     {
         return $this->hasOne(Chapter::class, ['id' => 'current_chapter_id']);
+    }
+
+    /**
+     * Gets query for [[Missions]].
+     *
+     * @return \yii\db\ActiveQuery<Mission>
+     */
+    public function getMissions()
+    {
+        return $this->hasMany(Mission::class, ['id' => 'mission_id'])->viaTable('quest_progress', ['quest_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Notifications]].
+     *
+     * @return \yii\db\ActiveQuery<Notification>
+     */
+    public function getNotifications()
+    {
+        return $this->hasMany(Notification::class, ['quest_id' => 'id']);
     }
 
     /**
@@ -171,21 +159,11 @@ class Quest extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Notifications]].
-     *
-     * @return \yii\db\ActiveQuery<Notification>
-     */
-    public function getNotifications()
-    {
-        return $this->hasMany(Notification::class, ['quest_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[CurrentPlayers]].
+     * Gets query for [[Players]].
      *
      * @return \yii\db\ActiveQuery<Player>
      */
-    public function getCurrentPlayers()
+    public function getPlayers()
     {
         return $this->hasMany(Player::class, ['quest_id' => 'id']);
     }
@@ -198,6 +176,16 @@ class Quest extends \yii\db\ActiveRecord
     public function getAllPlayers()
     {
         return $this->hasMany(Player::class, ['id' => 'player_id'])->viaTable('quest_player', ['quest_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[QuestLogs]].
+     *
+     * @return \yii\db\ActiveQuery<QuestLog>
+     */
+    public function getQuestLogs()
+    {
+        return $this->hasMany(QuestLog::class, ['quest_id' => 'id']);
     }
 
     /**
@@ -238,16 +226,6 @@ class Quest extends \yii\db\ActiveRecord
     public function getStory()
     {
         return $this->hasOne(Story::class, ['id' => 'story_id']);
-    }
-
-    /**
-     * Gets query for [[AccessLogs]].
-     *
-     * @return \yii\db\ActiveQuery<AccessLog>
-     */
-    public function getAccessLogs()
-    {
-        return $this->hasMany(AccessLog::class, ['quest_id' => 'id']);
     }
 
     /**

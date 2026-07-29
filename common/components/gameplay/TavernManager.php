@@ -192,7 +192,7 @@ class TavernManager extends BaseManager
             ];
         }
 
-        $playerCount = $quest?->getCurrentPlayers()->count();
+        $playerCount = $quest?->getPlayers()->count();
         if ($playerCount >= $story?->max_players) {
             return [
                 'denied' => true,

@@ -80,7 +80,7 @@ abstract class Event extends BaseObject
             'playerId' => $this->player->id,
             'questId' => $this->quest->id,
             'timestamp' => $this->timestamp,
-        ], $this->getPayload());
+                ], $this->getPayload());
         Yii::debug($array);
         return $array;
     }
@@ -154,7 +154,7 @@ abstract class Event extends BaseObject
     protected function savePlayerNotifications(int $notificationId): void
     {
         // Create notification_player entries for all players in quest
-        $players = $this->quest->currentPlayers;
+        $players = $this->quest->players;
         foreach ($players as $player) {
             if ($player->id !== $this->player->id) {
                 $this->newPlayerNotification($notificationId, $player->id);

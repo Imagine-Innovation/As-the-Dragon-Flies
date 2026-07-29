@@ -36,6 +36,7 @@ use Yii;
  * @property int|null $updated_at Last update timestamp
  *
  * @property Ability[] $abilities
+ * @property AccessLog[] $accessLogs
  * @property Alignment|null $alignment
  * @property Background $background
  * @property CharacterClass|null $class
@@ -45,7 +46,7 @@ use Yii;
  * @property Language[] $languages
  * @property Level|null $level
  * @property NotificationPlayer[] $notificationPlayers
- * @property Notification[] $triggeredNotifications
+ * @property Notification[] $ownNotifications
  * @property Notification[] $notifications
  * @property PlayerAbility[] $playerAbilities
  * @property PlayerBody $playerBody
@@ -68,7 +69,7 @@ use Yii;
  * @property Spell[] $spells
  * @property CharacterTrait[] $traits
  * @property User $user
- * @property AccessLog[] $accessLogs
+ * @property User[] $users
  *
  * *********** Custom Properties **********
  *
@@ -88,6 +89,7 @@ use Yii;
  */
 class Player extends \yii\db\ActiveRecord
 {
+
     /**
      * @var int|null
      */
@@ -116,116 +118,27 @@ class Player extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [
-                [
-                    'alignment_id',
-                    'image_id',
-                    'quest_id',
-                    'name',
-                    'history',
-                    'gender',
-                    'age',
-                    'speed',
-                    'created_at',
-                    'updated_at',
-                ],
-                'default',
-                'value' => null,
-            ],
+            [['alignment_id', 'image_id', 'quest_id', 'name', 'history', 'gender', 'age', 'speed', 'created_at', 'updated_at'], 'default', 'value' => null],
             [['level_id'], 'default', 'value' => 1],
             [['status'], 'default', 'value' => AppStatus::INACTIVE->value],
             [['status'], 'in', 'range' => AppStatus::getValuesForPlayer()],
             [['experience_points'], 'default', 'value' => 0],
             [['armor_class'], 'default', 'value' => 10],
             [['class_id', 'user_id', 'race_id', 'background_id'], 'required'],
-            [
-                [
-                    'class_id',
-                    'level_id',
-                    'user_id',
-                    'race_id',
-                    'background_id',
-                    'alignment_id',
-                    'image_id',
-                    'quest_id',
-                    'status',
-                    'age',
-                    'experience_points',
-                    'hit_points',
-                    'max_hit_points',
-                    'armor_class',
-                    'speed',
-                    'created_at',
-                    'updated_at',
-                ],
-                'integer',
-            ],
+            [['class_id', 'level_id', 'user_id', 'race_id', 'background_id', 'alignment_id', 'image_id', 'quest_id', 'status', 'age', 'experience_points', 'hit_points', 'max_hit_points', 'armor_class', 'speed', 'created_at', 'updated_at'], 'integer'],
             [['history', 'gender'], 'string'],
             [['history'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name'], 'string', 'max' => 64],
-            [
-                'name',
-                'match',
-                'pattern' => '/^[\p{L}\p{N}\s\'\(\)-]+$/u',
-                'message' => 'Name can only contain letters, numbers, spaces, hyphens, apostrophes, and parentheses.',
-            ],
+            ['name', 'match', 'pattern' => '/^[\p{L}\p{N}\s\'\(\)-]+$/u', 'message' => 'Name can only contain letters, numbers, spaces, hyphens, apostrophes, and parentheses.'],
             ['gender', 'in', 'range' => array_keys(self::optsGender())],
-            [
-                ['user_id'],
-                'exist',
-                'skipOnError' => true,
-                'targetClass' => User::class,
-                'targetAttribute' => ['user_id' => 'id'],
-            ],
-            [
-                ['race_id'],
-                'exist',
-                'skipOnError' => true,
-                'targetClass' => Race::class,
-                'targetAttribute' => ['race_id' => 'id'],
-            ],
-            [
-                ['class_id'],
-                'exist',
-                'skipOnError' => true,
-                'targetClass' => CharacterClass::class,
-                'targetAttribute' => ['class_id' => 'id'],
-            ],
-            [
-                ['alignment_id'],
-                'exist',
-                'skipOnError' => true,
-                'targetClass' => Alignment::class,
-                'targetAttribute' => ['alignment_id' => 'id'],
-            ],
-            [
-                ['background_id'],
-                'exist',
-                'skipOnError' => true,
-                'targetClass' => Background::class,
-                'targetAttribute' => ['background_id' => 'id'],
-            ],
-            [
-                ['level_id'],
-                'exist',
-                'skipOnError' => true,
-                'targetClass' => Level::class,
-                'targetAttribute' => ['level_id' => 'id'],
-            ],
-            [
-                ['image_id'],
-                'exist',
-                'skipOnError' => true,
-                'targetClass' => Image::class,
-                'targetAttribute' => ['image_id' => 'id'],
-            ],
-            [
-                ['quest_id'],
-                'exist',
-                'skipOnError' => true,
-                'targetClass' => Quest::class,
-                'targetAttribute' => ['quest_id' => 'id'],
-            ],
+            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
+            [['race_id'], 'exist', 'skipOnError' => true, 'targetClass' => Race::class, 'targetAttribute' => ['race_id' => 'id']],
+            [['class_id'], 'exist', 'skipOnError' => true, 'targetClass' => CharacterClass::class, 'targetAttribute' => ['class_id' => 'id']],
+            [['alignment_id'], 'exist', 'skipOnError' => true, 'targetClass' => Alignment::class, 'targetAttribute' => ['alignment_id' => 'id']],
+            [['background_id'], 'exist', 'skipOnError' => true, 'targetClass' => Background::class, 'targetAttribute' => ['background_id' => 'id']],
+            [['level_id'], 'exist', 'skipOnError' => true, 'targetClass' => Level::class, 'targetAttribute' => ['level_id' => 'id']],
+            [['image_id'], 'exist', 'skipOnError' => true, 'targetClass' => Image::class, 'targetAttribute' => ['image_id' => 'id']],
+            [['quest_id'], 'exist', 'skipOnError' => true, 'targetClass' => Quest::class, 'targetAttribute' => ['quest_id' => 'id']],
         ];
     }
 
@@ -245,7 +158,7 @@ class Player extends \yii\db\ActiveRecord
             'image_id' => 'Foreign key to “image” table. May be empty if no avatar is chosen.',
             'quest_id' => 'Optional foreign key to “quest” table',
             'name' => 'Character name',
-            'history' => 'Player\' history',
+            'history' => 'Player\'s history',
             'status' => 'Status of the player (Deleted=0, Inactive=9, Active=10)',
             'gender' => 'Gender: C=Child, F=Femelle, M=Male',
             'age' => 'Age of the player. Validated regarding the actual race',
@@ -266,9 +179,17 @@ class Player extends \yii\db\ActiveRecord
      */
     public function getAbilities()
     {
-        return $this->hasMany(Ability::class, ['id' => 'ability_id'])->viaTable('player_ability', [
-                    'player_id' => 'id',
-        ]);
+        return $this->hasMany(Ability::class, ['id' => 'ability_id'])->viaTable('player_ability', ['player_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[AccessLogs]].
+     *
+     * @return \yii\db\ActiveQuery<AccessLog>
+     */
+    public function getAccessLogs()
+    {
+        return $this->hasMany(AccessLog::class, ['player_id' => 'id']);
     }
 
     /**
@@ -338,9 +259,7 @@ class Player extends \yii\db\ActiveRecord
      */
     public function getLanguages()
     {
-        return $this->hasMany(Language::class, ['id' => 'language_id'])->viaTable('player_language', [
-                    'player_id' => 'id',
-        ]);
+        return $this->hasMany(Language::class, ['id' => 'language_id'])->viaTable('player_language', ['player_id' => 'id']);
     }
 
     /**
@@ -364,11 +283,11 @@ class Player extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[TriggeredNotifications]].
+     * Gets query for [[OwnNotifications]].
      *
      * @return \yii\db\ActiveQuery<Notification>
      */
-    public function getTriggeredNotifications()
+    public function getOwnNotifications()
     {
         return $this->hasMany(Notification::class, ['initiator_id' => 'id']);
     }
@@ -380,9 +299,7 @@ class Player extends \yii\db\ActiveRecord
      */
     public function getNotifications()
     {
-        return $this->hasMany(Notification::class, ['id' => 'notification_id'])->viaTable('notification_player', [
-                    'player_id' => 'id',
-        ]);
+        return $this->hasMany(Notification::class, ['id' => 'notification_id'])->viaTable('notification_player', ['player_id' => 'id']);
     }
 
     /**
@@ -486,6 +403,16 @@ class Player extends \yii\db\ActiveRecord
     }
 
     /**
+     * Gets query for [[QuestLogs]].
+     *
+     * @return \yii\db\ActiveQuery<QuestLog>
+     */
+    public function getQuestLogs()
+    {
+        return $this->hasMany(QuestLog::class, ['player_id' => 'id']);
+    }
+
+    /**
      * Gets query for [[QuestPlayers]].
      *
      * @return \yii\db\ActiveQuery<QuestPlayer>
@@ -582,9 +509,7 @@ class Player extends \yii\db\ActiveRecord
      */
     public function getTraits()
     {
-        return $this->hasMany(CharacterTrait::class, ['id' => 'trait_id'])->viaTable('player_trait', [
-                    'player_id' => 'id',
-        ]);
+        return $this->hasMany(CharacterTrait::class, ['id' => 'trait_id'])->viaTable('player_trait', ['player_id' => 'id']);
     }
 
     /**
@@ -595,16 +520,6 @@ class Player extends \yii\db\ActiveRecord
     public function getUser()
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
-    }
-
-    /**
-     * Gets query for [[AccessLogs]].
-     *
-     * @return \yii\db\ActiveQuery<AccessLog>
-     */
-    public function getAccessLogs()
-    {
-        return $this->hasMany(AccessLog::class, ['player_id' => 'id']);
     }
 
     /**
@@ -758,7 +673,6 @@ class Player extends \yii\db\ActiveRecord
                     $query->andWhere(['is_read' => 0]);
                 });
     }
-
 
     /**
      * ************************
