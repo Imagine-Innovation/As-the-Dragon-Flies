@@ -16,6 +16,23 @@ class AccessRightsManager extends Component
 
     const APP_BACKEND = 'app-backend';
     const APP_FRONTEND = 'app-frontend';
+    const ACTION_WHITE_LIST = [
+        'error',
+        'login',
+        'logout',
+        'captcha',
+        'index',
+        'signup',
+        'request-password-reset',
+        'reset-password',
+        'verify-email',
+        'resend-verification-email',
+        'colors',
+        'icons',
+        'fonts',
+        'game',
+        'action-type',
+    ];
 
     // --- Strict Accessors (The Level 8/9 "Secret Sauce") ---
 
@@ -125,27 +142,12 @@ class AccessRightsManager extends Component
      */
     public static function isPublic(string $route, string $action): bool
     {
-        $whiteList = [
-            'error',
-            'login',
-            'logout',
-            'captcha',
-            'index',
-            'signup',
-            'request-password-reset',
-            'reset-password',
-            'verify-email',
-            'resend-verification-email',
-            'colors',
-            'icons',
-            'fonts',
-            'game',
-            'action-type',
-        ];
-
         // Allow access to site/error, site/login, site/captcha, site/index,...
         // or to any ajax call (side effect, every ajax call actions should be prefixed with 'ajax'
-        return $route === 'site' && in_array($action, $whiteList) || strncmp($action, 'ajax', 4) === 0;
+        return ($route === 'site' && in_array($action, self::ACTION_WHITE_LIST)) ||
+                $route === 'gii' ||
+                $route === 'debug' ||
+                strncmp($action, 'ajax', 4) === 0;
     }
 
     /**
