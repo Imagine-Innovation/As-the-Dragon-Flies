@@ -39,10 +39,12 @@ class GameActionEventTest extends Unit
             'status' => AppStatus::SUCCESS,
             'outcomes' => [
                 [
+                    'id' => 1,
                     'name' => 'Door Opens',
                     'description' => 'The heavy oak door creaks open slowly.',
                 ],
                 [
+                    'id' => 2,
                     'name' => 'Found Gold',
                     'description' => 'You see 10 shiny gold pieces on the floor.',
                 ]
@@ -74,10 +76,12 @@ class GameActionEventTest extends Unit
 
         // Create standard mock objects for outcomes
         $outcome1 = new \stdClass();
+        $outcome1->id = 1;
         $outcome1->name = 'Door Opens';
         $outcome1->description = '<p>The heavy oak door creaks open slowly.</p>';
 
         $outcome2 = new \stdClass();
+        $outcome2->id = 2;
         $outcome2->name = 'Found Gold';
         $outcome2->description = 'You see 10 shiny gold pieces.';
 
@@ -114,6 +118,7 @@ class GameActionEventTest extends Unit
             'status' => AppStatus::SUCCESS,
             'outcomes' => [
                 [
+                    'id' => 1,
                     'name' => 'Door Opens',
                     'description' => 'The heavy oak door creaks open slowly.',
                 ]
@@ -147,6 +152,7 @@ class GameActionEventTest extends Unit
             'status' => AppStatus::SUCCESS,
             'outcomes' => [
                 [
+                    'id' => 1,
                     'name' => 'Door Opens',
                     'description' => 'La lourde porte s\'ouvre lentement.',
                 ]

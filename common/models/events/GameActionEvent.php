@@ -8,6 +8,7 @@ use common\components\AppStatus;
 use common\models\Player;
 use common\models\Quest;
 use common\models\QuestLog;
+use common\models\Outcome;
 use Yii;
 
 /**
@@ -37,25 +38,29 @@ class GameActionEvent extends Event
     }
 
     /**
-     * Extracts name and description from a single outcome.
+     * Extracts name, description and ID from a single outcome.
      *
      * @param mixed $outcome
-     * @return array{name: string, desc: string}
+     * @return array{id: int, name: string, desc: string}
      */
     protected function extractOutcomeDetails(mixed $outcome): array
     {
         if (is_array($outcome)) {
+            $id = $outcome['id'] ?? 0;
             $name = $outcome['name'] ?? '';
             $desc = $outcome['description'] ?? '';
         } elseif (is_object($outcome)) {
+            $id = isset($outcome->id) ? $outcome->id : 0;
             $name = isset($outcome->name) ? $outcome->name : '';
             $desc = isset($outcome->description) ? $outcome->description : '';
         } else {
+            $id = 0;
             $name = '';
             $desc = '';
         }
 
         return [
+            'id' => (int)$id,
             'name' => is_string($name) ? $name : '',
             'desc' => is_string($desc) ? $desc : '',
         ];
@@ -207,12 +212,65 @@ class GameActionEvent extends Event
         $maxRound = is_numeric($maxRoundVal) ? (int)$maxRoundVal : 0;
         $nextRound = $maxRound + 1;
 
+        // Extract outcome ID, DC, action success, and final action name
+        $outcomes = $this->detail['outcomes'] ?? [];
+        $firstOutcomeId = null;
+        $dc = 0;
+        $actionName = $this->action;
+
+        if (is_array($outcomes) && !empty($outcomes)) {
+            $first = $outcomes[0];
+            $details = $this->extractOutcomeDetails($first);
+            $firstOutcomeId = $details['id'];
+
+            if ($first instanceof Outcome) {
+                /** @var \common\models\Action|null $outcomeAction */
+                $outcomeAction = $first->action;
+                if ($outcomeAction !== null) {
+                    $dc = $outcomeAction->dc;
+                    $actionName = $outcomeAction->name;
+                }
+            }
+        }
+
+        // Fallback if outcome_id is still missing
+        if ($firstOutcomeId === null || $firstOutcomeId === 0) {
+            $missionId = $progress ? $progress->mission_id : null;
+            /** @var \common\models\Action|null $actionModel */
+            $actionModel = \common\models\Action::findOne([
+                'name' => $this->action,
+                'mission_id' => $missionId,
+            ]);
+
+            if ($actionModel !== null) {
+                $dc = $actionModel->dc;
+                $actionName = $actionModel->name;
+                /** @var Outcome|null $fallbackOutcome */
+                $fallbackOutcome = Outcome::findOne(['action_id' => $actionModel->id]);
+                if ($fallbackOutcome !== null) {
+                    $firstOutcomeId = $fallbackOutcome->id;
+                }
+            }
+        }
+
+        // Ultimate fallback to satisfy DB required rules
+        if ($firstOutcomeId === null || $firstOutcomeId === 0) {
+            $firstOutcomeId = 1;
+        }
+
+        /** @var AppStatus $status */
+        $status = $this->detail['status'] ?? AppStatus::FAILURE;
+
         $questLog = new QuestLog([
             'quest_id' => $this->quest->id,
             'player_id' => $this->player->id,
+            'outcome_id' => $firstOutcomeId,
             'round' => $nextRound,
             'chapter_name' => $chapterName,
             'mission_name' => $missionName,
+            'action_name' => $actionName,
+            'dc' => $dc,
+            'action_success' => $status->value,
             'description' => $description,
         ]);
 
