@@ -41,5 +41,17 @@ return [
                 'format' => yii\httpclient\Client::FORMAT_JSON,
             ],
         ],
+        'i18n' => [
+            'translations' => [
+                'game*' => [
+                    'class' => 'yii\i18n\PhpMessageSource',
+                    'basePath' => '@frontend/messages',
+                    'sourceLanguage' => 'xx',
+                    'fileMap' => [
+                        'game' => 'game.php',
+                    ],
+                ],
+            ],
+        ],
     ],
 ];

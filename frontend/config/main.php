@@ -127,6 +127,14 @@ return [
                         'app/error' => 'error.php',
                     ],
                 ],
+                'game*' => [
+                    'class' => 'yii\i18n\PhpMessageSource',
+                    'basePath' => '@app/messages',
+                    'sourceLanguage' => 'xx',
+                    'fileMap' => [
+                        'game' => 'game.php',
+                    ],
+                ],
             ],
         ],
         'httpclient' => [
