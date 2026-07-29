@@ -82,7 +82,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?php foreach ($npcs as $npc): ?>
                         <article class="npc-card">
                             <?php if ($npc->image): ?>
-                                <img class="npc-card__portrait" src="<?= $storyRoot ?>/img/<?= $npc->image ?>" alt="<?= $mission->name ?>">
+                                <img class="npc-card__portrait" src="<?= $storyRoot ?>/img/<?= $npc->image ?>" alt="<?= $npc->name ?>">
                             <?php else: ?>
                                 <span class="npc-card__portrait" aria-hidden="true"><i class="bi bi-person-fill"></i></span>
                             <?php endif; ?>
