@@ -37,6 +37,31 @@ class GameActionEvent extends Event
     }
 
     /**
+     * Extracts name and description from a single outcome.
+     *
+     * @param mixed $outcome
+     * @return array{name: string, desc: string}
+     */
+    protected function extractOutcomeDetails(mixed $outcome): array
+    {
+        if (is_array($outcome)) {
+            $name = $outcome['name'] ?? '';
+            $desc = $outcome['description'] ?? '';
+        } elseif (is_object($outcome)) {
+            $name = isset($outcome->name) ? $outcome->name : '';
+            $desc = isset($outcome->description) ? $outcome->description : '';
+        } else {
+            $name = '';
+            $desc = '';
+        }
+
+        return [
+            'name' => is_string($name) ? $name : '',
+            'desc' => is_string($desc) ? $desc : '',
+        ];
+    }
+
+    /**
      * Helper to get outcome conclusions.
      *
      * @return string
@@ -45,34 +70,24 @@ class GameActionEvent extends Event
     {
         $conclusions = [];
         $outcomes = $this->detail['outcomes'] ?? [];
-        if (is_array($outcomes)) {
-            foreach ($outcomes as $outcome) {
-                if (is_array($outcome)) {
-                    $name = $outcome['name'] ?? '';
-                    $desc = $outcome['description'] ?? '';
-                } elseif (is_object($outcome)) {
-                    $name = isset($outcome->name) ? $outcome->name : '';
-                    $desc = isset($outcome->description) ? $outcome->description : '';
-                } else {
-                    $name = '';
-                    $desc = '';
-                }
+        if (!is_array($outcomes)) {
+            return '';
+        }
 
-                $nameStr = is_string($name) ? $name : '';
-                $descStr = is_string($desc) ? $desc : '';
+        foreach ($outcomes as $outcome) {
+            $details = $this->extractOutcomeDetails($outcome);
+            $name = $details['name'];
+            $desc = strip_tags($details['desc']);
 
-                if ($nameStr !== '' || $descStr !== '') {
-                    $cleanDesc = strip_tags($descStr);
-                    if ($nameStr !== '' && $cleanDesc !== '') {
-                        $conclusions[] = "{$nameStr}: {$cleanDesc}";
-                    } elseif ($nameStr !== '') {
-                        $conclusions[] = $nameStr;
-                    } else {
-                        $conclusions[] = $cleanDesc;
-                    }
-                }
+            if ($name !== '' && $desc !== '') {
+                $conclusions[] = "{$name}: {$desc}";
+            } elseif ($name !== '') {
+                $conclusions[] = $name;
+            } elseif ($desc !== '') {
+                $conclusions[] = $desc;
             }
         }
+
         return implode('; ', $conclusions);
     }
 
@@ -84,49 +99,23 @@ class GameActionEvent extends Event
      */
     public function getLocalizedDescription(string $storyLanguage): string
     {
-        $playerName = $this->player->name ?? 'Unknown';
-        $actionName = $this->action;
-        $conclusion = $this->getOutcomeConclusion();
-
         /** @var AppStatus $status */
         $status = $this->detail['status'] ?? AppStatus::FAILURE;
 
-        switch ($status->value) {
-            case AppStatus::SUCCESS->value:
-                return Yii::t('game', '{playerName} tried {actionName} and succeeded. {outcomeConclusion}', [
-                    'playerName' => $playerName,
-                    'actionName' => $actionName,
-                    'outcomeConclusion' => $conclusion,
-                ], $storyLanguage);
+        $templates = [
+            AppStatus::SUCCESS->value => '{playerName} tried {actionName} and succeeded. {outcomeConclusion}',
+            AppStatus::PARTIAL->value => '{playerName} tried {actionName} and partially succeeded. {outcomeConclusion}',
+            AppStatus::FAILURE->value => '{playerName} tried {actionName} and failed. {outcomeConclusion}',
+            AppStatus::ITEM_MISSING->value => '{playerName} tried {actionName} but was missing a required item. {outcomeConclusion}',
+        ];
 
-            case AppStatus::PARTIAL->value:
-                return Yii::t('game', '{playerName} tried {actionName} and partially succeeded. {outcomeConclusion}', [
-                    'playerName' => $playerName,
-                    'actionName' => $actionName,
-                    'outcomeConclusion' => $conclusion,
-                ], $storyLanguage);
+        $template = $templates[$status->value] ?? '{playerName} tried {actionName}. {outcomeConclusion}';
 
-            case AppStatus::FAILURE->value:
-                return Yii::t('game', '{playerName} tried {actionName} and failed. {outcomeConclusion}', [
-                    'playerName' => $playerName,
-                    'actionName' => $actionName,
-                    'outcomeConclusion' => $conclusion,
-                ], $storyLanguage);
-
-            case AppStatus::ITEM_MISSING->value:
-                return Yii::t('game', '{playerName} tried {actionName} but was missing a required item. {outcomeConclusion}', [
-                    'playerName' => $playerName,
-                    'actionName' => $actionName,
-                    'outcomeConclusion' => $conclusion,
-                ], $storyLanguage);
-
-            default:
-                return Yii::t('game', '{playerName} tried {actionName}. {outcomeConclusion}', [
-                    'playerName' => $playerName,
-                    'actionName' => $actionName,
-                    'outcomeConclusion' => $conclusion,
-                ], $storyLanguage);
-        }
+        return Yii::t('game', $template, [
+            'playerName' => $this->player->name ?? 'Unknown',
+            'actionName' => $this->action,
+            'outcomeConclusion' => $this->getOutcomeConclusion(),
+        ], $storyLanguage);
     }
 
     /**
