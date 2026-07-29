@@ -51,9 +51,8 @@ class GameActionEvent extends Event
                     $name = $outcome['name'] ?? '';
                     $desc = $outcome['description'] ?? '';
                 } elseif (is_object($outcome)) {
-                    /** @var object $outcome */
-                    $name = property_exists($outcome, 'name') ? $outcome->name : '';
-                    $desc = property_exists($outcome, 'description') ? $outcome->description : '';
+                    $name = isset($outcome->name) ? $outcome->name : '';
+                    $desc = isset($outcome->description) ? $outcome->description : '';
                 } else {
                     $name = '';
                     $desc = '';
