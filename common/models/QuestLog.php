@@ -10,11 +10,16 @@ use Yii;
  * @property int $id Primary key
  * @property int $quest_id Foreign key to “quest” table
  * @property int $player_id Foreign key to “player” table
+ * @property int $outcome_id Foreign key to “outcome” table
  * @property int $round Round
  * @property string $chapter_name Chapter name
  * @property string $mission_name Mission name
+ * @property string $action_name Action name
+ * @property int $dc Difficulty Class (DC)
+ * @property int $action_success Success
  * @property string|null $description Short description
  *
+ * @property Outcome $outcome
  * @property Player $player
  * @property Quest $quest
  */
@@ -37,14 +42,17 @@ class QuestLog extends \yii\db\ActiveRecord
     {
         return [
             [['description'], 'default', 'value' => null],
-            [['round'], 'default', 'value' => 0],
+            [['dc'], 'default', 'value' => 0],
             [['mission_name'], 'default', 'value' => 'Unknown'],
-            [['quest_id', 'player_id'], 'required'],
-            [['quest_id', 'player_id', 'round'], 'integer'],
+            [['action_name'], 'default', 'value' => 'Something'],
+            [['action_success'], 'default', 'value' => 7],
+            [['quest_id', 'player_id', 'outcome_id'], 'required'],
+            [['quest_id', 'player_id', 'outcome_id', 'round', 'dc', 'action_success'], 'integer'],
             [['description'], 'string'],
-            [['chapter_name', 'mission_name'], 'string', 'max' => 64],
+            [['chapter_name', 'mission_name', 'action_name'], 'string', 'max' => 64],
             [['quest_id'], 'exist', 'skipOnError' => true, 'targetClass' => Quest::class, 'targetAttribute' => ['quest_id' => 'id']],
             [['player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['player_id' => 'id']],
+            [['outcome_id'], 'exist', 'skipOnError' => true, 'targetClass' => Outcome::class, 'targetAttribute' => ['outcome_id' => 'id']],
         ];
     }
 
@@ -57,11 +65,25 @@ class QuestLog extends \yii\db\ActiveRecord
             'id' => 'Primary key',
             'quest_id' => 'Foreign key to “quest” table',
             'player_id' => 'Foreign key to “player” table',
+            'outcome_id' => 'Foreign key to “outcome” table',
             'round' => 'Round',
             'chapter_name' => 'Chapter name',
             'mission_name' => 'Mission name',
+            'action_name' => 'Action name',
+            'dc' => 'Difficulty Class (DC)',
+            'action_success' => 'Success',
             'description' => 'Short description',
         ];
+    }
+
+    /**
+     * Gets query for [[Outcome]].
+     *
+     * @return \yii\db\ActiveQuery<Outcome>
+     */
+    public function getOutcome()
+    {
+        return $this->hasOne(Outcome::class, ['id' => 'outcome_id']);
     }
 
     /**
