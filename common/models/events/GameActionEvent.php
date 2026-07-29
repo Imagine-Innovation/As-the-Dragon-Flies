@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace common\models\events;
 
 use common\components\AppStatus;
 use common\models\Player;
 use common\models\Quest;
+use common\models\QuestLog;
 use Yii;
 
 /**
@@ -31,6 +34,100 @@ class GameActionEvent extends Event
         parent::__construct($sessionId, $player, $quest);
         $this->action = $action;
         $this->detail = $detail;
+    }
+
+    /**
+     * Helper to get outcome conclusions.
+     *
+     * @return string
+     */
+    public function getOutcomeConclusion(): string
+    {
+        $conclusions = [];
+        $outcomes = $this->detail['outcomes'] ?? [];
+        if (is_array($outcomes)) {
+            foreach ($outcomes as $outcome) {
+                if (is_array($outcome)) {
+                    $name = $outcome['name'] ?? '';
+                    $desc = $outcome['description'] ?? '';
+                } elseif (is_object($outcome)) {
+                    /** @var object $outcome */
+                    $name = property_exists($outcome, 'name') ? $outcome->name : '';
+                    $desc = property_exists($outcome, 'description') ? $outcome->description : '';
+                } else {
+                    $name = '';
+                    $desc = '';
+                }
+
+                $nameStr = is_string($name) ? $name : '';
+                $descStr = is_string($desc) ? $desc : '';
+
+                if ($nameStr !== '' || $descStr !== '') {
+                    $cleanDesc = strip_tags($descStr);
+                    if ($nameStr !== '' && $cleanDesc !== '') {
+                        $conclusions[] = "{$nameStr}: {$cleanDesc}";
+                    } elseif ($nameStr !== '') {
+                        $conclusions[] = $nameStr;
+                    } else {
+                        $conclusions[] = $cleanDesc;
+                    }
+                }
+            }
+        }
+        return implode('; ', $conclusions);
+    }
+
+    /**
+     * Helper to get localized description.
+     *
+     * @param string $storyLanguage
+     * @return string
+     */
+    public function getLocalizedDescription(string $storyLanguage): string
+    {
+        $playerName = $this->player->name ?? 'Unknown';
+        $actionName = $this->action;
+        $conclusion = $this->getOutcomeConclusion();
+
+        /** @var AppStatus $status */
+        $status = $this->detail['status'] ?? AppStatus::FAILURE;
+
+        switch ($status->value) {
+            case AppStatus::SUCCESS->value:
+                return Yii::t('game', '{playerName} tried {actionName} and succeeded. {outcomeConclusion}', [
+                    'playerName' => $playerName,
+                    'actionName' => $actionName,
+                    'outcomeConclusion' => $conclusion,
+                ], $storyLanguage);
+
+            case AppStatus::PARTIAL->value:
+                return Yii::t('game', '{playerName} tried {actionName} and partially succeeded. {outcomeConclusion}', [
+                    'playerName' => $playerName,
+                    'actionName' => $actionName,
+                    'outcomeConclusion' => $conclusion,
+                ], $storyLanguage);
+
+            case AppStatus::FAILURE->value:
+                return Yii::t('game', '{playerName} tried {actionName} and failed. {outcomeConclusion}', [
+                    'playerName' => $playerName,
+                    'actionName' => $actionName,
+                    'outcomeConclusion' => $conclusion,
+                ], $storyLanguage);
+
+            case AppStatus::ITEM_MISSING->value:
+                return Yii::t('game', '{playerName} tried {actionName} but was missing a required item. {outcomeConclusion}', [
+                    'playerName' => $playerName,
+                    'actionName' => $actionName,
+                    'outcomeConclusion' => $conclusion,
+                ], $storyLanguage);
+
+            default:
+                return Yii::t('game', '{playerName} tried {actionName}. {outcomeConclusion}', [
+                    'playerName' => $playerName,
+                    'actionName' => $actionName,
+                    'outcomeConclusion' => $conclusion,
+                ], $storyLanguage);
+        }
     }
 
     /**
@@ -101,6 +198,39 @@ class GameActionEvent extends Event
         $this->savePlayerNotifications($notification->id);
 
         $this->broadcast();
+
+        // Populate the quest_log table
+        $storyLanguage = $this->quest->story->language ?? 'en';
+
+        /** @var \common\models\QuestProgress|null $progress */
+        $progress = $this->quest->currentQuestProgress;
+        $chapterName = 'Unknown';
+        $missionName = 'Unknown';
+        if ($progress !== null) {
+            $chapterName = $progress->mission->chapter->name ?? 'Unknown';
+            $missionName = $progress->mission->name ?? 'Unknown';
+        }
+
+        $description = $this->getLocalizedDescription($storyLanguage);
+
+        // Calculate the next round
+        // We find the max round number for this quest in the quest_log table
+        $maxRoundVal = QuestLog::find()->where(['quest_id' => $this->quest->id])->max('round');
+        $maxRound = is_numeric($maxRoundVal) ? (int)$maxRoundVal : 0;
+        $nextRound = $maxRound + 1;
+
+        $questLog = new QuestLog([
+            'quest_id' => $this->quest->id,
+            'player_id' => $this->player->id,
+            'round' => $nextRound,
+            'chapter_name' => $chapterName,
+            'mission_name' => $missionName,
+            'description' => $description,
+        ]);
+
+        if (!$questLog->save()) {
+            Yii::error('Failed to save QuestLog: ' . print_r($questLog->getErrors(), true));
+        }
 
         // Dungeon master says hello
         $dungeonMaster = Player::findOne(1);
