@@ -67,7 +67,7 @@ class GameActionEvent extends Event
     }
 
     /**
-     * Helper to get outcome conclusions.
+     * Helper to get outcome conclusions. Made public for testing purpose
      *
      * @return string
      */
@@ -93,34 +93,34 @@ class GameActionEvent extends Event
             }
         }
 
-        return implode('; ', $conclusions);
+        return implode("\n", $conclusions);
     }
 
     /**
      * Helper to get localized description.
      *
-     * @param string $storyLanguage
      * @return string
      */
-    public function getLocalizedDescription(string $storyLanguage): string
+    public function getLogDescription(): string
     {
+        $language = $this->quest->story->language ?? 'en';
+
         /** @var AppStatus $status */
         $status = $this->detail['status'] ?? AppStatus::FAILURE;
 
-        $templates = [
+        $template = match ($status->value) {
             AppStatus::SUCCESS->value => '{playerName} tried {actionName} and succeeded. {outcomeConclusion}',
             AppStatus::PARTIAL->value => '{playerName} tried {actionName} and partially succeeded. {outcomeConclusion}',
             AppStatus::FAILURE->value => '{playerName} tried {actionName} and failed. {outcomeConclusion}',
             AppStatus::ITEM_MISSING->value => '{playerName} tried {actionName} but was missing a required item. {outcomeConclusion}',
-        ];
-
-        $template = $templates[$status->value] ?? '{playerName} tried {actionName}. {outcomeConclusion}';
+            default => '{playerName} tried {actionName}. {outcomeConclusion}'
+        };
 
         return Yii::t('app/game', $template, [
                     'playerName' => $this->player->name ?? 'Unknown',
                     'actionName' => $this->action,
                     'outcomeConclusion' => $this->getOutcomeConclusion(),
-                        ], $storyLanguage);
+                        ], $language);
     }
 
     /**
@@ -178,72 +178,30 @@ class GameActionEvent extends Event
         ];
     }
 
+    private function getNextRound(int $questId): int
+    {
+        $maxRoundVal = QuestLog::find()
+                ->where(['quest_id' => $questId])
+                ->max('round');
+
+        $maxRound = is_numeric($maxRoundVal) ? (int) $maxRoundVal : 0;
+
+        return $maxRound + 1;
+    }
+
     /**
-     * {@inheritdoc}
      *
      * @return void
      */
-    public function process(): void
+    private function addQuestLog(): void
     {
-        Yii::debug('*** Debug *** GameActionEvent - process');
-        $notification = $this->createNotification();
-
-        $this->broadcast();
-
-        // Populate the quest_log table
-        $storyLanguage = $this->quest->story->language ?? 'en';
-
         /** @var \common\models\QuestProgress|null $progress */
         $progress = $this->quest->currentQuestProgress;
-        $chapterName = 'Unknown';
-        $missionName = 'Unknown';
-        if ($progress !== null) {
-            $chapterName = $progress->mission->chapter->name ?? 'Unknown';
-            $missionName = $progress->mission->name ?? 'Unknown';
-        }
+        $chapterName = $progress?->mission->chapter->name ?? 'Unknown';
+        $missionName = $progress?->mission->name ?? 'Unknown';
 
-        $description = $this->getLocalizedDescription($storyLanguage);
-
-        // Calculate the next round
-        // We find the max round number for this quest in the quest_log table
-        $maxRoundVal = QuestLog::find()->where(['quest_id' => $this->quest->id])->max('round');
-        $maxRound = is_numeric($maxRoundVal) ? (int) $maxRoundVal : 0;
-        $nextRound = $maxRound + 1;
-
-        // Extract DC, action success, and final action name
-        $outcomes = $this->detail['outcomes'] ?? [];
-        $dc = 0;
-        $actionName = $this->action;
-        $hasOutcome = false;
-
-        if (is_array($outcomes) && !empty($outcomes)) {
-            $first = $outcomes[0];
-            $hasOutcome = true;
-
-            if ($first instanceof Outcome) {
-                /** @var \common\models\Action|null $outcomeAction */
-                $outcomeAction = $first->action;
-                if ($outcomeAction !== null) {
-                    $dc = $outcomeAction->dc;
-                    $actionName = $outcomeAction->name;
-                }
-            }
-        }
-
-        // Fallback if no outcomes were resolved
-        if (!$hasOutcome) {
-            $missionId = $progress ? $progress->mission_id : null;
-            /** @var \common\models\Action|null $actionModel */
-            $actionModel = \common\models\Action::findOne([
-                'name' => $this->action,
-                'mission_id' => $missionId,
-            ]);
-
-            if ($actionModel !== null) {
-                $dc = $actionModel->dc;
-                $actionName = $actionModel->name;
-            }
-        }
+        $description = $this->getLogDescription();
+        $nextRound = $this->getNextRound($this->quest->id);
 
         /** @var AppStatus $status */
         $status = $this->detail['status'] ?? AppStatus::FAILURE;
@@ -254,8 +212,8 @@ class GameActionEvent extends Event
             'round' => $nextRound,
             'chapter_name' => $chapterName,
             'mission_name' => $missionName,
-            'action_name' => $actionName,
-            'dc' => $dc,
+            'action_name' => $this->action ?? '??',
+            'dice_roll' => $this->detail['dice_roll'] ?? 0,
             'action_success' => $status->value,
             'description' => $description,
         ]);
@@ -263,13 +221,30 @@ class GameActionEvent extends Event
         if (!$questLog->save()) {
             Yii::error('Failed to save QuestLog: ' . print_r($questLog->getErrors(), true));
         }
+    }
 
-        // Dungeon master says hello
-        $dungeonMaster = Player::findOne(1);
-        if ($dungeonMaster) {
-            $message = $this->getMessage();
-            $sendingMessageEvent = new SendingMessageEvent($this->sessionId, $dungeonMaster, $this->quest, $message);
-            $sendingMessageEvent->process();
-        }
+    /**
+     * {@inheritdoc}
+     *
+     * @return void
+     */
+    public function process(): void
+    {
+        Yii::debug('*** Debug *** GameActionEvent - process');
+        $this->addQuestLog();
+
+        $notification = $this->createNotification();
+        $this->broadcast();
+
+        /*
+          // Dungeon master says hello
+          $dungeonMaster = Player::findOne(1);
+          if ($dungeonMaster) {
+          $message = $this->getMessage();
+          $sendingMessageEvent = new SendingMessageEvent($this->sessionId, $dungeonMaster, $this->quest, $message);
+          $sendingMessageEvent->process();
+          }
+         *
+         */
     }
 }

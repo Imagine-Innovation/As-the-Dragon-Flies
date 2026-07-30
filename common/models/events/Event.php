@@ -8,6 +8,7 @@ use common\models\Player;
 use common\models\Quest;
 use Yii;
 use yii\base\BaseObject;
+use yii\httpclient\Client as HttpClient;
 
 abstract class Event extends BaseObject
 {
@@ -102,15 +103,17 @@ abstract class Event extends BaseObject
      */
     protected function broadcast(): void
     {
-        $client = new \yii\httpclient\Client();
+        $client = new HttpClient();
+        $url = Yii::$app->params['eventHandlerUrl'] . ':';
+        Yii::$app->params['eventHandlerInternalPort'];
         $data = $this->requestData();
         try {
             $response = $client
                     ->createRequest()
                     ->setMethod('POST')
-                    ->setUrl('http://127.0.0.1:8083/broadcast')
+                    ->setUrl("{$url}/broadcast")
                     ->setData($data)
-                    ->setFormat(\yii\httpclient\Client::FORMAT_JSON)
+                    ->setFormat(HttpClient::FORMAT_JSON)
                     ->send();
 
             if ($response->isOk) {

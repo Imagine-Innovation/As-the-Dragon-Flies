@@ -2,7 +2,6 @@
 /** @var \yii\web\View $this */
 /** @var string $controllerId */
 /** @var string $actionId */
-
 // Only load real-time gameplay components for active gaming/tavern routes.
 // Other routes (like summary) return early with an empty JS response.
 $activeRoutes = [
@@ -36,7 +35,7 @@ let questName;
 $(document).ready(function () {
 const currentHost = window.location.hostname;
 const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-const url = `${protocol}://${currentHost}:8082`;
+const url = `${protocol}://${currentHost}:<?= Yii::$app->params['eventHandlerWebSocketPort'] ?? 8080 ?>`;
 sessionId = <?= json_encode($sessionId) ?>;
 playerId = <?= json_encode($playerId) ?>;
 avatar = <?= json_encode($avatar) ?>;

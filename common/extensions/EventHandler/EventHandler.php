@@ -26,9 +26,10 @@ use yii\base\Component;
 
 class EventHandler extends Component
 {
-    public string $host = '0.0.0.0';
-    public int $port = 8082;
-    public int $internalPort = 8083;
+
+    public string $host;
+    public int $port;
+    public int $internalPort;
     public string $logFilePath = 'c:/temp/EventHandler.log';
     public bool $debug = true;
     private LoggerService $loggerService;
@@ -46,6 +47,24 @@ class EventHandler extends Component
     public function init(): void
     {
         parent::init();
+
+        $this->host = Yii::$app->params['eventHandlerWebSocketHost'] ?? null;
+        if ($this->host === null) {
+            echo "ERROR - Missing eventHandlerWebSocketHost param in common\config\params-local.php";
+            return;
+        }
+
+        $this->port = Yii::$app->params['eventHandlerWebSocketPort'] ?? null;
+        if ($this->port === null) {
+            echo "ERROR - Missing eventHandlerWebSocketPort param in common\config\params-local.php";
+            return;
+        }
+
+        $this->internalPort = Yii::$app->params['eventHandlerInternalPort'] ?? null;
+        if ($this->internalPort === null) {
+            echo "ERROR - Missing eventHandlerInternalPort param in common\config\params-local.php";
+            return;
+        }
 
         echo "Init starting\n";
         echo "             host: {$this->host}\n";
@@ -71,19 +90,19 @@ class EventHandler extends Component
         $this->questSessionManager = new QuestSessionManager($this->loggerService);
         $messageFactory = new BroadcastMessageFactory();
         $this->webSocketServerManager = new WebSocketServerManager(
-            $this->loggerService,
-            $this->loop,
-            $this->questSessionManager,
+                $this->loggerService,
+                $this->loop,
+                $this->questSessionManager,
         );
         $this->broadcastService = new BroadcastService(
-            $this->loggerService,
-            $this->webSocketServerManager,
-            $this->questSessionManager,
+                $this->loggerService,
+                $this->webSocketServerManager,
+                $this->questSessionManager,
         );
         $this->notificationService = new NotificationService(
-            $this->loggerService,
-            $this->broadcastService,
-            $messageFactory,
+                $this->loggerService,
+                $this->broadcastService,
+                $messageFactory,
         );
         $this->broadcastService->setNotificationService($this->notificationService);
     }
@@ -96,57 +115,57 @@ class EventHandler extends Component
     {
         $specificHandlers = [
             'register' => new RegistrationHandler(
-                $this->loggerService,
-                $this->questSessionManager,
-                $this->broadcastService,
-                new BroadcastMessageFactory(),
+                    $this->loggerService,
+                    $this->questSessionManager,
+                    $this->broadcastService,
+                    new BroadcastMessageFactory(),
             ),
             'sending-message' => new SendingMessageHandler(
-                $this->loggerService,
-                $this->broadcastService,
-                new BroadcastMessageFactory(),
+                    $this->loggerService,
+                    $this->broadcastService,
+                    new BroadcastMessageFactory(),
             ),
             'game-action' => new GameActionHandler(
-                $this->loggerService,
-                $this->broadcastService,
-                new BroadcastMessageFactory(),
+                    $this->loggerService,
+                    $this->broadcastService,
+                    new BroadcastMessageFactory(),
             ),
             'player-joining' => new PlayerJoiningHandler(
-                $this->loggerService,
-                $this->broadcastService,
-                new BroadcastMessageFactory(),
+                    $this->loggerService,
+                    $this->broadcastService,
+                    new BroadcastMessageFactory(),
             ),
             'player-quitting' => new PlayerQuittingHandler(
-                $this->loggerService,
-                $this->broadcastService,
-                new BroadcastMessageFactory(),
+                    $this->loggerService,
+                    $this->broadcastService,
+                    new BroadcastMessageFactory(),
             ),
             'next-turn' => new NextTurnHandler(
-                $this->loggerService,
-                $this->broadcastService,
-                new BroadcastMessageFactory(),
+                    $this->loggerService,
+                    $this->broadcastService,
+                    new BroadcastMessageFactory(),
             ),
             'next-mission' => new NextMissionHandler(
-                $this->loggerService,
-                $this->broadcastService,
-                new BroadcastMessageFactory(),
+                    $this->loggerService,
+                    $this->broadcastService,
+                    new BroadcastMessageFactory(),
             ),
             'game-over' => new GameOverHandler(
-                $this->loggerService,
-                $this->broadcastService,
-                new BroadcastMessageFactory(),
+                    $this->loggerService,
+                    $this->broadcastService,
+                    new BroadcastMessageFactory(),
             ),
             'quest-starting' => new QuestStartingHandler(
-                $this->loggerService,
-                $this->broadcastService,
-                new BroadcastMessageFactory(),
+                    $this->loggerService,
+                    $this->broadcastService,
+                    new BroadcastMessageFactory(),
             ),
         ];
         $this->messageHandlerOrchestrator = new MessageHandlerOrchestrator(
-            $this->loggerService,
-            $this->broadcastService,
-            $this->notificationService,
-            $specificHandlers,
+                $this->loggerService,
+                $this->broadcastService,
+                $this->notificationService,
+                $specificHandlers,
         );
     }
 
@@ -191,7 +210,7 @@ class EventHandler extends Component
         $socket = new SocketServer("{$this->host}:{$this->internalPort}", [], $this->loop);
         $http->listen($socket);
         $this->loggerService->log(
-            "EventHandler: Internal HTTP server listening on {$this->host}:{$this->internalPort}",
+                "EventHandler: Internal HTTP server listening on {$this->host}:{$this->internalPort}",
         );
     }
 
@@ -203,17 +222,17 @@ class EventHandler extends Component
     public function handleBroadcastRequest(ServerRequestInterface $request): ResponseInterface
     {
         $this->loggerService->logStart(
-            "EventHandler: handleBroadcastRequest - Received request: {$request->getMethod()} {$request
-     ->getUri()
-     ->getPath()}",
+                "EventHandler: handleBroadcastRequest - Received request: {$request->getMethod()} {$request
+                        ->getUri()
+                        ->getPath()}",
         );
 
         if (!$this->isValidBroadcastRequest($request)) {
             $response = new Response(404, ['Content-Type' => 'text/plain'], 'Not found');
             $this->loggerService->logEnd(
-                'EventHandler: handleBroadcastRequest - Rejected request (not POST or not /broadcast).',
-                null,
-                'warning',
+                    'EventHandler: handleBroadcastRequest - Rejected request (not POST or not /broadcast).',
+                    null,
+                    'warning',
             );
             return $response;
         }
@@ -222,9 +241,9 @@ class EventHandler extends Component
         if ($data === null) {
             $response = new Response(400, ['Content-Type' => 'text/plain'], 'Invalid JSON');
             $this->loggerService->logEnd(
-                'EventHandler: handleBroadcastRequest - Invalid JSON received.',
-                null,
-                'warning',
+                    'EventHandler: handleBroadcastRequest - Invalid JSON received.',
+                    null,
+                    'warning',
             );
             return $response;
         }
@@ -233,15 +252,15 @@ class EventHandler extends Component
             $this->loggerService->logEnd('EventHandler: handleBroadcastRequest - Request processed successfully.');
         } catch (\Throwable $e) {
             $this->loggerService->log(
-                'EventHandler: Exception in processBroadcastRequest: ' . $e->getMessage(),
-                null,
-                'error',
+                    'EventHandler: Exception in processBroadcastRequest: ' . $e->getMessage(),
+                    null,
+                    'error',
             );
             $response = new Response(500, ['Content-Type' => 'text/plain'], 'Internal Server Error');
             $this->loggerService->logEnd(
-                'EventHandler: handleBroadcastRequest - Broadcast request failed',
-                null,
-                'error',
+                    'EventHandler: handleBroadcastRequest - Broadcast request failed',
+                    null,
+                    'error',
             );
         }
         return $response;
@@ -316,8 +335,8 @@ class EventHandler extends Component
     public function broadcastToQuest(int $questId, array $message, ?string $excludeSessionId = null): void
     {
         $this->loggerService->logStart(
-            "EventHandler: broadcastToQuest questId={$questId}, excludeSessionId={$excludeSessionId}, message:",
-            $message,
+                "EventHandler: broadcastToQuest questId={$questId}, excludeSessionId={$excludeSessionId}, message:",
+                $message,
         );
 
         try {
@@ -325,9 +344,9 @@ class EventHandler extends Component
             $this->loggerService->logEnd('EventHandler: broadcastToQuest');
         } catch (\Throwable $e) {
             $this->loggerService->logEnd(
-                'EventHandler: broadcastToQuest - Exception in broadcastToQuest: ' . $e->getMessage(),
-                null,
-                'error',
+                    'EventHandler: broadcastToQuest - Exception in broadcastToQuest: ' . $e->getMessage(),
+                    null,
+                    'error',
             );
         }
     }

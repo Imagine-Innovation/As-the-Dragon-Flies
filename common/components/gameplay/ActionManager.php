@@ -229,14 +229,16 @@ class ActionManager extends BaseManager
      *
      * @param AppStatus $status
      * @param Outcome[] $outcomes
-     * @param string $diceRollLabel
+     * @param string $diceToRoll
+     * @param int $diceRoll
      * @param bool $canReplay
      * @return array<string, mixed>
      */
     private function returnOutcomeEvaluation(
             AppStatus &$status,
             array $outcomes,
-            string $diceRollLabel,
+            string $diceToRoll,
+            int $diceRoll,
             bool $canReplay,
     ): array
     {
@@ -245,7 +247,8 @@ class ActionManager extends BaseManager
             'action' => $this->action,
             'status' => $status,
             'outcomes' => $outcomes,
-            'diceRoll' => $diceRollLabel,
+            'diceRoll' => $diceRoll,
+            'diceRollLabel' => $diceRoll,
             'hpLoss' => $this->hpLoss,
             'isFree' => $this->action?->is_free,
             'canReplay' => $canReplay,
