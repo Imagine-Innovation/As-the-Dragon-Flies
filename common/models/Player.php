@@ -45,7 +45,7 @@ use Yii;
  * @property Item[] $items
  * @property Language[] $languages
  * @property Level|null $level
- * @property Notification[] $ownNotifications
+ * @property Notification[] $notifications
  * @property PlayerAbility[] $playerAbilities
  * @property PlayerBody $playerBody
  * @property PlayerCart[] $playerCarts
@@ -56,6 +56,7 @@ use Yii;
  * @property PlayerSpell[] $playerSpells
  * @property PlayerTrait[] $playerTraits
  * @property Quest $quest
+ * @property QuestLog[] $questLogs
  * @property QuestPlayer[] $questPlayers
  * @property QuestSession[] $questSessions
  * @property QuestTurn[] $questTurns
@@ -271,11 +272,11 @@ class Player extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[OwnNotifications]].
+     * Gets query for [[Notifications]].
      *
      * @return \yii\db\ActiveQuery<Notification>
      */
-    public function getOwnNotifications()
+    public function getNotifications()
     {
         return $this->hasMany(Notification::class, ['initiator_id' => 'id']);
     }
