@@ -8,6 +8,7 @@ use Yii;
 
 class PlayerQuittingEvent extends Event
 {
+
     public string $reason;
 
     /**
@@ -78,8 +79,6 @@ class PlayerQuittingEvent extends Event
     {
         Yii::debug('*** Debug *** PlayerQuittingEvent - process');
         $notification = $this->createNotification();
-
-        $this->savePlayerNotifications($notification->id);
 
         $this->broadcast();
         Yii::debug('*** Debug *** PlayerJoiningEvent - process');
