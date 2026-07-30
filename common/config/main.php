@@ -46,7 +46,7 @@ return [
                 'app*' => [
                     'class' => 'yii\i18n\PhpMessageSource',
                     'basePath' => '@common/messages',
-                    'sourceLanguage' => 'xx', // if set to 'en', il8n uses keys, not translated values
+                    'sourceLanguage' => 'xx', // if set to 'en', i18n uses keys, not translated values
                     'fileMap' => [
                         'app' => 'app.php',
                         'app/guest' => 'guest.php',
