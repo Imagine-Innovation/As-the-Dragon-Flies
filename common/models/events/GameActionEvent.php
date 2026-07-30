@@ -216,9 +216,11 @@ class GameActionEvent extends Event
         $outcomes = $this->detail['outcomes'] ?? [];
         $dc = 0;
         $actionName = $this->action;
+        $hasOutcome = false;
 
         if (is_array($outcomes) && !empty($outcomes)) {
             $first = $outcomes[0];
+            $hasOutcome = true;
 
             if ($first instanceof Outcome) {
                 /** @var \common\models\Action|null $outcomeAction */
@@ -230,8 +232,8 @@ class GameActionEvent extends Event
             }
         }
 
-        // Fallback if Action model can be found
-        if ($dc === 0 || $actionName === $this->action) {
+        // Fallback if no outcomes were resolved
+        if (!$hasOutcome) {
             $missionId = $progress ? $progress->mission_id : null;
             /** @var \common\models\Action|null $actionModel */
             $actionModel = \common\models\Action::findOne([
