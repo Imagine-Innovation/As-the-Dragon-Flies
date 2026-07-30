@@ -11,6 +11,7 @@ use Yii;
  */
 class NextTurnEvent extends Event
 {
+
     /** @var string|null The action type */
     public ?string $action = null;
 
@@ -88,8 +89,6 @@ class NextTurnEvent extends Event
     {
         Yii::debug('*** Debug *** NextTurnEvent - process');
         $notification = $this->createNotification();
-
-        $this->savePlayerNotifications($notification->id);
 
         $this->broadcast();
 

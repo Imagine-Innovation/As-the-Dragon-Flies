@@ -11,6 +11,7 @@ use Yii;
  */
 class NextMissionEvent extends Event
 {
+
     /** @var string|null The action type */
     public ?string $action = null;
 
@@ -63,8 +64,8 @@ class NextMissionEvent extends Event
         $detail = $this->detail;
 
         return (
-            "{$detail['currentPlayerName']} has completed mission “{$detail['currentMissionName']}”.\n"
-            . "Now it's {$detail['nextPlayerName']}'s turn to start mission “{$detail['nextMissionName']}”."
+                "{$detail['currentPlayerName']} has completed mission “{$detail['currentMissionName']}”.\n"
+                . "Now it's {$detail['nextPlayerName']}'s turn to start mission “{$detail['nextMissionName']}”."
         );
     }
 
@@ -91,8 +92,6 @@ class NextMissionEvent extends Event
     {
         Yii::debug('*** Debug *** NextMissionEvent - process');
         $notification = $this->createNotification();
-
-        $this->savePlayerNotifications($notification->id);
 
         $this->broadcast();
 

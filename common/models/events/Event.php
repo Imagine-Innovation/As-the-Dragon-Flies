@@ -4,12 +4,10 @@ namespace common\models\events;
 
 use common\helpers\SaveHelper;
 use common\models\Notification;
-use common\models\NotificationPlayer;
 use common\models\Player;
 use common\models\Quest;
 use Yii;
 use yii\base\BaseObject;
-use yii\helpers\ArrayHelper;
 
 abstract class Event extends BaseObject
 {
@@ -123,42 +121,6 @@ abstract class Event extends BaseObject
             }
         } catch (\yii\httpclient\Exception $e) {
             Yii::error('Exception while trying to broadcast event: ' . $e->getMessage());
-        }
-    }
-
-    /**
-     *
-     * @param int $notificationId
-     * @param int $playerId
-     * @return void
-     */
-    protected function newPlayerNotification(int $notificationId, int $playerId): void
-    {
-        Yii::debug(
-                "*** Debug *** Event - newPlayerNotification - notificationId={$notificationId}, player->id={$playerId}",
-        );
-        $notificationPlayer = new NotificationPlayer([
-            'notification_id' => $notificationId,
-            'player_id' => $playerId,
-            'is_read' => 0,
-        ]);
-
-        SaveHelper::save($notificationPlayer);
-    }
-
-    /**
-     *
-     * @param int $notificationId
-     * @return void
-     */
-    protected function savePlayerNotifications(int $notificationId): void
-    {
-        // Create notification_player entries for all players in quest
-        $players = $this->quest->players;
-        foreach ($players as $player) {
-            if ($player->id !== $this->player->id) {
-                $this->newPlayerNotification($notificationId, $player->id);
-            }
         }
     }
 

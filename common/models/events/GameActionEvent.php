@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace common\models\events;
@@ -16,11 +15,12 @@ use Yii;
  */
 class GameActionEvent extends Event
 {
+
     /** @var string The action type */
-    public $action;
+    public string $action;
 
     /** @var array<string, mixed> Additional action data */
-    public $detail;
+    public array $detail;
 
     /**
      * Constructor
@@ -60,7 +60,7 @@ class GameActionEvent extends Event
         }
 
         return [
-            'id' => (int)$id,
+            'id' => (int) $id,
             'name' => is_string($name) ? $name : '',
             'desc' => is_string($desc) ? $desc : '',
         ];
@@ -116,11 +116,11 @@ class GameActionEvent extends Event
 
         $template = $templates[$status->value] ?? '{playerName} tried {actionName}. {outcomeConclusion}';
 
-        return Yii::t('game', $template, [
-            'playerName' => $this->player->name ?? 'Unknown',
-            'actionName' => $this->action,
-            'outcomeConclusion' => $this->getOutcomeConclusion(),
-        ], $storyLanguage);
+        return Yii::t('app/game', $template, [
+                    'playerName' => $this->player->name ?? 'Unknown',
+                    'actionName' => $this->action,
+                    'outcomeConclusion' => $this->getOutcomeConclusion(),
+                        ], $storyLanguage);
     }
 
     /**
@@ -188,8 +188,6 @@ class GameActionEvent extends Event
         Yii::debug('*** Debug *** GameActionEvent - process');
         $notification = $this->createNotification();
 
-        $this->savePlayerNotifications($notification->id);
-
         $this->broadcast();
 
         // Populate the quest_log table
@@ -209,7 +207,7 @@ class GameActionEvent extends Event
         // Calculate the next round
         // We find the max round number for this quest in the quest_log table
         $maxRoundVal = QuestLog::find()->where(['quest_id' => $this->quest->id])->max('round');
-        $maxRound = is_numeric($maxRoundVal) ? (int)$maxRoundVal : 0;
+        $maxRound = is_numeric($maxRoundVal) ? (int) $maxRoundVal : 0;
         $nextRound = $maxRound + 1;
 
         // Extract DC, action success, and final action name

@@ -19,12 +19,11 @@ use Yii;
  * @property string|null $payload Notification Payload
  *
  * @property Player $initiator
- * @property NotificationPlayer[] $notificationPlayers
- * @property Player[] $players
  * @property Quest $quest
  */
 class Notification extends \yii\db\ActiveRecord
 {
+
     /**
      * {@inheritdoc}
      */
@@ -48,20 +47,8 @@ class Notification extends \yii\db\ActiveRecord
             [['payload'], 'safe'],
             [['notification_type'], 'string', 'max' => 64],
             [['title'], 'string', 'max' => 4096],
-            [
-                ['initiator_id'],
-                'exist',
-                'skipOnError' => true,
-                'targetClass' => Player::class,
-                'targetAttribute' => ['initiator_id' => 'id'],
-            ],
-            [
-                ['quest_id'],
-                'exist',
-                'skipOnError' => true,
-                'targetClass' => Quest::class,
-                'targetAttribute' => ['quest_id' => 'id'],
-            ],
+            [['initiator_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['initiator_id' => 'id']],
+            [['quest_id'], 'exist', 'skipOnError' => true, 'targetClass' => Quest::class, 'targetAttribute' => ['quest_id' => 'id']],
         ];
     }
 
@@ -92,28 +79,6 @@ class Notification extends \yii\db\ActiveRecord
     public function getInitiator()
     {
         return $this->hasOne(Player::class, ['id' => 'initiator_id']);
-    }
-
-    /**
-     * Gets query for [[NotificationPlayers]].
-     *
-     * @return \yii\db\ActiveQuery<NotificationPlayer>
-     */
-    public function getNotificationPlayers()
-    {
-        return $this->hasMany(NotificationPlayer::class, ['notification_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[Players]].
-     *
-     * @return \yii\db\ActiveQuery<Player>
-     */
-    public function getPlayers()
-    {
-        return $this->hasMany(Player::class, ['id' => 'player_id'])->viaTable('notification_player', [
-            'notification_id' => 'id',
-        ]);
     }
 
     /**

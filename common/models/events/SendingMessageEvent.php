@@ -8,6 +8,7 @@ use Yii;
 
 class SendingMessageEvent extends Event
 {
+
     public string $message;
 
     /**
@@ -77,8 +78,6 @@ class SendingMessageEvent extends Event
     {
         Yii::debug('*** Debug *** SendingMessageEvent - process');
         $notification = $this->createNotification();
-
-        $this->savePlayerNotifications($notification->id);
 
         $this->broadcast();
     }

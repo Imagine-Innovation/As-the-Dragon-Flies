@@ -9,6 +9,7 @@ use Yii;
 
 class PlayerJoiningEvent extends Event
 {
+
     /**
      *
      * @param string $sessionId
@@ -74,8 +75,6 @@ class PlayerJoiningEvent extends Event
     {
         Yii::debug('*** Debug *** PlayerJoiningEvent - process');
         $notification = $this->createNotification();
-
-        $this->savePlayerNotifications($notification->id);
 
         $this->broadcast();
 

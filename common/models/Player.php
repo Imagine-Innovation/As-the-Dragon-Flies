@@ -45,8 +45,6 @@ use Yii;
  * @property Item[] $items
  * @property Language[] $languages
  * @property Level|null $level
- * @property NotificationPlayer[] $notificationPlayers
- * @property Notification[] $ownNotifications
  * @property Notification[] $notifications
  * @property PlayerAbility[] $playerAbilities
  * @property PlayerBody $playerBody
@@ -58,6 +56,7 @@ use Yii;
  * @property PlayerSpell[] $playerSpells
  * @property PlayerTrait[] $playerTraits
  * @property Quest $quest
+ * @property QuestLog[] $questLogs
  * @property QuestPlayer[] $questPlayers
  * @property QuestSession[] $questSessions
  * @property QuestTurn[] $questTurns
@@ -273,33 +272,13 @@ class Player extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[NotificationPlayers]].
-     *
-     * @return \yii\db\ActiveQuery<NotificationPlayer>
-     */
-    public function getNotificationPlayers()
-    {
-        return $this->hasMany(NotificationPlayer::class, ['player_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[OwnNotifications]].
-     *
-     * @return \yii\db\ActiveQuery<Notification>
-     */
-    public function getOwnNotifications()
-    {
-        return $this->hasMany(Notification::class, ['initiator_id' => 'id']);
-    }
-
-    /**
      * Gets query for [[Notifications]].
      *
      * @return \yii\db\ActiveQuery<Notification>
      */
     public function getNotifications()
     {
-        return $this->hasMany(Notification::class, ['id' => 'notification_id'])->viaTable('notification_player', ['player_id' => 'id']);
+        return $this->hasMany(Notification::class, ['initiator_id' => 'id']);
     }
 
     /**
@@ -658,20 +637,6 @@ class Player extends \yii\db\ActiveRecord
         $className = $this->class->name ?? '';
         $description = "{$age} {$gender} {$raceName}, {$levelName} {$alignment} {$className}";
         return strtolower($description);
-    }
-
-    /**
-     * Get unread notifications for this player
-     *
-     * @return \yii\db\ActiveQuery<Notification>
-     */
-    public function getUnreadNotifications()
-    {
-        return $this->hasMany(Notification::class, [
-                    'id' => 'notification_id',
-                ])->via('notificationPlayers', function ($query) {
-                    $query->andWhere(['is_read' => 0]);
-                });
     }
 
     /**

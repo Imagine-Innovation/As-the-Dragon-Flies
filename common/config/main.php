@@ -43,12 +43,16 @@ return [
         ],
         'i18n' => [
             'translations' => [
-                'game*' => [
+                'app*' => [
                     'class' => 'yii\i18n\PhpMessageSource',
-                    'basePath' => '@frontend/messages',
-                    'sourceLanguage' => 'xx',
+                    'basePath' => '@common/messages',
+                    'sourceLanguage' => 'xx', // if set to 'en', i18n uses keys, not translated values
                     'fileMap' => [
-                        'game' => 'game.php',
+                        'app' => 'app.php',
+                        'app/guest' => 'guest.php',
+                        'app/lobby' => 'lobby.php',
+                        'app/error' => 'error.php',
+                        'app/game' => 'game.php',
                     ],
                 ],
             ],

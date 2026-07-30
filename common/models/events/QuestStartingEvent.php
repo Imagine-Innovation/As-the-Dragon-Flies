@@ -8,6 +8,7 @@ use Yii;
 
 class QuestStartingEvent extends Event
 {
+
     /**
      *
      * @param string $sessionId
@@ -72,8 +73,6 @@ class QuestStartingEvent extends Event
     {
         Yii::debug('*** Debug *** QuestStartingEvent - process');
         $notification = $this->createNotification();
-
-        $this->savePlayerNotifications($notification->id);
 
         $this->broadcast();
 

@@ -11,6 +11,7 @@ use Yii;
  */
 class GameOverEvent extends Event
 {
+
     /** @var string|null The action type */
     public ?string $action = null;
 
@@ -87,8 +88,6 @@ class GameOverEvent extends Event
     {
         Yii::debug('*** Debug *** GameOverEvent - process');
         $notification = $this->createNotification();
-
-        $this->savePlayerNotifications($notification->id);
 
         $this->broadcast();
 
