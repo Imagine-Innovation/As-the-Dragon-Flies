@@ -212,16 +212,13 @@ class GameActionEvent extends Event
         $maxRound = is_numeric($maxRoundVal) ? (int)$maxRoundVal : 0;
         $nextRound = $maxRound + 1;
 
-        // Extract outcome ID, DC, action success, and final action name
+        // Extract DC, action success, and final action name
         $outcomes = $this->detail['outcomes'] ?? [];
-        $firstOutcomeId = null;
         $dc = 0;
         $actionName = $this->action;
 
         if (is_array($outcomes) && !empty($outcomes)) {
             $first = $outcomes[0];
-            $details = $this->extractOutcomeDetails($first);
-            $firstOutcomeId = $details['id'];
 
             if ($first instanceof Outcome) {
                 /** @var \common\models\Action|null $outcomeAction */
@@ -233,8 +230,8 @@ class GameActionEvent extends Event
             }
         }
 
-        // Fallback if outcome_id is still missing
-        if ($firstOutcomeId === null || $firstOutcomeId === 0) {
+        // Fallback if Action model can be found
+        if ($dc === 0 || $actionName === $this->action) {
             $missionId = $progress ? $progress->mission_id : null;
             /** @var \common\models\Action|null $actionModel */
             $actionModel = \common\models\Action::findOne([
@@ -245,17 +242,7 @@ class GameActionEvent extends Event
             if ($actionModel !== null) {
                 $dc = $actionModel->dc;
                 $actionName = $actionModel->name;
-                /** @var Outcome|null $fallbackOutcome */
-                $fallbackOutcome = Outcome::findOne(['action_id' => $actionModel->id]);
-                if ($fallbackOutcome !== null) {
-                    $firstOutcomeId = $fallbackOutcome->id;
-                }
             }
-        }
-
-        // Ultimate fallback to satisfy DB required rules
-        if ($firstOutcomeId === null || $firstOutcomeId === 0) {
-            $firstOutcomeId = 1;
         }
 
         /** @var AppStatus $status */
@@ -264,7 +251,6 @@ class GameActionEvent extends Event
         $questLog = new QuestLog([
             'quest_id' => $this->quest->id,
             'player_id' => $this->player->id,
-            'outcome_id' => $firstOutcomeId,
             'round' => $nextRound,
             'chapter_name' => $chapterName,
             'mission_name' => $missionName,
