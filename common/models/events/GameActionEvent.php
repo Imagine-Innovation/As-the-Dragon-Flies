@@ -116,7 +116,7 @@ class GameActionEvent extends Event
 
         $template = $templates[$status->value] ?? '{playerName} tried {actionName}. {outcomeConclusion}';
 
-        return Yii::t('game', $template, [
+        return Yii::t('app/game', $template, [
             'playerName' => $this->player->name ?? 'Unknown',
             'actionName' => $this->action,
             'outcomeConclusion' => $this->getOutcomeConclusion(),

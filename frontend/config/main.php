@@ -114,29 +114,6 @@ return [
             'errorAction' => 'site/error',
         ],
         'assetManager' => $assetManager,
-        'i18n' => [
-            'translations' => [
-                'app*' => [
-                    'class' => 'yii\i18n\PhpMessageSource',
-                    'basePath' => '@app/messages',
-                    'sourceLanguage' => 'xx', // if set to 'en', il8n uses keys, not translated values
-                    'fileMap' => [
-                        'app' => 'app.php',
-                        'app/guest' => 'guest.php',
-                        'app/lobby' => 'lobby.php',
-                        'app/error' => 'error.php',
-                    ],
-                ],
-                'game*' => [
-                    'class' => 'yii\i18n\PhpMessageSource',
-                    'basePath' => '@app/messages',
-                    'sourceLanguage' => 'xx',
-                    'fileMap' => [
-                        'game' => 'game.php',
-                    ],
-                ],
-            ],
-        ],
         'httpclient' => [
             'class' => 'yii\httpclient\Client',
             // Optional: Configure default options
