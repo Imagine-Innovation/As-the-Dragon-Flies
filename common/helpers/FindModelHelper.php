@@ -149,8 +149,6 @@ final class FindModelHelper
         $className = self::fullyQualifiedClassName($modelName);
         $pkColumns = $withPk ? self::getPrimaryKeyColumns($className) : [];
         $findOneFunctionParam = self::findOneFunctionParam($param, $pkColumns, $withPk);
-        Yii::debug("*** debug *** - findModel className={$className}, param=" . print_r($param, true));
-        Yii::debug($pkColumns);
         /** @var T|null $model */
         $model = $className::findOne($findOneFunctionParam);
 
