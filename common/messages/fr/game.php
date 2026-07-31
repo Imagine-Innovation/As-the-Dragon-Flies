@@ -1,11 +1,9 @@
 <?php
-
-declare(strict_types=1);
-
 return [
-    '{playerName} tried {actionName} and succeeded. {outcomeConclusion}' => '{playerName} a tenté {actionName} et a réussi. {outcomeConclusion}',
-    '{playerName} tried {actionName} and failed. {outcomeConclusion}' => '{playerName} a tenté {actionName} et a échoué. {outcomeConclusion}',
-    '{playerName} tried {actionName} and partially succeeded. {outcomeConclusion}' => '{playerName} a tenté {actionName} et a partiellement réussi. {outcomeConclusion}',
-    '{playerName} tried {actionName} but was missing a required item. {outcomeConclusion}' => '{playerName} a tenté {actionName} mais un objet requis manquait. {outcomeConclusion}',
-    '{playerName} tried {actionName}. {outcomeConclusion}' => '{playerName} a tenté {actionName}. {outcomeConclusion}',
+    '{playerName} tried {actionName} and succeeded' => '{playerName} a réussi l\'action {actionName}',
+    '{playerName} tried {actionName} and failed' => '{playerName} a échoué à réaliser l\'action {actionName}',
+    '{playerName} tried {actionName} and partially succeeded' => '{playerName} a partiellement réussi l\'action {actionName}',
+    '{playerName} tried {actionName} but was missing a required item' => 'Il manquait un objet à {playerName} pour qu\'il réaliser l\'action {actionName}',
+    '{playerName} tried {actionName}' => '{playerName} a tenté l\'action {actionName}',
+    'Rolling {diceToRoll} gave {diceRoll}' => 'La lancé de {diceToRoll} a donné {diceRoll}'
 ];
