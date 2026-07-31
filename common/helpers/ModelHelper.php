@@ -2,8 +2,9 @@
 
 namespace common\helpers;
 
-class ModelHelper
+final class ModelHelper
 {
+
     const SCANNING_PATHS = [
         "common\\models",
         "common\\components",

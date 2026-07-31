@@ -5,7 +5,7 @@ namespace common\helpers;
 use Yii;
 use yii\helpers\HtmlPurifier;
 
-class RichTextHelper
+final class RichTextHelper
 {
 
     /**

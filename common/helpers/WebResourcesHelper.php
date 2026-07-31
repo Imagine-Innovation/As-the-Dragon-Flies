@@ -2,7 +2,7 @@
 
 namespace common\helpers;
 
-class WebResourcesHelper
+final class WebResourcesHelper
 {
 
     /**

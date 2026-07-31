@@ -22,7 +22,7 @@ use common\models\CharacterClass;
 use common\models\Story;
 use common\widgets\CheckBox;
 
-class StoryNeededClass
+final class StoryNeededClass
 {
 
     /**

@@ -4,7 +4,7 @@ namespace common\helpers;
 
 use common\components\AppStatus;
 
-class ActionButtonsConfig
+final class ActionButtonsConfig
 {
 
     /**

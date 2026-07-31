@@ -2,8 +2,9 @@
 
 namespace common\helpers;
 
-class FileHelper
+final class FileHelper
 {
+
     /**
      * Removes the last extension from a filename.
      *

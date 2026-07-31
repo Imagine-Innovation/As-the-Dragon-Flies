@@ -21,7 +21,7 @@ use InvalidArgumentException;
 use Yii;
 use yii\web\NotFoundHttpException;
 
-class FindModelHelper
+final class FindModelHelper
 {
 
     /**

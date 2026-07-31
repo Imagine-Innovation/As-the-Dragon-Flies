@@ -10,7 +10,7 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
-class Status
+final class Status
 {
 
     /**
@@ -39,8 +39,7 @@ class Status
     {
         $defaultIcon = ['icon' => 'bi-exclamation-square', 'tooltip' => 'Undefined'];
 
-        $icon = $statusCode ? AppStatus::tryFrom($statusCode)?->getIcon() ?? $defaultIcon
-                    : $defaultIcon;
+        $icon = $statusCode ? AppStatus::tryFrom($statusCode)?->getIcon() ?? $defaultIcon : $defaultIcon;
 
         $iconClass = $icon['icon'];
         $tooltip = $icon['tooltip'];
@@ -105,8 +104,7 @@ class Status
         $controller = Utilities::getController($model); // Get the controller name for the model
 
         $propertyVal = $model->$property;
-        $display = isset($model->$property) ? Html::encode(empty($propertyVal) ? 'Unknown'
-                            : (string) $propertyVal) : '<i class="bi bi-exclamation-square"></i>';
+        $display = isset($model->$property) ? Html::encode(empty($propertyVal) ? 'Unknown' : (string) $propertyVal) : '<i class="bi bi-exclamation-square"></i>';
 
         if ($controller && isset($model->id) && isset($model->status)) {
             $route = "{$controller}/view";

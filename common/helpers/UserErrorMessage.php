@@ -6,7 +6,7 @@ use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
-class UserErrorMessage
+final class UserErrorMessage
 {
 
     /**

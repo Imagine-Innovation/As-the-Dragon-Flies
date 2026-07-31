@@ -18,7 +18,7 @@ use Yii;
 use yii\helpers\Html;
 use yii\helpers\Inflector;
 
-class Utilities extends Html
+final class Utilities extends Html
 {
 
     /**

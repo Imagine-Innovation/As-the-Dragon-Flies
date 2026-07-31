@@ -6,7 +6,7 @@ use common\models\AccessRight;
 use common\models\User;
 use common\widgets\CheckBox;
 
-class SpecialCheckBox
+final class SpecialCheckBox
 {
 
     /**

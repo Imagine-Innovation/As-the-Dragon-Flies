@@ -6,8 +6,9 @@ use common\models\Player;
 use common\models\Quest;
 use common\models\Story;
 
-class StoryPlayers
+final class StoryPlayers
 {
+
     /**
      *
      * @param Story $story
@@ -39,12 +40,12 @@ class StoryPlayers
         $n = count($playerNames);
         if ($n > 0) {
             return (
-                '<h6 class="card-subtitle">Your player'
-                . ($n > 1 ? 's ' : ' ')
-                . implode(' and ', $playerNames)
-                . ' '
-                . ($n > 1 ? ' are ' : ' is ')
-                . 'already waiting to start the quest</h6>'
+                    '<h6 class="card-subtitle">Your player'
+                    . ($n > 1 ? 's ' : ' ')
+                    . implode(' and ', $playerNames)
+                    . ' '
+                    . ($n > 1 ? ' are ' : ' is ')
+                    . 'already waiting to start the quest</h6>'
             );
         }
         return '';
