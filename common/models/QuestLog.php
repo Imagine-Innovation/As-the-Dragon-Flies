@@ -14,7 +14,7 @@ use Yii;
  * @property string $chapter_name Chapter name
  * @property string $mission_name Mission name
  * @property string $action_name Action name
- * @property int $dc Difficulty Class (DC)
+ * @property int $dice_roll Dice roll
  * @property int $action_success Success
  * @property string|null $description Short description
  *
@@ -23,7 +23,6 @@ use Yii;
  */
 class QuestLog extends \yii\db\ActiveRecord
 {
-
 
     /**
      * {@inheritdoc}
@@ -40,12 +39,12 @@ class QuestLog extends \yii\db\ActiveRecord
     {
         return [
             [['description'], 'default', 'value' => null],
-            [['dc'], 'default', 'value' => 0],
+            [['dice_roll'], 'default', 'value' => 0],
             [['mission_name'], 'default', 'value' => 'Unknown'],
             [['action_name'], 'default', 'value' => 'Something'],
             [['action_success'], 'default', 'value' => 7],
             [['quest_id', 'player_id'], 'required'],
-            [['quest_id', 'player_id', 'round', 'dc', 'action_success'], 'integer'],
+            [['quest_id', 'player_id', 'round', 'dice_roll', 'action_success'], 'integer'],
             [['description'], 'string'],
             [['chapter_name', 'mission_name', 'action_name'], 'string', 'max' => 64],
             [['quest_id'], 'exist', 'skipOnError' => true, 'targetClass' => Quest::class, 'targetAttribute' => ['quest_id' => 'id']],
@@ -66,7 +65,7 @@ class QuestLog extends \yii\db\ActiveRecord
             'chapter_name' => 'Chapter name',
             'mission_name' => 'Mission name',
             'action_name' => 'Action name',
-            'dc' => 'Difficulty Class (DC)',
+            'dice_roll' => 'Dice roll',
             'action_success' => 'Success',
             'description' => 'Short description',
         ];
