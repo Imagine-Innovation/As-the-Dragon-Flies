@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 return [
     'Messages' => 'Messages',
@@ -62,4 +61,9 @@ return [
     'The adventure is aborted' => 'The adventure is aborted',
     'Waiting to start' => 'Waiting to start',
     'You\'re missing an item' => 'You\'re missing an item',
+    // Default value when empty or null string
+    'Player' => 'The player',
+    'Action' => 'The action',
+    'Quest' => 'The quest',
+    'Story' => 'The story',
 ];
