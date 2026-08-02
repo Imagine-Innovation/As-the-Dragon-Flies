@@ -54,7 +54,7 @@ final class OutcomeManager extends BaseManager
      * @param AppStatus $status
      * @return Outcome[]
      */
-    public function getMatchingOutcomes(AppStatus $status): array
+    private function getMatchingOutcomes(AppStatus $status): array
     {
         Yii::debug("*** debug *** getMatchingOutcomes - status={$status->getLabel()}");
         $outcomes = Outcome::findAll(['action_id' => $this->action?->id]);
@@ -66,13 +66,11 @@ final class OutcomeManager extends BaseManager
         $selectedOutcomes = [];
         foreach ($outcomes as $outcome) {
             $bitwiseComparison = $outcome->status & $status->value;
-            Yii::debug("*** debug *** getMatchingOutcomes - outcome->status={$outcome->status}, status->value={$status->value}, bitwiseComparison={$bitwiseComparison}");
 
             if ($bitwiseComparison) {
                 $selectedOutcomes[] = $outcome;
             }
         }
-        Yii::debug('*** debug *** getMatchingOutcomes - selectedOutcomes=' . print_r($selectedOutcomes, true));
 
         return $selectedOutcomes;
     }
@@ -83,7 +81,7 @@ final class OutcomeManager extends BaseManager
      * @param Outcome[] $outcomes
      * @return bool
      */
-    public function canReplay(array $outcomes): bool
+    private function canReplay(array $outcomes): bool
     {
         Yii::debug('*** debug *** canReplay - outcomes=' . count($outcomes));
 
@@ -111,7 +109,7 @@ final class OutcomeManager extends BaseManager
      * @param Outcome[] $outcomes
      * @return void
      */
-    public function applyPlayerGainsAndLosses(array $outcomes): void
+    private function applyPlayerGainsAndLosses(array $outcomes): void
     {
         $this->hpLoss = 0; // Reset local counter
         if ($this->player) {
@@ -132,14 +130,14 @@ final class OutcomeManager extends BaseManager
      * @param bool $canReplay
      * @return array<string, mixed>
      */
-    public function buildEvaluationSummary(Action $action, ?Quest $quest, AppStatus $status, array $outcomes, string $diceToRoll, int $diceRoll, bool $canReplay): array
+    private function buildEvaluationSummary(Action $action, ?Quest $quest, AppStatus $status, array $outcomes, string $diceToRoll, int $diceRoll, bool $canReplay): array
     {
         $missionId = $this->questProgress?->mission_id;
 
-        $diceRollLabel = Yii::t('app/game', 'Rolling {diceToRoll} gave {diceRoll}', [
+        $diceRollLabel = Yii::t('app/game', 'rolling dice result', [
             'diceToRoll' => $diceToRoll,
             'diceRoll' => $diceRoll,
-                ], $action->story->language ?? 'en');
+                ], $quest->story->language ?? 'en');
 
         return [
             'action' => $action,
@@ -217,50 +215,6 @@ final class OutcomeManager extends BaseManager
     }
 
     /**
-     * @param AppStatus $status
-     * @param bool|null $canReplay
-     * @return void
-     */
-    private function endCurrentAction(AppStatus $status, ?bool $canReplay = true): void
-    {
-        Yii::debug("*** debug *** endCurrentAction - action={$this->action?->name}, status={$status->getLabel()}");
-
-        QuestAction::updateAll(['status' => $status->value, 'eligible' => $canReplay], [
-            'action_id' => $this->questAction?->action_id,
-            'quest_progress_id' => $this->questAction?->quest_progress_id,
-        ]);
-    }
-
-    /**
-     * @param AppStatus $status
-     * @return QuestAction[]
-     */
-    private function unlockNextActions(AppStatus $status): array
-    {
-        Yii::debug("*** debug *** unlockNextActions - action={$this->action?->name}, status={$status->getLabel()}");
-        $unlockedQuestActions = [];
-        $triggeredActions = $this->action?->triggers;
-
-        if ($triggeredActions === null) {
-            return $unlockedQuestActions;
-        }
-
-        $questProgressId = (int) $this->questProgress?->id;
-        /** @var ActionFlow $actionFlow */
-        foreach ($triggeredActions as $actionFlow) {
-            $bitwiseComparison = $actionFlow->status & $status->value;
-            $isEligible = $this->isActionEligible($actionFlow->nextAction, $questProgressId);
-            if ($bitwiseComparison && $isEligible) {
-                $actionId = $actionFlow->next_action_id;
-                $unlockedQuestActions[] = $this->addOneQuestAction($actionId, $questProgressId);
-            }
-        }
-
-        Yii::debug('*** debug *** unlockNextActions - isEligible: ' . count($unlockedQuestActions) . ' triggered action(s)');
-        return $unlockedQuestActions;
-    }
-
-    /**
      * Evaluates action, triggers outcome processing, and updates state flow.
      *
      * @return array<string, mixed>
@@ -284,6 +238,7 @@ final class OutcomeManager extends BaseManager
         }
 
         $outcomes = $this->getMatchingOutcomes($status);
+
         $canReplay = $this->canReplay($outcomes);
 
         $this->applyPlayerGainsAndLosses($outcomes);
