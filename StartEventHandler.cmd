@@ -21,6 +21,15 @@ cd C:\Users\franc\OneDrive\devenv\htdocs\DnD
 call rotate-logs EventHandler.log 10
 call rotate-logs BroadcastMessage.log 10
 
+REM Command Line Use : baretail [options] {file(s)}
+REM where options can be:
+REM --window-position left top width height => Specifies the window position at startup in pixels. Note that the -ws, --window-state option, as well as the stored windows state in the registry (from the last run) overrides this option when the state is minimised or maximised.
+REM --window-state 0 | 1 | 2      => Specifies the window state at startup: 0 Normal state (neither minimised or maximised), 1 Minimised, 2 Maximised
+REM --tile-window-count count --tile-window-index index => Specifies the window position at startup for vertical tiling of applications on the screen. The count specifies the number of equal height vertical slots for application windows. The index specifies the zero-based (zero is the top) offset of the slot in which to position the window.
+
+start C:\Portable\Baretail\baretail.exe --window-state 1 --window-position 0 0 900 1000   c:\temp\EventHandler.log
+start C:\Portable\Baretail\baretail.exe --window-state 1 --window-position 901 0 900 1000 c:\temp\BroadcastMessage.log
+
 rem cls
 
 php yii event-server/start

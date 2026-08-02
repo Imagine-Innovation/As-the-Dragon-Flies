@@ -6,6 +6,7 @@ use common\components\AppStatus;
 use common\components\ContextManager;
 use common\components\gameplay\ActionManager;
 use common\components\gameplay\QuestManager;
+use common\components\gameplay\OutcomeManager;
 use common\components\gameplay\TavernManager;
 use common\components\AccessRightsManager;
 use common\helpers\FindModelHelper;
@@ -282,8 +283,13 @@ class GameController extends Controller
             'action_id' => $postRequest->post('actionId'),
         ];
         $questAction = FindModelHelper::findQuestAction($param);
+        $outcomeManager = new OutcomeManager(['questAction' => $questAction]);
+        $outcomeArray = $outcomeManager->evaluateActionOutcome();
+
+        // Update state flow
         $actionManager = new ActionManager(['questAction' => $questAction]);
-        $outcomeArray = $actionManager->evaluateActionOutcome();
+        $actionManager->endCurrentAction($outcomeArray['status'], $outcomeArray['canReplay']);
+        $actionManager->unlockNextActions($outcomeArray['status']);
 
         $this->createEvent('game-action', $postRequest, $questAction->action->name, $outcomeArray);
 
