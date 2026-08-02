@@ -104,8 +104,7 @@ abstract class Event extends BaseObject
     protected function broadcast(): void
     {
         $client = new HttpClient();
-        $url = Yii::$app->params['eventHandlerUrl'] . ':';
-        Yii::$app->params['eventHandlerInternalPort'];
+        $url = Yii::$app->params['eventHandlerUrl'] . ':' . Yii::$app->params['eventHandlerInternalPort'];
         $data = $this->requestData();
         try {
             $response = $client
