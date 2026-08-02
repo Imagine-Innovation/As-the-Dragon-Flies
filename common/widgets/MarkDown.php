@@ -2,6 +2,7 @@
 
 namespace common\widgets;
 
+use common\helpers\MergeHelper;
 use common\helpers\RichTextHelper;
 use yii\base\Widget;
 use Yii;
@@ -12,6 +13,7 @@ use Yii;
  *
  * Usage:
  * <?= \common\widgets\MarkDown::widget(['content' => $model->description]) ?>
+ * <?= \common\widgets\MarkDown::widget(['content' => $model->description, 'playerName' => 'Gandalf']) ?>
  */
 class MarkDown extends Widget
 {
@@ -21,12 +23,10 @@ class MarkDown extends Widget
      * Clients should configure these prefixed with 'placeholder:' (e.g. 'placeholder:playerName' => 'Gandalf').
      */
     protected const VALID_PLACEHOLDERS = [
-        'playerName',
-        'questName',
-        'turnOwner',
-        'placeName',
-        'npcName',
-        'monsterName',
+        'story', 'chapter', 'mission',
+        'questName', 'placeName', 'npcName', 'monsterName',
+        'turnOwner', 'playerName', 'otherPlayerName',
+        'actionName',
     ];
 
     /**
@@ -50,8 +50,12 @@ class MarkDown extends Widget
 
         $html = $this->renderMarkdown($this->content);
 
+        if ($this->placeholders === []) {
+            return $html;
+        }
         // Perform placeholder replacements if placeholders were specified
-        return $this->replacePlaceholders($html, $this->placeholders);
+        //return $this->replacePlaceholders($html, $this->placeholders);
+        return MergeHelper::merge($html, $this->placeholders);
     }
 
     /**
@@ -211,76 +215,6 @@ class MarkDown extends Widget
         $this->closeTag($scrollOpened, 'div', $result);
 
         return implode(PHP_EOL, $result);
-    }
-
-    /**
-     * Performs dynamic placeholder replacement.
-     *
-     * @param string $html
-     * @param array<string, mixed> $placeholders
-     * @return string
-     */
-    protected function replacePlaceholders(string $html, array $placeholders): string
-    {
-        // Step 1: find every {placeholder} in the HTML
-        $matches = [];
-        preg_match_all('/\{([a-zA-Z0-9_\-]+)\}/', $html, $matches);
-
-        $placeholderTags = $matches[0]; // e.g. ['{playerName}', '{date}']
-        $placeholderKeys = $matches[1]; // e.g. ['playerName', 'date']
-        // Step 2: build a list of [search => replace] pairs
-        $search = [];
-        $replace = [];
-
-        foreach ($placeholderKeys as $searchString => $placeholder) {
-            $search[] = $placeholderTags[$searchString];
-            $replace[] = $this->getPlaceholderValue($placeholder, $placeholders);
-        }
-
-        // Step 3: replace them all in one pass
-        return str_replace($search, $replace, $html);
-    }
-
-    /**
-     *
-     * @param string $placeholder
-     * @param array<string, mixed> $placeholders
-     * @return string
-     */
-    private function getPlaceholderValue(string $placeholder, array $placeholders): string
-    {
-        if (!$this->isValidPlaceholder($placeholder, $placeholders)) {
-            return '{' . $placeholder . '}';
-        }
-
-        $value = $placeholders[$placeholder];
-
-        if ($value === null) {
-            return '';
-        }
-
-        if (is_string($value)) {
-            return $this->sanitize($value);
-        }
-
-        if (is_int($value)) {
-            return (string) $value;
-        }
-
-        // Any other type returns a empty string
-        return '';
-    }
-
-    /**
-     * Check whether the reserved space is valid and whether a replacement value has been provided
-     *
-     * @param string $placeholder
-     * @param array<string, mixed> $placeholders.
-     * @return bool
-     */
-    private function isValidPlaceholder(string $placeholder, array $placeholders): bool
-    {
-        return in_array($placeholder, self::VALID_PLACEHOLDERS, true) && array_key_exists($placeholder, $placeholders);
     }
 
     /**
