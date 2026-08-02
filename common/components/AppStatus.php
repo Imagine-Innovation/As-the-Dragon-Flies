@@ -151,7 +151,7 @@ enum AppStatus: int
             self::PARTIAL => 'partialy succeeded',
             self::SUCCESS => 'succeeded',
             self::FAILURE => 'failed',
-            default => 'did something, but I don\'t know what',
+            default => 'did something',
         };
     }
 

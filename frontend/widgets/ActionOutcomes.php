@@ -23,6 +23,7 @@ class ActionOutcomes extends Widget
     public ?int $questProgressId = null;
     public ?int $nextMissionId = null;
     public ?int $storyId = null;
+    public ?string $language = 'en';
 
     /**
      *
@@ -30,13 +31,15 @@ class ActionOutcomes extends Widget
      */
     public function run(): string
     {
-        // $canReplay = false;
         $status = $this->status ?? AppStatus::SUCCESS;
-        $html = "<p>{$this->diceRoll}: the action {$status->getActionAdjective()}</p>" . PHP_EOL;
-        $html .= $this->hpLoss > 0 ? "<p>You lost {$this->hpLoss} hit points</p>" . PHP_EOL : '';
+        $actionStatus = Yii::t('app/game', "the action {$status->getActionAdjective()}", $language ?? 'en');
+        $html = "<p>{$this->diceRoll}: {$actionStatus}</p>\n";
+
+        $lostHp = Yii::t('app/game', 'You lost {hpLoss} hit points', ['hpLoss' => $this->hpLoss], $language ?? 'en');
+        $html .= $this->hpLoss > 0 ? "<p>{$lostHp}</p>\n" : '';
 
         if (empty($this->outcomes)) {
-            $html .= "Something happened, that's for sure, but I don't really know what" . PHP_EOL;
+            $html .= Yii::t('app/game', 'Something happened but I don\'t know what', $language ?? 'en') . PHP_EOL;
         } else {
             $storyRoot = WebResourcesHelper::storyRootPath($this->storyId);
             foreach ($this->outcomes as $outcome) {
@@ -52,7 +55,6 @@ class ActionOutcomes extends Widget
                     'actionOutcome' => $actionOutcome,
                     'storyRoot' => $storyRoot,
                 ]);
-                // $canReplay = $canReplay || $outcome->can_replay;
             }
         }
         $html .= self::HR;
