@@ -31,20 +31,12 @@ final class MergeHelper
      */
     public static function merge(string $content, array $placeholderValueArray): string
     {
-        //echo "*** debug *** MergeHelper::merge - content='{$content}', placeholderValueArray=" . print_r($placeholderValueArray, true);
-        Yii::debug("*** debug *** MergeHelper::merge - content='{$content}', placeholderValueArray=" . print_r($placeholderValueArray, true));
         // Step 1: find every {placeholder} in the input content
         $matches = [];
         preg_match_all('/\{([a-zA-Z0-9_\-]+)\}/', $content, $matches);
 
         $placeholderTags = $matches[0]; // e.g. ['{playerName}', '{date}']
         $placeholderKeys = $matches[1]; // e.g. ['playerName', 'date']
-
-        Yii::debug("*** debug *** MergeHelper::merge - placeholderTags=");
-        Yii::debug($placeholderTags);
-        Yii::debug("*** debug *** MergeHelper::merge - placeholderKeys=");
-        Yii::debug($placeholderKeys);
-
         // Step 2: build a list of [search => replace] pairs
         $search = [];
         $replace = [];
@@ -53,10 +45,6 @@ final class MergeHelper
             $search[] = $placeholderTags[$searchString];
             $replace[] = self::getPlaceholderAllowedValue($placeholder, $placeholderValueArray);
         }
-        Yii::debug("*** debug *** MergeHelper::merge - search=");
-        Yii::debug($search);
-        Yii::debug("*** debug *** MergeHelper::merge - replace=");
-        Yii::debug($replace);
 
         // Step 3: replace them all in one pass
         return str_replace($search, $replace, $content);
