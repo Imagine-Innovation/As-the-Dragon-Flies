@@ -16,6 +16,7 @@ use common\widgets\MarkDown;
 /** @var int $missionId */
 /** @var int|null $nextMissionId */
 /** @var int|null $storyId */
+/** @var string $playerName */
 ?>
 <article class="text-decoration">
     <?= MarkDown::widget(['content' => $action->description]) ?>
@@ -30,6 +31,7 @@ ActionOutcomes::widget([
     'questProgressId' => $questProgressId,
     'nextMissionId' => $nextMissionId,
     'storyId' => $storyId,
+    'playerName' => $playerName,
 ]);
 ?>
 <?php
