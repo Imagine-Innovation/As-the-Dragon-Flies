@@ -276,7 +276,7 @@ class GameController extends Controller
      * @param Request $postRequest
      * @return array<string, mixed> An associative array that contains what should be displayed
      */
-    protected function getOutcomeArray(Request $postRequest): array
+    protected function getOutcomeLog(Request $postRequest): array
     {
         $param = [
             'quest_progress_id' => $postRequest->post('questProgressId'),
@@ -284,16 +284,18 @@ class GameController extends Controller
         ];
         $questAction = FindModelHelper::findQuestAction($param);
         $outcomeManager = new OutcomeManager(['questAction' => $questAction]);
-        $outcomeArray = $outcomeManager->evaluateActionOutcome();
+        $actionOutcome = $outcomeManager->evaluateActionOutcome();
+
+        $payload = $actionOutcome['payload'];
 
         // Update state flow
         $actionManager = new ActionManager(['questAction' => $questAction]);
-        $actionManager->endCurrentAction($outcomeArray['status'], $outcomeArray['canReplay']);
-        $actionManager->unlockNextActions($outcomeArray['status']);
+        $actionManager->endCurrentAction($payload['status'], $payload['canReplay']);
+        $actionManager->unlockNextActions($payload['status']);
 
-        $this->createEvent('game-action', $postRequest, $questAction->action->name, $outcomeArray);
+        $this->createEvent('game-action', $postRequest, $questAction->action->name, $payload);
 
-        return $outcomeArray;
+        return $actionOutcome['log'];
     }
 
     /**
@@ -309,9 +311,9 @@ class GameController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
-        $outcomeArray = $this->getOutcomeArray(Yii::$app->request);
+        $outcomeLog = $this->getOutcomeLog(Yii::$app->request);
 
-        $content = $this->renderPartial('ajax/outcomes', $outcomeArray);
+        $content = $this->renderPartial('ajax/outcomes', $outcomeLog);
         return ['error' => false, 'msg' => '', 'content' => $content];
     }
 
@@ -346,14 +348,11 @@ class GameController extends Controller
                 // One of the results of the previous action indicates
                 // that you should move on to another mission.
                 // This takes over the processing of the remaining actions.
-                Yii::debug("*** debug *** actionAjaxNextTurn - branching to moveToNextMission({$nextMissionId}) despite remaining actions");
                 return $questManager->moveToNextMission((int) $nextMissionId);
             }
-            Yii::debug("*** debug *** actionAjaxNextTurn - remaining actions exist, moving to nextPlayer()");
             return $questManager->nextPlayer();
         }
         // Move to the default mission
-        Yii::debug("*** debug *** actionAjaxNextTurn - no remaining actions, calling moveToNextMission(" . ($nextMissionId ?? 'null') . ")");
         return $questManager->moveToNextMission($nextMissionId);
     }
 

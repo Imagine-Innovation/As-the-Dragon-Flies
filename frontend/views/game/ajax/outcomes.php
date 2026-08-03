@@ -1,43 +1,54 @@
 <?php
 
-use frontend\widgets\ActionOutcomes;
+use common\helpers\WebResourcesHelper;
 use common\widgets\Button;
 use common\widgets\MarkDown;
 
 /** @var yii\web\View $this */
-/** @var common\models\Action $action */
-/** @var common\components\AppStatus $status */
-/** @var common\models\Outcome[] $outcomes */
+/** @var string $chapterName */
+/** @var string $missionName */
+/** @var string $actionName */
+/** @var string $actionDescription */
+/** @var string $actionStatus */
 /** @var string $diceRoll */
-/** @var int $hpLoss */
+/** @var string $hpLoss */
+/** @var string $outcomeList */
 /** @var bool $isFree */
-/** @var bool $canReplay */
 /** @var int $questProgressId */
-/** @var int $missionId */
 /** @var int|null $nextMissionId */
 /** @var int|null $storyId */
-/** @var string $playerName */
-?>
-<article class="text-decoration">
-    <?= MarkDown::widget(['content' => $action->description]) ?>
-</article>
-<?=
-ActionOutcomes::widget([
-    'outcomes' => $outcomes,
-    'diceRoll' => $diceRoll,
-    'status' => $status,
-    'hpLoss' => $hpLoss,
-    'isFree' => $isFree,
-    'questProgressId' => $questProgressId,
-    'nextMissionId' => $nextMissionId,
-    'storyId' => $storyId,
-    'playerName' => $playerName,
-]);
-?>
-<?php
 $stayInCurrentMission = ($nextMissionId === null || $nextMissionId === 0);
 $isFreeAndNoTransition = $isFree && $stayInCurrentMission;
+$storyRoot = WebResourcesHelper::storyRootPath($storyId);
 ?>
+<article class="text-decoration">
+    <?= MarkDown::widget(['content' => $actionDescription]) ?>
+
+    <p><?= $diceRoll ?>. <?= $hpLoss ?></p>
+
+    <?php foreach ($outcomeList as $outcome): ?>
+        <hr class="border border-warning border-1 opacity-50 w-50"><hr>
+        <div class="text-decoration">
+            <?php if ($outcome['image']): ?>
+                <div class="clearfix">
+                    <img class="col-md-6 float-md-end mb-3 ms-md-3" src="<?= $storyRoot ?>/img/<?= $outcome['image'] ?>" alt="<?= $outcome['name'] ?>" style="max-width: 150px;">
+                    <h4><?= MarkDown::widget(['content' => $outcome['name']]) ?></h4>
+                    <p class="text-muted"><?= MarkDown::widget(['content' => $outcome['description']]) ?></p>
+                    <?php foreach ($outcome['actionOutcome'] as $actionOutcome): ?>
+                        <p><?= $actionOutcome ?></p>
+                    <?php endforeach; ?>
+                </div>
+            <?php else: ?>
+                <h4><?= $outcome['name'] ?></h4>
+                <p class="text-muted"><?= MarkDown::widget(['content' => $outcome['description']]) ?></p>
+                <?php foreach ($outcome['actionOutcome'] as $actionOutcome): ?>
+                    <p><?= $actionOutcome ?></p>
+                <?php endforeach; ?>
+            <?php endif; ?>
+
+        </div>
+    <?php endforeach; ?>
+</article>
 <?=
 Button::widget([
     'icon' => $isFreeAndNoTransition ? 'bi-arrow-repeat' : 'bi-escape',
@@ -47,8 +58,3 @@ Button::widget([
     'ariaParams' => ['data-bs-dismiss' => 'modal'],
 ])
 ?>
-<p>
-    isFree=<?= $isFree ? 'true' : 'false' ?>,
-    questProgressId=<?= $questProgressId ?>,
-    nextMissionId=<?= $nextMissionId ?? 'null' ?>
-</p>

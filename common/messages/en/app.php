@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 return [
     'Messages' => 'Messages',
     'View all messages' => 'View all messages',
@@ -23,7 +22,8 @@ return [
     '{age}-year-old' => '{age}-year-old',
     'male' => 'male',
     'female' => 'female',
-    // AppStatus
+    //
+    //  AppStatus
     'Deleted' => 'Deleted',
     'Inactive' => 'Inactive',
     'Active' => 'Active',
@@ -61,9 +61,17 @@ return [
     'The adventure is aborted' => 'The adventure is aborted',
     'Waiting to start' => 'Waiting to start',
     'You\'re missing an item' => 'You\'re missing an item',
-    // Default value when empty or null string
+    //
+    //  Default value when empty or null string
     'Player' => 'The player',
     'Action' => 'The action',
     'Quest' => 'The quest',
     'Story' => 'The story',
+    'Item' => 'An item',
+    //
+    //  List separator keep space char as is
+    'and' => '{n, plural,
+        =2 { and }
+        other {, and }
+    }',
 ];

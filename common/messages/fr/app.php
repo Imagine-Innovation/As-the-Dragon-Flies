@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 return [
     'Messages' => 'Messages',
     'View all messages' => 'Voir tous les messages',
@@ -23,7 +22,8 @@ return [
     '{age}-year-old' => '{age} ans',
     'male' => 'homme',
     'female' => 'femme',
-    // AppStatus
+    //
+    //  AppStatus
     'Deleted' => 'Supprimé',
     'Inactive' => 'Inactif',
     'Active' => 'Actif',
@@ -61,9 +61,14 @@ return [
     'The adventure is aborted' => 'L\'aventure est abandonnée',
     'Waiting to start' => 'En attente de démarrage',
     'You\'re missing an item' => 'Il vous manque un objet',
-    // Default value when empty or null string
+    //
+    //  Default value when empty or null string
     'Player' => 'Le joueur',
     'Action' => 'L’action',
     'Quest' => 'La quête',
     'Story' => 'L’histoire',
+    'Item' => 'Un objet',
+    //
+    //  List separator keep space char as is
+    'and' => ' et ',
 ];

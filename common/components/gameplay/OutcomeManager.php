@@ -5,6 +5,8 @@ namespace common\components\gameplay;
 use common\components\AppStatus;
 use common\components\gameplay\BaseManager;
 use common\helpers\DiceRoller;
+use common\helpers\LanguageHelper;
+use common\helpers\MergeHelper;
 use common\models\Action;
 use common\models\ActionTypeSkill;
 use common\models\Outcome;
@@ -26,6 +28,7 @@ final class OutcomeManager extends BaseManager
     public ?Quest $quest = null;
     private ?int $nextMissionId = null;
     private int $hpLoss = 0;
+    private string $language = 'en';
 
     /**
      * @param array<string, mixed> $config
@@ -46,6 +49,8 @@ final class OutcomeManager extends BaseManager
         $this->action ??= $this->questAction?->action;
         $this->player ??= $this->questProgress->currentPlayer;
         $this->quest ??= $this->questProgress->quest;
+
+        $this->language = $this->quest->story->language ?? 'en';
     }
 
     /**
@@ -121,37 +126,30 @@ final class OutcomeManager extends BaseManager
     /**
      * Builds and structures the final evaluation outcome payload.
      *
-     * @param Action $action
-     * @param Quest|null $quest
      * @param AppStatus $status
      * @param Outcome[] $outcomes
-     * @param string $diceToRoll
      * @param int $diceRoll
      * @param bool $canReplay
      * @return array<string, mixed>
      */
-    private function buildEvaluationSummary(Action $action, ?Quest $quest, AppStatus $status, array $outcomes, string $diceToRoll, int $diceRoll, bool $canReplay): array
+    private function makePayload(AppStatus $status, array $outcomes, int $diceRoll, bool $canReplay): array
     {
         $missionId = $this->questProgress?->mission_id;
 
-        $diceRollLabel = Yii::t('app/game', 'rolling dice result', [
-            'diceToRoll' => $diceToRoll,
-            'diceRoll' => $diceRoll,
-                ], $quest->story->language ?? 'en');
-
         return [
-            'action' => $action,
+            'action' => $this->action,
             'status' => $status,
             'outcomes' => $outcomes,
             'diceRoll' => $diceRoll,
-            'diceRollLabel' => $diceRollLabel,
             'hpLoss' => $this->hpLoss,
-            'isFree' => $action->is_free,
+            'isFree' => $this->action->is_free,
             'canReplay' => $canReplay,
             'questProgressId' => $this->questProgress?->id,
             'missionId' => $missionId,
             'nextMissionId' => $this->nextMissionId,
-            'storyId' => $quest?->story_id,
+            'storyId' => $this->quest?->story_id,
+            'playerName' => $this->player->name,
+            'language' => $this->language,
         ];
     }
 
@@ -243,6 +241,131 @@ final class OutcomeManager extends BaseManager
 
         $this->applyPlayerGainsAndLosses($outcomes);
 
-        return $this->buildEvaluationSummary($this->action, $this->quest, $status, $outcomes, $diceToRoll, $diceRoll, $canReplay);
+        $payload = $this->makePayload($status, $outcomes, $diceRoll, $canReplay);
+        $log = $this->makeQuestLog($status, $outcomes, $diceToRoll, $diceRoll);
+
+        return ['payload' => $payload, 'log' => $log];
+    }
+
+    /**
+     *
+     * @param string $diceToRoll
+     * @param int $diceRoll
+     * @return string
+     */
+    private function getDiceRoll(string $diceToRoll, int $diceRoll): string
+    {
+        return Yii::t('app/game', 'rolling dice result',
+                        [
+                            'diceToRoll' => $diceToRoll,
+                            'diceRoll' => $diceRoll,
+                        ],
+                        $this->language
+                );
+    }
+
+    /**
+     *
+     * @param string $playerName
+     * @param AppStatus $status
+     * @return string
+     */
+    private function getActionResult(string $playerName, AppStatus $status): string
+    {
+        return Yii::t('app/game', 'action_status',
+                        [
+                            'playerName' => $playerName,
+                            'actionName' => $this->action->name,
+                            'status' => $status->value,
+                        ],
+                        $this->language
+                );
+    }
+
+    /**
+     *
+     * @param AppStatus $status
+     * @param Outcome[] $outcomes
+     * @param string $diceToRoll
+     * @param int $diceRoll
+     * @return array<string, mixed>
+     */
+    private function makeQuestLog(AppStatus $status, array $outcomes, string $diceToRoll, int $diceRoll): array
+    {
+        $playerName = LanguageHelper::defaultName('Player', $this->player?->name, $this->language);
+
+        $outcomeList = $this->makeOutcomes($outcomes, $playerName);
+
+        $log = [
+            'playerName' => $playerName,
+            'chapterName' => LanguageHelper::defaultName('Chapter', $this->quest?->currentChapter->name, $this->language),
+            'missionName' => $this->questProgress->mission->name,
+            'actionName' => MergeHelper::merge($this->action->name, ['playerName' => $playerName]),
+            'actionDescription' => MergeHelper::merge($this->action->description, ['playerName' => $playerName]),
+            'actionStatus' => $this->getActionResult($playerName, $status),
+            'diceRoll' => $this->getDiceRoll($diceToRoll, $diceRoll),
+            'hpLoss' => Yii::t('app/game', 'loosing hp', ['hpLoss' => $this->hpLoss], $this->language),
+            'outcomeList' => $outcomeList,
+            'isFree' => $this->action->is_free,
+            'questProgressId' => $this->questProgress?->id,
+            'nextMissionId' => $this->nextMissionId,
+            'storyId' => $this->quest?->story_id,
+        ];
+
+        return $log;
+    }
+
+    /**
+     *
+     * @param Outcome[] $outcomes
+     * @param string $playerName
+     * @return array<string, mixed>
+     */
+    private function makeOutcomes(array $outcomes, string $playerName): array
+    {
+        if (empty($outcomes)) {
+            return [
+                'name' => '',
+                'image' => null,
+                'description' => Yii::t('app/game', 'Something happened', $this->language),
+                'actionOutcome' => [],
+            ];
+        }
+
+        $outcomeLog = [];
+        foreach ($outcomes as $outcome) {
+            $actionOutcome = $this->getActionOutcome($outcome);
+            $outcomeLog[] = [
+                'name' => MergeHelper::merge($outcome->name, ['playerName' => $playerName]),
+                'image' => $outcome->image,
+                'description' => MergeHelper::merge($outcome->description, ['playerName' => $playerName]),
+                'actionOutcome' => $actionOutcome,
+            ];
+        }
+
+        return $outcomeLog;
+    }
+
+    /**
+     *
+     * @param Outcome $outcome
+     * @return array<string>
+     */
+    private function getActionOutcome(Outcome $outcome): array
+    {
+        $actionOutcome = [];
+        if ($outcome->gained_gp > 0) {
+            $actionOutcome[] = Yii::t('app/game', 'gained gp', ['gp' => $outcome->gained_gp], $this->language);
+        }
+
+        if ($outcome->gained_xp > 0) {
+            $actionOutcome[] = Yii::t('app/game', 'gained xp', ['xp' => $outcome->gained_xp], $this->language);
+        }
+
+        if ($outcome->item_id) {
+            $itemName = LanguageHelper::defaultName('Item', $outcome->item?->name, $this->language);
+            $actionOutcome[] = Yii::t('app/game', 'gained item', ['itemName' => strtolower($itemName)], $this->language);
+        }
+        return $actionOutcome;
     }
 }
