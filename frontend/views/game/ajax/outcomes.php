@@ -12,11 +12,11 @@ use common\widgets\MarkDown;
 /** @var string $actionStatus */
 /** @var string $diceRoll */
 /** @var string $hpLoss */
-/** @var string $outcomeList */
+/** @var list<array{name: string|null, image: string|null, description: string|null, actionOutcome: array<string>}> $outcomeList */
 /** @var bool $isFree */
 /** @var int $questProgressId */
 /** @var int|null $nextMissionId */
-/** @var int|null $storyId */
+/** @var int $storyId */
 $stayInCurrentMission = ($nextMissionId === null || $nextMissionId === 0);
 $isFreeAndNoTransition = $isFree && $stayInCurrentMission;
 $storyRoot = WebResourcesHelper::storyRootPath($storyId);
@@ -24,29 +24,26 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
 <article class="text-decoration">
     <?= MarkDown::widget(['content' => $actionDescription]) ?>
 
-    <p><?= $diceRoll ?>. <?= $hpLoss ?></p>
+    <p><?= MarkDown::widget(['content' => "{$diceRoll}. {$actionStatus}. {$hpLoss}"]) ?></p>
 
     <?php foreach ($outcomeList as $outcome): ?>
         <hr class="border border-warning border-1 opacity-50 w-50"><hr>
-        <div class="text-decoration">
-            <?php if ($outcome['image']): ?>
-                <div class="clearfix">
-                    <img class="col-md-6 float-md-end mb-3 ms-md-3" src="<?= $storyRoot ?>/img/<?= $outcome['image'] ?>" alt="<?= $outcome['name'] ?>" style="max-width: 150px;">
-                    <h4><?= MarkDown::widget(['content' => $outcome['name']]) ?></h4>
-                    <p class="text-muted"><?= MarkDown::widget(['content' => $outcome['description']]) ?></p>
-                    <?php foreach ($outcome['actionOutcome'] as $actionOutcome): ?>
-                        <p><?= $actionOutcome ?></p>
-                    <?php endforeach; ?>
-                </div>
-            <?php else: ?>
-                <h4><?= $outcome['name'] ?></h4>
+        <?php if ($outcome['image'] !== null): ?>
+            <div class="clearfix">
+                <img class="col-md-6 float-md-end mb-3 ms-md-3" src="<?= $storyRoot ?>/img/<?= $outcome['image'] ?>" alt="<?= $outcome['name'] ?>" style="max-width: 150px;">
+                <h4><?= MarkDown::widget(['content' => $outcome['name']]) ?></h4>
                 <p class="text-muted"><?= MarkDown::widget(['content' => $outcome['description']]) ?></p>
                 <?php foreach ($outcome['actionOutcome'] as $actionOutcome): ?>
                     <p><?= $actionOutcome ?></p>
                 <?php endforeach; ?>
-            <?php endif; ?>
-
-        </div>
+            </div>
+        <?php else: ?>
+            <h4><?= MarkDown::widget(['content' => $outcome['name']]) ?></h4>
+            <p class="text-muted"><?= MarkDown::widget(['content' => $outcome['description']]) ?></p>
+            <?php foreach ($outcome['actionOutcome'] as $actionOutcome): ?>
+                <p><?= $actionOutcome ?></p>
+            <?php endforeach; ?>
+        <?php endif; ?>
     <?php endforeach; ?>
 </article>
 <?=
