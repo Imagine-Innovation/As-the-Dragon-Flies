@@ -1,6 +1,6 @@
 <?php
 /** @var yii\web\View $this */
-/** @var common\models\Alignement $model */
+/** @var common\models\Alignment $model */
 ?>
 <div class="card">
     <div class="card-body">

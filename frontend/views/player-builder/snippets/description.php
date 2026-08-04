@@ -64,9 +64,8 @@ foreach ($alignments as $alignment) {
             <div class="card">
                 <div class="card-body" id="ajaxLanguageSelection">
                     <h4 class="card-title text-decoration">Languages</h4>
-                    <h6 class="card-subtitle">Choose the languages that your race (<?= $model->race->name ?>) and background (<?=
-    $model->background->name
-?>) allow you to speak.</h6>
+                    <h6 class="card-subtitle">Choose the languages that your race (<?= $model->race->name ?? 'unknown race' ?>)
+                        and background (<?= $model->background->name ?? 'unknown background' ?>) allow you to speak.</h6>
                 </div>
             </div>
         </div>
@@ -76,13 +75,13 @@ foreach ($alignments as $alignment) {
             <div class="card">
                 <div class="actions">
                     <?=
-    Button::widget([
-        'mode' => 'icon',
-        'id' => 'generateNewNamesButton',
-        'icon' => 'bi-arrow-repeat',
-        'tooltip' => 'New random names',
-    ])
-?>
+                    Button::widget([
+                        'mode' => 'icon',
+                        'id' => 'generateNewNamesButton',
+                        'icon' => 'bi-arrow-repeat',
+                        'tooltip' => 'New random names',
+                    ])
+                    ?>
                 </div>
                 <div class="card-body" id="ajaxNameSelection">
                     <h4 class="card-title text-decoration">Name</h4>
@@ -100,13 +99,13 @@ foreach ($alignments as $alignment) {
             <div class="card">
                 <div class="actions">
                     <?=
-    Button::widget([
-        'mode' => 'icon',
-        'icon' => 'bi-magic',
-        'tooltip' => 'Alignment wizard',
-        'modal' => 'builderWizardModal',
-    ])
-?>
+                    Button::widget([
+                        'mode' => 'icon',
+                        'icon' => 'bi-magic',
+                        'tooltip' => 'Alignment wizard',
+                        'modal' => 'builderWizardModal',
+                    ])
+                    ?>
                 </div>
                 <div class="card-body">
                     <h4 class="card-title text-decoration">Alignment</h4>
@@ -129,11 +128,11 @@ foreach ($alignments as $alignment) {
                                                 <div class="custom-control custom-radio mb-2">
                                                     <input type="radio" id="alignment<?= $alignmentIds[$col][$row] ?>" name="alignment" class="custom-control-input"
                                                            onchange='PlayerBuilder.setProperty("alignment_id", <?=
-                                            $alignmentIds[$col][$row]
-                                        ?>);'>
+                                                           $alignmentIds[$col][$row]
+                                                           ?>);'>
                                                     <label class="custom-control-label" for="alignment<?=
-                                            $alignmentIds[$col][$row]
-                                        ?>"> </label>
+                                                    $alignmentIds[$col][$row]
+                                                    ?>"> </label>
                                                 </div>
                                             </td>
                                         <?php endforeach; ?>

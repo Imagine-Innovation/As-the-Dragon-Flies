@@ -284,8 +284,24 @@ class GameController extends Controller
         ];
         $questAction = FindModelHelper::findQuestAction($param);
         $outcomeManager = new OutcomeManager(['questAction' => $questAction]);
+        /** @var array{payload: array<string, mixed>, log: array<string, mixed>} $actionOutcome */
         $actionOutcome = $outcomeManager->evaluateActionOutcome();
         $outcomeManager->addQuestLog($actionOutcome['log']);
+        /** @var array{
+         *   action: \common\models\Action,
+         *   status: AppStatus,
+         *   outcomes: array<\common\models\Outcome>,
+         *   diceRoll: string,
+         *   hpLoss: string,
+         *   isFree: bool,
+         *   canReplay: bool,
+         *   questProgressId: int,
+         *   missionId: int,
+         *   nextMissionId: int|null,
+         *   storyId: int,
+         *   playerName: string,
+         *   language: string
+         * } $payload */
         $payload = $actionOutcome['payload'];
 
         // Update state flow

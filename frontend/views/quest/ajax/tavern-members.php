@@ -19,11 +19,9 @@ $playerId = Yii::$app->session->get('playerId');
                         <p class="small mb-1">
                             <?= $player->age ?>-year-old
                             <?= $player->gender === 'M' ? 'male' : 'female' ?>
-                            <?= $player->race->name ?>
+                            <?= $player->race?->name ?>
                         </p>
-                        <p class="small mb-0"><?= $player->level->name ?> <?= $player->alignment?->name ?> <?=
-                            $player->class->name
-                            ?></p>
+                        <p class="small mb-0"><?= $player->level?->name ?> <?= $player->alignment?->name ?> <?= $player->class?->name ?></p>
                         <?php
                         // Buttons are displayed only for the current player
                         if ($player->id === $playerId) {

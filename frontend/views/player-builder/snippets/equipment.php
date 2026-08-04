@@ -11,7 +11,7 @@ $choices = max(array_keys($endowmentTable));
 $backgroundItems = $model->background->backgroundItems;
 
 $backgroundName = $model->background->name;
-$className = $model->class->name;
+$className = $model->class->name ?? 'unknown class';
 
 $paragraphs = [
     "Your class '{$className}' and your background '{$backgroundName}' offers you the following options for building your starting equipment",

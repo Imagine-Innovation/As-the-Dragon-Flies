@@ -23,10 +23,10 @@ $route = $current ? 'player/update' : 'player/set-current';
                     <p class="small mb-1">
                         <?= Yii::t('app', '{age}-year-old', ['age' => $player->age]) ?>
                         <?= Yii::t('app', $player->gender === 'M' ? 'male' : 'female') ?>
-                        <?= $player->race->name ?>
+                        <?= $player->race?->name ?>
                     </p>
                     <p class="small mb-0">
-                        <?= $player->level->name ?> <?= $player->alignment?->name ?> <?= $player->class->name ?>
+                        <?= $player->level?->name ?> <?= $player->alignment?->name ?> <?= $player->class?->name ?>
                     </p>
                     <p></p>
                     <?=

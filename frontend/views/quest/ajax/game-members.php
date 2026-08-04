@@ -1,6 +1,7 @@
 <?php
 
 use common\components\AppStatus;
+use common\helpers\FindModelHelper;
 use common\models\QuestPlayer;
 
 /** @var yii\web\View $this */
@@ -22,7 +23,7 @@ $textColor = [
             if ($player->id !== $playerId):
                 // only the other players
                 $partner = $player;
-                $questPlayer = QuestPlayer::findOne(['player_id' => $player->id, 'quest_id' => $questId]);
+                $questPlayer = FindModelHelper::findQuestPlayer(['player_id' => $player->id, 'quest_id' => $questId]);
                 $status = $questPlayer->status;
                 $statusEnum = AppStatus::from($status);
                 $iconInfo = $statusEnum->getIcon();
@@ -31,7 +32,7 @@ $textColor = [
                     <p class="text-<?= $textColor[$status] ?? '' ?>">
                         <span data-bs-toggle="tooltip" title="<?= $iconInfo['tooltip'] ?>" data-placement="bottom">
                             <i class="bi <?= $iconInfo['icon'] ?>"></i>
-                            <?= $partner->name ?> (<?= $partner->race->name ?> <?= $partner->class->name ?>)
+                            <?= $partner->name ?> (<?= $partner->race?->name ?> <?= $partner->class?->name ?>)
                         </span>
                     </p>
                     <div class="progress" role="progressbar" aria-label="Hit points"

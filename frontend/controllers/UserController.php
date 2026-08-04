@@ -20,7 +20,6 @@ class UserController extends Controller
      */
     public function behaviors()
     {
-        /** @phpstan-ignore-next-line */
         return array_merge(parent::behaviors(), [
             'access' => [
                 'class' => AccessControl::class,
@@ -72,7 +71,11 @@ class UserController extends Controller
         return ['error' => true, 'msg' => 'Invalid language code'];
     }
 
-    public function actionProfile()
+    /**
+     *
+     * @return string|Response
+     */
+    public function actionProfile(): string|Response
     {
         /** @var User $user */
         $user = Yii::$app->user->identity;

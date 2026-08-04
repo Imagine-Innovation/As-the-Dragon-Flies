@@ -1,5 +1,4 @@
 <?php
-
 /** @var yii\web\View $this */
 /** @var common\models\Player|null $player */
 /** @var array $raceLanguages */
@@ -15,14 +14,14 @@ foreach ($raceLanguages as $raceLanguage) {
 <h4 class="card-title text-decoration">Languages</h4>
 <?php if ($player): ?>
     <?php if ($raceLanguages): ?>
-        <p class="text-muted">As a <?= $player->race->name ?>, you speak the following languages</p>
+        <p class="text-muted">As a <?= $player->race->name ?? 'unknown race' ?>, you speak the following languages</p>
         <br>
         <?php foreach ($raceLanguages as $raceLanguage): ?>
             <div class="custom-control custom-checkbox mb-2">
                 <input type="checkbox" id="languageCheckbox-<?= $raceLanguage['language_id'] ?>" name="playerLanguages" class="custom-control-input" checked disabled>
                 <label class="custom-control-label" for="languageCheckbox-<?= $raceLanguage['language_id'] ?>"><?=
-            $raceLanguage['name']
-        ?></label>
+                    $raceLanguage['name']
+                    ?></label>
             </div>
         <?php endforeach; ?>
         <br>
@@ -40,8 +39,8 @@ foreach ($raceLanguages as $raceLanguage) {
                     <input type="checkbox" id="languageCheckbox-<?= $otherLanguage['language_id'] ?>" name="playerLanguages" class="custom-control-input"
                            onclick='PlayerBuilder.validateLanguages(<?= $otherLanguage['language_id'] ?>, <?= $max ?>);'>
                     <label class="custom-control-label" for="languageCheckbox-<?= $otherLanguage['language_id'] ?>"><?=
-                $otherLanguage['name']
-            ?></label>
+                        $otherLanguage['name']
+                        ?></label>
                 </div>
             <?php endif; ?>
         <?php endforeach; ?>

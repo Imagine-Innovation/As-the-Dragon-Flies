@@ -12,6 +12,7 @@ use common\models\PlayerBody;
 use common\models\PlayerItem;
 use common\models\Quest;
 use common\models\QuestAction;
+use common\models\QuestPlayer;
 use common\models\QuestProgress;
 use common\models\Race;
 use common\models\Reply;
@@ -227,6 +228,16 @@ final class FindModelHelper
     public static function findQuestAction(int|array $param): QuestAction
     {
         return self::findModel(QuestAction::class, $param);
+    }
+
+    /**
+     *
+     * @param int|array<string, mixed> $param
+     * @return QuestPlayer
+     */
+    public static function findQuestPlayer(int|array $param): QuestPlayer
+    {
+        return self::findModel(QuestPlayer::class, $param);
     }
 
     /**

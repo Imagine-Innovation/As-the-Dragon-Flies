@@ -253,7 +253,7 @@ class PlayerCartController extends Controller
         // Construct a message indicating the player's name and his purse status based on the purse string
         $shopping = new Shopping();
         $str = $shopping->getPurseValueString($player->playerCoins);
-        $playerDesc = "{$player->name} is a {$player->alignment?->name} {$player->race->name} {$player->class->name}";
+        $playerDesc = "{$player->name} is a {$player->alignment?->name} {$player->race?->name} {$player->class?->name}";
         $purseMsg = $str !== '' ? "{$playerDesc} that currently has {$str}" : "{$player->name}'s purse is empty";
 
         return [

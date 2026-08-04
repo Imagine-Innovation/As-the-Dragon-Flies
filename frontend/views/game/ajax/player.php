@@ -7,7 +7,7 @@ use frontend\components\PlayerComponent;
 /** @var common\models\Player $player */
 $imgPath = WebResourcesHelper::imagePath();
 $avatar = Yii::$app->session->get('avatar');
-$proficiencyBonus = $player->level->proficiency_bonus;
+$proficiencyBonus = $player->level->proficiency_bonus ?? 0;
 
 /** @var non-empty-array<string, array{code: string, name: string, score: int, modifier: int, savingThrow: int}> */
 $playerAbilities = PlayerComponent::getAbilitiesAndSavingThrow($player->playerAbilities, $proficiencyBonus);
@@ -17,7 +17,7 @@ $playerAbilities = PlayerComponent::getAbilitiesAndSavingThrow($player->playerAb
     <header class="text-center">
         <img src="<?= $imgPath ?>/character/<?= $avatar ?>" alt="Avatar" class="avatar my-2">
         <h6 class="text-warning text-decoration"><?= $player->name ?></h6>
-        <p class="text-muted small"><?= $player->level->name ?> <?= $player->class->name ?> <?= $player->race->name ?></p>
+        <p class="text-muted small"><?= $player->level->name ?? '' ?> <?= $player->class->name ?? 'unknown class' ?> <?= $player->race->name ?? 'unknown race' ?></p>
     </header>
 
     <!-- Health -->
@@ -41,12 +41,11 @@ $playerAbilities = PlayerComponent::getAbilitiesAndSavingThrow($player->playerAb
                     <?= $playerAbility['code'] ?> <?= $playerAbility['score'] ?>
                     <?=
                     $playerAbility['modifier'] ? (
-                            $playerAbility['modifier'] > 0 ? "(+{$playerAbility['modifier']})"
-                                        : "({$playerAbility['modifier']})"
+                            $playerAbility['modifier'] > 0 ? "(+{$playerAbility['modifier']})" : "({$playerAbility['modifier']})"
                             ) : ''
                     ?>
                 </div>
-                <?php endforeach; ?>
+            <?php endforeach; ?>
             <div class="col-12 g-2 mb-2">Armor Class <?= $player->armor_class ?></div>
         </div>
     </div>

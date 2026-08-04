@@ -13,7 +13,7 @@ $currentUser = Yii::$app->user->identity;
 AppAsset::register($this);
 
 $languages = \common\components\LanguageSelector::SUPPORTED_LANGUAGES;
-$currentLanguageLabel = $languages[Yii::$app->language] ?? ($languages[\common\components\LanguageSelector::DEFAULT_LANGUAGE] ?? 'English');
+$currentLanguageLabel = $languages[Yii::$app->language] ?? ($languages[\common\components\LanguageSelector::DEFAULT_LANGUAGE]);
 ?>
 <header class="header">
 

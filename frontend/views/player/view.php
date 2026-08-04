@@ -10,7 +10,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Players', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
 $cards = ['abilities', 'skills', 'combat-stats', 'attacks'];
-$proficiencyBonus = $model->level->proficiency_bonus;
+$proficiencyBonus = $model->level->proficiency_bonus ?? 0;
 ?>
 <div class="container">
     <!-- Character Header -->

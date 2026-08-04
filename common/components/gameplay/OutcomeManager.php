@@ -212,7 +212,7 @@ final class OutcomeManager extends BaseManager
     /**
      * Evaluates action, triggers outcome processing, and updates state flow.
      *
-     * @return array<string, mixed>
+     * @return array{payload: array<string, mixed>, log: array<string, mixed>}
      * @throws \Exception
      */
     public function evaluateActionOutcome(): array

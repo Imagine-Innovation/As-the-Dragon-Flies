@@ -8,7 +8,7 @@ use yii\helpers\Url;
 $imgPath = WebResourcesHelper::imagePath();
 
 $languages = \common\components\LanguageSelector::SUPPORTED_LANGUAGES;
-$currentLanguageLabel = $languages[Yii::$app->language] ?? ($languages[\common\components\LanguageSelector::DEFAULT_LANGUAGE] ?? 'English');
+$currentLanguageLabel = $languages[Yii::$app->language] ?? ($languages[\common\components\LanguageSelector::DEFAULT_LANGUAGE]);
 ?>
 <header class="header">
 

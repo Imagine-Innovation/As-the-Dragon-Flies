@@ -31,9 +31,8 @@ $firstTab = array_key_first($tabs);
             ?>
         </div>
         <h6 class="card-subtitle">
-            You've chosen to be a <?= $model->race->name ?> <?= $model->class->name ?> with a <?=
-            $model->background->name
-            ?> background, now you just need to fine-tune your characteristics before embarking on new adventures.
+            You've chosen to be a <?= $model->race->name ?? 'something' ?> <?= $model->class->name ?? 'of something' ?>
+            with a <?= $model->background->name ?? '' ?> background, now you just need to fine-tune your characteristics before embarking on new adventures.
         </h6>
         <div class="d-none">
             Hidden div to embeb utility tags for PHP/JS communication

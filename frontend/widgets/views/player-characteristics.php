@@ -1,5 +1,4 @@
 <?php
-
 /** @var yii\web\View $this */
 /** @var frontend\models\PlayerBuilder $model */
 /** @var string $embedded */
@@ -13,9 +12,11 @@ $colSplit = $embedded ? 'col-4' : 'col-4 col-md-2 col-lg-1';
                     <p><?= $playerAbility->ability->code ?></p>
                     <p>
                         <span class="badge badge-danger">
-                            <?= $playerAbility->score ?><?= $playerAbility->bonus >= 0 ? '+' : '-' ?><?=
-                $playerAbility->bonus
-            ?>
+                            <?= $playerAbility->score ?><?=
+                            $playerAbility->bonus >= 0 ? '+' : '-'
+                            ?><?=
+                            $playerAbility->bonus
+                            ?>
                         </span>
                     </p>
                 </div>
@@ -25,7 +26,7 @@ $colSplit = $embedded ? 'col-4' : 'col-4 col-md-2 col-lg-1';
             <div class="<?= $colSplit ?>">
                 <p>Speed</p>
                 <p>
-                    <span class="badge badge-danger"><?= $model->race->speed ?></span>
+                    <span class="badge badge-danger"><?= $model->race->speed ?? 0 ?></span>
                 </p>
             </div>
 
@@ -39,7 +40,7 @@ $colSplit = $embedded ? 'col-4' : 'col-4 col-md-2 col-lg-1';
             <div class="<?= $colSplit ?>">
                 <p>HD</p>
                 <p>
-                    <span class="badge badge-danger"><?= $model->class->hit_die ?></span>
+                    <span class="badge badge-danger"><?= $model->class->hit_die ?? '0' ?></span>
                 </p>
             </div>
 
