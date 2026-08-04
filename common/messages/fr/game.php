@@ -22,19 +22,19 @@ return [
         other {Tu as gagné # points d’expérience}
     } !',
     'Something happened' => 'Il s’est passé quelque chose, ça c’est certain, mais je ne sais pas vraiment quoi',
-    'action status' => '{status, select,
+    'action result' => '{status, select,
         SUCCESS {{playerName} a réussi l’action « {actionName} »}
         PARTIAL {{playerName} a partiellement réussi l’action « {actionName} »}
         FAILURE {{playerName} a échoué dans l’action « {actionName} »}
         ITEM_MISSING {Il manque un objet à {playerName} pour réaliser l’action « {actionName} »}
         other {Je ne sais pas si {playerName} a réussi l’action « {actionName} »}
     }',
-    'simple action status' => '{status, select,
+    'simple action result' => '{status, select,
         SUCCESS {L’action a réussi}
         PARTIAL {L’action a partiellement réussi}
         FAILURE {L’action a échoué}
-        ITEM_MISSING {Il manque un objet pour réaliser l’action}
-        other {Je ne sais pas si l’action a réussi ou non}}
+        ITEM_MISSING {Il te manque un objet pour réaliser l’action}
+        other {Je ne sais pas si l’action a réussi ou non}
     }',
     'gained item' => 'Tu as maintenant un(e) {itemName} dans ton sac à dos',
 ];

@@ -267,10 +267,27 @@ final class OutcomeManager extends BaseManager
     private function getActionResult(string $playerName, AppStatus $status): string
     {
         Yii::debug("*** debug *** getActionResult(playerName={$playerName}, status={$status->name})");
-        return Yii::t('app/game', 'action status',
+        return Yii::t('app/game', 'action result',
                         [
                             'playerName' => $playerName,
                             'actionName' => $this->action->name,
+                            'status' => $status->name,
+                        ],
+                        $this->language
+                );
+    }
+
+    /**
+     *
+     * @param string $playerName
+     * @param AppStatus $status
+     * @return string
+     */
+    private function getSimpleActionResult(AppStatus $status): string
+    {
+        Yii::debug("*** debug *** getSimpleActionResult(status={$status->name})");
+        return Yii::t('app/game', 'simple action result',
+                        [
                             'status' => $status->name,
                         ],
                         $this->language
@@ -303,7 +320,8 @@ final class OutcomeManager extends BaseManager
         $description = '';
         /** @var array{name: string|null, image: string|null, description: string|null, actionOutcome: array<string>} $outcome */
         foreach ($outcomeList as $outcome) {
-            $description .= "{$outcome['name']}\n{$outcome['description']}\n";
+            // # signs are on purpose for markdown layout when rendering the quest history
+            $description .= "#####{$outcome['name']}\n{$outcome['description']}\n";
         }
         return $description;
     }
@@ -328,7 +346,7 @@ final class OutcomeManager extends BaseManager
             'mission_name' => $log['missionName'],
             'action_name' => $log['actionName'],
             'dice_roll' => $log['diceRoll'],
-            'action_success' => $log['actionStatus'],
+            'result' => $log['result'],
             'description' => $description,
         ]);
 
@@ -357,7 +375,8 @@ final class OutcomeManager extends BaseManager
             'missionName' => $this->questProgress->mission->name,
             'actionName' => MergeHelper::merge($this->action->name, ['playerName' => $playerName]),
             'actionDescription' => MergeHelper::merge($this->action->description, ['playerName' => $playerName]),
-            'actionStatus' => $this->getActionResult($playerName, $status),
+            'shortResult' => $this->getSimpleActionResult($status),
+            'result' => $this->getActionResult($playerName, $status),
             'diceRoll' => $this->getDiceRoll($diceToRoll, $diceRoll),
             'hpLoss' => Yii::t('app/game', 'loosing hp', ['hpLoss' => $this->hpLoss], $this->language),
             'outcomeList' => $outcomeList,

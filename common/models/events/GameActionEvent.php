@@ -71,7 +71,7 @@ class GameActionEvent extends Event
 
         $playerName = LanguageHelper::defaultName('Player', $this->player->name);
 
-        return Yii::t('app/game', 'action status',
+        return Yii::t('app/game', 'action result',
                         [
                             'playerName' => $playerName,
                             'actionName' => $this->action,

@@ -14,8 +14,8 @@ use Yii;
  * @property string $chapter_name Chapter name
  * @property string $mission_name Mission name
  * @property string $action_name Action name
- * @property int $dice_roll Dice roll
- * @property int $action_success Success
+ * @property string $dice_roll Dice roll
+ * @property string $result Result
  * @property string|null $description Short description
  *
  * @property Player $player
@@ -23,6 +23,7 @@ use Yii;
  */
 class QuestLog extends \yii\db\ActiveRecord
 {
+
 
     /**
      * {@inheritdoc}
@@ -39,14 +40,13 @@ class QuestLog extends \yii\db\ActiveRecord
     {
         return [
             [['description'], 'default', 'value' => null],
-            [['dice_roll'], 'default', 'value' => 0],
+            [['round'], 'default', 'value' => 0],
             [['mission_name'], 'default', 'value' => 'Unknown'],
             [['action_name'], 'default', 'value' => 'Something'],
-            [['action_success'], 'default', 'value' => 7],
-            [['quest_id', 'player_id'], 'required'],
-            [['quest_id', 'player_id', 'round', 'dice_roll', 'action_success'], 'integer'],
+            [['quest_id', 'player_id', 'dice_roll', 'result'], 'required'],
+            [['quest_id', 'player_id', 'round'], 'integer'],
             [['description'], 'string'],
-            [['chapter_name', 'mission_name', 'action_name'], 'string', 'max' => 64],
+            [['chapter_name', 'mission_name', 'action_name', 'dice_roll', 'result'], 'string', 'max' => 64],
             [['quest_id'], 'exist', 'skipOnError' => true, 'targetClass' => Quest::class, 'targetAttribute' => ['quest_id' => 'id']],
             [['player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['player_id' => 'id']],
         ];
@@ -66,7 +66,7 @@ class QuestLog extends \yii\db\ActiveRecord
             'mission_name' => 'Mission name',
             'action_name' => 'Action name',
             'dice_roll' => 'Dice roll',
-            'action_success' => 'Success',
+            'result' => 'Result',
             'description' => 'Short description',
         ];
     }

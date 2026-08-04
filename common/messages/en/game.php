@@ -22,14 +22,14 @@ return [
         other {You gained # experience points!}
     }',
     'Something happened' => 'Something happened, that’s for sure, but I don’t really know what',
-    'action status' => '{status, select,
+    'action result' => '{status, select,
         SUCCESS {{playerName} successfully performed “{actionName}”}
         PARTIAL {{playerName} partially succeeded in “{actionName}”}
         FAILURE {{playerName} failed to perform “{actionName}”}
         ITEM_MISSING {{playerName} is missing an item to perform the action “{actionName}”}
         other {It is unknown whether {playerName} succeeded in “{actionName}”}
     }',
-    'simple action status' => '{status, select,
+    'simple action result' => '{status, select,
         SUCCESS {The action was successful}
         PARTIAL {The action was partially successful}
         FAILURE {The action failed}

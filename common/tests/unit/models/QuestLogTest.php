@@ -52,7 +52,7 @@ class QuestLogTest extends Unit
         $this->assertContains('player_id', $integerAttributes);
         $this->assertContains('round', $integerAttributes);
         $this->assertContains('dice_roll', $integerAttributes);
-        $this->assertContains('action_success', $integerAttributes);
+        $this->assertContains('result', $integerAttributes);
     }
 
     public function testAttributeLabels(): void

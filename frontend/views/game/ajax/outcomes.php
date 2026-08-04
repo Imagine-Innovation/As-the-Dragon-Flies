@@ -9,7 +9,8 @@ use common\widgets\MarkDown;
 /** @var string $missionName */
 /** @var string $actionName */
 /** @var string $actionDescription */
-/** @var string $actionStatus */
+/** @var string $shortResult */
+/** @var string $result */
 /** @var string $diceRoll */
 /** @var string $hpLoss */
 /** @var list<array{name: string|null, image: string|null, description: string|null, actionOutcome: array<string>}> $outcomeList */
@@ -24,7 +25,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
 <article class="text-decoration">
     <?= MarkDown::widget(['content' => $actionDescription]) ?>
 
-    <p><?= MarkDown::widget(['content' => "{$diceRoll}. {$actionStatus}. {$hpLoss}"]) ?></p>
+    <p><?= MarkDown::widget(['content' => "{$diceRoll}. {$shortResult}. {$hpLoss}"]) ?></p>
 
     <?php foreach ($outcomeList as $outcome): ?>
         <hr class="border border-warning border-1 opacity-50 w-50"><hr>
