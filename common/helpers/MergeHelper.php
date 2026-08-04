@@ -25,15 +25,21 @@ final class MergeHelper
     /**
      * Performs dynamic placeholder replacement.
      *
-     * @param string $content
+     * @param string|null $content
      * @param array<string, mixed> $placeholderValueArray
      * @return string
      */
-    public static function merge(string $content, array $placeholderValueArray): string
+    public static function merge(?string $content, array $placeholderValueArray): string
     {
+        $input = trim($content);
+
+        if ($input === null || $input === '') {
+            return '';
+        }
+
         // Step 1: find every {placeholder} in the input content
         $matches = [];
-        preg_match_all('/\{([a-zA-Z0-9_\-]+)\}/', $content, $matches);
+        preg_match_all('/\{([a-zA-Z0-9_\-]+)\}/', $input, $matches);
 
         $placeholderTags = $matches[0]; // e.g. ['{playerName}', '{date}']
         $placeholderKeys = $matches[1]; // e.g. ['playerName', 'date']
@@ -47,7 +53,7 @@ final class MergeHelper
         }
 
         // Step 3: replace them all in one pass
-        return str_replace($search, $replace, $content);
+        return str_replace($search, $replace, $input);
     }
 
     /**
