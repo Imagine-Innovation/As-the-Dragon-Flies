@@ -12,12 +12,12 @@ use Yii;
 
 class PlayerManager extends BaseManager
 {
+
     // Context data
     // Public facade
     public ?QuestPlayer $questPlayer = null;
     public ?Quest $quest = null;
     public ?Player $player = null;
-    // internal use
 
     /**
      *  @var array{
@@ -27,7 +27,7 @@ class PlayerManager extends BaseManager
      *      gainedItems: non-empty-array<Item>|array{}
      *  } $stats
      */
-    private array $stats;
+    public array $stats;
 
     /**
      *
@@ -69,9 +69,9 @@ class PlayerManager extends BaseManager
     {
         Yii::debug("*** debug *** getLevelId - xp={$xp}");
         $level = \common\models\Level::find()
-            ->where(['<=', 'xp_min', $xp])
-            ->andWhere(['>', 'xp_max', $xp])
-            ->one();
+                ->where(['<=', 'xp_min', $xp])
+                ->andWhere(['>', 'xp_max', $xp])
+                ->one();
         return $level->id ?? 1;
     }
 
@@ -128,7 +128,7 @@ class PlayerManager extends BaseManager
     public function updatePlayerStats(Outcome &$outcome): void
     {
         Yii::debug(
-            "*** debug *** updatePlayerStats - player={$this->player?->name}, outcome=" . print_r($outcome, true),
+                "*** debug *** updatePlayerStats - player={$this->player?->name}, outcome=" . print_r($outcome, true),
         );
         if ($this->player === null) {
             return;
