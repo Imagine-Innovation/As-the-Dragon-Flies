@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace common\tests\unit\models;
@@ -9,6 +8,7 @@ use common\models\QuestLog;
 
 class QuestLogTest extends Unit
 {
+
     /**
      * @var \common\tests\UnitTester
      */
@@ -24,7 +24,7 @@ class QuestLogTest extends Unit
         $integerAttributes = [];
 
         foreach ($rules as $rule) {
-            $attributes = (array)$rule[0];
+            $attributes = (array) $rule[0];
             $validatorName = $rule[1];
 
             if (in_array('outcome_id', $attributes, true)) {
@@ -51,7 +51,7 @@ class QuestLogTest extends Unit
         $this->assertContains('quest_id', $integerAttributes);
         $this->assertContains('player_id', $integerAttributes);
         $this->assertContains('round', $integerAttributes);
-        $this->assertContains('dc', $integerAttributes);
+        $this->assertContains('dice_roll', $integerAttributes);
         $this->assertContains('action_success', $integerAttributes);
     }
 

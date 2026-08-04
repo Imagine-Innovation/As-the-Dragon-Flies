@@ -15,17 +15,21 @@ use common\models\PlayerItem;
 use common\models\PlayerSkill;
 use common\models\Quest;
 use common\models\QuestAction;
+use common\models\QuestLog;
 use common\models\QuestProgress;
 use Yii;
 
 final class OutcomeManager extends BaseManager
 {
 
-    public ?QuestAction $questAction = null;
-    public ?QuestProgress $questProgress = null;
-    public ?Action $action = null;
-    public ?Player $player = null;
-    public ?Quest $quest = null;
+    // Public facade
+    public QuestAction $questAction;
+    //
+    // Internal use
+    private QuestProgress $questProgress;
+    private Action $action;
+    private Player $player;
+    private Quest $quest;
     private ?int $nextMissionId = null;
     private int $hpLoss = 0;
     private string $language = 'en';
@@ -38,17 +42,11 @@ final class OutcomeManager extends BaseManager
     {
         parent::__construct($config);
 
-        if ($this->questAction) {
-            $this->questProgress = $this->questAction->questProgress;
-        }
+        $this->questProgress = $this->questAction->questProgress;
 
-        if (!$this->questProgress) {
-            throw new \Exception('Missing QuestProgress!!!');
-        }
-
-        $this->action ??= $this->questAction?->action;
-        $this->player ??= $this->questProgress->currentPlayer;
-        $this->quest ??= $this->questProgress->quest;
+        $this->action = $this->questAction->action;
+        $this->player = $this->questProgress->currentPlayer;
+        $this->quest = $this->questProgress->quest;
 
         $this->language = $this->quest->story->language ?? 'en';
     }
@@ -62,7 +60,7 @@ final class OutcomeManager extends BaseManager
     private function getMatchingOutcomes(AppStatus $status): array
     {
         Yii::debug("*** debug *** getMatchingOutcomes - status={$status->getLabel()}");
-        $outcomes = Outcome::findAll(['action_id' => $this->action?->id]);
+        $outcomes = Outcome::findAll(['action_id' => $this->action->id]);
 
         if (!$outcomes) {
             return [];
@@ -86,7 +84,7 @@ final class OutcomeManager extends BaseManager
      * @param Outcome[] $outcomes
      * @return bool
      */
-    private function canReplay(array $outcomes): bool
+    private function playerCanReplay(array $outcomes): bool
     {
         Yii::debug('*** debug *** canReplay - outcomes=' . count($outcomes));
 
@@ -96,7 +94,7 @@ final class OutcomeManager extends BaseManager
 
         $nextMissionId = null;
         $canReplay = true;
-        $currentMissionId = (int) $this->questProgress?->mission_id;
+        $currentMissionId = (int) $this->questProgress->mission_id;
 
         foreach ($outcomes as $outcome) {
             $canReplay = $canReplay && $outcome->can_replay === 1;
@@ -114,13 +112,11 @@ final class OutcomeManager extends BaseManager
      * @param Outcome[] $outcomes
      * @return void
      */
-    private function applyPlayerGainsAndLosses(array $outcomes): void
+    private function setPlayerGainsAndLosses(array $outcomes): void
     {
-        $this->hpLoss = 0; // Reset local counter
-        if ($this->player) {
-            $playerManager = new PlayerManager(['player' => $this->player]);
-            $playerManager->registerGainsAndLosses($outcomes);
-        }
+        $playerManager = new PlayerManager(['player' => $this->player]);
+        $playerManager->registerGainsAndLosses($outcomes);
+        $this->hpLoss = $playerManager->stats['hpLoss'];
     }
 
     /**
@@ -132,9 +128,10 @@ final class OutcomeManager extends BaseManager
      * @param bool $canReplay
      * @return array<string, mixed>
      */
-    private function makePayload(AppStatus $status, array $outcomes, int $diceRoll, bool $canReplay): array
+    private function setPayload(AppStatus $status, array $outcomes, int $diceRoll, bool $canReplay): array
     {
-        $missionId = $this->questProgress?->mission_id;
+        $missionId = $this->questProgress->mission_id;
+        $playerName = LanguageHelper::defaultName('Player', $this->player->name, $this->language);
 
         return [
             'action' => $this->action,
@@ -144,11 +141,11 @@ final class OutcomeManager extends BaseManager
             'hpLoss' => $this->hpLoss,
             'isFree' => $this->action->is_free,
             'canReplay' => $canReplay,
-            'questProgressId' => $this->questProgress?->id,
+            'questProgressId' => $this->questProgress->id,
             'missionId' => $missionId,
             'nextMissionId' => $this->nextMissionId,
-            'storyId' => $this->quest?->story_id,
-            'playerName' => $this->player->name,
+            'storyId' => $this->quest->story_id,
+            'playerName' => $playerName,
             'language' => $this->language,
         ];
     }
@@ -158,10 +155,10 @@ final class OutcomeManager extends BaseManager
      */
     private function getModifier(): int
     {
-        Yii::debug("*** debug *** getModifier - action={$this->action?->name}, player={$this->player?->name}");
+        Yii::debug("*** debug *** getModifier - action={$this->action->name}, player={$this->player->name}");
         $skillIds = ActionTypeSkill::find()
                 ->select('skill_id')
-                ->where(['action_type_id' => $this->action?->action_type_id])
+                ->where(['action_type_id' => $this->action->action_type_id])
                 ->column();
 
         if (!$skillIds) {
@@ -169,7 +166,7 @@ final class OutcomeManager extends BaseManager
         }
 
         $modifier = PlayerSkill::find()
-                ->where(['player_id' => $this->player?->id, 'skill_id' => $skillIds])
+                ->where(['player_id' => $this->player->id, 'skill_id' => $skillIds])
                 ->max('bonus');
 
         return is_numeric($modifier) ? (int) $modifier : 0;
@@ -197,9 +194,9 @@ final class OutcomeManager extends BaseManager
      */
     private function getActionStatus(int $diceRoll): AppStatus
     {
-        Yii::debug("*** debug *** getActionStatus - action={$this->action?->name}, diceRoll={$diceRoll}");
-        $dc = $this->action?->dc;
-        $partialDc = $this->action?->partial_dc;
+        Yii::debug("*** debug *** getActionStatus - action={$this->action->name}, diceRoll={$diceRoll}");
+        $dc = $this->action->dc;
+        $partialDc = $this->action->partial_dc;
 
         if ($diceRoll >= $dc) {
             return AppStatus::SUCCESS;
@@ -221,15 +218,12 @@ final class OutcomeManager extends BaseManager
     public function evaluateActionOutcome(): array
     {
         Yii::debug('*** debug *** evaluateActionOutcome');
-        if (!$this->action) {
-            throw new \Exception('Action not found.');
-        }
 
         $modifier = $this->getModifier();
         $diceToRoll = $modifier ? "1d20+{$modifier}" : 'd20';
         $diceRoll = DiceRoller::roll($diceToRoll);
 
-        if ($this->playerHasRequiredItem($this->player?->id, $this->action->required_item_id)) {
+        if ($this->playerHasRequiredItem($this->player->id, $this->action->required_item_id)) {
             $status = $this->getActionStatus($diceRoll);
         } else {
             $status = AppStatus::ITEM_MISSING;
@@ -237,12 +231,12 @@ final class OutcomeManager extends BaseManager
 
         $outcomes = $this->getMatchingOutcomes($status);
 
-        $canReplay = $this->canReplay($outcomes);
+        $canReplay = $this->playerCanReplay($outcomes);
 
-        $this->applyPlayerGainsAndLosses($outcomes);
+        $this->setPlayerGainsAndLosses($outcomes);
 
-        $payload = $this->makePayload($status, $outcomes, $diceRoll, $canReplay);
-        $log = $this->makeQuestLog($status, $outcomes, $diceToRoll, $diceRoll);
+        $payload = $this->setPayload($status, $outcomes, $diceRoll, $canReplay);
+        $log = $this->setQuestLog($status, $outcomes, $diceToRoll, $diceRoll);
 
         return ['payload' => $payload, 'log' => $log];
     }
@@ -272,14 +266,75 @@ final class OutcomeManager extends BaseManager
      */
     private function getActionResult(string $playerName, AppStatus $status): string
     {
-        return Yii::t('app/game', 'action_status',
+        Yii::debug("*** debug *** getActionResult(playerName={$playerName}, status={$status->name})");
+        return Yii::t('app/game', 'action status',
                         [
                             'playerName' => $playerName,
                             'actionName' => $this->action->name,
-                            'status' => $status->value,
+                            'status' => $status->name,
                         ],
                         $this->language
                 );
+    }
+
+    /**
+     *
+     * @param int $questId
+     * @return int
+     */
+    private function getNextRound(int $questId): int
+    {
+        $maxRoundVal = QuestLog::find()
+                ->where(['quest_id' => $questId])
+                ->max('round');
+
+        $maxRound = is_numeric($maxRoundVal) ? (int) $maxRoundVal : 0;
+
+        return $maxRound + 1;
+    }
+
+    /**
+     *
+     * @param list<array{name: string|null, image: string|null, description: string|null, actionOutcome: array<string>}> $outcomeList
+     * @return string
+     */
+    private function getLogDescription(array $outcomeList): string
+    {
+        $description = '';
+        /** @var array{name: string|null, image: string|null, description: string|null, actionOutcome: array<string>} $outcome */
+        foreach ($outcomeList as $outcome) {
+            $description .= "{$outcome['name']}\n{$outcome['description']}\n";
+        }
+        return $description;
+    }
+
+    /**
+     *
+     * @param array<string, mixed> $log
+     * @return void
+     */
+    public function addQuestLog(array $log): void
+    {
+        $round = $this->getNextRound($this->quest->id);
+        /** @var list<array{name: string|null, image: string|null, description: string|null, actionOutcome: array<string>}> $outcomeList */
+        $outcomeList = $log['outcomeList'];
+        $description = $this->getLogDescription($outcomeList);
+
+        $questLog = new QuestLog([
+            'quest_id' => $this->quest->id,
+            'player_id' => $this->player->id,
+            'round' => $round,
+            'chapter_name' => $log['chapterName'],
+            'mission_name' => $log['missionName'],
+            'action_name' => $log['actionName'],
+            'dice_roll' => $log['diceRoll'],
+            'action_success' => $log['actionStatus'],
+            'description' => $description,
+        ]);
+
+        if (!$questLog->save()) {
+            Yii::error('Failed to save QuestLog: ' . print_r($questLog->getErrors(), true));
+        }
     }
 
     /**
@@ -290,15 +345,15 @@ final class OutcomeManager extends BaseManager
      * @param int $diceRoll
      * @return array<string, mixed>
      */
-    private function makeQuestLog(AppStatus $status, array $outcomes, string $diceToRoll, int $diceRoll): array
+    private function setQuestLog(AppStatus $status, array $outcomes, string $diceToRoll, int $diceRoll): array
     {
-        $playerName = LanguageHelper::defaultName('Player', $this->player?->name, $this->language);
+        $playerName = LanguageHelper::defaultName('Player', $this->player->name, $this->language);
 
-        $outcomeList = $this->makeOutcomes($outcomes, $playerName);
+        $outcomeList = $this->getOutcomeList($outcomes, $playerName);
 
         $log = [
             'playerName' => $playerName,
-            'chapterName' => LanguageHelper::defaultName('Chapter', $this->quest?->currentChapter->name, $this->language),
+            'chapterName' => LanguageHelper::defaultName('Chapter', $this->quest->currentChapter?->name, $this->language),
             'missionName' => $this->questProgress->mission->name,
             'actionName' => MergeHelper::merge($this->action->name, ['playerName' => $playerName]),
             'actionDescription' => MergeHelper::merge($this->action->description, ['playerName' => $playerName]),
@@ -307,9 +362,9 @@ final class OutcomeManager extends BaseManager
             'hpLoss' => Yii::t('app/game', 'loosing hp', ['hpLoss' => $this->hpLoss], $this->language),
             'outcomeList' => $outcomeList,
             'isFree' => $this->action->is_free,
-            'questProgressId' => $this->questProgress?->id,
+            'questProgressId' => $this->questProgress->id,
             'nextMissionId' => $this->nextMissionId,
-            'storyId' => $this->quest?->story_id,
+            'storyId' => $this->quest->story_id,
         ];
 
         return $log;
@@ -319,16 +374,18 @@ final class OutcomeManager extends BaseManager
      *
      * @param Outcome[] $outcomes
      * @param string $playerName
-     * @return array<string, mixed>
+     * @return list<array{name: string|null, image: string|null, description: string|null, actionOutcome: array<string>}>
      */
-    private function makeOutcomes(array $outcomes, string $playerName): array
+    private function getOutcomeList(array $outcomes, string $playerName): array
     {
         if (empty($outcomes)) {
             return [
-                'name' => '',
-                'image' => null,
-                'description' => Yii::t('app/game', 'Something happened', $this->language),
-                'actionOutcome' => [],
+                [
+                    'name' => '',
+                    'image' => null,
+                    'description' => Yii::t('app/game', 'Something happened', $this->language),
+                    'actionOutcome' => [],
+                ]
             ];
         }
 

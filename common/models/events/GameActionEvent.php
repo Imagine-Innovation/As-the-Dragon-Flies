@@ -1,13 +1,11 @@
 <?php
-declare(strict_types=1);
 
 namespace common\models\events;
 
 use common\components\AppStatus;
+use common\helpers\LanguageHelper;
 use common\models\Player;
 use common\models\Quest;
-use common\models\QuestLog;
-use common\models\Outcome;
 use Yii;
 
 /**
@@ -15,6 +13,9 @@ use Yii;
  */
 class GameActionEvent extends Event
 {
+
+    /** @var string The story language */
+    public string $language;
 
     /** @var string The action type */
     public string $action;
@@ -35,92 +36,7 @@ class GameActionEvent extends Event
         parent::__construct($sessionId, $player, $quest);
         $this->action = $action;
         $this->detail = $detail;
-    }
-
-    /**
-     * Extracts name, description and ID from a single outcome.
-     *
-     * @param mixed $outcome
-     * @return array{id: int, name: string, desc: string}
-     */
-    protected function extractOutcomeDetails(mixed $outcome): array
-    {
-        if (is_array($outcome)) {
-            $id = $outcome['id'] ?? 0;
-            $name = $outcome['name'] ?? '';
-            $desc = $outcome['description'] ?? '';
-        } elseif (is_object($outcome)) {
-            $id = isset($outcome->id) ? $outcome->id : 0;
-            $name = isset($outcome->name) ? $outcome->name : '';
-            $desc = isset($outcome->description) ? $outcome->description : '';
-        } else {
-            $id = 0;
-            $name = '';
-            $desc = '';
-        }
-
-        return [
-            'id' => (int) $id,
-            'name' => is_string($name) ? $name : '',
-            'desc' => is_string($desc) ? $desc : '',
-        ];
-    }
-
-    /**
-     * Helper to get outcome conclusions. Made public for testing purpose
-     *
-     * @return string
-     */
-    public function getOutcomeConclusion(): string
-    {
-        $conclusions = [];
-        $outcomes = $this->detail['outcomes'] ?? [];
-        if (!is_array($outcomes)) {
-            return '';
-        }
-
-        foreach ($outcomes as $outcome) {
-            $details = $this->extractOutcomeDetails($outcome);
-            $name = $details['name'];
-            $desc = strip_tags($details['desc']);
-
-            if ($name !== '' && $desc !== '') {
-                $conclusions[] = "{$name}: {$desc}";
-            } elseif ($name !== '') {
-                $conclusions[] = $name;
-            } elseif ($desc !== '') {
-                $conclusions[] = $desc;
-            }
-        }
-
-        return implode("\n", $conclusions);
-    }
-
-    /**
-     * Helper to get localized description.
-     *
-     * @return string
-     */
-    public function getLogDescription(): string
-    {
-        $language = $this->quest->story->language ?? 'en';
-
-        /** @var AppStatus $status */
-        $status = $this->detail['status'] ?? AppStatus::FAILURE;
-
-        $template = match ($status->value) {
-            AppStatus::SUCCESS->value => '{playerName} tried {actionName} and succeeded. {outcomeConclusion}',
-            AppStatus::PARTIAL->value => '{playerName} tried {actionName} and partially succeeded. {outcomeConclusion}',
-            AppStatus::FAILURE->value => '{playerName} tried {actionName} and failed. {outcomeConclusion}',
-            AppStatus::ITEM_MISSING->value => '{playerName} tried {actionName} but was missing a required item. {outcomeConclusion}',
-            default => '{playerName} tried {actionName}. {outcomeConclusion}'
-        };
-
-        return Yii::t('app/game', $template, [
-                    'playerName' => $this->player->name ?? 'Unknown',
-                    'actionName' => $this->action,
-                    'outcomeConclusion' => $this->getOutcomeConclusion(),
-                        ], $language);
+        $this->language = $this->quest->story->language ?? 'en';
     }
 
     /**
@@ -152,13 +68,17 @@ class GameActionEvent extends Event
     {
         /** @var AppStatus */
         $status = $this->detail['status'];
-        Yii::debug("*** debug *** GameActionEvent->getMessage status={$status->getLabel()}");
-        return match ($status->value) {
-            AppStatus::SUCCESS->value => "{$this->player->name} successfully completed the “{$this->action}” action",
-            AppStatus::PARTIAL->value => "{$this->player->name} partially completed the “{$this->action}” action",
-            AppStatus::FAILURE->value => "{$this->player->name} failed to complete the “{$this->action}” action",
-            default => "{$this->player->name} completed the “{$this->action}” action with an unknown status",
-        };
+
+        $playerName = LanguageHelper::defaultName('Player', $this->player->name);
+
+        return Yii::t('app/game', 'action status',
+                        [
+                            'playerName' => $playerName,
+                            'actionName' => $this->action,
+                            'status' => $status->name,
+                        ],
+                        $this->language
+                );
     }
 
     /**
@@ -178,51 +98,6 @@ class GameActionEvent extends Event
         ];
     }
 
-    private function getNextRound(int $questId): int
-    {
-        $maxRoundVal = QuestLog::find()
-                ->where(['quest_id' => $questId])
-                ->max('round');
-
-        $maxRound = is_numeric($maxRoundVal) ? (int) $maxRoundVal : 0;
-
-        return $maxRound + 1;
-    }
-
-    /**
-     *
-     * @return void
-     */
-    private function addQuestLog(): void
-    {
-        /** @var \common\models\QuestProgress|null $progress */
-        $progress = $this->quest->currentQuestProgress;
-        $chapterName = $progress?->mission->chapter->name ?? 'Unknown';
-        $missionName = $progress?->mission->name ?? 'Unknown';
-
-        $description = $this->getLogDescription();
-        $nextRound = $this->getNextRound($this->quest->id);
-
-        /** @var AppStatus $status */
-        $status = $this->detail['status'] ?? AppStatus::FAILURE;
-
-        $questLog = new QuestLog([
-            'quest_id' => $this->quest->id,
-            'player_id' => $this->player->id,
-            'round' => $nextRound,
-            'chapter_name' => $chapterName,
-            'mission_name' => $missionName,
-            'action_name' => $this->action ?? '??',
-            'dice_roll' => $this->detail['dice_roll'] ?? 0,
-            'action_success' => $status->value,
-            'description' => $description,
-        ]);
-
-        if (!$questLog->save()) {
-            Yii::error('Failed to save QuestLog: ' . print_r($questLog->getErrors(), true));
-        }
-    }
-
     /**
      * {@inheritdoc}
      *
@@ -231,7 +106,6 @@ class GameActionEvent extends Event
     public function process(): void
     {
         Yii::debug('*** Debug *** GameActionEvent - process');
-        $this->addQuestLog();
 
         $notification = $this->createNotification();
         $this->broadcast();

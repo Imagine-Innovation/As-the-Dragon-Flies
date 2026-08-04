@@ -285,7 +285,7 @@ class GameController extends Controller
         $questAction = FindModelHelper::findQuestAction($param);
         $outcomeManager = new OutcomeManager(['questAction' => $questAction]);
         $actionOutcome = $outcomeManager->evaluateActionOutcome();
-
+        $outcomeManager->addQuestLog($actionOutcome['log']);
         $payload = $actionOutcome['payload'];
 
         // Update state flow
@@ -312,7 +312,7 @@ class GameController extends Controller
         }
 
         $outcomeLog = $this->getOutcomeLog(Yii::$app->request);
-
+        Yii::debug($outcomeLog);
         $content = $this->renderPartial('ajax/outcomes', $outcomeLog);
         return ['error' => false, 'msg' => '', 'content' => $content];
     }
