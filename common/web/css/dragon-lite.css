@@ -2651,6 +2651,10 @@ a {
     cursor: pointer;
 }
 
+a.link-primary, a.link-primary:visited {
+    color: var(--yellow) !important;
+}
+
 a.text-danger:focus, a.text-danger:hover {
     color: var(--danger)!important;
 }
