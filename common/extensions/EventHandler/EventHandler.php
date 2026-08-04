@@ -48,23 +48,9 @@ class EventHandler extends Component
     {
         parent::init();
 
-        $this->host = Yii::$app->params['eventHandlerWebSocketHost'] ?? null;
-        if ($this->host === null) {
-            echo "ERROR - Missing eventHandlerWebSocketHost param in common\config\params-local.php";
-            return;
-        }
-
-        $this->port = Yii::$app->params['eventHandlerWebSocketPort'] ?? null;
-        if ($this->port === null) {
-            echo "ERROR - Missing eventHandlerWebSocketPort param in common\config\params-local.php";
-            return;
-        }
-
-        $this->internalPort = Yii::$app->params['eventHandlerInternalPort'] ?? null;
-        if ($this->internalPort === null) {
-            echo "ERROR - Missing eventHandlerInternalPort param in common\config\params-local.php";
-            return;
-        }
+        $this->host = Yii::$app->params['eventHandlerWebSocketHost'] ?? '0.0.0.0';
+        $this->port = Yii::$app->params['eventHandlerWebSocketPort'] ?? 8082;
+        $this->internalPort = Yii::$app->params['eventHandlerInternalPort'] ?? 8083;
 
         echo "Init starting\n";
         echo "             host: {$this->host}\n";

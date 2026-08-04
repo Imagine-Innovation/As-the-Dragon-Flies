@@ -31,9 +31,9 @@ final class MergeHelper
      */
     public static function merge(?string $content, array $placeholderValueArray): string
     {
-        $input = trim($content);
+        $input = trim($content ?? '');
 
-        if ($input === null || $input === '') {
+        if ($input === '') {
             return '';
         }
 
