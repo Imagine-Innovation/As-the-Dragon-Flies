@@ -28,7 +28,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
     <p><?= MarkDown::widget(['content' => "{$diceRoll}. {$shortResult}. {$hpLoss}"]) ?></p>
 
     <?php foreach ($outcomeList as $outcome): ?>
-        <hr class="border border-warning border-1 opacity-50 w-50"><hr>
+        <hr class="border border-warning border-1 opacity-50 w-50">
         <?php if ($outcome['image'] !== null): ?>
             <div class="clearfix">
                 <img class="col-md-6 float-md-end mb-3 ms-md-3" src="<?= $storyRoot ?>/img/<?= $outcome['image'] ?>" alt="<?= $outcome['name'] ?>" style="max-width: 150px;">
