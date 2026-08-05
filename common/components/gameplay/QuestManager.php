@@ -263,7 +263,7 @@ class QuestManager extends BaseManager
      * @param AppStatus $status
      * @return array{error: bool, msg: string, event?: string, payload?: array<string, mixed>}
      */
-    private function gameOver(AppStatus $status): array
+    protected function gameOver(AppStatus $status): array
     {
         $quest = $this->getQuest();
         $progress = $this->getQuestProgress();
@@ -320,7 +320,7 @@ class QuestManager extends BaseManager
      * @param AppStatus $status
      * @return void
      */
-    private function endCurrentQuestProgress(
+    protected function endCurrentQuestProgress(
             QuestProgress $questProgress,
             AppStatus $status = AppStatus::TERMINATED,
     ): void
@@ -339,7 +339,7 @@ class QuestManager extends BaseManager
      * @return QuestProgress|null
      * @throws Exception
      */
-    private function addQuestProgress(int $missionId): ?QuestProgress
+    protected function addQuestProgress(int $missionId): ?QuestProgress
     {
         $mission = Mission::findOne($missionId);
         if (!$mission) {
@@ -462,7 +462,7 @@ class QuestManager extends BaseManager
      *       timestamp: int
      * }
      */
-    private function getNextMissionDetail(QuestProgress $currentQuestProgress, QuestProgress $nextQuestProgress): array
+    protected function getNextMissionDetail(QuestProgress $currentQuestProgress, QuestProgress $nextQuestProgress): array
     {
         $currentMission = $currentQuestProgress->mission;
         $nextMission = $nextQuestProgress->mission;
@@ -643,7 +643,7 @@ class QuestManager extends BaseManager
      * @return \common\models\events\Event
      * @throws Exception
      */
-    private function createQuestEvent(
+    protected function createQuestEvent(
             string $eventType,
             string $eventDescription,
             ?Player $initiator,

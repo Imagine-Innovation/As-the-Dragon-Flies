@@ -53,6 +53,11 @@ class VirtualTableTop {
 
         ToastManager.show('Game message', toastMessage, 'info');
 
+        if (detail.nextQuestProgressId) {
+            this.updateContext({ questProgressId: detail.nextQuestProgressId });
+            $('#hiddenQuestProgressId').val(detail.nextQuestProgressId);
+        }
+
         this._updatePlayer(playerId);
         this._updateQuestMembers(questId);
         this._updateMission(detail.nextMissionId);
@@ -67,6 +72,11 @@ class VirtualTableTop {
         const toastMessage = `${detail.currentPlayerName} has finished his turn. Now it's ${nextPlayer} turn to play.`;
 
         ToastManager.show('Game message', toastMessage, 'info');
+
+        if (detail.questProgressId) {
+            this.updateContext({ questProgressId: detail.questProgressId });
+            $('#hiddenQuestProgressId').val(detail.questProgressId);
+        }
 
         this._updatePlayer(playerId);
         this._updateQuestMembers(questId);
