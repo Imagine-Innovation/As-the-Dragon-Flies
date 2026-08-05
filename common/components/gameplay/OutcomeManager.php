@@ -116,7 +116,8 @@ final class OutcomeManager extends BaseManager
     {
         $playerManager = new PlayerManager(['player' => $this->player]);
         $playerManager->registerGainsAndLosses($outcomes);
-        $this->hpLoss = $playerManager->stats['hpLoss'];
+        $stats = $playerManager->stats;
+        $this->hpLoss = $stats['hpLoss'];
     }
 
     /**
@@ -321,7 +322,7 @@ final class OutcomeManager extends BaseManager
         /** @var array{name: string|null, image: string|null, description: string|null, actionOutcome: array<string>} $outcome */
         foreach ($outcomeList as $outcome) {
             // # signs are on purpose for markdown layout when rendering the quest history
-            $description .= "#####{$outcome['name']}\n{$outcome['description']}\n";
+            $description .= "##### {$outcome['name']}\n{$outcome['description']}\n";
         }
         return $description;
     }
@@ -334,20 +335,23 @@ final class OutcomeManager extends BaseManager
     public function addQuestLog(array $log): void
     {
         $round = $this->getNextRound($this->quest->id);
-        /** @var list<array{name: string|null, image: string|null, description: string|null, actionOutcome: array<string>}> $outcomeList */
-        $outcomeList = $log['outcomeList'];
-        $description = $this->getLogDescription($outcomeList);
+        //** @var list<array{name: string|null, image: string|null, description: string|null, actionOutcome: array<string>}> $outcomeList */
+        //$outcomeList = $log['outcomeList'];
+        //$description = $this->getLogDescription($outcomeList);
 
         $questLog = new QuestLog([
             'quest_id' => $this->quest->id,
             'player_id' => $this->player->id,
             'round' => $round,
             'chapter_name' => $log['chapterName'],
+            'chapter_description' => $log['chapterDescription'],
             'mission_name' => $log['missionName'],
+            'mission_description' => $log['missionDescription'],
             'action_name' => $log['actionName'],
+            'action_description' => $log['actionDescription'],
             'dice_roll' => $log['diceRoll'],
             'result' => $log['result'],
-            'description' => $description,
+            'description' => json_encode($log['outcomeList']),
         ]);
 
         if (!$questLog->save()) {
@@ -372,7 +376,9 @@ final class OutcomeManager extends BaseManager
         $log = [
             'playerName' => $playerName,
             'chapterName' => LanguageHelper::defaultName('Chapter', $this->quest->currentChapter?->name, $this->language),
+            'chapterDescription' => $this->quest->currentChapter?->description ?? '',
             'missionName' => $this->questProgress->mission->name,
+            'missionDescription' => $this->questProgress->mission->description ?? '',
             'actionName' => MergeHelper::merge($this->action->name, ['playerName' => $playerName]),
             'actionDescription' => MergeHelper::merge($this->action->description, ['playerName' => $playerName]),
             'shortResult' => $this->getSimpleActionResult($status),

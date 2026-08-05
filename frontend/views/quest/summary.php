@@ -2,68 +2,118 @@
 
 use common\components\AppStatus;
 use common\helpers\DateTimeHelper;
+use common\widgets\MarkDown;
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var common\models\Quest $model */
-$this->title = 'Quest Summary: ' . $model->name;
+/** @var common\models\Quest $quest */
+/** @var common\models\QuestLog[] $logs */
+$this->title = $quest->name;
 $this->params['breadcrumbs'][] = ['label' => 'Quests', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
-$status = AppStatus::from($model->status);
+$status = AppStatus::from($quest->status);
+
+$chapterName = "";
+$missionName = "";
+$actionName = "";
+$chapterNumber = 0;
+$missionNumber = 0;
 ?>
 <div class="quest-summary">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <div class="row">
-        <div class="col-md-8">
-            <div class="card mb-4">
-                <div class="card-header bg-dark text-white">
-                    <h5 class="mb-0">Quest Details</h5>
+    <container id='questHistory' class="row">
+        <section id="questLogs" class="col-12 col-xl-8">
+            <div class="card mb-4 text-decoration">
+                <div class="card-header">
+                    <h2 class="mb-0"><?= Html::encode($this->title) ?></h2>
                 </div>
                 <div class="card-body">
-                    <p><strong>Story:</strong> <?= Html::encode($model->story->name) ?></p>
-                    <p><strong>Status:</strong>
-                        <span class="badge bg-<?= $model->status === AppStatus::COMPLETED->value ? 'success' : 'danger' ?>">
-                            <?= Html::encode($status->getLabel()) ?>
-                        </span>
-                    </p>
-                    <p><strong>Started at:</strong> <?= Yii::$app->formatter->asDatetime($model->started_at) ?></p>
-                    <p><strong>Completed at:</strong> <?= Yii::$app->formatter->asDatetime($model->completed_at) ?></p>
-                    <p><strong>Elapsed time:</strong> <?= DateTimeHelper::elapsedTime($model->started_at ?? time(), $model->completed_at) ?></p>
-                </div>
-            </div>
+                    <?= MarkDown::widget(['content' => $quest->description]) ?>
+                    <?php foreach ($logs as $log): ?>
+                        <article>
+                            <?php
+                            if ($log->chapter_name !== $chapterName) {
+                                $chapterName = $log->chapter_name;
+                                $chapterNumber += 1;
+                                $name = MarkDown::widget(['content' => "{$chapterNumber}. {$chapterName}"]);
+                                $description = MarkDown::widget(['content' => $log->chapter_description]);
+                                echo "<h3 class=\"text-warning\">{$name}</h3>\n<p class=\"text-muted\">{$description}</p>\n";
+                            }
+                            if ($log->mission_name !== $missionName) {
+                                $missionName = $log->mission_name;
+                                $missionNumber += 1;
+                                $name = MarkDown::widget(['content' => "{$chapterNumber}.{$missionNumber}. {$missionName}"]);
+                                $description = MarkDown::widget(['content' => $log->mission_description]);
+                                echo "<h4 class=\"text-warning\">{$name}</h4>\n<p class=\"text-muted\">{$description}</p>\n";
+                            }
+                            if ($log->action_name !== $actionName) {
+                                $actionName = $log->action_name;
+                                $name = MarkDown::widget(['content' => $actionName]);
+                                $description = MarkDown::widget(['content' => $log->action_description]);
+                                //echo "<span class=\"badge bg-warning text-dark\">Round {$log->round} - {$log->player->name}</span><h5>{$name}</h5>\n<p class=\"text-muted\">{$description}</p>\n";
+                                echo "<span class=\"badge bg-warning text-dark\">Round {$log->round} - {$log->player->name}</span><p class=\"text-muted\">{$description}</p>\n";
+                            } else {
+                                echo "<span class=\"badge bg-warning text-dark\">Round {$log->round}</span>\n";
+                            }
+                            echo "<p class=\"small\">{$log->result}</p>\n";
 
-            <div class="card mb-4">
-                <div class="card-header bg-dark text-white">
-                    <h5 class="mb-0">Quest Description</h5>
-                </div>
-                <div class="card-body">
-                    <?= nl2br(Html::encode((string) $model->description)) ?>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card mb-4">
-                <div class="card-header bg-dark text-white">
-                    <h5 class="mb-0">Participants</h5>
-                </div>
-                <ul class="list-group list-group-flush">
-                    <?php foreach ($model->allPlayers as $player): ?>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <?= Html::encode($player->name ?? '') ?>
-                            <span class="badge bg-secondary"><?= Html::encode($player->class->name ?? 'Adventurer') ?></span>
-                        </li>
+                            $logDescription = json_decode($log->description);
+                            foreach ($logDescription as $outcome) {
+                                echo MarkDown::widget(['content' => $outcome->name]);
+                                $description = MarkDown::widget(['content' => $outcome->description]);
+                                echo "<div class=\"text-muted\">\n{$description}\n</div>\n";
+                            }
+                            ?>
+                        </article>
+                        <hr class="border border-warning w-90">
                     <?php endforeach; ?>
-                </ul>
+                </div>
             </div>
+        </section>
 
-            <div class="d-grid gap-2">
-                <?= Html::a('Back to Stories', ['story/index'], ['class' => 'btn btn-primary']) ?>
+        <section id="questContext" class="col-12 col-xl-4">
+            <div class="row">
+                <div class="col-12 col-md-6 col-xl-12 col-3xl-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Participants</h5>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <?php foreach ($quest->allPlayers as $player): ?>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <?= Html::encode($player->name ?? '') ?>
+                                    <span class="badge bg-secondary"><?= Html::encode($player->class->name ?? 'Adventurer') ?></span>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-xl-12 col-3xl-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Quest Details</h5>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Story:</strong> <?= Html::encode($quest->story->name) ?></p>
+                            <p><strong>Status:</strong>
+                                <span class="badge bg-<?= $quest->status === AppStatus::COMPLETED->value ? 'success' : 'danger' ?>">
+                                    <?= Html::encode($status->getLabel()) ?>
+                                </span>
+                            </p>
+                            <p><strong>Started at:</strong> <?= Yii::$app->formatter->asDatetime($quest->started_at) ?></p>
+                            <p><strong>Completed at:</strong> <?= Yii::$app->formatter->asDatetime($quest->completed_at) ?></p>
+                            <p><strong>Elapsed time:</strong> <?= DateTimeHelper::elapsedTime($quest->started_at ?? time(), $quest->completed_at) ?></p>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <?= Html::a('Back to Stories', ['story/index'], ['class' => 'btn btn-primary']) ?>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
+        </section>
+    </container>
 
 </div>

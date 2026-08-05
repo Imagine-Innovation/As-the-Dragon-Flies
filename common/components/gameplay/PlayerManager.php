@@ -27,7 +27,12 @@ class PlayerManager extends BaseManager
      *      gainedItems: non-empty-array<Item>|array{}
      *  } $stats
      */
-    public array $stats;
+    public array $stats = [
+        'hpLoss' => 0,
+        'gainedXp' => 0,
+        'gainedGp' => 0,
+        'gainedItems' => [],
+    ];
 
     /**
      *

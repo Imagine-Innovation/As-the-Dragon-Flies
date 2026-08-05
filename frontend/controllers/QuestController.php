@@ -461,15 +461,9 @@ class QuestController extends Controller
     {
         $quest = $this->findModel($id);
 
-        /**
-          // Summary is only available for finished quests to avoid relying on missing completion data in the view
-          if ($quest->status !== AppStatus::COMPLETED->value && $quest->status !== AppStatus::ABORTED->value) {
-          throw new NotFoundHttpException('The requested quest summary is only available after the quest is completed or aborted.');
-          }
-         *
-         */
         return $this->render('summary', [
-                    'model' => $quest,
+                    'quest' => $quest,
+                    'logs' => $quest->questLogs,
         ]);
     }
 
