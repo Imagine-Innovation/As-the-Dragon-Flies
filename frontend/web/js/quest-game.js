@@ -44,6 +44,13 @@ class VirtualTableTop {
         this._updateQuestMembers(questId);
     }
 
+    _updateQuestProgressId(questProgressId) {
+        if (questProgressId) {
+            this.updateContext({ questProgressId: questProgressId });
+            $('#hiddenQuestProgressId').val(questProgressId);
+        }
+    }
+
     refreshMission(questId, playerId, detail) {
         Logger.log(1, 'refreshMission', `questId=${questId}, playerId=${playerId}, detail=${JSON.stringify(detail, null, 2)}`);
 
@@ -53,10 +60,7 @@ class VirtualTableTop {
 
         ToastManager.show('Game message', toastMessage, 'info');
 
-        if (detail.nextQuestProgressId) {
-            this.updateContext({ questProgressId: detail.nextQuestProgressId });
-            $('#hiddenQuestProgressId').val(detail.nextQuestProgressId);
-        }
+        this._updateQuestProgressId(detail.nextQuestProgressId);
 
         this._updatePlayer(playerId);
         this._updateQuestMembers(questId);
@@ -73,10 +77,7 @@ class VirtualTableTop {
 
         ToastManager.show('Game message', toastMessage, 'info');
 
-        if (detail.questProgressId) {
-            this.updateContext({ questProgressId: detail.questProgressId });
-            $('#hiddenQuestProgressId').val(detail.questProgressId);
-        }
+        this._updateQuestProgressId(detail.questProgressId);
 
         this._updatePlayer(playerId);
         this._updateQuestMembers(questId);
