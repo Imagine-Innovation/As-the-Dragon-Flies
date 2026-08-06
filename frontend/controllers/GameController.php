@@ -154,7 +154,7 @@ class GameController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxMission(int $missionId): array
+    public function actionAjaxMission(?int $missionId = null): array
     {
         // Configure JSON response format
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -162,6 +162,10 @@ class GameController extends Controller
         // Validate request type
         if (!$this->request->isGet || !$this->request->isAjax) {
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
+        }
+
+        if (!$missionId) {
+            return ['error' => true, 'msg' => 'Missing missionId'];
         }
 
         $mission = FindModelHelper::findMission(['id' => $missionId]);
@@ -205,7 +209,7 @@ class GameController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxActions(int $questProgressId): array
+    public function actionAjaxActions(?int $questProgressId = null): array
     {
         // Configure JSON response format
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -213,6 +217,10 @@ class GameController extends Controller
         // Validate request type
         if (!$this->request->isGet || !$this->request->isAjax) {
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
+        }
+
+        if (!$questProgressId) {
+            return ['error' => true, 'msg' => 'Missing questProgressId'];
         }
 
         $questProgress = FindModelHelper::findQuestProgress(['id' => $questProgressId]);
@@ -236,17 +244,21 @@ class GameController extends Controller
     /**
      * Ajax GET request to manage the dialog between a player and a NPC
      *
-     * @param int $replyId
-     * @param int $playerId
-     * @param int $storyId
+     * @param int|null $replyId
+     * @param int|null $playerId
+     * @param int|null $storyId
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxDialog(int $replyId, int $playerId, int $storyId): array
+    public function actionAjaxDialog(?int $replyId = null, ?int $playerId = null, ?int $storyId = null): array
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isGet || !$this->request->isAjax) {
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
+        }
+
+        if (!$replyId || !$playerId || !$storyId) {
+            return ['error' => true, 'msg' => 'Missing required parameters'];
         }
 
         $reply = FindModelHelper::findReply(['id' => $replyId]);
