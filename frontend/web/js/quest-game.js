@@ -93,6 +93,11 @@ class VirtualTableTop {
         const offcanvasTarget = `#questMembers-offcanvas`;
         if (!DOMUtils.exists(offcanvasTarget))
             return;
+
+        if (!questId || questId === '') {
+            return;
+        }
+
         AjaxUtils.request({
             url: 'quest/ajax-quest-members',
             method: 'GET',
@@ -116,6 +121,10 @@ class VirtualTableTop {
         const offcanvasTarget = `#player-offcanvas`;
         if (!DOMUtils.exists(offcanvasTarget))
             return;
+
+        if (!playerId || playerId === '') {
+            return;
+        }
 
         AjaxUtils.request({
             url: 'game/ajax-player',
@@ -141,6 +150,10 @@ class VirtualTableTop {
         const targetDescription = `#description`;
         if (!DOMUtils.exists(targetDescription))
             return;
+
+        if (!missionId || missionId === '') {
+            return;
+        }
 
         AjaxUtils.request({
             url: 'game/ajax-mission',
@@ -209,6 +222,10 @@ class VirtualTableTop {
             return;
         }
         $(target).removeClass('d-none');
+
+        if (!questProgressId || questProgressId === '') {
+            return;
+        }
 
         AjaxUtils.request({
             url: 'game/ajax-actions',
