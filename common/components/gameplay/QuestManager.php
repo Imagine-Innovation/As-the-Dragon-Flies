@@ -556,7 +556,7 @@ class QuestManager extends BaseManager
      */
     public function moveToNextMission(int $nextMissionId): array
     {
-        Yii::debug("*** debug *** QuestManager::moveToNextMission nextMissionId={$nextMissionId}");
+        Yii::debug("*** debug *** QuestManager::moveToNextMission nextMissionId={$nextMissionId}";
 
         $status = AppStatus::from($this->quest->status);
         if ($status === AppStatus::COMPLETED || $status === AppStatus::ABORTED) {
