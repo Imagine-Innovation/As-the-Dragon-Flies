@@ -230,18 +230,32 @@ class GameController extends Controller
 
         // Check if there is any pending transition in completed questActions of the current QuestProgress.
         $nextMissionId = null;
+        $completedPairs = [];
         foreach ($questProgress->questActions as $questAction) {
             if ($questAction->status !== null) {
-                // Find matching outcomes
-                $outcomes = \common\models\Outcome::findAll([
+                $completedPairs[] = [
                     'action_id' => $questAction->action_id,
                     'status' => $questAction->status,
-                ]);
-                foreach ($outcomes as $outcome) {
-                    if ($outcome->next_mission_id !== null && (int)$outcome->next_mission_id !== (int)$questProgress->mission_id) {
-                        $nextMissionId = (int)$outcome->next_mission_id;
-                        break 2;
-                    }
+                ];
+            }
+        }
+
+        if (!empty($completedPairs)) {
+            $query = \common\models\Outcome::find();
+            $orConditions = ['or'];
+            foreach ($completedPairs as $pair) {
+                $orConditions[] = [
+                    'action_id' => $pair['action_id'],
+                    'status' => $pair['status'],
+                ];
+            }
+            $query->where($orConditions);
+            $outcomes = $query->all();
+
+            foreach ($outcomes as $outcome) {
+                if ($outcome->next_mission_id !== null && (int)$outcome->next_mission_id !== (int)$questProgress->mission_id) {
+                    $nextMissionId = (int)$outcome->next_mission_id;
+                    break;
                 }
             }
         }

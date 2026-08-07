@@ -246,6 +246,7 @@ class QuestManager extends BaseManager
     }
 
     /**
+     * @internal Protected for unit testing purposes.
      *
      * @param AppStatus $status
      * @return array{error: bool, msg: string, event?: string, payload?: array<string, mixed>}
@@ -302,6 +303,7 @@ class QuestManager extends BaseManager
     }
 
     /**
+     * @internal Protected for unit testing purposes.
      *
      * @param QuestProgress $questProgress
      * @param AppStatus $status
@@ -321,6 +323,8 @@ class QuestManager extends BaseManager
 
     /**
      * Add a QuestProgress model as an instance of a Mission model for a specific Quest
+     *
+     * @internal Protected for unit testing purposes.
      *
      * @param int $missionId
      * @return QuestProgress|null
@@ -542,6 +546,10 @@ class QuestManager extends BaseManager
 
     /**
      * Move to a specific mission ID.
+     *
+     * If the target mission ID matches the current mission ID, the request is ignored
+     * and delegated to moveToNextDefaultMission() to prevent infinite loops or
+     * restarting the current mission upon its completion.
      *
      * @param int $nextMissionId
      * @return array{error: bool, msg: string, event?: string, payload?: array<string, mixed>}
