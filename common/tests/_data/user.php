@@ -10,5 +10,6 @@ return [
         'created_at' => '1402312317',
         'updated_at' => '1402312317',
         'email' => 'nicole.paucek@schultz.info',
+        'verification_token' => 'HP187Mvq7Mmm3CTU80dLkGmni_FUH_lR',
     ],
 ];

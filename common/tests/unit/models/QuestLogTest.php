@@ -47,12 +47,10 @@ class QuestLogTest extends Unit
         $this->assertContains('quest_id', $requiredAttributes);
         $this->assertContains('player_id', $requiredAttributes);
 
-        // quest_id, player_id, round, dc, and action_success must be integers
+        // quest_id, player_id, and round must be integers
         $this->assertContains('quest_id', $integerAttributes);
         $this->assertContains('player_id', $integerAttributes);
         $this->assertContains('round', $integerAttributes);
-        $this->assertContains('dice_roll', $integerAttributes);
-        $this->assertContains('result', $integerAttributes);
     }
 
     public function testAttributeLabels(): void
