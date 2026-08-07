@@ -33,12 +33,12 @@ class QuestManagerTest extends \Codeception\Test\Unit
 
         $manager = $this->getMockBuilder(QuestManager::class)
                 ->disableOriginalConstructor()
-                ->onlyMethods(['getQuest'])
+                ->onlyMethods(['getQuestProgress'])
                 ->getMock();
 
-        $manager->method('getQuest')->willReturn($quest);
+        $manager->quest = $quest;
 
-        $result = $manager->moveToNextDefaultMission();
+        $result = $manager->moveToNextMission(101);
 
         $this->assertFalse($result['error']);
         $this->assertStringContainsString('is already over with status Completed', $result['msg']);
@@ -56,12 +56,12 @@ class QuestManagerTest extends \Codeception\Test\Unit
 
         $manager = $this->getMockBuilder(QuestManager::class)
                 ->disableOriginalConstructor()
-                ->onlyMethods(['getQuest'])
+                ->onlyMethods(['getQuestProgress'])
                 ->getMock();
 
-        $manager->method('getQuest')->willReturn($quest);
+        $manager->quest = $quest;
 
-        $result = $manager->moveToNextDefaultMission();
+        $result = $manager->moveToNextMission(101);
 
         $this->assertFalse($result['error']);
         $this->assertStringContainsString('is already over with status Aborted', $result['msg']);
@@ -87,10 +87,10 @@ class QuestManagerTest extends \Codeception\Test\Unit
 
         $manager = $this->getMockBuilder(QuestManager::class)
                 ->disableOriginalConstructor()
-                ->onlyMethods(['getQuest', 'getQuestProgress', 'endCurrentQuestProgress', 'addQuestProgress', 'gameOver'])
+                ->onlyMethods(['getQuestProgress', 'endCurrentQuestProgress', 'addQuestProgress', 'gameOver'])
                 ->getMock();
 
-        $manager->method('getQuest')->willReturn($quest);
+        $manager->quest = $quest;
         $manager->method('getQuestProgress')->willReturn($progress);
         $manager->method('addQuestProgress')->willReturn(null);
 
