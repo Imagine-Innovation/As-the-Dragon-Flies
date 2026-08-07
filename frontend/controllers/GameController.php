@@ -154,7 +154,7 @@ class GameController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxMission(int $missionId): array
+    public function actionAjaxMission(?int $missionId = null): array
     {
         // Configure JSON response format
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -162,6 +162,10 @@ class GameController extends Controller
         // Validate request type
         if (!$this->request->isGet || !$this->request->isAjax) {
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
+        }
+
+        if (!$missionId) {
+            return ['error' => true, 'msg' => 'Missing missionId'];
         }
 
         $mission = FindModelHelper::findMission(['id' => $missionId]);
@@ -205,7 +209,7 @@ class GameController extends Controller
      *
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxActions(int $questProgressId): array
+    public function actionAjaxActions(?int $questProgressId = null): array
     {
         // Configure JSON response format
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -213,6 +217,10 @@ class GameController extends Controller
         // Validate request type
         if (!$this->request->isGet || !$this->request->isAjax) {
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
+        }
+
+        if (!$questProgressId) {
+            return ['error' => true, 'msg' => 'Missing questProgressId'];
         }
 
         $questProgress = FindModelHelper::findQuestProgress(['id' => $questProgressId]);
@@ -227,6 +235,28 @@ class GameController extends Controller
             $render = $this->renderPartial('ajax/actions', ['questActions' => $remainingActions]);
             return ['error' => false, 'msg' => '', 'content' => $render];
         }
+
+        // Check if there is a pending transition to another mission from completed actions
+        $hasTransition = false;
+        foreach ($questProgress->questActions as $qa) {
+            if ($qa->status !== null) {
+                $outcomes = \common\models\Outcome::findAll([
+                    'action_id' => $qa->action_id,
+                ]);
+                foreach ($outcomes as $outcome) {
+                    $bitwiseComparison = $outcome->status & $qa->status;
+                    if ($bitwiseComparison && $outcome->next_mission_id !== null && (int) $outcome->next_mission_id !== (int) $questProgress->mission_id) {
+                        $hasTransition = true;
+                        break 2;
+                    }
+                }
+            }
+        }
+
+        if ($hasTransition) {
+            return ['error' => false, 'msg' => 'Transition pending', 'content' => ''];
+        }
+
         // There are no more actions remaining, this mission is considered complete,
         // we move on to the next mission.
         $questManager = new QuestManager(['questProgress' => $questProgress]);
@@ -236,17 +266,21 @@ class GameController extends Controller
     /**
      * Ajax GET request to manage the dialog between a player and a NPC
      *
-     * @param int $replyId
-     * @param int $playerId
-     * @param int $storyId
+     * @param int|null $replyId
+     * @param int|null $playerId
+     * @param int|null $storyId
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxDialog(int $replyId, int $playerId, int $storyId): array
+    public function actionAjaxDialog(?int $replyId = null, ?int $playerId = null, ?int $storyId = null): array
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isGet || !$this->request->isAjax) {
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
+        }
+
+        if (!$replyId || !$playerId || !$storyId) {
+            return ['error' => true, 'msg' => 'Missing required parameters'];
         }
 
         $reply = FindModelHelper::findReply(['id' => $replyId]);
@@ -317,7 +351,7 @@ class GameController extends Controller
     /**
      * Ajax POST request that evaluates the outcome of the completed action
      *
-     * @return array{error: bool, msg: string, content?: string} Json encoded associative array with error status, internal message, and content to display
+     * @return array{error: bool, msg: string, content?: string, isFree?: bool, nextMissionId?: int|null} Json encoded associative array with error status, internal message, and content to display
      */
     public function actionAjaxEvaluate(): array
     {
@@ -330,7 +364,13 @@ class GameController extends Controller
         $outcomeLog = $this->getOutcomeLog(Yii::$app->request);
         Yii::debug($outcomeLog);
         $content = $this->renderPartial('ajax/outcomes', $outcomeLog);
-        return ['error' => false, 'msg' => '', 'content' => $content];
+        return [
+            'error' => false,
+            'msg' => '',
+            'content' => $content,
+            'isFree' => isset($outcomeLog['isFree']) ? (bool) $outcomeLog['isFree'] : false,
+            'nextMissionId' => isset($outcomeLog['nextMissionId']) ? $outcomeLog['nextMissionId'] : null,
+        ];
     }
 
     /**

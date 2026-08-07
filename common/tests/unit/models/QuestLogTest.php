@@ -22,6 +22,7 @@ class QuestLogTest extends Unit
         $foundOutcomeId = false;
         $requiredAttributes = [];
         $integerAttributes = [];
+        $stringAttributes = [];
 
         foreach ($rules as $rule) {
             $attributes = (array) $rule[0];
@@ -38,6 +39,10 @@ class QuestLogTest extends Unit
             if ($validatorName === 'integer') {
                 $integerAttributes = array_merge($integerAttributes, $attributes);
             }
+
+            if ($validatorName === 'string') {
+                $stringAttributes = array_merge($stringAttributes, $attributes);
+            }
         }
 
         // outcome_id must NOT be referenced in rules under the new schema
@@ -47,12 +52,14 @@ class QuestLogTest extends Unit
         $this->assertContains('quest_id', $requiredAttributes);
         $this->assertContains('player_id', $requiredAttributes);
 
-        // quest_id, player_id, round, dc, and action_success must be integers
+        // quest_id, player_id, round must be integers
         $this->assertContains('quest_id', $integerAttributes);
         $this->assertContains('player_id', $integerAttributes);
         $this->assertContains('round', $integerAttributes);
-        $this->assertContains('dice_roll', $integerAttributes);
-        $this->assertContains('result', $integerAttributes);
+
+        // dice_roll and result must be strings
+        $this->assertContains('dice_roll', $stringAttributes);
+        $this->assertContains('result', $stringAttributes);
     }
 
     public function testAttributeLabels(): void

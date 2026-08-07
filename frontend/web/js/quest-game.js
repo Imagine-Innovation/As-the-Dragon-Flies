@@ -44,6 +44,13 @@ class VirtualTableTop {
         this._updateQuestMembers(questId);
     }
 
+    _updateQuestProgressId(questProgressId) {
+        if (questProgressId) {
+            this.updateContext({ questProgressId: questProgressId });
+            $('#hiddenQuestProgressId').val(questProgressId);
+        }
+    }
+
     refreshMission(questId, playerId, detail) {
         Logger.log(1, 'refreshMission', `questId=${questId}, playerId=${playerId}, detail=${JSON.stringify(detail, null, 2)}`);
 
@@ -52,6 +59,8 @@ class VirtualTableTop {
  Now it's ${nextPlayer} turn to start mission “${detail.nextMissionName}”`;
 
         ToastManager.show('Game message', toastMessage, 'info');
+
+        this._updateQuestProgressId(detail.nextQuestProgressId);
 
         this._updatePlayer(playerId);
         this._updateQuestMembers(questId);
@@ -68,6 +77,8 @@ class VirtualTableTop {
 
         ToastManager.show('Game message', toastMessage, 'info');
 
+        this._updateQuestProgressId(detail.questProgressId);
+
         this._updatePlayer(playerId);
         this._updateQuestMembers(questId);
         this._updateTurn(playerId, detail.nextPlayerId, detail.nextPlayerName);
@@ -82,6 +93,11 @@ class VirtualTableTop {
         const offcanvasTarget = `#questMembers-offcanvas`;
         if (!DOMUtils.exists(offcanvasTarget))
             return;
+
+        if (!questId || questId === '') {
+            return;
+        }
+
         AjaxUtils.request({
             url: 'quest/ajax-quest-members',
             method: 'GET',
@@ -105,6 +121,10 @@ class VirtualTableTop {
         const offcanvasTarget = `#player-offcanvas`;
         if (!DOMUtils.exists(offcanvasTarget))
             return;
+
+        if (!playerId || playerId === '') {
+            return;
+        }
 
         AjaxUtils.request({
             url: 'game/ajax-player',
@@ -130,6 +150,10 @@ class VirtualTableTop {
         const targetDescription = `#description`;
         if (!DOMUtils.exists(targetDescription))
             return;
+
+        if (!missionId || missionId === '') {
+            return;
+        }
 
         AjaxUtils.request({
             url: 'game/ajax-mission',
@@ -198,6 +222,10 @@ class VirtualTableTop {
             return;
         }
         $(target).removeClass('d-none');
+
+        if (!questProgressId || questProgressId === '') {
+            return;
+        }
 
         AjaxUtils.request({
             url: 'game/ajax-actions',
