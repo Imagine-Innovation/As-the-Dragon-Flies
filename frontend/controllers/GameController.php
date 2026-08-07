@@ -227,10 +227,46 @@ class GameController extends Controller
             $render = $this->renderPartial('ajax/actions', ['questActions' => $remainingActions]);
             return ['error' => false, 'msg' => '', 'content' => $render];
         }
-        // There are no more actions remaining, this mission is considered complete,
-        // we move on to the next mission.
+
+        // Check if there is any pending transition in completed questActions of the current QuestProgress.
+        $nextMissionId = null;
+        $completedPairs = [];
+        foreach ($questProgress->questActions as $questAction) {
+            if ($questAction->status !== null) {
+                $completedPairs[] = [
+                    'action_id' => $questAction->action_id,
+                    'status' => $questAction->status,
+                ];
+            }
+        }
+
+        if (!empty($completedPairs)) {
+            $query = \common\models\Outcome::find();
+            $orConditions = ['or'];
+            foreach ($completedPairs as $pair) {
+                $orConditions[] = [
+                    'action_id' => $pair['action_id'],
+                    'status' => $pair['status'],
+                ];
+            }
+            $query->where($orConditions);
+            $outcomes = $query->all();
+
+            foreach ($outcomes as $outcome) {
+                if ($outcome->next_mission_id !== null && (int)$outcome->next_mission_id !== (int)$questProgress->mission_id) {
+                    $nextMissionId = (int)$outcome->next_mission_id;
+                    break;
+                }
+            }
+        }
+
         $questManager = new QuestManager(['questProgress' => $questProgress]);
-        return $questManager->moveToNextMission();
+
+        if ($nextMissionId !== null) {
+            return $questManager->moveToNextMission($nextMissionId);
+        }
+
+        return $questManager->moveToNextDefaultMission();
     }
 
     /**
@@ -369,7 +405,10 @@ class GameController extends Controller
             return $questManager->nextPlayer();
         }
         // Move to the default mission
-        return $questManager->moveToNextMission($nextMissionId);
+        if ($nextMissionId !== null) {
+            return $questManager->moveToNextMission((int) $nextMissionId);
+        }
+        return $questManager->moveToNextDefaultMission();
     }
 
     /**

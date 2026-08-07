@@ -25,44 +25,46 @@ class QuestManagerTest extends \Codeception\Test\Unit
     {
         $quest = $this->getMockBuilder(Quest::class)
                 ->disableOriginalConstructor()
-                ->onlyMethods(['getAttributes'])
+                ->onlyMethods(['attributes'])
                 ->getMock();
+        $quest->method('attributes')->willReturn(['id', 'status', 'current_player_id', 'current_chapter_id']);
         $quest->id = self::QUEST_ID;
         $quest->status = AppStatus::COMPLETED->value;
 
         $manager = $this->getMockBuilder(QuestManager::class)
                 ->disableOriginalConstructor()
-                ->onlyMethods(['getQuest'])
+                ->onlyMethods(['getQuestProgress'])
                 ->getMock();
 
-        $manager->method('getQuest')->willReturn($quest);
+        $manager->quest = $quest;
 
-        $result = $manager->moveToNextMission();
+        $result = $manager->moveToNextMission(101);
 
-        verify($result['error'])->false();
-        verify($result['msg'])->contains('is already over with status Completed');
+        $this->assertFalse($result['error']);
+        $this->assertStringContainsString('is already over with status Completed', $result['msg']);
     }
 
     public function testMoveToNextMissionReturnsEarlyWhenAborted()
     {
         $quest = $this->getMockBuilder(Quest::class)
                 ->disableOriginalConstructor()
-                ->onlyMethods(['getAttributes'])
+                ->onlyMethods(['attributes'])
                 ->getMock();
+        $quest->method('attributes')->willReturn(['id', 'status', 'current_player_id', 'current_chapter_id']);
         $quest->id = self::QUEST_ID;
         $quest->status = AppStatus::ABORTED->value;
 
         $manager = $this->getMockBuilder(QuestManager::class)
                 ->disableOriginalConstructor()
-                ->onlyMethods(['getQuest'])
+                ->onlyMethods(['getQuestProgress'])
                 ->getMock();
 
-        $manager->method('getQuest')->willReturn($quest);
+        $manager->quest = $quest;
 
-        $result = $manager->moveToNextMission();
+        $result = $manager->moveToNextMission(101);
 
-        verify($result['error'])->false();
-        verify($result['msg'])->contains('is already over with status Aborted');
+        $this->assertFalse($result['error']);
+        $this->assertStringContainsString('is already over with status Aborted', $result['msg']);
     }
 
     public function testSetNextMissionTriggersGameOverWhenAddQuestProgressFails()
@@ -73,22 +75,22 @@ class QuestManagerTest extends \Codeception\Test\Unit
 
         $quest = $this->getMockBuilder(Quest::class)
                 ->disableOriginalConstructor()
-                ->onlyMethods(['getCurrentPlayer'])
+                ->onlyMethods(['getCurrentPlayer', 'attributes'])
                 ->getMock();
+        $quest->method('attributes')->willReturn(['id', 'status', 'current_player_id', 'current_chapter_id']);
         $quest->id = self::QUEST_ID;
         $quest->current_player_id = self::CURRENT_PLAYER_ID;
         $quest->method('getCurrentPlayer')->willReturn($hero);
-        $quest->currentPlayer = $hero;
 
         $progress = $this->getMockBuilder(QuestProgress::class)->disableOriginalConstructor()->getMock();
         $progress->id = self::QUEST_PROGRESS_ID;
 
         $manager = $this->getMockBuilder(QuestManager::class)
                 ->disableOriginalConstructor()
-                ->onlyMethods(['getQuest', 'getQuestProgress', 'endCurrentQuestProgress', 'addQuestProgress', 'gameOver'])
+                ->onlyMethods(['getQuestProgress', 'endCurrentQuestProgress', 'addQuestProgress', 'gameOver'])
                 ->getMock();
 
-        $manager->method('getQuest')->willReturn($quest);
+        $manager->quest = $quest;
         $manager->method('getQuestProgress')->willReturn($progress);
         $manager->method('addQuestProgress')->willReturn(null);
 
@@ -99,6 +101,6 @@ class QuestManagerTest extends \Codeception\Test\Unit
 
         $result = $manager->moveToNextMission(101); // Triggering setNextMission through moveToNextMission
 
-        verify($result['msg'])->equals('Game Over Success');
+        $this->assertEquals('Game Over Success', $result['msg']);
     }
 }

@@ -9,6 +9,7 @@ return [
         'created_at' => '1391885313',
         'updated_at' => '1391885313',
         'email' => 'brady.renner@rutherford.com',
+        'verification_token' => 'iwTNae9t34OmnK6l4vT4IeaTk-YWI2Rv',
     ],
     [
         'username' => 'troy.becker',
@@ -19,6 +20,7 @@ return [
         'updated_at' => '1391885313',
         'email' => 'nicolas.dianna@hotmail.com',
         'status' => '0',
+        'verification_token' => 'EdKfXrx88weFMV0vIxuTMWKgfK2tS3Lp',
     ],
     [
         'username' => 'test.test',
