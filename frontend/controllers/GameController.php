@@ -228,9 +228,23 @@ class GameController extends Controller
             return ['error' => false, 'msg' => '', 'content' => $render];
         }
         // There are no more actions remaining, this mission is considered complete,
-        // we move on to the next mission.
+        // we move on to the next mission. Check if any completed action in this quest progress
+        // has an outcome with a next_mission_id pointing to a different mission.
+        $nextMissionId = null;
+        foreach ($questProgress->questActions as $qa) {
+            if ($qa->status !== null) {
+                $outcomes = \common\models\Outcome::findAll(['action_id' => $qa->action_id]);
+                foreach ($outcomes as $outcome) {
+                    if (($outcome->status & $qa->status) && $outcome->next_mission_id !== null && (int)$outcome->next_mission_id !== (int)$questProgress->mission_id) {
+                        $nextMissionId = (int)$outcome->next_mission_id;
+                        break 2;
+                    }
+                }
+            }
+        }
+
         $questManager = new QuestManager(['questProgress' => $questProgress]);
-        return $questManager->moveToNextMission();
+        return $questManager->moveToNextMission($nextMissionId);
     }
 
     /**
