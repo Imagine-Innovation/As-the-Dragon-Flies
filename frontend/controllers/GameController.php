@@ -42,7 +42,7 @@ class GameController extends Controller
                             'view',
                             'ajax-actions',
                             'ajax-dialog',
-                            'ajax-evaluate',
+                            'ajax-get-outcomes',
                             'ajax-mission',
                             'ajax-next-turn',
                             'ajax-player',
@@ -230,7 +230,7 @@ class GameController extends Controller
         // There are no more actions remaining, this mission is considered complete,
         // we move on to the next mission.
         $questManager = new QuestManager(['questProgress' => $questProgress]);
-        return $questManager->moveToNextMission();
+        return $questManager->moveToNextDefaultMission();
     }
 
     /**
@@ -273,14 +273,14 @@ class GameController extends Controller
     /**
      * Retrieves the POST parameters, evaluates the results of the completed action, and triggers a "game-action" event.
      *
-     * @param Request $postRequest
+     * @param Request $getRequest
      * @return array<string, mixed> An associative array that contains what should be displayed
      */
-    protected function getOutcomeLog(Request $postRequest): array
+    protected function getOutcomeLog(Request $getRequest): array
     {
         $param = [
-            'quest_progress_id' => $postRequest->post('questProgressId'),
-            'action_id' => $postRequest->post('actionId'),
+            'quest_progress_id' => $getRequest->get('questProgressId'),
+            'action_id' => $getRequest->get('actionId'),
         ];
         $questAction = FindModelHelper::findQuestAction($param);
         $outcomeManager = new OutcomeManager(['questAction' => $questAction]);
@@ -309,22 +309,27 @@ class GameController extends Controller
         $actionManager->endCurrentAction($payload['status'], $payload['canReplay']);
         $actionManager->unlockNextActions($payload['status']);
 
-        $this->createEvent('game-action', $postRequest, $questAction->action->name, $payload);
+        $this->createEvent('game-action', $getRequest, $questAction->action->name, $payload);
+
+        if ($payload['nextMissionId']) {
+            $questManager = new QuestManager(['questProgress' => $questAction->questProgress]);
+            $questManager->moveToNextMission($payload['nextMissionId']);
+        }
 
         return $actionOutcome['log'];
     }
 
     /**
-     * Ajax POST request that evaluates the outcome of the completed action
+     * Ajax POST request that evaluates the action and get the outcomes of the completed action
      *
      * @return array{error: bool, msg: string, content?: string} Json encoded associative array with error status, internal message, and content to display
      */
-    public function actionAjaxEvaluate(): array
+    public function actionAjaxGetOutcomes(): array
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        if (!$this->request->isPost || !$this->request->isAjax) {
-            return ['error' => true, 'msg' => 'Not an Ajax POST request'];
+        if (!$this->request->isGet || !$this->request->isAjax) {
+            return ['error' => true, 'msg' => 'Not an Ajax GET request'];
         }
 
         $outcomeLog = $this->getOutcomeLog(Yii::$app->request);
@@ -375,18 +380,18 @@ class GameController extends Controller
     /**
      *
      * @param string $eventType
-     * @param Request $postRequest
+     * @param Request $getRequest
      * @param string $actionName
      * @param array<string, mixed> $outcome
      * @return bool
      * @throws \Exception
      */
-    protected function createEvent(string $eventType, Request $postRequest, string $actionName, array $outcome = [],): bool
+    protected function createEvent(string $eventType, Request $getRequest, string $actionName, array $outcome = [],): bool
     {
         $sessionId = Yii::$app->session->get('sessionId');
         try {
-            $playerId = $postRequest->post('playerId');
-            $questId = $postRequest->post('questId');
+            $playerId = $getRequest->get('playerId');
+            $questId = $getRequest->get('questId');
             $player = FindModelHelper::findPlayer(['id' => $playerId]);
             $quest = FindModelHelper::findQuest(['id' => $questId]);
             $data['action'] = $actionName;

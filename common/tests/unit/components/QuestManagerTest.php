@@ -37,7 +37,7 @@ class QuestManagerTest extends \Codeception\Test\Unit
 
         $manager->method('getQuest')->willReturn($quest);
 
-        $result = $manager->moveToNextMission();
+        $result = $manager->moveToNextDefaultMission();
 
         verify($result['error'])->false();
         verify($result['msg'])->contains('is already over with status Completed');
@@ -59,7 +59,7 @@ class QuestManagerTest extends \Codeception\Test\Unit
 
         $manager->method('getQuest')->willReturn($quest);
 
-        $result = $manager->moveToNextMission();
+        $result = $manager->moveToNextDefaultMission();
 
         verify($result['error'])->false();
         verify($result['msg'])->contains('is already over with status Aborted');
