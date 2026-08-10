@@ -409,7 +409,7 @@ class VirtualTableTop {
             return;
 
         AjaxUtils.request({
-            url: 'game/ajax-evaluate',
+            url: 'game/ajax-get-outcomes',
             method: 'POST',
             data: this.context,
             successCallback: (response) => {
