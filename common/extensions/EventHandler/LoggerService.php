@@ -4,6 +4,7 @@ namespace common\extensions\EventHandler;
 
 class LoggerService
 {
+
     private string $logFilePath;
     private bool $debug;
     private int $nestedLevel = 0;
@@ -45,8 +46,10 @@ class LoggerService
         fwrite($myfile, $txt);
 
         if ($dump) {
-            if (is_array($dump) || is_object($dump)) {
+            if (is_array($dump)) {
                 $output = print_r($dump, true);
+            } elseif (is_object($dump)) {
+                $output = print_r($dump->attributes, true);
             } else {
                 $output = $dump;
             }
