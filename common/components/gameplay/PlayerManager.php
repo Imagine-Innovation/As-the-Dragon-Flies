@@ -3,7 +3,6 @@
 namespace common\components\gameplay;
 
 use common\helpers\DiceRoller;
-use common\models\Item;
 use common\models\Outcome;
 use common\models\Player;
 use common\models\Quest;
@@ -133,7 +132,7 @@ class PlayerManager extends BaseManager
     public function updatePlayerStats(Outcome &$outcome): void
     {
         Yii::debug(
-                "*** debug *** updatePlayerStats - player={$this->player?->name}, outcome=" . print_r($outcome, true),
+                "*** debug *** updatePlayerStats - player={$this->player?->name}, outcome=" . print_r($outcome->attributes, true),
         );
         if ($this->player === null) {
             return;

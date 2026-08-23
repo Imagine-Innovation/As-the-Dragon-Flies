@@ -47,7 +47,6 @@ class GameController extends Controller
                             'ajax-next-turn',
                             'ajax-player',
                             'ajax-quit',
-                            'ajax-turn',
                         ],
                         'allow' => true,
                         'matchCallback' => function ($rule, $action) {
@@ -170,39 +169,9 @@ class GameController extends Controller
     }
 
     /**
-     * Ajax GET request to get the turn info
-     *
-     * @return  array{error: bool, msg: string, content?: mixed}
-     */
-    public function actionAjaxTurn(): array
-    {
-        // Configure JSON response format
-        Yii::$app->response->format = Response::FORMAT_JSON;
-
-        // Validate request type
-        if (!$this->request->isGet || !$this->request->isAjax) {
-            return ['error' => true, 'msg' => 'Not an Ajax GET request'];
-        }
-
-        $questTurn = QuestTurn::find()->where([
-                    'status' => AppStatus::IN_PROGRESS->value,
-                    'quest_progress_id' => Yii::$app->request->get('questProgressId'),
-                ])->one();
-
-        if ($questTurn) {
-            $content = [
-                'playerId' => $questTurn->player_id,
-                'sequence' => $questTurn->sequence,
-            ];
-            return ['error' => false, 'msg' => '', 'content' => $content];
-        }
-
-        return ['error' => true, 'msg' => 'Error encountered'];
-    }
-
-    /**
      * Ajax GET request to retreive the eligible actions for a player
      *
+     * @param int $questProgressId
      * @return array{error: bool, msg: string, content?: string}
      */
     public function actionAjaxActions(int $questProgressId): array
@@ -227,8 +196,9 @@ class GameController extends Controller
             $render = $this->renderPartial('ajax/actions', ['questActions' => $remainingActions]);
             return ['error' => false, 'msg' => '', 'content' => $render];
         }
+
         // There are no more actions remaining, this mission is considered complete,
-        // we move on to the next mission.
+        // we move on to the next default mission.
         $questManager = new QuestManager(['questProgress' => $questProgress]);
         return $questManager->moveToNextDefaultMission();
     }
@@ -276,17 +246,19 @@ class GameController extends Controller
      * @param Request $getRequest
      * @return array<string, mixed> An associative array that contains what should be displayed
      */
-    protected function getOutcomeLog(Request $getRequest): array
+    protected function getActionResultLog(Request $getRequest): array
     {
         $param = [
             'quest_progress_id' => $getRequest->get('questProgressId'),
             'action_id' => $getRequest->get('actionId'),
         ];
+        Yii::debug("*** debug *** - getActionResultLog - param=" . print_r($param, true));
         $questAction = FindModelHelper::findQuestAction($param);
         $outcomeManager = new OutcomeManager(['questAction' => $questAction]);
         /** @var array{payload: array<string, mixed>, log: array<string, mixed>} $actionOutcome */
-        $actionOutcome = $outcomeManager->evaluateActionOutcome();
-        $outcomeManager->addQuestLog($actionOutcome['log']);
+        $actionOutcome = $outcomeManager->evaluateActionResult();
+        $outcomeManager->logQuestAction($actionOutcome['log']);
+
         /** @var array{
          *   action: \common\models\Action,
          *   status: AppStatus,
@@ -309,13 +281,7 @@ class GameController extends Controller
         $actionManager->endCurrentAction($payload['status'], $payload['canReplay']);
         $actionManager->unlockNextActions($payload['status']);
 
-        $this->createEvent('game-action', $getRequest, $questAction->action->name, $payload);
-
-        if ($payload['nextMissionId']) {
-            $questManager = new QuestManager(['questProgress' => $questAction->questProgress]);
-            $questManager->moveToNextMission($payload['nextMissionId']);
-        }
-
+        $this->createGameActionEvent($questAction->action->name, $payload);
         return $actionOutcome['log'];
     }
 
@@ -332,10 +298,15 @@ class GameController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
         }
 
-        $outcomeLog = $this->getOutcomeLog(Yii::$app->request);
-        Yii::debug($outcomeLog);
-        $content = $this->renderPartial('ajax/outcomes', $outcomeLog);
-        return ['error' => false, 'msg' => '', 'content' => $content];
+        $actionLog = $this->getActionResultLog(Yii::$app->request);
+        Yii::debug($actionLog);
+        $content = $this->renderPartial('ajax/outcomes', $actionLog);
+        return [
+            'error' => false,
+            'msg' => '',
+            'content' => $content,
+            'questProgressId' => $actionLog['questProgressId'],
+        ];
     }
 
     /**
@@ -360,16 +331,14 @@ class GameController extends Controller
         $rawNextMissionId = $request->post('nextMissionId');
         $nextMissionId = ($rawNextMissionId !== null && $rawNextMissionId !== '') ? (int) $rawNextMissionId : null;
         $currentMissionId = (int) $request->post('missionId');
+
         $remainingActions = $questProgress->remainingActions;
-
-        Yii::debug("*** debug *** actionAjaxNextTurn - questProgressId={$questProgressId}, nextMissionId=" . ($nextMissionId ?? 'null') . ", currentMissionId={$currentMissionId}, remainingActionsCount=" . count($remainingActions));
-
         if ($remainingActions) {
-            if ($nextMissionId && (int) $nextMissionId !== $currentMissionId) {
+            if ($nextMissionId && $nextMissionId !== $currentMissionId) {
                 // One of the results of the previous action indicates
                 // that you should move on to another mission.
                 // This takes over the processing of the remaining actions.
-                return $questManager->moveToNextMission((int) $nextMissionId);
+                return $questManager->moveToNextMission($nextMissionId);
             }
             return $questManager->nextPlayer();
         }
@@ -379,33 +348,29 @@ class GameController extends Controller
 
     /**
      *
-     * @param string $eventType
-     * @param Request $getRequest
      * @param string $actionName
-     * @param array<string, mixed> $outcome
+     * @param array<string, mixed> $actionResult
      * @return bool
      * @throws \Exception
      */
-    protected function createEvent(string $eventType, Request $getRequest, string $actionName, array $outcome = [],): bool
+    protected function createGameActionEvent(string $actionName, array $actionResult = []): bool
     {
         $sessionId = Yii::$app->session->get('sessionId');
+        $player = Yii::$app->session->get('currentPlayer');
+        $quest = Yii::$app->session->get('currentQuest');
         try {
-            $playerId = $getRequest->get('playerId');
-            $questId = $getRequest->get('questId');
-            $player = FindModelHelper::findPlayer(['id' => $playerId]);
-            $quest = FindModelHelper::findQuest(['id' => $questId]);
             $data['action'] = $actionName;
             $data['detail'] = [
-                'diceRoll' => $outcome['diceRoll'],
-                'status' => $outcome['status'],
-                'outcomes' => $outcome['outcomes'],
-                'hpLoss' => $outcome['hpLoss'],
+                'diceRoll' => $actionResult['diceRoll'],
+                'status' => $actionResult['status'],
+                'outcomes' => $actionResult['outcomes'],
+                'hpLoss' => $actionResult['hpLoss'],
             ];
-            $event = EventFactory::createEvent($eventType, $sessionId, $player, $quest, $data);
+            $event = EventFactory::createEvent('game-action', $sessionId, $player, $quest, $data);
             $event->process();
             return true;
         } catch (\Exception $e) {
-            Yii::error("Failed to broadcast '{$eventType}' event: " . $e->getMessage());
+            Yii::error("Failed to broadcast 'game-action' event: {$e->getMessage()}");
             $errorMessage = 'Error: ' . $e->getMessage() . '<br />Stack Trace:<br />' . nl2br($e->getTraceAsString());
             throw new \Exception($errorMessage);
         }

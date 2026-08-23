@@ -18,8 +18,8 @@ final class ActionManager extends BaseManager
     public ?QuestAction $questAction = null;
     public ?QuestProgress $questProgress = null;
     private ?Action $action = null;
-    private ?Player $player = null;
-    private ?Quest $quest = null;
+    private Player $player;
+    private Quest $quest;
 
     /**
      * @param array<string, mixed> $config
@@ -38,11 +38,15 @@ final class ActionManager extends BaseManager
         }
 
         $this->action ??= $this->questAction?->action;
-        $this->player ??= $this->questProgress->currentPlayer;
-        $this->quest ??= $this->questProgress->quest;
+        $this->player = $this->questProgress->currentPlayer;
+        $this->quest = $this->questProgress->quest;
+
+        Yii::debug("*** debug *** ActionManager action={$this->action?->name}, questProgressId={$this->questProgress->id}, player={$this->player->name}, questId={$this->quest->id}");
     }
 
     /**
+     * Determines whether an action is eligible by verifying that all prerequisites are met.
+     *
      * @param Action $action
      * @param int $questProgressId
      * @return bool
@@ -61,6 +65,8 @@ final class ActionManager extends BaseManager
     }
 
     /**
+     * Verify that all prerequisites for an action have been met.
+     *
      * @param ActionFlow $prerequisite
      * @param int $questProgressId
      * @return bool
@@ -100,6 +106,7 @@ final class ActionManager extends BaseManager
 
         if ($questAction) {
             if (!$questAction->eligible) {
+                // If the existing action is no longer eligible, do not modify it.
                 return $questAction;
             }
             // Existing and eligible action, reset the status
@@ -124,7 +131,7 @@ final class ActionManager extends BaseManager
         $actions = Action::findAll(['mission_id' => $missionId]);
 
         foreach ($actions as $action) {
-            $questProgressId = (int) $this->questProgress?->id;
+            $questProgressId = $this->questProgress->id;
             if ($this->isActionEligible($action, $questProgressId)) {
                 $this->addOneQuestAction($action->id, $questProgressId);
             }
@@ -132,6 +139,8 @@ final class ActionManager extends BaseManager
     }
 
     /**
+     * Update the completion status and eligibility of the action.
+     *
      * @param AppStatus $status
      * @param bool|null $canReplay
      * @return void
@@ -160,7 +169,7 @@ final class ActionManager extends BaseManager
             return $unlockedQuestActions;
         }
 
-        $questProgressId = (int) $this->questProgress?->id;
+        $questProgressId = $this->questProgress->id;
         /** @var ActionFlow $actionFlow */
         foreach ($triggeredActions as $actionFlow) {
             $bitwiseComparison = $actionFlow->status & $status->value;

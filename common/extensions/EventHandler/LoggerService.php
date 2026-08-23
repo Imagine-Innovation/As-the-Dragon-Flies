@@ -49,7 +49,8 @@ class LoggerService
             if (is_array($dump)) {
                 $output = print_r($dump, true);
             } elseif (is_object($dump)) {
-                $output = print_r($dump->attributes, true);
+                //$output = print_r($dump->attributes, true);
+                $output = print_r($dump, true);
             } else {
                 $output = $dump;
             }

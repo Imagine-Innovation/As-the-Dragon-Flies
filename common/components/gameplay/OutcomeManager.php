@@ -59,7 +59,7 @@ final class OutcomeManager extends BaseManager
      */
     private function getMatchingOutcomes(AppStatus $status): array
     {
-        Yii::debug("*** debug *** getMatchingOutcomes - status={$status->getLabel()}");
+        Yii::debug("*** debug *** getMatchingOutcomes - status={$status->name}");
         $outcomes = Outcome::findAll(['action_id' => $this->action->id]);
 
         if (!$outcomes) {
@@ -94,12 +94,15 @@ final class OutcomeManager extends BaseManager
 
         $nextMissionId = null;
         $canReplay = true;
-        $currentMissionId = (int) $this->questProgress->mission_id;
+        $currentMissionId = $this->questProgress->mission_id;
 
         foreach ($outcomes as $outcome) {
-            $canReplay = $canReplay && $outcome->can_replay === 1;
-            if ($nextMissionId === null && $outcome->next_mission_id !== null && (int) $outcome->next_mission_id !== $currentMissionId) {
-                $nextMissionId = (int) $outcome->next_mission_id;
+            // The player may take another turn if all the outcomes indicate that they may do so
+            $canReplay = $canReplay && ($outcome->can_replay === 1);
+
+            // If multiple outcomes lead to a next mission, the first mission found will be selected.
+            if ($nextMissionId === null && $outcome->next_mission_id !== null && $outcome->next_mission_id !== $currentMissionId) {
+                $nextMissionId = $outcome->next_mission_id;
             }
         }
         $this->nextMissionId = $nextMissionId;
@@ -131,6 +134,10 @@ final class OutcomeManager extends BaseManager
      */
     private function setPayload(AppStatus $status, array $outcomes, int $diceRoll, bool $canReplay): array
     {
+        Yii::debug("*** debug *** OutcomeManager - setPayload(status={$status->name}, diceRoll={$diceRoll}, canReplay={$canReplay})");
+        foreach ($outcomes as $outcome) {
+            Yii::debug($outcome->attributes);
+        }
         $missionId = $this->questProgress->mission_id;
         $playerName = LanguageHelper::defaultName('Player', $this->player->name, $this->language);
 
@@ -157,20 +164,103 @@ final class OutcomeManager extends BaseManager
     private function getModifier(): int
     {
         Yii::debug("*** debug *** getModifier - action={$this->action->name}, player={$this->player->name}");
-        $skillIds = ActionTypeSkill::find()
+        $requiredSkillsIds = ActionTypeSkill::find()
                 ->select('skill_id')
                 ->where(['action_type_id' => $this->action->action_type_id])
                 ->column();
 
-        if (!$skillIds) {
+        if (!$requiredSkillsIds) {
             return 0;
         }
 
-        $modifier = PlayerSkill::find()
-                ->where(['player_id' => $this->player->id, 'skill_id' => $skillIds])
-                ->max('bonus');
+        $playerSkills = $this->getPlayerSkills($this->player->id, $requiredSkillsIds);
 
-        return is_numeric($modifier) ? (int) $modifier : 0;
+        if (empty($playerSkills)) {
+            return 0;
+        }
+        Yii::debug("*** debug *** getModifier -> bonuses=" . print_r($playerSkills, true));
+
+        $modifier = $this->skillCheckModifier($playerSkills);
+
+        Yii::debug("*** debug *** getModifier -> modifier={$modifier}");
+        return $modifier;
+    }
+
+    /**
+     * Skill Check Modifier
+     *
+     * For each required skill, calculate its modifier by adding the associated ability modifier and,
+     * if the player is proficient in that skill, its proficiency bonus.
+     *
+     * The highest calculated modifier is used as the base modifier.
+     *
+     * If the player is proficient in additional required skills, add the proficiency bonus
+     * from each additional proficient skill to the base modifier.
+     *
+     * Final Modifier = Highest Skill Modifier + Additional Proficiency Bonuses
+     *
+     * For example, if an action requires Arcana and Investigation, and the character has
+     * Intelligence +3 and a +3 proficiency bonus:
+     * - Proficient in neither: +3
+     * - Proficient in Arcana only: +6
+     * - Proficient in Investigation only: +6
+     * - Proficient in both: +9
+     *
+     * @param array{skillName: string, isProficient: bool, skillBonus: int, abilityModifier: int} $playerSkills
+     * @return int
+     */
+    private function skillCheckModifier(array $playerSkills): int
+    {
+        $bestModifier = 0;
+        $additionalBonus = 0;
+        $hasProficiency = false;
+
+        foreach ($playerSkills as $skill) {
+            Yii::debug($skill);
+            $modifier = $skill['abilityModifier'];
+
+            if ($skill['isProficient']) {
+                $modifier += $skill['skillBonus'];
+                $additionalBonus += $hasProficiency ? $skill['skillBonus'] : 0;
+                $hasProficiency = true;
+            }
+
+            $bestModifier = max($bestModifier, $modifier);
+        }
+
+        return ($bestModifier ?? 0) + $additionalBonus;
+    }
+
+    /**
+     *
+     * @param int $playerId
+     * @param array<int> $requiredSkillsIds
+     * @return array{skillName: string, isProficient: bool, skillBonus: int, abilityModifier: int}
+     */
+    private function getPlayerSkills(int $playerId, array $requiredSkillsIds): array
+    {
+        $playerSkills = PlayerSkill::find()
+                        ->alias('ps')
+                        ->select([
+                            'skillName' => 's.name',
+                            'isProficient' => 'ps.is_proficient',
+                            'skillBonus' => 'ps.bonus',
+                            'abilityModifier' => 'pa.modifier',
+                        ])
+                        ->innerJoin(
+                                ['s' => \common\models\Skill::tableName()],
+                                's.id = ps.skill_id'
+                        )
+                        ->innerJoin(
+                                ['pa' => \common\models\PlayerAbility::tableName()],
+                                'pa.player_id = ps.player_id AND pa.ability_id = s.ability_id'
+                        )
+                        ->where(['ps.player_id' => $playerId, 'ps.skill_id' => $requiredSkillsIds])
+                        ->asArray()->all();
+
+        Yii::debug($playerSkills);
+
+        return $playerSkills;
     }
 
     /**
@@ -214,11 +304,10 @@ final class OutcomeManager extends BaseManager
      * Evaluates action, triggers outcome processing, and updates state flow.
      *
      * @return array{payload: array<string, mixed>, log: array<string, mixed>}
-     * @throws \Exception
      */
-    public function evaluateActionOutcome(): array
+    public function evaluateActionResult(): array
     {
-        Yii::debug('*** debug *** evaluateActionOutcome');
+        Yii::debug('*** debug *** evaluateActionResult');
 
         $modifier = $this->getModifier();
         $diceToRoll = $modifier ? "1d20+{$modifier}" : 'd20';
@@ -288,9 +377,7 @@ final class OutcomeManager extends BaseManager
     {
         Yii::debug("*** debug *** getSimpleActionResult(status={$status->name})");
         return Yii::t('app/game', 'simple action result',
-                        [
-                            'status' => $status->name,
-                        ],
+                        ['status' => $status->name],
                         $this->language
                 );
     }
@@ -300,31 +387,15 @@ final class OutcomeManager extends BaseManager
      * @param int $questId
      * @return int
      */
-    private function getNextRound(int $questId): int
+    private function getQuestRound(int $questId): int
     {
-        $maxRoundVal = QuestLog::find()
+        $lastRound = QuestLog::find()
                 ->where(['quest_id' => $questId])
                 ->max('round');
 
-        $maxRound = is_numeric($maxRoundVal) ? (int) $maxRoundVal : 0;
+        $lastQuestRound = is_numeric($lastRound) ? $lastRound : 0;
 
-        return $maxRound + 1;
-    }
-
-    /**
-     *
-     * @param list<array{name: string|null, image: string|null, description: string|null, actionOutcome: array<string>}> $outcomeList
-     * @return string
-     */
-    private function getLogDescription(array $outcomeList): string
-    {
-        $description = '';
-        /** @var array{name: string|null, image: string|null, description: string|null, actionOutcome: array<string>} $outcome */
-        foreach ($outcomeList as $outcome) {
-            // # signs are on purpose for markdown layout when rendering the quest history
-            $description .= "##### {$outcome['name']}\n{$outcome['description']}\n";
-        }
-        return $description;
+        return $lastQuestRound + 1;
     }
 
     /**
@@ -332,12 +403,9 @@ final class OutcomeManager extends BaseManager
      * @param array<string, mixed> $log
      * @return void
      */
-    public function addQuestLog(array $log): void
+    public function logQuestAction(array $log): void
     {
-        $round = $this->getNextRound($this->quest->id);
-        //** @var list<array{name: string|null, image: string|null, description: string|null, actionOutcome: array<string>}> $outcomeList */
-        //$outcomeList = $log['outcomeList'];
-        //$description = $this->getLogDescription($outcomeList);
+        $round = $this->getQuestRound($this->quest->id);
 
         $questLog = new QuestLog([
             'quest_id' => $this->quest->id,
@@ -354,9 +422,36 @@ final class OutcomeManager extends BaseManager
             'description' => json_encode($log['outcomeList']),
         ]);
 
-        if (!$questLog->save()) {
-            Yii::error('Failed to save QuestLog: ' . print_r($questLog->getErrors(), true));
+        $this->save($questLog);
+    }
+
+    /**
+     *
+     * @return int
+     */
+    private function getQuestProgressId(): int
+    {
+        if ($this->nextMissionId === null) {
+            Yii::debug("*** debug *** OutcomeManager - getQuestProgressId(): no next mission Id");
+            return $this->questProgress->id;
         }
+
+        // There is a next mission defined.
+        // We check to make sure it hasn't already been processed.
+        $nextQuestProgress = QuestProgress::find()
+                ->where([
+                    'quest_id' => $this->quest->id,
+                    'mission_id' => $this->nextMissionId
+                ])
+                ->one();
+
+        if ($nextQuestProgress) {
+            // If we find a record of the next mission, we reuse its ID
+            Yii::debug("*** debug *** OutcomeManager - getQuestProgressId(): return existing questProgress id {$nextQuestProgress->id}");
+            return $nextQuestProgress->id;
+        }
+        Yii::debug("*** debug *** OutcomeManager - getQuestProgressId(): return current questProgress id {$this->questProgress->id}");
+        return $this->questProgress->id;
     }
 
     /**
@@ -387,7 +482,8 @@ final class OutcomeManager extends BaseManager
             'hpLoss' => Yii::t('app/game', 'loosing hp', ['hpLoss' => $this->hpLoss], $this->language),
             'outcomeList' => $outcomeList,
             'isFree' => $this->action->is_free,
-            'questProgressId' => $this->questProgress->id,
+            // 'questProgressId' => $this->questProgress->id,
+            'questProgressId' => $this->getQuestProgressId(),
             'nextMissionId' => $this->nextMissionId,
             'storyId' => $this->quest->story_id,
         ];

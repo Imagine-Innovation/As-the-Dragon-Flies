@@ -9,6 +9,15 @@ class VirtualTableTop {
     }
 
     init() {
+        this._loadContext();
+        Logger.log(1, 'init', `context=${JSON.stringify(this.context, null, 2)}`);
+
+        this._updateMission(this.context.missionId);
+        this._updateTurn(this.context.playerId, this.context.currentPlayerId, this.context.currentPlayerName);
+        this._updateActions(this.context.playerId, this.context.currentPlayerId, this.context.questProgressId);
+    }
+
+    _loadContext() {
         this.context = {
             storyId: DOMUtils.getParam('hiddenStoryId'),
             questId: DOMUtils.getParam('hiddenQuestId'),
@@ -19,20 +28,28 @@ class VirtualTableTop {
             questProgressId: DOMUtils.getParam('hiddenQuestProgressId'),
             actionId: DOMUtils.getParam('hiddenQuestActionId')
         };
-        Logger.log(1, 'init', `context=${JSON.stringify(this.context, null, 2)}`);
+    }
 
-        this._updateMission(this.context.missionId);
-        this._updateTurn(this.context.playerId, this.context.currentPlayerId, this.context.currentPlayerName);
-        this._updateActions(this.context.playerId, this.context.currentPlayerId, this.context.questProgressId);
+    _saveContext() {
+        $('#hiddenStoryId').val(this.context.storyId);
+        $('#hiddenQuestId').val(this.context.questId);
+        $('#hiddenPlayerId').val(this.context.playerId);
+        $('#hiddenCurrentPlayerId').val(this.context.currentPlayerId);
+        $('#hiddenCurrentPlayerName').val(this.context.currentPlayerName);
+        $('#hiddenQuestMissionId').val(this.context.missionId);
+        $('#hiddenQuestProgressId').val(this.context.questProgressId);
+        $('#hiddenQuestActionId').val(this.context.actionId);
     }
 
     updateContext(newData) {
+        this._loadContext();
         Logger.log(2, 'updateContext', `newData=${JSON.stringify(newData, null, 2)}`);
         this.context = {
             ...this.context,
             ...newData
         };
-        Logger.log(3, 'updateContext', `context=${JSON.stringify(this.context, null, 2)}`);
+        Logger.log(2, 'updateContext', `context=${JSON.stringify(this.context, null, 2)}`);
+        this._saveContext();
     }
 
     refresh(questId, sessionId, message = null) {
@@ -145,7 +162,6 @@ class VirtualTableTop {
                         $(targetTitle).html(response.title);
                     }
                     this.updateContext({missionId: missionId});
-                    $('#hiddenQuestMissionId').val(missionId);
                 }
             }
         });
@@ -159,9 +175,6 @@ class VirtualTableTop {
                 currentPlayerId: nextPlayerId,
                 currentPlayerName: nextPlayerName
             });
-            // Also update the hidden inputs for immediate consistency if they exist
-            $('#hiddenCurrentPlayerId').val(nextPlayerId);
-            $('#hiddenCurrentPlayerName').val(nextPlayerName);
         }
 
         const target = `#turnDescription`;
@@ -173,31 +186,48 @@ class VirtualTableTop {
         $(target).text(message);
     }
 
+    /**
+     * 
+     * @returns {void}
+     */
+    __hideActionList() {
+        const target = `#actionList`;
+        if (!DOMUtils.exists(target))
+            return;
+
+        $(target).addClass('d-none');
+    }
+
+    /**
+     * 
+     * @returns {void}
+     */
+    __showActionList() {
+        const target = `#actionList`;
+        if (!DOMUtils.exists(target))
+            return;
+
+        $(target).removeClass('d-none');
+    }
+    /**
+     * 
+     * @param {int} playerId
+     * @param {int} currentPlayerId
+     * @param {int} questProgressId
+     * @returns {void}
+     */
     _updateActions(playerId, currentPlayerId, questProgressId) {
         Logger.log(2, '_updateActions', `playerId=${playerId}, currentPlayerId=${currentPlayerId}, questProgressId=${questProgressId}`);
         const target = `#actionList`;
         if (!DOMUtils.exists(target))
             return;
 
-        const numericPlayerId = Number(playerId);
-        const numericCurrentPlayerId = Number(currentPlayerId);
-
-        // Guard against invalid or missing IDs to avoid hiding the action card
-        if (Number.isNaN(numericPlayerId) || Number.isNaN(numericCurrentPlayerId)) {
-            console.warn('Invalid player ID(s) when deciding whether to hide the action card', {
-                playerId,
-                currentPlayerId
-            });
-            return;
-        }
-
-        if (numericPlayerId !== numericCurrentPlayerId) {
+        if (playerId !== currentPlayerId) {
             // The player is not the one who is playing, 
             // the action card is hidden, and we stop there.
-            $(target).addClass('d-none');
+            this.__hideActionList();
             return;
         }
-        $(target).removeClass('d-none');
 
         AjaxUtils.request({
             url: 'game/ajax-actions',
@@ -208,9 +238,9 @@ class VirtualTableTop {
                 const content = response.error ? response.msg : response.content;
                 if (!response.error) {
                     this.updateContext({questProgressId: questProgressId});
-                    $('#hiddenQuestProgressId').val(questProgressId);
                 }
                 $(target).html(content);
+                this.__showActionList();
             }
         });
     }
@@ -310,22 +340,22 @@ class VirtualTableTop {
                     Logger.log(2, '_dialog', `response.audio=${response.audio}`);
 
                     if (response.audio) {
-                        this.__play();
+                        this.__playRecordedVoice();
                     } else {
-                        this.__speakText(response.text);
+                        this.__speak2TextFallback(response.text);
                     }
                 }
             }
         });
     }
 
-    __play() {
-        Logger.log(3, '__play', ``);
+    __playRecordedVoice() {
+        Logger.log(3, '__playRecordedVoice', ``);
 
         const characterLines = document.getElementById('npcLines');
 
         if (!characterLines) {
-            Logger.log(10, '__play', `No audio object found`);
+            Logger.log(10, '__playRecordedVoice', `No audio object found`);
             return;
         }
 
@@ -338,8 +368,8 @@ class VirtualTableTop {
         });
     }
 
-    __speakText(textToRead) {
-        Logger.log(3, '__speakText', `textToRead=${textToRead}`);
+    __speak2TextFallback(textToRead) {
+        Logger.log(3, '__speak2TextFallback', `textToRead=${textToRead}`);
 
         if (!textToRead)
             return;
@@ -387,8 +417,13 @@ class VirtualTableTop {
                 nextMissionId: nextMissionId
             },
             successCallback: (response) => {
-                Logger.log(1, 'moveToNextPlayer', `moveToNextPlayer callback=${JSON.stringify(response)}`);
+                Logger.log(10, 'moveToNextPlayer', `game/ajax-next-turn callback=${JSON.stringify(response)}`);
                 if (!response.error) {
+                    this.updateContext({
+                        questProgressId: questProgressId,
+                        missionId: nextMissionId
+                    });
+
                     if (!this._handleResponseEvent(response)) {
                         window.location.reload();
                     }
@@ -408,16 +443,19 @@ class VirtualTableTop {
         if (!DOMUtils.exists(target))
             return;
 
+        this.__hideActionList();
+
         AjaxUtils.request({
             url: 'game/ajax-get-outcomes',
-            method: 'POST',
+            method: 'GET',
             data: this.context,
             successCallback: (response) => {
+                //Logger.log(10, 'evaluateAction', `game/ajax-get-outcomes callback=${JSON.stringify(response)}`);
                 if (!response.error) {
                     this._showModal('#gameModal');
                     $(target).html(response.content);
                     // update action list
-                    this._updateActions(this.context.playerId, this.context.currentPlayerId, this.context.questProgressId);
+                    this._updateActions(this.context.playerId, this.context.currentPlayerId, response.questProgressId);
                 }
                 this._updatePlayer(this.context.playerId);
                 if (typeof notificationClient !== 'undefined') {

@@ -11,21 +11,20 @@ use yii\helpers\Url;
 $playerId = Yii::$app->session->get('playerId');
 $player = \common\models\Player::findOne($playerId);
 $this->title = $quest->name;
-$story = $quest->story;
 
 // $player is passed as an array of one element because the ajax snippet
 // is expecting a collection of players and not a single one
 $currentQuestProgress = $quest->currentQuestProgress;
-$currentPlayer = $currentQuestProgress->currentPlayer;
-$isCurrentPlayer = $currentQuestProgress->current_player_id === $playerId;
+$currentPlayer = $currentQuestProgress?->currentPlayer;
+$isCurrentPlayer = ($currentQuestProgress?->current_player_id === $playerId);
 ?>
 <div class="d-none">
     Hidden div to embeb utility tags for PHP/JS communication
-    <input type="hidden" id="hiddenStoryId" value="<?= $story->id ?>" />
-    <input type="hidden" id="hiddenQuestId" value="<?= $currentQuestProgress->quest_id ?>" />
-    <input type="hidden" id="hiddenQuestProgressId" value="<?= $currentQuestProgress->id ?>" />
-    <input type="hidden" id="hiddenQuestMissionId" value="<?= $currentQuestProgress->mission_id ?>" />
-    <input type="hidden" id="hiddenCurrentPlayerId" value="<?= $currentPlayer->id ?>" />
+    <input type="hidden" id="hiddenStoryId" value="<?= $quest->story_id ?>" />
+    <input type="hidden" id="hiddenQuestId" value="<?= $quest->id ?>" />
+    <input type="hidden" id="hiddenQuestProgressId" value="<?= $currentQuestProgress?->id ?>" />
+    <input type="hidden" id="hiddenQuestMissionId" value="<?= $currentQuestProgress?->mission_id ?>" />
+    <input type="hidden" id="hiddenCurrentPlayerId" value="<?= $currentPlayer?->id ?>" />
     <input type="hidden" id="hiddenCurrentPlayerName" value="<?= Html::encode($currentPlayer->name ?? '') ?>" />
     <input type="hidden" id="hiddenPlayerId" value="<?= $playerId ?>" />
 </div>

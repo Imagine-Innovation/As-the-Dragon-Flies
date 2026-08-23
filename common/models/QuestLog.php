@@ -48,8 +48,8 @@ class QuestLog extends \yii\db\ActiveRecord
             [['action_name'], 'default', 'value' => 'Something'],
             [['quest_id', 'player_id', 'dice_roll', 'result'], 'required'],
             [['quest_id', 'player_id', 'round'], 'integer'],
-            [['chapter_description', 'mission_description', 'action_description', 'description'], 'string'],
-            [['chapter_name', 'mission_name', 'action_name', 'dice_roll', 'result'], 'string', 'max' => 64],
+            [['chapter_description', 'mission_description', 'action_description', 'result', 'description'], 'string'],
+            [['chapter_name', 'mission_name', 'action_name', 'dice_roll'], 'string', 'max' => 64],
             [['quest_id'], 'exist', 'skipOnError' => true, 'targetClass' => Quest::class, 'targetAttribute' => ['quest_id' => 'id']],
             [['player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['player_id' => 'id']],
         ];
