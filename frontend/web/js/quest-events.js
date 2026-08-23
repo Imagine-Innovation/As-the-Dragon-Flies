@@ -53,8 +53,8 @@ class NotificationClient {
         });
 
         // Clean up when the page is unloaded
-        window.addEventListener('unload', (e) => {
-            e.preventDefault();
+        window.addEventListener('pagehide', () => {
+            Logger.log(2, 'init', `------> pagehide event`);
             this.disconnect();
         });
 
