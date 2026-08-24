@@ -268,6 +268,12 @@ class QuestController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
+        $questId = Yii::$app->session->get('questId');
+
+        $deletedNotifications = \common\models\Notification::deleteAll(['quest_id' => $questId]);
+        $deletedQuestSessions = \common\models\QuestSession::deleteAll(['quest_id' => $questId]);
+
+        Yii::debug("*** debug *** clearQuestData - questId={$questId} => {$deletedNotifications} deleted notifications, {$deletedQuestSessions} deleted quest sessions.");
         ContextManager::clearSessionId();
 
         return ['error' => false, 'msg' => 'Session ID cleared'];
