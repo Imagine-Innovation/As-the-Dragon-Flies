@@ -211,7 +211,7 @@ class GameController extends Controller
      * @param int $storyId
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxDialog(int $replyId, int $playerId, int $storyId): array
+    public function actionAjaxDialog(int $replyId, int $playerId, int $storyId, ?string $dialogLog = null): array
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -223,6 +223,7 @@ class GameController extends Controller
         $dialog = $reply->nextDialog;
 
         $player = FindModelHelper::findPlayer(['id' => $playerId]);
+        $npc = $dialog->npc;
 
         $content = $this->renderPartial('ajax/dialog', [
             'storyId' => $storyId,
@@ -231,12 +232,30 @@ class GameController extends Controller
             'dialog' => $dialog,
         ]);
 
+        $lines = [];
+        if (!empty($dialogLog)) {
+            $lines[] = $dialogLog;
+        }
+
+        if (!empty($reply->text) && trim($reply->text) !== '') {
+            $playerName = $player->name ?? 'Player';
+            $lines[] = "**{$playerName}**: " . trim($reply->text);
+        }
+
+        if (!empty($dialog->text) && trim($dialog->text) !== '') {
+            $npcName = $npc->name ?? 'NPC';
+            $lines[] = "**{$npcName}**: " . trim($dialog->text);
+        }
+
+        $updatedDialogLog = implode("\n", $lines);
+
         return [
             'error' => false,
             'msg' => '',
             'content' => $content,
             'text' => $dialog->text,
             'audio' => $dialog->audio,
+            'dialogLog' => $updatedDialogLog,
         ];
     }
 
@@ -252,9 +271,10 @@ class GameController extends Controller
             'quest_progress_id' => $getRequest->get('questProgressId'),
             'action_id' => $getRequest->get('actionId'),
         ];
+        $dialogLog = $getRequest->get('dialogLog');
         Yii::debug("*** debug *** - getActionResultLog - param=" . print_r($param, true));
         $questAction = FindModelHelper::findQuestAction($param);
-        $outcomeManager = new OutcomeManager(['questAction' => $questAction]);
+        $outcomeManager = new OutcomeManager(['questAction' => $questAction, 'dialogLog' => $dialogLog]);
         /** @var array{payload: array<string, mixed>, log: array<string, mixed>} $actionOutcome */
         $actionOutcome = $outcomeManager->evaluateActionResult();
         $outcomeManager->logQuestAction($actionOutcome['log']);
