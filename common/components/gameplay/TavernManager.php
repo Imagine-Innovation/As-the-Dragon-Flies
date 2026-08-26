@@ -19,7 +19,7 @@ use yii\web\NotFoundHttpException;
 class TavernManager extends BaseManager
 {
 
-    public Story $story;
+    public ?Story $story = null;
     public ?Quest $quest = null;
 
     /**
@@ -575,7 +575,7 @@ class TavernManager extends BaseManager
         $questId = Yii::$app->session->get('questId');
 
         if ($questId && (!$tavern || $tavern->id !== $questId)) {
-            throw new NotFoundHttpException("Tavern is not the current quest for story {$this->story->name}");
+            throw new NotFoundHttpException("Tavern is not the current quest for story {$this->story?->name}");
         }
 
         $foundTavern = $tavern ?? $this->newTavern();
