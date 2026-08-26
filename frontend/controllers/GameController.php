@@ -235,16 +235,25 @@ class GameController extends Controller
         $lines = [];
         if (!empty($dialogLog)) {
             $lines[] = $dialogLog;
+        } else {
+            $rawActionId = $this->request->get('actionId');
+            if ($rawActionId) {
+                $action = FindModelHelper::findAction(['id' => (int) $rawActionId]);
+                if (!empty($action->description)) {
+                    $playerName = $player->name ?? 'Player';
+                    $lines[] = trim(\common\helpers\MergeHelper::merge($action->description, ['playerName' => $playerName]));
+                }
+            }
         }
 
         if (!empty($reply->text) && trim($reply->text) !== '') {
             $playerName = $player->name ?? 'Player';
-            $lines[] = "**{$playerName}**: " . trim($reply->text);
+            $lines[] = "- **{$playerName}**: " . trim($reply->text);
         }
 
         if (!empty($dialog->text) && trim($dialog->text) !== '') {
             $npcName = $npc->name ?? 'NPC';
-            $lines[] = "**{$npcName}**: " . trim($dialog->text);
+            $lines[] = "- **{$npcName}**: " . trim($dialog->text);
         }
 
         $updatedDialogLog = implode("\n", $lines);
