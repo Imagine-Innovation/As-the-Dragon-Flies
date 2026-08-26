@@ -385,7 +385,7 @@ class QuestController extends Controller
             return ['canStart' => false, 'msg' => 'Not an Ajax POST request'];
         }
 
-        $quest = Yii::$app->session->get('currentQuest');
+        $quest = Quest::findOne(Yii::$app->session->get('questId'));
         $playerId = Yii::$app->session->get('playerId');
 
         $tavernManager = new TavernManager(['quest' => $quest]);

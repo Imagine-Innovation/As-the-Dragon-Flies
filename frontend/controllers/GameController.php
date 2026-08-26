@@ -11,6 +11,8 @@ use common\components\gameplay\TavernManager;
 use common\components\AccessRightsManager;
 use common\helpers\FindModelHelper;
 use common\models\events\EventFactory;
+use common\models\Player;
+use common\models\Quest;
 use common\models\QuestPlayer;
 use common\models\QuestTurn;
 use Yii;
@@ -126,12 +128,12 @@ class GameController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
-        $player = Yii::$app->session->get('currentPlayer');
+        $player = Player::findOne(Yii::$app->session->get('playerId'));
         if (!$player) {
             return ['error' => true, 'msg' => 'Player not found'];
         }
 
-        $quest = Yii::$app->session->get('currentQuest');
+        $quest = Quest::findOne(Yii::$app->session->get('questId'));
         if (!$quest) {
             return ['error' => true, 'msg' => 'Quest not found'];
         }
@@ -385,8 +387,8 @@ class GameController extends Controller
     protected function createGameActionEvent(string $actionName, array $actionResult = []): bool
     {
         $sessionId = Yii::$app->session->get('sessionId');
-        $player = Yii::$app->session->get('currentPlayer');
-        $quest = Yii::$app->session->get('currentQuest');
+        $player = Player::findOne(Yii::$app->session->get('playerId'));
+        $quest = Quest::findOne(Yii::$app->session->get('questId'));
         try {
             $data['action'] = $actionName;
             $data['detail'] = [

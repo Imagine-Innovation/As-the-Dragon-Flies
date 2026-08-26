@@ -95,7 +95,6 @@ class ContextManager extends Component
         Yii::$app->session->set('playerId', $currentPlayer->id);
         Yii::$app->session->set('playerName', $currentPlayer->name);
         Yii::$app->session->set('avatar', $currentPlayer->image?->file_name);
-        Yii::$app->session->set('currentPlayer', $currentPlayer);
         self::updateQuestContext($currentPlayer->quest_id);
     }
 
@@ -109,7 +108,6 @@ class ContextManager extends Component
         Yii::$app->session->set('playerId', null);
         Yii::$app->session->set('playerName', null);
         Yii::$app->session->set('avatar', null);
-        Yii::$app->session->set('currentPlayer', null);
         self::updateQuestContext(null);
     }
 
@@ -146,7 +144,6 @@ class ContextManager extends Component
         Yii::$app->session->set('inQuest', true);
         Yii::$app->session->set('questId', $quest->id);
         Yii::$app->session->set('questName', $quest->name);
-        Yii::$app->session->set('currentQuest', $quest);
     }
 
     /**
@@ -158,7 +155,6 @@ class ContextManager extends Component
         Yii::$app->session->set('inQuest', false);
         Yii::$app->session->set('questId', null);
         Yii::$app->session->set('questName', null);
-        Yii::$app->session->set('currentQuest', null);
     }
 
     /**

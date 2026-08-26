@@ -6,12 +6,6 @@ use common\widgets\MarkDown;
 
 /** @var yii\web\View $this */
 /** @var common\models\Quest $model */
-/*
-  $player = Yii::$app->session->get('currentPlayer');
-  $playerId = $player->id;
-  $playerName = $player->name;
-  $avatar = $player->image->file_name;
- */
 $playerId = Yii::$app->session->get('playerId');
 $playerName = Yii::$app->session->get('playerName');
 $avatar = Yii::$app->session->get('avatar');
