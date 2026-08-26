@@ -77,6 +77,29 @@ class QuestManagerTest extends \Codeception\Test\Unit
      */
     protected $tester;
 
+    protected function _before(): void
+    {
+        Yii::$app->db->createCommand("
+            CREATE TABLE IF NOT EXISTS player (id INTEGER PRIMARY KEY, quest_id INTEGER, name TEXT);
+            CREATE TABLE IF NOT EXISTS quest (id INTEGER PRIMARY KEY, story_id INTEGER, name TEXT, description TEXT, image TEXT, status INTEGER, current_player_id INTEGER, current_chapter_id INTEGER, initiator_id INTEGER, created_at TEXT, started_at TEXT, completed_at TEXT);
+            CREATE TABLE IF NOT EXISTS mission (id INTEGER PRIMARY KEY, chapter_id INTEGER, name TEXT, description TEXT);
+            CREATE TABLE IF NOT EXISTS chapter (id INTEGER PRIMARY KEY, story_id INTEGER, chapter_number INTEGER, name TEXT);
+            CREATE TABLE IF NOT EXISTS quest_progress (id INTEGER PRIMARY KEY, quest_id INTEGER, mission_id INTEGER, status INTEGER, current_player_id INTEGER, description TEXT, started_at TEXT, completed_at TEXT);
+            CREATE TABLE IF NOT EXISTS quest_turn (id INTEGER PRIMARY KEY, quest_progress_id INTEGER, player_id INTEGER, sequence INTEGER, status INTEGER, started_at TEXT, ended_at TEXT);
+            CREATE TABLE IF NOT EXISTS quest_player (id INTEGER PRIMARY KEY, quest_id INTEGER, player_id INTEGER, player_turn INTEGER, status INTEGER, left_at TEXT, reason TEXT);
+            CREATE TABLE IF NOT EXISTS story (id INTEGER PRIMARY KEY, name TEXT);
+            CREATE TABLE IF NOT EXISTS decor (id INTEGER PRIMARY KEY, mission_id INTEGER, name TEXT);
+            CREATE TABLE IF NOT EXISTS monster (id INTEGER PRIMARY KEY, mission_id INTEGER, name TEXT);
+            CREATE TABLE IF NOT EXISTS action (id INTEGER PRIMARY KEY, mission_id INTEGER, name TEXT, description TEXT, reply_id INTEGER);
+            INSERT OR REPLACE INTO quest (id, story_id, name, status, current_player_id, current_chapter_id, initiator_id) VALUES (10, 1, 'Test Quest', 1, 35, 1, 35);
+            INSERT OR REPLACE INTO player (id, quest_id, name) VALUES (35, 10, 'Hero');
+            INSERT OR REPLACE INTO story (id, name) VALUES (1, 'Test Story');
+            INSERT OR REPLACE INTO mission (id, chapter_id, name) VALUES (1, 1, 'Mission 1'), (101, 1, 'Mission 101');
+            INSERT OR REPLACE INTO quest_player (id, quest_id, player_id, player_turn, status) VALUES (1, 10, 35, 1, 1);
+            INSERT OR REPLACE INTO quest_progress (id, quest_id, mission_id, status, current_player_id) VALUES (24, 10, 1, 1, 35);
+        ")->execute();
+    }
+
     public function testMoveToNextMissionReturnsEarlyWhenCompleted()
     {
         $hero = new Player();

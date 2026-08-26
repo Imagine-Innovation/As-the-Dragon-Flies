@@ -19,6 +19,7 @@ class VirtualTableTop {
 
     _loadContext() {
         const dialogLog = this.context?.dialogLog || (DOMUtils.exists('#hiddenDialogLog') ? DOMUtils.getParam('hiddenDialogLog') : '');
+        const actionId = this.context?.actionId || (DOMUtils.exists('#hiddenQuestActionId') ? DOMUtils.getParam('hiddenQuestActionId') : '');
         this.context = {
             storyId: DOMUtils.getParam('hiddenStoryId'),
             questId: DOMUtils.getParam('hiddenQuestId'),
@@ -27,7 +28,7 @@ class VirtualTableTop {
             currentPlayerName: DOMUtils.getParam('hiddenCurrentPlayerName'),
             missionId: DOMUtils.getParam('hiddenQuestMissionId'),
             questProgressId: DOMUtils.getParam('hiddenQuestProgressId'),
-            actionId: DOMUtils.getParam('hiddenQuestActionId'),
+            actionId: actionId,
             dialogLog: dialogLog
         };
     }
