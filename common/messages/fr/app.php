@@ -68,6 +68,7 @@ return [
     'Quest' => 'La quête',
     'Story' => 'L’histoire',
     'Item' => 'Un objet',
+    'Npc' => 'Un PNJ',
     //
     //  List separator keep space char as is
     'and' => ' et ',

@@ -68,6 +68,7 @@ return [
     'Quest' => 'The quest',
     'Story' => 'The story',
     'Item' => 'An item',
+    'Npc' => 'The NPC',
     //
     //  List separator keep space char as is
     'and' => '{n, plural,
