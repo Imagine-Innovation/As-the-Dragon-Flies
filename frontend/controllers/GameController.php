@@ -10,11 +10,12 @@ use common\components\gameplay\OutcomeManager;
 use common\components\gameplay\TavernManager;
 use common\components\AccessRightsManager;
 use common\helpers\FindModelHelper;
+use common\helpers\LanguageHelper;
+use common\helpers\MergeHelper;
 use common\models\events\EventFactory;
 use common\models\Player;
 use common\models\Quest;
 use common\models\QuestPlayer;
-use common\models\QuestTurn;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -220,45 +221,23 @@ class GameController extends Controller
         if (!$this->request->isGet || !$this->request->isAjax) {
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
         }
-
+        $story = FindModelHelper::findStory(['id' => $storyId]);
         $reply = FindModelHelper::findReply(['id' => $replyId]);
         $dialog = $reply->nextDialog;
+        $npc = $dialog->npc;
+        $npcName = LanguageHelper::defaultName('Npc', $npc->name, $story->language);
 
         $player = FindModelHelper::findPlayer(['id' => $playerId]);
-        $npc = $dialog->npc;
+        $playerName = LanguageHelper::defaultName('Player', $player->name, $story->language);
 
         $content = $this->renderPartial('ajax/dialog', [
             'storyId' => $storyId,
-            'playerName' => $player->name,
+            'playerName' => $playerName,
             'reply' => $reply,
             'dialog' => $dialog,
         ]);
 
-        $lines = [];
-        if (!empty($dialogLog)) {
-            $lines[] = $dialogLog;
-        } else {
-            $rawActionId = $this->request->get('actionId');
-            if ($rawActionId) {
-                $action = FindModelHelper::findAction(['id' => (int) $rawActionId]);
-                if (!empty($action->description)) {
-                    $playerName = $player->name ?? 'Player';
-                    $lines[] = trim(\common\helpers\MergeHelper::merge($action->description, ['playerName' => $playerName]));
-                }
-            }
-        }
-
-        if (!empty($reply->text) && trim($reply->text) !== '') {
-            $playerName = $player->name ?? 'Player';
-            $lines[] = "- **{$playerName}**: " . trim($reply->text);
-        }
-
-        if (!empty($dialog->text) && trim($dialog->text) !== '') {
-            $npcName = $npc->name ?? 'NPC';
-            $lines[] = "- **{$npcName}**: " . trim($dialog->text);
-        }
-
-        $updatedDialogLog = implode("\n", $lines);
+        $updatedDialogLog = $this->updateDialogLog($playerName, $npcName, $reply->text, $dialog->text, $dialogLog);
 
         return [
             'error' => false,
@@ -268,6 +247,78 @@ class GameController extends Controller
             'audio' => $dialog->audio,
             'dialogLog' => $updatedDialogLog,
         ];
+    }
+
+    /**
+     *
+     * @param string $playerName
+     * @param string $npcName
+     * @param string|null $playerDialog
+     * @param string|null $npcDialog
+     * @param string|null $dialogLog
+     * @return string
+     */
+    protected function updateDialogLog(string $playerName, string $npcName, ?string $playerDialog = null, ?string $npcDialog = null, ?string $dialogLog = null): string
+    {
+        $lines = [];
+        $firstLine = $this->getFirstLine($playerName, $dialogLog);
+        if ($firstLine !== null) {
+            $lines[] = $firstLine;
+        }
+
+        $playerLog = $this->formatDialog($playerName, $playerDialog);
+        if ($playerLog !== null) {
+            $lines[] = $playerLog;
+        }
+
+        $npcLog = $this->formatDialog($npcName, $npcDialog);
+        if ($npcLog !== null) {
+            $lines[] = $npcLog;
+        }
+        $updatedDialogLog = implode("\n", $lines);
+
+        return $updatedDialogLog;
+    }
+
+    /**
+     *
+     * @param string $name
+     * @param string|null $text
+     * @return string|null
+     */
+    protected function formatDialog(string $name, ?string $text): ?string
+    {
+        $trimedText = trim($text);
+        if ($text === null || $trimedText === '') {
+            return null;
+        }
+        return "- [{$name}](#) - {$trimedText}";
+    }
+
+    /**
+     *
+     * @param string $playerName
+     * @param string|null $dialogLog
+     * @return string|null
+     */
+    protected function getFirstLine(string $playerName, ?string $dialogLog = null): ?string
+    {
+        if ($dialogLog !== null && trim($dialogLog) !== '') {
+            return trim($dialogLog);
+        }
+
+        $rawActionId = $this->request->get('actionId');
+        if ($rawActionId === null) {
+            return null;
+        }
+
+        $action = FindModelHelper::findAction(['id' => (int) $rawActionId]);
+        if ($action->description === null || trim($action->description) === '') {
+            return null;
+        }
+
+        $firstLine = trim(MergeHelper::merge($action->description, ['playerName' => $playerName]));
+        return $firstLine;
     }
 
     /**
