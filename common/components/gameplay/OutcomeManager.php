@@ -408,6 +408,8 @@ final class OutcomeManager extends BaseManager
     {
         $round = $this->getQuestRound($this->quest->id);
 
+        $dc = $this->action->dc;
+
         $questLog = new QuestLog([
             'quest_id' => $this->quest->id,
             'player_id' => $this->player->id,
@@ -418,8 +420,8 @@ final class OutcomeManager extends BaseManager
             'mission_description' => $log['missionDescription'],
             'action_name' => $log['actionName'],
             'action_description' => $log['actionDescription'],
-            'dice_roll' => $log['diceRoll'],
-            'result' => $log['result'],
+            'dice_roll' => $dc > 0 ? $log['diceRoll'] : null,
+            'result' => $dc > 0 ? $log['result'] : null,
             'description' => json_encode($log['outcomeList']),
         ]);
 

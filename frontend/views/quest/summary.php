@@ -50,13 +50,18 @@ $missionNumber = 0;
                             $actionName = "Round {$log->round} - {$log->action_name}";
                             $description = MarkDown::widget(['content' => $log->action_description]);
                             echo "<span class=\"badge bg-warning text-dark\">{$actionName}</span><p class=\"text-muted\">{$description}</p>\n";
-                            echo "<p class=\"small\">{$log->result}</p>\n";
 
-                            $logDescription = json_decode($log->description);
-                            foreach ($logDescription as $outcome) {
-                                echo MarkDown::widget(['content' => $outcome->name]);
-                                $description = MarkDown::widget(['content' => $outcome->description]);
-                                echo "<div class=\"text-muted\">\n{$description}\n</div>\n";
+                            if ($log->result !== null) {
+                                echo "<p><i class=\"bi dnd-d20\"></i> {$log->result}</p>\n";
+                            }
+
+                            $results = json_decode($log->description);
+                            foreach ($results as $result) {
+                                if ($result->name !== null && trim($result->name) !== '') {
+                                    echo MarkDown::widget(['content' => "###### {$result->name}"]);
+                                    $description = MarkDown::widget(['content' => $result->description]);
+                                    echo "<div class=\"text-muted\">\n{$description}\n</div>\n";
+                                }
                             }
                             ?>
                         </article>

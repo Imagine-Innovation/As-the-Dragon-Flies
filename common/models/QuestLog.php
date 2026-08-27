@@ -17,8 +17,8 @@ use Yii;
  * @property string|null $mission_description Mission description
  * @property string $action_name Action name
  * @property string|null $action_description Action description
- * @property string $dice_roll Dice roll
- * @property string $result Result
+ * @property string|null $dice_roll Dice roll
+ * @property string|null $result Result
  * @property string|null $description Result description
  *
  * @property Player $player
@@ -42,11 +42,11 @@ class QuestLog extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['chapter_description', 'mission_description', 'action_description', 'description'], 'default', 'value' => null],
+            [['chapter_description', 'mission_description', 'action_description', 'dice_roll', 'result', 'description'], 'default', 'value' => null],
             [['round'], 'default', 'value' => 0],
             [['mission_name'], 'default', 'value' => 'Unknown'],
             [['action_name'], 'default', 'value' => 'Something'],
-            [['quest_id', 'player_id', 'dice_roll', 'result'], 'required'],
+            [['quest_id', 'player_id'], 'required'],
             [['quest_id', 'player_id', 'round'], 'integer'],
             [['chapter_description', 'mission_description', 'action_description', 'result', 'description'], 'string'],
             [['chapter_name', 'mission_name', 'action_name', 'dice_roll'], 'string', 'max' => 64],
