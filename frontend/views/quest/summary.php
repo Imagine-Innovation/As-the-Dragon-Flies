@@ -16,7 +16,6 @@ $status = AppStatus::from($quest->status);
 
 $chapterName = "";
 $missionName = "";
-$actionName = "";
 $chapterNumber = 0;
 $missionNumber = 0;
 ?>
@@ -36,6 +35,7 @@ $missionNumber = 0;
                             if ($log->chapter_name !== $chapterName) {
                                 $chapterName = $log->chapter_name;
                                 $chapterNumber += 1;
+                                $missionNumber = 0;
                                 $name = MarkDown::widget(['content' => "{$chapterNumber}. {$chapterName}"]);
                                 $description = MarkDown::widget(['content' => $log->chapter_description]);
                                 echo "<h3 class=\"text-warning\">{$name}</h3>\n<p class=\"text-muted\">{$description}</p>\n";
@@ -47,15 +47,9 @@ $missionNumber = 0;
                                 $description = MarkDown::widget(['content' => $log->mission_description]);
                                 echo "<h4 class=\"text-warning\">{$name}</h4>\n<p class=\"text-muted\">{$description}</p>\n";
                             }
-                            if ($log->action_name !== $actionName) {
-                                $actionName = $log->action_name;
-                                $name = MarkDown::widget(['content' => $actionName]);
-                                $description = MarkDown::widget(['content' => $log->action_description]);
-                                //echo "<span class=\"badge bg-warning text-dark\">Round {$log->round} - {$log->player->name}</span><h5>{$name}</h5>\n<p class=\"text-muted\">{$description}</p>\n";
-                                echo "<span class=\"badge bg-warning text-dark\">Round {$log->round} - {$log->player->name}</span><p class=\"text-muted\">{$description}</p>\n";
-                            } else {
-                                echo "<span class=\"badge bg-warning text-dark\">Round {$log->round}</span>\n";
-                            }
+                            $actionName = "Round {$log->round} - {$log->action_name}";
+                            $description = MarkDown::widget(['content' => $log->action_description]);
+                            echo "<span class=\"badge bg-warning text-dark\">{$actionName}</span><p class=\"text-muted\">{$description}</p>\n";
                             echo "<p class=\"small\">{$log->result}</p>\n";
 
                             $logDescription = json_decode($log->description);
