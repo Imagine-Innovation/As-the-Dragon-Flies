@@ -10,9 +10,12 @@ use common\components\gameplay\OutcomeManager;
 use common\components\gameplay\TavernManager;
 use common\components\AccessRightsManager;
 use common\helpers\FindModelHelper;
+use common\helpers\LanguageHelper;
+use common\helpers\MergeHelper;
 use common\models\events\EventFactory;
+use common\models\Player;
+use common\models\Quest;
 use common\models\QuestPlayer;
-use common\models\QuestTurn;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -126,12 +129,12 @@ class GameController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
-        $player = Yii::$app->session->get('currentPlayer');
+        $player = Player::findOne(Yii::$app->session->get('playerId'));
         if (!$player) {
             return ['error' => true, 'msg' => 'Player not found'];
         }
 
-        $quest = Yii::$app->session->get('currentQuest');
+        $quest = Quest::findOne(Yii::$app->session->get('questId'));
         if (!$quest) {
             return ['error' => true, 'msg' => 'Quest not found'];
         }
@@ -211,25 +214,30 @@ class GameController extends Controller
      * @param int $storyId
      * @return array{error: bool, msg: string, content?: string}
      */
-    public function actionAjaxDialog(int $replyId, int $playerId, int $storyId): array
+    public function actionAjaxDialog(int $replyId, int $playerId, int $storyId, ?string $dialogLog = null): array
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if (!$this->request->isGet || !$this->request->isAjax) {
             return ['error' => true, 'msg' => 'Not an Ajax GET request'];
         }
-
+        $story = FindModelHelper::findStory(['id' => $storyId]);
         $reply = FindModelHelper::findReply(['id' => $replyId]);
         $dialog = $reply->nextDialog;
+        $npc = $dialog->npc;
+        $npcName = LanguageHelper::defaultName('Npc', $npc->name, $story->language);
 
         $player = FindModelHelper::findPlayer(['id' => $playerId]);
+        $playerName = LanguageHelper::defaultName('Player', $player->name, $story->language);
 
         $content = $this->renderPartial('ajax/dialog', [
             'storyId' => $storyId,
-            'playerName' => $player->name,
+            'playerName' => $playerName,
             'reply' => $reply,
             'dialog' => $dialog,
         ]);
+
+        $updatedDialogLog = $this->updateDialogLog($playerName, $npcName, $reply->text, $dialog->text, $dialogLog);
 
         return [
             'error' => false,
@@ -237,7 +245,80 @@ class GameController extends Controller
             'content' => $content,
             'text' => $dialog->text,
             'audio' => $dialog->audio,
+            'dialogLog' => $updatedDialogLog,
         ];
+    }
+
+    /**
+     *
+     * @param string $playerName
+     * @param string $npcName
+     * @param string|null $playerDialog
+     * @param string|null $npcDialog
+     * @param string|null $dialogLog
+     * @return string
+     */
+    protected function updateDialogLog(string $playerName, string $npcName, ?string $playerDialog = null, ?string $npcDialog = null, ?string $dialogLog = null): string
+    {
+        $lines = [];
+        $firstLine = $this->getFirstLine($playerName, $dialogLog);
+        if ($firstLine !== null) {
+            $lines[] = $firstLine;
+        }
+
+        $playerLog = $this->formatDialog($playerName, $playerDialog);
+        if ($playerLog !== null) {
+            $lines[] = $playerLog;
+        }
+
+        $npcLog = $this->formatDialog($npcName, $npcDialog);
+        if ($npcLog !== null) {
+            $lines[] = $npcLog;
+        }
+        $updatedDialogLog = implode("\n", $lines);
+
+        return $updatedDialogLog;
+    }
+
+    /**
+     *
+     * @param string $name
+     * @param string|null $text
+     * @return string|null
+     */
+    protected function formatDialog(string $name, ?string $text): ?string
+    {
+        $trimedText = trim($text);
+        if ($text === null || $trimedText === '') {
+            return null;
+        }
+        return "- [{$name}](#) - {$trimedText}";
+    }
+
+    /**
+     *
+     * @param string $playerName
+     * @param string|null $dialogLog
+     * @return string|null
+     */
+    protected function getFirstLine(string $playerName, ?string $dialogLog = null): ?string
+    {
+        if ($dialogLog !== null && trim($dialogLog) !== '') {
+            return trim($dialogLog);
+        }
+
+        $rawActionId = $this->request->get('actionId');
+        if ($rawActionId === null) {
+            return null;
+        }
+
+        $action = FindModelHelper::findAction(['id' => (int) $rawActionId]);
+        if ($action->description === null || trim($action->description) === '') {
+            return null;
+        }
+
+        $firstLine = trim(MergeHelper::merge($action->description, ['playerName' => $playerName]));
+        return $firstLine;
     }
 
     /**
@@ -252,9 +333,10 @@ class GameController extends Controller
             'quest_progress_id' => $getRequest->get('questProgressId'),
             'action_id' => $getRequest->get('actionId'),
         ];
+        $dialogLog = $getRequest->get('dialogLog');
         Yii::debug("*** debug *** - getActionResultLog - param=" . print_r($param, true));
         $questAction = FindModelHelper::findQuestAction($param);
-        $outcomeManager = new OutcomeManager(['questAction' => $questAction]);
+        $outcomeManager = new OutcomeManager(['questAction' => $questAction, 'dialogLog' => $dialogLog]);
         /** @var array{payload: array<string, mixed>, log: array<string, mixed>} $actionOutcome */
         $actionOutcome = $outcomeManager->evaluateActionResult();
         $outcomeManager->logQuestAction($actionOutcome['log']);
@@ -356,8 +438,8 @@ class GameController extends Controller
     protected function createGameActionEvent(string $actionName, array $actionResult = []): bool
     {
         $sessionId = Yii::$app->session->get('sessionId');
-        $player = Yii::$app->session->get('currentPlayer');
-        $quest = Yii::$app->session->get('currentQuest');
+        $player = Player::findOne(Yii::$app->session->get('playerId'));
+        $quest = Quest::findOne(Yii::$app->session->get('questId'));
         try {
             $data['action'] = $actionName;
             $data['detail'] = [

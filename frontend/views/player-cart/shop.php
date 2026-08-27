@@ -1,6 +1,7 @@
 <?php
 
 use common\components\Shopping;
+use common\models\Player;
 use common\widgets\Button;
 use yii\helpers\Url;
 
@@ -15,7 +16,7 @@ $itemTypes = $shopping->itemTypes;
 $shopData = $shopping->loadShopData($items);
 
 $user = Yii::$app->session->get('user');
-$currentPlayer = Yii::$app->session->get('currentPlayer');
+$currentPlayer = Player::findOne(Yii::$app->session->get('playerId'));
 
 $active = $user->hasPlayers();
 

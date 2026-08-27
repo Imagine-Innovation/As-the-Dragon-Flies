@@ -251,7 +251,7 @@ class QuestManager extends BaseManager
      * @param AppStatus $status
      * @return array{error: bool, msg: string, event?: string, payload?: array<string, mixed>}
      */
-    private function gameOver(AppStatus $status): array
+    protected function gameOver(AppStatus $status): array
     {
         $progress = $this->getQuestProgress();
         $player = $this->getPlayer();
@@ -325,7 +325,7 @@ class QuestManager extends BaseManager
      * @return QuestProgress|null
      * @throws Exception
      */
-    private function addQuestProgress(int $missionId): ?QuestProgress
+    protected function addQuestProgress(int $missionId): ?QuestProgress
     {
         $mission = Mission::findOne($missionId);
         if (!$mission) {
@@ -635,7 +635,7 @@ class QuestManager extends BaseManager
      * @return \common\models\events\Event
      * @throws Exception
      */
-    private function createQuestEvent(
+    protected function createQuestEvent(
             string $eventType,
             string $eventDescription,
             ?Player $initiator,

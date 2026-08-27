@@ -1,6 +1,7 @@
 <?php
 
 use frontend\components\Inventory;
+use common\models\Player;
 use common\widgets\Button;
 use yii\helpers\Url;
 
@@ -9,7 +10,7 @@ use yii\helpers\Url;
 //$user = Yii::$app->user->identity;
 //$currentPlayer = $user->currentPlayer;
 $user = Yii::$app->session->get('user');
-$currentPlayer = Yii::$app->session->get('currentPlayer');
+$currentPlayer = Player::findOne(Yii::$app->session->get('playerId'));
 
 $this->title = 'Possessions';
 $this->params['breadcrumbs'][] = [
@@ -29,21 +30,21 @@ $firstType = $itemTypes[0] ?? '';
             <p id="purseContent"></p>
             <div class="actions">
                 <?=
-    Button::widget([
-        'mode' => 'icon',
-        'url' => Url::toRoute(['player-item/see-package']),
-        'icon' => 'bi-backpack2',
-        'tooltip' => 'See what you are carrying',
-    ])
-?>
+                Button::widget([
+                    'mode' => 'icon',
+                    'url' => Url::toRoute(['player-item/see-package']),
+                    'icon' => 'bi-backpack2',
+                    'tooltip' => 'See what you are carrying',
+                ])
+                ?>
                 <?=
-    Button::widget([
-        'mode' => 'icon',
-        'url' => Url::toRoute(['player-cart/shop']),
-        'icon' => 'bi-shop',
-        'tooltip' => 'Make some shopping',
-    ])
-?>
+                Button::widget([
+                    'mode' => 'icon',
+                    'url' => Url::toRoute(['player-cart/shop']),
+                    'icon' => 'bi-shop',
+                    'tooltip' => 'Make some shopping',
+                ])
+                ?>
             </div>
 
             <?php if ($itemTypes): ?>
@@ -64,12 +65,12 @@ $firstType = $itemTypes[0] ?? '';
                             <div class="tab-pane <?= $itemType === $firstType ? 'active fade show' : 'fade' ?>"
                                  id="tab-<?= $itemType ?>" role="tabpanel">
                                      <?=
-                            $this->render('snippets/inventory', [
-                                'items' => $playerItems[$itemType],
-                                'player' => $currentPlayer,
-                            ])
-                        ;
-                        ?>
+                                     $this->render('snippets/inventory', [
+                                         'items' => $playerItems[$itemType],
+                                         'player' => $currentPlayer,
+                                     ])
+                                     ;
+                                     ?>
                             </div>
                         <?php endforeach; ?>
                     </div>

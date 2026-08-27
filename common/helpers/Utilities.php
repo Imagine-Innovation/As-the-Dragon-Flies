@@ -14,6 +14,7 @@
 namespace common\helpers;
 
 use common\helpers\WebResourcesHelper;
+use common\models\Quest;
 use Yii;
 use yii\helpers\Html;
 use yii\helpers\Inflector;
@@ -138,7 +139,7 @@ final class Utilities extends Html
 
         // Handle context-specific story images
         if ($isContext && $questId) {
-            $quest = Yii::$app->session->get('currentQuest');
+            $quest = Quest::findOne($questId);
             $storyRoot = WebResourcesHelper::storyRootPath($quest->story_id);
             // Return story-specific image if available
             if ($quest->image) {

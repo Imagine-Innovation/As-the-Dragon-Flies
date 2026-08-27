@@ -5,7 +5,9 @@ namespace frontend\controllers;
 use common\components\AppStatus;
 use common\components\AccessRightsManager;
 use common\components\LanguageSelector;
+use common\helpers\FindModelHelper;
 use common\models\Story;
+use common\models\Quest;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -81,8 +83,14 @@ class StoryController extends Controller
                 ->limit(20)
                 ->all();
 
+        $player = FindModelHelper::findPlayer(Yii::$app->session->get('playerId'));
+        // Don't use FindModelHelper to allow NULL quest
+        $quest = Quest::findOne(Yii::$app->session->get('questId'));
+
         return $this->render('index', [
                     'stories' => $stories,
+                    'player' => $player,
+                    'quest' => $quest,
                     'langFilter' => $lang,
         ]);
     }

@@ -68,7 +68,7 @@ class QuestController extends Controller
                         'actions' => [
                             'index', 'join', 'quit', 'resume', 'start', 'summarize', 'tavern',
                             'ajax-can-start', 'ajax-get-messages', 'ajax-quest-members', 'ajax-send-message', 'ajax-welcome-messages',
-                            'ajax-clear-session',
+                            'ajax-end-quest',
                         ],
                         'allow' => true,
                         'matchCallback' => function ($rule, $action) {
@@ -260,7 +260,7 @@ class QuestController extends Controller
      *
      * @return array{error: bool, msg: string}
      */
-    public function actionAjaxClearSession(): array
+    public function actionAjaxEndQuest(): array
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -274,6 +274,7 @@ class QuestController extends Controller
         $deletedQuestSessions = \common\models\QuestSession::deleteAll(['quest_id' => $questId]);
 
         Yii::debug("*** debug *** clearQuestData - questId={$questId} => {$deletedNotifications} deleted notifications, {$deletedQuestSessions} deleted quest sessions.");
+        ContextManager::updateQuestContext(null);
         ContextManager::clearSessionId();
 
         return ['error' => false, 'msg' => 'Session ID cleared'];
@@ -384,7 +385,7 @@ class QuestController extends Controller
             return ['canStart' => false, 'msg' => 'Not an Ajax POST request'];
         }
 
-        $quest = Yii::$app->session->get('currentQuest');
+        $quest = Quest::findOne(Yii::$app->session->get('questId'));
         $playerId = Yii::$app->session->get('playerId');
 
         $tavernManager = new TavernManager(['quest' => $quest]);

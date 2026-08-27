@@ -18,6 +18,8 @@ class VirtualTableTop {
     }
 
     _loadContext() {
+        const dialogLog = this.context?.dialogLog || (DOMUtils.exists('#hiddenDialogLog') ? DOMUtils.getParam('hiddenDialogLog') : '');
+        const actionId = this.context?.actionId || (DOMUtils.exists('#hiddenQuestActionId') ? DOMUtils.getParam('hiddenQuestActionId') : '');
         this.context = {
             storyId: DOMUtils.getParam('hiddenStoryId'),
             questId: DOMUtils.getParam('hiddenQuestId'),
@@ -26,7 +28,8 @@ class VirtualTableTop {
             currentPlayerName: DOMUtils.getParam('hiddenCurrentPlayerName'),
             missionId: DOMUtils.getParam('hiddenQuestMissionId'),
             questProgressId: DOMUtils.getParam('hiddenQuestProgressId'),
-            actionId: DOMUtils.getParam('hiddenQuestActionId')
+            actionId: actionId,
+            dialogLog: dialogLog
         };
     }
 
@@ -310,8 +313,8 @@ class VirtualTableTop {
         const target = `#actionFeedback`;
         $(target).text(`Talk: actionId=${actionId}, replyId=${replyId}`);
         this._showModal('#gameModal');
-        // Store the current action in the context
-        this.context.actionId = actionId;
+        // Store the current action in the context and reset dialogLog
+        this.updateContext({ actionId: actionId, dialogLog: '' });
         this._dialog(replyId);
     }
 
@@ -337,6 +340,9 @@ class VirtualTableTop {
             successCallback: (response) => {
                 if (!response.error) {
                     $(target).html(response.content);
+                    if (response.dialogLog !== undefined) {
+                        this.updateContext({ dialogLog: response.dialogLog });
+                    }
                     Logger.log(2, '_dialog', `response.audio=${response.audio}`);
 
                     if (response.audio) {
@@ -437,7 +443,7 @@ class VirtualTableTop {
 
         // Store the current action in the context
         if (actionId)
-            this.context.actionId = actionId;
+            this.updateContext({ actionId: actionId });
 
         const target = `#currentAction`;
         if (!DOMUtils.exists(target))
@@ -454,6 +460,8 @@ class VirtualTableTop {
                 if (!response.error) {
                     this._showModal('#gameModal');
                     $(target).html(response.content);
+                    // reset dialogLog for subsequent actions
+                    this.updateContext({ dialogLog: '' });
                     // update action list
                     this._updateActions(this.context.playerId, this.context.currentPlayerId, response.questProgressId);
                 }

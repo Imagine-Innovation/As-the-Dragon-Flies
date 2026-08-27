@@ -24,6 +24,7 @@ final class OutcomeManager extends BaseManager
 
     // Public facade
     public QuestAction $questAction;
+    public ?string $dialogLog = null;
     //
     // Internal use
     private QuestProgress $questProgress;
@@ -468,6 +469,11 @@ final class OutcomeManager extends BaseManager
 
         $outcomeList = $this->getOutcomeList($outcomes, $playerName);
 
+        $actionDescription = MergeHelper::merge($this->action->description, ['playerName' => $playerName]);
+        if ($this->dialogLog !== null && trim($this->dialogLog) !== '') {
+            $actionDescription = $this->dialogLog;
+        }
+
         $log = [
             'playerName' => $playerName,
             'chapterName' => LanguageHelper::defaultName('Chapter', $this->quest->currentChapter?->name, $this->language),
@@ -475,7 +481,7 @@ final class OutcomeManager extends BaseManager
             'missionName' => $this->questProgress->mission->name,
             'missionDescription' => $this->questProgress->mission->description ?? '',
             'actionName' => MergeHelper::merge($this->action->name, ['playerName' => $playerName]),
-            'actionDescription' => MergeHelper::merge($this->action->description, ['playerName' => $playerName]),
+            'actionDescription' => $actionDescription,
             'shortResult' => $this->getSimpleActionResult($status),
             'result' => $this->getActionResult($playerName, $status),
             'diceRoll' => $this->getDiceRoll($diceToRoll, $diceRoll),

@@ -176,7 +176,7 @@ class NotificationClient {
             };
 
             AjaxUtils.request({
-                url: 'quest/ajax-clear-session',
+                url: 'quest/ajax-end-quest',
                 method: 'POST',
                 successCallback: (response) => {
                     Logger.log(1, 'game-over', 'Session ID cleared');
