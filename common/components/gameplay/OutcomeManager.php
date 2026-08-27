@@ -470,7 +470,7 @@ final class OutcomeManager extends BaseManager
         $outcomeList = $this->getOutcomeList($outcomes, $playerName);
 
         $actionDescription = MergeHelper::merge($this->action->description, ['playerName' => $playerName]);
-        if (!empty($this->dialogLog)) {
+        if ($this->dialogLog !== null && trim($this->dialogLog) !== '') {
             $actionDescription = $this->dialogLog;
         }
 
