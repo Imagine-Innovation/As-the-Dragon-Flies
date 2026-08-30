@@ -23,7 +23,7 @@ $breadcrumbs = [
 $this->params['breadcrumbs'] = $breadcrumbs;
 
 $narrative = new NarrativeComponent([
-    'mission' => $mission,
+    'mission' => $model,
     'title' => false,
         ]);
 $description = $narrative->renderDescription();
