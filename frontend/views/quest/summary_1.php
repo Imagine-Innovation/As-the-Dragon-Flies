@@ -32,19 +32,19 @@ $missionNumber = 0;
                     <?php foreach ($logs as $log): ?>
                         <article>
                             <?php
-                            if ($log->chapterLog->name !== $chapterName) {
-                                $chapterName = $log->chapterLog->name;
+                            if ($log->chapter_name !== $chapterName) {
+                                $chapterName = $log->chapter_name;
                                 $chapterNumber += 1;
                                 $missionNumber = 0;
                                 $name = MarkDown::widget(['content' => "{$chapterNumber}. {$chapterName}"]);
-                                $description = MarkDown::widget(['content' => $log->chapterLog->description]);
+                                $description = MarkDown::widget(['content' => $log->chapter_description]);
                                 echo "<h3 class=\"text-warning\">{$name}</h3>\n<p class=\"text-muted\">{$description}</p>\n";
                             }
-                            if ($log->missionLog->name !== $missionName) {
-                                $missionName = $log->missionLog->name;
+                            if ($log->mission_name !== $missionName) {
+                                $missionName = $log->mission_name;
                                 $missionNumber += 1;
                                 $name = MarkDown::widget(['content' => "{$chapterNumber}.{$missionNumber}. {$missionName}"]);
-                                $description = MarkDown::widget(['content' => $log->missionLog->description]);
+                                $description = MarkDown::widget(['content' => $log->mission_description]);
                                 echo "<h4 class=\"text-warning\">{$name}</h4>\n<p class=\"text-muted\">{$description}</p>\n";
                             }
                             $actionName = "Round {$log->round} - {$log->action_name}";

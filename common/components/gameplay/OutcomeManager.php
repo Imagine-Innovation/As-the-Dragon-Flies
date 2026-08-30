@@ -4,12 +4,17 @@ namespace common\components\gameplay;
 
 use common\components\AppStatus;
 use common\components\gameplay\BaseManager;
+use common\components\NarrativeComponent;
 use common\helpers\DiceRoller;
 use common\helpers\LanguageHelper;
 use common\helpers\MergeHelper;
 use common\models\Action;
 use common\models\ActionTypeSkill;
+use common\models\Chapter;
+use common\models\ChapterLog;
 use common\models\Outcome;
+use common\models\Mission;
+use common\models\MissionLog;
 use common\models\Player;
 use common\models\PlayerItem;
 use common\models\PlayerSkill;
@@ -136,9 +141,6 @@ final class OutcomeManager extends BaseManager
     private function setPayload(AppStatus $status, array $outcomes, int $diceRoll, bool $canReplay): array
     {
         Yii::debug("*** debug *** OutcomeManager - setPayload(status={$status->name}, diceRoll={$diceRoll}, canReplay={$canReplay})");
-        foreach ($outcomes as $outcome) {
-            Yii::debug($outcome->attributes);
-        }
         $missionId = $this->questProgress->mission_id;
         $playerName = LanguageHelper::defaultName('Player', $this->player->name, $this->language);
 
@@ -176,7 +178,7 @@ final class OutcomeManager extends BaseManager
 
         $playerSkills = $this->getPlayerSkills($this->player->id, $requiredSkillsIds);
 
-        if (empty($playerSkills)) {
+        if ($playerSkills === []) {
             return 0;
         }
         Yii::debug("*** debug *** getModifier -> bonuses=" . print_r($playerSkills, true));
@@ -207,7 +209,7 @@ final class OutcomeManager extends BaseManager
      * - Proficient in Investigation only: +6
      * - Proficient in both: +9
      *
-     * @param array{skillName: string, isProficient: bool, skillBonus: int, abilityModifier: int} $playerSkills
+     * @param array<array{skillName: string, isProficient: bool, skillBonus: int, abilityModifier: int}> $playerSkills
      * @return int
      */
     private function skillCheckModifier(array $playerSkills): int
@@ -217,6 +219,7 @@ final class OutcomeManager extends BaseManager
         $hasProficiency = false;
 
         foreach ($playerSkills as $skill) {
+            /** @var array{skillName: string, isProficient: bool, skillBonus: int, abilityModifier: int} $playerSkills $skill */
             Yii::debug($skill);
             $modifier = $skill['abilityModifier'];
 
@@ -229,14 +232,14 @@ final class OutcomeManager extends BaseManager
             $bestModifier = max($bestModifier, $modifier);
         }
 
-        return ($bestModifier ?? 0) + $additionalBonus;
+        return $bestModifier + $additionalBonus;
     }
 
     /**
      *
      * @param int $playerId
      * @param array<int> $requiredSkillsIds
-     * @return array{skillName: string, isProficient: bool, skillBonus: int, abilityModifier: int}
+     * @return array<array{skillName: string, isProficient: bool, skillBonus: int, abilityModifier: int}>
      */
     private function getPlayerSkills(int $playerId, array $requiredSkillsIds): array
     {
@@ -259,8 +262,7 @@ final class OutcomeManager extends BaseManager
                         ->where(['ps.player_id' => $playerId, 'ps.skill_id' => $requiredSkillsIds])
                         ->asArray()->all();
 
-        Yii::debug($playerSkills);
-
+        /** @var array<array{skillName: string, isProficient: bool, skillBonus: int, abilityModifier: int}> $playerSkills */
         return $playerSkills;
     }
 
@@ -370,7 +372,6 @@ final class OutcomeManager extends BaseManager
 
     /**
      *
-     * @param string $playerName
      * @param AppStatus $status
      * @return string
      */
@@ -394,7 +395,7 @@ final class OutcomeManager extends BaseManager
                 ->where(['quest_id' => $questId])
                 ->max('round');
 
-        $lastQuestRound = is_numeric($lastRound) ? $lastRound : 0;
+        $lastQuestRound = is_numeric($lastRound) ? (int) $lastRound : 0;
 
         return $lastQuestRound + 1;
     }
@@ -413,11 +414,9 @@ final class OutcomeManager extends BaseManager
         $questLog = new QuestLog([
             'quest_id' => $this->quest->id,
             'player_id' => $this->player->id,
+            'chapter_id' => $log['chapterId'],
+            'mission_id' => $log['missionId'],
             'round' => $round,
-            'chapter_name' => $log['chapterName'],
-            'chapter_description' => $log['chapterDescription'],
-            'mission_name' => $log['missionName'],
-            'mission_description' => $log['missionDescription'],
             'action_name' => $log['actionName'],
             'action_description' => $log['actionDescription'],
             'dice_roll' => $dc > 0 ? $log['diceRoll'] : null,
@@ -426,6 +425,61 @@ final class OutcomeManager extends BaseManager
         ]);
 
         $this->save($questLog);
+    }
+
+    /**
+     *
+     * @param int $questId
+     * @param Chapter|null $chapter
+     * @return void
+     */
+    private function logChapter(int $questId, ?Chapter $chapter): void
+    {
+        $existingChapterLog = ChapterLog::findOne(['chapter_id' => $chapter->id ?? 0, 'quest_id' => $questId]);
+
+        if ($existingChapterLog !== null) {
+            return;
+        }
+
+        $chapterLog = new ChapterLog([
+            'chapter_id' => $chapter->id ?? 0,
+            'quest_id' => $questId,
+            'name' => $chapter->name ?? 'Unknown chapter',
+            'image' => $chapter->image ?? null,
+            'description' => $chapter->description ?? '',
+        ]);
+
+        $chapterLog->save(false);
+    }
+
+    /**
+     *
+     * @param int $questId
+     * @param Mission|null $mission
+     * @return void
+     */
+    private function logMission(int $questId, ?Mission $mission): void
+    {
+        $existingMissionLog = MissionLog::findOne(['mission_id' => $mission->id ?? 0, 'quest_id' => $questId]);
+
+        if ($existingMissionLog !== null) {
+            return;
+        }
+        $narrative = new NarrativeComponent([
+            'mission' => $mission,
+            'title' => false,
+            'sections' => ['decors'],
+        ]);
+
+        $missionLog = new MissionLog([
+            'mission_id' => $mission->id ?? 0,
+            'quest_id' => $questId,
+            'name' => $mission->name ?? 'Unknown mission',
+            'image' => $mission->image ?? null,
+            'description' => $narrative->rawDescription(),
+        ]);
+
+        $missionLog->save(false);
     }
 
     /**
@@ -476,12 +530,16 @@ final class OutcomeManager extends BaseManager
             $actionDescription = $this->dialogLog;
         }
 
+        $chapter = $this->quest->currentChapter;
+        $mission = $this->questProgress->mission;
+
+        $this->logChapter($this->quest->id, $chapter);
+        $this->logMission($this->quest->id, $mission);
+
         $log = [
             'playerName' => $playerName,
-            'chapterName' => LanguageHelper::defaultName('Chapter', $this->quest->currentChapter?->name, $this->language),
-            'chapterDescription' => $this->quest->currentChapter?->description ?? '',
-            'missionName' => $this->questProgress->mission->name,
-            'missionDescription' => $this->questProgress->mission->description ?? '',
+            'chapterId' => $chapter->id ?? 0,
+            'missionId' => $mission->id,
             'actionName' => MergeHelper::merge($this->action->name, ['playerName' => $playerName]),
             'actionDescription' => $actionDescription,
             'shortResult' => $this->getSimpleActionResult($status),
@@ -490,7 +548,6 @@ final class OutcomeManager extends BaseManager
             'hpLoss' => Yii::t('app/game', 'loosing hp', ['hpLoss' => $this->hpLoss], $this->language),
             'outcomeList' => $outcomeList,
             'isFree' => $this->action->is_free,
-            // 'questProgressId' => $this->questProgress->id,
             'questProgressId' => $this->getQuestProgressId(),
             'nextMissionId' => $this->nextMissionId,
             'storyId' => $this->quest->story_id,
@@ -520,12 +577,11 @@ final class OutcomeManager extends BaseManager
 
         $outcomeLog = [];
         foreach ($outcomes as $outcome) {
-            $actionOutcome = $this->getActionOutcome($outcome);
             $outcomeLog[] = [
                 'name' => MergeHelper::merge($outcome->name, ['playerName' => $playerName]),
                 'image' => $outcome->image,
                 'description' => MergeHelper::merge($outcome->description, ['playerName' => $playerName]),
-                'actionOutcome' => $actionOutcome,
+                'actionOutcome' => $this->getActionOutcome($outcome),
             ];
         }
 

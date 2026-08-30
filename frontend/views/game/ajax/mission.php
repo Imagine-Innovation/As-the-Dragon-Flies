@@ -7,7 +7,11 @@ use common\helpers\WebResourcesHelper;
 /** @var common\models\Mission $mission */
 $chapter = $mission->chapter;
 $storyRoot = WebResourcesHelper::storyRootPath($chapter->story_id);
-$narrative = new NarrativeComponent(['mission' => $mission, 'title' => false]);
+$narrative = new NarrativeComponent([
+    'mission' => $mission,
+    'title' => false,
+    'sections' => ['decors'],
+        ]);
 $description = $narrative->renderDescription();
 ?>
 <?php if ($mission->image): ?>

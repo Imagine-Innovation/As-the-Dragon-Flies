@@ -22,7 +22,10 @@ $breadcrumbs = [
 // Set breadcrumbs for the view
 $this->params['breadcrumbs'] = $breadcrumbs;
 
-$narrative = new NarrativeComponent(['mission' => $model, 'title' => false]);
+$narrative = new NarrativeComponent([
+    'mission' => $mission,
+    'title' => false,
+        ]);
 $description = $narrative->renderDescription();
 ?>
 <div class="container-fluid">

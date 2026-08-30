@@ -30,6 +30,7 @@ use common\helpers\UserErrorMessage;
 use common\models\events\EventFactory;
 use common\models\Player;
 use common\models\Quest;
+use common\models\QuestLog;
 use common\models\Story;
 use common\components\AjaxRequest;
 use Yii;
@@ -467,10 +468,15 @@ class QuestController extends Controller
     public function actionSummarize(int $id): string
     {
         $quest = $this->findModel($id);
+        $questLogs = QuestLog::find()
+                ->where(['quest_id' => $id])
+                ->with(['missionLog', 'chapterLog'])
+                ->orderBy('round ASC')
+                ->all();
 
         return $this->render('summary', [
                     'quest' => $quest,
-                    'logs' => $quest->questLogs,
+                    'logs' => $questLogs,
         ]);
     }
 

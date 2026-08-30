@@ -370,7 +370,10 @@ class QuestManager extends BaseManager
      */
     private function newQuestProgress(Mission $mission, int $nextPlayerId): QuestProgress
     {
-        $narrative = new NarrativeComponent(['mission' => $mission]);
+        $narrative = new NarrativeComponent([
+            'mission' => $mission,
+            'sections' => ['decors'],
+        ]);
 
         $questProgress = QuestProgress::find()
                 ->where(['quest_id' => $this->quest->id, 'mission_id' => $mission->id])
@@ -574,7 +577,6 @@ class QuestManager extends BaseManager
 
     /**
      *
-     * @param int|null $nextMissionId
      * @return array{error: bool, msg: string, event?: string, payload?: array<string, mixed>}
      */
     public function moveToNextDefaultMission(): array

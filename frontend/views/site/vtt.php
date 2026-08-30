@@ -17,7 +17,11 @@ $isYourTurn = ($currentPlayer->id === $localPlayerId);
 $questProgress = $quest->currentQuestProgress;
 $questActions = $questProgress?->questActions;
 $mission = $questProgress?->mission;
-$narrative = new NarrativeComponent(['mission' => $mission, 'title' => false]);
+$narrative = new NarrativeComponent([
+    'mission' => $mission,
+    'title' => false,
+    'sections' => ['decors'],
+        ]);
 $description = $narrative->renderDescription();
 
 $npcs = $mission?->npcs;

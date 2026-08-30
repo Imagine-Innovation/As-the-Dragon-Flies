@@ -10,10 +10,13 @@ use yii\base\Component;
 class NarrativeComponent extends Component
 {
 
-    const DETAILS = ['decors', 'npcs', 'monsters'];
+    const SECTIONS = ['decors', 'npcs', 'monsters'];
 
     public ?Mission $mission = null;
-    public ?bool $title = true;
+    public ?bool $title = true; // defines if mission name should be rendered or not
+
+    /** @var array<string> $sections */
+    public array $sections = self::SECTIONS; // List of sections to be included
 
     /**
      *
@@ -26,9 +29,36 @@ class NarrativeComponent extends Component
 
     /**
      *
+     * @return string
+     */
+    public function renderDescription(): string
+    {
+        $descriptions = $this->missionDecription();
+        $renderedDescription = [];
+
+        foreach ($descriptions as $description) {
+            $renderedDescription[] = MarkDown::widget(['content' => $description]);
+        }
+        $text = implode(PHP_EOL, $renderedDescription);
+        return $text;
+    }
+
+    /**
+     *
+     * @return string
+     */
+    public function rawDescription(): string
+    {
+        $descriptions = $this->missionDecription();
+        $text = implode(PHP_EOL, $descriptions);
+        return $text;
+    }
+
+    /**
+     *
      * @return array<string>
      */
-    public function missionDecription(): array
+    private function missionDecription(): array
     {
         if ($this->mission === null) {
             return ['The mission has not been found, even by the most learned magicians'];
@@ -39,11 +69,11 @@ class NarrativeComponent extends Component
             $narrative[] = "Mission: {$this->mission->name}";
         }
         if ($this->mission->description) {
-            $narrative[] = MarkDown::widget(['content' => $this->mission->description]);
+            $narrative[] = $this->mission->description;
         }
 
-        foreach (self::DETAILS as $details) {
-            $narrative = [...$narrative, ...$this->describeDetail($details)];
+        foreach ($this->sections as $section) {
+            $narrative = [...$narrative, ...$this->describeDetail($section)];
         }
 
         return $narrative;
@@ -51,26 +81,15 @@ class NarrativeComponent extends Component
 
     /**
      *
-     * @return string
-     */
-    public function renderDescription(): string
-    {
-        $descriptions = $this->missionDecription();
-        $text = implode(PHP_EOL, $descriptions);
-        return $text;
-    }
-
-    /**
-     *
-     * @param string $details
+     * @param string $section
      * @return array<string>
      */
-    private function describeDetail(string $details): array
+    private function describeDetail(string $section): array
     {
         $narrative = [];
-        $detailList = $this->mission->$details;
+        $detailList = $this->mission->$section;
         foreach ($detailList as $detail) {
-            $narrative[] = $detail->description ? MarkDown::widget(['content' => $detail->description]) : $detail->name;
+            $narrative[] = $detail->description ? $detail->description : $detail->name;
         }
         return $narrative;
     }
