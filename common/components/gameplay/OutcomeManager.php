@@ -441,6 +441,17 @@ final class OutcomeManager extends BaseManager
             return;
         }
 
+        $this->newChapterLog($questId, $chapter);
+    }
+
+    /**
+     *
+     * @param int $questId
+     * @param Chapter|null $chapter
+     * @return void
+     */
+    private function newChapterLog(int $questId, ?Chapter $chapter): void
+    {
         $chapterLog = new ChapterLog([
             'chapter_id' => $chapter->id ?? 0,
             'quest_id' => $questId,
@@ -465,6 +476,18 @@ final class OutcomeManager extends BaseManager
         if ($existingMissionLog !== null) {
             return;
         }
+
+        $this->newMissionLog($questId, $mission);
+    }
+
+    /**
+     *
+     * @param int $questId
+     * @param Mission|null $mission
+     * @return void
+     */
+    private function newMissionLog(int $questId, ?Mission $mission): void
+    {
         $narrative = new NarrativeComponent([
             'mission' => $mission,
             'title' => false,

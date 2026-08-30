@@ -87,9 +87,9 @@ class NarrativeComponent extends Component
     private function describeDetail(string $section): array
     {
         $narrative = [];
-        $detailList = $this->mission->$section;
-        foreach ($detailList as $detail) {
-            $narrative[] = $detail->description ? $detail->description : $detail->name;
+        $sectionContentList = $this->mission->$section;
+        foreach ($sectionContentList as $detail) {
+            $narrative[] = $detail->description ?? $detail->name;
         }
         return $narrative;
     }
