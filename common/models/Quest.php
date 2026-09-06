@@ -18,6 +18,7 @@ use Yii;
  * @property string $name Quest name
  * @property string|null $description Description
  * @property string|null $image Image
+ * @property string $language Language
  * @property int $status Quest status (waiting, playing, paused, completed, aborted)
  * @property int $created_at Created at
  * @property int|null $started_at Started at
@@ -63,6 +64,7 @@ class Quest extends \yii\db\ActiveRecord
     {
         return [
             [['current_chapter_id', 'current_player_id', 'initiator_id', 'description', 'image', 'started_at', 'completed_at'], 'default', 'value' => null],
+            [['language'], 'default', 'value' => 'en'],
             [['status'], 'default', 'value' => AppStatus::WAITING->value],
             [['created_at'], 'default', 'value' => 0],
             [['story_id', 'name'], 'required'],
@@ -70,6 +72,7 @@ class Quest extends \yii\db\ActiveRecord
             [['description'], 'string'],
             [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeMarkdownWithCache']],
             [['name', 'image'], 'string', 'max' => 64],
+            [['language'], 'string', 'max' => 8],
             [['story_id'], 'exist', 'skipOnError' => true, 'targetClass' => Story::class, 'targetAttribute' => ['story_id' => 'id']],
             [['current_chapter_id'], 'exist', 'skipOnError' => true, 'targetClass' => Chapter::class, 'targetAttribute' => ['current_chapter_id' => 'id']],
             [['current_player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['current_player_id' => 'id']],
@@ -91,6 +94,7 @@ class Quest extends \yii\db\ActiveRecord
             'name' => 'Quest name',
             'description' => 'Description',
             'image' => 'Image',
+            'language' => 'Language',
             'status' => 'Quest status (waiting, playing, paused, completed, aborted)',
             'created_at' => 'Created at',
             'started_at' => 'Started at',

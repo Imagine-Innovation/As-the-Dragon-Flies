@@ -555,6 +555,7 @@ class TavernManager extends BaseManager
             'name' => $story->name,
             'description' => $story->description,
             'image' => $story->image,
+            'language' => $story->language,
             'status' => AppStatus::WAITING->value,
             'created_at' => time(),
         ]);
