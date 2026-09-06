@@ -109,47 +109,56 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php endif; ?>
 
         <?php if ($isYourTurn && $questActions !== null): ?>
-            <section class="actions-panel" aria-labelledby="actions-title">
-                <p class="panel-heading" id="actions-title"><i class="bi bi-lightning-charge-fill" aria-hidden="true"></i> Actions disponibles — Aelric</p>
-                <div class="actions-panel__grid">
-                    <?php
-                    foreach ($questActions as $questAction):
-                        $action = $questAction->action;
-                        $onclick = $action->reply_id ?
-                                "vtt.talk({$action->id}, {$action->reply_id}); return false;" :
-                                "vtt.evaluateAction({$action->id}); return false;";
-                        ?>
-                        <button type="button" class="action-btn">
-                            <span class="action-btn__top">
-                                <span class="action-btn__name">
-                                    <?php if ($action->actionType?->icon): ?>
-                                        <i class="bi <?= $action->actionType->icon ?>" aria-hidden="true"></i>
-                                    <?php endif; ?>
-                                    <?= $action->name ?>
-                                </span>
-                                <span class="action-btn__badges">
-                                    <?php if ($action->is_free): ?>
-                                        <span class="badge badge-success">Gratuite</span>
-                                    <?php endif; ?>
-                                    <?php if ($action->dc > 0): ?>
-                                        <span class="badge badge-warning">DC <?= $action->dc ?></span>
-                                    <?php endif; ?>
-                                </span>
-                            </span>
-                            <span class="action-btn__desc">
-                                <?=
-                                MarkDown::widget([
-                                    'content' => $action->description,
-                                    'placeholders' => [
-                                        'playerName' => $currentPlayer->name,
-                                    ],
-                                ])
-                                ?>
-                            </span>
-                        </button>
-                    <?php endforeach; ?>
-                </div>
-            </section>
+            <?=
+            $this->renderFile('@app/views/game/ajax/action.php', [
+                'questActions' => $$questActions,
+                'playerName' => $currentPlayer->name,
+                'language' => $quest->language,
+            ])
+            ?>
+            <!--
+                        <section class="actions-panel" aria-labelledby="actions-title">
+                            <p class="panel-heading" id="actions-title"><i class="bi bi-lightning-charge-fill" aria-hidden="true"></i> Actions disponibles — Aelric</p>
+                            <div class="actions-panel__grid">
+            <?php
+            foreach ($questActions as $questAction):
+                $action = $questAction->action;
+                $onclick = $action->reply_id ?
+                        "vtt.talk({$action->id}, {$action->reply_id}); return false;" :
+                        "vtt.evaluateAction({$action->id}); return false;";
+                ?>
+                                        <button type="button" class="action-btn">
+                                            <span class="action-btn__top">
+                                                <span class="action-btn__name">
+                <?php if ($action->actionType?->icon): ?>
+                                                            <i class="bi <?= $action->actionType->icon ?>" aria-hidden="true"></i>
+                <?php endif; ?>
+                <?= $action->name ?>
+                                                </span>
+                                                <span class="action-btn__badges">
+                <?php if ($action->is_free): ?>
+                                                            <span class="badge badge-success">Gratuite</span>
+                <?php endif; ?>
+                <?php if ($action->dc > 0): ?>
+                                                            <span class="badge badge-warning">DC <?= $action->dc ?></span>
+                <?php endif; ?>
+                                                </span>
+                                            </span>
+                                            <span class="action-btn__desc">
+                <?=
+                MarkDown::widget([
+                    'content' => $action->description,
+                    'placeholders' => [
+                        'playerName' => $currentPlayer->name,
+                    ],
+                ])
+                ?>
+                                            </span>
+                                        </button>
+            <?php endforeach; ?>
+                            </div>
+                        </section>
+            -->
         <?php endif; ?>
 
         <footer class="turn-bar">
@@ -247,32 +256,38 @@ $this->params['breadcrumbs'][] = $this->title;
             <aside id="gameLogPanel" class="side-panel" aria-label="Journal de la quête">
                 <p class="side-panel__title"><i class="bi bi-journal-text" aria-hidden="true"></i> Journal de la quête</p>
                 <div class="journal-feed">
+                    <?=
+                    $this->renderFile('@app/views/game/ajax/quest-log.php', [
+                        'questLogs' => $quest->questLogs,
+                        'language' => $quest->language,
+                    ])
+                    ?>
+                    <!--
+                                        <p class="journal-entry">
+                                            <time>Round 1</time>
+                                            Le groupe entre dans <strong>l'Auberge du Sanglier Rieur</strong>, à la lisière de la forêt de Vaelthar.
+                                        </p>
 
-                    <p class="journal-entry">
-                        <time>Round 1</time>
-                        Le groupe entre dans <strong>l'Auberge du Sanglier Rieur</strong>, à la lisière de la forêt de Vaelthar.
-                    </p>
+                                        <p class="journal-entry">
+                                            <time>Round 1</time>
+                                            <strong>Tommy l'aubergiste</strong> met en garde les aventuriers contre un manoir maudit et un trésor perdu des croisades.
+                                        </p>
 
-                    <p class="journal-entry">
-                        <time>Round 1</time>
-                        <strong>Tommy l'aubergiste</strong> met en garde les aventuriers contre un manoir maudit et un trésor perdu des croisades.
-                    </p>
+                                        <p class="journal-entry">
+                                            <time>Round 2</time>
+                                            <strong>Nym</strong> examine le tableau du Chevalier Noir et découvre un texte dissimulé sur le parchemin peint.
+                                        </p>
 
-                    <p class="journal-entry">
-                        <time>Round 2</time>
-                        <strong>Nym</strong> examine le tableau du Chevalier Noir et découvre un texte dissimulé sur le parchemin peint.
-                    </p>
+                                        <p class="journal-entry">
+                                            <time>Round 2</time>
+                                            <strong>Aelric</strong> examine le comptoir (DC 20) — rien trouvé pour l'instant.
+                                        </p>
 
-                    <p class="journal-entry">
-                        <time>Round 2</time>
-                        <strong>Aelric</strong> examine le comptoir (DC 20) — rien trouvé pour l'instant.
-                    </p>
-
-                    <p class="journal-entry">
-                        <time>Round 3</time>
-                        <strong>Gurdil l'ivrogne</strong> évoque des rumeurs sur le manoir et un chemin à travers les bois.
-                    </p>
-
+                                        <p class="journal-entry">
+                                            <time>Round 3</time>
+                                            <strong>Gurdil l'ivrogne</strong> évoque des rumeurs sur le manoir et un chemin à travers les bois.
+                                        </p>
+                    -->
                 </div>
             </aside>
 
