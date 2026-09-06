@@ -273,7 +273,8 @@ class SiteController extends Controller
     public function actionVtt(): string
     {
         $this->layout = 'game';
-        $quest = \common\models\Quest::findOne(10);
+        $questId = Yii::$app->session->get('questId');
+        $quest = \common\models\Quest::findOne($questId);
         return $this->render('vtt', ['quest' => $quest]);
     }
 
