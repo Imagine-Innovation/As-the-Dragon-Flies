@@ -6,6 +6,7 @@ use common\widgets\RecordCount;
 
 /** @var yii\web\View $this */
 /** @var common\models\Item $models */
+/** @var int $itemType item type */
 /** @var int $itemTypeId internal id of the item type */
 /** @var int $count total number of records retrived by the query */
 /** @var int $page current page number */

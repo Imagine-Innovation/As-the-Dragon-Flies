@@ -35,7 +35,7 @@ class ItemTable extends Widget
             'is-repeated' => false,
             'is-link' => false,
             'iconography' => null,
-            'filter' => ['Armor', 'Weapon', 'Tool', 'Gear', 'Poison'],
+            'filter' => ['Armor', 'Weapon', 'Tool', 'Gear', 'Poison', 'Scroll'],
         ],
         'Name' => [
             'column-header' => 'Name',
@@ -44,7 +44,7 @@ class ItemTable extends Widget
             'is-repeated' => true,
             'is-link' => true,
             'iconography' => null,
-            'filter' => ['Armor', 'Shield', 'Weapon', 'Tool', 'Gear', 'Pack', 'Poison'],
+            'filter' => ['Armor', 'Shield', 'Helmet', 'Weapon', 'Tool', 'Gear', 'Pack', 'Poison', 'Scroll'],
         ],
         'Image' => [
             'column-header' => 'Image',
@@ -53,7 +53,7 @@ class ItemTable extends Widget
             'is-repeated' => true,
             'is-link' => false,
             'iconography' => 'image',
-            'filter' => ['Armor', 'Shield', 'Weapon', 'Tool', 'Gear', 'Pack', 'Poison'],
+            'filter' => ['Armor', 'Shield', 'Helmet', 'Weapon', 'Tool', 'Gear', 'Pack', 'Poison', 'Scroll'],
         ],
         'Description' => [
             'column-header' => 'Description',
@@ -71,7 +71,7 @@ class ItemTable extends Widget
             'is-repeated' => true,
             'is-link' => false,
             'iconography' => null,
-            'filter' => ['Armor', 'Shield', 'Weapon', 'Tool', 'Gear', 'Pack', 'Poison'],
+            'filter' => ['Armor', 'Shield', 'Helmet', 'Weapon', 'Tool', 'Gear', 'Pack', 'Poison'],
         ],
         'Quantity' => [
             'column-header' => 'Quantity',
@@ -89,7 +89,7 @@ class ItemTable extends Widget
             'is-repeated' => true,
             'is-link' => false,
             'iconography' => null,
-            'filter' => ['Armor', 'Shield', 'Weapon', 'Tool', 'Gear', 'Pack'],
+            'filter' => ['Armor', 'Shield', 'Helmet', 'Weapon', 'Tool', 'Gear', 'Pack'],
         ],
         'Armor Class (AC)' => [
             'column-header' => 'Armor Class (AC)',
@@ -98,7 +98,7 @@ class ItemTable extends Widget
             'is-repeated' => true,
             'is-link' => false,
             'iconography' => null,
-            'filter' => ['Armor', 'Shield'],
+            'filter' => ['Armor', 'Shield', 'Helmet'],
         ],
         'Strength' => [
             'column-header' => 'Strength',
@@ -146,7 +146,7 @@ class ItemTable extends Widget
             'filter' => ['Poison'],
         ],
     ];
-    private const LUT_TYPE = ['Armor', 'Weapon', 'Tool', 'Gear', 'Pack', 'Poison', 'Shield', 'Scroll'];
+    private const LUT_TYPE = ['Armor', 'Shield', 'Helmet', 'Weapon', 'Tool', 'Gear', 'Pack', 'Poison', 'Scroll'];
 
     /** @var Item[] $items */
     public array $items = [];

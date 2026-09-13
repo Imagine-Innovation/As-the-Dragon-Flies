@@ -377,13 +377,14 @@ class LayoutInitializer {
 class ItemManager {
     /**
      * Loads and displays items for a specific type
-     * @param {number} itemType - Type of items to load
+     * @param {number} itemTypeId - Type of items to load
+     * @param {string} itemTypeName - Item type name
      */
-    static loadTypeTab(itemType) {
-        Logger.log(1, 'loadTypeTab', `itemType=${itemType}`);
+    static loadTypeTab(itemTypeId, itemTypeName) {
+        Logger.log(1, 'loadTypeTab', `itemTypeId=${itemTypeId}, itemTypeName=${itemTypeName}`);
 
-        $("#container").html(`ajax-${itemType}`);
-        $("#currentTab").html(itemType);
+        $("#container").html(`ajax-${itemTypeId}`);
+        $("#currentTab").html(itemTypeId);
 
         TableManager.loadGenericAjaxTable(0);
     }

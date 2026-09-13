@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use common\components\AccessRightsManager;
 use common\models\Item;
+use common\models\ItemType;
 use common\components\AjaxRequest;
 use Yii;
 use yii\filters\AccessControl;
@@ -54,7 +55,8 @@ class ItemController extends Controller
     public function actionIndex(): string
     {
         if (Yii::$app->user->identity->is_designer) {
-            return $this->render('index');
+            $itemTypes = ItemType::find()->orderBy('sort_order')->all();
+            return $this->render('index', ['itemTypes' => $itemTypes]);
         }
         throw new UnauthorizedHttpException('Only designer users can see this page');
     }

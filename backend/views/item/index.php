@@ -1,21 +1,12 @@
 <?php
 
-use common\models\ItemType;
 use common\widgets\AjaxContainer;
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var int $count: total number of records retrived by the query */
-/** @var int $page: current page number */
-/** @var int $pageCount: nomber of pages regarding the limit of the query */
-/** @var int $limit: nomber of records to be fetched */
-/** @var boolean $partial: indicates that the first column should not be displayed */
+/** @var \common\models\ItemType[] $itemTypes */
 $this->title = 'Items';
 $this->params['breadcrumbs'][] = $this->title;
-
-$itemTypes = ItemType::find()->orderBy('sort_order')->all();
-
-//$tabs = ['Armor', 'Weapon', 'Tool', 'Gear', 'Pack', 'Poison'];
 
 $firstTypeId = $itemTypes[0]->id;
 ?>
@@ -28,7 +19,7 @@ $firstTypeId = $itemTypes[0]->id;
                     <li class="nav-item">
                         <a class="nav-link<?= $itemType->id === $firstTypeId ? ' active' : '' ?>"
                            data-bs-toggle="tab" href="#tab-<?= $itemType->id ?>" role="tab"
-                           href="#" onclick="ItemManager.loadTypeTab('<?= $itemType->id ?>');">
+                           href="#" onclick="ItemManager.loadTypeTab('<?= $itemType->id ?>', '<?= $itemType->name ?>');">
                                <?= $itemType->name ?>
                         </a>
                     </li>
@@ -47,8 +38,8 @@ $firstTypeId = $itemTypes[0]->id;
     </div>
 </div>
 <?=
-    $this->renderFile('@app/views/layouts/snippets/ajax-params.php', [
-        'route' => 'item/ajax', // default route
-        'initTab' => $firstTypeId,
-    ])
+$this->renderFile('@app/views/layouts/snippets/ajax-params.php', [
+    'route' => 'item/ajax', // default route
+    'initTab' => $firstTypeId,
+])
 ?>
