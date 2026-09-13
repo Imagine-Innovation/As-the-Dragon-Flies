@@ -39,19 +39,16 @@ $lastItemType = 'none';
 <div class="m-3">
     <h6 class="text-warning">Equipment</h6>
 
-    <?php foreach ($itemTypes as $itemType): ?>
-        <?php
-        /** @phpstan-ignore-next-line */
-        if (array_key_exists($itemType, $playerItems) && !empty($playerItems[$itemType])):
-            ?>
-            <?php
+    <?php
+    foreach ($itemTypes as $itemType) {
+        if (array_key_exists($itemType, $playerItems) && $playerItems[$itemType] != null) {
             if ($lastItemType !== $itemType) {
                 $lastItemType = $itemType;
                 echo "<p>{$itemType}</p>";
             }
-            ?>
 
-            <?php foreach ($playerItems[$itemType] as $item): ?>
+            foreach ($playerItems[$itemType] as $item) {
+                ?>
                 <div class="d-flex align-items-center justify-content-between">
                     <div class="d-flex align-items-center">
                         <img src="<?= $imgPath ?>/item/<?= $item['image'] ?>" class="image-thumbnail me-2" style="width: 50px;height: 50px;">
@@ -60,7 +57,9 @@ $lastItemType = 'none';
                         ?>
                     </div>
                 </div>
-            <?php endforeach; ?>
-        <?php endif; ?>
-    <?php endforeach; ?>
+                <?php
+            }
+        }
+    }
+    ?>
 </div>
