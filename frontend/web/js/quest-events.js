@@ -120,7 +120,36 @@ class NotificationClient {
         this.on('game-action', (data) => {
             Logger.log(2, 'setupDefaultHandlers', 'Received game-action message:', data);
             Logger.log(10, 'setupDefaultHandlers', `Payload: ${JSON.stringify(data, null, 2)}`);
-            if (this.vtt) {
+
+            const isCurrentPlayer = (data.playerName && data.playerName === this.playerName) ||
+                                    (data.playerId && String(data.playerId) === String(this.playerId));
+
+            if (isCurrentPlayer && data.detail && Array.isArray(data.detail.outcomes)) {
+                const outcomes = data.detail.outcomes;
+
+                // 1. if at least one outcome.item_id is not null, refresh the player equipment (call player-item/ajax-equipment)
+                const hasItem = outcomes.some(o => o.item_id !== null && o.item_id !== undefined && Number(o.item_id) > 0);
+
+                // 2. if at least one outcome.gained_xg, outcome.gained_gp, or outcome.hp_loss_dice has a positive value
+                const hasStats = outcomes.some(o =>
+                    (Number(o.gained_xg) > 0) ||
+                    (Number(o.gained_xp) > 0) ||
+                    (Number(o.gained_gp) > 0) ||
+                    (o.hp_loss_dice && o.hp_loss_dice !== '0' && o.hp_loss_dice !== 'null')
+                );
+
+                if (hasItem && typeof equipmentHandler !== 'undefined' && equipmentHandler) {
+                    equipmentHandler.refreshEquipment(this.playerId);
+                }
+
+                if (hasStats && this.vtt && typeof this.vtt._updatePlayer === 'function') {
+                    this.vtt._updatePlayer(this.playerId);
+                }
+
+                if (this.vtt && typeof this.vtt._updateQuestMembers === 'function') {
+                    this.vtt._updateQuestMembers(this.questId);
+                }
+            } else if (this.vtt) {
                 this.vtt.refresh(this.questId, this.sessionId);
             }
         });

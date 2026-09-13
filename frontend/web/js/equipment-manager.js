@@ -36,7 +36,15 @@ class EquipmentHandler {
         });
     }
 
-    _getInitPlayerItems(playerId) {
+    refreshEquipment(playerId = null) {
+        const targetId = playerId || this.playerId;
+        if (targetId) {
+            this._getInitPlayerItems(targetId);
+        }
+    }
+
+    _getInitPlayerItems(playerId = null) {
+        const targetId = playerId || this.playerId;
         const target = `#packageContent`;
         if (!DOMUtils.exists(target))
             return;
@@ -44,7 +52,7 @@ class EquipmentHandler {
         AjaxUtils.request({
             url: 'player-item/ajax-equipment',
             method: 'GET',
-            data: {playerId: playerId},
+            data: {playerId: targetId},
             successCallback: (response) => {
                 console.log('Callback', response);
                 if (!response.error) {
