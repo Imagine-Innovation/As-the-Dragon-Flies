@@ -1,92 +1,88 @@
-# Directives de Développement & Guide pour Google Jules (Agentic Engineering)
+# AI Agent Directives & Engineering Guide for Google Jules (Agentic Engineering)
 
-Ce document définit les directives et principes fondateurs pour optimiser la collaboration avec l'agent d'IA (Google Jules) au sein de la codebase. Basé sur les principes de l'**Agentic Engineering**, il vise à maximiser la précision du code généré, réduire les allers-retours correctifs et garantir la qualité en production.
-
----
-
-## 1. Spectre du Développement Assisté par IA
-
-Le développement assisté par IA s'inscrit sur un spectre selon l'enjeu du projet :
-
-- **Vibe Coding (Prototypes & Expérimentations) :**
-  - Adapté aux prototypes rapides, scripts internes ou POCs où la rapidité prime sur la rigueur.
-  - Processus : Description haut niveau -> Génération -> Ajustements rapides.
-- **Agentic Engineering (Systèmes de Production) :**
-  - Obligatoire pour le code destiné à la production.
-  - Exige un environnement structuré : spécifications précises, documentation d'architecture, suites de tests, contraintes de sécurité et garde-fous (guardrails).
+This document establishes key principles and instructions for working with AI coding agents (specifically Google Jules) within this repository. Based on the concepts of **Agentic Engineering**, these directives aim to maximize code relevance, minimize iterative corrections, and ensure production-level quality.
 
 ---
 
-## 2. Context Engineering (Ingénierie du Contexte)
+## 1. The Spectrum of AI-Assisted Development
 
-La qualité du code produit dépend directement du contexte fourni. L'agent doit toujours prendre en compte le contexte du dépôt avant de générer du code.
+AI-assisted development sits on a spectrum based on project stakes:
 
-### Contexte Statique vs Dynamique
-- **Contexte Statique (Toujours disponible) :**
-  - Conventions de code et règles d'architecture globales.
-  - Directives spécifiques au projet (ex: `AGENT.md`, `DESIGN.md`).
-  - Choix technologiques de référence (frameworks, bibliothèques autorisées/interdites).
-- **Contexte Dynamique (Chargé à la demande) :**
-  - Documentation API spécifique et résultats d'outils.
-  - Contexte relatif à la tâche ou à la fonctionnalité en cours.
-  - Logs de tests ou de débogage.
-
-### Règle d'or du Contexte
-Privilégier le flux : **Spécifier l'intention -> Explorer le contexte repo -> Générer la solution -> Vérifier & Valider**, afin d'éviter d'improviser des choix d'architecture arbitraires.
+- **Vibe Coding (Prototypes & Experimentation):**
+  - Best for quick prototypes, exploratory scripts, or internal utilities where speed is paramount.
+  - Workflow: High-level prompt -> Generate code -> Quick iterative tweaks until it works.
+- **Agentic Engineering (Production Systems):**
+  - Required for production-grade software.
+  - Operates in a highly structured environment using precise specifications, architecture docs, test suites, CI/CD gates, security rules, and guardrails.
 
 ---
 
-## 3. Modèle + Harness (`Agent = Model + Harness`)
+## 2. Context Engineering Over Prompt Engineering
 
-L'agent ne se limite pas au modèle de langage. Il s'appuie sur son **harness** (environnement d'exécution et outils) :
+High-quality code generation depends far more on repository context than on clever prompting. The agent must thoroughly analyze existing project context before implementing changes.
 
-- **Outils & Sandbox :** Utiliser les outils disponibles (lecture de fichiers, exécution de tests, sessions Bash) pour analyser l'environnement avant toute modification.
-- **Guardrails & Contraintes :** Respecter strictement les politiques de sécurité, les droits d'accès et les standards du projet.
-- **Observabilité :** Analyser systématiquement les erreurs d'exécution ou d'analyse statique plutôt que d'émettre des hypothèses blindées.
+### Static vs. Dynamic Context
+- **Static Context (Always Available):**
+  - Architecture conventions, coding standards, and repository instructions (e.g., `AGENT.md`, `DESIGN.md`).
+  - Core tech stack rules and allowed/forbidden libraries.
+- **Dynamic Context (Loaded On-Demand):**
+  - Specific API contracts, task specs, tool outputs, execution logs, and debugging traces.
 
----
-
-## 4. Approche Test-First & Spécification Prioritaire
-
-L'implémentation devenant rapide et économique, l'effort principal doit se concentrer en amont sur la spécification et la vérification.
-
-### Flux de travail obligatoire
-1. **Spécification :** Définir ce qui doit être accompli, les cas limites (*edge cases*) et les contraintes strictes.
-2. **Tests / Évaluations :** Établir ou mettre à jour les tests (unitaires, d'intégration) définissant le contrat de succès *avant* ou conjointement à l'implémentation.
-3. **Implémentation :** Générer le code nécessaire pour satisfaire spécifications et tests.
-4. **Vérification :** Valider la conformité du code et vérifier le comportement global du système.
+### Golden Rule of Context
+Follow this workflow: **Specify Intent -> Discover Repo Context -> Generate Solution -> Verify & Validate**, avoiding arbitrary architectural assumptions.
 
 ---
 
-## 5. Priorité à la Vérification et au Jugement
+## 3. The Agent Harness (`Agent = Model + Harness`)
 
-L'IA excelle à produire les premiers 80% d'une solution. La valeur de l'ingénieur et de la vérification réside dans les 20% restants :
+An AI coding agent is more than just an LLM. The model is wrapped inside a surrounding harness that enables reliable work:
 
-- **Résolution des cas limites (Edge Cases) :** Traitement des cas d'erreur, validation des entrées, et cas aux limites.
-- **Respect de l'Architecture :** S'assurer que le code ne réintroduit pas de dette technique ou ne viole pas le découpage modulaire.
-- **Évaluation de Trajectoire & Résultat :**
-  - *Évaluation du résultat :* Le code final est-il correct et conforme aux spécifications ?
-  - *Évaluation de trajectoire :* Les étapes suivies et les modifications apportées sont-elles cohérentes et minimales ?
+- **Tools & Sandbox:** Leverage available tools (file reading, bash sessions, static analysis, test runners) to understand the workspace before modifying files.
+- **Guardrails & Constraints:** Adhere strictly to repository security policies, access controls, and code conventions.
+- **Observability:** Analyze execution logs and test failures systematically rather than guessing root causes.
 
 ---
 
-## 6. Modes d'Opération : Conducteur vs Orchestrateur
+## 4. Test-Driven & Specification-First Workflow
 
-L'interaction avec Jules s'adapte selon la complexité de la tâche :
+Because code implementation has become fast and cheap, human and agent effort should focus heavily up front on specification and verification.
 
-- **Mode Conducteur (Tâches complexes ou architecturales) :**
-  - Analyse étape par étape, guidage rapproché, inspection continue des modifications diff par diff.
-- **Mode Orchestrateur (Tâches bien définies, migrations, refactorings) :**
-  - Définition claire des objectifs, contraintes et critères d'acceptation.
-  - Exécution autonome par l'agent puis revue globale du résultat.
+### Mandatory Workflow
+1. **Specification:** Clearly define objectives, interfaces, invariants, and edge cases.
+2. **Tests & Evaluations:** Define unit/integration tests or validation criteria *before* or alongside implementation.
+3. **Implementation:** Generate surgical, minimal code to satisfy specifications and pass tests.
+4. **Verification:** Validate code correctness and assess overall system impact.
 
 ---
 
-## 7. Résumé des Engagements de l'Agent
+## 5. Shift Focus from Implementation to Verification
 
-Lors de chaque intervention, Google Jules s'engage à :
-1. Consulter le contexte du dépôt (architecture, conventions, fichiers de règles).
-2. Vérifier les spécifications et les tests existants avant toute modification majeure.
-3. Produire des modifications chirurgicales et bien ciblées.
-4. Lancer les outils de vérification (analyse statique, tests) pour valider l'implémentation.
-5. Privilégier la clarté, la maintenabilité et la sécurité du code généré.
+AI agents easily handle the first 70–80% of feature implementation. The core engineering value lies in verifying the remaining 20%:
+
+- **Edge Case Coverage:** Handle unexpected inputs, error paths, and boundary conditions.
+- **Architectural Alignment:** Ensure new code maintains system structure without adding technical debt or violating existing patterns.
+- **Trajectory & Result Evaluation:**
+  - *Output Evaluation:* Does the final diff meet all functional and security requirements?
+  - *Trajectory Evaluation:* Did the agent take sensible, well-scoped steps and use tools appropriately along the way?
+
+---
+
+## 6. Operating Modes: Conductor vs. Orchestrator
+
+Adapt how you direct Google Jules based on task complexity:
+
+- **Conductor Mode (Complex/Architectural Tasks):**
+  - Work closely with the agent inside the IDE/sandbox, inspecting and reviewing changes step-by-step.
+- **Orchestrator Mode (Well-Defined Tasks, Refactorings, Test Generation):**
+  - Define clear goals, constraints, and success criteria. Let the agent work autonomously and conduct a thorough review at the end.
+
+---
+
+## 7. Core Commitments for Google Jules
+
+During every task, Google Jules must:
+1. Consult repository instructions and codebase context before writing code.
+2. Verify existing specifications and tests before making non-trivial modifications.
+3. Produce clean, surgical, and minimal diffs.
+4. Execute project tests and verification steps to confirm correctness.
+5. Prioritize system maintainability, security, and architectural integrity.
