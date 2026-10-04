@@ -730,7 +730,10 @@ class Player extends \yii\db\ActiveRecord
             return null;
         }
 
-        $updatedRows = PlayerItem::updateAll(['quantity' => new \yii\db\Expression("quantity+{$quantity}")], [
+        $updatedRows = PlayerItem::updateAll([
+            'quantity' => new \yii\db\Expression("quantity+{$quantity}"),
+            'is_carrying' => 1,
+        ], [
             'player_id' => $this->id,
             'item_id' => $itemId,
         ]);
@@ -753,5 +756,106 @@ class Player extends \yii\db\ActiveRecord
             return SaveHelper::save($playerItem);
         }
         return true;
+    }
+
+    /**
+     * Recalculates and updates the player's Armor Class (AC) based on equipped items and DEX modifier.
+     *
+     * @return int The updated Armor Class value.
+     */
+    public function updateArmorClass(): int
+    {
+        $dexAbility = PlayerAbility::find()
+            ->alias('pa')
+            ->innerJoin(['a' => 'ability'], 'a.id = pa.ability_id')
+            ->where(['pa.player_id' => $this->id, 'a.code' => 'DEX'])
+            ->one();
+        $dexModifier = $dexAbility ? (int)$dexAbility->modifier : 0;
+
+        $playerBody = $this->playerBody;
+        if (!$playerBody) {
+            $ac = 10 + $dexModifier;
+            if ($this->armor_class !== $ac) {
+                $this->armor_class = $ac;
+                $this->save(false, ['armor_class', 'updated_at']);
+            }
+            return $ac;
+        }
+
+        // Chest Armor
+        $chestAc = 0;
+        $chestDexMod = $dexModifier;
+        $chestBonus = 0;
+        $hasChestArmor = false;
+
+        if ($playerBody->chest_item_id) {
+            $chestItem = Item::findOne($playerBody->chest_item_id);
+            if ($chestItem && $chestItem->armor) {
+                $armor = $chestItem->armor;
+                if ($armor->armor_class > 0) {
+                    $hasChestArmor = true;
+                    $chestAc = $armor->armor_class;
+                    if ($armor->dex_modifier) {
+                        if ($armor->max_modifier > 0) {
+                            $chestDexMod = min($dexModifier, $armor->max_modifier);
+                        } else {
+                            $chestDexMod = $dexModifier;
+                        }
+                    } else {
+                        $chestDexMod = 0;
+                    }
+                }
+                $chestBonus = $armor->armor_bonus;
+            }
+        }
+
+        if ($hasChestArmor) {
+            $baseAc = $chestAc + $chestDexMod + $chestBonus;
+        } else {
+            $baseAc = 10 + $dexModifier;
+        }
+
+        // Other equipped body slots (Head, Left Hand, Right Hand, Back)
+        $otherSlotIds = array_filter([
+            'head' => $playerBody->head_item_id,
+            'left_hand' => ($playerBody->left_hand_item_id !== $playerBody->chest_item_id) ? $playerBody->left_hand_item_id : null,
+            'right_hand' => ($playerBody->right_hand_item_id !== $playerBody->chest_item_id) ? $playerBody->right_hand_item_id : null,
+            'back' => $playerBody->back_item_id,
+        ]);
+
+        $additionalAc = 0;
+        $processedItemIds = [];
+
+        foreach ($otherSlotIds as $slotName => $itemId) {
+            if (!$itemId || in_array($itemId, $processedItemIds, true)) {
+                continue;
+            }
+            $processedItemIds[] = $itemId;
+
+            $item = Item::findOne($itemId);
+            if (!$item) {
+                continue;
+            }
+
+            if ($item->armor) {
+                $armor = $item->armor;
+                if ($armor->armor_bonus > 0) {
+                    $additionalAc += $armor->armor_bonus;
+                } elseif ($armor->armor_class > 0) {
+                    $additionalAc += $armor->armor_class;
+                }
+            } elseif ($item->itemType && $item->itemType->name === 'Helmet') {
+                $additionalAc += 1;
+            }
+        }
+
+        $totalAc = $baseAc + $additionalAc;
+
+        if ($this->armor_class !== $totalAc) {
+            $this->armor_class = $totalAc;
+            $this->save(false, ['armor_class', 'updated_at']);
+        }
+
+        return $totalAc;
     }
 }

@@ -164,6 +164,10 @@ class PlayerItemController extends Controller
 
         $request = Yii::$app->request;
         $playerId = (int) $request->get('playerId');
+        $player = Player::findOne($playerId);
+        if ($player) {
+            $player->updateArmorClass();
+        }
         $playerBody = FindModelHelper::findPlayerBody(['player_id' => $playerId]);
 
         // If a player is found, return the player's packs
@@ -272,6 +276,10 @@ class PlayerItemController extends Controller
         Yii::debug("*** debug *** savePlayerBody - itemName={$itemName}");
         $successfullySaved = SaveHelper::save($playerBody, false);
         if ($successfullySaved) {
+            $player = Player::findOne($playerBody->player_id);
+            if ($player) {
+                $player->updateArmorClass();
+            }
             $playerBodyData = $this->getPlayerBodyData($playerBody);
 
             return [
