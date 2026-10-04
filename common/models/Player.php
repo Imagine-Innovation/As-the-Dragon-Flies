@@ -759,97 +759,133 @@ class Player extends \yii\db\ActiveRecord
     }
 
     /**
-     * Recalculates and updates the player's Armor Class (AC) based on equipped items and DEX modifier.
+     * Retrieves the player's Dexterity modifier.
      *
-     * @return int The updated Armor Class value.
+     * @return int
      */
-    public function updateArmorClass(): int
+    private function getDexterityModifier(): int
     {
         $dexAbility = PlayerAbility::find()
             ->alias('pa')
             ->innerJoin(['a' => 'ability'], 'a.id = pa.ability_id')
             ->where(['pa.player_id' => $this->id, 'a.code' => 'DEX'])
             ->one();
-        $dexModifier = $dexAbility ? (int)$dexAbility->modifier : 0;
 
-        $playerBody = $this->playerBody;
-        if (!$playerBody) {
-            $ac = 10 + $dexModifier;
-            if ($this->armor_class !== $ac) {
-                $this->armor_class = $ac;
-                $this->save(false, ['armor_class', 'updated_at']);
-            }
-            return $ac;
+        return $dexAbility ? (int) $dexAbility->modifier : 0;
+    }
+
+    /**
+     * Calculates base Armor Class contributed by chest armor or unarmored defense.
+     *
+     * @param PlayerBody $playerBody
+     * @param int $dexModifier
+     * @return int
+     */
+    private function getChestBaseArmorClass(PlayerBody $playerBody, int $dexModifier): int
+    {
+        if (!$playerBody->chest_item_id) {
+            return 10 + $dexModifier;
         }
 
-        // Chest Armor
-        $chestAc = 0;
+        $chestItem = Item::findOne($playerBody->chest_item_id);
+        if (!$chestItem || !$chestItem->armor || $chestItem->armor->armor_class <= 0) {
+            return 10 + $dexModifier;
+        }
+
+        $armor = $chestItem->armor;
+        $chestAc = $armor->armor_class;
         $chestDexMod = $dexModifier;
-        $chestBonus = 0;
-        $hasChestArmor = false;
 
-        if ($playerBody->chest_item_id) {
-            $chestItem = Item::findOne($playerBody->chest_item_id);
-            if ($chestItem && $chestItem->armor) {
-                $armor = $chestItem->armor;
-                if ($armor->armor_class > 0) {
-                    $hasChestArmor = true;
-                    $chestAc = $armor->armor_class;
-                    if ($armor->dex_modifier) {
-                        if ($armor->max_modifier > 0) {
-                            $chestDexMod = min($dexModifier, $armor->max_modifier);
-                        } else {
-                            $chestDexMod = $dexModifier;
-                        }
-                    } else {
-                        $chestDexMod = 0;
-                    }
-                }
-                $chestBonus = $armor->armor_bonus;
+        if ($armor->dex_modifier) {
+            if ($armor->max_modifier > 0) {
+                $chestDexMod = min($dexModifier, $armor->max_modifier);
             }
-        }
-
-        if ($hasChestArmor) {
-            $baseAc = $chestAc + $chestDexMod + $chestBonus;
         } else {
-            $baseAc = 10 + $dexModifier;
+            $chestDexMod = 0;
         }
 
-        // Other equipped body slots (Head, Left Hand, Right Hand, Back)
+        return $chestAc + $chestDexMod + $armor->armor_bonus;
+    }
+
+    /**
+     * Computes additional AC bonus for an equipped non-chest item.
+     *
+     * @param int|null $itemId
+     * @return int
+     */
+    private function getSlotItemArmorBonus(?int $itemId): int
+    {
+        if (!$itemId) {
+            return 0;
+        }
+
+        $item = Item::findOne($itemId);
+        if (!$item) {
+            return 0;
+        }
+
+        if ($item->armor) {
+            $armor = $item->armor;
+            if ($armor->armor_bonus > 0) {
+                return $armor->armor_bonus;
+            }
+            if ($armor->armor_class > 0) {
+                return $armor->armor_class;
+            }
+        } elseif ($item->itemType && $item->itemType->name === 'Helmet') {
+            return 1;
+        }
+
+        return 0;
+    }
+
+    /**
+     * Calculates additional AC bonuses from non-chest equipped slots.
+     *
+     * @param PlayerBody $playerBody
+     * @return int
+     */
+    private function getAdditionalSlotsArmorClass(PlayerBody $playerBody): int
+    {
+        $chestItemId = $playerBody->chest_item_id;
         $otherSlotIds = array_filter([
             'head' => $playerBody->head_item_id,
-            'left_hand' => ($playerBody->left_hand_item_id !== $playerBody->chest_item_id) ? $playerBody->left_hand_item_id : null,
-            'right_hand' => ($playerBody->right_hand_item_id !== $playerBody->chest_item_id) ? $playerBody->right_hand_item_id : null,
+            'left_hand' => ($playerBody->left_hand_item_id !== $chestItemId) ? $playerBody->left_hand_item_id : null,
+            'right_hand' => ($playerBody->right_hand_item_id !== $chestItemId) ? $playerBody->right_hand_item_id : null,
             'back' => $playerBody->back_item_id,
         ]);
 
         $additionalAc = 0;
         $processedItemIds = [];
 
-        foreach ($otherSlotIds as $slotName => $itemId) {
+        foreach ($otherSlotIds as $itemId) {
             if (!$itemId || in_array($itemId, $processedItemIds, true)) {
                 continue;
             }
             $processedItemIds[] = $itemId;
-
-            $item = Item::findOne($itemId);
-            if (!$item) {
-                continue;
-            }
-
-            if ($item->armor) {
-                $armor = $item->armor;
-                if ($armor->armor_bonus > 0) {
-                    $additionalAc += $armor->armor_bonus;
-                } elseif ($armor->armor_class > 0) {
-                    $additionalAc += $armor->armor_class;
-                }
-            } elseif ($item->itemType && $item->itemType->name === 'Helmet') {
-                $additionalAc += 1;
-            }
+            $additionalAc += $this->getSlotItemArmorBonus($itemId);
         }
 
-        $totalAc = $baseAc + $additionalAc;
+        return $additionalAc;
+    }
+
+    /**
+     * Recalculates and updates the player's Armor Class (AC) based on equipped items and DEX modifier.
+     *
+     * @return int The updated Armor Class value.
+     */
+    public function updateArmorClass(): int
+    {
+        $dexModifier = $this->getDexterityModifier();
+        $playerBody = $this->playerBody;
+
+        if (!$playerBody) {
+            $totalAc = 10 + $dexModifier;
+        } else {
+            $baseAc = $this->getChestBaseArmorClass($playerBody, $dexModifier);
+            $additionalAc = $this->getAdditionalSlotsArmorClass($playerBody);
+            $totalAc = $baseAc + $additionalAc;
+        }
 
         if ($this->armor_class !== $totalAc) {
             $this->armor_class = $totalAc;
