@@ -7,7 +7,7 @@ use Yii;
 /**
  * This is the model class for table "player_body".
  *
- * @property int $player_id Foreign key to “player” table
+ * @property int $player_id Primary key and foreign key to “player” table
  * @property int|null $head_item_id Optional foreign key to “player_item” table. Item that protect the head
  * @property int|null $chest_item_id Optional foreign key to “player_item” table. Item that protect the chest
  * @property int|null $right_hand_item_id Optional foreign key to “player_item” table. Item handled in the right hand
@@ -23,6 +23,7 @@ use Yii;
  */
 class PlayerBody extends \yii\db\ActiveRecord
 {
+
     /**
      * {@inheritdoc}
      */
@@ -37,60 +38,39 @@ class PlayerBody extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['head_item_id', 'chest_item_id', 'right_hand_item_id', 'left_hand_item_id'], 'default', 'value' => null],
+            [['head_item_id', 'chest_item_id', 'right_hand_item_id', 'left_hand_item_id', 'back_item_id'], 'default', 'value' => null],
             [['player_id'], 'required'],
             [['player_id', 'head_item_id', 'chest_item_id', 'right_hand_item_id', 'left_hand_item_id'], 'integer'],
-            [
-                ['player_id'],
-                'exist',
-                'skipOnError' => true,
-                'targetClass' => Player::class,
-                'targetAttribute' => ['player_id' => 'id'],
-            ],
-            [
-                ['player_id', 'head_item_id'],
-                'exist',
-                'skipOnError' => true,
+            [['player_id'], 'exist', 'skipOnError' => true, 'targetClass' => Player::class, 'targetAttribute' => ['player_id' => 'id']],
+            [['player_id', 'head_item_id'], 'exist', 'skipOnError' => true,
                 'targetClass' => PlayerItem::class,
                 'targetAttribute' => ['player_id' => 'player_id', 'head_item_id' => 'item_id'],
                 'when' => function ($model) {
                     return $model->head_item_id !== null;
                 },
             ],
-            [
-                ['player_id', 'chest_item_id'],
-                'exist',
-                'skipOnError' => true,
+            [['player_id', 'chest_item_id'], 'exist', 'skipOnError' => true,
                 'targetClass' => PlayerItem::class,
                 'targetAttribute' => ['player_id' => 'player_id', 'chest_item_id' => 'item_id'],
                 'when' => function ($model) {
                     return $model->chest_item_id !== null;
                 },
             ],
-            [
-                ['player_id', 'right_hand_item_id'],
-                'exist',
-                'skipOnError' => true,
+            [['player_id', 'right_hand_item_id'], 'exist', 'skipOnError' => true,
                 'targetClass' => PlayerItem::class,
                 'targetAttribute' => ['player_id' => 'player_id', 'right_hand_item_id' => 'item_id'],
                 'when' => function ($model) {
                     return $model->right_hand_item_id !== null;
                 },
             ],
-            [
-                ['player_id', 'left_hand_item_id'],
-                'exist',
-                'skipOnError' => true,
+            [['player_id', 'left_hand_item_id'], 'exist', 'skipOnError' => true,
                 'targetClass' => PlayerItem::class,
                 'targetAttribute' => ['player_id' => 'player_id', 'left_hand_item_id' => 'item_id'],
                 'when' => function ($model) {
                     return $model->left_hand_item_id !== null;
                 },
             ],
-            [
-                ['player_id', 'back_item_id'],
-                'exist',
-                'skipOnError' => true,
+            [['player_id', 'back_item_id'], 'exist', 'skipOnError' => true,
                 'targetClass' => PlayerItem::class,
                 'targetAttribute' => ['player_id' => 'player_id', 'back_item_id' => 'item_id'],
                 'when' => function ($model) {
@@ -106,7 +86,7 @@ class PlayerBody extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'player_id' => 'Foreign key to “player” table',
+            'player_id' => 'Primary key and foreign key to “player” table',
             'head_item_id' => 'Optional foreign key to “player_item” table. Item that protect the head',
             'chest_item_id' => 'Optional foreign key to “player_item” table. Item that protect the chest',
             'right_hand_item_id' => 'Optional foreign key to “player_item” table. Item handled in the right hand',
