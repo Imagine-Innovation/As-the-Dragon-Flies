@@ -117,13 +117,7 @@ class NotificationClient {
             }
         });
 
-        this.on('game-action', (data) => {
-            Logger.log(2, 'setupDefaultHandlers', 'Received game-action message:', data);
-            Logger.log(10, 'setupDefaultHandlers', `Payload: ${JSON.stringify(data, null, 2)}`);
-            if (this.vtt) {
-                this.vtt.refresh(this.questId, this.sessionId);
-            }
-        });
+        this.on('game-action', (data) => this.handleGameAction(data));
 
         this.on('next-turn', (data) => {
             Logger.log(2, 'setupDefaultHandlers', 'Received next-turn message:', data);
@@ -215,6 +209,119 @@ class NotificationClient {
                 console.warn('Received player-quit event with incomplete payload:', data);
             }
         });
+    }
+
+    /**
+     * Checks if the player who performed the action is the current player.
+     *
+     * @param {object} data
+     * @returns {boolean}
+     */
+    _isCurrentPlayer(data) {
+        if (!data || !data.playerName) {
+            return false;
+        }
+        return data.playerName === this.playerName || (Boolean(this.vtt) && data.playerName === this.vtt.context?.currentPlayerName);
+    }
+
+    /**
+     * Checks if at least one outcome has a non-null item_id.
+     *
+     * @param {Array} outcomes
+     * @returns {boolean}
+     */
+    _hasItemOutcome(outcomes) {
+        if (!Array.isArray(outcomes)) {
+            return false;
+        }
+        return outcomes.some(outcome =>
+            outcome !== null &&
+            outcome !== undefined &&
+            outcome.item_id !== null &&
+            outcome.item_id !== undefined
+        );
+    }
+
+    /**
+     * Checks if a value is positive (number > 0 or non-empty/non-zero string).
+     *
+     * @param {number|string|null|undefined} val
+     * @returns {boolean}
+     */
+    _hasPositiveValue(val) {
+        if (val === null || val === undefined) return false;
+        if (typeof val === 'number') return val > 0;
+        if (typeof val === 'string') {
+            const trimmed = val.trim();
+            if (trimmed === '' || trimmed === '0') return false;
+            const num = Number(trimmed);
+            if (!isNaN(num)) return num > 0;
+            return true; // Handles dice strings like "1d6"
+        }
+        return false;
+    }
+
+    /**
+     * Checks if at least one outcome has a positive gained_xp, gained_gp, or hp_loss_dice.
+     *
+     * @param {Array} outcomes
+     * @returns {boolean}
+     */
+    _hasStatsOutcome(outcomes) {
+        if (!Array.isArray(outcomes)) {
+            return false;
+        }
+        return outcomes.some(outcome =>
+            outcome !== null &&
+            outcome !== undefined && (
+                this._hasPositiveValue(outcome.gained_xp) ||
+                this._hasPositiveValue(outcome.gained_gp) ||
+                this._hasPositiveValue(outcome.hp_loss_dice)
+            )
+        );
+    }
+
+    /**
+     * Handles equipment and stats updates for the current player's action.
+     *
+     * @param {Array} outcomes
+     * @returns {void}
+     */
+    _processCurrentPlayerAction(outcomes) {
+        if (this._hasItemOutcome(outcomes)) {
+            if (typeof equipmentHandler !== 'undefined' && equipmentHandler && typeof equipmentHandler.refreshEquipment === 'function') {
+                equipmentHandler.refreshEquipment(this.playerId);
+            }
+        }
+
+        if (this._hasStatsOutcome(outcomes)) {
+            if (this.vtt && typeof this.vtt._updatePlayer === 'function') {
+                this.vtt._updatePlayer(this.playerId);
+            }
+        }
+    }
+
+    /**
+     * Handles game-action event and performs necessary UI updates.
+     *
+     * @param {object} data
+     * @returns {void}
+     */
+    handleGameAction(data) {
+        Logger.log(2, 'handleGameAction', 'Received game-action message:', data);
+        Logger.log(10, 'handleGameAction', `Payload: ${JSON.stringify(data, null, 2)}`);
+
+        const detail = this._getEventDetail(data);
+        const outcomes = (detail && Array.isArray(detail.outcomes)) ? detail.outcomes : [];
+
+        // Always update quest members display so party state is synchronized for all players
+        if (this.vtt && typeof this.vtt._updateQuestMembers === 'function') {
+            this.vtt._updateQuestMembers(this.questId);
+        }
+
+        if (this._isCurrentPlayer(data)) {
+            this._processCurrentPlayerAction(outcomes);
+        }
     }
 
     /**

@@ -730,7 +730,10 @@ class Player extends \yii\db\ActiveRecord
             return null;
         }
 
-        $updatedRows = PlayerItem::updateAll(['quantity' => new \yii\db\Expression("quantity+{$quantity}")], [
+        $updatedRows = PlayerItem::updateAll([
+            'quantity' => new \yii\db\Expression("quantity+{$quantity}"),
+            'is_carrying' => 1,
+        ], [
             'player_id' => $this->id,
             'item_id' => $itemId,
         ]);
@@ -754,4 +757,5 @@ class Player extends \yii\db\ActiveRecord
         }
         return true;
     }
+
 }
