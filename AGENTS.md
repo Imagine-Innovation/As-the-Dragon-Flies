@@ -1,6 +1,6 @@
 # Guidelines & AI Agent Directives for Google Jules
 
-This document sets guidelines, structural rules, coding standards, testing requirements, and agentic engineering principles to enable Google Jules to generate highly relevant, maintainable, and robust code for this project.
+This document sets guidelines, structural rules, coding standards, testing requirements, tool execution parameters, and agentic engineering principles to enable Google Jules to generate highly relevant, maintainable, and robust code for this project.
 
 When defining any policy or directive, relevant exceptions are explicitly documented to guide appropriate trade-offs.
 
@@ -84,10 +84,15 @@ project/
 - **Exceptions:**
   - Lightweight value objects, data transfer objects (DTOs), framework widgets, or Active Record models instantiated contextually via Yii configuration arrays or static factory methods (e.g., `$module = new MyModule(['playerId' => $playerId])`).
 
-### 5. Code Quality & Static Analysis
+### 5. Code Quality & Static Analysis Execution Parameters
 - **Policy:** Target **PHPStan Level 9** compliance across all custom classes.
+- **Execution Parameters for PHPStan:**
+  - **Full Analysis Command:** `vendor/bin/phpstan analyze -c phpstan.neon --level=9`
+  - **Single File / Target Directory Analysis Command:** `vendor/bin/phpstan analyze <path/to/file_or_directory> -c phpstan.neon --level=9 --no-progress`
+  - **Memory Limit Parameter:** Add `--memory-limit=1G` if analyzing large sets of files.
 - **Exceptions:**
-  - Pre-existing legacy files that are outside the scope of current changes, unless directly touched or requested by the user.
+  - If `vendor/bin/phpstan` is not available in the binary path of the environment, perform manual static type checking and type validation against `phpstan.neon`.
+  - Pre-existing legacy files outside the scope of current changes unless directly touched or requested by the user.
 
 ### 6. Modern PHP 8 Features
 - **Policy:** Adopt Constructor Property Promotion, `match` expressions, Named Arguments, and Attributes.
@@ -96,7 +101,7 @@ project/
 
 ---
 
-## III. Testing Requirements
+## III. Testing Requirements & Execution Parameters
 
 ### 1. Happy Path & Boundary Value Testing
 - **Policy:** Every newly created component, helper, or service must include unit/integration tests covering:
@@ -112,6 +117,24 @@ project/
   - Potential runtime crashes (e.g., division by zero)
   - Non-existent array key lookups (e.g., `$array['non_existent_key']`)
 - **Exceptions:** Private internal helper methods where strict type declarations at the caller level make bad inputs impossible at compile/runtime.
+
+### 3. Execution Parameters for PHPUnit / Codeception Tests
+- **Full Test Suite Execution:**
+  - `vendor/bin/codecept run`
+- **Application-Specific Suite Execution:**
+  - **Common Unit Tests:** `cd common && ../vendor/bin/codecept run unit`
+  - **Frontend Suite:** `cd frontend && ../vendor/bin/codecept run`
+  - **Backend Suite:** `cd backend && ../vendor/bin/codecept run`
+- **Single Test Class Execution Parameters:**
+  - `vendor/bin/codecept run <path/to/TestClass.php>` (e.g., `vendor/bin/codecept run common/tests/unit/models/UserTest.php`)
+- **Single Test Method Execution Parameters:**
+  - `vendor/bin/codecept run <path/to/TestClass.php>:<methodName>` (e.g., `vendor/bin/codecept run common/tests/unit/models/UserTest.php:testValidation`)
+- **Direct PHPUnit Execution Parameters (when using PHPUnit binary directly):**
+  - **Full Suite:** `vendor/bin/phpunit`
+  - **Single Test File:** `vendor/bin/phpunit tests/unit/SampleTest.php`
+  - **Filter Specific Test Method:** `vendor/bin/phpunit --filter testMethodName`
+- **Exceptions:**
+  - If `vendor/bin/codecept` or `vendor/bin/phpunit` are not installed in the environment vendor directory, use PHP CLI or native verification scripts to validate business logic changes.
 
 ---
 
