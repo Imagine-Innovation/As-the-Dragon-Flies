@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\components\AccessRightsManager;
+use common\components\gameplay\PlayerManager;
 use common\helpers\FindModelHelper;
 use common\helpers\SaveHelper;
 use common\models\Item;
@@ -166,7 +167,8 @@ class PlayerItemController extends Controller
         $playerId = (int) $request->get('playerId');
         $player = Player::findOne($playerId);
         if ($player) {
-            $player->updateArmorClass();
+            $playerManager = new PlayerManager(['player' => $player]);
+            $playerManager->updateArmorClass();
         }
         $playerBody = FindModelHelper::findPlayerBody(['player_id' => $playerId]);
 
@@ -278,7 +280,8 @@ class PlayerItemController extends Controller
         if ($successfullySaved) {
             $player = Player::findOne($playerBody->player_id);
             if ($player) {
-                $player->updateArmorClass();
+                $playerManager = new PlayerManager(['player' => $player]);
+                $playerManager->updateArmorClass();
             }
             $playerBodyData = $this->getPlayerBodyData($playerBody);
 

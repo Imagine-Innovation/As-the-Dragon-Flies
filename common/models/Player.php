@@ -758,15 +758,4 @@ class Player extends \yii\db\ActiveRecord
         return true;
     }
 
-    /**
-     * Recalculates and updates the player's Armor Class (AC) based on equipped items and DEX modifier.
-     * Delegates calculation logic to PlayerManager component.
-     *
-     * @return int The updated Armor Class value.
-     */
-    public function updateArmorClass(): int
-    {
-        $playerManager = new \common\components\gameplay\PlayerManager(['player' => $this]);
-        return $playerManager->updateArmorClass();
-    }
 }
