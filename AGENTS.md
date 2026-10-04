@@ -2,6 +2,8 @@
 
 This document sets guidelines, structural rules, coding standards, testing requirements, and agentic engineering principles to enable Google Jules to generate highly relevant, maintainable, and robust code for this project.
 
+When defining any policy or directive, relevant exceptions are explicitly documented to guide appropriate trade-offs.
+
 ---
 
 ## I. Codebase Organization & Architecture
@@ -47,7 +49,9 @@ project/
 3. **`common/`:** Shared components between backend and frontend. In particular, `common/models/` contains Active Record definitions mirroring the underlying database schema.
 4. **`console/`:** Contains console commands and the `EventHandler` application enabling real-time communication between quest clients.
 5. **`frontend/`:** Turn-based online RPG web application (Dungeons & Dragons style).
-6. **`web/` subdirectories:** Contain stylesheets, JavaScript libraries, and multimedia assets. **Do NOT analyze or parse asset files inside `web/` directories.**
+6. **`web/` Asset Subdirectories Exclusion Policy:**
+   - **Policy:** Do NOT analyze, parse, or index asset files (compiled JS, CSS, fonts, images) located in `web/` directories.
+   - **Exceptions:** When explicitly requested by the user or when debugging asset loading paths or bundle configurations.
 
 ### Shared Library Conventions (`common/`)
 - **Helpers:** Basic function libraries implemented as static helper classes.
@@ -59,106 +63,72 @@ project/
 ## II. General Development & PHP Coding Rules
 
 ### 1. Strict Typing & Rigor
-- **Strict Types Directive:** Place `declare(strict_types=1);` at the top of every PHP file to prevent implicit type coercion.
-- **Exhaustive Typing:** Expressly type function arguments, class properties, and return types. Use union (`string|int`) or intersection types where appropriate.
-- **Immutability:** Use `readonly` for classes and properties to prevent state mutation after instantiation.
+- **Policy:** Place `declare(strict_types=1);` at the top of every PHP file to prevent implicit type coercion. Type function arguments, class properties, and return values exhaustively.
+- **Exceptions:**
+  - View templates (`backend/views/*`, `frontend/views/*`) and simple HTML layout snippets where strict scalar types can interfere with framework rendering helpers or HTML generation.
+  - Legacy code refactorings where adding `declare(strict_types=1)` would break third-party/framework type coercion without clear benefit, or where explicit review instructions dictate otherwise.
 
-```php
-<?php
-
-declare(strict_types=1);
-
-namespace App\Service;
-
-final readonly class UserService
-{
-    public function __construct(
-        private UserRepositoryInterface $userRepository
-    ) {}
-
-    public function findUser(int $id): ?User
-    {
-        return $this->userRepository->findById($id);
-    }
-}
-```
-
-### 2. PSR Standard Compliance
-- **PSR-12 / PER-CS:** Follow standard code style (4-space indentation, correct brace placement, grouped imports).
-- **PSR-4:** Standard Composer namespace autoloading.
-- **PSR-7 & PSR-15:** Standard HTTP request, response, and middleware interfaces.
+### 2. Class Immutability
+- **Policy:** Use `readonly` for classes and properties to prevent state mutation after instantiation.
+- **Exceptions:**
+  - Active Record models (`yii\db\ActiveRecord` subclasses) whose properties represent mutable database rows.
+  - Stateful services, form models, or entities whose properties must be updated during lifecycle processing.
 
 ### 3. Security by Design
-- **Prepared SQL Statements:** Never concatenate variables into SQL queries. Always use PDO prepared statements or Yii Query Builder.
-- **XSS Protection:** Sanitize user input before rendering using `htmlspecialchars($input, ENT_QUOTES, 'UTF-8')` or framework HTML helpers.
-- **Secrets Management:** Keep secrets in environment configuration files ignored by Git.
-
-```php
-// ❌ SQL Injection Vulnerability
-$pdo->query("SELECT * FROM users WHERE email = '$email'");
-
-// ✅ Safe Prepared Statement
-$stmt = $pdo->prepare("SELECT * FROM users WHERE email = :email");
-$stmt->execute(['email' => $email]);
-```
+- **Policy:** Never concatenate user input or dynamic variables into SQL queries. Always use PDO prepared statements or Yii Query Builder.
+- **Exceptions:**
+  - Structural SQL components (such as table names, column names, or fixed SQL keywords) that cannot be parameterized by PDO. In such cases, identifiers must be strictly validated against an explicit whitelist or escaped via Yii's schema identifier quoting methods (e.g., `quoteColumnName`).
 
 ### 4. Architecture & SOLID Principles
-- **Single Responsibility Principle (SRP):** Keep controllers thin; isolate business logic into services and models.
-- **Dependency Inversion (DI):** Inject interface dependencies via constructors rather than directly instantiating dependencies inside classes.
-- **PHP 8 Enums & Attributes:** Use native PHP `enum` types instead of scattered constants for fixed sets of values (roles, statuses).
+- **Policy:** Apply Single Responsibility Principle (SRP) and Dependency Inversion (DI). Inject interface dependencies via constructors rather than directly instantiating concrete classes inside services.
+- **Exceptions:**
+  - Lightweight value objects, data transfer objects (DTOs), framework widgets, or Active Record models instantiated contextually via Yii configuration arrays or static factory methods (e.g., `$module = new MyModule(['playerId' => $playerId])`).
 
 ### 5. Code Quality & Static Analysis
-- **Static Analysis:** Target **PHPStan Level 9** compliance. Catch potential bugs before runtime.
-- **Error Handling:** Catch and handle anomalies using specific, descriptive exceptions instead of suppressing errors.
+- **Policy:** Target **PHPStan Level 9** compliance across all custom classes.
+- **Exceptions:**
+  - Pre-existing legacy files that are outside the scope of current changes, unless directly touched or requested by the user.
 
 ### 6. Modern PHP 8 Features
-- **Constructor Property Promotion:** Reduce boilerplate by declaring and initializing properties in constructor signatures.
-- **Match Expressions:** Use `match` instead of verbose or loose `switch` statements.
-- **Named Arguments:** Clarify function calls when passing optional or boolean parameters.
-- **Attributes:** Use native attributes for routing and metadata configuration.
+- **Policy:** Adopt Constructor Property Promotion, `match` expressions, Named Arguments, and Attributes.
+- **Exceptions:**
+  - Simple classes without constructor boilerplate or framework annotations where traditional signatures remain clearer or required for framework compatibility.
 
 ---
 
 ## III. Testing Requirements
 
 ### 1. Happy Path & Boundary Value Testing
-- Verify standard behavior with boundary values:
-  - `null` values
-  - `0` or empty strings (`''`)
-  - Maximum allowable values (e.g. 100%)
-  - Pagination boundary thresholds
+- **Policy:** Every newly created component, helper, or service must include unit/integration tests covering:
+  - Standard execution paths (Happy path)
+  - Boundary values (`null`, `0`, empty string `''`, maximum limits like 100%, page index bounds)
+- **Exceptions:** Pure view templates, static layout views, or simple configuration files containing no executable business logic.
 
 ### 2. Resilience & Edge-Case Testing
-Incorporate tests for negative paths and invalid conditions:
-- Missing required parameters
-- Out-of-bound values (e.g., 150% where 100% is max)
-- Incorrect data types (e.g., passing string `'hello'`, array `[12]`, or `null` where an integer or array is expected)
-- Potential crash conditions (e.g., division by zero)
-- Non-existent array key lookups (e.g., accessing `$array['non_existent_key']`)
+- **Policy:** Write tests verifying graceful handling of negative conditions:
+  - Missing parameters
+  - Out-of-bound inputs (e.g., 150%)
+  - Incorrect data types (e.g., passing string `'hello'`, array `[12]`, or `null` where an integer or array is expected)
+  - Potential runtime crashes (e.g., division by zero)
+  - Non-existent array key lookups (e.g., `$array['non_existent_key']`)
+- **Exceptions:** Private internal helper methods where strict type declarations at the caller level make bad inputs impossible at compile/runtime.
 
 ---
 
 ## IV. Agentic Engineering Principles
 
 ### 1. Spectrum of AI-Assisted Development
-- **Vibe Coding:** Useful for fast prototypes or internal utilities where speed matters most.
-- **Agentic Engineering:** Required for production software. Operates in a structured ecosystem with specifications, architecture docs, tests, and guardrails.
+- **Policy:** Follow **Agentic Engineering** for production code (specifications, tests, CI/CD gates, guardrails).
+- **Exceptions:** Use **Vibe Coding** (rapid prototyping without strict harnesses) only when explicitly requested for throwaway POCs, internal quick scripts, or weekend prototypes.
 
 ### 2. Context Engineering Over Prompt Engineering
-Providing rich, structured codebase context yields far better results than prompt engineering alone:
-- **Static Context:** Architecture conventions, project guidelines (`AGENT.md`, `DESIGN.md`), and tech stack rules.
-- **Dynamic Context:** API specs, task descriptions, test outputs, and tool results loaded as needed.
-- **Workflow:** `Specify Intent -> Discover Repo Context -> Generate Solution -> Verify & Validate`
+- **Policy:** Thoroughly explore repository context (`AGENT.md`, `DESIGN.md`, existing code) before generating implementations.
+- **Exceptions:** Self-contained utility functions with no repository dependencies.
 
 ### 3. Agent = Model + Harness
-An AI coding agent relies on its surrounding harness: tools, sandboxes, rule files, test suites, and observability. Always use workspace tools to inspect and verify before making assumptions.
+- **Policy:** Rely on the surrounding harness (tools, sandboxes, test runners, static analysis) to verify code execution and diagnose errors.
+- **Exceptions:** Non-code documentation tasks or pure text updates.
 
-### 4. Test-First & Verification Focus
-Implementation is cheap; verification and judgment are not. Focus on:
-- Writing specifications and test contracts prior to or alongside code generation.
-- Verifying edge cases, boundary conditions, and architectural alignment.
-- Evaluating both output diffs and execution trajectory.
-
-### 5. Conductor vs. Orchestrator
-- **Conductor Mode:** For complex architectural tasks, inspect and review changes step-by-step.
-- **Orchestrator Mode:** For well-defined tasks (refactoring, test generation), define goals and constraints, delegate execution, and review final outputs.
+### 4. Conductor vs. Orchestrator Modes
+- **Policy:** Operate in **Orchestrator Mode** for well-defined, autonomous tasks (delegating goals and reviewing final diffs).
+- **Exceptions:** Switch to **Conductor Mode** (step-by-step guidance and continuous diff inspection) for complex, unfamiliar, or high-risk architectural changes.
