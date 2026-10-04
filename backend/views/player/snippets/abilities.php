@@ -1,6 +1,6 @@
 <?php
 
-use frontend\components\PlayerComponent;
+use common\components\gameplay\PlayerManager;
 
 /** @var yii\web\View $this */
 /** @var common\models\Player $model */
@@ -8,7 +8,7 @@ use frontend\components\PlayerComponent;
 $proficiencyBonus = $model->level->proficiency_bonus ?? 0;
 
 /** @var non-empty-array<string, array{code: string, name: string, score: int, modifier: int, savingThrow: int}> */
-$playerAbilities = PlayerComponent::getAbilitiesAndSavingThrow($model->playerAbilities, $proficiencyBonus);
+$playerAbilities = PlayerManager::getAbilitiesAndSavingThrow($model->playerAbilities, $proficiencyBonus);
 
 $combatStat = [
     ['label' => 'AC', 'value' => $model->armor_class],

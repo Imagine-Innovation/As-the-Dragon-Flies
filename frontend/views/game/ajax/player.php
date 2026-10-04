@@ -1,7 +1,7 @@
 <?php
 
+use common\components\gameplay\PlayerManager;
 use common\helpers\WebResourcesHelper;
-use frontend\components\PlayerComponent;
 
 /** @var yii\web\View $this */
 /** @var common\models\Player $player */
@@ -10,7 +10,7 @@ $avatar = Yii::$app->session->get('avatar');
 $proficiencyBonus = $player->level->proficiency_bonus ?? 0;
 
 /** @var non-empty-array<string, array{code: string, name: string, score: int, modifier: int, savingThrow: int}> */
-$playerAbilities = PlayerComponent::getAbilitiesAndSavingThrow($player->playerAbilities, $proficiencyBonus);
+$playerAbilities = PlayerManager::getAbilitiesAndSavingThrow($player->playerAbilities, $proficiencyBonus);
 ?>
 <div class="m-3">
     <!-- Character Info -->
