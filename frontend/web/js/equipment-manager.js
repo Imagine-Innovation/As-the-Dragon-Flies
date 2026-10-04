@@ -36,6 +36,19 @@ class EquipmentHandler {
         });
     }
 
+    /**
+     * Refresh player equipment and update equipment UI and SVGs
+     *
+     * @param {number|string|null} playerId
+     * @returns {void}
+     */
+    refreshEquipment(playerId = null) {
+        const id = playerId || this.playerId;
+        if (id) {
+            this._getInitPlayerItems(id);
+        }
+    }
+
     _getInitPlayerItems(playerId) {
         const target = `#packageContent`;
         if (!DOMUtils.exists(target))

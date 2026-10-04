@@ -120,8 +120,67 @@ class NotificationClient {
         this.on('game-action', (data) => {
             Logger.log(2, 'setupDefaultHandlers', 'Received game-action message:', data);
             Logger.log(10, 'setupDefaultHandlers', `Payload: ${JSON.stringify(data, null, 2)}`);
-            if (this.vtt) {
-                this.vtt.refresh(this.questId, this.sessionId);
+
+            const detail = this._getEventDetail(data);
+            const outcomes = (detail && Array.isArray(detail.outcomes)) ? detail.outcomes : [];
+
+            // Always update quest members display so party state is synchronized for all players
+            if (this.vtt && typeof this.vtt._updateQuestMembers === 'function') {
+                this.vtt._updateQuestMembers(this.questId);
+            }
+
+            // Verify if the player who performed the action is the current player
+            const isCurrentPlayer = Boolean(
+                data.playerName && (
+                    data.playerName === this.playerName ||
+                    (this.vtt && data.playerName === this.vtt.context?.currentPlayerName)
+                )
+            );
+
+            if (isCurrentPlayer) {
+                // Check if at least one outcome.item_id is not null
+                const hasItemUpdate = outcomes.some(outcome =>
+                    outcome !== null &&
+                    outcome !== undefined &&
+                    outcome.item_id !== null &&
+                    outcome.item_id !== undefined
+                );
+
+                // Helper to check if a stat property has a positive value
+                const isPositive = (val) => {
+                    if (val === null || val === undefined) return false;
+                    if (typeof val === 'number') return val > 0;
+                    if (typeof val === 'string') {
+                        const trimmed = val.trim();
+                        if (trimmed === '' || trimmed === '0') return false;
+                        const num = Number(trimmed);
+                        if (!isNaN(num)) return num > 0;
+                        return true; // Handles dice strings like "1d6"
+                    }
+                    return false;
+                };
+
+                // Check if at least one outcome.gained_xp, outcome.gained_gp, or outcome.hp_loss_dice has a positive value
+                const hasStatsUpdate = outcomes.some(outcome =>
+                    outcome !== null &&
+                    outcome !== undefined && (
+                        isPositive(outcome.gained_xp) ||
+                        isPositive(outcome.gained_gp) ||
+                        isPositive(outcome.hp_loss_dice)
+                    )
+                );
+
+                if (hasItemUpdate) {
+                    if (typeof equipmentHandler !== 'undefined' && equipmentHandler && typeof equipmentHandler.refreshEquipment === 'function') {
+                        equipmentHandler.refreshEquipment(this.playerId);
+                    }
+                }
+
+                if (hasStatsUpdate) {
+                    if (this.vtt && typeof this.vtt._updatePlayer === 'function') {
+                        this.vtt._updatePlayer(this.playerId);
+                    }
+                }
             }
         });
 
