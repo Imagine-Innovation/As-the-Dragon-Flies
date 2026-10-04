@@ -49,9 +49,9 @@ project/
 3. **`common/`:** Shared components between backend and frontend. In particular, `common/models/` contains Active Record definitions mirroring the underlying database schema.
 4. **`console/`:** Contains console commands and the `EventHandler` application enabling real-time communication between quest clients.
 5. **`frontend/`:** Turn-based online RPG web application (Dungeons & Dragons style).
-6. **`web/` Asset Subdirectories Exclusion Policy:**
-   - **Policy:** Do NOT analyze, parse, or index asset files (compiled JS, CSS, fonts, images) located in `web/` directories.
-   - **Exceptions:** When explicitly requested by the user or when debugging asset loading paths or bundle configurations.
+6. **`web/` Asset Subdirectories Parsing Policy:**
+   - **Policy:** CSS (`.css`) and JavaScript (`.js`) files in `web/` subdirectories **shall be analyzed and parsed**. Non-code multimedia assets (images, audio files, compiled binary fonts) shall not be analyzed.
+   - **Exceptions:** Minified vendor libraries (e.g., `jquery.min.js`, `bootstrap.min.css`) or third-party assets in `web/offline/` unless explicitly requested for debugging.
 
 ### Shared Library Conventions (`common/`)
 - **Helpers:** Basic function libraries implemented as static helper classes.
