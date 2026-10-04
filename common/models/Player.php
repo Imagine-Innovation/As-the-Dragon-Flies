@@ -759,139 +759,14 @@ class Player extends \yii\db\ActiveRecord
     }
 
     /**
-     * Retrieves the player's Dexterity modifier.
-     *
-     * @return int
-     */
-    private function getDexterityModifier(): int
-    {
-        $dexAbility = PlayerAbility::find()
-            ->alias('pa')
-            ->innerJoin(['a' => 'ability'], 'a.id = pa.ability_id')
-            ->where(['pa.player_id' => $this->id, 'a.code' => 'DEX'])
-            ->one();
-
-        return $dexAbility ? (int) $dexAbility->modifier : 0;
-    }
-
-    /**
-     * Calculates base Armor Class contributed by chest armor or unarmored defense.
-     *
-     * @param PlayerBody $playerBody
-     * @param int $dexModifier
-     * @return int
-     */
-    private function getChestBaseArmorClass(PlayerBody $playerBody, int $dexModifier): int
-    {
-        if (!$playerBody->chest_item_id) {
-            return 10 + $dexModifier;
-        }
-
-        $chestItem = Item::findOne($playerBody->chest_item_id);
-        if (!$chestItem || !$chestItem->armor || $chestItem->armor->armor_class <= 0) {
-            return 10 + $dexModifier;
-        }
-
-        $armor = $chestItem->armor;
-        $chestAc = $armor->armor_class;
-        $chestDexMod = $dexModifier;
-
-        if ($armor->dex_modifier) {
-            if ($armor->max_modifier > 0) {
-                $chestDexMod = min($dexModifier, $armor->max_modifier);
-            }
-        } else {
-            $chestDexMod = 0;
-        }
-
-        return $chestAc + $chestDexMod + $armor->armor_bonus;
-    }
-
-    /**
-     * Computes additional AC bonus for an equipped non-chest item.
-     *
-     * @param int|null $itemId
-     * @return int
-     */
-    private function getSlotItemArmorBonus(?int $itemId): int
-    {
-        if (!$itemId) {
-            return 0;
-        }
-
-        $item = Item::findOne($itemId);
-        if (!$item) {
-            return 0;
-        }
-
-        if ($item->armor) {
-            $armor = $item->armor;
-            if ($armor->armor_bonus > 0) {
-                return $armor->armor_bonus;
-            }
-            if ($armor->armor_class > 0) {
-                return $armor->armor_class;
-            }
-        } elseif ($item->itemType && $item->itemType->name === 'Helmet') {
-            return 1;
-        }
-
-        return 0;
-    }
-
-    /**
-     * Calculates additional AC bonuses from non-chest equipped slots.
-     *
-     * @param PlayerBody $playerBody
-     * @return int
-     */
-    private function getAdditionalSlotsArmorClass(PlayerBody $playerBody): int
-    {
-        $chestItemId = $playerBody->chest_item_id;
-        $otherSlotIds = array_filter([
-            'head' => $playerBody->head_item_id,
-            'left_hand' => ($playerBody->left_hand_item_id !== $chestItemId) ? $playerBody->left_hand_item_id : null,
-            'right_hand' => ($playerBody->right_hand_item_id !== $chestItemId) ? $playerBody->right_hand_item_id : null,
-            'back' => $playerBody->back_item_id,
-        ]);
-
-        $additionalAc = 0;
-        $processedItemIds = [];
-
-        foreach ($otherSlotIds as $itemId) {
-            if (!$itemId || in_array($itemId, $processedItemIds, true)) {
-                continue;
-            }
-            $processedItemIds[] = $itemId;
-            $additionalAc += $this->getSlotItemArmorBonus($itemId);
-        }
-
-        return $additionalAc;
-    }
-
-    /**
      * Recalculates and updates the player's Armor Class (AC) based on equipped items and DEX modifier.
+     * Delegates calculation logic to PlayerManager component.
      *
      * @return int The updated Armor Class value.
      */
     public function updateArmorClass(): int
     {
-        $dexModifier = $this->getDexterityModifier();
-        $playerBody = $this->playerBody;
-
-        if (!$playerBody) {
-            $totalAc = 10 + $dexModifier;
-        } else {
-            $baseAc = $this->getChestBaseArmorClass($playerBody, $dexModifier);
-            $additionalAc = $this->getAdditionalSlotsArmorClass($playerBody);
-            $totalAc = $baseAc + $additionalAc;
-        }
-
-        if ($this->armor_class !== $totalAc) {
-            $this->armor_class = $totalAc;
-            $this->save(false, ['armor_class', 'updated_at']);
-        }
-
-        return $totalAc;
+        $playerManager = new \common\components\gameplay\PlayerManager(['player' => $this]);
+        return $playerManager->updateArmorClass();
     }
 }
