@@ -1,4 +1,4 @@
-<?php  //[STAMP] 85b65fbdadc9dff2b3c0356170569a47
+<?php  //[STAMP] 8302b05a6a4c87449113c5faeb1cfec2
 // phpcs:ignoreFile
 namespace frontend\tests\_generated;
 

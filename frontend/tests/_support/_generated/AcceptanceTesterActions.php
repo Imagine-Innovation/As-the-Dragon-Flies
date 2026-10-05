@@ -1,4 +1,4 @@
-<?php  //[STAMP] 04abe0add5060616518ca63986ee8d2f
+<?php  //[STAMP] 5c160b01eb82297659a2069d73509cb0
 // phpcs:ignoreFile
 namespace frontend\tests\_generated;
 
@@ -2607,7 +2607,7 @@ trait AcceptanceTesterActions
      * @throws ElementNotFound
      * @see \Codeception\Module\WebDriver::pressKey()
      */
-    public function pressKey($element, $chars = null): void {
+    public function pressKey($element, ...$chars): void {
         $this->getScenario()->runStep(new \Codeception\Step\Action('pressKey', func_get_args()));
     }
 
