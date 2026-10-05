@@ -50,7 +50,7 @@ $storyRoot = WebResourcesHelper::storyRootPath($storyId);
 <?=
 Button::widget([
     'icon' => $isFreeAndNoTransition ? 'bi-arrow-repeat' : 'bi-escape',
-    'title' => $isFreeAndNoTransition ? 'Try another action' : 'Finish your turn',
+    'title' => $isFreeAndNoTransition ? Yii::t('app/game', 'Try another action') : Yii::t('app/game', 'Finish your turn'),
     'onclick' => $isFreeAndNoTransition ? null : "vtt.moveToNextPlayer({$questProgressId}, " . ($nextMissionId ?? 'null') . "); return false;",
     'isCta' => true,
     'ariaParams' => ['data-bs-dismiss' => 'modal'],

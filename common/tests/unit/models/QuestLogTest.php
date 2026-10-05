@@ -71,8 +71,8 @@ class QuestLogTest extends Unit
         $this->assertArrayNotHasKey('outcome_id', $labels, 'outcome_id should not be present in attribute labels');
 
         $this->assertEquals('Round', $labels['round']);
-        $this->assertEquals('Chapter name', $labels['chapter_name']);
-        $this->assertEquals('Mission name', $labels['mission_name']);
+        $this->assertEquals('Foreign key to “chapter_log” table', $labels['chapter_id']);
+        $this->assertEquals('Foreign key to “mission_log” table', $labels['mission_id']);
         $this->assertEquals('Action name', $labels['action_name']);
     }
 }

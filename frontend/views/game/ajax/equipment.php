@@ -31,13 +31,13 @@ $lastItemType = 'none';
         'id' => 'showEquipmentModal-Button',
         'mode' => 'icon',
         'icon' => 'dnd-equipment',
-        'tooltip' => "Player's equipement",
+        'tooltip' => Yii::t('app/game', "Player's equipment"),
         'modal' => 'equipmentModal',
     ])
     ?>
 </div>
 <div class="m-3">
-    <h6 class="text-warning">Equipment</h6>
+    <h6 class="text-warning"><?= Yii::t('app/game', 'Equipment') ?></h6>
 
     <?php
     foreach ($itemTypes as $itemType) {

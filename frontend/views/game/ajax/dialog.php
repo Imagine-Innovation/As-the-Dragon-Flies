@@ -51,10 +51,10 @@ $npc = $dialog->npc;
         <?php else: ?>
             <?=
             Button::widget([
-                'title' => 'Next step',
+                'title' => Yii::t('app/game', 'Next step'),
                 'icon' => 'dnd-d20',
                 'style' => 'align-bottom',
-                'tooltip' => 'Back to the mission',
+                'tooltip' => Yii::t('app/game', 'Back to the mission'),
                 'onclick' => 'vtt.evaluateAction(); return false;',
                 'isCta' => true,
             ])

@@ -16,7 +16,7 @@ $textColor = [
 ?>
 <div class="m-3">
     <!-- Party Members -->
-    <h6 class="text-warning">Partners</h6>
+    <h6 class="text-warning"><?= Yii::t('app/game', 'Partners') ?></h6>
     <?php if (count($models) > 1): ?>
         <?php foreach ($models as $player): ?>
             <?php
@@ -50,6 +50,6 @@ $textColor = [
             <?php endif; ?>
         <?php endforeach; ?>
     <?php else: ?>
-        <p class="mx-3">You are alone in the quest</p>
+        <p class="mx-3"><?= Yii::t('app/game', 'You are alone in the quest') ?></p>
     <?php endif; ?>
 </div>
