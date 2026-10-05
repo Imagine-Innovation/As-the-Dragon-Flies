@@ -7,11 +7,11 @@
                     <div class="col-sm-6 text-center">
                         <div class="equipment-card">
                             <div class="card-header">
-                                <p class="lead text-decoration">List a available equipment</p>
-                                <p class="text-decoration">Click on the white areas to see the list of items your player can pick up.</p>
+                                <p class="lead text-decoration"><?= Yii::t('app/game', 'List of available equipment') ?></p>
+                                <p class="text-decoration"><?= Yii::t('app/game', 'Click on the white areas to see the list of items your player can pick up.') ?></p>
                             </div>
                             <div id="packageContent" class="card-body" style="height: 80%; overflow: auto;">
-                                <p class="text-decoration">You have nothing at all</p>
+                                <p class="text-decoration"><?= Yii::t('app/game', 'You have nothing at all') ?></p>
                             </div>
                         </div>
                     </div>

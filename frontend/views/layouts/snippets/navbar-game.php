@@ -23,7 +23,7 @@ $questName = Yii::$app->session->get('questName');
             <i class="bi bi-circle-fill blink" id="eventHandlerStatus"></i>
         </li>
         <li class="dropdown top-nav__notifications">
-            <a href="<?= Url::toRoute(['site/index']) ?>" data-bs-toggle="tooltip" title="Back to lobby" data-placement="bottom">
+            <a href="<?= Url::toRoute(['site/index']) ?>" data-bs-toggle="tooltip" title="<?= Yii::t('app/game', 'Back to lobby') ?>" data-placement="bottom">
                 <i class="bi bi-box-arrow-right"></i>
             </a>
         </li>

@@ -17,12 +17,12 @@ $playerAbilities = PlayerComponent::getAbilitiesAndSavingThrow($player->playerAb
     <header class="text-center">
         <img src="<?= $imgPath ?>/character/<?= $avatar ?>" alt="Avatar" class="avatar my-2">
         <h6 class="text-warning text-decoration"><?= $player->name ?></h6>
-        <p class="text-muted small"><?= $player->level->name ?? '' ?> <?= $player->class->name ?? 'unknown class' ?> <?= $player->race->name ?? 'unknown race' ?></p>
+        <p class="text-muted small"><?= $player->level->name ?? '' ?> <?= $player->class->name ?? Yii::t('app/game', 'unknown class') ?> <?= $player->race->name ?? Yii::t('app/game', 'unknown race') ?></p>
     </header>
 
     <!-- Health -->
     <!-- Health -->
-    <p>Health</p>
+    <p><?= Yii::t('app/game', 'Health') ?></p>
     <div class="progress" role="progressbar" aria-label="Hit points"
          aria-valuenow="<?= $player->hit_points ?>" aria-valuemin="0" aria-valuemax="<?= $player->max_hit_points ?>">
         <div class="progress-bar text-bg-warning"
@@ -33,7 +33,7 @@ $playerAbilities = PlayerComponent::getAbilitiesAndSavingThrow($player->playerAb
 
     <!-- Stats -->
     <div id="game-player-abilities">
-        <h6 class="text-warning mt-4">Abilities</h6>
+        <h6 class="text-warning mt-4"><?= Yii::t('app/game', 'Abilities') ?></h6>
 
         <div class="row g-2">
             <?php foreach ($playerAbilities as $playerAbility): ?>
@@ -46,7 +46,7 @@ $playerAbilities = PlayerComponent::getAbilitiesAndSavingThrow($player->playerAb
                     ?>
                 </div>
             <?php endforeach; ?>
-            <div class="col-12 g-2 mb-2">Armor Class <?= $player->armor_class ?></div>
+            <div class="col-12 g-2 mb-2"><?= Yii::t('app/game', 'Armor Class {ac}', ['ac' => $player->armor_class]) ?></div>
         </div>
     </div>
 </div>

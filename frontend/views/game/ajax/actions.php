@@ -6,7 +6,7 @@
 
 <div class="card">
     <div class="card-body text-decoration">
-        <p>What do want to do?</p>
+        <p><?= Yii::t('app/game', 'What do you want to do?') ?></p>
         <ol>
             <?php
 

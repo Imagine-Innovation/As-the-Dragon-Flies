@@ -50,13 +50,13 @@ $isCurrentPlayer = ($currentQuestProgress?->current_player_id === $playerId);
                             'id' => 'showEquipmentModal-Button',
                             'mode' => 'icon',
                             'icon' => 'dnd-equipment',
-                            'tooltip' => "Player's equipement",
+                            'tooltip' => Yii::t('app/game', "Player's equipment"),
                             'modal' => 'equipmentModal',
                         ])
                         ?>
                     </div>
                     <div class="m-3">
-                        <h6 class="text-warning">Equipment</h6>
+                        <h6 class="text-warning"><?= Yii::t('app/game', 'Equipment') ?></h6>
                         <div class="equipment-card" id="svg-aside-offcanvas"></div>
                     </div>
                 </article>
@@ -80,13 +80,13 @@ $isCurrentPlayer = ($currentQuestProgress?->current_player_id === $playerId);
                         'id' => 'showEquipmentModal-Button',
                         'mode' => 'icon',
                         'icon' => 'dnd-equipment',
-                        'tooltip' => "Player's equipement",
+                        'tooltip' => Yii::t('app/game', "Player's equipment"),
                         'modal' => 'equipmentModal',
                     ])
                     ?>
                 </div>
                 <div class="m-3">
-                    <h6 class="text-warning">Equipment</h6>
+                    <h6 class="text-warning"><?= Yii::t('app/game', 'Equipment') ?></h6>
                     <div class="equipment-card" id="svg-aside"></div>
                 </div>
             </article>
@@ -113,7 +113,7 @@ $isCurrentPlayer = ($currentQuestProgress?->current_player_id === $playerId);
                             'url' => Url::toRoute(['site/index']),
                             'style' => 'd-md-none',
                             'icon' => 'bi-box-arrow-right',
-                            'tooltip' => 'Back to lobby',
+                            'tooltip' => Yii::t('app/game', 'Back to lobby'),
                         ])
                         ?>
                     </div>

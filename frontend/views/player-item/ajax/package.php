@@ -28,9 +28,10 @@ $itemTypes = ['Armor', 'Helmet', 'Shield', 'Weapon', 'Tool'];
                                 Button::widget([
                                     'icon' => $item['isTwoHanded'] ? 'dnd-action-fight'
                                                 : 'dnd-weapon-sword',
-                                    'tooltip' => $item['isTwoHanded'] ? 'To use this weapon, you need both hands.'
-                                                : 'You only need one hand to use this weapon',
-                                    'title' => 'Equip',
+                                    'tooltip' => $item['isTwoHanded']
+                                                ? Yii::t('app/game', 'To use this weapon, you need both hands.')
+                                                : Yii::t('app/game', 'You only need one hand to use this weapon'),
+                                    'title' => Yii::t('app/game', 'Equip'),
                                     'id' => $item['buttonId'],
                                     'isCta' => true,
                                     'style' => 'btn-sm mt-2',
@@ -39,7 +40,7 @@ $itemTypes = ['Armor', 'Helmet', 'Shield', 'Weapon', 'Tool'];
                             } else {
                                 echo
                                 Button::widget([
-                                    'title' => 'Equip',
+                                    'title' => Yii::t('app/game', 'Equip'),
                                     'id' => $item['buttonId'],
                                     'isCta' => true,
                                     'style' => 'btn-sm mt-2',
