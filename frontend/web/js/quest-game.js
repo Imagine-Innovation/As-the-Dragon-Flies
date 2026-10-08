@@ -67,11 +67,11 @@ class VirtualTableTop {
     refreshMission(questId, playerId, detail) {
         Logger.log(1, 'refreshMission', `questId=${questId}, playerId=${playerId}, detail=${JSON.stringify(detail, null, 2)}`);
 
-        const nextPlayer = (playerId === detail.nextPlayerId) ? 'your' : `${detail.nextPlayerName}'s`;
-        const toastMessage = `${detail.currentPlayerName} has completed mission “${detail.currentMissionName}”.
- Now it's ${nextPlayer} turn to start mission “${detail.nextMissionName}”`;
+        const toastMessage = (playerId === detail.nextPlayerId) ? detail.toastMessage?.current : detail.toastMessage?.other;
 
-        ToastManager.show('Game message', toastMessage, 'info');
+        if (toastMessage) {
+            ToastManager.show('Game message', toastMessage, 'info');
+        }
 
         this._updatePlayer(playerId);
         this._updateQuestMembers(questId);
@@ -83,10 +83,11 @@ class VirtualTableTop {
     refreshTurn(questId, playerId, detail) {
         Logger.log(1, 'refreshTurn', `questId=${questId}, playerId=${playerId}, detail=${JSON.stringify(detail, null, 2)}`);
 
-        const nextPlayer = (playerId === detail.nextPlayerId) ? 'your' : `${detail.nextPlayerName}'s`;
-        const toastMessage = `${detail.currentPlayerName} has finished his turn. Now it's ${nextPlayer} turn to play.`;
+        const toastMessage = (playerId === detail.nextPlayerId) ? detail.toastMessage?.current : detail.toastMessage?.other;
 
-        ToastManager.show('Game message', toastMessage, 'info');
+        if (toastMessage) {
+            ToastManager.show('Game message', toastMessage, 'info');
+        }
 
         this._updatePlayer(playerId);
         this._updateQuestMembers(questId);

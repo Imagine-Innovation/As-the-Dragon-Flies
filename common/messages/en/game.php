@@ -98,6 +98,11 @@ return [
     'Quest can start once {minPlayers} joined. Current count is {currentCount}' => 'Quest can start once {minPlayers} joined. Current count is {currentCount}',
     'Missing required player classes' => 'Missing required player classes',
     'Quest can start' => 'Quest can start',
+    // Mission & Turn Toast Messages
+    '{currentPlayerName} has completed mission “{currentMissionName}”.\nNow it’s your turn to start mission “{nextMissionName}”' => '{currentPlayerName} has completed mission “{currentMissionName}”.\nNow it’s your turn to start mission “{nextMissionName}”',
+    '{currentPlayerName} has completed mission “{currentMissionName}”.\nNow it’s {nextPlayerName}’s turn to start mission “{nextMissionName}”' => '{currentPlayerName} has completed mission “{currentMissionName}”.\nNow it’s {nextPlayerName}’s turn to start mission “{nextMissionName}”',
+    '{currentPlayerName} has finished his turn. Now it’s your turn to play.' => '{currentPlayerName} has finished his turn. Now it’s your turn to play.',
+    '{currentPlayerName} has finished his turn. Now it’s {nextPlayerName}’s turn to play.' => '{currentPlayerName} has finished his turn. Now it’s {nextPlayerName}’s turn to play.',
     // Story levels & company size
     'Undefined' => 'Undefined',
     'Beginner only' => 'Beginner only',
