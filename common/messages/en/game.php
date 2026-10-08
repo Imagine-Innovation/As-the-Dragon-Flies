@@ -98,4 +98,14 @@ return [
     'Quest can start once {minPlayers} joined. Current count is {currentCount}' => 'Quest can start once {minPlayers} joined. Current count is {currentCount}',
     'Missing required player classes' => 'Missing required player classes',
     'Quest can start' => 'Quest can start',
+    // Story levels & company size
+    'Undefined' => 'Undefined',
+    'Beginner only' => 'Beginner only',
+    'Level {min} only' => 'Level {min} only',
+    'Level {min} or {max}' => 'Level {min} or {max}',
+    'From level {min} to level {max}' => 'From level {min} to level {max}',
+    'Single player' => 'Single player',
+    '{min} players' => '{min} players',
+    '{min} or {max} players' => '{min} or {max} players',
+    '{min} to {max} players' => '{min} to {max} players',
 ];
