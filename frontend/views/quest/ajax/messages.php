@@ -5,7 +5,7 @@
 ?>
 <?php if (empty($messages)): ?>
     <div class="messages__item">
-        <div class="messages__details">No message yet</div>
+        <div class="messages__details"><?= Yii::t('app/game', 'No message yet') ?></div>
     </div>
 <?php else: ?>
     <?php

@@ -12,12 +12,12 @@ return [
         other {You lost # hit points}
     }',
     'gained gp' => '{gp, plural,
-        =0 {You haven’t gain any gold pieces}
+        =0 {You haven’t gained any gold pieces}
         one {You gained one gold piece}
         other {You gained # gold pieces!}
     }',
     'gained xp' => '{xp, plural,
-        =0 {You haven’t gain any experience point}
+        =0 {You haven’t gained any experience point}
         one {You gained one experience point}
         other {You gained # experience points!}
     }',
@@ -58,4 +58,44 @@ return [
     'Equip' => 'Equip',
     'To use this weapon, you need both hands.' => 'To use this weapon, you need both hands.',
     'You only need one hand to use this weapon' => 'You only need one hand to use this weapon',
+    // Tavern & Quest Lobby
+    'Quests' => 'Quests',
+    'Welcome {playerName} in {questName} Quest' => 'Welcome {playerName} in {questName} Quest',
+    'This quest allows {companySize} {requiredLevels} to take part in the game.' => 'This quest allows {companySize} {requiredLevels} to take part in the game.',
+    'The adventuring companionship that is building up' => 'The adventuring companionship that is building up',
+    '{age}-year-old {gender} {race}' => '{age}-year-old {gender} {race}',
+    'male' => 'male',
+    'female' => 'female',
+    'Start the quest' => 'Start the quest',
+    'Leave Tavern' => 'Leave Tavern',
+    'Quest Chat' => 'Quest Chat',
+    'Type your message...' => 'Type your message...',
+    'Send' => 'Send',
+    'Press Enter to send • Be respectful to fellow adventurers' => 'Press Enter to send • Be respectful to fellow adventurers',
+    'No message yet' => 'No message yet',
+    'Join the quest' => 'Join the quest',
+    '{count} partners waiting' => '{count} partners waiting',
+    'Expected character classes:' => 'Expected character classes:',
+    'and' => 'and',
+    '{n, plural, one {Your player {names} is already waiting to start the quest} other {Your players {names} are already waiting to start the quest}}' => '{n, plural, one {Your player {names} is already waiting to start the quest} other {Your players {names} are already waiting to start the quest}}',
+    // TavernManager messages
+    'There’s nobody here!' => 'There’s nobody here!',
+    'For the moment, it looks like you’re the first one' => 'For the moment, it looks like you’re the first one',
+    'Look, there are two of you now' => 'Look, there are two of you now',
+    'Ah! but there are three of you! Wait, I’ll get a chair' => 'Ah! but there are three of you! Wait, I’ll get a chair',
+    'Now that there are four of you, I’m going to put you on a bigger table' => 'Now that there are four of you, I’m going to put you on a bigger table',
+    'With five guys like you, it’s going to be quite a team!' => 'With five guys like you, it’s going to be quite a team!',
+    'Boy, that’s quite a team!' => 'Boy, that’s quite a team!',
+    'We’re still waiting for {missingCount} other members to join us before starting' => 'We’re still waiting for {missingCount} other members to join us before starting',
+    'One more member to join and we can start' => 'One more member to join and we can start',
+    'The whole company is there, we can start!' => 'The whole company is there, we can start!',
+    'Every expected class is represented in the company!' => 'Every expected class is represented in the company!',
+    'We still need a {className} to meet all the conditions.' => 'We still need a {className} to meet all the conditions.',
+    'We still need a {className1} and a {className2} to meet all the conditions.' => 'We still need a {className1} and a {className2} to meet all the conditions.',
+    'We still need a {classesExceptLast} and a {lastClass} to meet all the conditions.' => 'We still need a {classesExceptLast} and a {lastClass} to meet all the conditions.',
+    'You are not the quest initiator' => 'You are not the quest initiator',
+    'Quest {questName} is not in waiting state.' => 'Quest {questName} is not in waiting state.',
+    'Quest can start once {minPlayers} joined. Current count is {currentCount}' => 'Quest can start once {minPlayers} joined. Current count is {currentCount}',
+    'Missing required player classes' => 'Missing required player classes',
+    'Quest can start' => 'Quest can start',
 ];

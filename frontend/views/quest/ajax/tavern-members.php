@@ -17,9 +17,11 @@ $playerId = Yii::$app->session->get('playerId');
                     <div class="image-card-label">
                         <h5><?= $player->name ?></h5>
                         <p class="small mb-1">
-                            <?= $player->age ?>-year-old
-                            <?= $player->gender === 'M' ? 'male' : 'female' ?>
-                            <?= $player->race?->name ?>
+                            <?= Yii::t('app/game', '{age}-year-old {gender} {race}', [
+                                'age' => $player->age,
+                                'gender' => $player->gender === 'M' ? Yii::t('app/game', 'male') : Yii::t('app/game', 'female'),
+                                'race' => $player->race?->name,
+                            ]) ?>
                         </p>
                         <p class="small mb-0"><?= $player->level?->name ?> <?= $player->alignment?->name ?> <?= $player->class?->name ?></p>
                         <?php
@@ -38,7 +40,7 @@ $playerId = Yii::$app->session->get('playerId');
                                     'isCta' => true,
                                     'id' => 'startQuestButton',
                                     'icon' => 'dnd-action-move',
-                                    'title' => 'Start the quest',
+                                    'title' => Yii::t('app/game', 'Start the quest'),
                                 ])
                                 ;
                             } else {
@@ -52,7 +54,7 @@ $playerId = Yii::$app->session->get('playerId');
                                     'isCta' => true,
                                     'id' => 'leaveQuestButton',
                                     'icon' => 'bi-box-arrow-right',
-                                    'title' => 'Leave Tavern',
+                                    'title' => Yii::t('app/game', 'Leave Tavern'),
                                 ])
                                 ;
                             }

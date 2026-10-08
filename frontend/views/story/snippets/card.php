@@ -38,7 +38,7 @@ $image = $story->image ? "{$storyRoot}/img/{$story->image}" : $randomImage;
                     'isPost' => true,
                     'url' => Url::toRoute(['quest/join', 'storyId' => $story->id, 'playerId' => $player?->id]),
                     'icon' => 'dnd-tower',
-                    'title' => 'Join the quest',
+                    'title' => Yii::t('app/game', 'Join the quest'),
                     'style' => 'text-decoration',
                     'isCta' => true,
                 ])
@@ -53,7 +53,7 @@ $image = $story->image ? "{$storyRoot}/img/{$story->image}" : $randomImage;
             <span class="badge badge-info"><?= $story->getRequiredLevels() ?></span>
             <span class="badge badge-info"><?= $story->companySize ?></span>
             <?php if ($story->tavern): ?>
-                <span class="badge badge-info"><?= $story->tavern->getQuestPlayers()->count() ?> partners waiting</span>
+                <span class="badge badge-info"><?= Yii::t('app/game', '{count} partners waiting', ['count' => $story->tavern->getQuestPlayers()->count()]) ?></span>
             <?php endif; ?>
         </p>
 
