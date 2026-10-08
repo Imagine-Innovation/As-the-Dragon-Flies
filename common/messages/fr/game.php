@@ -99,10 +99,10 @@ return [
     'Missing required player classes' => 'Classes de joueurs requises manquantes',
     'Quest can start' => 'La quête peut commencer',
     // Mission & Turn Toast Messages
-    "{currentPlayerName} has completed mission “{currentMissionName}”.\nNow it’s your turn to start mission “{nextMissionName}”" => "{currentPlayerName} a terminé la mission « {currentMissionName} ».\nC’est maintenant à ton tour de démarrer la mission « {nextMissionName} »",
-    "{currentPlayerName} has completed mission “{currentMissionName}”.\nNow it’s {nextPlayerName}’s turn to start mission “{nextMissionName}”" => "{currentPlayerName} a terminé la mission « {currentMissionName} ».\nC’est maintenant au tour de {nextPlayerName} de démarrer la mission « {nextMissionName} »",
-    '{currentPlayerName} has finished his turn. Now it’s your turn to play.' => '{currentPlayerName} a terminé son tour. C’est maintenant à ton tour de jouer.',
-    '{currentPlayerName} has finished his turn. Now it’s {nextPlayerName}’s turn to play.' => '{currentPlayerName} a terminé son tour. C’est maintenant au tour de {nextPlayerName} de jouer.',
+    "{currentPlayerName} completed “{currentMissionName}”. Your turn: “{nextMissionName}”" => "{currentPlayerName} a terminé « {currentMissionName} ». Ton tour : « {nextMissionName} »",
+    "{currentPlayerName} completed “{currentMissionName}”. {nextPlayerName}’s turn: “{nextMissionName}”" => "{currentPlayerName} a terminé « {currentMissionName} ». Tour de {nextPlayerName} : « {nextMissionName} »",
+    "{currentPlayerName} finished turn. Your turn to play!" => "{currentPlayerName} a fini son tour. À toi de jouer !",
+    "{currentPlayerName} finished turn. {nextPlayerName}’s turn to play." => "{currentPlayerName} a fini son tour. Au tour de {nextPlayerName} !",
     // Story levels & company size
     'Undefined' => 'Non défini',
     'Beginner only' => 'Débutants uniquement',

@@ -466,13 +466,13 @@ class QuestManager extends BaseManager
         $currentPlayer = $currentQuestProgress->currentPlayer;
         $nextPlayer = $nextQuestProgress->currentPlayer;
 
-        $currentString = Yii::t('app/game', "{currentPlayerName} has completed mission “{currentMissionName}”.\nNow it’s your turn to start mission “{nextMissionName}”", [
+        $currentString = Yii::t('app/game', "{currentPlayerName} completed “{currentMissionName}”. Your turn: “{nextMissionName}”", [
             'currentPlayerName' => $currentPlayer->name,
             'currentMissionName' => $currentMission->name,
             'nextMissionName' => $nextMission->name,
         ]);
 
-        $otherString = Yii::t('app/game', "{currentPlayerName} has completed mission “{currentMissionName}”.\nNow it’s {nextPlayerName}’s turn to start mission “{nextMissionName}”", [
+        $otherString = Yii::t('app/game', "{currentPlayerName} completed “{currentMissionName}”. {nextPlayerName}’s turn: “{nextMissionName}”", [
             'currentPlayerName' => $currentPlayer->name,
             'currentMissionName' => $currentMission->name,
             'nextPlayerName' => $nextPlayer->name,
@@ -627,11 +627,11 @@ class QuestManager extends BaseManager
         $newPlayer = $this->getPlayer();
         $message = 'Move to next player';
 
-        $currentString = Yii::t('app/game', '{currentPlayerName} has finished his turn. Now it’s your turn to play.', [
+        $currentString = Yii::t('app/game', "{currentPlayerName} finished turn. Your turn to play!", [
             'currentPlayerName' => $oldPlayer->name,
         ]);
 
-        $otherString = Yii::t('app/game', '{currentPlayerName} has finished his turn. Now it’s {nextPlayerName}’s turn to play.', [
+        $otherString = Yii::t('app/game', "{currentPlayerName} finished turn. {nextPlayerName}’s turn to play.", [
             'currentPlayerName' => $oldPlayer->name,
             'nextPlayerName' => $newPlayer->name,
         ]);
