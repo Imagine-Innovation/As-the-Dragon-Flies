@@ -466,13 +466,13 @@ class QuestManager extends BaseManager
         $currentPlayer = $currentQuestProgress->currentPlayer;
         $nextPlayer = $nextQuestProgress->currentPlayer;
 
-        $currentString = Yii::t('app/game', '{currentPlayerName} has completed mission “{currentMissionName}”.\nNow it’s your turn to start mission “{nextMissionName}”', [
+        $currentString = Yii::t('app/game', "{currentPlayerName} has completed mission “{currentMissionName}”.\nNow it’s your turn to start mission “{nextMissionName}”", [
             'currentPlayerName' => $currentPlayer->name,
             'currentMissionName' => $currentMission->name,
             'nextMissionName' => $nextMission->name,
         ]);
 
-        $otherString = Yii::t('app/game', '{currentPlayerName} has completed mission “{currentMissionName}”.\nNow it’s {nextPlayerName}’s turn to start mission “{nextMissionName}”', [
+        $otherString = Yii::t('app/game', "{currentPlayerName} has completed mission “{currentMissionName}”.\nNow it’s {nextPlayerName}’s turn to start mission “{nextMissionName}”", [
             'currentPlayerName' => $currentPlayer->name,
             'currentMissionName' => $currentMission->name,
             'nextPlayerName' => $nextPlayer->name,
