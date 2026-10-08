@@ -63,28 +63,28 @@ class TavernManager extends BaseManager
     }
 
     /**
-     * Returns a wellcone message for a new joiner
+     * Returns a welcome message for a new joiner
      *
-     * @param int $playerCount Number of already on boarded players
+     * @param int $playerCount Number of already onboarded players
      * @return string Welcome message
      */
     public function welcomeMessage(int $playerCount): string
     {
         return match ($playerCount) {
-            0 => 'There\'s nobody here!',
-            1 => 'For the moment, it looks like you\'re the first one',
-            2 => 'Look, there are two of you now',
-            3 => 'Ah! but there are three of you! Wait, I\'ll get a chair',
-            4 => 'Now that there are four of you, I\'m going to put you on a bigger table',
-            5 => 'With five guys like you, it\'s going to be quite a team!',
-            default => 'Boy, that\'s quite a team!',
+            0 => Yii::t('app/game', 'There’s nobody here!'),
+            1 => Yii::t('app/game', 'For the moment, it looks like you’re the first one'),
+            2 => Yii::t('app/game', 'Look, there are two of you now'),
+            3 => Yii::t('app/game', 'Ah! but there are three of you! Wait, I’ll get a chair'),
+            4 => Yii::t('app/game', 'Now that there are four of you, I’m going to put you on a bigger table'),
+            5 => Yii::t('app/game', 'With five guys like you, it’s going to be quite a team!'),
+            default => Yii::t('app/game', 'Boy, that’s quite a team!'),
         };
     }
 
     /**
      * Returns a message given the missing number of players before the quest can start
      *
-     * @param ?int $playerCount Number of already on boarded players, null when quest is beeing created
+     * @param ?int $playerCount Number of already onboarded players, null when quest is being created
      * @return string Missing player message
      */
     public function missingPlayers(?int $playerCount = null): string
@@ -95,13 +95,15 @@ class TavernManager extends BaseManager
         $missingCount = $storyMinPlayers - $actualPlayerCount;
 
         if ($missingCount > 1) {
-            return "We're still waiting for {$missingCount} other members to join us before starting";
+            return Yii::t('app/game', 'We’re still waiting for {missingCount} other members to join us before starting', [
+                'missingCount' => $missingCount,
+            ]);
         }
 
         if ($missingCount === 1) {
-            return 'One more member to join and we can start';
+            return Yii::t('app/game', 'One more member to join and we can start');
         }
-        return 'The whole company is there, we can start!';
+        return Yii::t('app/game', 'The whole company is there, we can start!');
     }
 
     /**
@@ -121,21 +123,25 @@ class TavernManager extends BaseManager
         $classNames = array_map(fn($class) => $class->name, CharacterClass::findAll(['id' => $missingClassIds]));
 
         return match (count($classNames)) {
-            0 => 'Every expected class is represented in the company!',
-            1 => "We still need a {$classNames[0]} to meet all the conditions.",
-            2 => "We still need a {$classNames[0]} and a {$classNames[1]} to meet all the conditions.",
-            default => 'We still need a '
-            . implode(', a ', array_slice($classNames, 0, -1))
-            . ' and a '
-            . end($classNames)
-            . ' to meet all the conditions.',
+            0 => Yii::t('app/game', 'Every expected class is represented in the company!'),
+            1 => Yii::t('app/game', 'We still need a {className} to meet all the conditions.', [
+                'className' => $classNames[0],
+            ]),
+            2 => Yii::t('app/game', 'We still need a {className1} and a {className2} to meet all the conditions.', [
+                'className1' => $classNames[0],
+                'className2' => $classNames[1],
+            ]),
+            default => Yii::t('app/game', 'We still need a {classesExceptLast} and a {lastClass} to meet all the conditions.', [
+                'classesExceptLast' => implode(', a ', array_slice($classNames, 0, -1)),
+                'lastClass' => end($classNames),
+            ]),
         };
     }
 
     /**
-     * Get the list of missing class IDs, null if bo class is required
+     * Get the list of missing class IDs, null if no class is required
      *
-     * @return array<int>|null Missing class IDs, null if bo class is required
+     * @return array<int>|null Missing class IDs, null if no class is required
      */
     private function getMissingClassIds(): ?array
     {
@@ -598,11 +604,11 @@ class TavernManager extends BaseManager
                 "*** debug *** - questCanStart - questId={$quest->id}, initiatorId={$quest->initiator_id}, playerId={$playerId}",
         );
         if ($playerId !== $quest->initiator_id) {
-            return ['canStart' => false, 'msg' => 'Your are not the quest initiator'];
+            return ['canStart' => false, 'msg' => Yii::t('app/game', 'You are not the quest initiator')];
         }
 
         if ($quest->status !== AppStatus::WAITING->value) {
-            return ['canStart' => false, 'msg' => "Quest {$quest->name} is not in wating state."];
+            return ['canStart' => false, 'msg' => Yii::t('app/game', 'Quest {questName} is not in waiting state.', ['questName' => $quest->name])];
         }
 
         $playersCount = $this->getCurrentPlayerCount();
@@ -611,14 +617,17 @@ class TavernManager extends BaseManager
         if ($playersCount < $story->min_players) {
             return [
                 'canStart' => false,
-                'msg' => "Quest can start once {$story->min_players} joined. Current count is {$playersCount}",
+                'msg' => Yii::t('app/game', 'Quest can start once {minPlayers} joined. Current count is {currentCount}', [
+                    'minPlayers' => $story->min_players,
+                    'currentCount' => $playersCount,
+                ]),
             ];
         }
 
         if (!$this->areRequiredClassesPresent()) {
-            return ['canStart' => false, 'msg' => 'Missing required player classes'];
+            return ['canStart' => false, 'msg' => Yii::t('app/game', 'Missing required player classes')];
         }
 
-        return ['canStart' => true, 'msg' => 'Quest can start', 'questName' => $quest->name, 'questId' => $quest->id];
+        return ['canStart' => true, 'msg' => Yii::t('app/game', 'Quest can start'), 'questName' => $quest->name, 'questId' => $quest->id];
     }
 }

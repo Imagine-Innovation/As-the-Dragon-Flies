@@ -186,18 +186,18 @@ class Story extends \yii\db\ActiveRecord
         $max = $this->max_level ?? 0;
         $min = $this->min_level ?? 0;
         if (($min + $max) === 0) {
-            return 'Undefined';
+            return Yii::t('app/game', 'Undefined');
         }
         if ($max === 1) {
-            return 'Beginner only';
+            return Yii::t('app/game', 'Beginner only');
         }
         if ($max === $min) {
-            return "Level {$min} only";
+            return Yii::t('app/game', 'Level {min} only', ['min' => $min]);
         }
         if (($max - $min) === 1) {
-            return "Level {$min} or {$max}";
+            return Yii::t('app/game', 'Level {min} or {max}', ['min' => $min, 'max' => $max]);
         }
-        return "From level {$min} to level {$max}";
+        return Yii::t('app/game', 'From level {min} to level {max}', ['min' => $min, 'max' => $max]);
     }
 
     /**
@@ -210,17 +210,17 @@ class Story extends \yii\db\ActiveRecord
         $max = $this->max_players ?? 0;
         $min = $this->min_players ?? 0;
         if (($min + $max) === 0) {
-            return 'Undefined';
+            return Yii::t('app/game', 'Undefined');
         }
         if ($max === 1) {
-            return 'Single player';
+            return Yii::t('app/game', 'Single player');
         }
         if (($max - $min) === 0) {
-            return "{$min} players";
+            return Yii::t('app/game', '{min} players', ['min' => $min]);
         }
         if (($max - $min) === 1) {
-            return "{$min} or {$max} players";
+            return Yii::t('app/game', '{min} or {max} players', ['min' => $min, 'max' => $max]);
         }
-        return "{$min} to {$max} players";
+        return Yii::t('app/game', '{min} to {max} players', ['min' => $min, 'max' => $max]);
     }
 }

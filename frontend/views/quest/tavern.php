@@ -12,7 +12,7 @@ $avatar = Yii::$app->session->get('avatar');
 $questName = $model->name;
 
 $this->title = $questName;
-$this->params['breadcrumbs'][] = ['label' => 'Quests', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app/game', 'Quests'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $questName;
 $chatManager = new ChatManager(['questId' => $model->id, 'playerId' => $playerId]);
 $messages = $chatManager->getLastMessages();
@@ -22,13 +22,15 @@ $messages = $chatManager->getLastMessages();
     <div class="col-md-6 col-xl-8">
         <div class="card p-4 mb-3">
             <div class="card-header">
-                <h5 class="text-decoration">Welcome <?= $playerName ?> in <?= $questName ?> Quest</h5>
+                <h5 class="text-decoration"><?= Yii::t('app/game', 'Welcome {playerName} in {questName} Quest', ['playerName' => $playerName, 'questName' => $questName]) ?></h5>
                 <p class="text-decoration mb-3" id="tavernWelcomeMessage"></p>
             </div>
             <div class="card-body">
                 <div class="text-decoration mb-3"><?= MarkDown::widget(['content' => $model->description]) ?></div>
-                <p class="mb-3">This quest allows <?= $model->story->companySize ?>
-                    <?= strtolower($model->story->requiredLevels) ?> to take part in the game.</p>
+                <p class="mb-3"><?= Yii::t('app/game', 'This quest allows {companySize} {requiredLevels} to take part in the game.', [
+                    'companySize' => $model->story->companySize,
+                    'requiredLevels' => strtolower($model->story->requiredLevels),
+                ]) ?></p>
                 <p class="mb-3" id="tavernMissingPlayers"></p>
                 <p class="mb-0" id="tavernMissingClasses"></p>
             </div>
@@ -37,7 +39,7 @@ $messages = $chatManager->getLastMessages();
         <!-- Party Panel -->
         <div class="card p-4">
             <div class="card-header">
-                <h5 class="text-decoration">The adventuring companionship that is building up</h5>
+                <h5 class="text-decoration"><?= Yii::t('app/game', 'The adventuring companionship that is building up') ?></h5>
             </div>
             <div class="card-body">
                 <div class="row g-4">

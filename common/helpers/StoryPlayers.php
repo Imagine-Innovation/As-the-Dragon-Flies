@@ -39,13 +39,15 @@ final class StoryPlayers
         }
         $n = count($playerNames);
         if ($n > 0) {
+            $namesText = implode(' ' . \Yii::t('app/game', 'and') . ' ', $playerNames);
+            $message = \Yii::t('app/game', '{n, plural, one {Your player {names} is already waiting to start the quest} other {Your players {names} are already waiting to start the quest}}', [
+                'n' => $n,
+                'names' => $namesText,
+            ]);
             return (
-                    '<h6 class="card-subtitle">Your player'
-                    . ($n > 1 ? 's ' : ' ')
-                    . implode(' and ', $playerNames)
-                    . ' '
-                    . ($n > 1 ? ' are ' : ' is ')
-                    . 'already waiting to start the quest</h6>'
+                    '<h6 class="card-subtitle">'
+                    . $message
+                    . '</h6>'
             );
         }
         return '';

@@ -53,7 +53,7 @@ final class StoryNeededClass
             ]);
         }
 
-        return '<ul class="list list--check">Expected character classes:' . $checkboxes . '</ul>';
+        return '<ul class="list list--check">' . \Yii::t('app/game', 'Expected character classes:') . $checkboxes . '</ul>';
     }
 
     public static function classBadge(Story $story): string
