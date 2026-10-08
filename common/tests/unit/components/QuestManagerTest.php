@@ -233,4 +233,78 @@ class QuestManagerTest extends \Codeception\Test\Unit
         verify($manager->gameOverStatus)->equals(AppStatus::ABORTED);
         verify($result['msg'])->equals('Game Over Success');
     }
+
+    public function testGetNextMissionDetailToastMessageStructure()
+    {
+        $hero = new Player();
+        $hero->id = self::CURRENT_PLAYER_ID;
+        $hero->name = 'Hero';
+
+        $nextHero = new Player();
+        $nextHero->id = 36;
+        $nextHero->name = 'Companion';
+
+        $currentMission = new Mission();
+        $currentMission->id = 1;
+        $currentMission->name = 'First Mission';
+
+        $nextMission = new Mission();
+        $nextMission->id = 2;
+        $nextMission->name = 'Second Mission';
+
+        $currentProgress = new QuestProgress();
+        $currentProgress->populateRelation('mission', $currentMission);
+        $currentProgress->populateRelation('currentPlayer', $hero);
+
+        $nextProgress = new QuestProgress();
+        $nextProgress->populateRelation('mission', $nextMission);
+        $nextProgress->populateRelation('currentPlayer', $nextHero);
+
+        $quest = new Quest();
+        $quest->id = 10;
+
+        $currentProgress->populateRelation('quest', $quest);
+
+        $manager = new TestQuestManager(['questProgress' => $currentProgress]);
+        $manager->mockQuest = $quest;
+        $manager->mockQuestProgress = $currentProgress;
+
+        $reflection = new \ReflectionClass(QuestManager::class);
+        $method = $reflection->getMethod('getNextMissionDetail');
+        $method->setAccessible(true);
+
+        $detail = $method->invoke($manager, $currentProgress, $nextProgress);
+
+        $this->assertArrayHasKey('toastMessage', $detail);
+        $this->assertArrayHasKey('current', $detail['toastMessage']);
+        $this->assertArrayHasKey('other', $detail['toastMessage']);
+        $this->assertStringContainsString('Hero completed “First Mission”', $detail['toastMessage']['current']);
+        $this->assertStringContainsString('Your turn: “Second Mission”', $detail['toastMessage']['current']);
+        $this->assertStringContainsString('Companion’s turn: “Second Mission”', $detail['toastMessage']['other']);
+    }
+
+    public function testNextTurnAndMissionEventsGetMessageWithToastMessage()
+    {
+        $hero = new Player();
+        $hero->id = 35;
+        $hero->name = 'Hero';
+
+        $quest = new Quest();
+        $quest->id = 10;
+
+        $detail = [
+            'currentPlayerName' => 'Hero',
+            'nextPlayerName' => 'Companion',
+            'toastMessage' => [
+                'current' => 'Current player message',
+                'other' => 'Other player message',
+            ],
+        ];
+
+        $nextTurnEvent = new \common\models\events\NextTurnEvent('session1', $hero, $quest, 'Next turn', $detail);
+        $this->assertEquals('Other player message', $nextTurnEvent->getMessage());
+
+        $nextMissionEvent = new \common\models\events\NextMissionEvent('session1', $hero, $quest, 'Next mission', $detail);
+        $this->assertEquals('Other player message', $nextMissionEvent->getMessage());
+    }
 }

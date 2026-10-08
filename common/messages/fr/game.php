@@ -98,6 +98,11 @@ return [
     'Quest can start once {minPlayers} joined. Current count is {currentCount}' => 'La quête peut commencer dès que {minPlayers} membres ont rejoint. Le nombre actuel est de {currentCount}',
     'Missing required player classes' => 'Classes de joueurs requises manquantes',
     'Quest can start' => 'La quête peut commencer',
+    // Mission & Turn Toast Messages
+    "{currentPlayerName} completed “{currentMissionName}”. Your turn: “{nextMissionName}”" => "{currentPlayerName} a terminé « {currentMissionName} ». Ton tour : « {nextMissionName} »",
+    "{currentPlayerName} completed “{currentMissionName}”. {nextPlayerName}’s turn: “{nextMissionName}”" => "{currentPlayerName} a terminé « {currentMissionName} ». Tour de {nextPlayerName} : « {nextMissionName} »",
+    "{currentPlayerName} finished turn. Your turn to play!" => "{currentPlayerName} a fini son tour. À toi de jouer !",
+    "{currentPlayerName} finished turn. {nextPlayerName}’s turn to play." => "{currentPlayerName} a fini son tour. Au tour de {nextPlayerName} !",
     // Story levels & company size
     'Undefined' => 'Non défini',
     'Beginner only' => 'Débutants uniquement',

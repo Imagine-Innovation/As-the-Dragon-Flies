@@ -466,6 +466,19 @@ class QuestManager extends BaseManager
         $currentPlayer = $currentQuestProgress->currentPlayer;
         $nextPlayer = $nextQuestProgress->currentPlayer;
 
+        $currentString = Yii::t('app/game', "{currentPlayerName} completed “{currentMissionName}”. Your turn: “{nextMissionName}”", [
+            'currentPlayerName' => $currentPlayer->name,
+            'currentMissionName' => $currentMission->name,
+            'nextMissionName' => $nextMission->name,
+        ]);
+
+        $otherString = Yii::t('app/game', "{currentPlayerName} completed “{currentMissionName}”. {nextPlayerName}’s turn: “{nextMissionName}”", [
+            'currentPlayerName' => $currentPlayer->name,
+            'currentMissionName' => $currentMission->name,
+            'nextPlayerName' => $nextPlayer->name,
+            'nextMissionName' => $nextMission->name,
+        ]);
+
         return [
             'currentMissionId' => $currentMission->id,
             'currentMissionName' => $currentMission->name,
@@ -476,6 +489,10 @@ class QuestManager extends BaseManager
             'nextPlayerId' => $nextPlayer->id,
             'nextPlayerName' => $nextPlayer->name,
             'nextQuestProgressId' => $nextQuestProgress->id,
+            'toastMessage' => [
+                'current' => $currentString,
+                'other' => $otherString,
+            ],
             'timestamp' => time(),
         ];
     }
@@ -609,6 +626,16 @@ class QuestManager extends BaseManager
 
         $newPlayer = $this->getPlayer();
         $message = 'Move to next player';
+
+        $currentString = Yii::t('app/game', "{currentPlayerName} finished turn. Your turn to play!", [
+            'currentPlayerName' => $oldPlayer->name,
+        ]);
+
+        $otherString = Yii::t('app/game', "{currentPlayerName} finished turn. {nextPlayerName}’s turn to play.", [
+            'currentPlayerName' => $oldPlayer->name,
+            'nextPlayerName' => $newPlayer->name,
+        ]);
+
         $detail = [
             'currentPlayerId' => $oldPlayer->id,
             'currentPlayerName' => $oldPlayer->name,
@@ -616,6 +643,10 @@ class QuestManager extends BaseManager
             'nextPlayerId' => $newPlayer->id,
             'nextPlayerName' => $newPlayer->name,
             'nextTurnSequence' => $this->nextSequence,
+            'toastMessage' => [
+                'current' => $currentString,
+                'other' => $otherString,
+            ],
             'timestamp' => time(),
         ];
 
