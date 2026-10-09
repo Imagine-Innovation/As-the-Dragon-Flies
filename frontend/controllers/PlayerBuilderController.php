@@ -15,8 +15,8 @@ use common\models\PlayerBody;
 use common\models\PlayerItem;
 use common\models\PlayerLanguage;
 use common\components\AjaxRequest;
+use common\components\gameplay\PlayerManager;
 use frontend\components\BuilderComponent;
-use frontend\components\PlayerComponent;
 use frontend\models\PlayerBuilder;
 use Yii;
 use yii\filters\AccessControl;
@@ -499,7 +499,7 @@ class PlayerBuilderController extends Controller
         $isProficient = $player->isProficient($item->id) ? 1 : 0;
         $proficiencyModifier = $isProficient ? $player->level?->proficiency_bonus : 0;
 
-        $weaponProperties = PlayerComponent::getPlayerWeaponProperties($player->id, $item->id, $proficiencyModifier ?? 0);
+        $weaponProperties = PlayerManager::getPlayerWeaponProperties($player->id, $item->id, $proficiencyModifier ?? 0);
         $itemType = $item->itemType->name;
 
         return new PlayerItem([
@@ -682,7 +682,7 @@ class PlayerBuilderController extends Controller
             $ability_id = $playerAbility->ability_id;
             $score = $abilities[$ability_id];
             $playerAbility->score = $score;
-            $playerAbility->modifier = PlayerComponent::calcAbilityModifier($score);
+            $playerAbility->modifier = PlayerManager::calcAbilityModifier($score);
             SaveHelper::save($playerAbility);
         }
 

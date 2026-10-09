@@ -19,6 +19,7 @@ use common\models\PlayerSkill;
 use common\models\PlayerTrait;
 use common\models\Race;
 use common\models\RaceGroupLanguage;
+use common\components\gameplay\PlayerManager;
 use common\models\Skill;
 use common\models\Wizard;
 use Yii;
@@ -650,7 +651,7 @@ class BuilderComponent
             $id = $defaultAbility->ability_id;
             $score = $defaultAbility->score ?? 10;
             $initAbilityArray[$id]['score'] = $score;
-            $initAbilityArray[$id]['modifier'] = PlayerComponent::calcAbilityModifier($score);
+            $initAbilityArray[$id]['modifier'] = PlayerManager::calcAbilityModifier($score);
         }
 
         return $initAbilityArray;
