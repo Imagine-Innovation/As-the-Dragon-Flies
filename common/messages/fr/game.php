@@ -103,6 +103,8 @@ return [
     "{currentPlayerName} completed “{currentMissionName}”. {nextPlayerName}’s turn: “{nextMissionName}”" => "{currentPlayerName} a terminé « {currentMissionName} ». Tour de {nextPlayerName} : « {nextMissionName} »",
     "{currentPlayerName} finished turn. Your turn to play!" => "{currentPlayerName} a fini son tour. À toi de jouer !",
     "{currentPlayerName} finished turn. {nextPlayerName}’s turn to play." => "{currentPlayerName} a fini son tour. Au tour de {nextPlayerName} !",
+    "It’s your turn to play" => "C’est à ton tour de jouer",
+    "It’s {nextPlayerName}’s turn to play" => "C’est au tour de {nextPlayerName} de jouer",
     // Event Messages
     '{playerName} ended quest “{questName}” ({status})' => '{playerName} a terminé la quête « {questName} » ({status})',
     '{playerName} joins the quest' => '{playerName} rejoint la quête',

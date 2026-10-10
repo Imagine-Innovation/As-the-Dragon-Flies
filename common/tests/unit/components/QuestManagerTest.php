@@ -281,6 +281,12 @@ class QuestManagerTest extends \Codeception\Test\Unit
         $this->assertStringContainsString('Hero completed “First Mission”', $detail['toastMessage']['current']);
         $this->assertStringContainsString('Your turn: “Second Mission”', $detail['toastMessage']['current']);
         $this->assertStringContainsString('Companion’s turn: “Second Mission”', $detail['toastMessage']['other']);
+
+        $this->assertArrayHasKey('turnMessage', $detail);
+        $this->assertArrayHasKey('current', $detail['turnMessage']);
+        $this->assertArrayHasKey('other', $detail['turnMessage']);
+        $this->assertEquals('It’s your turn to play', $detail['turnMessage']['current']);
+        $this->assertEquals('It’s Companion’s turn to play', $detail['turnMessage']['other']);
     }
 
     public function testNextTurnAndMissionEventsGetMessageWithToastMessage()

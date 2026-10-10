@@ -13,8 +13,25 @@ class VirtualTableTop {
         Logger.log(1, 'init', `context=${JSON.stringify(this.context, null, 2)}`);
 
         this._updateMission(this.context.missionId);
-        this._updateTurn(this.context.playerId, this.context.currentPlayerId, this.context.currentPlayerName);
+        this._getTurnMessage(this.context.questProgressId);
         this._updateActions(this.context.playerId, this.context.currentPlayerId, this.context.questProgressId);
+    }
+
+    _getTurnMessage(questProgressId) {
+        Logger.log(2, '_getTurnMessage', `questProgressId=${questProgressId}`);
+        if (!questProgressId)
+            return;
+
+        AjaxUtils.request({
+            url: 'game/ajax-turn',
+            method: 'GET',
+            data: { questProgressId: questProgressId },
+            successCallback: (response) => {
+                if (!response.error && response.turnMessage) {
+                    this._updateTurn(response.turnMessage);
+                }
+            }
+        });
     }
 
     _loadContext() {
@@ -73,10 +90,19 @@ class VirtualTableTop {
             ToastManager.show('Game message', toastMessage, 'info');
         }
 
+        const turnMessage = (playerId === detail.nextPlayerId) ? detail.turnMessage?.current : detail.turnMessage?.other;
+
+        if (detail.nextPlayerId && detail.nextPlayerName) {
+            this.updateContext({
+                currentPlayerId: detail.nextPlayerId,
+                currentPlayerName: detail.nextPlayerName
+            });
+        }
+
         this._updatePlayer(playerId);
         this._updateQuestMembers(questId);
         this._updateMission(detail.nextMissionId);
-        this._updateTurn(playerId, detail.nextPlayerId, detail.nextPlayerName);
+        this._updateTurn(turnMessage);
         this._updateActions(playerId, detail.nextPlayerId, detail.nextQuestProgressId);
     }
 
@@ -89,9 +115,18 @@ class VirtualTableTop {
             ToastManager.show('Game message', toastMessage, 'info');
         }
 
+        const turnMessage = (playerId === detail.nextPlayerId) ? detail.turnMessage?.current : detail.turnMessage?.other;
+
+        if (detail.nextPlayerId && detail.nextPlayerName) {
+            this.updateContext({
+                currentPlayerId: detail.nextPlayerId,
+                currentPlayerName: detail.nextPlayerName
+            });
+        }
+
         this._updatePlayer(playerId);
         this._updateQuestMembers(questId);
-        this._updateTurn(playerId, detail.nextPlayerId, detail.nextPlayerName);
+        this._updateTurn(turnMessage);
         this._updateActions(playerId, detail.nextPlayerId, detail.questProgressId);
     }
 
@@ -171,22 +206,13 @@ class VirtualTableTop {
         });
     }
 
-    _updateTurn(playerId, nextPlayerId, nextPlayerName) {
-        Logger.log(2, '_updateTurn', `playerId=${playerId}, nextPlayerId=${nextPlayerId}, nextPlayerName=${nextPlayerName}`);
-
-        if (nextPlayerId && nextPlayerName) {
-            this.updateContext({
-                currentPlayerId: nextPlayerId,
-                currentPlayerName: nextPlayerName
-            });
-        }
+    _updateTurn(message) {
+        Logger.log(2, '_updateTurn', `message=${message}`);
 
         const target = `#turnDescription`;
-        if (!DOMUtils.exists(target))
+        if (!DOMUtils.exists(target) || !message)
             return;
 
-        const nextPlayer = (playerId === nextPlayerId) ? 'your' : `${nextPlayerName}'s`;
-        const message = `It's ${nextPlayer} turn to play`;
         $(target).text(message);
     }
 

@@ -50,6 +50,7 @@ class GameController extends Controller
                             'ajax-next-turn',
                             'ajax-player',
                             'ajax-quit',
+                            'ajax-turn',
                         ],
                         'allow' => true,
                         'matchCallback' => function ($rule, $action) {
@@ -86,6 +87,40 @@ class GameController extends Controller
                     'quest' => $quest,
                     'nbPlayers' => $nbPlayers,
         ]);
+    }
+
+    /**
+     * Ajax GET request to retrieve the localized turn description message
+     *
+     * @param int|null $questProgressId
+     * @return array{error: bool, msg: string, turnMessage?: string}
+     */
+    public function actionAjaxTurn(?int $questProgressId = null): array
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        if (!$this->request->isGet || !$this->request->isAjax) {
+            return ['error' => true, 'msg' => 'Not an Ajax GET request'];
+        }
+
+        $id = $questProgressId ?? (int) Yii::$app->request->get('questProgressId');
+        if (!$id) {
+            return ['error' => true, 'msg' => 'Missing quest progress ID'];
+        }
+
+        $questProgress = FindModelHelper::findQuestProgress(['id' => $id]);
+        $currentPlayer = $questProgress->currentPlayer;
+        $playerId = Yii::$app->session->get('playerId');
+
+        $turnMessage = ($questProgress->current_player_id === $playerId)
+            ? Yii::t('app/game', "It’s your turn to play")
+            : Yii::t('app/game', "It’s {nextPlayerName}’s turn to play", ['nextPlayerName' => $currentPlayer->name ?? '']);
+
+        return [
+            'error' => false,
+            'msg' => '',
+            'turnMessage' => $turnMessage,
+        ];
     }
 
     /**

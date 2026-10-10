@@ -479,6 +479,11 @@ class QuestManager extends BaseManager
             'nextMissionName' => $nextMission->name,
         ]);
 
+        $turnCurrentString = Yii::t('app/game', "It’s your turn to play");
+        $turnOtherString = Yii::t('app/game', "It’s {nextPlayerName}’s turn to play", [
+            'nextPlayerName' => $nextPlayer->name,
+        ]);
+
         return [
             'currentMissionId' => $currentMission->id,
             'currentMissionName' => $currentMission->name,
@@ -492,6 +497,10 @@ class QuestManager extends BaseManager
             'toastMessage' => [
                 'current' => $currentString,
                 'other' => $otherString,
+            ],
+            'turnMessage' => [
+                'current' => $turnCurrentString,
+                'other' => $turnOtherString,
             ],
             'timestamp' => time(),
         ];
@@ -636,6 +645,11 @@ class QuestManager extends BaseManager
             'nextPlayerName' => $newPlayer->name,
         ]);
 
+        $turnCurrentString = Yii::t('app/game', "It’s your turn to play");
+        $turnOtherString = Yii::t('app/game', "It’s {nextPlayerName}’s turn to play", [
+            'nextPlayerName' => $newPlayer->name,
+        ]);
+
         $detail = [
             'currentPlayerId' => $oldPlayer->id,
             'currentPlayerName' => $oldPlayer->name,
@@ -646,6 +660,10 @@ class QuestManager extends BaseManager
             'toastMessage' => [
                 'current' => $currentString,
                 'other' => $otherString,
+            ],
+            'turnMessage' => [
+                'current' => $turnCurrentString,
+                'other' => $turnOtherString,
             ],
             'timestamp' => time(),
         ];
