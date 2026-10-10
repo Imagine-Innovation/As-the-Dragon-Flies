@@ -5,6 +5,7 @@ namespace common\components\gameplay;
 use common\components\AppStatus;
 use common\components\NarrativeComponent;
 use common\helpers\SaveHelper;
+use common\helpers\FindModelHelper;
 use common\models\Chapter;
 use common\models\events\EventFactory;
 use common\models\Mission;
@@ -276,10 +277,35 @@ class QuestManager extends BaseManager
         $event = $this->createQuestEvent('game-over', $message, $player, $detail);
 
         return [
-            'error' => false,
-            'msg' => $message,
-            'event' => 'game-over',
+            'error' => false, 'msg' => $message, 'event' => 'game-over',
             'payload' => $event->toArray(),
+        ];
+    }
+
+    /**
+     *
+     * @param string $playerName
+     * @param string $questName
+     * @param string $status
+     * @return array{current: string, other: string}
+     */
+    protected function setGameOverToastMessage(string $playerName, string $questName, string $status): array
+    {
+        // ${detail.playerName} has ended quest “${detail.questName}” with status ${detail.status}
+        $currentString = Yii::t('app/game', "You ended quest {questName} with status {status}", [
+            'questName' => $questName,
+            'status' => $status,
+        ]);
+
+        $otherString = Yii::t('app/game', "{playerName} ended quest {questName} with status {status}", [
+            'playerName' => $playerName,
+            'questName' => $questName,
+            'status' => $status,
+        ]);
+
+        return [
+            'current' => $currentString,
+            'other' => $otherString,
         ];
     }
 
@@ -306,10 +332,7 @@ class QuestManager extends BaseManager
      * @param AppStatus $status
      * @return void
      */
-    private function endCurrentQuestProgress(
-            QuestProgress $questProgress,
-            AppStatus $status = AppStatus::TERMINATED,
-    ): void
+    private function endCurrentQuestProgress(QuestProgress $questProgress, AppStatus $status = AppStatus::TERMINATED): void
     {
         $this->endCurrentTurn($questProgress->id, $status);
 
@@ -327,73 +350,71 @@ class QuestManager extends BaseManager
      */
     protected function addQuestProgress(int $missionId): ?QuestProgress
     {
-        $mission = Mission::findOne($missionId);
-        if (!$mission) {
-            throw new Exception("Mission #{$missionId} not found");
-        }
-
         $nextQuestPlayer = $this->getNextQuestPlayer();
         if (!$nextQuestPlayer) {
             return null;
         }
 
-        $questId = $this->quest->id;
-        $questProgress = QuestProgress::findOne([
-            'quest_id' => $questId,
-            'mission_id' => $missionId,
-        ]);
+        $this->questProgress = $this->setQuestProgress($this->quest->id, $missionId, $nextQuestPlayer->player_id);
+        $this->save($this->questProgress);
+
+        $actionManager = new ActionManager(['questProgress' => $this->questProgress]);
+        $actionManager->addQuestActions($missionId);
+
+        $this->setNextQuestTurn();
+
+        return $this->questProgress;
+    }
+
+    /**
+     *
+     * @param int $questId
+     * @param int $missionId
+     * @param int $playerId
+     * @return QuestProgress
+     */
+    protected function setQuestProgress(int $questId, int $missionId, int $playerId): QuestProgress
+    {
+        $questProgress = QuestProgress::findOne(['quest_id' => $questId, 'mission_id' => $missionId]);
 
         if ($questProgress) {
             // Reactivate existing progress
             $questProgress->status = AppStatus::IN_PROGRESS->value;
-            $questProgress->current_player_id = $nextQuestPlayer->player_id;
+            $questProgress->current_player_id = $playerId;
             $questProgress->completed_at = null;
         } else {
-            $questProgress = $this->newQuestProgress($mission, $nextQuestPlayer->player_id);
+            $questProgress = $this->newQuestProgress($missionId, $playerId);
         }
-        $this->questProgress = $questProgress;
-        $this->save($this->questProgress);
-
-        $actionManager = new ActionManager(['questProgress' => $questProgress]);
-        $actionManager->addQuestActions($missionId);
-
-        $this->setNextQuestTurn();
 
         return $questProgress;
     }
 
     /**
      *
-     * @param Mission $mission
+     * @param int $missionId
      * @param int $nextPlayerId
      * @return QuestProgress
      */
-    private function newQuestProgress(Mission $mission, int $nextPlayerId): QuestProgress
+    protected function newQuestProgress(int $missionId, int $nextPlayerId): QuestProgress
     {
-        $narrative = new NarrativeComponent([
-            'mission' => $mission,
-            'sections' => ['decors'],
+        $mission = FindModelHelper::findMission($missionId);
+        /*
+
+          $narrative = new NarrativeComponent([
+          'mission' => $mission,
+          'sections' => ['decors'],
+          ]);
+         */
+
+        $questProgress = new QuestProgress([
+            'quest_id' => $this->quest->id,
+            'mission_id' => $missionId,
+            'current_player_id' => $nextPlayerId,
+            //'description' => $narrative->renderDescription(),
+            'description' => $mission->description,
+            'status' => AppStatus::IN_PROGRESS->value,
+            'started_at' => time(),
         ]);
-
-        $questProgress = QuestProgress::find()
-                ->where(['quest_id' => $this->quest->id, 'mission_id' => $mission->id])
-                ->one();
-
-        if ($questProgress) {
-            $questProgress->status = AppStatus::IN_PROGRESS->value;
-            $questProgress->completed_at = null;
-        } else {
-            $questProgress = new QuestProgress([
-                'quest_id' => $this->quest->id,
-                'mission_id' => $mission->id,
-                'current_player_id' => $nextPlayerId,
-                'description' => $narrative->renderDescription(),
-                'status' => AppStatus::IN_PROGRESS->value,
-                'started_at' => time(),
-            ]);
-        }
-
-        $this->save($questProgress);
 
         return $questProgress;
     }
@@ -466,24 +487,6 @@ class QuestManager extends BaseManager
         $currentPlayer = $currentQuestProgress->currentPlayer;
         $nextPlayer = $nextQuestProgress->currentPlayer;
 
-        $currentString = Yii::t('app/game', "{currentPlayerName} completed “{currentMissionName}”. Your turn: “{nextMissionName}”", [
-            'currentPlayerName' => $currentPlayer->name,
-            'currentMissionName' => $currentMission->name,
-            'nextMissionName' => $nextMission->name,
-        ]);
-
-        $otherString = Yii::t('app/game', "{currentPlayerName} completed “{currentMissionName}”. {nextPlayerName}’s turn: “{nextMissionName}”", [
-            'currentPlayerName' => $currentPlayer->name,
-            'currentMissionName' => $currentMission->name,
-            'nextPlayerName' => $nextPlayer->name,
-            'nextMissionName' => $nextMission->name,
-        ]);
-
-        $turnCurrentString = Yii::t('app/game', "It’s your turn to play");
-        $turnOtherString = Yii::t('app/game', "It’s {nextPlayerName}’s turn to play", [
-            'nextPlayerName' => $nextPlayer->name,
-        ]);
-
         return [
             'currentMissionId' => $currentMission->id,
             'currentMissionName' => $currentMission->name,
@@ -494,15 +497,54 @@ class QuestManager extends BaseManager
             'nextPlayerId' => $nextPlayer->id,
             'nextPlayerName' => $nextPlayer->name,
             'nextQuestProgressId' => $nextQuestProgress->id,
-            'toastMessage' => [
-                'current' => $currentString,
-                'other' => $otherString,
-            ],
-            'turnMessage' => [
-                'current' => $turnCurrentString,
-                'other' => $turnOtherString,
-            ],
+            'toastMessage' => $this->setNextMissionToastMessage($currentPlayer->name, $currentMission->name, $nextPlayer->name, $nextMission->name),
+            'turnMessage' => $this->setTurnMessage($nextPlayer->name),
             'timestamp' => time(),
+        ];
+    }
+
+    /**
+     *
+     * @param string $currentPlayerName
+     * @param string $currentMissionName
+     * @param string $nextPlayerName
+     * @param string $nextMissionName
+     * @return array{current: string, other: string}
+     */
+    protected function setNextMissionToastMessage(string $currentPlayerName, string $currentMissionName, string $nextPlayerName, string $nextMissionName): array
+    {
+        $currentString = Yii::t('app/game', "{playerName} completed “{missionName}”. Your turn: “{nextMissionName}”", [
+            'playerName' => $currentPlayerName,
+            'missionName' => $currentMissionName,
+            'nextMissionName' => $nextMissionName,
+        ]);
+
+        $otherString = Yii::t('app/game', "{playerName} completed “{missionName}”. {nextPlayerName}’s turn: “{nextMissionName}”", [
+            'playerName' => $currentPlayerName,
+            'missionName' => $currentMissionName,
+            'nextPlayerName' => $nextPlayerName,
+            'nextMissionName' => $nextMissionName,
+        ]);
+
+        return [
+            'current' => $currentString,
+            'other' => $otherString,
+        ];
+    }
+
+    /**
+     *
+     * @param string $nextPlayerName
+     * @return array{current: string, other: string}
+     */
+    protected function setTurnMessage(string $nextPlayerName): array
+    {
+        $turnCurrentString = Yii::t('app/game', "It’s your turn to play");
+        $turnOtherString = Yii::t('app/game', "It’s {nextPlayerName}’s turn to play", ['nextPlayerName' => $nextPlayerName]);
+
+        return [
+            'current' => $turnCurrentString,
+            'other' => $turnOtherString,
         ];
     }
 
@@ -534,19 +576,17 @@ class QuestManager extends BaseManager
     private function setNextMission(int $nextMissionId): array
     {
         Yii::debug("*** debug *** QuestManager - setNextMission(nextMissionId={$nextMissionId})");
-        $currentQuestProgress = $this->getQuestProgress();
         $currentPlayer = $this->quest->currentPlayer;
-
         if ($currentPlayer === null) {
             throw new Exception('No current player found for quest.');
         }
 
+        $currentQuestProgress = $this->getQuestProgress();
         $this->endCurrentQuestProgress($currentQuestProgress);
         $nextQuestProgress = $this->addQuestProgress($nextMissionId);
 
         if (!$nextQuestProgress) {
-            $currentPlayerId = $this->quest->current_player_id ?? 'null';
-            Yii::debug("Could not initialize next quest progress for Quest #{$this->quest->id}, Player #{$currentPlayerId}, Mission #{$nextMissionId}. Forcing game over.");
+            Yii::debug("Could not initialize next quest progress for Quest #{$this->quest->id}, Player #{$this->quest->current_player_id}, Mission #{$nextMissionId}. Forcing game over.");
             return $this->gameOver(AppStatus::ABORTED);
         }
 
@@ -568,20 +608,17 @@ class QuestManager extends BaseManager
         $message = "The mission '{$detail['currentMissionName']}' is over, let's move to '{$detail['nextMissionName']}'!!!";
 
         $event = $this->createQuestEvent('next-mission', $message, $currentPlayer, $detail);
-        return [
-            'error' => false,
-            'msg' => $message,
-            'event' => 'next-mission',
+        return ['error' => false, 'msg' => $message, 'event' => 'next-mission',
             'payload' => $event->toArray(),
         ];
     }
 
     /**
      *
-     * @param int $nextMissionId
+     * @param int|null $nextMissionId
      * @return array{error: bool, msg: string, event?: string, payload?: array<string, mixed>}
      */
-    public function moveToNextMission(int $nextMissionId): array
+    public function moveToNextMission(?int $nextMissionId): array
     {
         Yii::debug("*** debug *** QuestManager::moveToNextMission nextMissionId={$nextMissionId}");
 
@@ -593,12 +630,12 @@ class QuestManager extends BaseManager
                 'msg' => "Quest #{$this->quest->id} is already over with status " . $status->getLabel(),
             ];
         }
+        if ($nextMissionId) {
+            return $this->setNextMission($nextMissionId);
+        }
 
-        $questProgress = $this->getQuestProgress();
-        $currentMissionId = $questProgress->mission_id;
-        $missionId = ($nextMissionId === $currentMissionId) ? $currentMissionId : $nextMissionId;
-        Yii::debug("*** debug *** QuestManager::moveToNextMission - Calling setNextMission with missionId={$missionId}");
-        return $this->setNextMission($missionId);
+        Yii::debug("*** debug *** QuestManager::moveToNextMission - No more missions, game over.");
+        return $this->gameOver(AppStatus::COMPLETED);
     }
 
     /**
@@ -628,52 +665,74 @@ class QuestManager extends BaseManager
         $this->endCurrentTurn();
         $oldPlayer = $this->getPlayer();
         $questTurn = $this->setNextQuestTurn();
-
         if (!$questTurn) {
             return $this->gameOver(AppStatus::ABORTED);
         }
 
-        $newPlayer = $this->getPlayer();
+        $nextPlayer = $this->getPlayer();
         $message = 'Move to next player';
 
-        $currentString = Yii::t('app/game', "{currentPlayerName} finished turn. Your turn to play!", [
-            'currentPlayerName' => $oldPlayer->name,
-        ]);
-
-        $otherString = Yii::t('app/game', "{currentPlayerName} finished turn. {nextPlayerName}’s turn to play.", [
-            'currentPlayerName' => $oldPlayer->name,
-            'nextPlayerName' => $newPlayer->name,
-        ]);
-
-        $turnCurrentString = Yii::t('app/game', "It’s your turn to play");
-        $turnOtherString = Yii::t('app/game', "It’s {nextPlayerName}’s turn to play", [
-            'nextPlayerName' => $newPlayer->name,
-        ]);
-
-        $detail = [
-            'currentPlayerId' => $oldPlayer->id,
-            'currentPlayerName' => $oldPlayer->name,
-            'questProgressId' => $this->getQuestProgress()->id,
-            'nextPlayerId' => $newPlayer->id,
-            'nextPlayerName' => $newPlayer->name,
-            'nextTurnSequence' => $this->nextSequence,
-            'toastMessage' => [
-                'current' => $currentString,
-                'other' => $otherString,
-            ],
-            'turnMessage' => [
-                'current' => $turnCurrentString,
-                'other' => $turnOtherString,
-            ],
-            'timestamp' => time(),
-        ];
+        $detail = $this->setNextPlayerDetail($oldPlayer, $nextPlayer);
 
         $event = $this->createQuestEvent('next-turn', $message, $oldPlayer, $detail);
-        return [
-            'error' => false,
-            'msg' => $message,
-            'event' => 'next-turn',
+        return ['error' => false, 'msg' => $message, 'event' => 'next-turn',
             'payload' => $event->toArray(),
+        ];
+    }
+
+    /**
+     *
+     * @param Player $oldPlayer
+     * @param Player $nextPlayer
+     * @return array {
+     *   currentPlayerId: int,
+     *   currentPlayerName: string,
+     *   questProgressId: int,
+     *   nextPlayerId: int,
+     *   nextPlayerName: string,
+     *   nextTurnSequence: int,
+     *   toastMessage: array{current: string, other:string},
+     *   turnMessage: array{current: string, other:string},
+     *   timestamp: int,
+     * }
+     */
+    protected function setNextPlayerDetail(Player $oldPlayer, Player $nextPlayer): array
+    {
+        $questProgress = $this->getQuestProgress();
+
+        return [
+            'currentPlayerId' => $oldPlayer->id,
+            'currentPlayerName' => $oldPlayer->name,
+            'questProgressId' => $questProgress->id,
+            'nextPlayerId' => $nextPlayer->id,
+            'nextPlayerName' => $nextPlayer->name,
+            'nextTurnSequence' => $this->nextSequence,
+            'toastMessage' => $this->setNextPlayerToastMessage($oldPlayer->name, $nextPlayer->name),
+            'turnMessage' => $this->setTurnMessage($nextPlayer->name),
+            'timestamp' => time(),
+        ];
+    }
+
+    /**
+     *
+     * @param string $oldPlayerName
+     * @param string $nextPlayerName
+     * @return array{current: string, other:string}
+     */
+    protected function setNextPlayerToastMessage(string $oldPlayerName, string $nextPlayerName): array
+    {
+        $currentString = Yii::t('app/game', "{playerName} finished turn. Your turn to play!", [
+            'playerName' => $oldPlayerName,
+        ]);
+
+        $otherString = Yii::t('app/game', "{playerName} finished turn. {nextPlayerName}’s turn to play.", [
+            'playerName' => $oldPlayerName,
+            'nextPlayerName' => $nextPlayerName,
+        ]);
+
+        return [
+            'current' => $currentString,
+            'other' => $otherString,
         ];
     }
 

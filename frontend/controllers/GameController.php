@@ -43,14 +43,8 @@ class GameController extends Controller
                     [
                         'actions' => [
                             'view',
-                            'ajax-actions',
-                            'ajax-dialog',
-                            'ajax-get-outcomes',
-                            'ajax-mission',
-                            'ajax-next-turn',
-                            'ajax-player',
-                            'ajax-quit',
-                            'ajax-turn',
+                            'ajax-actions', 'ajax-dialog', 'ajax-get-outcomes', 'ajax-mission', 'ajax-next-turn',
+                            'ajax-player', 'ajax-quit', 'ajax-turn'
                         ],
                         'allow' => true,
                         'matchCallback' => function ($rule, $action) {
@@ -112,9 +106,9 @@ class GameController extends Controller
         $currentPlayer = $questProgress->currentPlayer;
         $playerId = Yii::$app->session->get('playerId');
 
-        $turnMessage = ($questProgress->current_player_id === $playerId)
-            ? Yii::t('app/game', "It’s your turn to play")
-            : Yii::t('app/game', "It’s {nextPlayerName}’s turn to play", ['nextPlayerName' => $currentPlayer->name ?? '']);
+        $turnMessage = ($questProgress->current_player_id === $playerId) ?
+                Yii::t('app/game', "It’s your turn to play") :
+                Yii::t('app/game', "It’s {nextPlayerName}’s turn to play", ['nextPlayerName' => $currentPlayer->name ?? '']);
 
         return [
             'error' => false,
@@ -464,7 +458,7 @@ class GameController extends Controller
             }
             return $questManager->nextPlayer();
         }
-        // Move to the default mission
+        // Move to the next mission
         return $questManager->moveToNextMission($nextMissionId);
     }
 

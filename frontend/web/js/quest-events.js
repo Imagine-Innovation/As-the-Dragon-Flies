@@ -151,16 +151,16 @@ class NotificationClient {
 
         this.on('game-over', (data) => {
             Logger.log(2, 'setupDefaultHandlers', 'Received game-over message:', data);
-            Logger.log(10, 'setupDefaultHandlers', `Payload: ${JSON.stringify(data, null, 2)}`);
+            Logger.log(10, 'setupDefaultHandlers', `game-over Payload: ${JSON.stringify(data, null, 2)}`);
             const detail = this._getEventDetail(data);
+            Logger.log(10, 'setupDefaultHandlers', `game-over event => detail=${JSON.stringify(detail, null, 2)}`);
             if (!detail || typeof detail !== 'object') {
                 Logger.log(1, 'setupDefaultHandlers', 'Ignoring game-over message: invalid detail payload');
                 return;
             }
-            const message = `${detail.playerName} has ended quest “${detail.questName}” with status ${detail.status}.`;
-            // VirtualTableTop.refresh(this.questId, this.sessionId);
+            const toastMessage = (this.playerId === detail.playerId) ? detail.toastMessage?.current : detail.toastMessage?.other;
 
-            ToastManager.show('Game Over', message, 'info');
+            ToastManager.show('Game Over', toastMessage, 'info');
 
             const redirectAction = () => {
                 // Preserve current origin/base path/front controller and only change the route/query
@@ -236,9 +236,9 @@ class NotificationClient {
         }
         return outcomes.some(outcome =>
             outcome !== null &&
-            outcome !== undefined &&
-            outcome.item_id !== null &&
-            outcome.item_id !== undefined
+                    outcome !== undefined &&
+                    outcome.item_id !== null &&
+                    outcome.item_id !== undefined
         );
     }
 
@@ -249,13 +249,17 @@ class NotificationClient {
      * @returns {boolean}
      */
     _hasPositiveValue(val) {
-        if (val === null || val === undefined) return false;
-        if (typeof val === 'number') return val > 0;
+        if (val === null || val === undefined)
+            return false;
+        if (typeof val === 'number')
+            return val > 0;
         if (typeof val === 'string') {
             const trimmed = val.trim();
-            if (trimmed === '' || trimmed === '0') return false;
+            if (trimmed === '' || trimmed === '0')
+                return false;
             const num = Number(trimmed);
-            if (!isNaN(num)) return num > 0;
+            if (!isNaN(num))
+                return num > 0;
             return true; // Handles dice strings like "1d6"
         }
         return false;
@@ -273,11 +277,11 @@ class NotificationClient {
         }
         return outcomes.some(outcome =>
             outcome !== null &&
-            outcome !== undefined && (
-                this._hasPositiveValue(outcome.gained_xp) ||
-                this._hasPositiveValue(outcome.gained_gp) ||
-                this._hasPositiveValue(outcome.hp_loss_dice)
-            )
+                    outcome !== undefined && (
+                            this._hasPositiveValue(outcome.gained_xp) ||
+                            this._hasPositiveValue(outcome.gained_gp) ||
+                            this._hasPositiveValue(outcome.hp_loss_dice)
+                            )
         );
     }
 

@@ -58,7 +58,9 @@ return [
     'Equip' => 'Equip',
     'To use this weapon, you need both hands.' => 'To use this weapon, you need both hands.',
     'You only need one hand to use this weapon' => 'You only need one hand to use this weapon',
-    // Tavern & Quest Lobby
+    /*
+     *  Tavern & Quest Lobby
+     */
     'Quests' => 'Quests',
     'Welcome {playerName} in {questName} Quest' => 'Welcome {playerName} in {questName} Quest',
     'This quest allows {companySize} {requiredLevels} to take part in the game.' => 'This quest allows {companySize} {requiredLevels} to take part in the game.',
@@ -78,7 +80,9 @@ return [
     'Expected character classes:' => 'Expected character classes:',
     'and' => 'and',
     '{n, plural, one {Your player {names} is already waiting to start the quest} other {Your players {names} are already waiting to start the quest}}' => '{n, plural, one {Your player {names} is already waiting to start the quest} other {Your players {names} are already waiting to start the quest}}',
-    // TavernManager messages
+    /*
+     *  TavernManager messages
+     */
     'There’s nobody here!' => 'There’s nobody here!',
     'For the moment, it looks like you’re the first one' => 'For the moment, it looks like you’re the first one',
     'Look, there are two of you now' => 'Look, there are two of you now',
@@ -98,20 +102,36 @@ return [
     'Quest can start once {minPlayers} joined. Current count is {currentCount}' => 'Quest can start once {minPlayers} joined. Current count is {currentCount}',
     'Missing required player classes' => 'Missing required player classes',
     'Quest can start' => 'Quest can start',
-    // Mission & Turn Toast Messages
-    "{currentPlayerName} completed “{currentMissionName}”. Your turn: “{nextMissionName}”" => "{currentPlayerName} completed “{currentMissionName}”. Your turn: “{nextMissionName}”",
-    "{currentPlayerName} completed “{currentMissionName}”. {nextPlayerName}’s turn: “{nextMissionName}”" => "{currentPlayerName} completed “{currentMissionName}”. {nextPlayerName}’s turn: “{nextMissionName}”",
-    "{currentPlayerName} finished turn. Your turn to play!" => "{currentPlayerName} finished turn. Your turn to play!",
-    "{currentPlayerName} finished turn. {nextPlayerName}’s turn to play." => "{currentPlayerName} finished turn. {nextPlayerName}’s turn to play.",
+    /*
+     *  Mission & Turn Toast Messages
+     */
+    "{playerName} completed “{missionName}”. Your turn: “{nextMissionName}”" => "{playerName} have completed the “{missionName}” mission. It is your turn to start the next mission: “{nextMissionName}”",
+    "{playerName} completed “{missionName}”. {nextPlayerName}’s turn: “{nextMissionName}”" => "{playerName} completed “{missionName}”. {nextPlayerName}’s turn: “{nextMissionName}”",
+    "{playerName} finished turn. Your turn to play!" => "{playerName} finished turn. Your turn to play!",
+    "{playerName} finished turn. {nextPlayerName}’s turn to play." => "{playerName} finished turn. {nextPlayerName}’s turn to play.",
     "It’s your turn to play" => "It’s your turn to play",
     "It’s {nextPlayerName}’s turn to play" => "It’s {nextPlayerName}’s turn to play",
-    // Event Messages
+    "You ended quest {questName} with status {status}" => '{status, select,
+        ABORTED {You have interrupted  quest “{questName}”}
+        COMPLETED {You have completed the “{questName}” quest}
+        other {I don’t know how you completed the “{questName}” quest}
+    }',
+    "{playerName} ended quest {questName} with status {status}" => '{status, select,
+        ABORTED {{playerName} has interrupted  quest “{questName}”}
+        COMPLETED {{playerName} has completed the “{questName}” quest}
+        other {I don’t know how {playerName} completed the “{questName}” quest}
+    }',
+    /*
+     *  Event Messages
+     */
     '{playerName} ended quest “{questName}” ({status})' => '{playerName} ended quest “{questName}” ({status})',
     '{playerName} joins the quest' => '{playerName} joins the quest',
     '{playerName} quits the quest' => '{playerName} quits the quest',
     'Quest {questName} starting' => 'Quest {questName} starting',
     '{playerName} starts quest “{questName}”' => '{playerName} starts quest “{questName}”',
-    // Story levels & company size
+    /*
+     *  Story levels & company size
+     */
     'Undefined' => 'Undefined',
     'Beginner only' => 'Beginner only',
     'Level {min} only' => 'Level {min} only',
