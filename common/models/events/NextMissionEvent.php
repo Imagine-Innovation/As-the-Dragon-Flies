@@ -60,18 +60,19 @@ class NextMissionEvent extends Event
      */
     public function getMessage(): string
     {
-        /** @var array{currentPlayerName?: string, currentMissionName?: string, nextPlayerName?: string, nextMissionName?: string, toastMessage?: array{current: string, other: string}, turnMessage?: array{current: string, other: string}} */
-        $detail = $this->detail;
-
         if (!isset($this->detail['toastMessage']['other'])) {
+            /** @var array{currentPlayerName?: string, currentMissionName?: string, nextPlayerName?: string, nextMissionName?: string, toastMessage?: array{current: string, other: string}} */
+            $detail = $this->detail;
+
             $this->detail['toastMessage']['other'] = Yii::t('app/game', '{currentPlayerName} completed “{currentMissionName}”. {nextPlayerName}’s turn: “{nextMissionName}”', [
                 'currentPlayerName' => $detail['currentPlayerName'] ?? '',
                 'currentMissionName' => $detail['currentMissionName'] ?? '',
                 'nextPlayerName' => $detail['nextPlayerName'] ?? '',
                 'nextMissionName' => $detail['nextMissionName'] ?? '',
-            ], $this->language);
+                    ], $this->language);
         }
 
+        Yii::debug($this->detail['toastMessage']['other']);
         return $this->detail['toastMessage']['other'];
     }
 

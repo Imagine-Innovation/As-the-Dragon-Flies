@@ -32,7 +32,7 @@
             "version": "3.7.1",
             "source": {
                 "type": "git",
-                "url": "git@github.com:jquery/jquery-dist.git",
+                "url": "https://github.com/jquery/jquery-dist.git",
                 "reference": "fde1f76e2799dd877c176abde0ec836553246991"
             },
             "dist": {
@@ -50,12 +50,12 @@
             "version": "v2.3.1",
             "source": {
                 "type": "git",
-                "url": "git@github.com:bestiejs/punycode.js.git",
+                "url": "https://github.com/mathiasbynens/punycode.js.git",
                 "reference": "9e1b2cda98d215d3a73fcbfe93c62e021f4ba768"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bestiejs/punycode.js/zipball/9e1b2cda98d215d3a73fcbfe93c62e021f4ba768",
+                "url": "https://api.github.com/repos/mathiasbynens/punycode.js/zipball/9e1b2cda98d215d3a73fcbfe93c62e021f4ba768",
                 "reference": "9e1b2cda98d215d3a73fcbfe93c62e021f4ba768"
             },
             "type": "bower-asset"
@@ -65,7 +65,7 @@
             "version": "2.0.9",
             "source": {
                 "type": "git",
-                "url": "git@github.com:yiisoft/jquery-pjax.git",
+                "url": "https://github.com/yiisoft/jquery-pjax.git",
                 "reference": "452b56b7124326487fd0d3be6b205fcaa66598a0"
             },
             "dist": {
@@ -3423,16 +3423,16 @@
         },
         {
             "name": "carthage-software/mago",
-            "version": "1.51.2",
+            "version": "1.54.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/carthage-software/mago.git",
-                "reference": "5415d6900d330a5a6a70728aaa7f9c52c7672495"
+                "reference": "9a86b1847d12f4f2fe073ecbb2614eb7b2b1614c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/carthage-software/mago/zipball/5415d6900d330a5a6a70728aaa7f9c52c7672495",
-                "reference": "5415d6900d330a5a6a70728aaa7f9c52c7672495",
+                "url": "https://api.github.com/repos/carthage-software/mago/zipball/9a86b1847d12f4f2fe073ecbb2614eb7b2b1614c",
+                "reference": "9a86b1847d12f4f2fe073ecbb2614eb7b2b1614c",
                 "shasum": ""
             },
             "require": {
@@ -3474,7 +3474,7 @@
             ],
             "support": {
                 "issues": "https://github.com/carthage-software/mago/issues",
-                "source": "https://github.com/carthage-software/mago/tree/1.51.2"
+                "source": "https://github.com/carthage-software/mago/tree/1.54.0"
             },
             "funding": [
                 {
@@ -3482,7 +3482,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-10-03T09:05:17+00:00"
+            "time": "2026-10-08T18:27:19+00:00"
         },
         {
             "name": "codeception/codeception",
@@ -4642,11 +4642,11 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "2.2.17",
+            "version": "2.3.1",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/e676a49fa70cee9f5bf6ff4796186b928a08673f",
-                "reference": "e676a49fa70cee9f5bf6ff4796186b928a08673f",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/6155239b488e95d26d1ebd95c6b4bb294d7f09db",
+                "reference": "6155239b488e95d26d1ebd95c6b4bb294d7f09db",
                 "shasum": ""
             },
             "require": {
@@ -4702,7 +4702,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-10-04T19:40:09+00:00"
+            "time": "2026-10-08T21:09:11+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
