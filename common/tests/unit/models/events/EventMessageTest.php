@@ -109,10 +109,12 @@ class EventMessageTest extends Unit
         $eventEn = new NextMissionEvent('session1', $player, $quest, 'Next mission', $detail);
         $eventEn->language = 'en';
         $this->assertEquals('Legolas completed “Mission 1”. Gimli’s turn: “Mission 2”', $eventEn->getMessage());
+        $this->assertEquals('Legolas completed “Mission 1”. Gimli’s turn: “Mission 2”', $eventEn->detail['toastMessage']['other']);
 
         $eventFr = new NextMissionEvent('session1', $player, $quest, 'Next mission', $detail);
         $eventFr->language = 'fr';
         $this->assertEquals('Legolas a terminé « Mission 1 ». Tour de Gimli : « Mission 2 »', $eventFr->getMessage());
+        $this->assertEquals('Legolas a terminé « Mission 1 ». Tour de Gimli : « Mission 2 »', $eventFr->detail['toastMessage']['other']);
     }
 
     public function testNextTurnEventMessageLocalization(): void
@@ -128,9 +130,11 @@ class EventMessageTest extends Unit
         $eventEn = new NextTurnEvent('session1', $player, $quest, 'Next turn', $detail);
         $eventEn->language = 'en';
         $this->assertEquals('Gandalf finished turn. Pippin’s turn to play.', $eventEn->getMessage());
+        $this->assertEquals('Gandalf finished turn. Pippin’s turn to play.', $eventEn->detail['toastMessage']['other']);
 
         $eventFr = new NextTurnEvent('session1', $player, $quest, 'Next turn', $detail);
         $eventFr->language = 'fr';
         $this->assertEquals('Gandalf a fini son tour. Au tour de Pippin !', $eventFr->getMessage());
+        $this->assertEquals('Gandalf a fini son tour. Au tour de Pippin !', $eventFr->detail['toastMessage']['other']);
     }
 }
