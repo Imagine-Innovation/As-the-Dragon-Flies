@@ -60,16 +60,17 @@ class NextTurnEvent extends Event
      */
     public function getMessage(): string
     {
-        /** @var array{currentPlayerName?: string, nextPlayerName?: string, toastMessage?: array{current: string, other: string}} */
-        $detail = $this->detail;
-
         if (!isset($this->detail['toastMessage']['other'])) {
+            /** @var array{currentPlayerName?: string, nextPlayerName?: string, toastMessage?: array{current: string, other: string}} */
+            $detail = $this->detail;
+
             $this->detail['toastMessage']['other'] = Yii::t('app/game', '{currentPlayerName} finished turn. {nextPlayerName}’s turn to play.', [
                 'currentPlayerName' => $detail['currentPlayerName'] ?? '',
                 'nextPlayerName' => $detail['nextPlayerName'] ?? '',
-            ], $this->language);
+                    ], $this->language);
         }
 
+        Yii::debug($this->detail['toastMessage']['other']);
         return $this->detail['toastMessage']['other'];
     }
 
