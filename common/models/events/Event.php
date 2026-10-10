@@ -18,6 +18,7 @@ abstract class Event extends BaseObject
     public Quest $quest;
     public int $timestamp;
     public ?int $notificationId = null;
+    public string $language;
 
     /**
      *
@@ -34,6 +35,9 @@ abstract class Event extends BaseObject
         $this->quest = $quest;
         $this->timestamp = time();
         parent::__construct($config);
+        if (!isset($this->language)) {
+            $this->language = Yii::$app->user->identity->language ?? Yii::$app->language ?? 'en';
+        }
     }
 
     /**

@@ -59,10 +59,14 @@ class GameOverEvent extends Event
      */
     public function getMessage(): string
     {
-        /** @var array{playerName: string, questName: string, status: string} */
+        /** @var array{playerName?: string, questName?: string, status?: string} */
         $detail = $this->detail;
 
-        return "{$detail['playerName']} has ended quest “{$detail['questName']}” with status {$detail['status']}.";
+        return Yii::t('app/game', '{playerName} ended quest “{questName}” ({status})', [
+            'playerName' => $detail['playerName'] ?? '',
+            'questName' => $detail['questName'] ?? '',
+            'status' => $detail['status'] ?? '',
+        ], $this->language);
     }
 
     /**
