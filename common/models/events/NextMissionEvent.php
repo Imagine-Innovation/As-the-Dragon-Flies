@@ -60,7 +60,7 @@ class NextMissionEvent extends Event
      */
     public function getMessage(): string
     {
-        /** @var array{currentPlayerName?: string, currentMissionName?: string, nextPlayerName?: string, nextMissionName?: string, toastMessage?: array{current: string, other: string}} */
+        /** @var array{currentPlayerName?: string, currentMissionName?: string, nextPlayerName?: string, nextMissionName?: string, toastMessage?: array{current: string, other: string}, turnMessage?: array{current: string, other: string}} */
         $detail = $this->detail;
 
         if (!isset($this->detail['toastMessage']['other'])) {

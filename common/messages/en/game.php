@@ -103,6 +103,8 @@ return [
     "{currentPlayerName} completed “{currentMissionName}”. {nextPlayerName}’s turn: “{nextMissionName}”" => "{currentPlayerName} completed “{currentMissionName}”. {nextPlayerName}’s turn: “{nextMissionName}”",
     "{currentPlayerName} finished turn. Your turn to play!" => "{currentPlayerName} finished turn. Your turn to play!",
     "{currentPlayerName} finished turn. {nextPlayerName}’s turn to play." => "{currentPlayerName} finished turn. {nextPlayerName}’s turn to play.",
+    "It’s your turn to play" => "It’s your turn to play",
+    "It’s {nextPlayerName}’s turn to play" => "It’s {nextPlayerName}’s turn to play",
     // Event Messages
     '{playerName} ended quest “{questName}” ({status})' => '{playerName} ended quest “{questName}” ({status})',
     '{playerName} joins the quest' => '{playerName} joins the quest',

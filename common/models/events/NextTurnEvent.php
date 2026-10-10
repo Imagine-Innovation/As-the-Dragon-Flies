@@ -60,7 +60,7 @@ class NextTurnEvent extends Event
      */
     public function getMessage(): string
     {
-        /** @var array{currentPlayerName?: string, nextPlayerName?: string, toastMessage?: array{current: string, other: string}} */
+        /** @var array{currentPlayerName?: string, nextPlayerName?: string, toastMessage?: array{current: string, other: string}, turnMessage?: array{current: string, other: string}} */
         $detail = $this->detail;
 
         if (!isset($this->detail['toastMessage']['other'])) {
