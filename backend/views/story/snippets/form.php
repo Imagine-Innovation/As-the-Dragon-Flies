@@ -15,6 +15,13 @@ $languages = [
 ];
 ?>
 
+<div class="d-none">
+    Hidden div to embeb utility tags for PHP/JS communication
+    <span id="hiddenImagePath"><?= $storyRoot ?>/img</span>
+    <span id="hiddenFormName">story</span>
+    <span id="hiddenParentId"></span>
+</div>
+
 <?php $form = ActiveForm::begin(); ?>
 
 <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>

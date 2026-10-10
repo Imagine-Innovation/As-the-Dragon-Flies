@@ -11,6 +11,13 @@ use yii\widgets\ActiveForm;
 $storyRoot = WebResourcesHelper::storyRootPath($model->story_id);
 ?>
 
+<div class="d-none">
+    Hidden div to embeb utility tags for PHP/JS communication
+    <span id="hiddenImagePath"><?= $storyRoot ?>/img</span>
+    <span id="hiddenFormName">chapter</span>
+    <span id="hiddenParentId"></span>
+</div>
+
 <?php $form = ActiveForm::begin(); ?>
 <div class="row mb-3">
     <div class="col-4 col-lg-2 col-3xl-1">

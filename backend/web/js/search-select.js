@@ -3,6 +3,28 @@ const imagePath = $('#hiddenImagePath').html();
 const parentId = $('#hiddenParentId').html();
 const config = [
     {
+        form: 'story',
+        params: [
+            {
+                field: 'story-image',
+                valueType: 'image',
+                minChar: 1,
+                imagePath: imagePath
+            }
+        ]
+    },
+    {
+        form: 'chapter',
+        params: [
+            {
+                field: 'chapter-image',
+                valueType: 'image',
+                minChar: 1,
+                imagePath: imagePath
+            }
+        ]
+    },
+    {
         form: 'mission',
         params: [
             {
