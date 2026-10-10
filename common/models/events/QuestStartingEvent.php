@@ -48,7 +48,9 @@ class QuestStartingEvent extends Event
      */
     public function getMessage(): string
     {
-        return "The quest {$this->quest->name} is starting";
+        return Yii::t('app/game', 'Quest {questName} starting', [
+            'questName' => $this->quest->name,
+        ], $this->language);
     }
 
     /**
@@ -78,9 +80,11 @@ class QuestStartingEvent extends Event
 
         // Dungeon master says hello
         $dungeonMaster = Player::findOne(1);
-        $questName = $this->quest->name;
         if ($dungeonMaster) {
-            $message = "{$this->player->name} has started quest '{$questName}'!";
+            $message = Yii::t('app/game', '{playerName} starts quest “{questName}”', [
+                'playerName' => $this->player->name,
+                'questName' => $this->quest->name,
+            ], $this->language);
             $sendingMessageEvent = new SendingMessageEvent($this->sessionId, $dungeonMaster, $this->quest, $message);
             $sendingMessageEvent->process();
         }

@@ -49,7 +49,9 @@ class PlayerJoiningEvent extends Event
      */
     public function getMessage(): string
     {
-        return "{$this->player->name} is joining the quest";
+        return Yii::t('app/game', '{playerName} joins the quest', [
+            'playerName' => $this->player->name,
+        ], $this->language);
     }
 
     /**
@@ -81,7 +83,7 @@ class PlayerJoiningEvent extends Event
         // Dungeon master says hello
         $dungeonMaster = Player::findOne(1);
         if ($dungeonMaster) {
-            $message = "Player {$this->player->name} has joined the quest";
+            $message = $this->getMessage();
             $sendingMessageEvent = new SendingMessageEvent($this->sessionId, $dungeonMaster, $this->quest, $message);
             $sendingMessageEvent->process();
         }

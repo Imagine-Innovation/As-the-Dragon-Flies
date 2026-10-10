@@ -103,6 +103,12 @@ return [
     "{currentPlayerName} completed “{currentMissionName}”. {nextPlayerName}’s turn: “{nextMissionName}”" => "{currentPlayerName} a terminé « {currentMissionName} ». Tour de {nextPlayerName} : « {nextMissionName} »",
     "{currentPlayerName} finished turn. Your turn to play!" => "{currentPlayerName} a fini son tour. À toi de jouer !",
     "{currentPlayerName} finished turn. {nextPlayerName}’s turn to play." => "{currentPlayerName} a fini son tour. Au tour de {nextPlayerName} !",
+    // Event Messages
+    '{playerName} ended quest “{questName}” ({status})' => '{playerName} a terminé la quête « {questName} » ({status})',
+    '{playerName} joins the quest' => '{playerName} rejoint la quête',
+    '{playerName} quits the quest' => '{playerName} quitte la quête',
+    'Quest {questName} starting' => 'Lancement de la quête « {questName} »',
+    '{playerName} starts quest “{questName}”' => '{playerName} lance la quête « {questName} »',
     // Story levels & company size
     'Undefined' => 'Non défini',
     'Beginner only' => 'Débutants uniquement',

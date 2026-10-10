@@ -14,9 +14,6 @@ use Yii;
 class GameActionEvent extends Event
 {
 
-    /** @var string The story language */
-    public string $language;
-
     /** @var string The action type */
     public string $action;
 
@@ -36,7 +33,6 @@ class GameActionEvent extends Event
         parent::__construct($sessionId, $player, $quest);
         $this->action = $action;
         $this->detail = $detail;
-        $this->language = $this->quest->story->language ?? 'en';
     }
 
     /**

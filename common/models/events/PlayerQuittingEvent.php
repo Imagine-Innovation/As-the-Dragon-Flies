@@ -52,7 +52,9 @@ class PlayerQuittingEvent extends Event
      */
     public function getMessage(): string
     {
-        return "{$this->player->name} is quitting the quest";
+        return Yii::t('app/game', '{playerName} quits the quest', [
+            'playerName' => $this->player->name,
+        ], $this->language);
     }
 
     /**
@@ -81,12 +83,14 @@ class PlayerQuittingEvent extends Event
         $notification = $this->createNotification();
 
         $this->broadcast();
-        Yii::debug('*** Debug *** PlayerJoiningEvent - process');
 
         // Dungeon master says hello
         $dungeonMaster = Player::findOne(1);
         if ($dungeonMaster) {
-            $message = "Player {$this->player->name} has quit the quest. Reason: {$this->reason}";
+            $message = $this->getMessage();
+            if ($this->reason !== '') {
+                $message .= ' (' . $this->reason . ')';
+            }
             $sendingMessageEvent = new SendingMessageEvent($this->sessionId, $dungeonMaster, $this->quest, $message);
             $sendingMessageEvent->process();
         }
