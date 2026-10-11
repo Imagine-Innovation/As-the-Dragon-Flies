@@ -5,7 +5,6 @@ namespace common\components\gameplay;
 use common\components\AppStatus;
 use common\helpers\FindModelHelper;
 use common\helpers\LocalizeMessageHelper;
-use common\helpers\SaveHelper;
 use common\models\events\Event;
 use common\models\events\EventFactory;
 use common\models\Chapter;
@@ -82,6 +81,20 @@ class QuestManager extends BaseManager
             throw new RuntimeException('QuestManager context error: Current player is missing.');
         }
         return $currentPlayer;
+    }
+
+    /**
+     *
+     * @return Chapter
+     * @throws RuntimeException
+     */
+    private function getCurrentChapter(): Chapter
+    {
+        $currentChapter = $this->quest->currentChapter;
+        if ($currentChapter === null) {
+            throw new RuntimeException('QuestManager context error: Current Chapter is missing.');
+        }
+        return $currentChapter;
     }
 
     // --- Logic Methods ---
@@ -207,7 +220,7 @@ class QuestManager extends BaseManager
             'started_at' => time(),
         ]);
 
-        SaveHelper::save($questTurn);
+        $this->save($questTurn);
         return $questTurn;
     }
 
@@ -295,11 +308,7 @@ class QuestManager extends BaseManager
      */
     public function addFirstQuestProgress(): bool
     {
-        $chapter = $this->quest->currentChapter;
-        if ($chapter === null) {
-            throw new Exception("Current chapter not found for Quest #{$this->quest->id}");
-        }
-
+        $chapter = $this->getCurrentChapter();
         $questProgress = $this->addQuestProgress((int) $chapter->first_mission_id);
         return $questProgress !== null;
     }
@@ -486,9 +495,7 @@ class QuestManager extends BaseManager
 
             // Persist quest without running validation,
             // to avoid leaving current_chapter_id out of sync
-            if (!$this->quest->save()) {
-                throw new Exception('Could not update quest current chapter.');
-            }
+            $this->save($this->quest);
         }
     }
 
