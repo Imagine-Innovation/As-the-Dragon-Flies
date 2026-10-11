@@ -2,6 +2,7 @@
 
 namespace common\models\events;
 
+use common\helpers\LocalizeMessageHelper;
 use common\models\Player;
 use common\models\Quest;
 use Yii;
@@ -9,14 +10,26 @@ use Yii;
 /**
  * Event for game actions
  */
+
+/**
+ * @phpstan-type T array{
+ *     status: string,
+ *     playerName: string,
+ *     questName: string,
+ *     toastMessage: array{current: string, other: string},
+ *     timestamp: int
+ * }
+ */
 class GameOverEvent extends Event
 {
 
     /** @var string|null The action type */
     public ?string $action = null;
 
-    /** @var array<string, mixed> Additional action data */
-    public $detail = [];
+    /*     * *** @var array<string, mixed> Additional action data */
+
+    /** @var T|array{} $detail */
+    public $detail;
 
     /**
      * Constructor
@@ -24,7 +37,7 @@ class GameOverEvent extends Event
      * @param Player $player The player who performed the action
      * @param Quest $quest The quest context
      * @param string|null $action The action type
-     * @param array<string, mixed> $detail Additional action data
+     * @param T|array{} $detail Additional action data
      */
     public function __construct(string $sessionId, Player $player, Quest $quest, ?string $action, array $detail = [])
     {
@@ -59,14 +72,21 @@ class GameOverEvent extends Event
      */
     public function getMessage(): string
     {
-        /** @var array{playerName?: string, questName?: string, status?: string} */
-        $detail = $this->detail;
+        if (!isset($this->detail['toastMessage'])) {
+            /** @var T $detail */
+            $detail = $this->detail;
 
-        return Yii::t('app/game', '{playerName} ended quest “{questName}” ({status})', [
-            'playerName' => $detail['playerName'] ?? '',
-            'questName' => $detail['questName'] ?? '',
-            'status' => $detail['status'] ?? '',
-        ], $this->language);
+            $toastMessage = LocalizeMessageHelper::gameOverToastMessage(
+                    $detail['playerName'],
+                    $detail['questName'],
+                    $detail['status']
+            );
+            Yii::debug($toastMessage['other']);
+            return $toastMessage['other'];
+        }
+
+        Yii::debug($this->detail['toastMessage']['other']);
+        return $this->detail['toastMessage']['other'];
     }
 
     /**

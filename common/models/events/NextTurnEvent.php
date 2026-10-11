@@ -2,12 +2,27 @@
 
 namespace common\models\events;
 
+use common\helpers\LocalizeMessageHelper;
 use common\models\Player;
 use common\models\Quest;
 use Yii;
 
 /**
- * Event for game actions
+ * Event for moving to the next player
+ */
+
+/**
+ * @phpstan-type T array{
+ *     currentPlayerId: int,
+ *     currentPlayerName: string,
+ *     questProgressId: int,
+ *     nextPlayerId: int,
+ *     nextPlayerName: string,
+ *     nextTurnSequence: int,
+ *     toastMessage: array{current: string, other: string},
+ *     turnMessage: array{current: string, other: string},
+ *     timestamp: int
+ * }
  */
 class NextTurnEvent extends Event
 {
@@ -15,8 +30,8 @@ class NextTurnEvent extends Event
     /** @var string|null The action type */
     public ?string $action = null;
 
-    /** @var array<string, mixed> Additional action data */
-    public $detail = [];
+    /** @var T|array{} $detail Additional action data */
+    public $detail;
 
     /**
      * Constructor
@@ -24,7 +39,7 @@ class NextTurnEvent extends Event
      * @param Player $player The player who performed the action
      * @param Quest $quest The quest context
      * @param string|null $action The action type
-     * @param array<string, mixed> $detail Additional action data
+     * @param T|array{} $detail Additional action data
      */
     public function __construct(string $sessionId, Player $player, Quest $quest, ?string $action, array $detail = [])
     {
@@ -60,14 +75,13 @@ class NextTurnEvent extends Event
      */
     public function getMessage(): string
     {
-        if (!isset($this->detail['toastMessage']['other'])) {
-            /** @var array{currentPlayerName?: string, nextPlayerName?: string, toastMessage?: array{current: string, other: string}} */
+        if (!isset($this->detail['toastMessage'])) {
+            /** @var T $detail */
             $detail = $this->detail;
 
-            $this->detail['toastMessage']['other'] = Yii::t('app/game', '{currentPlayerName} finished turn. {nextPlayerName}’s turn to play.', [
-                'currentPlayerName' => $detail['currentPlayerName'] ?? '',
-                'nextPlayerName' => $detail['nextPlayerName'] ?? '',
-                    ], $this->language);
+            $toastMessage = LocalizeMessageHelper::nextTurnMessage($detail['nextPlayerName']);
+            Yii::debug($toastMessage['other']);
+            return $toastMessage['other'];
         }
 
         Yii::debug($this->detail['toastMessage']['other']);

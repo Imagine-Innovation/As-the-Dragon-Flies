@@ -25,6 +25,8 @@ enum AppStatus: int
     case ONLINE = 300;
     case OFFLINE = 301;
     case LEFT = 302;
+    case DEAD = 303;
+    case OVER = 304;
     // Mission/Progress status
     case PENDING = 400;
     case IN_PROGRESS = 401;
@@ -63,6 +65,8 @@ enum AppStatus: int
             self::ONLINE => Yii::t('app', 'Online'),
             self::OFFLINE => Yii::t('app', 'Offline'),
             self::LEFT => Yii::t('app', 'No longer in the game'),
+            self::DEAD => Yii::t('app', 'Player is dead'),
+            self::OVER => Yii::t('app', 'Game over'),
             // Mission/Progress status
             self::PENDING => Yii::t('app', 'Pending'),
             self::IN_PROGRESS => Yii::t('app', 'In progress'),
@@ -107,6 +111,8 @@ enum AppStatus: int
             self::ONLINE => ['icon' => 'bi-play-circle', 'tooltip' => Yii::t('app', 'Online')],
             self::OFFLINE => ['icon' => 'bi-pause-circle', 'tooltip' => Yii::t('app', 'Offline')],
             self::LEFT => ['icon' => 'bi-x-circle', 'tooltip' => Yii::t('app', 'No longer in the game')],
+            self::DEAD => ['icon' => 'bi dnd-ghost', 'tooltip' => Yii::t('app', 'Player is dead')],
+            self::OVER => ['icon' => 'bi-trophy-fill', 'tooltip' => Yii::t('app', 'Game over')],
             // Mission/Progress status
             self::PENDING => ['icon' => 'bi-hourglass-split', 'tooltip' => Yii::t('app', 'Waiting to start')],
             self::IN_PROGRESS => ['icon' => 'dnd-d20', 'tooltip' => Yii::t('app', 'In progress')],
@@ -214,6 +220,8 @@ enum AppStatus: int
             self::ONLINE->value,
             self::OFFLINE->value,
             self::LEFT->value,
+            self::DEAD->value,
+            self::OVER->value,
         ];
     }
 
