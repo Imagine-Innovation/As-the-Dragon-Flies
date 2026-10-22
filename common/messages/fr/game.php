@@ -50,6 +50,8 @@ return [
     'Armor Class {ac}' => 'Classe d’armure {ac}',
     'unknown class' => 'classe inconnue',
     'unknown race' => 'race inconnue',
+    'Unknown chapter' => 'Chapitre inconnu',
+    'Unknown mission' => 'Mission inconnue',
     'List of available equipment' => 'Liste des équipements disponibles',
     'Click on the white areas to see the list of items your player can pick up.' => 'Clique sur les zones blanches pour voir la liste des objets que ton joueur peut ramasser.',
     'You have nothing at all' => 'Tu n’as rien du tout',

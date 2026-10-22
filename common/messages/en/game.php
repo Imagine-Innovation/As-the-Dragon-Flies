@@ -50,6 +50,8 @@ return [
     'Armor Class {ac}' => 'Armor Class {ac}',
     'unknown class' => 'unknown class',
     'unknown race' => 'unknown race',
+    'Unknown chapter' => 'Unknown chapter',
+    'Unknown mission' => 'Unknown mission',
     'List of available equipment' => 'List of available equipment',
     'Click on the white areas to see the list of items your player can pick up.' => 'Click on the white areas to see the list of items your player can pick up.',
     'You have nothing at all' => 'You have nothing at all',
