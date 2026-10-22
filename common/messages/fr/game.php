@@ -104,6 +104,16 @@ return [
     'Quest can start once {minPlayers} joined. Current count is {currentCount}' => 'La quête peut commencer dès que {minPlayers} membres ont rejoint. Le nombre actuel est de {currentCount}',
     'Missing required player classes' => 'Classes de joueurs requises manquantes',
     'Quest can start' => 'La quête peut commencer',
+    'No player is selected' => 'Aucun joueur n’est sélectionné',
+    'Player {playerName}’s level ({levelName}) is not within story requirements ({minLevel} to {maxLevel})' => 'Le niveau ({levelName}) du joueur {playerName} ne respecte pas les prérequis ({minLevel} à {maxLevel})',
+    'Quest has reached maximum players ({maxPlayers})' => 'La quête a atteint le nombre maximum de joueurs ({maxPlayers})',
+    'Cannot welcome more players of class {className}' => 'Impossible d’accueillir plus de joueurs de la classe {className}',
+    'Player {playerName} can join the quest' => 'Le joueur {playerName} peut rejoindre la quête',
+    'You can create a new quest' => 'Tu peux créer une nouvelle quête',
+    'Quest is not waiting to start anymore' => 'La quête n’est plus en attente de démarrage',
+    'Quest #{questId} is a valid quest' => 'La quête #{questId} est une quête valide',
+    'Player {playerName} is already involved in another quest' => 'Le joueur {playerName} participe déjà à une autre quête',
+    'Player {playerName} is eligible to join a quest' => 'Le joueur {playerName} peut rejoindre une quête',
     /*
      *  Mission & Turn Toast Messages
      */
