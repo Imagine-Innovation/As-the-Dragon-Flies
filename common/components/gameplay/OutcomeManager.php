@@ -342,10 +342,13 @@ final class OutcomeManager extends BaseManager
      */
     private function getDiceRoll(string $diceToRoll, int $diceRoll): string
     {
-        return Yii::t('app/game', 'rolling dice result', [
-            'diceToRoll' => $diceToRoll,
-            'diceRoll' => $diceRoll,
-        ]);
+        return Yii::t('app/game', 'rolling dice result',
+            [
+                'diceToRoll' => $diceToRoll,
+                'diceRoll' => $diceRoll,
+            ],
+            $this->language
+        );
     }
 
     /**
@@ -357,11 +360,14 @@ final class OutcomeManager extends BaseManager
     private function getActionResult(string $playerName, AppStatus $status): string
     {
         Yii::debug("*** debug *** getActionResult(playerName={$playerName}, status={$status->name})");
-        return Yii::t('app/game', 'action result', [
-            'playerName' => $playerName,
-            'actionName' => $this->action->name,
-            'status' => $status->name,
-        ]);
+        return Yii::t('app/game', 'action result',
+            [
+                'playerName' => $playerName,
+                'actionName' => $this->action->name,
+                'status' => $status->name,
+            ],
+            $this->language
+        );
     }
 
     /**
@@ -372,7 +378,10 @@ final class OutcomeManager extends BaseManager
     private function getSimpleActionResult(AppStatus $status): string
     {
         Yii::debug("*** debug *** getSimpleActionResult(status={$status->name})");
-        return Yii::t('app/game', 'simple action result', ['status' => $status->name]);
+        return Yii::t('app/game', 'simple action result',
+            ['status' => $status->name],
+            $this->language
+        );
     }
 
     /**
@@ -446,7 +455,7 @@ final class OutcomeManager extends BaseManager
         $chapterLog = new ChapterLog([
             'chapter_id' => $chapter->id ?? 0,
             'quest_id' => $questId,
-            'name' => $chapter->name ?? Yii::t('app/game', 'Unknown chapter'),
+            'name' => $chapter->name ?? Yii::t('app/game', 'Unknown chapter', [], $this->language),
             'image' => $chapter->image ?? null,
             'description' => $chapter->description ?? '',
         ]);
@@ -488,7 +497,7 @@ final class OutcomeManager extends BaseManager
         $missionLog = new MissionLog([
             'mission_id' => $mission->id ?? 0,
             'quest_id' => $questId,
-            'name' => $mission->name ?? Yii::t('app/game', 'Unknown mission'),
+            'name' => $mission->name ?? Yii::t('app/game', 'Unknown mission', [], $this->language),
             'image' => $mission->image ?? null,
             'description' => $narrative->rawDescription(),
         ]);
@@ -559,7 +568,7 @@ final class OutcomeManager extends BaseManager
             'shortResult' => $this->getSimpleActionResult($status),
             'result' => $this->getActionResult($playerName, $status),
             'diceRoll' => $this->getDiceRoll($diceToRoll, $diceRoll),
-            'hpLoss' => Yii::t('app/game', 'loosing hp', ['hpLoss' => $this->hpLoss]),
+            'hpLoss' => Yii::t('app/game', 'loosing hp', ['hpLoss' => $this->hpLoss], $this->language),
             'outcomeList' => $outcomeList,
             'isFree' => $this->action->is_free,
             'questProgressId' => $this->getQuestProgressId(),
@@ -583,7 +592,7 @@ final class OutcomeManager extends BaseManager
                 [
                     'name' => '',
                     'image' => null,
-                    'description' => Yii::t('app/game', 'Something happened'),
+                    'description' => Yii::t('app/game', 'Something happened', [], $this->language),
                     'actionOutcome' => [],
                 ]
             ];
@@ -611,16 +620,16 @@ final class OutcomeManager extends BaseManager
     {
         $actionOutcome = [];
         if ($outcome->gained_gp > 0) {
-            $actionOutcome[] = Yii::t('app/game', 'gained gp', ['gp' => $outcome->gained_gp]);
+            $actionOutcome[] = Yii::t('app/game', 'gained gp', ['gp' => $outcome->gained_gp], $this->language);
         }
 
         if ($outcome->gained_xp > 0) {
-            $actionOutcome[] = Yii::t('app/game', 'gained xp', ['xp' => $outcome->gained_xp]);
+            $actionOutcome[] = Yii::t('app/game', 'gained xp', ['xp' => $outcome->gained_xp], $this->language);
         }
 
         if ($outcome->item_id) {
             $itemName = LanguageHelper::defaultName('Item', $outcome->item?->name, $this->language);
-            $actionOutcome[] = Yii::t('app/game', 'gained item', ['itemName' => strtolower($itemName)]);
+            $actionOutcome[] = Yii::t('app/game', 'gained item', ['itemName' => strtolower($itemName)], $this->language);
         }
         return $actionOutcome;
     }
