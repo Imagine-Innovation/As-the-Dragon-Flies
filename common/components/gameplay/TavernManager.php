@@ -173,7 +173,7 @@ class TavernManager extends BaseManager
     {
         // Check if player is selected
         if (!$player) {
-            return ['error' => true, 'denied' => true, 'reason' => 'canPlayerJoinQuest->No player is selected'];
+            return ['error' => true, 'denied' => true, 'reason' => Yii::t('app/game', 'No player is selected')];
         }
 
         // Check if the player is eligible to join a quest
@@ -194,26 +194,35 @@ class TavernManager extends BaseManager
         if (!$this->isPlayerLevelValid($player)) {
             return [
                 'denied' => true,
-                'reason' => "canPlayerJoinQuest->Player {$player->name}'s level ({$player->level?->name}) is not within story requirements ({$story?->min_level} to {$story?->max_level})",
+                'reason' => Yii::t('app/game', 'Player {playerName}’s level ({levelName}) is not within story requirements ({minLevel} to {maxLevel})', [
+                    'playerName' => $player->name,
+                    'levelName' => $player->level->name ?? '',
+                    'minLevel' => $story->min_level ?? 0,
+                    'maxLevel' => $story->max_level ?? 0,
+                ]),
             ];
         }
 
         $playerCount = $quest?->getPlayers()->count();
-        if ($playerCount >= $story?->max_players) {
+        if ($playerCount >= ($story->max_players ?? 0)) {
             return [
                 'denied' => true,
-                'reason' => "canPlayerJoinQuest->Quest has reached maximum players ({$story?->max_players})",
+                'reason' => Yii::t('app/game', 'Quest has reached maximum players ({maxPlayers})', [
+                    'maxPlayers' => $story->max_players ?? 0,
+                ]),
             ];
         }
 
         if (!$this->isPlayerClassValid($player)) {
             return [
                 'denied' => true,
-                'reason' => "canPlayerJoinQuest->Cannot welcome more players of class {$player->class?->name}",
+                'reason' => Yii::t('app/game', 'Cannot welcome more players of class {className}', [
+                    'className' => $player->class->name ?? '',
+                ]),
             ];
         }
 
-        return ['denied' => false, 'reason' => "canPlayerJoinQuest->Player {$player->name} can join the quest"];
+        return ['denied' => false, 'reason' => Yii::t('app/game', 'Player {playerName} can join the quest', ['playerName' => $player->name])];
     }
 
     /**
@@ -225,21 +234,21 @@ class TavernManager extends BaseManager
     {
         // Check if quest exists
         if (!$this->quest) {
-            return ['error' => true, 'denied' => false, 'reason' => 'canPlayerJoinQuest->You can create a new quest'];
+            return ['error' => true, 'denied' => false, 'reason' => Yii::t('app/game', 'You can create a new quest')];
         }
 
         if ($this->quest->status !== AppStatus::WAITING->value) {
             return [
                 'error' => true,
                 'denied' => true,
-                'reason' => 'canPlayerJoinQuest->Quest is not waiting to start anymore',
+                'reason' => Yii::t('app/game', 'Quest is not waiting to start anymore'),
             ];
         }
 
         return [
             'error' => false,
             'denied' => false,
-            'reason' => "canPlayerJoinQuest->Quest #{$this->quest->id} is valid quest",
+            'reason' => Yii::t('app/game', 'Quest #{questId} is a valid quest', ['questId' => $this->quest->id]),
         ];
     }
 
@@ -258,7 +267,7 @@ class TavernManager extends BaseManager
                 return [
                     'error' => true,
                     'denied' => true,
-                    'reason' => "isPlayerValid->Player {$player->name} is already involved in another quest",
+                    'reason' => Yii::t('app/game', 'Player {playerName} is already involved in another quest', ['playerName' => $player->name]),
                 ];
             }
         } elseif ($player->quest_id && $player->quest_id !== $this->quest->id) {
@@ -268,14 +277,14 @@ class TavernManager extends BaseManager
             return [
                 'error' => true,
                 'denied' => true,
-                'reason' => "isPlayerValid->Player {$player->name} is already involved in another quest",
+                'reason' => Yii::t('app/game', 'Player {playerName} is already involved in another quest', ['playerName' => $player->name]),
             ];
         }
 
         return [
             'error' => false,
             'denied' => false,
-            'reason' => "isPlayerValid->Player {$player->name} is eligible to join a quest",
+            'reason' => Yii::t('app/game', 'Player {playerName} is eligible to join a quest', ['playerName' => $player->name]),
         ];
     }
 

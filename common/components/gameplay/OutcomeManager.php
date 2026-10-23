@@ -343,12 +343,12 @@ final class OutcomeManager extends BaseManager
     private function getDiceRoll(string $diceToRoll, int $diceRoll): string
     {
         return Yii::t('app/game', 'rolling dice result',
-                        [
-                            'diceToRoll' => $diceToRoll,
-                            'diceRoll' => $diceRoll,
-                        ],
-                        $this->language
-                );
+            [
+                'diceToRoll' => $diceToRoll,
+                'diceRoll' => $diceRoll,
+            ],
+            $this->language
+        );
     }
 
     /**
@@ -361,13 +361,13 @@ final class OutcomeManager extends BaseManager
     {
         Yii::debug("*** debug *** getActionResult(playerName={$playerName}, status={$status->name})");
         return Yii::t('app/game', 'action result',
-                        [
-                            'playerName' => $playerName,
-                            'actionName' => $this->action->name,
-                            'status' => $status->name,
-                        ],
-                        $this->language
-                );
+            [
+                'playerName' => $playerName,
+                'actionName' => $this->action->name,
+                'status' => $status->name,
+            ],
+            $this->language
+        );
     }
 
     /**
@@ -379,9 +379,9 @@ final class OutcomeManager extends BaseManager
     {
         Yii::debug("*** debug *** getSimpleActionResult(status={$status->name})");
         return Yii::t('app/game', 'simple action result',
-                        ['status' => $status->name],
-                        $this->language
-                );
+            ['status' => $status->name],
+            $this->language
+        );
     }
 
     /**
@@ -455,7 +455,7 @@ final class OutcomeManager extends BaseManager
         $chapterLog = new ChapterLog([
             'chapter_id' => $chapter->id ?? 0,
             'quest_id' => $questId,
-            'name' => $chapter->name ?? 'Unknown chapter',
+            'name' => $chapter->name ?? Yii::t('app/game', 'Unknown chapter', [], $this->language),
             'image' => $chapter->image ?? null,
             'description' => $chapter->description ?? '',
         ]);
@@ -497,7 +497,7 @@ final class OutcomeManager extends BaseManager
         $missionLog = new MissionLog([
             'mission_id' => $mission->id ?? 0,
             'quest_id' => $questId,
-            'name' => $mission->name ?? 'Unknown mission',
+            'name' => $mission->name ?? Yii::t('app/game', 'Unknown mission', [], $this->language),
             'image' => $mission->image ?? null,
             'description' => $narrative->rawDescription(),
         ]);
@@ -592,7 +592,7 @@ final class OutcomeManager extends BaseManager
                 [
                     'name' => '',
                     'image' => null,
-                    'description' => Yii::t('app/game', 'Something happened', $this->language),
+                    'description' => Yii::t('app/game', 'Something happened', [], $this->language),
                     'actionOutcome' => [],
                 ]
             ];

@@ -50,6 +50,8 @@ return [
     'Armor Class {ac}' => 'Armor Class {ac}',
     'unknown class' => 'unknown class',
     'unknown race' => 'unknown race',
+    'Unknown chapter' => 'Unknown chapter',
+    'Unknown mission' => 'Unknown mission',
     'List of available equipment' => 'List of available equipment',
     'Click on the white areas to see the list of items your player can pick up.' => 'Click on the white areas to see the list of items your player can pick up.',
     'You have nothing at all' => 'You have nothing at all',
@@ -102,6 +104,16 @@ return [
     'Quest can start once {minPlayers} joined. Current count is {currentCount}' => 'Quest can start once {minPlayers} joined. Current count is {currentCount}',
     'Missing required player classes' => 'Missing required player classes',
     'Quest can start' => 'Quest can start',
+    'No player is selected' => 'No player is selected',
+    'Player {playerName}’s level ({levelName}) is not within story requirements ({minLevel} to {maxLevel})' => 'Player {playerName}’s level ({levelName}) is not within story requirements ({minLevel} to {maxLevel})',
+    'Quest has reached maximum players ({maxPlayers})' => 'Quest has reached maximum players ({maxPlayers})',
+    'Cannot welcome more players of class {className}' => 'Cannot welcome more players of class {className}',
+    'Player {playerName} can join the quest' => 'Player {playerName} can join the quest',
+    'You can create a new quest' => 'You can create a new quest',
+    'Quest is not waiting to start anymore' => 'Quest is not waiting to start anymore',
+    'Quest #{questId} is a valid quest' => 'Quest #{questId} is a valid quest',
+    'Player {playerName} is already involved in another quest' => 'Player {playerName} is already involved in another quest',
+    'Player {playerName} is eligible to join a quest' => 'Player {playerName} is eligible to join a quest',
     /*
      *  Mission & Turn Toast Messages
      */
