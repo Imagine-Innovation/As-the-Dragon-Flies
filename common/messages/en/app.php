@@ -77,4 +77,5 @@ return [
         =2 { and }
         other {, and }
     }',
+    'indefinite article' => 'a',
 ];

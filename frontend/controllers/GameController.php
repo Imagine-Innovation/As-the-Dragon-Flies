@@ -107,8 +107,8 @@ class GameController extends Controller
         $playerId = Yii::$app->session->get('playerId');
 
         $turnMessage = ($questProgress->current_player_id === $playerId) ?
-                Yii::t('app/game', "It’s your turn to play") :
-                Yii::t('app/game', "It’s {nextPlayerName}’s turn to play", ['nextPlayerName' => $currentPlayer->name ?? '']);
+                Yii::t('app/game', 'Your turn to play') :
+                Yii::t('app/game', '{nextPlayerName} turn to play', ['nextPlayerName' => $currentPlayer->name ?? '']);
 
         return [
             'error' => false,

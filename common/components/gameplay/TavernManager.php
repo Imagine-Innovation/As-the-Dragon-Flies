@@ -71,13 +71,13 @@ class TavernManager extends BaseManager
     public function welcomeMessage(int $playerCount): string
     {
         return match ($playerCount) {
-            0 => Yii::t('app/game', 'There’s nobody here!'),
-            1 => Yii::t('app/game', 'For the moment, it looks like you’re the first one'),
-            2 => Yii::t('app/game', 'Look, there are two of you now'),
-            3 => Yii::t('app/game', 'Ah! but there are three of you! Wait, I’ll get a chair'),
-            4 => Yii::t('app/game', 'Now that there are four of you, I’m going to put you on a bigger table'),
-            5 => Yii::t('app/game', 'With five guys like you, it’s going to be quite a team!'),
-            default => Yii::t('app/game', 'Boy, that’s quite a team!'),
+            0 => Yii::t('app/game', 'Tavern0'),
+            1 => Yii::t('app/game', 'Tavern1'),
+            2 => Yii::t('app/game', 'Tavern2'),
+            3 => Yii::t('app/game', 'Tavern3'),
+            4 => Yii::t('app/game', 'Tavern4'),
+            5 => Yii::t('app/game', 'Tavern5'),
+            default => Yii::t('app/game', 'Tavern-many'),
         };
     }
 
@@ -95,15 +95,15 @@ class TavernManager extends BaseManager
         $missingCount = $storyMinPlayers - $actualPlayerCount;
 
         if ($missingCount > 1) {
-            return Yii::t('app/game', 'We’re still waiting for {missingCount} other members to join us before starting', [
-                'missingCount' => $missingCount,
+            return Yii::t('app/game', '{missingCount} missing members', [
+                        'missingCount' => $missingCount,
             ]);
         }
 
         if ($missingCount === 1) {
-            return Yii::t('app/game', 'One more member to join and we can start');
+            return Yii::t('app/game', 'One more member to join');
         }
-        return Yii::t('app/game', 'The whole company is there, we can start!');
+        return Yii::t('app/game', 'We can start');
     }
 
     /**
@@ -121,19 +121,18 @@ class TavernManager extends BaseManager
         }
 
         $classNames = array_map(fn($class) => $class->name, CharacterClass::findAll(['id' => $missingClassIds]));
+        $article = Yii::t('app', 'indefinite article');
 
         return match (count($classNames)) {
-            0 => Yii::t('app/game', 'Every expected class is represented in the company!'),
-            1 => Yii::t('app/game', 'We still need a {className} to meet all the conditions.', [
-                'className' => $classNames[0],
-            ]),
-            2 => Yii::t('app/game', 'We still need a {className1} and a {className2} to meet all the conditions.', [
+            0 => Yii::t('app/game', 'Every expected class is represented'),
+            1 => Yii::t('app/game', 'We still need a {className}', ['className' => $classNames[0]]),
+            2 => Yii::t('app/game', 'We still need a {className1} and a {className2}', [
                 'className1' => $classNames[0],
                 'className2' => $classNames[1],
             ]),
-            default => Yii::t('app/game', 'We still need a {classesExceptLast} and a {lastClass} to meet all the conditions.', [
-                'classesExceptLast' => implode(', a ', array_slice($classNames, 0, -1)),
-                'lastClass' => end($classNames),
+            default => Yii::t('app/game', 'We still need a {className1} and a {className2}', [
+                'className1' => implode(", {$article} ", array_slice($classNames, 0, -1)),
+                'className2' => end($classNames),
             ]),
         };
     }
@@ -171,121 +170,194 @@ class TavernManager extends BaseManager
      */
     public function canPlayerJoinQuest(?Player &$player): array
     {
-        // Check if player is selected
         if (!$player) {
-            return ['error' => true, 'denied' => true, 'reason' => Yii::t('app/game', 'No player is selected')];
+            return $this->noPlayerSelectedDenyMessage();
         }
 
-        // Check if the player is eligible to join a quest
-        $playerStatus = $this->isPlayerValid($player);
-        if ($playerStatus['error']) {
-            return $playerStatus;
+        if (!$this->isPlayerValid($player)) {
+            return $this->invalidPlayerDenyMessage($player->name);
+        }
+
+        $questStatus = $this->isQuestValid();
+        if ($questStatus['error']) {
+            return $questStatus['denyMessage'];
+        }
+
+        $story = $this->story;
+        if (!$this->isPlayerLevelValid($player)) {
+            return $this->badPlayerLevelDenyMessage($player, $story);
         }
 
         $quest = $this->quest; // quest can be null. Don't call the getter getQuest()
-        $story = $this->story;
-
-        // Check if the quest is a valid one
-        $questStatus = $this->isQuestValid();
-        if ($questStatus['error']) {
-            return $questStatus;
-        }
-
-        if (!$this->isPlayerLevelValid($player)) {
-            return [
-                'denied' => true,
-                'reason' => Yii::t('app/game', 'Player {playerName}’s level ({levelName}) is not within story requirements ({minLevel} to {maxLevel})', [
-                    'playerName' => $player->name,
-                    'levelName' => $player->level->name ?? '',
-                    'minLevel' => $story->min_level ?? 0,
-                    'maxLevel' => $story->max_level ?? 0,
-                ]),
-            ];
-        }
-
         $playerCount = $quest?->getPlayers()->count();
         if ($playerCount >= ($story->max_players ?? 0)) {
-            return [
-                'denied' => true,
-                'reason' => Yii::t('app/game', 'Quest has reached maximum players ({maxPlayers})', [
-                    'maxPlayers' => $story->max_players ?? 0,
-                ]),
-            ];
+            return $this->maxPlayerReachedDenyMessage($story->max_players ?? 0);
         }
 
         if (!$this->isPlayerClassValid($player)) {
-            return [
-                'denied' => true,
-                'reason' => Yii::t('app/game', 'Cannot welcome more players of class {className}', [
-                    'className' => $player->class->name ?? '',
-                ]),
-            ];
+            return $this->noMoreClassDenyMessage($player->class->name ?? '');
         }
 
-        return ['denied' => false, 'reason' => Yii::t('app/game', 'Player {playerName} can join the quest', ['playerName' => $player->name])];
+        return $this->playerCanJoinAllowMessage($player->name ?? '');
+    }
+
+    /**
+     *
+     * @return array{
+     *     denied: bool,
+     *     reason: string
+     * } Associative array with a deny status and the reason why
+     */
+    private function noPlayerSelectedDenyMessage(): array
+    {
+        return [
+            'error' => true,
+            'denied' => true, 'reason' => Yii::t('app/game', 'No player is selected')
+        ];
+    }
+
+    /**
+     *
+     * @param string|null $playerName
+     * @return array{
+     *     denied: bool,
+     *     reason: string
+     * } Associative array with a deny status and the reason why
+     */
+    private function invalidPlayerDenyMessage(?string $playerName): array
+    {
+        return [
+            'denied' => true,
+            'reason' => Yii::t('app/game', '{playerName} in another quest', ['playerName' => $playerName ?? '']),
+        ];
+    }
+
+    /**
+     *
+     * @param Player $player
+     * @param Story|null $story
+     * @return array{
+     *     denied: bool,
+     *     reason: string
+     * } Associative array with a deny status and the reason why
+     */
+    private function badPlayerLevelDenyMessage(Player $player, ?Story $story): array
+    {
+        return [
+            'denied' => true,
+            'reason' => Yii::t('app/game', '{playerName} level {levelName} not between {minLevel} and {maxLevel}', [
+                'playerName' => $player->name,
+                'levelName' => $player->level->name ?? '',
+                'minLevel' => $story->min_level ?? 1,
+                'maxLevel' => $story->max_level ?? 99,
+            ])
+        ];
+    }
+
+    /**
+     *
+     * @param int $maxPlayerCount
+     * @return array{
+     *     denied: bool,
+     *     reason: string
+     * } Associative array with a deny status and the reason why
+     */
+    private function maxPlayerReachedDenyMessage(int $maxPlayerCount): array
+    {
+        return [
+            'denied' => true,
+            'reason' => Yii::t('app/game', 'Max players {maxPlayers} reached', [
+                'maxPlayers' => $maxPlayerCount,
+            ]),
+        ];
+    }
+
+    /**
+     *
+     * @param string $className
+     * @return array{
+     *     denied: bool,
+     *     reason: string
+     * } Associative array with a deny status and the reason why
+     */
+    private function noMoreClassDenyMessage(string $className): array
+    {
+        return [
+            'denied' => true,
+            'reason' => Yii::t('app/game', 'No more {className}', [
+                'className' => $className,
+            ]),
+        ];
+    }
+
+    /**
+     *
+     * @param string $playerName
+     * @return array{
+     *     denied: bool,
+     *     reason: string
+     * } Associative array with a deny status and the reason why
+     */
+    private function playerCanJoinAllowMessage(string $playerName): array
+    {
+        return [
+            'denied' => false,
+            'reason' => Yii::t('app/game', '{playerName} can join the quest', ['playerName' => $playerName])
+        ];
     }
 
     /**
      * Check if a quest is valid
      *
-     * @return array{error: bool, denied: bool, reason: string} Associative array with an error status, a deny status and the reason why
+     * @return array{error: bool, denyMessage: array{denied: bool, reason: string}}
      */
     private function isQuestValid(): array
     {
         // Check if quest exists
         if (!$this->quest) {
-            return ['error' => true, 'denied' => false, 'reason' => Yii::t('app/game', 'You can create a new quest')];
+            return ['error' => true,
+                'denyMessage' => [
+                    'denied' => false,
+                    'reason' => Yii::t('app/game', 'You can create a new quest')
+                ]
+            ];
         }
 
         if ($this->quest->status !== AppStatus::WAITING->value) {
             return [
                 'error' => true,
-                'denied' => true,
-                'reason' => Yii::t('app/game', 'Quest is not waiting to start anymore'),
+                'denyMessage' => [
+                    'denied' => true,
+                    'reason' => Yii::t('app/game', 'Quest is not waiting'),
+                ]
             ];
         }
 
-        return [
-            'error' => false,
-            'denied' => false,
-            'reason' => Yii::t('app/game', 'Quest #{questId} is a valid quest', ['questId' => $this->quest->id]),
-        ];
+        return ['error' => false, 'denyMessage' => ['denied' => false, 'reason' => '']];
     }
 
     /**
      * Check if a player is valid to join a new quest
      *
-     * @param Player $player reference to a Player object
-     * @return array{error: bool, denied: bool, reason: string} Associative array with an error status, a deny status and the reason why
+     * @param Player $player
+     * @return bool
      */
-    private function isPlayerValid(Player $player): array
+    private function isPlayerValid(Player $player): bool
     {
         // Check if player is in another quest
         if ($this->quest === null) {
             if ($player->quest_id) {
                 Yii::debug("*** Debug *** isPlayerValid - quest is null and player->quest_id is {$player->quest_id}");
-                return [
-                    'error' => true,
-                    'denied' => true,
-                    'reason' => Yii::t('app/game', 'Player {playerName} is already involved in another quest', ['playerName' => $player->name]),
-                ];
+                return false;
             }
         } elseif ($player->quest_id && $player->quest_id !== $this->quest->id) {
             Yii::debug(
                     "*** Debug *** isPlayerValid - quest is not null but player->quest_id is {$player->quest_id} <> quest->id {$this->quest->id}",
             );
-            return [
-                'error' => true,
-                'denied' => true,
-                'reason' => Yii::t('app/game', 'Player {playerName} is already involved in another quest', ['playerName' => $player->name]),
-            ];
+            return false;
         }
 
-        return [
-            'error' => false,
-            'denied' => false,
-            'reason' => Yii::t('app/game', 'Player {playerName} is eligible to join a quest', ['playerName' => $player->name]),
-        ];
+        return true;
     }
 
     /**
@@ -530,10 +602,10 @@ class TavernManager extends BaseManager
     /**
      *
      * @param Player $player reference to a Player object
-     * @param string $reason
+     * @param string|null $reason
      * @return array{error: bool, message: string}
      */
-    public function withdrawPlayerFromQuest(Player &$player, string $reason = null): array
+    public function withdrawPlayerFromQuest(Player &$player, ?string $reason = null): array
     {
         $quest = $this->getQuest();
 
@@ -617,7 +689,7 @@ class TavernManager extends BaseManager
         }
 
         if ($quest->status !== AppStatus::WAITING->value) {
-            return ['canStart' => false, 'msg' => Yii::t('app/game', 'Quest {questName} is not in waiting state.', ['questName' => $quest->name])];
+            return ['canStart' => false, 'msg' => Yii::t('app/game', '{questName} not in waiting state', ['questName' => $quest->name])];
         }
 
         $playersCount = $this->getCurrentPlayerCount();
@@ -626,7 +698,7 @@ class TavernManager extends BaseManager
         if ($playersCount < $story->min_players) {
             return [
                 'canStart' => false,
-                'msg' => Yii::t('app/game', 'Quest can start once {minPlayers} joined. Current count is {currentCount}', [
+                'msg' => Yii::t('app/game', '{minPlayers} to start, current count is {currentCount}', [
                     'minPlayers' => $story->min_players,
                     'currentCount' => $playersCount,
                 ]),

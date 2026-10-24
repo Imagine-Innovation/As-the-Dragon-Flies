@@ -74,4 +74,5 @@ return [
     //
     //  List separator keep space char as is
     'and' => ' et ',
+    'indefinite article' => 'un(e)',
 ];

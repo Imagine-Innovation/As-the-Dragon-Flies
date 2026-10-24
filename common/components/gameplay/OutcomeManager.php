@@ -343,12 +343,12 @@ final class OutcomeManager extends BaseManager
     private function getDiceRoll(string $diceToRoll, int $diceRoll): string
     {
         return Yii::t('app/game', 'rolling dice result',
-            [
-                'diceToRoll' => $diceToRoll,
-                'diceRoll' => $diceRoll,
-            ],
-            $this->language
-        );
+                        [
+                            'diceToRoll' => $diceToRoll,
+                            'diceRoll' => $diceRoll,
+                        ],
+                        $this->language
+                );
     }
 
     /**
@@ -361,13 +361,13 @@ final class OutcomeManager extends BaseManager
     {
         Yii::debug("*** debug *** getActionResult(playerName={$playerName}, status={$status->name})");
         return Yii::t('app/game', 'action result',
-            [
-                'playerName' => $playerName,
-                'actionName' => $this->action->name,
-                'status' => $status->name,
-            ],
-            $this->language
-        );
+                        [
+                            'playerName' => $playerName,
+                            'actionName' => $this->action->name,
+                            'status' => $status->name,
+                        ],
+                        $this->language
+                );
     }
 
     /**
@@ -379,9 +379,9 @@ final class OutcomeManager extends BaseManager
     {
         Yii::debug("*** debug *** getSimpleActionResult(status={$status->name})");
         return Yii::t('app/game', 'simple action result',
-            ['status' => $status->name],
-            $this->language
-        );
+                        ['status' => $status->name],
+                        $this->language
+                );
     }
 
     /**
@@ -438,6 +438,7 @@ final class OutcomeManager extends BaseManager
         $existingChapterLog = ChapterLog::findOne(['chapter_id' => $chapter->id ?? 0, 'quest_id' => $questId]);
 
         if ($existingChapterLog !== null) {
+            // logChapter already exists, do not create a new one
             return;
         }
 

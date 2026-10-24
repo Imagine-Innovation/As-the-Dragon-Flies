@@ -21,13 +21,13 @@ final class LocalizeMessageHelper
             ?string $nextPlayerName,
             ?string $nextMissionName): array
     {
-        $currentString = Yii::t('app/game', "{playerName} completed “{missionName}”. Your turn: “{nextMissionName}”", [
+        $currentString = Yii::t('app/game', '{playerName} completed {missionName}. Your turn: {nextMissionName}', [
             'playerName' => $currentPlayerName ?? '',
             'missionName' => $currentMissionName ?? '',
             'nextMissionName' => $nextMissionName ?? '',
         ]);
 
-        $otherString = Yii::t('app/game', "{playerName} completed “{missionName}”. {nextPlayerName}’s turn: “{nextMissionName}”", [
+        $otherString = Yii::t('app/game', '{playerName} completed {missionName}. {nextPlayerName} turn: {nextMissionName}', [
             'playerName' => $currentPlayerName ?? '',
             'missionName' => $currentMissionName ?? '',
             'nextPlayerName' => $nextPlayerName ?? '',
@@ -48,11 +48,11 @@ final class LocalizeMessageHelper
      */
     public static function nextPlayerToastMessage(?string $oldPlayerName, ?string $nextPlayerName): array
     {
-        $currentString = Yii::t('app/game', "{playerName} finished turn. Your turn to play!", [
+        $currentString = Yii::t('app/game', '{playerName} finished turn. Your turn to play', [
             'playerName' => $oldPlayerName ?? '',
         ]);
 
-        $otherString = Yii::t('app/game', "{playerName} finished turn. {nextPlayerName}’s turn to play.", [
+        $otherString = Yii::t('app/game', '{playerName} finished turn. {nextPlayerName} turn', [
             'playerName' => $oldPlayerName ?? '',
             'nextPlayerName' => $nextPlayerName ?? '',
         ]);
@@ -73,12 +73,12 @@ final class LocalizeMessageHelper
     public static function gameOverToastMessage(?string $playerName, ?string $questName, string $status): array
     {
         // ${detail.playerName} has ended quest “${detail.questName}” with status ${detail.status}
-        $currentString = Yii::t('app/game', "You ended quest {questName} with status {status}", [
+        $currentString = Yii::t('app/game', 'You ended {questName} with status {status}', [
             'questName' => $questName ?? '',
             'status' => $status,
         ]);
 
-        $otherString = Yii::t('app/game', "{playerName} ended quest {questName} with status {status}", [
+        $otherString = Yii::t('app/game', '{playerName} ended {questName} with status {status}', [
             'playerName' => $playerName ?? '',
             'questName' => $questName ?? '',
             'status' => $status,
@@ -97,8 +97,8 @@ final class LocalizeMessageHelper
      */
     public static function nextTurnMessage(?string $nextPlayerName): array
     {
-        $turnCurrentString = Yii::t('app/game', "It’s your turn to play");
-        $turnOtherString = Yii::t('app/game', "It’s {nextPlayerName}’s turn to play", [
+        $turnCurrentString = Yii::t('app/game', 'Your turn to play');
+        $turnOtherString = Yii::t('app/game', '{nextPlayerName} turn to play', [
             'nextPlayerName' => $nextPlayerName ?? ''
                 ]
         );
