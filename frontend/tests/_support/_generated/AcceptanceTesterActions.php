@@ -1,4 +1,4 @@
-<?php  //[STAMP] 5c160b01eb82297659a2069d73509cb0
+<?php  //[STAMP] 24066c48b24af979ffc6bf58736ef884
 // phpcs:ignoreFile
 namespace frontend\tests\_generated;
 
@@ -2869,7 +2869,7 @@ trait AcceptanceTesterActions
      * In 3rd argument you can set number a seconds to wait for element to appear
      *
      * @param string|array|WebDriverBy $element
-     * @param callable|array|\Codeception\Util\ActionSequence $actions
+     * @param callable|array|ActionSequence $actions
      * @see \Codeception\Module\WebDriver::performOn()
      */
     public function performOn($element, $actions, int $timeout = 10): void {

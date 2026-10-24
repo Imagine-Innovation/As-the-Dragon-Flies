@@ -1,6 +1,6 @@
 parameters:
     level: 9  # Start at level 0-5 for existing projects; 9 is strictest
-    phpVersion: 80200  # PHP 8.2
+    phpVersion: 80500  # PHP 8.5
     #checkExplicitMixed: false
     #reportUnmatchedIgnoredErrors: false
     #inferPrivatePropertyTypeFromConstructor: true

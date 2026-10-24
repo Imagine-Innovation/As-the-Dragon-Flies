@@ -7,6 +7,7 @@ use common\helpers\SaveHelper;
 use common\models\Notification;
 use Yii;
 use yii\base\Component;
+use yii\base\Event;
 
 /**
  * BaseManager
@@ -23,9 +24,9 @@ abstract class BaseManager extends Component
      * Trigger an event (wrapper for consistency)
      *
      * @param string $name
-     * @param \yii\base\Event|null $event
+     * @param Event|null $event
      */
-    protected function raiseEvent(string $name, $event = null): void
+    protected function raiseEvent(string $name, ?Event $event = null): void
     {
         $this->trigger($name, $event);
     }

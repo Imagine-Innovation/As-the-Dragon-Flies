@@ -30,10 +30,10 @@ class Alert extends \yii\bootstrap5\Widget
 
     /**
      *
-     * @param string $type
+     * @param string|null $type
      * @return string|null
      */
-    protected function bootstrapAlertType(string $type = null): ?string
+    protected function bootstrapAlertType(?string $type = null): ?string
     {
         return match ($type) {
             'error' => 'alert-danger',
