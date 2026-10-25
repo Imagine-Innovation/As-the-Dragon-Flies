@@ -400,8 +400,9 @@ class PlayerItemController extends Controller
      */
     private function equipWithQuiver(PlayerBody &$playerBody, Item &$weapon): void
     {
-        Yii::debug("*** debug *** equipWithQuiver - weapon={$weapon->name}");
-        $haystack = strtolower($weapon->name);
+        Yii::debug("*** debug *** equipWithQuiver - weapon={$weapon->getName()}");
+        $canonicalName = $weapon->getAttribute('name') ?? '';
+        $haystack = strtolower($canonicalName);
 
         if (str_contains($haystack, 'bow')) {
             // Special treatment for weapons that use arrows:
@@ -582,7 +583,8 @@ class PlayerItemController extends Controller
             string $weaponName,
     ): void
     {
-        $haystack = strtolower($weaponName);
+        $canonicalName = $playerItem->item?->getAttribute('name') ?? $weaponName;
+        $haystack = strtolower($canonicalName);
 
         if (str_contains($haystack, 'bow')) {
             // Special treatment for weapons that use arrows:
