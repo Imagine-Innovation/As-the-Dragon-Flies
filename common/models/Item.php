@@ -345,67 +345,67 @@ class Item extends \yii\db\ActiveRecord
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function __get($name)
-    {
-        if ($name === 'name') {
-            return $this->getName();
-        }
-        if ($name === 'description') {
-            return $this->getDescription();
-        }
-        return parent::__get($name);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAttribute($name)
-    {
-        if ($name === 'name') {
-            return $this->getName();
-        }
-        if ($name === 'description') {
-            return $this->getDescription();
-        }
-        return parent::getAttribute($name);
-    }
-
-    /**
      * *****************************
      *      Custom Properties
      * ***************************** */
 
     /**
-     * Retrieves the localized name of the item.
+     * Resolves the target language code for localization.
+     * Defaults to active user identity language or application language.
      *
+     * @param string|null $language
      * @return string
      */
-    public function getName(): string
+    protected function resolveLanguage(?string $language = null): string
     {
-        $rawName = parent::getAttribute('name');
-        if ($rawName === null) {
+        if ($language !== null && $language !== '') {
+            return $language;
+        }
+
+        if (isset(Yii::$app->user->identity->language) && !empty(Yii::$app->user->identity->language)) {
+            return Yii::$app->user->identity->language;
+        }
+
+        return Yii::$app->language ?? 'en';
+    }
+
+    /**
+     * Retrieves the localized display name of the item.
+     *
+     * @param string|null $language Optional language code (e.g. user or story locale).
+     *                              Defaults to user profile locale or app locale.
+     * @return string
+     */
+    public function getName(?string $language = null): string
+    {
+        $rawName = $this->getAttribute('name');
+        if ($rawName === null || $rawName === '') {
             return '';
         }
 
-        $translated = Yii::t('app/item', $rawName);
+        $targetLang = $this->resolveLanguage($language);
+        $translated = Yii::t('app/item', $rawName, [], $targetLang);
+
         return $translated !== $rawName ? $translated : $rawName;
     }
 
     /**
-     * Retrieves the localized description of the item.
+     * Retrieves the localized display description of the item.
      *
+     * @param string|null $language Optional language code (e.g. user or story locale).
+     *                              Defaults to user profile locale or app locale.
      * @return string|null
      */
-    public function getDescription(): ?string
+    public function getDescription(?string $language = null): ?string
     {
-        $rawName = parent::getAttribute('name');
-        $rawDescription = parent::getAttribute('description');
+        $rawName = $this->getAttribute('name');
+        $rawDescription = $this->getAttribute('description');
 
-        if ($rawName !== null) {
+        if ($rawName !== null && $rawName !== '') {
             $key = $rawName . ' description';
-            $translated = Yii::t('app/item', $key);
+            $targetLang = $this->resolveLanguage($language);
+            $translated = Yii::t('app/item', $key, [], $targetLang);
+
             if ($translated !== $key) {
                 return $translated;
             }
