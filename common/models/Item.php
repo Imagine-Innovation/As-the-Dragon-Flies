@@ -345,9 +345,74 @@ class Item extends \yii\db\ActiveRecord
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function __get($name)
+    {
+        if ($name === 'name') {
+            return $this->getName();
+        }
+        if ($name === 'description') {
+            return $this->getDescription();
+        }
+        return parent::__get($name);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAttribute($name)
+    {
+        if ($name === 'name') {
+            return $this->getName();
+        }
+        if ($name === 'description') {
+            return $this->getDescription();
+        }
+        return parent::getAttribute($name);
+    }
+
+    /**
      * *****************************
      *      Custom Properties
      * ***************************** */
+
+    /**
+     * Retrieves the localized name of the item.
+     *
+     * @return string
+     */
+    public function getName(): string
+    {
+        $rawName = parent::getAttribute('name');
+        if ($rawName === null) {
+            return '';
+        }
+
+        $translated = Yii::t('app/item', $rawName);
+        return $translated !== $rawName ? $translated : $rawName;
+    }
+
+    /**
+     * Retrieves the localized description of the item.
+     *
+     * @return string|null
+     */
+    public function getDescription(): ?string
+    {
+        $rawName = parent::getAttribute('name');
+        $rawDescription = parent::getAttribute('description');
+
+        if ($rawName !== null) {
+            $key = $rawName . ' description';
+            $translated = Yii::t('app/item', $key);
+            if ($translated !== $key) {
+                return $translated;
+            }
+        }
+
+        return $rawDescription;
+    }
 
     /**
      * Select the main category name among the different item categories
