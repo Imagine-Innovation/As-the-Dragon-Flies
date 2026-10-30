@@ -83,7 +83,6 @@ class PlayerCartController extends Controller
                     'item_type_id' => SORT_ASC,
                     'name' => SORT_ASC,
                 ])
-                ->with('itemType')
                 ->all();
 
         return $this->render('shop', [

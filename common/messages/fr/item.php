@@ -127,7 +127,7 @@ return [
     'Drum' => 'Tambour',
     'Drum description' => "Instrument de musique à percussion constitué d'une membrane tendue sur un fût.",
     'Dulcimer' => 'Tympanon',
-    'Dulcimer description' => "A dulcimer was a stringed instrument known in the Realms. The Zakharan version was known as a santur. The dulcimer had strings stretched over a sounding board, which was typically trapezoidal in shape. The strings would be plucked or struck with a hammer.",
+    'Dulcimer description' => "Le tympanon est un instrument de musique à cordes tendues sur une table de résonance trapézoïdale, pincées ou frappées à l'aide de petits marteaux.",
     'Dungeoneers Pack' => 'Paquetage d\'explorateur de donjon',
     'Dungeoneers Pack description' => "Comprend un sac à dos, une pince de monseigneur, un marteau, 10 pitons, 10 torches, une boîte d'allumage, 10 jours de rations, une gourde et 15 mètres de corde de chanvre.",
     'Emblem' => 'Emblème',
