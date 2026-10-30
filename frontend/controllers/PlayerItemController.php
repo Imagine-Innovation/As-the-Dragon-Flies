@@ -276,6 +276,7 @@ class PlayerItemController extends Controller
     private function savePlayerBody(PlayerBody &$playerBody, string $itemName, bool $equiped = true): array
     {
         Yii::debug("*** debug *** savePlayerBody - itemName={$itemName}");
+
         $successfullySaved = SaveHelper::save($playerBody, false);
         if ($successfullySaved) {
             $player = Player::findOne($playerBody->player_id);
@@ -401,8 +402,9 @@ class PlayerItemController extends Controller
     private function equipWithQuiver(PlayerBody &$playerBody, Item &$weapon): void
     {
         Yii::debug("*** debug *** equipWithQuiver - weapon={$weapon->name}");
-        $canonicalName = $weapon->getAttribute('name') ?? '';
-        $haystack = strtolower($canonicalName);
+        $weaponName = $weapon->name;
+
+        $haystack = strtolower($weaponName);
 
         if (str_contains($haystack, 'bow')) {
             // Special treatment for weapons that use arrows:
@@ -412,7 +414,16 @@ class PlayerItemController extends Controller
                 return;
             }
             $amunitionId = $bow->amunition_id;
-            $playerBody->back_item_id = $amunitionId;
+            if (empty($bow->amunition_id)) {
+                return;
+            }
+            $playerAmunition = PlayerItem::findOne([
+                'player_id' => $playerBody->player_id,
+                'item_id' => $amunitionId,
+            ]);
+            $playerBody->back_item_id = ($playerAmunition !== null && $playerAmunition->quantity > 0)
+                ? $amunitionId
+                : null;
         }
     }
 
@@ -583,8 +594,8 @@ class PlayerItemController extends Controller
             string $weaponName,
     ): void
     {
-        $canonicalName = $playerItem->item?->getAttribute('name') ?? $weaponName;
-        $haystack = strtolower($canonicalName);
+
+        $haystack = strtolower($weaponName);
 
         if (str_contains($haystack, 'bow')) {
             // Special treatment for weapons that use arrows:
