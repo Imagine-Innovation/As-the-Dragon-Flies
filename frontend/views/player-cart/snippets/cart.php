@@ -52,15 +52,22 @@ $item = $playerCart->item;
         </div>
         <img src="<?= $imgPath ?>/item/<?= $item->image ?>" class="image-thumbnail float-start" style="width: 80px;height: 80px;">
         <h6 class="card-subtitle">
-            <?= $item->name ?>
+            <?= Yii::t('app/item', $item->name) ?>
             <?= $item->quantity > 1 ? "(x{$item->quantity})" : '' ?>
             (<?= $item->price ?>)
         </h6>
         <h6 class="card-subtitle text-muted w-75">
+            <?php
+            $descKey = $item->name . ' description';
+            $translatedDesc = Yii::t('app/item', $descKey);
+            $displayDesc = ($translatedDesc !== $descKey && $translatedDesc !== null && $translatedDesc !== '')
+                ? $translatedDesc
+                : $item->description;
+            ?>
             <?=
             ModalDesc::widget([
-                'name' => $item->name,
-                'description' => $item->description,
+                'name' => Yii::t('app/item', $item->name),
+                'description' => $displayDesc,
                 'maxLength' => 180,
                 'type' => $item->itemType->name,
                 'id' => $playerCart->item_id,
