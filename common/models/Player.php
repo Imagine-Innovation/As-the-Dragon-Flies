@@ -651,7 +651,7 @@ class Player extends \yii\db\ActiveRecord
      * @return bool|null Returns true if the player is proficient with the item, false if not,
      *                   or null if the player parameter is null.
      */
-    public function isProficient(int $itemId): ?bool
+    public function isProficientV1(int $itemId): ?bool
     {
         // Check whether the player's class gives a direct proficiency for the item.
         Yii::debug("*** Debug *** isProficient({$this->class_id}, {$itemId})");
@@ -673,6 +673,40 @@ class Player extends \yii\db\ActiveRecord
 
         Yii::debug('*** Debug *** isProficient return ' . ($proficient ? 'true' : 'false'));
         return $proficient ? true : false;
+    }
+
+    public function isProficient(int $itemId): bool
+    {
+        Yii::debug("*** Debug *** isProficient({$itemId}) for class_id={$this->class_id}");
+
+        /**
+          $isProficient = ClassItemProficiency::find()
+          ->where(['class_id' => $this->class_id])
+          ->andWhere([
+          'or',
+          ['item_id' => $itemId],
+          ['category_id' => ItemCategory::find()->select('category_id')->where(['item_id' => $itemId])]
+          ])
+          ->exists();
+         *
+         */
+        $isProficient = ClassItemProficiency::find()
+                ->alias('cip')
+                ->leftJoin(
+                        ['ic' => ItemCategory::tableName()],
+                        'ic.category_id = cip.category_id AND ic.item_id = :itemId',
+                        [':itemId' => $itemId]
+                )
+                ->where(['cip.class_id' => $this->class_id])
+                ->andWhere([
+                    'or',
+                    ['cip.item_id' => $itemId],
+                    ['is not', 'ic.item_id', null]
+                ])
+                ->exists();
+
+        Yii::debug('*** Debug *** isProficient return ' . ($isProficient ? 'true' : 'false'));
+        return $isProficient;
     }
 
     /**
@@ -733,7 +767,7 @@ class Player extends \yii\db\ActiveRecord
         $updatedRows = PlayerItem::updateAll([
             'quantity' => new \yii\db\Expression("quantity+{$quantity}"),
             'is_carrying' => 1,
-        ], [
+                ], [
             'player_id' => $this->id,
             'item_id' => $itemId,
         ]);
@@ -757,5 +791,4 @@ class Player extends \yii\db\ActiveRecord
         }
         return true;
     }
-
 }

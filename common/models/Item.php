@@ -80,23 +80,14 @@ class Item extends \yii\db\ActiveRecord
             [['is_purchasable'], 'default', 'value' => 1],
             [['is_wearable'], 'default', 'value' => 0],
             [['item_type_id', 'name'], 'required'],
-            [
-                ['item_type_id', 'sort_order', 'cost', 'quantity', 'is_packable', 'is_wearable', 'is_purchasable'],
-                'integer',
-            ],
+            [['item_type_id', 'sort_order', 'cost', 'quantity', 'is_packable', 'is_wearable', 'is_purchasable'], 'integer'],
             [['description'], 'string'],
             [['description'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['weight', 'max_load', 'max_volume'], 'number'],
             [['name', 'image'], 'string', 'max' => 64],
             [['coin'], 'string', 'max' => 2],
             [['name'], 'unique'],
-            [
-                ['item_type_id'],
-                'exist',
-                'skipOnError' => true,
-                'targetClass' => ItemType::class,
-                'targetAttribute' => ['item_type_id' => 'id'],
-            ],
+            [['item_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => ItemType::class, 'targetAttribute' => ['item_type_id' => 'id']],
         ];
     }
 
@@ -358,14 +349,18 @@ class Item extends \yii\db\ActiveRecord
      */
     protected function resolveLanguage(?string $language = null): string
     {
+        Yii::debug("*** debug *** resolveLanguage({$language})");
         if ($language !== null && $language !== '') {
+            Yii::debug("*** debug *** resolveLanguage({$language}) returns 1 {$language}");
             return $language;
         }
 
         if (isset(Yii::$app->user->identity->language) && !empty(Yii::$app->user->identity->language)) {
+            Yii::debug("*** debug *** resolveLanguage({$language}) returns 2 {(Yii::$app->user->identity->language)}");
             return Yii::$app->user->identity->language;
         }
 
+        Yii::debug("*** debug *** resolveLanguage({$language}) returns 3 {(Yii::$app->language ?? 'en')}");
         return Yii::$app->language ?? 'en';
     }
 
@@ -378,15 +373,19 @@ class Item extends \yii\db\ActiveRecord
      */
     public function getName(?string $language = null): string
     {
+        Yii::debug("*** debug *** getName({$language})");
         $rawName = $this->getAttribute('name');
         if ($rawName === null || $rawName === '') {
+            Yii::debug("*** debug *** getName({$language}) return 1 ''");
             return '';
         }
 
         $targetLang = $this->resolveLanguage($language);
         $translated = Yii::t('app/item', $rawName, [], $targetLang);
 
-        return $translated !== $rawName ? $translated : $rawName;
+        $name = $translated !== $rawName ? $translated : $rawName;
+        Yii::debug("*** debug *** getName({$language}) return 2 {$name}");
+        return $name;
     }
 
     /**
@@ -398,6 +397,7 @@ class Item extends \yii\db\ActiveRecord
      */
     public function getDescription(?string $language = null): ?string
     {
+        Yii::debug("*** debug *** getDescription({$language})");
         $rawName = $this->getAttribute('name');
         $rawDescription = $this->getAttribute('description');
 
@@ -407,10 +407,12 @@ class Item extends \yii\db\ActiveRecord
             $translated = Yii::t('app/item', $key, [], $targetLang);
 
             if ($translated !== $key) {
+                Yii::debug("*** debug *** getDescription({$language}) returns 1 {$translated}");
                 return $translated;
             }
         }
 
+        Yii::debug("*** debug *** getDescription({$language}) returns 2 {$rawDescription}");
         return $rawDescription;
     }
 
