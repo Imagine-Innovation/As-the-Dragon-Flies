@@ -17,7 +17,7 @@ $itemTypes = ['Armor', 'Helmet', 'Shield', 'Weapon', 'Tool'];
                         <div class="d-flex align-items-center justify-content-between">
                             <div class="d-flex align-items-center">
                                 <img src="<?= $imgPath ?>/item/<?= $item['image'] ?>" class="image-thumbnail me-2" style="width: 50px;height: 50px;">
-                                <?= $item['name'] ?>
+                                <?= Yii::t('app/item', $item['name']) ?>
                                 <?= $item['quantity'] > 1
                                             ? "(x{$item['quantity']})" : ''
                                 ?>

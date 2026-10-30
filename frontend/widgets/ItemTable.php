@@ -205,10 +205,18 @@ class ItemTable extends Widget
                 "*** Debug ***  ItemTable Widget - renderTableCell() - colIndex={$colIndex}, col['property']={$col['property']}",
         );
         // Retrieve the content for the table cell using the model's property.
-        $property = $col['property'] === 'categories' ? implode(', ', ArrayHelper::getColumn($item->categories, 'name'))
-                    : $item[$col['property']];
-
-        $cellContent = is_string($property) ? $property : '';
+        if ($col['property'] === 'categories') {
+            $cellContent = implode(', ', ArrayHelper::getColumn($item->categories, 'name'));
+        } elseif ($col['property'] === 'name') {
+            $cellContent = Yii::t('app/item', $item->name);
+        } elseif ($col['property'] === 'description') {
+            $key = $item->name . ' description';
+            $translated = Yii::t('app/item', $key);
+            $cellContent = ($translated !== $key && $translated !== null && $translated !== '') ? $translated : ($item->description ?? '');
+        } else {
+            $property = $item[$col['property']];
+            $cellContent = is_string($property) ? $property : '';
+        }
         Yii::debug("*** Debug ***  ItemTable Widget - renderTableCell() - cellContent={$cellContent}");
 
         // Format the content for display, considering whether it's an icon, an image

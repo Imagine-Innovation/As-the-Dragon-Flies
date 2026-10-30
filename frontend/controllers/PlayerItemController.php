@@ -400,7 +400,7 @@ class PlayerItemController extends Controller
      */
     private function equipWithQuiver(PlayerBody &$playerBody, Item &$weapon): void
     {
-        Yii::debug("*** debug *** equipWithQuiver - weapon={$weapon->getName()}");
+        Yii::debug("*** debug *** equipWithQuiver - weapon={$weapon->name}");
         $canonicalName = $weapon->getAttribute('name') ?? '';
         $haystack = strtolower($canonicalName);
 
