@@ -18,6 +18,8 @@ final class SaveHelper
      */
     public static function save(ActiveRecord &$model, bool $throw = true): bool
     {
+        $pk = json_encode($model->getPrimaryKey());
+        Yii::debug("*** debug *** save helper activeRecord, PK={$pk}");
         $successfullySaved = $model->save();
         if ($successfullySaved) {
             return true;

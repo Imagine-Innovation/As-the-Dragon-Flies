@@ -30,7 +30,7 @@ $imgPath = WebResourcesHelper::imagePath();
                             ?>
                         </div>
                         <h4 class="card-title text-center">
-                            <?= $item['name'] ?>
+                            <?= Yii::t('app/item', $item['name']) ?>
                             <?php if ($item['quantity'] > 1): ?>
                                 (x<?= $item['quantity'] ?>)
                             <?php endif; ?>
@@ -42,10 +42,17 @@ $imgPath = WebResourcesHelper::imagePath();
                         </h4>
                         <h4 class="card-subtitle text-center"><?= $item['price'] ?></h4>
                         <h6 class="card-subtitle text-muted">
+                            <?php
+                            $descKey = $item['name'] . ' description';
+                            $translatedDesc = Yii::t('app/item', $descKey);
+                            $displayDesc = ($translatedDesc !== $descKey && $translatedDesc !== null && $translatedDesc !== '')
+                                ? $translatedDesc
+                                : $item['description'];
+                            ?>
                             <?=
                             ModalDesc::widget([
-                                'name' => $item['name'],
-                                'description' => $item['description'],
+                                'name' => Yii::t('app/item', $item['name']),
+                                'description' => $displayDesc,
                                 'maxLength' => 180,
                                 'type' => $item['type'],
                                 'id' => $item['id'],

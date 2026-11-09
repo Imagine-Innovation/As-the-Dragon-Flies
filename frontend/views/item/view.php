@@ -39,8 +39,19 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'item_type_id',
             'image_id',
-            'name',
-            'description:ntext',
+            [
+                'attribute' => 'name',
+                'value' => Yii::t('app/item', $model->name),
+            ],
+            [
+                'attribute' => 'description',
+                'format' => 'ntext',
+                'value' => function ($model) {
+                    $key = $model->name . ' description';
+                    $translated = Yii::t('app/item', $key);
+                    return ($translated !== $key && $translated !== null && $translated !== '') ? $translated : $model->description;
+                },
+            ],
             'sort_order',
             'cost',
             'coin',

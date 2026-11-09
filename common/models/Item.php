@@ -349,6 +349,7 @@ class Item extends \yii\db\ActiveRecord
      *      Custom Properties
      * ***************************** */
 
+
     /**
      * Select the main category name among the different item categories
      *
