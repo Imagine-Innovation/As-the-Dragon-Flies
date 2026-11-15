@@ -20,25 +20,24 @@ use Yii;
  * cursor: each client sends back the last event id it has seen ("after")
  * and receives every newer event, which guarantees no loss and no
  * duplication, even across reconnections.
- *
- * @package common\components\gameplay
  */
-class EventWaiter extends BaseManager
+final class EventWaiter extends BaseManager
 {
 
-    const POLL_INTERVAL_MICROSECONDS = 300000;
-    const DEFAULT_TIMEOUT_SECONDS = 25;
-    const PURGE_MAX_AGE_SECONDS = 86400;
+    public const POLL_INTERVAL_MICROSECONDS = 300_000;
+    public const DEFAULT_TIMEOUT_SECONDS    = 25;
+    public const PURGE_MAX_AGE_SECONDS      = 86_400;
 
     /**
-     * @var int|null ID of the quest whose events are waited for
+     * ID of the quest whose events are waited for.
+     *
+     * @var int|null
      */
     public ?int $questId = null;
 
     /**
-     *
-     * @param array<string, mixed> $config
-     * @throws \Exception
+     * @param array<string, mixed> $config configuration with a mandatory questId
+     * @throws \Exception when questId is missing
      */
     public function __construct($config = [])
     {
@@ -60,10 +59,10 @@ class EventWaiter extends BaseManager
      * returned immediately so that a freshly loaded page does not replay
      * old events.
      *
-     * @param int $after last event id seen by the client
+     * @param int      $after          last event id seen by the client
      * @param int|null $timeoutSeconds max seconds to block (defaults to DEFAULT_TIMEOUT_SECONDS)
      * @return array{events: array<int, array<string, mixed>>, after: int}
-     * @throws \Exception
+     * @throws \Exception when the quest was not provided
      */
     public function wait(int $after, ?int $timeoutSeconds = null): array
     {
@@ -100,7 +99,7 @@ class EventWaiter extends BaseManager
      * playerId, questId, timestamp + event payload).
      *
      * @param int $questId ID of the quest
-     * @param int $after last event id seen by the client
+     * @param int $after   last event id seen by the client
      * @return array<int, array<string, mixed>>
      */
     public function fetchEvents(int $questId, int $after): array
@@ -121,7 +120,7 @@ class EventWaiter extends BaseManager
     /**
      * Rebuilds the client message from a persisted notification.
      *
-     * @param Notification $notification
+     * @param Notification $notification notification to convert
      * @return array<string, mixed>
      */
     public function buildEventMessage(Notification $notification): array
@@ -157,8 +156,6 @@ class EventWaiter extends BaseManager
      *
      * Replaces the deletion previously performed by the WebSocket daemon
      * on game-over, which would race with polling clients.
-     *
-     * @return void
      */
     protected function purgeExpired(): void
     {
@@ -175,8 +172,7 @@ class EventWaiter extends BaseManager
     }
 
     /**
-     *
-     * @return int
+     * Returns the blocking timeout configured for the waiter.
      */
     protected function defaultTimeout(): int
     {

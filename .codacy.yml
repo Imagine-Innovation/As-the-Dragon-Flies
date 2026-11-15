@@ -1,0 +1,13 @@
+# Codacy configuration
+#
+# The repository follows PSR-12 (4-space indentation, PSR-4 file names,
+# no closing PHP tag). Codacy's default PHPCS standard set (PEAR/Squiz)
+# contradicts these conventions and flags every new file, so the PHP
+# engine is pinned to PSR-12. Deeper static analysis remains covered by
+# PHPStan level 9 (phpstan.neon) and mago (mago.toml).
+
+engines:
+  phpcs:
+    enabled: true
+    config:
+      standard: "PSR12"

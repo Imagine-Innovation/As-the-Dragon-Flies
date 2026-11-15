@@ -8,7 +8,7 @@ use Codeception\Test\Unit;
 use common\components\gameplay\EventWaiter;
 use common\models\Notification;
 
-class EventWaiterTest extends Unit
+final class EventWaiterTest extends Unit
 {
 
     public function testBuildEventMessageReconstructsWireFormat(): void
