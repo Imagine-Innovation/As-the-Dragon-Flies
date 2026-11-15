@@ -23,7 +23,6 @@ use Yii;
  */
 final class EventWaiter extends BaseManager
 {
-
     public const POLL_INTERVAL_MICROSECONDS = 300_000;
     public const DEFAULT_TIMEOUT_SECONDS    = 25;
     public const PURGE_MAX_AGE_SECONDS      = 86_400;
@@ -105,15 +104,15 @@ final class EventWaiter extends BaseManager
     public function fetchEvents(int $questId, int $after): array
     {
         $notifications = Notification::find()
-                ->where(['quest_id' => $questId])
-                ->andWhere(['>', 'id', $after])
-                ->andWhere(['is_private' => 0])
-                ->orderBy(['id' => SORT_ASC])
-                ->all();
+            ->where(['quest_id' => $questId])
+            ->andWhere(['>', 'id', $after])
+            ->andWhere(['is_private' => 0])
+            ->orderBy(['id' => SORT_ASC])
+            ->all();
 
         return array_values(array_map(
-                fn (Notification $notification): array => $this->buildEventMessage($notification),
-                $notifications,
+            fn (Notification $notification): array => $this->buildEventMessage($notification),
+            $notifications,
         ));
     }
 
@@ -145,8 +144,8 @@ final class EventWaiter extends BaseManager
     public function currentCursor(): int
     {
         $maxId = Notification::find()
-                ->where(['quest_id' => $this->questId])
-                ->max('id');
+            ->where(['quest_id' => $this->questId])
+            ->max('id');
 
         return (int) ($maxId ?? 0);
     }
@@ -161,9 +160,9 @@ final class EventWaiter extends BaseManager
     {
         $purgeBefore = time() - self::PURGE_MAX_AGE_SECONDS;
         $deleted = Notification::deleteAll([
-                    'and',
-                    ['quest_id' => $this->questId],
-                    ['<', 'created_at', $purgeBefore],
+            'and',
+            ['quest_id' => $this->questId],
+            ['<', 'created_at', $purgeBefore],
         ]);
 
         if ($deleted > 0) {

@@ -10,7 +10,6 @@ use common\models\Notification;
 
 final class EventWaiterTest extends Unit
 {
-
     public function testBuildEventMessageReconstructsWireFormat(): void
     {
         $notification = new Notification();
