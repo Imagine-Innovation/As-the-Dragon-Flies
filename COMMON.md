@@ -10,8 +10,8 @@ The `common/` directory forms the central foundation of the **As the Dragon Flie
 
 ### Key Responsibilities & Subsystems
 * **Shared Gameplay Core (`common/components/gameplay/`):** Encapsulates turn-based RPG mechanics, quest progression, action and outcome evaluation, character stat calculations, tavern room management, and player chat.
-* **Real-Time Event Framework (`common/models/events/` & `common/extensions/EventHandler/`):** Defines real-time WebSocket event payloads (`GameActionEvent`, `NextTurnEvent`, `NextMissionEvent`, `GameOverEvent`, `SendingMessageEvent`) and handles IPC message passing between PHP backend processes and the Node.js / WebSocket event handler server on port `8080`.
-* **Centralized State & Session Management (`ContextManager`):** Coordinates user identity, selected player character, active quest state, session UUID, and language preferences across requests and websocket streams.
+* **Real-Time Event Framework (`common/models/events/`):** Defines real-time event payloads (`GameActionEvent`, `NextTurnEvent`, `NextMissionEvent`, `GameOverEvent`, `SendingMessageEvent`) persisted as `notification` rows and delivered to clients through HTTP long polling (`EventWaiter`).
+* **Centralized State & Session Management (`ContextManager`):** Coordinates user identity, selected player character, active quest state, session UUID, and language preferences across requests and AJAX calls.
 * **Localization Engine (`LanguageSelector` & `common/messages/`):** Manages multi-language translations ('en' and 'fr') using Yii2's `PhpMessageSource` with a centralized category mapping in `common/config/main.php`.
 * **ActiveRecord Data Layer (`common/models/`):** Provides ORM definitions and validation logic for over 90 relational tables encompassing campaign authoring, gameplay state, character equipment, user roles, and system event logging.
 * **Shared Web Assets & Theme (`common/web/`):** Hosts the primary system stylesheet (`dragon-lite.css`), custom WYSIWYG editor script (`simple-rich-text.js`), pure ES6 client library (`core-library.js`), icon fonts, and typography.
@@ -41,13 +41,9 @@ common/
 │   └── Shopping.php                  # Shop item purchasing & inventory endowment
 ├── config/
 │   ├── bootstrap.php                 # Global path aliases (`@common`, `@frontend`, `@backend`, `@console`)
-│   ├── main.php                      # Centralized component configuration (i18n, cache, log, eventHandler, httpclient)
+│   ├── main.php                      # Centralized component configuration (i18n, cache, log)
 │   ├── params.php                    # Shared configuration parameters
 │   └── test.php                      # Test configuration overrides
-├── extensions/
-│   └── EventHandler/                 # Real-time WebSocket event handler integration
-│       ├── EventHandler.php          # PHP socket client to broadcast events to WebSocket server
-│       └── Server/                   # Node.js / Socket server implementation
 ├── helpers/                          # Shared utility & static helper classes
 │   ├── ActionButtonsConfig.php       # Action button styling & configuration
 │   ├── DateTimeHelper.php            # Date/time formatting & timezone utilities
@@ -129,10 +125,8 @@ common/
 ### 3.1 Centralized Components (`common/config/main.php`)
 All shared components are configured in `@common/config/main.php`:
 * **`i18n`:** Uses `yii\i18n\PhpMessageSource`. Configured with `app*` wildcard mapping `app`, `app/guest`, `app/lobby`, `app/error`, and `app/game` to file maps in `@common/messages`.
-* **`eventHandler`:** Instance of `common\extensions\EventHandler\EventHandler` used to send JSON messages to the WebSocket daemon process.
-* **`httpclient`:** Configured `yii\httpclient\Client` for outbound JSON API requests.
 * **`cache`:** Configured with `yii\caching\FileCache` by default.
-* **`log`:** File target logging runtime errors and warnings to `@runtime/logs/console.log` and websocket communications to `@runtime/logs/websocket.log`.
+* **`log`:** File target logging runtime errors and warnings to `@runtime/logs/console.log`.
 
 ### 3.2 Context & Session Management (`ContextManager`)
 `ContextManager` initializes and maintains runtime session state across HTTP requests and AJAX calls:
@@ -213,7 +207,7 @@ The gameplay mechanics are segregated into manager classes extending `BaseManage
   * Awards or removes items (`Item` endowment via `PlayerItem`).
   * Applies damage or healing to player HP (`current_hp`).
   * Triggers mission jumps (`next_mission_id`).
-* **Logging & Events:** Stores `dialogLog` into `QuestLog` and triggers `GameActionEvent` broadcast via `EventHandler`.
+* **Logging & Events:** Stores `dialogLog` into `QuestLog` and triggers `GameActionEvent` broadcast (persisted as a `notification` row).
 
 ### 5.4 PlayerManager
 * **Role:** Character attribute calculations, equipment modifiers, and combat formulas.
@@ -230,7 +224,7 @@ The gameplay mechanics are segregated into manager classes extending `BaseManage
 
 ## 6. Real-Time Event Architecture
 
-Real-time synchronization across clients is powered by event payloads in `common/models/events/` dispatched via `EventHandler`.
+Real-time synchronization across clients is powered by event payloads in `common/models/events/` persisted as `notification` rows and delivered through HTTP long polling — no external WebSocket daemon is required.
 
 ### 6.1 Event Flow
 ```
@@ -242,12 +236,12 @@ Real-time synchronization across clients is powered by event payloads in `common
           +---> Creates QuestLog entry (localized via story language)
           |
           v
-  [ EventHandler::send(Event $event) ]
+  [ createNotification() -> notification table row ]
           |
-          v (JSON payload over TCP socket)
-  [ WebSocket Server (Port 8080) ]
+          v (polled by EventWaiter, server-side wait loop)
+  [ quest/ajax-wait-events (HTTP long polling) ]
           |
-          v (Broadcasts to connected WebSocket clients)
+          v (JSON response as soon as a new event exists)
   [ NotificationClient (Frontend JS) ]
 ```
 

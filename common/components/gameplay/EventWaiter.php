@@ -1,0 +1,186 @@
+<?php
+
+declare(strict_types=1);
+
+namespace common\components\gameplay;
+
+use common\helpers\JsonHelper;
+use common\models\Notification;
+use Yii;
+
+/**
+ * EventWaiter
+ *
+ * Server-side long polling service. Replaces the external WebSocket
+ * (Ratchet) event daemon: the waiting loop lives in the controller and
+ * blocks until a new notification is persisted for the quest, or until
+ * the timeout expires.
+ *
+ * The notification table auto-increment primary key is used as the event
+ * cursor: each client sends back the last event id it has seen ("after")
+ * and receives every newer event, which guarantees no loss and no
+ * duplication, even across reconnections.
+ *
+ * @package common\components\gameplay
+ */
+class EventWaiter extends BaseManager
+{
+
+    const POLL_INTERVAL_MICROSECONDS = 300000;
+    const DEFAULT_TIMEOUT_SECONDS = 25;
+    const PURGE_MAX_AGE_SECONDS = 86400;
+
+    /**
+     * @var int|null ID of the quest whose events are waited for
+     */
+    public ?int $questId = null;
+
+    /**
+     *
+     * @param array<string, mixed> $config
+     * @throws \Exception
+     */
+    public function __construct($config = [])
+    {
+        parent::__construct($config);
+
+        if (!$this->questId) {
+            throw new \Exception('EventWaiter requires a questId.');
+        }
+    }
+
+    /**
+     * Waits for new quest events.
+     *
+     * Blocks up to $timeoutSeconds, polling the notification table at
+     * regular intervals. Returns as soon as at least one new event is
+     * available.
+     *
+     * A non-positive $after acts as a bootstrap: the current cursor is
+     * returned immediately so that a freshly loaded page does not replay
+     * old events.
+     *
+     * @param int $after last event id seen by the client
+     * @param int|null $timeoutSeconds max seconds to block (defaults to DEFAULT_TIMEOUT_SECONDS)
+     * @return array{events: array<int, array<string, mixed>>, after: int}
+     * @throws \Exception
+     */
+    public function wait(int $after, ?int $timeoutSeconds = null): array
+    {
+        $timeout = $timeoutSeconds ?? $this->defaultTimeout();
+        Yii::debug("*** Debug *** EventWaiter.wait - questId={$this->questId}, after={$after}, timeout={$timeout}");
+
+        if ($after <= 0) {
+            $this->purgeExpired();
+            return ['events' => [], 'after' => $this->currentCursor()];
+        }
+
+        $deadline = microtime(true) + $timeout;
+
+        while (microtime(true) < $deadline) {
+            $events = $this->fetchEvents((int) $this->questId, $after);
+
+            if ($events !== []) {
+                $lastEvent = end($events);
+                $cursor = is_array($lastEvent) ? (int) ($lastEvent['notificationId'] ?? 0) : 0;
+                return ['events' => $events, 'after' => max($after, $cursor)];
+            }
+
+            usleep(self::POLL_INTERVAL_MICROSECONDS);
+        }
+
+        return ['events' => [], 'after' => $after];
+    }
+
+    /**
+     * Returns every event of the quest newer than $after, in wire format.
+     *
+     * The wire format is identical to the one previously pushed by the
+     * WebSocket daemon: Event::toArray() (type, notificationId, sessionId,
+     * playerId, questId, timestamp + event payload).
+     *
+     * @param int $questId ID of the quest
+     * @param int $after last event id seen by the client
+     * @return array<int, array<string, mixed>>
+     */
+    public function fetchEvents(int $questId, int $after): array
+    {
+        $notifications = Notification::find()
+                ->where(['quest_id' => $questId])
+                ->andWhere(['>', 'id', $after])
+                ->andWhere(['is_private' => 0])
+                ->orderBy(['id' => SORT_ASC])
+                ->all();
+
+        return array_values(array_map(
+                fn (Notification $notification): array => $this->buildEventMessage($notification),
+                $notifications,
+        ));
+    }
+
+    /**
+     * Rebuilds the client message from a persisted notification.
+     *
+     * @param Notification $notification
+     * @return array<string, mixed>
+     */
+    public function buildEventMessage(Notification $notification): array
+    {
+        $payload = JsonHelper::decode($notification->payload);
+
+        return array_merge($payload, [
+            'type' => $notification->notification_type,
+            'notificationId' => (int) $notification->id,
+            'sessionId' => $payload['sessionId'] ?? null,
+            'playerId' => (int) $notification->initiator_id,
+            'questId' => (int) $notification->quest_id,
+            'timestamp' => (int) $notification->created_at,
+        ]);
+    }
+
+    /**
+     * Returns the highest event id currently persisted for the quest.
+     *
+     * @return int
+     */
+    public function currentCursor(): int
+    {
+        $maxId = Notification::find()
+                ->where(['quest_id' => $this->questId])
+                ->max('id');
+
+        return (int) ($maxId ?? 0);
+    }
+
+    /**
+     * Deletes quest notifications older than PURGE_MAX_AGE_SECONDS.
+     *
+     * Replaces the deletion previously performed by the WebSocket daemon
+     * on game-over, which would race with polling clients.
+     *
+     * @return void
+     */
+    protected function purgeExpired(): void
+    {
+        $purgeBefore = time() - self::PURGE_MAX_AGE_SECONDS;
+        $deleted = Notification::deleteAll([
+                    'and',
+                    ['quest_id' => $this->questId],
+                    ['<', 'created_at', $purgeBefore],
+        ]);
+
+        if ($deleted > 0) {
+            Yii::info("EventWaiter: purged {$deleted} expired notification(s) for questId={$this->questId}.");
+        }
+    }
+
+    /**
+     *
+     * @return int
+     */
+    protected function defaultTimeout(): int
+    {
+        $timeout = Yii::$app->params['eventWaitTimeoutSeconds'] ?? self::DEFAULT_TIMEOUT_SECONDS;
+        return is_int($timeout) && $timeout > 0 ? $timeout : self::DEFAULT_TIMEOUT_SECONDS;
+    }
+}

@@ -4,7 +4,7 @@ As the Dragon Flies is a comprehensive web-based platform designed to facilitate
 
 The application features distinct frontend and backend interfaces. The frontend caters to players, enabling character creation and management (including aspects like character class, race, and alignment), participation in interactive quests, inventory and equipment handling, and communication through features like quest chat. Core gameplay elements such as items and spells are integral to the player experience.
 
-The backend likely serves administrative and content creation purposes, allowing for the design of intricate stories, multi-step quests (managed via `Quest` and `Story` models), and the definition of game elements like items, spells, and potentially non-player characters. With integrated WebSocket technology, evidenced by components like `EventServerController` and `WebSocketController`, the platform aims to support real-time interactions, crucial for enhancing the immersive experience of collaborative storytelling and dynamic gameplay.
+The backend likely serves administrative and content creation purposes, allowing for the design of intricate stories, multi-step quests (managed via `Quest` and `Story` models), and the definition of game elements like items, spells, and potentially non-player characters. Real-time interactions between players are powered by server-side HTTP long polling (`quest/ajax-wait-events` backed by the `notification` table), crucial for enhancing the immersive experience of collaborative storytelling and dynamic gameplay.
 
 ## Usage Guide
 
@@ -27,7 +27,7 @@ The backend likely serves administrative and content creation purposes, allowing
     *   Players can view available stories (`Story` model) and quests suitable for their character.
 
 4.  **Playing the Game:**
-    *   **Interactive Gameplay:** Participate in quests with real-time updates and interactions, facilitated by WebSocket components (`QuestChat`, `WebSocketController`).
+    *   **Interactive Gameplay:** Participate in quests with real-time updates and interactions, delivered through HTTP long polling (`NotificationClient`, `quest/ajax-wait-events`).
     *   **Chat:** Communicate with the Game Master and other players through an integrated chat system (`QuestChat`).
     *   **Inventory Management:** Manage your character's items (`Item` model) and equipment acquired during adventures.
     *   **Character Progression:** Characters likely gain experience and levels, though specific mechanics are not detailed.

@@ -33,9 +33,9 @@ let questId;
 let questName;
 
 $(document).ready(function () {
-const currentHost = window.location.hostname;
-const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-const url = `${protocol}://${currentHost}:<?= Yii::$app->params['eventHandlerWebSocketPort'] ?? 8080 ?>`;
+// Long polling endpoint: the wait loop lives server-side in QuestController,
+// no external WebSocket daemon is needed anymore.
+const url = 'quest/ajax-wait-events';
 sessionId = <?= json_encode($sessionId) ?>;
 playerId = <?= json_encode($playerId) ?>;
 avatar = <?= json_encode($avatar) ?>;

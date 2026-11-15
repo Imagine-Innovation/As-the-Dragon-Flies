@@ -103,8 +103,7 @@ class GameActionEvent extends Event
     {
         Yii::debug('*** Debug *** GameActionEvent - process');
 
-        $notification = $this->createNotification();
-        $this->broadcast();
+        $this->createNotification();
 
         /*
           // Dungeon master says hello

@@ -8,7 +8,6 @@ use common\models\Player;
 use common\models\Quest;
 use Yii;
 use yii\base\BaseObject;
-use yii\httpclient\Client as HttpClient;
 
 abstract class Event extends BaseObject
 {
@@ -90,48 +89,6 @@ abstract class Event extends BaseObject
 
     /**
      *
-     * @return array<string, mixed>
-     */
-    private function requestData(): array
-    {
-        return [
-            'questId' => $this->quest->id,
-            'message' => $this->toArray(),
-            'excludeSessionId' => $this->sessionId,
-        ];
-    }
-
-    /**
-     *
-     * @return void
-     */
-    protected function broadcast(): void
-    {
-        $client = new HttpClient();
-        $url = Yii::$app->params['eventHandlerUrl'] . ':' . Yii::$app->params['eventHandlerInternalPort'];
-        $data = $this->requestData();
-        try {
-            $response = $client
-                    ->createRequest()
-                    ->setMethod('POST')
-                    ->setUrl("{$url}/broadcast")
-                    ->setData($data)
-                    ->setFormat(HttpClient::FORMAT_JSON)
-                    ->send();
-
-            if ($response->isOk) {
-                Yii::info('Successfully sent event to event server.', 'eventhandler');
-            } else {
-                Yii::error('Failed to broadcast event. HTTP status: ' . $response->getStatusCode());
-                Yii::error('Response body: ' . $response->getContent());
-            }
-        } catch (\yii\httpclient\Exception $e) {
-            Yii::error('Exception while trying to broadcast event: ' . $e->getMessage());
-        }
-    }
-
-    /**
-     *
      * @return Notification
      */
     protected function createNotification(): Notification
@@ -143,7 +100,7 @@ abstract class Event extends BaseObject
             'title' => $this->getTitle(),
             'message' => $this->getMessage(),
             'created_at' => time(),
-            'payload' => json_encode($this->getPayload()),
+            'payload' => json_encode(array_merge($this->getPayload(), ['sessionId' => $this->sessionId])),
             'is_private' => 0,
         ];
         $notification = new Notification($notificationData);

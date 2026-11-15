@@ -11,11 +11,11 @@ class NotificationClient {
         this.vtt = vtt;
 
         // init internal variables
-        this.socket = null;
         this.connected = false;
-        this.messageQueue = [];
+        this.stopped = false;
+        this.after = 0;
+        this.abortController = null;
         this.eventListeners = {};
-        this.heartbeatInterval = 30000; // 30s
         this.ding = new Audio("music/ding.mp3");
     }
 
@@ -342,61 +342,119 @@ class NotificationClient {
     }
 
     /**
-     * Connect to the WebSocket server
+     * Connect to the event stream (HTTP long polling)
+     *
+     * No WebSocket daemon anymore: each request blocks server-side in the
+     * controller until a new event is available (or until the server
+     * timeout expires), then the client immediately issues the next
+     * request. There is no JavaScript polling timer.
      */
     connect() {
         Logger.log(1, 'connect', `----------------------------------------------`);
-        Logger.log(1, 'connect', `Connecting to WebSocket server at ${this.url}`);
+        Logger.log(1, 'connect', `Connecting to event stream at ${this.url}`);
         Logger.log(1, 'connect', `Player ID: ${this.playerId}, Player name: ${this.playerName}, Avatar: ${this.avatar}, Quest ID: ${this.questId}, Quest name: ${this.questName}, Session ID: ${this.sessionId}`);
         Logger.log(1, 'connect', `----------------------------------------------`);
 
-        this.socket = new WebSocket(this.url);
+        this.connected = true;
+        this.stopped = false;
+        this.pollLoop();
+    }
 
-        this.socket.onopen = () => {
-            Logger.log(2, 'connect', 'WebSocket connection established');
-            this.connected = true;
-            this.send({type: 'register'});
+    /**
+     * Long polling loop: waits for server events until disconnected
+     *
+     * @returns {Promise<void>}
+     */
+    async pollLoop() {
+        let firstPoll = true;
 
-            // Process any queued messages
-            Logger.log(2, 'connect', `Processing ${this.messageQueue.length} queued messages`);
-            while (this.messageQueue.length > 0) {
-                const message = this.messageQueue.shift();
-                Logger.log(2, 'connect', 'Sending queued message:', message);
-                this.socket.send(JSON.stringify(message));
-            }
-
-            this.triggerEvent('open');
-            if (this.vtt) {
-                this.vtt.refresh(this.questId, this.sessionId);
-            }
-        };
-
-        this.socket.onmessage = (event) => {
-            Logger.log(2, 'connect', 'Received message:', event.data);
+        while (!this.stopped) {
+            this.abortController = new AbortController();
             try {
-                const data = JSON.parse(event.data);
-                this.triggerEvent('message', data);
-                if (data.type) {
-                    this.triggerEvent(data.type, data);
+                const response = await fetch(this.buildUrl(), {
+                    method: 'GET',
+                    headers: {'X-Requested-With': 'XMLHttpRequest'},
+                    signal: this.abortController.signal
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (firstPoll) {
+                    firstPoll = false;
+                    this.triggerEvent('open');
+                    if (this.vtt) {
+                        this.vtt.refresh(this.questId, this.sessionId);
+                    }
+                }
+
+                if (Array.isArray(data.events)) {
+                    data.events.forEach((event) => this.dispatch(event));
+                }
+                if (data.after !== undefined && data.after !== null) {
+                    this.after = parseInt(data.after, 10) || this.after;
                 }
             } catch (error) {
-                console.error('Error parsing message:', error);
-                console.error('Raw message:', event.data);
+                if (this.stopped) {
+                    break;
+                }
+                Logger.log(1, 'pollLoop', `Event stream error: ${error}`);
+                this.triggerEvent('error', error);
+                this.triggerEvent('close');
+                // Attempt to reconnect after a delay
+                await this.sleep(3000);
             }
-        };
+        }
+    }
 
-        this.socket.onclose = (event) => {
-            Logger.log(2, 'connect', `WebSocket connection closed. Code:${event.code}, Reason: ${event.reason}`);
-            this.connected = false;
-            this.triggerEvent('close');
-            // Attempt to reconnect after a delay
-            setTimeout(() => this.connect(), 3000);
-        };
+    /**
+     * Dispatch a received event to the registered handlers, skipping
+     * events initiated by this very session (parity with the previous
+     * server-side excludeSessionId behaviour)
+     *
+     * @param {Object} event
+     * @returns {void}
+     */
+    dispatch(event) {
+        if (!event || typeof event !== 'object') {
+            return;
+        }
+        if (event.sessionId && event.sessionId === this.sessionId) {
+            Logger.log(3, 'dispatch', `Skipping own event: ${event.type}`);
+            return;
+        }
+        this.triggerEvent('message', event);
+        if (event.type) {
+            this.triggerEvent(event.type, event);
+        }
+    }
 
-        this.socket.onerror = (error) => {
-            console.error('WebSocket error:', error);
-            this.triggerEvent('error', error);
-        };
+    /**
+     * Build the long polling URL with the current event cursor
+     *
+     * @returns {String}
+     */
+    buildUrl() {
+        const params = new URLSearchParams({
+            r: this.url.toLowerCase(),
+            questId: this.questId,
+            playerId: this.playerId,
+            after: this.after
+        });
+        return `${CONFIG.ROOT_URL}/index.php?${params.toString()}`;
+    }
+
+    /**
+     * Wait for the given delay
+     *
+     * @param {number} milliseconds
+     * @returns {Promise<void>}
+     */
+    sleep(milliseconds) {
+        return new Promise((resolve) => setTimeout(resolve, milliseconds));
     }
 
     updateChatMessages() {
@@ -427,35 +485,6 @@ class NotificationClient {
                 }
             }
         });
-    }
-
-    /**
-     * Send a message to the server
-     * 
-     * @param {Object} messageArray
-     * @returns {void}
-     */
-    send(messageArray) {
-        Logger.log(1, 'send', `send sessionId=${this.sessionId}, playerId=${this.playerId}, questId=${this.questId}`);
-        // Ensure all messages include the session ID, player ID, and quest ID
-        const completeMessage = {
-            ...messageArray,
-            sessionId: this.sessionId,
-            playerId: this.playerId,
-            questId: this.questId,
-            playerName: this.playerName
-        };
-        Logger.log(2, 'send', `completeMessage=${JSON.stringify(completeMessage, null, 2)}`);
-
-        if (this.connected) {
-            Logger.log(2, 'send', 'Sending message:', completeMessage);
-            this.socket.send(JSON.stringify(completeMessage));
-            //this.socket.send(completeMessage);
-        } else {
-            Logger.log(2, 'send', 'Connection not ready, queueing message:', completeMessage);
-            // Queue the message to be sent when connection is established
-            this.messageQueue.push(completeMessage);
-        }
     }
 
     /**
@@ -492,12 +521,10 @@ class NotificationClient {
      * Disconnect from the server
      */
     disconnect() {
-        // Clear heartbeat interval
-        if (this.heartbeatInterval) {
-            clearInterval(this.heartbeatInterval);
-        }
-        if (this.socket) {
-            this.socket.close();
+        this.stopped = true;
+        this.connected = false;
+        if (this.abortController) {
+            this.abortController.abort();
         }
     }
 

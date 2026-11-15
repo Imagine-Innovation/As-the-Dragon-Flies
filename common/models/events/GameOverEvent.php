@@ -111,9 +111,7 @@ class GameOverEvent extends Event
     public function process(): void
     {
         Yii::debug('*** Debug *** GameOverEvent - process');
-        $notification = $this->createNotification();
-
-        $this->broadcast();
+        $this->createNotification();
 
         // Dungeon master says hello
         $dungeonMaster = Player::findOne(1);

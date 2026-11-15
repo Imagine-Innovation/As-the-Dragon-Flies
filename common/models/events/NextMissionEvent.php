@@ -118,9 +118,7 @@ class NextMissionEvent extends Event
     public function process(): void
     {
         Yii::debug('*** Debug *** NextMissionEvent - process');
-        $notification = $this->createNotification();
-
-        $this->broadcast();
+        $this->createNotification();
 
         // Dungeon master says hello
         $dungeonMaster = Player::findOne(1);

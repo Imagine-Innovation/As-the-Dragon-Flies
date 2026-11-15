@@ -21,6 +21,7 @@ namespace frontend\controllers;
 use common\components\AppStatus;
 use common\components\ContextManager;
 use common\components\gameplay\ChatManager;
+use common\components\gameplay\EventWaiter;
 use common\components\gameplay\QuestManager;
 use common\components\gameplay\TavernManager;
 use common\components\AccessRightsManager;
@@ -69,7 +70,7 @@ class QuestController extends Controller
                         'actions' => [
                             'index', 'join', 'quit', 'resume', 'start', 'summarize', 'tavern',
                             'ajax-can-start', 'ajax-get-messages', 'ajax-quest-members', 'ajax-send-message', 'ajax-welcome-messages',
-                            'ajax-end-quest',
+                            'ajax-end-quest', 'ajax-wait-events',
                         ],
                         'allow' => true,
                         'matchCallback' => function ($rule, $action) {
@@ -369,6 +370,47 @@ class QuestController extends Controller
         $content = $this->renderPartial('ajax/messages', ['messages' => $messages]);
 
         return ['error' => false, 'msg' => '', 'content' => $content];
+    }
+
+    /**
+     * Long polling endpoint for real-time quest events.
+     *
+     * Replaces the external WebSocket (Ratchet) event daemon: the waiting
+     * loop lives here, server-side. The request blocks until a new event
+     * is persisted for the quest, or until the timeout expires. The client
+     * immediately issues a new request after each response, so there is no
+     * JavaScript polling timer.
+     *
+     * The PHP session lock is released first so that parallel requests
+     * from the same player are not serialized.
+     *
+     * @return array{error: bool, msg: string, events?: array<int, array<string, mixed>>, after?: int}
+     */
+    public function actionAjaxWaitEvents(): array
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        if (!$this->request->isGet || !$this->request->isAjax) {
+            return ['error' => true, 'msg' => 'Not an Ajax GET request'];
+        }
+
+        $questId = (int) (Yii::$app->request->get('questId') ?? Yii::$app->session->get('questId'));
+        $after = (int) Yii::$app->request->get('after', 0);
+
+        if ($questId <= 0) {
+            return ['error' => true, 'msg' => 'Missing quest ID'];
+        }
+
+        Yii::$app->session->close();
+        set_time_limit(0);
+
+        try {
+            $eventWaiter = new EventWaiter(['questId' => $questId]);
+            return array_merge(['error' => false, 'msg' => ''], $eventWaiter->wait($after));
+        } catch (\Exception $e) {
+            Yii::error("Failed to wait for quest events: {$e->getMessage()}");
+            return ['error' => true, 'msg' => 'Failed to wait for quest events'];
+        }
     }
 
     /**
