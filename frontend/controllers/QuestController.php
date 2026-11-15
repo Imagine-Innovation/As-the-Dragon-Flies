@@ -21,7 +21,6 @@ namespace frontend\controllers;
 use common\components\AppStatus;
 use common\components\ContextManager;
 use common\components\gameplay\ChatManager;
-use common\components\gameplay\EventWaiter;
 use common\components\gameplay\QuestManager;
 use common\components\gameplay\TavernManager;
 use common\components\AccessRightsManager;
@@ -390,12 +389,12 @@ class QuestController extends Controller
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        if (!$this->request->isGet || !$this->request->isAjax) {
-            return ['error' => true, 'msg' => 'Not an Ajax GET request'];
+        if (!$this->request->isPost || !$this->request->isAjax) {
+            return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
-        $questId = (int) (Yii::$app->request->get('questId') ?? Yii::$app->session->get('questId'));
-        $after = (int) Yii::$app->request->get('after', 0);
+        $questId = (int) ($this->request->post('questId') ?? Yii::$app->session->get('questId'));
+        $after = (int) $this->request->post('after', 0);
 
         if ($questId <= 0) {
             return ['error' => true, 'msg' => 'Missing quest ID'];
@@ -405,7 +404,7 @@ class QuestController extends Controller
         set_time_limit(0);
 
         try {
-            $eventWaiter = new EventWaiter(['questId' => $questId]);
+            $eventWaiter = new \common\components\gameplay\EventWaiter(['questId' => $questId]);
             return array_merge(['error' => false, 'msg' => ''], $eventWaiter->wait($after));
         } catch (\Exception $e) {
             Yii::error("Failed to wait for quest events: {$e->getMessage()}");

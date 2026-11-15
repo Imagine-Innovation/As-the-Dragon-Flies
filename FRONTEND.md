@@ -175,7 +175,7 @@ Context state is synchronized between client JS and server PHP using hidden `<in
 The real-time layer is powered by `NotificationClient` (`frontend/web/js/quest-events.js`).
 
 ### 5.1 Connection Lifecycle
-* The client calls `quest/ajax-wait-events?after=<lastEventId>` in a loop; each request blocks server-side (up to ~25 s) in `QuestController::actionAjaxWaitEvents()` until a new `notification` row exists for the quest.
+* The client posts to `quest/ajax-wait-events` (with `questId`, `playerId` and the `after` cursor in the POST body, plus the CSRF header); each request blocks server-side (up to ~25 s) in `QuestController::actionAjaxWaitEvents()` until a new `notification` row exists for the quest.
 * The server returns immediately with the current cursor on the first call (`after=0`), so a freshly loaded page does not replay old events.
 * A new request is issued immediately after each response — there is no JavaScript polling timer.
 * Failed requests are retried automatically every 3 seconds.

@@ -14,7 +14,6 @@ class NotificationClient {
         this.connected = false;
         this.stopped = false;
         this.after = 0;
-        this.abortController = null;
         this.eventListeners = {};
         this.ding = new Audio("music/ding.mp3");
     }
@@ -351,62 +350,92 @@ class NotificationClient {
      */
     connect() {
         Logger.log(1, 'connect', `----------------------------------------------`);
-        Logger.log(1, 'connect', `Connecting to event stream at ${this.url}`);
         Logger.log(1, 'connect', `Player ID: ${this.playerId}, Player name: ${this.playerName}, Avatar: ${this.avatar}, Quest ID: ${this.questId}, Quest name: ${this.questName}, Session ID: ${this.sessionId}`);
         Logger.log(1, 'connect', `----------------------------------------------`);
 
         this.connected = true;
         this.stopped = false;
-        this.pollLoop();
+        this.firstPoll = true;
+        this.pollStep();
     }
 
     /**
-     * Long polling loop: waits for server events until disconnected
+     * Long polling step: issues one blocking request, then reschedules
+     * itself until disconnected. The server holds each request until a
+     * new event is available, so there is no JavaScript polling timer.
      *
      * @returns {Promise<void>}
      */
-    async pollLoop() {
-        let firstPoll = true;
-
-        while (!this.stopped) {
-            this.abortController = new AbortController();
-            try {
-                const response = await fetch(this.buildUrl(), {
-                    method: 'GET',
-                    headers: {'X-Requested-With': 'XMLHttpRequest'},
-                    signal: this.abortController.signal
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
-                }
-
-                const data = await response.json();
-
-                if (firstPoll) {
-                    firstPoll = false;
-                    this.triggerEvent('open');
-                    if (this.vtt) {
-                        this.vtt.refresh(this.questId, this.sessionId);
-                    }
-                }
-
-                if (Array.isArray(data.events)) {
-                    data.events.forEach((event) => this.dispatch(event));
-                }
-                if (data.after !== undefined && data.after !== null) {
-                    this.after = parseInt(data.after, 10) || this.after;
-                }
-            } catch (error) {
-                if (this.stopped) {
-                    break;
-                }
-                Logger.log(1, 'pollLoop', `Event stream error: ${error}`);
-                this.triggerEvent('error', error);
-                this.triggerEvent('close');
-                // Attempt to reconnect after a delay
-                await this.sleep(3000);
+    async pollStep() {
+        if (this.stopped) {
+            return;
+        }
+        this.abortController = new AbortController();
+        try {
+            const data = await this.fetchEventPage();
+            this.handlePollData(data);
+        } catch (error) {
+            if (this.stopped) {
+                return;
             }
+            console.warn('Event stream error:', error);
+            this.triggerEvent('error', error);
+            this.triggerEvent('close');
+            // Attempt to reconnect after a delay
+            await this.sleep(3000);
+        }
+        this.pollStep();
+    }
+
+    /**
+     * Issues one blocking long polling request and returns the decoded
+     * response
+     *
+     * @returns {Promise<object>}
+     */
+    async fetchEventPage() {
+        const response = await fetch(this.buildUrl(), {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-Token': CONFIG.CSRF_TOKEN
+            },
+            body: new URLSearchParams({
+                questId: this.questId,
+                playerId: this.playerId,
+                after: this.after
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        return response.json();
+    }
+
+    /**
+     * Handles one successful polling response
+     *
+     * @param {object} data
+     * @returns {void}
+     */
+    handlePollData(data) {
+        if (this.firstPoll) {
+            this.firstPoll = false;
+            this.triggerEvent('open');
+            if (this.vtt) {
+                this.vtt.refresh(this.questId, this.sessionId);
+            }
+        }
+
+        if (Array.isArray(data.events)) {
+            data.events.forEach((event) => {
+                this.dispatch(event);
+            });
+        }
+        if (data.after) {
+            this.after = parseInt(data.after, 10) || this.after;
         }
     }
 
@@ -423,7 +452,6 @@ class NotificationClient {
             return;
         }
         if (event.sessionId && event.sessionId === this.sessionId) {
-            Logger.log(3, 'dispatch', `Skipping own event: ${event.type}`);
             return;
         }
         this.triggerEvent('message', event);
@@ -433,18 +461,13 @@ class NotificationClient {
     }
 
     /**
-     * Build the long polling URL with the current event cursor
+     * Build the long polling route URL (the event cursor travels in the
+     * POST body, not in the URL)
      *
      * @returns {String}
      */
     buildUrl() {
-        const params = new URLSearchParams({
-            r: this.url.toLowerCase(),
-            questId: this.questId,
-            playerId: this.playerId,
-            after: this.after
-        });
-        return `${CONFIG.ROOT_URL}/index.php?${params.toString()}`;
+        return `${CONFIG.ROOT_URL}/index.php?r=${this.url.toLowerCase()}`;
     }
 
     /**
