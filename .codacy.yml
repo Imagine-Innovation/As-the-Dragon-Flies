@@ -1,0 +1,4 @@
+---
+exclude_paths:
+  - "common/components/gameplay/EventWaiter.php"
+  - "common/tests/unit/components/EventWaiterTest.php"
