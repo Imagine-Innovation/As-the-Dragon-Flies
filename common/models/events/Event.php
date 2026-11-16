@@ -96,7 +96,7 @@ abstract class Event extends BaseObject
             'title' => $this->getTitle(),
             'message' => $this->getMessage(),
             'created_at' => time(),
-            'payload' => json_encode($this->getPayload()),
+            'payload' => $this->getPayload(),
             'is_private' => 0,
         ];
         $notification = new Notification($notificationData);

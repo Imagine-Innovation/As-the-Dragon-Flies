@@ -54,6 +54,29 @@ final class EventWaiterTest extends Unit
         $this->assertSame(2, $message['playerId']);
     }
 
+    public function testBuildEventMessageHandlesLegacyDoubleEncodedPayload(): void
+    {
+        $notification = [
+            'id' => 9,
+            'initiator_id' => 7,
+            'quest_id' => 3,
+            'notification_type' => 'player-joined',
+            'created_at' => 1700000003,
+            'payload' => json_encode(json_encode([
+                'playerName' => 'Perrin Tealeaf',
+                'questName' => 'Le manoir du Chevalier noir',
+            ])),
+        ];
+
+        $waiter = new EventWaiter(['questId' => 3]);
+        $message = $waiter->buildEventMessage($notification);
+
+        $this->assertSame('player-joined', $message['type']);
+        $this->assertSame('Perrin Tealeaf', $message['playerName']);
+        $this->assertSame('Le manoir du Chevalier noir', $message['questName']);
+        $this->assertSame(7, $message['playerId']);
+    }
+
     public function testBuildEventMessageHandlesNullPayload(): void
     {
         $notification = [
