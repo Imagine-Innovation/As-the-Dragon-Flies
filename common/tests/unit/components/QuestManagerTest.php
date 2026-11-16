@@ -307,10 +307,10 @@ class QuestManagerTest extends \Codeception\Test\Unit
             ],
         ];
 
-        $nextTurnEvent = new \common\models\events\NextTurnEvent('session1', $hero, $quest, 'Next turn', $detail);
+        $nextTurnEvent = new \common\models\events\NextTurnEvent($hero, $quest, 'Next turn', $detail);
         $this->assertEquals('Other player message', $nextTurnEvent->getMessage());
 
-        $nextMissionEvent = new \common\models\events\NextMissionEvent('session1', $hero, $quest, 'Next mission', $detail);
+        $nextMissionEvent = new \common\models\events\NextMissionEvent($hero, $quest, 'Next mission', $detail);
         $this->assertEquals('Other player message', $nextMissionEvent->getMessage());
     }
 }
