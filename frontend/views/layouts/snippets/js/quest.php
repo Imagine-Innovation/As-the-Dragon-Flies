@@ -43,9 +43,7 @@ questName = <?= json_encode($questName) ?>;
 vtt = new VirtualTableTop(); // defined in "quest-<?= $controllerId === 'game' ? 'game' : 'tavern' ?>.js"
 vtt.init();
 
-notificationClient = new NotificationClient(
-	url, playerId, playerName, avatar, questId, questName, vtt
-);
+notificationClient = new NotificationClient(url, playerId, playerName, avatar, questId, questName, vtt);
 notificationClient.init();
 
 <?php if ($controllerId === 'game'): ?>
