@@ -184,7 +184,6 @@ The real-time layer is powered by `NotificationClient` (`frontend/web/js/quest-e
 ### 5.2 Handled Event Subscriptions
 | Event Name | Action / Handler |
 | :--- | :--- |
-| `open` | Updates status indicator `#eventHandlerStatus` after the first successful long polling response. |
 | `notification` | Calls `vtt.refresh()` to update member list and player stats. |
 | `new-message` | Triggers `updateChatMessages()` to refresh chat feed via AJAX. |
 | `game-action` | Invokes `handleGameAction(data)`: Updates party stats and triggers `equipmentHandler.refreshEquipment()` if items/stats changed. |

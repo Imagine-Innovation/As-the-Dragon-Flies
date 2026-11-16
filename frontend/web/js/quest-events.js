@@ -10,7 +10,6 @@ class NotificationClient {
         this.vtt = vtt;
 
         // init internal variables
-        this.connected = false;
         this.stopped = false;
         this.after = 0;
         this.eventListeners = {};
@@ -64,24 +63,6 @@ class NotificationClient {
      */
     setupDefaultHandlers() {
         Logger.log(1, 'setupDefaultHandlers', '');
-        // Handle connection established
-        this.on('open', () => {
-            Logger.log(2, 'setupDefaultHandlers', 'Connection to notification server established');
-            this.updateConnectionStatus('Connected');
-        });
-
-        // Handle connection closed
-        this.on('close', () => {
-            Logger.log(2, 'setupDefaultHandlers', 'Connection to notification server closed');
-            this.updateConnectionStatus('Disconnected - Reconnecting...');
-        });
-
-        // Handle errors
-        this.on('error', (error) => {
-            console.error('Notification error:', error);
-            this.updateConnectionStatus('Connection Error');
-        });
-
         // Handle incoming notifications
         this.on('notification', (data) => {
             Logger.log(2, 'setupDefaultHandlers', 'Received notification:', data);
@@ -352,7 +333,6 @@ class NotificationClient {
         Logger.log(1, 'connect', `Player ID: ${this.playerId}, Player name: ${this.playerName}, Avatar: ${this.avatar}, Quest ID: ${this.questId}, Quest name: ${this.questName}`);
         Logger.log(1, 'connect', `----------------------------------------------`);
 
-        this.connected = true;
         this.stopped = false;
         this.firstPoll = true;
         this.pollStep();
@@ -378,8 +358,6 @@ class NotificationClient {
                 return;
             }
             console.warn('Event stream error:', error);
-            this.triggerEvent('error', error);
-            this.triggerEvent('close');
             // Attempt to reconnect after a delay
             await this.sleep(3000);
         }
@@ -422,7 +400,6 @@ class NotificationClient {
     handlePollData(data) {
         if (this.firstPoll) {
             this.firstPoll = false;
-            this.triggerEvent('open');
             if (this.vtt) {
                 this.vtt.refresh(this.questId);
             }
@@ -544,42 +521,9 @@ class NotificationClient {
      */
     disconnect() {
         this.stopped = true;
-        this.connected = false;
         if (this.abortController) {
             this.abortController.abort();
         }
-    }
-
-    /**
-     * Update the connection status indicator
-     * 
-     * @param {string} status
-     * @returns {void}
-     */
-    updateConnectionStatus(status) {
-        let severity = '';
-        //const statusIcon = $(#eventHandlerStatus);
-        const statusIcon = document.getElementById('eventHandlerStatus');
-        switch (status) {
-            case 'Connected':
-                statusIcon.classList.remove('blink');
-                statusIcon.style.color = 'var(--success)';
-
-                severity = 'info';
-                break;
-            case 'Error':
-                statusIcon.classList.add('blink');
-                statusIcon.style.color = 'var(--error)';
-
-                severity = 'error';
-                break;
-            default:
-                statusIcon.classList.add('blink');
-                statusIcon.style.color = 'var(--warning)';
-
-                severity = 'warning';
-        }
-        ToastManager.show('Connection status', status, severity);
     }
 
     /**
