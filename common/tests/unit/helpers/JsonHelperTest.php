@@ -13,41 +13,41 @@ use Codeception\Test\Unit;
  */
 final class JsonHelperTest extends Unit
 {
-    public function testDecodesAJsonString(): void
-    {
-        $payload = JsonHelper::decode('{"playerName":"Aragorn"}');
+	public function testDecodesAJsonString(): void
+	{
+		$payload = JsonHelper::decode('{"playerName":"Aragorn"}');
 
-        $this->assertSame(['playerName' => 'Aragorn'], $payload);
-    }
+		$this->assertSame(['playerName' => 'Aragorn'], $payload);
+	}
 
-    public function testReturnsTheArrayWhenAlreadyDecoded(): void
-    {
-        $payload = JsonHelper::decode(['playerName' => 'Aragorn']);
+	public function testReturnsTheArrayWhenAlreadyDecoded(): void
+	{
+		$payload = JsonHelper::decode(['playerName' => 'Aragorn']);
 
-        $this->assertSame(['playerName' => 'Aragorn'], $payload);
-    }
+		$this->assertSame(['playerName' => 'Aragorn'], $payload);
+	}
 
-    public function testDecodesLegacyDoubleEncodedPayload(): void
-    {
-        $doubleEncoded = json_encode(json_encode(['playerName' => 'Perrin Tealeaf']));
+	public function testDecodesLegacyDoubleEncodedPayload(): void
+	{
+		$doubleEncoded = json_encode(json_encode(['playerName' => 'Perrin Tealeaf']));
 
-        $payload = JsonHelper::decode($doubleEncoded);
+		$payload = JsonHelper::decode($doubleEncoded);
 
-        $this->assertSame(['playerName' => 'Perrin Tealeaf'], $payload);
-    }
+		$this->assertSame(['playerName' => 'Perrin Tealeaf'], $payload);
+	}
 
-    public function testReturnsEmptyArrayForNull(): void
-    {
-        $this->assertSame([], JsonHelper::decode(null));
-    }
+	public function testReturnsEmptyArrayForNull(): void
+	{
+		$this->assertSame([], JsonHelper::decode(null));
+	}
 
-    public function testReturnsEmptyArrayForEmptyString(): void
-    {
-        $this->assertSame([], JsonHelper::decode(''));
-    }
+	public function testReturnsEmptyArrayForEmptyString(): void
+	{
+		$this->assertSame([], JsonHelper::decode(''));
+	}
 
-    public function testReturnsEmptyArrayForInvalidJson(): void
-    {
-        $this->assertSame([], JsonHelper::decode('{not-json'));
-    }
+	public function testReturnsEmptyArrayForInvalidJson(): void
+	{
+		$this->assertSame([], JsonHelper::decode('{not-json'));
+	}
 }
