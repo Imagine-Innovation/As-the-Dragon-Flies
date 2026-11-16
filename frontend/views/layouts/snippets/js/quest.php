@@ -44,7 +44,7 @@ vtt = new VirtualTableTop(); // defined in "quest-<?= $controllerId === 'game' ?
 vtt.init();
 
 notificationClient = new NotificationClient(
-    url, playerId, playerName, avatar, questId, questName, vtt
+	url, playerId, playerName, avatar, questId, questName, vtt
 );
 notificationClient.init();
 
