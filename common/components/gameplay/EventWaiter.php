@@ -128,7 +128,7 @@ final class EventWaiter extends BaseManager
      */
     public function buildEventMessage(array $notification): array
     {
-        $payload = $this->decodePayload($notification['payload'] ?? null);
+        $payload = JsonHelper::decode($notification['payload'] ?? null);
 
         return array_merge($payload, [
             'type' => $notification['notification_type'],
@@ -137,24 +137,6 @@ final class EventWaiter extends BaseManager
             'questId' => (int) $notification['quest_id'],
             'timestamp' => (int) $notification['created_at'],
         ]);
-    }
-
-    /**
-     * Decodes the persisted payload, tolerating legacy rows that were
-     * double-encoded by the JSON column typecast (a JSON string wrapping
-     * the actual JSON object).
-     *
-     * @param mixed $rawPayload raw payload column value
-     * @return array<string, mixed>
-     */
-    protected function decodePayload(mixed $rawPayload): array
-    {
-        $payload = is_array($rawPayload) ? $rawPayload : JsonHelper::decode(is_string($rawPayload) ? $rawPayload : null);
-        if (is_string($payload)) {
-            $payload = JsonHelper::decode($payload);
-        }
-
-        return $payload;
     }
 
     /**
