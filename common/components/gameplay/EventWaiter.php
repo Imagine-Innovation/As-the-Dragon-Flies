@@ -25,7 +25,6 @@ final class EventWaiter extends BaseManager
 {
     public const POLL_INTERVAL_MICROSECONDS = 300_000;
     public const DEFAULT_TIMEOUT_SECONDS    = 25;
-    public const PURGE_MAX_AGE_SECONDS      = 86_400;
 
     /**
      * ID of the quest whose events are waited for.
@@ -69,7 +68,6 @@ final class EventWaiter extends BaseManager
         Yii::debug("*** Debug *** EventWaiter.wait - questId={$this->questId}, after={$after}, timeout={$timeout}");
 
         if ($after <= 0) {
-            $this->purgeExpired();
             return ['events' => [], 'after' => $this->currentCursor()];
         }
 
@@ -148,26 +146,6 @@ final class EventWaiter extends BaseManager
             ->max('id');
 
         return (int) ($maxId ?? 0);
-    }
-
-    /**
-     * Deletes quest notifications older than PURGE_MAX_AGE_SECONDS.
-     *
-     * Replaces the deletion previously performed by the WebSocket daemon
-     * on game-over, which would race with polling clients.
-     */
-    protected function purgeExpired(): void
-    {
-        $purgeBefore = time() - self::PURGE_MAX_AGE_SECONDS;
-        $deleted = Notification::deleteAll([
-            'and',
-            ['quest_id' => $this->questId],
-            ['<', 'created_at', $purgeBefore],
-        ]);
-
-        if ($deleted > 0) {
-            Yii::info("EventWaiter: purged {$deleted} expired notification(s) for questId={$this->questId}.");
-        }
     }
 
     /**
