@@ -101,10 +101,12 @@ final class EventWaiter extends BaseManager
      */
     protected function fetchEvents(int $questId, int $after): array
     {
-        return array_values(array_map(
-            $this->buildEventMessage(...),
-            $this->findNotifications($questId, $after),
-        ));
+        $events = [];
+        foreach ($this->findNotifications($questId, $after) as $notification) {
+            $events[] = $this->buildEventMessage($notification);
+        }
+
+        return $events;
     }
 
     /**
