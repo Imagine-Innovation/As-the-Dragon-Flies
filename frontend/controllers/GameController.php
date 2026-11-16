@@ -473,6 +473,7 @@ class GameController extends Controller
     {
         $player = Player::findOne(Yii::$app->session->get('playerId'));
         $quest = Quest::findOne(Yii::$app->session->get('questId'));
+        $data = [];
         try {
             $data['action'] = $actionName;
             $data['detail'] = [
