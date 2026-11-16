@@ -108,11 +108,12 @@ final class EventWaiter extends BaseManager
     }
 
     /**
-     * Returns the quest notifications persisted after the given event id.
+     * Returns the quest notifications persisted after the given event id,
+     * as raw rows (no ActiveRecord hydration in the polling loop).
      *
      * @param int $questId ID of the quest
      * @param int $after   last event id seen by the client
-     * @return Notification[]
+     * @return array<int, array<string, mixed>>
      */
     protected function findNotifications(int $questId, int $after): array
     {
@@ -121,26 +122,28 @@ final class EventWaiter extends BaseManager
             ->andWhere(['>', 'id', $after])
             ->andWhere(['is_private' => 0])
             ->orderBy(['id' => SORT_ASC])
+            ->asArray()
             ->all();
     }
 
     /**
-     * Rebuilds the client message from a persisted notification.
+     * Rebuilds the client message from a persisted notification row.
      *
-     * @param Notification $notification notification to convert
+     * @param array<string, mixed> $notification notification row to convert
      * @return array<string, mixed>
      */
-    public function buildEventMessage(Notification $notification): array
+    public function buildEventMessage(array $notification): array
     {
-        $payload = JsonHelper::decode($notification->payload);
+        $rawPayload = $notification['payload'] ?? null;
+        $payload = JsonHelper::decode(is_string($rawPayload) ? $rawPayload : null);
         $payload['sessionId'] ??= null;
 
         return array_merge($payload, [
-            'type' => $notification->notification_type,
-            'notificationId' => (int) $notification->id,
-            'playerId' => (int) $notification->initiator_id,
-            'questId' => (int) $notification->quest_id,
-            'timestamp' => (int) $notification->created_at,
+            'type' => $notification['notification_type'],
+            'notificationId' => (int) $notification['id'],
+            'playerId' => (int) $notification['initiator_id'],
+            'questId' => (int) $notification['quest_id'],
+            'timestamp' => (int) $notification['created_at'],
         ]);
     }
 

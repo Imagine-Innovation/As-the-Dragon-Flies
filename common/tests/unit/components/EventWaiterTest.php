@@ -6,26 +6,23 @@ namespace common\tests\unit\components;
 
 use Codeception\Test\Unit;
 use common\components\gameplay\EventWaiter;
-use common\models\Notification;
 
 final class EventWaiterTest extends Unit
 {
     public function testBuildEventMessageReconstructsWireFormat(): void
     {
-        $notification = new Notification();
-        $notification->id = 42;
-        $notification->initiator_id = 7;
-        $notification->quest_id = 3;
-        $notification->notification_type = 'next-turn';
-        $notification->title = 'Next turn';
-        $notification->message = 'It is your turn';
-        $notification->created_at = 1700000000;
-        $notification->is_private = 0;
-        $notification->payload = json_encode([
-            'playerName' => 'Aragorn',
-            'sessionId' => 'session-abc',
-            'detail' => ['nextPlayerId' => 7, 'nextPlayerName' => 'Aragorn'],
-        ]);
+        $notification = [
+            'id' => 42,
+            'initiator_id' => 7,
+            'quest_id' => 3,
+            'notification_type' => 'next-turn',
+            'created_at' => 1700000000,
+            'payload' => json_encode([
+                'playerName' => 'Aragorn',
+                'sessionId' => 'session-abc',
+                'detail' => ['nextPlayerId' => 7, 'nextPlayerName' => 'Aragorn'],
+            ]),
+        ];
 
         $waiter = new EventWaiter(['questId' => 3]);
         $message = $waiter->buildEventMessage($notification);
@@ -42,16 +39,14 @@ final class EventWaiterTest extends Unit
 
     public function testBuildEventMessageHandlesLegacyPayloadWithoutSessionId(): void
     {
-        $notification = new Notification();
-        $notification->id = 1;
-        $notification->initiator_id = 2;
-        $notification->quest_id = 3;
-        $notification->notification_type = 'game-action';
-        $notification->title = 'Game action';
-        $notification->message = 'Rolled a dice';
-        $notification->created_at = 1700000001;
-        $notification->is_private = 0;
-        $notification->payload = json_encode(['playerName' => 'Gimli']);
+        $notification = [
+            'id' => 1,
+            'initiator_id' => 2,
+            'quest_id' => 3,
+            'notification_type' => 'game-action',
+            'created_at' => 1700000001,
+            'payload' => json_encode(['playerName' => 'Gimli']),
+        ];
 
         $waiter = new EventWaiter(['questId' => 3]);
         $message = $waiter->buildEventMessage($notification);
@@ -64,16 +59,14 @@ final class EventWaiterTest extends Unit
 
     public function testBuildEventMessageHandlesNullPayload(): void
     {
-        $notification = new Notification();
-        $notification->id = 5;
-        $notification->initiator_id = 2;
-        $notification->quest_id = 3;
-        $notification->notification_type = 'player-quit';
-        $notification->title = 'Player quit';
-        $notification->message = 'Boromir left';
-        $notification->created_at = 1700000002;
-        $notification->is_private = 0;
-        $notification->payload = null;
+        $notification = [
+            'id' => 5,
+            'initiator_id' => 2,
+            'quest_id' => 3,
+            'notification_type' => 'player-quit',
+            'created_at' => 1700000002,
+            'payload' => null,
+        ];
 
         $waiter = new EventWaiter(['questId' => 3]);
         $message = $waiter->buildEventMessage($notification);
