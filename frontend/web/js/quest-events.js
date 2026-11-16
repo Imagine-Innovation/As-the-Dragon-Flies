@@ -386,6 +386,14 @@ class NotificationClient {
         };
 
         this.socket.onclose = (event) => {
+            console.error(
+                    'WebSocket closed',
+                    {
+                        code: event.code,
+                        reason: event.reason,
+                        wasClean: event.wasClean
+                    }
+            );
             Logger.log(2, 'connect', `WebSocket connection closed. Code:${event.code}, Reason: ${event.reason}`);
             this.connected = false;
             this.triggerEvent('close');
