@@ -13,15 +13,14 @@ class SendingMessageEvent extends Event
 
     /**
      *
-     * @param string $sessionId
      * @param Player $player
      * @param Quest $quest
      * @param string $message
      * @param array<string, mixed> $config
      */
-    public function __construct(string $sessionId, Player $player, Quest $quest, string $message, array $config = [])
+    public function __construct(Player $player, Quest $quest, string $message, array $config = [])
     {
-        parent::__construct($sessionId, $player, $quest, $config);
+        parent::__construct($player, $quest, $config);
         $this->message = $message;
     }
 

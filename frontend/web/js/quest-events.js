@@ -1,8 +1,7 @@
 class NotificationClient {
-    constructor(url, sessionId, playerId, playerName, avatar, questId, questName, vtt = null) {
+    constructor(url, playerId, playerName, avatar, questId, questName, vtt = null) {
         // loading init parameters
         this.url = url;
-        this.sessionId = sessionId;
         this.playerId = playerId;
         this.playerName = playerName;
         this.avatar = avatar;
@@ -88,7 +87,7 @@ class NotificationClient {
             Logger.log(2, 'setupDefaultHandlers', 'Received notification:', data);
             const message = data.message ?? null;
             if (this.vtt) {
-                this.vtt.refresh(this.questId, this.sessionId, message);
+                this.vtt.refresh(this.questId, message);
             }
         });
 
@@ -189,7 +188,7 @@ class NotificationClient {
                 // Construct the message from the payload
                 const message = `Player ${data.playerName} has joined quest "${data.questName}".`;
                 if (this.vtt) {
-                    this.vtt.refresh(this.questId, this.sessionId, message);
+                    this.vtt.refresh(this.questId, message);
                 }
             } else {
                 console.warn('Received player-joined event with incomplete payload:', data);
@@ -202,7 +201,7 @@ class NotificationClient {
                 // Construct the message from the payload
                 const message = `Player ${data.playerName} has left the quest`;
                 if (this.vtt) {
-                    this.vtt.refresh(this.questId, this.sessionId, message);
+                    this.vtt.refresh(this.questId, message);
                 }
             } else {
                 console.warn('Received player-quit event with incomplete payload:', data);
@@ -350,7 +349,7 @@ class NotificationClient {
      */
     connect() {
         Logger.log(1, 'connect', `----------------------------------------------`);
-        Logger.log(1, 'connect', `Player ID: ${this.playerId}, Player name: ${this.playerName}, Avatar: ${this.avatar}, Quest ID: ${this.questId}, Quest name: ${this.questName}, Session ID: ${this.sessionId}`);
+        Logger.log(1, 'connect', `Player ID: ${this.playerId}, Player name: ${this.playerName}, Avatar: ${this.avatar}, Quest ID: ${this.questId}, Quest name: ${this.questName}`);
         Logger.log(1, 'connect', `----------------------------------------------`);
 
         this.connected = true;
@@ -425,7 +424,7 @@ class NotificationClient {
             this.firstPoll = false;
             this.triggerEvent('open');
             if (this.vtt) {
-                this.vtt.refresh(this.questId, this.sessionId);
+                this.vtt.refresh(this.questId);
             }
         }
 
@@ -441,8 +440,8 @@ class NotificationClient {
 
     /**
      * Dispatch a received event to the registered handlers, skipping
-     * events initiated by this very session (parity with the previous
-     * server-side excludeSessionId behaviour)
+     * events initiated by this very player (the initiator already handles
+     * its own action through the AJAX response)
      *
      * @param {Object} event
      * @returns {void}
@@ -451,7 +450,7 @@ class NotificationClient {
         if (!event || typeof event !== 'object') {
             return;
         }
-        if (event.sessionId && event.sessionId === this.sessionId) {
+        if (event.playerId && event.playerId === this.playerId) {
             return;
         }
         this.triggerEvent('message', event);

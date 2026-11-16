@@ -53,10 +53,6 @@ final class EventWaiter extends BaseManager
      * regular intervals. Returns as soon as at least one new event is
      * available.
      *
-     * A non-positive $after acts as a bootstrap: the current cursor is
-     * returned immediately so that a freshly loaded page does not replay
-     * old events.
-     *
      * @param int      $after          last event id seen by the client
      * @param int|null $timeoutSeconds max seconds to block (defaults to DEFAULT_TIMEOUT_SECONDS)
      * @return array{events: array<int, array<string, mixed>>, after: int}
@@ -66,10 +62,6 @@ final class EventWaiter extends BaseManager
     {
         $timeout = $timeoutSeconds ?? $this->defaultTimeout();
         Yii::debug("*** Debug *** EventWaiter.wait - questId={$this->questId}, after={$after}, timeout={$timeout}");
-
-        if ($after <= 0) {
-            return ['events' => [], 'after' => $this->currentCursor()];
-        }
 
         $deadline = microtime(true) + $timeout;
 
@@ -92,8 +84,8 @@ final class EventWaiter extends BaseManager
      * Returns every event of the quest newer than $after, in wire format.
      *
      * The wire format is identical to the one previously pushed by the
-     * WebSocket daemon: Event::toArray() (type, notificationId, sessionId,
-     * playerId, questId, timestamp + event payload).
+     * WebSocket daemon: Event::toArray() (type, notificationId, playerId,
+     * questId, timestamp + event payload).
      *
      * @param int $questId ID of the quest
      * @param int $after   last event id seen by the client
@@ -138,7 +130,6 @@ final class EventWaiter extends BaseManager
     {
         $rawPayload = $notification['payload'] ?? null;
         $payload = JsonHelper::decode(is_string($rawPayload) ? $rawPayload : null);
-        $payload['sessionId'] ??= null;
 
         return array_merge($payload, [
             'type' => $notification['notification_type'],
@@ -147,20 +138,6 @@ final class EventWaiter extends BaseManager
             'questId' => (int) $notification['quest_id'],
             'timestamp' => (int) $notification['created_at'],
         ]);
-    }
-
-    /**
-     * Returns the highest event id currently persisted for the quest.
-     *
-     * @return int
-     */
-    public function currentCursor(): int
-    {
-        $maxId = Notification::find()
-            ->where(['quest_id' => $this->questId])
-            ->max('id');
-
-        return (int) ($maxId ?? 0);
     }
 
     /**

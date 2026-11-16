@@ -19,7 +19,6 @@ final class EventWaiterTest extends Unit
             'created_at' => 1700000000,
             'payload' => json_encode([
                 'playerName' => 'Aragorn',
-                'sessionId' => 'session-abc',
                 'detail' => ['nextPlayerId' => 7, 'nextPlayerName' => 'Aragorn'],
             ]),
         ];
@@ -29,7 +28,6 @@ final class EventWaiterTest extends Unit
 
         $this->assertSame('next-turn', $message['type']);
         $this->assertSame(42, $message['notificationId']);
-        $this->assertSame('session-abc', $message['sessionId']);
         $this->assertSame(7, $message['playerId']);
         $this->assertSame(3, $message['questId']);
         $this->assertSame(1700000000, $message['timestamp']);
@@ -52,7 +50,6 @@ final class EventWaiterTest extends Unit
         $message = $waiter->buildEventMessage($notification);
 
         $this->assertSame('game-action', $message['type']);
-        $this->assertNull($message['sessionId']);
         $this->assertSame('Gimli', $message['playerName']);
         $this->assertSame(2, $message['playerId']);
     }
@@ -72,7 +69,6 @@ final class EventWaiterTest extends Unit
         $message = $waiter->buildEventMessage($notification);
 
         $this->assertSame('player-quit', $message['type']);
-        $this->assertNull($message['sessionId']);
         $this->assertSame(5, $message['notificationId']);
     }
 

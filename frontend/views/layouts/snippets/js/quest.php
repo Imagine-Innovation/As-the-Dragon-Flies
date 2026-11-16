@@ -14,7 +14,6 @@ if (!in_array($currentRoute, $activeRoutes)) {
     return;
 }
 
-$sessionId = Yii::$app->session->get('sessionId');
 $playerId = Yii::$app->session->get('playerId');
 $playerName = Yii::$app->session->get('playerName');
 $avatar = Yii::$app->session->get('avatar');
@@ -25,7 +24,6 @@ $questName = Yii::$app->session->get('questName');
 let notificationClient;
 let equipmentHandler;
 let vtt;
-let sessionId;
 let playerId;
 let avatar;
 let playerName;
@@ -36,7 +34,6 @@ $(document).ready(function () {
 // Long polling endpoint: the wait loop lives server-side in QuestController,
 // no external WebSocket daemon is needed anymore.
 const url = 'quest/ajax-wait-events';
-sessionId = <?= json_encode($sessionId) ?>;
 playerId = <?= json_encode($playerId) ?>;
 avatar = <?= json_encode($avatar) ?>;
 playerName = <?= json_encode($playerName) ?>;
@@ -46,7 +43,7 @@ questName = <?= json_encode($questName) ?>;
 vtt = new VirtualTableTop(); // defined in "quest-<?= $controllerId === 'game' ? 'game' : 'tavern' ?>.js"
 vtt.init();
 
-notificationClient = new NotificationClient(url, sessionId, playerId, playerName, avatar, questId, questName, vtt);
+notificationClient = new NotificationClient(url, playerId, playerName, avatar, questId, questName, vtt);
 notificationClient.init();
 
 <?php if ($controllerId === 'game'): ?>

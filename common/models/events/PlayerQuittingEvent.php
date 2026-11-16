@@ -13,15 +13,14 @@ class PlayerQuittingEvent extends Event
 
     /**
      *
-     * @param string $sessionId
      * @param Player $player
      * @param Quest $quest
      * @param string $reason
      * @param array<string, mixed> $config
      */
-    public function __construct(string $sessionId, Player $player, Quest $quest, string $reason, array $config = [])
+    public function __construct(Player $player, Quest $quest, string $reason, array $config = [])
     {
-        parent::__construct($sessionId, $player, $quest, $config);
+        parent::__construct($player, $quest, $config);
         $this->reason = $reason;
     }
 
@@ -89,7 +88,7 @@ class PlayerQuittingEvent extends Event
             if ($this->reason !== '') {
                 $message .= ' (' . $this->reason . ')';
             }
-            $sendingMessageEvent = new SendingMessageEvent($this->sessionId, $dungeonMaster, $this->quest, $message);
+            $sendingMessageEvent = new SendingMessageEvent($dungeonMaster, $this->quest, $message);
             $sendingMessageEvent->process();
         }
     }

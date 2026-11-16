@@ -18,8 +18,8 @@ class VirtualTableTop {
         Logger.log(1, 'init', `context=${JSON.stringify(this.context, null, 2)}`);
     }
 
-    refresh(questId, sessionId, message = null) {
-        Logger.log(1, 'refresh', `questId=${questId}, sessionId=${sessionId}, message=${message}`);
+    refresh(questId, message = null) {
+        Logger.log(1, 'refresh', `questId=${questId}, message=${message}`);
 
         if (message)
             ToastManager.show('Tavern message', message, 'info');
@@ -42,7 +42,7 @@ class VirtualTableTop {
             successCallback: (response) => {
                 if (!response.error) {
                     $(target).html(response.content);
-                    this._checkIfQuestCanStart(questId, this.context.sessionId);
+                    this._checkIfQuestCanStart(questId);
                 }
             }
         });
@@ -78,8 +78,8 @@ class VirtualTableTop {
 
     }
 
-    _checkIfQuestCanStart(questId, sessionId) {
-        Logger.log(2, '_checkIfQuestCanStart', `questId=${questId}, sessionId=${sessionId}`);
+    _checkIfQuestCanStart(questId) {
+        Logger.log(2, '_checkIfQuestCanStart', `questId=${questId}`);
 
         const button = `#startQuestButton`;
         if (!DOMUtils.exists(button))
@@ -87,7 +87,6 @@ class VirtualTableTop {
 
         AjaxUtils.request({
             url: 'quest/ajax-can-start',
-            data: {sessionId: sessionId},
             successCallback: (response) => {
                 Logger.log(3, '_checkIfQuestCanStart', `Can start? ${JSON.stringify(response, null, 2)}`);
                 if (response.canStart) {

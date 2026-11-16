@@ -72,8 +72,8 @@ class VirtualTableTop {
         this._saveContext();
     }
 
-    refresh(questId, sessionId, message = null) {
-        Logger.log(1, 'refresh', `questId=${questId}, sessionId=${sessionId}, message=${message}`);
+    refresh(questId, message = null) {
+        Logger.log(1, 'refresh', `questId=${questId}, message=${message}`);
         if (message)
             ToastManager.show('Tavern message', message, 'info');
 

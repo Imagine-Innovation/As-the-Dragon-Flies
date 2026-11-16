@@ -144,7 +144,6 @@ Key guarantees enforced by `ContextManager`:
 * Automatically hooks into `afterLogin` event on the `user` component in both `frontend` and `backend`.
 * Sets `Yii::$app->language` based on user model preference or 30-day language cookie (`LanguageSelector::getLangCookie()`).
 * Automatically syncs active player (`playerId`, `playerName`, `avatar`) and active quest (`questId`, `questName`, `inQuest`).
-* Generates a unique session UUID (`sessionId`) if not present.
 
 ---
 

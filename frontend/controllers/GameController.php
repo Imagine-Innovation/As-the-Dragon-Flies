@@ -471,7 +471,6 @@ class GameController extends Controller
      */
     protected function createGameActionEvent(string $actionName, array $actionResult = []): bool
     {
-        $sessionId = Yii::$app->session->get('sessionId');
         $player = Player::findOne(Yii::$app->session->get('playerId'));
         $quest = Quest::findOne(Yii::$app->session->get('questId'));
         try {
@@ -482,7 +481,7 @@ class GameController extends Controller
                 'outcomes' => $actionResult['outcomes'],
                 'hpLoss' => $actionResult['hpLoss'],
             ];
-            $event = EventFactory::createEvent('game-action', $sessionId, $player, $quest, $data);
+            $event = EventFactory::createEvent('game-action', $player, $quest, $data);
             $event->process();
             return true;
         } catch (\Exception $e) {

@@ -649,8 +649,6 @@ class QuestManager extends BaseManager
         Yii::debug("createQuestEvent - initiator={$initiator?->name}");
 
         try {
-            /** @var string $sessionId */
-            $sessionId = Yii::$app->session->get('sessionId');
             $player = $initiator ?? $this->getPlayer();
 
             $data = [
@@ -658,7 +656,7 @@ class QuestManager extends BaseManager
                 'detail' => $detail,
             ];
 
-            $event = EventFactory::createEvent($eventType, $sessionId, $player, $this->quest, $data);
+            $event = EventFactory::createEvent($eventType, $player, $this->quest, $data);
             $event->process();
             return $event;
         } catch (Exception $e) {

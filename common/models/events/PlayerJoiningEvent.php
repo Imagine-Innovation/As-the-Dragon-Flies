@@ -12,14 +12,13 @@ class PlayerJoiningEvent extends Event
 
     /**
      *
-     * @param string $sessionId
      * @param Player $player
      * @param Quest $quest
      * @param array<string, mixed> $config
      */
-    public function __construct(string $sessionId, Player $player, Quest $quest, array $config = [])
+    public function __construct(Player $player, Quest $quest, array $config = [])
     {
-        parent::__construct($sessionId, $player, $quest, $config);
+        parent::__construct($player, $quest, $config);
     }
 
     /**
@@ -82,7 +81,7 @@ class PlayerJoiningEvent extends Event
         $dungeonMaster = Player::findOne(1);
         if ($dungeonMaster) {
             $message = $this->getMessage();
-            $sendingMessageEvent = new SendingMessageEvent($this->sessionId, $dungeonMaster, $this->quest, $message);
+            $sendingMessageEvent = new SendingMessageEvent($dungeonMaster, $this->quest, $message);
             $sendingMessageEvent->process();
         }
     }

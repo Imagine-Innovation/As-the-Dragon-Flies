@@ -298,7 +298,7 @@ On page load (`$(document).ready`), global instances are initialized:
 vtt = new VirtualTableTop();
 vtt.init();
 
-notificationClient = new NotificationClient(url, sessionId, playerId, playerName, avatar, questId, questName, vtt);
+notificationClient = new NotificationClient(url, playerId, playerName, avatar, questId, questName, vtt);
 notificationClient.init();
 
 equipmentHandler = new EquipmentHandler();

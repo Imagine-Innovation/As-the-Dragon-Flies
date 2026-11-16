@@ -12,7 +12,6 @@ use yii\base\BaseObject;
 abstract class Event extends BaseObject
 {
 
-    public string $sessionId;
     public Player $player;
     public Quest $quest;
     public int $timestamp;
@@ -21,15 +20,13 @@ abstract class Event extends BaseObject
 
     /**
      *
-     * @param string $sessionId
      * @param Player $player
      * @param Quest $quest
      * @param array<string, mixed> $config
      */
-    public function __construct(string $sessionId, Player $player, Quest $quest, array $config = [])
+    public function __construct(Player $player, Quest $quest, array $config = [])
     {
         $this->notificationId = null;
-        $this->sessionId = $sessionId;
         $this->player = $player;
         $this->quest = $quest;
         $this->timestamp = time();
@@ -78,7 +75,6 @@ abstract class Event extends BaseObject
         $array = array_merge([
             'type' => $this->getType(),
             'notificationId' => $this->notificationId,
-            'sessionId' => $this->sessionId,
             'playerId' => $this->player->id,
             'questId' => $this->quest->id,
             'timestamp' => $this->timestamp,
@@ -100,7 +96,7 @@ abstract class Event extends BaseObject
             'title' => $this->getTitle(),
             'message' => $this->getMessage(),
             'created_at' => time(),
-            'payload' => json_encode(array_merge($this->getPayload(), ['sessionId' => $this->sessionId])),
+            'payload' => json_encode($this->getPayload()),
             'is_private' => 0,
         ];
         $notification = new Notification($notificationData);

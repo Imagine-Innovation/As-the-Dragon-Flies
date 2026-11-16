@@ -276,7 +276,6 @@ class QuestController extends Controller
 
         Yii::debug("*** debug *** clearQuestData - questId={$questId} => {$deletedNotifications} deleted notifications, {$deletedQuestSessions} deleted quest sessions.");
         ContextManager::updateQuestContext(null);
-        ContextManager::clearSessionId();
 
         return ['error' => false, 'msg' => 'Session ID cleared'];
     }
@@ -472,7 +471,6 @@ class QuestController extends Controller
 
         $success = $this->createEvent('player-quitting', $player, $quest, ['reason' => $reason]);
         if ($success) {
-            ContextManager::clearSessionId();
             return $this->redirect(['story/index']);
         }
         UserErrorMessage::throw($this, 'error', 'Could not trigger event', self::DEFAULT_REDIRECT);
@@ -583,9 +581,8 @@ class QuestController extends Controller
      */
     protected function createEvent(string $eventType, Player &$player, Quest &$quest, array $data = []): bool
     {
-        $sessionId = Yii::$app->session->get('sessionId');
         try {
-            $event = EventFactory::createEvent($eventType, $sessionId, $player, $quest, $data);
+            $event = EventFactory::createEvent($eventType, $player, $quest, $data);
             $event->process();
             return true;
         } catch (\Exception $e) {
