@@ -185,6 +185,7 @@ The real-time layer is powered by `NotificationClient` (`frontend/web/js/quest-e
 | Event Name | Action / Handler |
 | :--- | :--- |
 | `notification` | Calls `vtt.refresh()` to update member list and player stats. |
+| `quest-started` | Redirects the browser to the VTT screen (`game/view`) for players still in the tavern. |
 | `new-message` | Triggers `updateChatMessages()` to refresh chat feed via AJAX. |
 | `game-action` | Invokes `handleGameAction(data)`: Updates party stats and triggers `equipmentHandler.refreshEquipment()` if items/stats changed. |
 | `next-turn` | Invokes `vtt.refreshTurn(questId, playerId, detail)`. |

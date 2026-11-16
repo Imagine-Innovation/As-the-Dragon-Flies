@@ -91,9 +91,7 @@ class NotificationClient {
 
         this.on('quest-started', (data) => {
             Logger.log(2, 'setupDefaultHandlers', 'Received quest-started message:', data);
-            if (data.redirectUrl) {
-                window.location.href = data.redirectUrl;
-            }
+            window.location.href = AjaxUtils.buildUrl('game/view') + '&id=' + data.questId;
         });
 
         this.on('game-action', (data) => this.handleGameAction(data));
