@@ -99,19 +99,29 @@ final class EventWaiter extends BaseManager
      * @param int $after   last event id seen by the client
      * @return array<int, array<string, mixed>>
      */
-    public function fetchEvents(int $questId, int $after): array
+    protected function fetchEvents(int $questId, int $after): array
     {
-        $notifications = Notification::find()
+        return array_values(array_map(
+            $this->buildEventMessage(...),
+            $this->findNotifications($questId, $after),
+        ));
+    }
+
+    /**
+     * Returns the quest notifications persisted after the given event id.
+     *
+     * @param int $questId ID of the quest
+     * @param int $after   last event id seen by the client
+     * @return Notification[]
+     */
+    protected function findNotifications(int $questId, int $after): array
+    {
+        return Notification::find()
             ->where(['quest_id' => $questId])
             ->andWhere(['>', 'id', $after])
             ->andWhere(['is_private' => 0])
             ->orderBy(['id' => SORT_ASC])
             ->all();
-
-        return array_values(array_map(
-            fn (Notification $notification): array => $this->buildEventMessage($notification),
-            $notifications,
-        ));
     }
 
     /**
@@ -123,11 +133,11 @@ final class EventWaiter extends BaseManager
     public function buildEventMessage(Notification $notification): array
     {
         $payload = JsonHelper::decode($notification->payload);
+        $payload['sessionId'] ??= null;
 
         return array_merge($payload, [
             'type' => $notification->notification_type,
             'notificationId' => (int) $notification->id,
-            'sessionId' => $payload['sessionId'] ?? null,
             'playerId' => (int) $notification->initiator_id,
             'questId' => (int) $notification->quest_id,
             'timestamp' => (int) $notification->created_at,
