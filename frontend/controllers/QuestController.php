@@ -271,7 +271,18 @@ class QuestController extends Controller
 
         $questId = Yii::$app->session->get('questId');
 
-        $deletedNotifications = \common\models\Notification::deleteAll(['quest_id' => $questId]);
+        // Keep the latest game-over notification: the other players are still
+        // long-polling for it when the first client clears the quest data.
+        $gameOverId = (int) \common\models\Notification::find()
+                ->where(['quest_id' => $questId, 'notification_type' => 'game-over'])
+                ->max('id');
+
+        $notificationCondition = ['quest_id' => $questId];
+        if ($gameOverId > 0) {
+            $notificationCondition = ['and', ['quest_id' => $questId], ['!=', 'id', $gameOverId]];
+        }
+
+        $deletedNotifications = \common\models\Notification::deleteAll($notificationCondition);
         $deletedQuestSessions = \common\models\QuestSession::deleteAll(['quest_id' => $questId]);
 
         Yii::debug("*** debug *** clearQuestData - questId={$questId} => {$deletedNotifications} deleted notifications, {$deletedQuestSessions} deleted quest sessions.");
