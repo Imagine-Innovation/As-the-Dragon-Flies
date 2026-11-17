@@ -140,6 +140,18 @@ final class EventWaiter extends BaseManager
     }
 
     /**
+     * Returns the current cursor of the quest, i.e. the id of the last
+     * persisted notification. A freshly loaded client bootstraps on it so
+     * that it only receives live events, never the quest history.
+     */
+    public function currentCursor(): int
+    {
+        return (int) (Notification::find()
+            ->where(['quest_id' => (int) $this->questId])
+            ->max('id') ?? 0);
+    }
+
+    /**
      * Returns the blocking timeout configured for the waiter.
      */
     protected function defaultTimeout(): int

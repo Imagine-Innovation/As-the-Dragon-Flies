@@ -393,18 +393,25 @@ class QuestController extends Controller
         }
 
         $questId = (int) ($this->request->post('questId') ?? Yii::$app->session->get('questId'));
-        $after = (int) $this->request->post('after', 0);
+        $after = $this->request->post('after');
 
         if ($questId <= 0) {
             return ['error' => true, 'msg' => 'Missing quest ID'];
         }
 
-        Yii::$app->session->close();
-        set_time_limit(0);
-
         try {
             $eventWaiter = new \common\components\gameplay\EventWaiter(['questId' => $questId]);
-            return array_merge(['error' => false, 'msg' => ''], $eventWaiter->wait($after));
+
+            if ($after === null) {
+                // Bootstrap: a freshly loaded page has no cursor yet. It must
+                // not replay the quest history, only wait for live events.
+                return ['error' => false, 'msg' => '', 'events' => [], 'after' => $eventWaiter->currentCursor()];
+            }
+
+            Yii::$app->session->close();
+            set_time_limit(0);
+
+            return array_merge(['error' => false, 'msg' => ''], $eventWaiter->wait((int) $after));
         } catch (\Exception $e) {
             Yii::error("Failed to wait for quest events: {$e->getMessage()}");
             return ['error' => true, 'msg' => 'Failed to wait for quest events'];

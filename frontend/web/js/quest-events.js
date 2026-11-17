@@ -11,7 +11,7 @@ class NotificationClient {
 
         // init internal variables
         this.stopped = false;
-        this.after = 0;
+        this.after = null;
         this.eventListeners = {};
         this.ding = new Audio("music/ding.mp3");
     }
@@ -369,17 +369,21 @@ class NotificationClient {
      * @returns {Promise<object>}
      */
     async fetchEventPage() {
+        const body = {
+            questId: this.questId,
+            playerId: this.playerId
+        };
+        if (this.after !== null) {
+            body.after = this.after;
+        }
+
         const response = await fetch(this.buildUrl(), {
             method: 'POST',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
                 'X-CSRF-Token': CONFIG.CSRF_TOKEN
             },
-            body: new URLSearchParams({
-                questId: this.questId,
-                playerId: this.playerId,
-                after: this.after
-            })
+            body: new URLSearchParams(body)
         });
 
         if (!response.ok) {
