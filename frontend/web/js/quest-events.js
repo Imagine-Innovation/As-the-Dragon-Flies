@@ -562,6 +562,9 @@ class NotificationClient {
             successCallback: (response) => {
                 if (!response.error) {
                     chatInput.value = '';
+                    // The sender's own new-message event is filtered out by
+                    // dispatch(), so the chat must be refreshed here.
+                    this.updateChatMessages();
                 }
             }
         });
