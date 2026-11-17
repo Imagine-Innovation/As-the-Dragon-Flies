@@ -71,6 +71,8 @@ final class EventWaiter extends BaseManager
             if ($events !== []) {
                 $lastEvent = end($events);
                 $cursor = is_array($lastEvent) ? (int) ($lastEvent['notificationId'] ?? 0) : 0;
+                $ids = implode(',', array_column($events, 'notificationId'));
+                Yii::info("EventWaiter.wait - delivering " . count($events) . " event(s) for quest {$this->questId} (after={$after}): ids [{$ids}]");
                 return ['events' => $events, 'after' => max($after, $cursor)];
             }
 

@@ -285,7 +285,7 @@ class QuestController extends Controller
         $deletedNotifications = \common\models\Notification::deleteAll($notificationCondition);
         $deletedQuestSessions = \common\models\QuestSession::deleteAll(['quest_id' => $questId]);
 
-        Yii::debug("*** debug *** clearQuestData - questId={$questId} => {$deletedNotifications} deleted notifications, {$deletedQuestSessions} deleted quest sessions.");
+        Yii::info("*** ajax-end-quest - questId={$questId}, kept game-over notification #{$gameOverId}, deleted {$deletedNotifications} notification(s), {$deletedQuestSessions} quest session(s).");
         ContextManager::updateQuestContext(null);
 
         return ['error' => false, 'msg' => 'Session ID cleared'];
