@@ -10,6 +10,18 @@ return [
         'cache' => [
             'class' => \yii\caching\FileCache::class,
         ],
+        'db' => [
+            // Long polling makes each game page issue a request every few hundred
+            // milliseconds per player. Without schema cache, every single request
+            // pays a full schema introspection (SHOW FULL COLUMNS / SHOW CREATE
+            // TABLE / FK lookups over every table), which delays session
+            // initialization by seconds and lengthens the time the session file
+            // lock is held.
+            // After a database structure change (migrations), flush with:
+            // php yii cache/flush-all
+            'enableSchemaCache' => true,
+            'schemaCacheDuration' => 3600,
+        ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [
