@@ -63,15 +63,26 @@ class GameController extends Controller
      * Shows comprehensive information about a specific quest instance
      * in a virtual tabletop (VTT) layout
      *
+     * A finished quest has no more QuestProgress in progress, so the VTT page
+     * would render with an empty mission context (empty hidden fields) and its
+     * JS initialization would call ajax endpoints without required parameters.
+     * Players landing here after a game over are sent to the quest summary.
+     *
      * @param int $id Quest ID to view
-     * @return string Rendered view page
+     * @return string|Response Rendered view page, or redirect to the summary
      * @throws NotFoundHttpException if quest not found
      */
-    public function actionView(int $id): string
+    public function actionView(int $id): string|Response
     {
         $this->layout = 'game';
 
         $quest = FindModelHelper::findQuest(['id' => $id]);
+
+        $status = AppStatus::tryFrom($quest->status);
+        if ($status === AppStatus::COMPLETED || $status === AppStatus::ABORTED) {
+            return $this->redirect(['quest/summarize', 'id' => $quest->id]);
+        }
+
         $nbPlayers = QuestPlayer::find()
                 ->where(['quest_id' => $quest->id])
                 ->andWhere(['<>', 'status', AppStatus::LEFT->value])

@@ -179,6 +179,11 @@ class VirtualTableTop {
     _updateMission(missionId) {
         Logger.log(2, '_updateMission', `missionId=${missionId}`);
 
+        // No mission in progress (e.g. the quest is over): calling the endpoint
+        // without its required parameter would fail with a 400 Bad Request.
+        if (!missionId)
+            return;
+
         const targetTitle = `#missionTitle`;
         if (!DOMUtils.exists(targetTitle))
             return;
@@ -250,6 +255,11 @@ class VirtualTableTop {
         Logger.log(2, '_updateActions', `playerId=${playerId}, currentPlayerId=${currentPlayerId}, questProgressId=${questProgressId}`);
         const target = `#actionList`;
         if (!DOMUtils.exists(target))
+            return;
+
+        // No quest progress in progress (e.g. the quest is over): calling the
+        // endpoint without its required parameter would fail with a 400.
+        if (!questProgressId)
             return;
 
         if (playerId !== currentPlayerId) {
