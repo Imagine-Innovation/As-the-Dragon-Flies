@@ -181,8 +181,9 @@ class VirtualTableTop {
 
         // No mission in progress (e.g. the quest is over): calling the endpoint
         // without its required parameter would fail with a 400 Bad Request.
-        if (!missionId)
+        if (!missionId) {
             return;
+        }
 
         const targetTitle = `#missionTitle`;
         if (!DOMUtils.exists(targetTitle))
@@ -259,8 +260,9 @@ class VirtualTableTop {
 
         // No quest progress in progress (e.g. the quest is over): calling the
         // endpoint without its required parameter would fail with a 400.
-        if (!questProgressId)
+        if (!questProgressId) {
             return;
+        }
 
         if (playerId !== currentPlayerId) {
             // The player is not the one who is playing, 

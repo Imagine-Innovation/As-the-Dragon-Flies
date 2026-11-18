@@ -80,7 +80,7 @@ class GameController extends Controller
 
         $status = AppStatus::tryFrom($quest->status);
         if ($status === AppStatus::COMPLETED || $status === AppStatus::ABORTED) {
-            return $this->redirect(['quest/summarize', 'id' => $quest->id]);
+            return $this->redirect(['quest/summarize', 'id' => (int) $id]);
         }
 
         $nbPlayers = QuestPlayer::find()
