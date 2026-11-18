@@ -8,3 +8,4 @@ exclude_paths:
   - "frontend/views/layouts/snippets/js/quest.php"
   - "frontend/web/js/quest-events.js"
   - "frontend/web/js/quest-game.js"
+  - "common/config/main.php"
