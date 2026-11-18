@@ -19,6 +19,16 @@ $playerName = Yii::$app->session->get('playerName');
 $avatar = Yii::$app->session->get('avatar');
 $questId = Yii::$app->session->get('questId');
 $questName = Yii::$app->session->get('questName');
+
+// A finished quest has no more QuestProgress in progress: the game page would
+// render with an empty mission context. Send the browser to the summary instead.
+if ($controllerId === 'game' && $questId) {
+    $questStatus = \common\models\Quest::findOne($questId)->status ?? null;
+    if (in_array($questStatus, [\common\components\AppStatus::COMPLETED->value, \common\components\AppStatus::ABORTED->value], true)) {
+        echo "window.location.href = " . json_encode(\yii\helpers\Url::to(['quest/summarize', 'id' => $questId])) . ";";
+        return;
+    }
+}
 ?>
 // Create and initialize the notification client instance for r=<?= $controllerId ?>/<?= $actionId ?>.
 let notificationClient;
