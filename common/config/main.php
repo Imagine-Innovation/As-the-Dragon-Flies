@@ -21,6 +21,13 @@ return [
             // php yii cache/flush-all
             'enableSchemaCache' => true,
             'schemaCacheDuration' => 3600,
+            // Reuse the PDO connection across requests in the same worker: with
+            // non-persistent connections every request pays the full MariaDB
+            // handshake, which can take seconds if localhost first tries an
+            // unreachable IPv6 loopback before falling back to 127.0.0.1.
+            'attributes' => [
+                \PDO::ATTR_PERSISTENT => true,
+            ],
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
