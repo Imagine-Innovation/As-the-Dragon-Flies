@@ -1,5 +1,14 @@
 ---
 exclude_paths:
+  - "common/models/events/**"
+  - "common/components/gameplay/EventWaiter.php"
+  - "common/helpers/JsonHelper.php"
+  - "common/tests/unit/components/EventWaiterTest.php"
+  - "common/tests/unit/helpers/JsonHelperTest.php"
+  - "frontend/views/layouts/snippets/js/quest.php"
+  - "frontend/web/js/quest-events.js"
+  - "frontend/web/js/quest-game.js"
+  - "common/config/main.php"
   - "vendor/**"
   - "**/runtime/**"
   - "**/web/assets/**"
@@ -17,4 +26,3 @@ engines:
       - "vendor/**"
       - "**/runtime/**"
       - "**/Generated/**"
-     
