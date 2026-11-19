@@ -551,7 +551,7 @@ class QuestManager extends BaseManager
     /**
      *
      * @param int|null $nextMissionId
-     * @return array{error: bool, msg: string, event?: string, payload?: array<string, mixed>}
+     * @return array{error: bool, msg: string, event?: string, payload?: array<string, mixed>, over?: bool}
      */
     public function moveToNextMission(?int $nextMissionId): array
     {
@@ -562,6 +562,10 @@ class QuestManager extends BaseManager
             Yii::debug("*** debug *** QuestManager::moveToNextMission - Quest #{$this->quest->id} is already over with status " . $status->getLabel());
             return [
                 'error' => false,
+                // Tells the client that the quest is over (another screen or a
+                // previous call already ended it), so it can go to the summary
+                // instead of reloading a game page it can no longer access.
+                'over' => true,
                 'msg' => "Quest #{$this->quest->id} is already over with status " . $status->getLabel(),
             ];
         }
@@ -575,7 +579,7 @@ class QuestManager extends BaseManager
 
     /**
      *
-     * @return array{error: bool, msg: string, event?: string, payload?: array<string, mixed>}
+     * @return array{error: bool, msg: string, event?: string, payload?: array<string, mixed>, over?: bool}
      */
     public function moveToNextDefaultMission(): array
     {
@@ -593,10 +597,20 @@ class QuestManager extends BaseManager
 
     /**
      *
-     * @return array{error: bool, msg: string, event?: string, payload?: array<string, mixed>}
+     * @return array{error: bool, msg: string, event?: string, payload?: array<string, mixed>, over?: bool}
      */
     public function nextPlayer(): array
     {
+        $status = AppStatus::from($this->quest->status);
+        if ($status === AppStatus::COMPLETED || $status === AppStatus::ABORTED) {
+            Yii::debug("*** debug *** QuestManager::nextPlayer - Quest #{$this->quest->id} is already over");
+            return [
+                'error' => false,
+                'over' => true,
+                'msg' => "Quest #{$this->quest->id} is already over with status " . $status->getLabel(),
+            ];
+        }
+
         $this->endCurrentTurn();
         $currentPlayer = $this->getPlayer();
         $questTurn = $this->setNextQuestTurn();

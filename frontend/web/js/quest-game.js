@@ -469,6 +469,15 @@ class VirtualTableTop {
                         missionId: nextMissionId
                     });
 
+                    // The server tells us the quest is already over (the ending
+                    // action was processed by a previous call): reloading game/view
+                    // would fail with a 403 because the players are no longer
+                    // engaged. Go to the summary instead.
+                    if (response.over) {
+                        window.location.href = AjaxUtils.buildUrl('quest/summarize') + '&id=' + encodeURIComponent(this.context.questId);
+                        return;
+                    }
+
                     if (!this._handleResponseEvent(response)) {
                         window.location.reload();
                     }
