@@ -79,13 +79,17 @@ class StoryController extends Controller
             $lang = null;
         }
 
-        $stories = $query->orderBy(['id' => SORT_DESC])
+        // Eager relations used by the story cards, otherwise each card fires
+        // lazy queries for its tavern, tags and classes (N+1 pattern).
+        $stories = $query->with(['tavern', 'tavern.questPlayers', 'tags', 'classes'])
+                ->orderBy(['id' => SORT_DESC])
                 ->limit(20)
                 ->all();
 
         $player = FindModelHelper::findPlayer(Yii::$app->session->get('playerId'));
         // Don't use FindModelHelper to allow NULL quest
-        $quest = Quest::findOne(Yii::$app->session->get('questId'));
+        $questId = Yii::$app->session->get('questId');
+        $quest = $questId ? Quest::findOne($questId) : null;
 
         return $this->render('index', [
                     'stories' => $stories,
