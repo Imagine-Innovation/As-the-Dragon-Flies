@@ -173,7 +173,9 @@ class Story extends \yii\db\ActiveRecord
      */
     public function getTavern(): \yii\db\ActiveQuery
     {
-        return $this->hasOne(Quest::class, ['story_id' => 'id'])->andWhere(['status' => AppStatus::WAITING->value]);
+        return $this->hasOne(Quest::class, ['story_id' => 'id'])
+                ->andWhere(['status' => AppStatus::WAITING->value])
+                ->orderBy(['id' => SORT_ASC]);
     }
 
     /**
