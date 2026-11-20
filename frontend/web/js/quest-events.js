@@ -383,7 +383,10 @@ class NotificationClient {
                 'X-Requested-With': 'XMLHttpRequest',
                 'X-CSRF-Token': CONFIG.CSRF_TOKEN
             },
-            body: new URLSearchParams(body)
+            body: new URLSearchParams(body),
+            // Lets disconnect() (pagehide) cancel a poll that is still
+            // blocked server-side.
+            signal: this.abortController.signal
         });
 
         if (!response.ok) {
@@ -407,13 +410,31 @@ class NotificationClient {
             }
         }
 
-        if (Array.isArray(data.events)) {
-            data.events.forEach((event) => {
-                this.dispatch(event);
-            });
+        const events = Array.isArray(data.events) ? data.events : [];
+
+        // The quest may have ended before this page finished loading: the
+        // layout check ran before the game-over notification was persisted,
+        // so the cursor bootstrap consumed the game-over event silently.
+        // Without this safety net the client would stay on a stale game
+        // screen, polling a quest nobody participates in anymore. Events
+        // (a just delivered game-over among them) are dispatched first:
+        // their handlers perform the end-of-quest flow themselves.
+        if (data.questOver && !events.some((event) => event && event.type === 'game-over')) {
+            this.disconnect();
+            window.location.href = `${CONFIG.ROOT_URL}/index.php?r=quest/summarize&id=${this.questId}`;
+            return;
         }
-        if (data.after) {
-            this.after = parseInt(data.after, 10) || this.after;
+
+        events.forEach((event) => {
+            this.dispatch(event);
+        });
+        // Zero is a valid cursor (a quest with no notification yet): only
+        // an absent value must leave the client in bootstrap mode.
+        if (data.after !== undefined && data.after !== null) {
+            const cursor = parseInt(data.after, 10);
+            if (!Number.isNaN(cursor) && cursor >= 0) {
+                this.after = cursor;
+            }
         }
     }
 

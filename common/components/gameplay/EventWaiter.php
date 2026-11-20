@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace common\components\gameplay;
 
+use common\components\AppStatus;
 use common\helpers\JsonHelper;
 use common\models\Notification;
+use common\models\Quest;
 use common\models\QuestSession;
 use Yii;
 
@@ -93,14 +95,24 @@ final class EventWaiter extends BaseManager
      * an event is available or the timeout expires.
      *
      * @param mixed $after raw "after" request parameter (null, or numeric string)
-     * @return array{error: bool, msg: string, events?: array<int, array<string, mixed>>, after?: int}
+     * @return array{error: bool, msg: string, events: array<int, array<string, mixed>>, after: int, questOver: bool}
      */
     public function poll(mixed $after): array
     {
         if ($after === null) {
             // Bootstrap: a freshly loaded page has no cursor yet. It must
-            // not replay the quest history, only wait for live events.
-            return ['error' => false, 'msg' => '', 'events' => [], 'after' => $this->currentCursor()];
+            // not replay the quest history, only wait for live events. The
+            // quest status is reconciled BEFORE the client advances its
+            // cursor onto the game-over notification (if any), otherwise a
+            // page loaded just after the quest ended would skip the
+            // game-over event and stay on a stale game screen forever.
+            return [
+                'error' => false,
+                'msg' => '',
+                'events' => [],
+                'after' => $this->currentCursor(),
+                'questOver' => $this->isQuestOver(),
+            ];
         }
 
         // Release the PHP session lock first so that parallel requests
@@ -108,7 +120,13 @@ final class EventWaiter extends BaseManager
         Yii::$app->session->close();
         set_time_limit(0);
 
-        return array_merge(['error' => false, 'msg' => ''], $this->wait((int) $after));
+        $result = $this->wait((int) $after);
+        // The quest can end while the client was blocked: the game-over
+        // event is delivered by wait(), the questOver flag covers the case
+        // where the notification was already played and removed.
+        $result['questOver'] = $this->isQuestOver();
+
+        return $result;
     }
 
     /**
@@ -168,6 +186,24 @@ final class EventWaiter extends BaseManager
             'questId' => (int) $notification['quest_id'],
             'timestamp' => (int) $notification['created_at'],
         ]);
+    }
+
+    /**
+     * Tells whether the quest is already finished (completed or aborted).
+     *
+     * Returned with every polling answer so that a client can stop
+     * polling and join the quest summary when its event stream climbed
+     * past the game-over notification (e.g. a page loaded after the quest
+     * ended, or a game-over notification removed by the purge).
+     */
+    public function isQuestOver(): bool
+    {
+        $status = Quest::find()
+            ->select('status')
+            ->where(['id' => (int) $this->questId])
+            ->scalar();
+
+        return in_array((int) $status, [AppStatus::COMPLETED->value, AppStatus::ABORTED->value], true);
     }
 
     /**

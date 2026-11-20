@@ -175,8 +175,9 @@ Context state is synchronized between client JS and server PHP using hidden `<in
 The real-time layer is powered by `NotificationClient` (`frontend/web/js/quest-events.js`).
 
 ### 5.1 Connection Lifecycle
-* The client posts to `quest/ajax-wait-events` (with `questId`, `playerId` and the `after` cursor in the POST body, plus the CSRF header); each request blocks server-side (up to ~25 s) in `QuestController::actionAjaxWaitEvents()` until a new `notification` row exists for the quest.
-* On the first call the client omits the `after` cursor; the server returns immediately with the current cursor (`EventWaiter::currentCursor()`), so a freshly loaded page only receives live events and never replays the quest history.
+* The client posts to `quest/ajax-wait-events` (with `questId`, `playerId` and the `after` cursor in the POST body, plus the CSRF header); each request blocks server-side (up to ~25 s) in `QuestController::actionAjaxWaitEvents()` until a new `notification` row exists for the quest. The waited quest is always the player's session quest (`Yii::$app->session->get('questId')`), so a client cannot subscribe to another quest's stream.
+* On the first call the client omits the `after` cursor; the server returns immediately with the current cursor (`EventWaiter::currentCursor()`), so a freshly loaded page only receives live events and never replays the quest history. A zero cursor (a quest with no notification yet) is accepted.
+* Every polling answer also carries a `questOver` flag (`EventWaiter::isQuestOver()`). When it is `true` and no fresh `game-over` event was part of the answer, the client stops polling and joins the quest summary page — this covers a game page loaded just after the quest ended.
 * A new request is issued immediately after each response — there is no JavaScript polling timer.
 * Failed requests are retried automatically every 3 seconds.
 * Audio chime (`music/ding.mp3`) signals new chat messages or updates.

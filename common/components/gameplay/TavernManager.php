@@ -669,17 +669,23 @@ class TavernManager extends BaseManager
                     ->createCommand('SELECT id FROM story WHERE id = :id FOR UPDATE', [':id' => $story->id])
                     ->queryScalar();
 
-            return $story->tavern;
+            $foundTavern = $story->tavern;
+
+            // Create the tavern INSIDE the transaction: releasing the story
+            // row lock before the insert would let a concurrent join miss
+            // the (not yet visible) waiting tavern and create a second one,
+            // splitting the party in two.
+            if ($foundTavern === null) {
+                $foundTavern = $this->newTavern();
+            }
+
+            return $foundTavern;
         });
 
         $questId = Yii::$app->session->get('questId');
 
         if ($questId && (!$foundTavern || $foundTavern->id !== $questId)) {
             throw new NotFoundHttpException("Tavern is not the current quest for story {$this->story?->name}");
-        }
-
-        if ($foundTavern === null) {
-            $foundTavern = $this->newTavern();
         }
 
         // Update the current context

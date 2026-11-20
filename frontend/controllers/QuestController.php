@@ -391,7 +391,12 @@ class QuestController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
-        $questId = (int) ($this->request->post('questId') ?? Yii::$app->session->get('questId'));
+        // Bind the polling to the player's current quest: the POSTed quest
+        // id is not honored, otherwise any authenticated user could read
+        // another quest's event stream by posting its id (unlisted Ajax
+        // routes are allowed by default). The session quest id is set when
+        // the player joins the quest, and they cannot switch it silently.
+        $questId = (int) Yii::$app->session->get('questId');
         $after = $this->request->post('after');
 
         if ($questId <= 0) {
