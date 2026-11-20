@@ -6,6 +6,7 @@ namespace common\components\gameplay;
 
 use common\helpers\JsonHelper;
 use common\models\Notification;
+use common\models\QuestSession;
 use Yii;
 
 /**
@@ -151,6 +152,43 @@ final class EventWaiter extends BaseManager
         return (int) (Notification::find()
             ->where(['quest_id' => (int) $this->questId])
             ->max('id') ?? 0);
+    }
+
+    /**
+     * Clears the quest event store when the quest is over.
+     *
+     * Called by the first client that processes the game-over event:
+     * every notification and quest session of the quest is deleted, EXCEPT
+     * the latest game-over notification, so that the other clients still
+     * long-polling can receive it before they stop polling.
+     *
+     * A null quest id (session already cleared by a previous call) is a
+     * tolerated no-op.
+     *
+     * @param int|null $questId ID of the quest to clear
+     * @return array{keptGameOverId: int, deletedNotifications: int, deletedQuestSessions: int}
+     */
+    public static function purgeQuestNotifications(?int $questId): array
+    {
+        if ($questId === null || $questId <= 0) {
+            return ['keptGameOverId' => 0, 'deletedNotifications' => 0, 'deletedQuestSessions' => 0];
+        }
+
+        $keptGameOverId = (int) (Notification::find()
+            ->where(['quest_id' => $questId, 'notification_type' => 'game-over'])
+            ->max('id') ?? 0);
+
+        $notificationCondition = ['quest_id' => $questId];
+        if ($keptGameOverId > 0) {
+            $notificationCondition = ['and', ['quest_id' => $questId], ['!=', 'id', $keptGameOverId]];
+        }
+
+        $deletedNotifications = Notification::deleteAll($notificationCondition);
+        $deletedQuestSessions = QuestSession::deleteAll(['quest_id' => $questId]);
+
+        Yii::info("EventWaiter.purgeQuestNotifications - quest {$questId}: kept game-over notification #{$keptGameOverId}, deleted {$deletedNotifications} notification(s), {$deletedQuestSessions} quest session(s).");
+
+        return ['keptGameOverId' => $keptGameOverId, 'deletedNotifications' => $deletedNotifications, 'deletedQuestSessions' => $deletedQuestSessions];
     }
 
     /**

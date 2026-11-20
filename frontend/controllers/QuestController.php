@@ -21,6 +21,7 @@ namespace frontend\controllers;
 use common\components\AppStatus;
 use common\components\ContextManager;
 use common\components\gameplay\ChatManager;
+use common\components\gameplay\EventWaiter;
 use common\components\gameplay\QuestManager;
 use common\components\gameplay\TavernManager;
 use common\components\AccessRightsManager;
@@ -269,23 +270,10 @@ class QuestController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
-        $questId = Yii::$app->session->get('questId');
-
-        // Keep the latest game-over notification: the other players are still
-        // long-polling for it when the first client clears the quest data.
-        $gameOverId = (int) \common\models\Notification::find()
-                ->where(['quest_id' => $questId, 'notification_type' => 'game-over'])
-                ->max('id');
-
-        $notificationCondition = ['quest_id' => $questId];
-        if ($gameOverId > 0) {
-            $notificationCondition = ['and', ['quest_id' => $questId], ['!=', 'id', $gameOverId]];
-        }
-
-        $deletedNotifications = \common\models\Notification::deleteAll($notificationCondition);
-        $deletedQuestSessions = \common\models\QuestSession::deleteAll(['quest_id' => $questId]);
-
-        Yii::info("*** ajax-end-quest - questId={$questId}, kept game-over notification #{$gameOverId}, deleted {$deletedNotifications} notification(s), {$deletedQuestSessions} quest session(s).");
+        // Clear the event store, keeping the latest game-over notification:
+        // the other players are still long-polling for it when the first
+        // client clears the quest data.
+        EventWaiter::purgeQuestNotifications((int) Yii::$app->session->get('questId'));
         ContextManager::updateQuestContext(null);
 
         return ['error' => false, 'msg' => 'Session ID cleared'];
