@@ -53,7 +53,7 @@ class PlayerBuilder {
         // Only proceed if mandatory parameters are present
         if (params.playerId) {
             AjaxUtils.getContent({
-                target: `#${div}` ?? `#ajax-${property}`,
+                target: div ? `#${div}` : `#ajax-${property}`,
                 url: `player-builder/ajax-${property}`,
                 data: params
             });
@@ -602,7 +602,7 @@ class PlayerBuilder {
             successCallback: (response) => {
                 if (!response.error) {
                     $(target).html(response.content);
-                    let endowment = {};
+                    let endowment;
                     for (let choice = 1; choice <= response.choices; choice++) {
                         endowment = response.endowments[choice];
                         if (endowment && endowment[1] && Object.keys(endowment).length === 1) {

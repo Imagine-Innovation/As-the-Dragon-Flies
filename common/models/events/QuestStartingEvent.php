@@ -10,17 +10,6 @@ class QuestStartingEvent extends Event
 {
 
     /**
-     *
-     * @param Player $player
-     * @param Quest $quest
-     * @param array<string, mixed> $config
-     */
-    public function __construct(Player $player, Quest $quest, array $config = [])
-    {
-        parent::__construct($player, $quest, $config);
-    }
-
-    /**
      * {@inheritdoc}
      *
      * @return string

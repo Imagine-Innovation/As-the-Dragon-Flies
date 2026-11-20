@@ -149,12 +149,12 @@ class NotificationClient {
             AjaxUtils.request({
                 url: 'quest/ajax-end-quest',
                 method: 'POST',
-                successCallback: (response) => {
+                successCallback: () => {
                     Logger.log(1, 'game-over', 'Session ID cleared');
                     // Redirect all participants to the summary page after a short delay
                     setTimeout(redirectAction, 3000);
                 },
-                errorCallback: (error) => {
+                errorCallback: () => {
                     Logger.log(1, 'game-over', 'Failed to clear session ID, redirecting anyway');
                     setTimeout(redirectAction, 3000);
                 }
