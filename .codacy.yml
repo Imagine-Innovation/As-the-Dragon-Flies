@@ -1,20 +1,14 @@
 ---
 exclude_paths:
-  - "common/models/events/**"
-  - "common/components/gameplay/EventWaiter.php"
-  - "common/helpers/JsonHelper.php"
   - "common/tests/**"
-  - "frontend/views/layouts/snippets/js/quest.php"
-  - "frontend/web/js/quest-events.js"
-  - "frontend/web/js/quest-game.js"
-  - "frontend/web/js/quest-tavern.js"
-  - "common/config/main.php"
+  - "backend/tests/**"
+  - "frontend/tests/**"
+  - "console/tests/**"
   - "vendor/**"
   - "**/runtime/**"
-  - "**/web/assets/**"
-  - "**/*.generated.php"
   - "**/Generated/**"
-  - "**/coverage/**"
+  - "**/*.sql"
+  - "tools/**"
   - "*.sql"
 
 engines:
@@ -27,5 +21,4 @@ engines:
       - "vendor/**"
       - "**/runtime/**"
       - "**/Generated/**"
-      - "**/*.sql"
       - "tools/**"
