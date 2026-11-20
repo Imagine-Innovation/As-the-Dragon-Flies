@@ -31,7 +31,7 @@ $imgPath = WebResourcesHelper::imagePath();
                             </div>
                         </div>
                         <h4 class="card-title text-center">
-                            <?= $item['quantity'] ?> x <?= $item['name'] ?>
+                            <?= $item['quantity'] ?> x <?= Yii::t('app/item', $item['name']) ?>
                             <?php if ($player->isProficient($item['id'])): ?>
                                 <span data-bs-toggle="tooltip" title="You have proficiency with this item" data-placement="bottom">
                                     <i class="bi bi-star-fill"></i>
@@ -39,10 +39,17 @@ $imgPath = WebResourcesHelper::imagePath();
                             <?php endif; ?>
                         </h4>
                         <h6 class="card-subtitle text-muted">
+                            <?php
+                            $descKey = $item['name'] . ' description';
+                            $translatedDesc = Yii::t('app/item', $descKey);
+                            $displayDesc = ($translatedDesc !== $descKey && $translatedDesc !== null && $translatedDesc !== '')
+                                ? $translatedDesc
+                                : $item['description'];
+                            ?>
                             <?=
                             ModalDesc::widget([
-                                'name' => $item['name'],
-                                'description' => $item['description'],
+                                'name' => Yii::t('app/item', $item['name']),
+                                'description' => $displayDesc,
                                 'maxLength' => 180,
                                 'type' => $item['type'],
                                 'id' => $item['id'],

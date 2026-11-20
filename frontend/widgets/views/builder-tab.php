@@ -21,14 +21,22 @@ use common\widgets\ModalDesc;
                             <input type="radio" id="<?= $field_name ?><?= $model->id ?>" name="<?= $field_name ?>" class="custom-control-input"
                                    onchange="PlayerBuilder.setProperty('<?= $field_name ?>_id', <?= $model->id ?>);">
                             <label class="custom-control-label text-decoration" for="<?= $field_name ?><?= $model->id ?>"><?=
-            $model->name
+            $field_name === 'item' ? Yii::t('app/item', $model->name) : $model->name
         ?></label>
                         </div>
                         <h6 class="card-subtitle text-muted">
+                            <?php
+                            $displayName = $field_name === 'item' ? Yii::t('app/item', $model->name) : $model->name;
+                            $descKey = $model->name . ' description';
+                            $translatedDesc = Yii::t('app/item', $descKey);
+                            $displayDesc = $field_name === 'item'
+                                ? (($translatedDesc !== $descKey && $translatedDesc !== null && $translatedDesc !== '') ? $translatedDesc : $model->description)
+                                : $model->description;
+                            ?>
                             <?=
             ModalDesc::widget([
-                'name' => $model->name,
-                'description' => $model->description,
+                'name' => $displayName,
+                'description' => $displayDesc,
                 'maxLength' => 200,
                 'type' => $field_name,
                 'id' => $model->id,

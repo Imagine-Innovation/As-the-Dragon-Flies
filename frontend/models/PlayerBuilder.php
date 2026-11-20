@@ -29,7 +29,7 @@ class PlayerBuilder extends Player
      * @param array<string, mixed>|null $attributeNames
      * @return bool Returns true if all player's advanced properties are successfully saved, false otherwise.
      */
-    public function save(bool $runValidation = true, ?array $attributeNames = null): bool
+    public function save($runValidation = true, $attributeNames = null): bool
     {
         $ts = time();
 

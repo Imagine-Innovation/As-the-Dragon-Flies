@@ -30,7 +30,7 @@ $imgPath = WebResourcesHelper::imagePath();
                                    $alreadySelectedItems ?
                                            ",$alreadySelectedItems" : ''
                                    ?>">
-                            <label class="custom-control-label" for="selectItemRadio-<?= $item->id ?>"><?= $item->name ?></label>
+                            <label class="custom-control-label" for="selectItemRadio-<?= $item->id ?>"><?= Yii::t('app/item', $item->name) ?></label>
                         </div>
                     </div>
                 </div>
