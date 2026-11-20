@@ -1,3 +1,6 @@
+// Globals shared across the front-end scripts, defined in common/web/js/core-library.js
+/* global DOMUtils, Logger, AjaxUtils, ToastManager */
+
 class VirtualTableTop {
     constructor(options = {}) {
         this.context = {};
