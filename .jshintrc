@@ -1,0 +1,20 @@
+{
+    "esversion": 2021,
+    "browser": true,
+    "devel": true,
+    "undef": true,
+    "unused": false,
+    "latedef": false,
+    "maxlen": 150,
+    "predef": [
+        "DOMUtils",
+        "ToastManager",
+        "AjaxUtils",
+        "Logger",
+        "DOMPurify",
+        "CONFIG",
+        "notificationClient",
+        "ChartDrawer",
+        "EventSource"
+    ]
+}
