@@ -34,11 +34,28 @@ class m261119_120000_drop_quest_session_table extends Migration
             'quest_id' => $this->integer()->unsigned()->null()->comment('Foreign key to quest table'),
             'player_id' => $this->integer()->unsigned()->null()->comment('Foreign key to player table'),
             'client_id' => $this->string(64)->null()->comment('Connection ID (socket)'),
-            'last_ts' => $this->integer()->unsigned()->notNull()->defaultValue(0)->comment('Last time the session was used'),
+            'last_ts' => $this->integer()->unsigned()->notNull()->defaultValue(0)
+                ->comment('Last time the session was used'),
         ]);
 
         $this->createIndex('uk_client', '{{%quest_session}}', 'client_id', true);
-        $this->addForeignKey('quest_session_ibfk_1', '{{%quest_session}}', 'player_id', '{{%player}}', 'id', 'CASCADE', 'CASCADE');
-        $this->addForeignKey('quest_session_ibfk_2', '{{%quest_session}}', 'quest_id', '{{%quest}}', 'id', 'CASCADE', 'CASCADE');
+        $this->addForeignKey(
+            'quest_session_ibfk_1',
+            '{{%quest_session}}',
+            'player_id',
+            '{{%player}}',
+            'id',
+            'CASCADE',
+            'CASCADE'
+        );
+        $this->addForeignKey(
+            'quest_session_ibfk_2',
+            '{{%quest_session}}',
+            'quest_id',
+            '{{%quest}}',
+            'id',
+            'CASCADE',
+            'CASCADE'
+        );
     }
 }
