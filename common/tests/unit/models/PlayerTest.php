@@ -5,10 +5,9 @@ namespace common\tests\unit\models;
 
 use Codeception\Test\Unit;
 use common\models\Player;
-use common\models\PlayerBody;
 use common\models\PlayerItem;
 
-class PlayerBodyTest extends Unit
+class PlayerTest extends Unit
 {
     /**
      * @var \common\tests\UnitTester
@@ -17,7 +16,7 @@ class PlayerBodyTest extends Unit
 
     public function testRulesDefinition(): void
     {
-        $model = new PlayerBody();
+        $model = new Player();
         $rules = $model->rules();
 
         $slots = ['head_item_id', 'chest_item_id', 'right_hand_item_id', 'left_hand_item_id', 'back_item_id'];
@@ -28,8 +27,8 @@ class PlayerBodyTest extends Unit
             $validatorName = $rule[1];
 
             if ($validatorName === 'exist' && isset($rule['targetClass']) && $rule['targetClass'] === PlayerItem::class) {
-                // The attribute list should only contain the slot attribute, NOT player_id
-                $this->assertNotContains('player_id', $attributes, 'player_id must not be validated in slot exist rule');
+                // The attribute list should only contain the slot attributes, NOT the primary key
+                $this->assertNotContains('id', $attributes, 'id must not be validated in slot exist rule');
                 foreach ($attributes as $attr) {
                     $validatedExistSlots[] = $attr;
                 }
@@ -49,16 +48,14 @@ class PlayerBodyTest extends Unit
             $this->markTestSkipped('No player in database');
         }
 
-        $playerBody = PlayerBody::findOne(['player_id' => $player->id]) ?? new PlayerBody();
-        $playerBody->player_id = $player->id;
-        $playerBody->head_item_id = null;
-        $playerBody->chest_item_id = null;
-        $playerBody->right_hand_item_id = null;
-        $playerBody->left_hand_item_id = null;
-        $playerBody->back_item_id = null;
+        $player->head_item_id = null;
+        $player->chest_item_id = null;
+        $player->right_hand_item_id = null;
+        $player->left_hand_item_id = null;
+        $player->back_item_id = null;
 
-        $isValid = $playerBody->validate();
-        $this->assertTrue($isValid, 'PlayerBody should be valid when all equipment slots are null: ' . json_encode($playerBody->errors));
+        $isValid = $player->validate();
+        $this->assertTrue($isValid, 'Player should be valid when all equipment slots are null: ' . json_encode($player->errors));
     }
 
     public function testValidationFailsOnSlotWhenItemNotOwned(): void
@@ -68,14 +65,10 @@ class PlayerBodyTest extends Unit
             $this->markTestSkipped('No player in database');
         }
 
-        $playerBody = PlayerBody::findOne(['player_id' => $player->id]) ?? new PlayerBody();
-        $playerBody->player_id = $player->id;
-        $playerBody->back_item_id = 99999999; // non-existent item
+        $player->back_item_id = 99999999; // non-existent item
 
-        $isValid = $playerBody->validate();
-        $this->assertFalse($isValid, 'PlayerBody must fail validation when an unowned item is equipped');
-        $this->assertArrayHasKey('back_item_id', $playerBody->errors, 'The validation error should be on back_item_id');
-        $this->assertArrayNotHasKey('player_id', $playerBody->errors, 'player_id should not receive an error for an invalid slot item');
+        $isValid = $player->validate();
+        $this->assertFalse($isValid, 'Player must fail validation when an unowned item is equipped');
+        $this->assertArrayHasKey('back_item_id', $player->errors, 'The validation error should be on back_item_id');
     }
 }
-

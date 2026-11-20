@@ -7,7 +7,6 @@ use common\models\Item;
 use common\models\Outcome;
 use common\models\Player;
 use common\models\PlayerAbility;
-use common\models\PlayerBody;
 use common\models\Quest;
 use common\models\QuestPlayer;
 use common\models\Weapon;
@@ -306,17 +305,17 @@ class PlayerManager extends BaseManager
     /**
      * Calculates base Armor Class contributed by chest armor or unarmored defense.
      *
-     * @param PlayerBody $playerBody
+     * @param Player $player
      * @param int $dexModifier
      * @return int
      */
-    private function getChestBaseArmorClass(PlayerBody $playerBody, int $dexModifier): int
+    private function getChestBaseArmorClass(Player $player, int $dexModifier): int
     {
-        if (!$playerBody->chest_item_id) {
+        if (!$player->chest_item_id) {
             return 10 + $dexModifier;
         }
 
-        $chestItem = Item::findOne($playerBody->chest_item_id);
+        $chestItem = Item::findOne($player->chest_item_id);
         if (!$chestItem || !$chestItem->armor || $chestItem->armor->armor_class <= 0) {
             return 10 + $dexModifier;
         }
@@ -371,17 +370,17 @@ class PlayerManager extends BaseManager
     /**
      * Calculates additional AC bonuses from non-chest equipped slots.
      *
-     * @param PlayerBody $playerBody
+     * @param Player $player
      * @return int
      */
-    private function getAdditionalSlotsArmorClass(PlayerBody $playerBody): int
+    private function getAdditionalSlotsArmorClass(Player $player): int
     {
-        $chestItemId = $playerBody->chest_item_id;
+        $chestItemId = $player->chest_item_id;
         $otherSlotIds = array_filter([
-            'head' => $playerBody->head_item_id,
-            'left_hand' => ($playerBody->left_hand_item_id !== $chestItemId) ? $playerBody->left_hand_item_id : null,
-            'right_hand' => ($playerBody->right_hand_item_id !== $chestItemId) ? $playerBody->right_hand_item_id : null,
-            'back' => $playerBody->back_item_id,
+            'head' => $player->head_item_id,
+            'left_hand' => ($player->left_hand_item_id !== $chestItemId) ? $player->left_hand_item_id : null,
+            'right_hand' => ($player->right_hand_item_id !== $chestItemId) ? $player->right_hand_item_id : null,
+            'back' => $player->back_item_id,
         ]);
 
         $additionalAc = 0;
@@ -412,15 +411,9 @@ class PlayerManager extends BaseManager
         }
 
         $dexModifier = $this->getDexterityModifier($targetPlayer);
-        $playerBody = $targetPlayer->playerBody;
-
-        if (!$playerBody) {
-            $totalAc = 10 + $dexModifier;
-        } else {
-            $baseAc = $this->getChestBaseArmorClass($playerBody, $dexModifier);
-            $additionalAc = $this->getAdditionalSlotsArmorClass($playerBody);
-            $totalAc = $baseAc + $additionalAc;
-        }
+        $baseAc = $this->getChestBaseArmorClass($targetPlayer, $dexModifier);
+        $additionalAc = $this->getAdditionalSlotsArmorClass($targetPlayer);
+        $totalAc = $baseAc + $additionalAc;
 
         if ($targetPlayer->armor_class !== $totalAc) {
             $targetPlayer->armor_class = $totalAc;

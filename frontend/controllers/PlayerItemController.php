@@ -8,7 +8,6 @@ use common\helpers\FindModelHelper;
 use common\helpers\SaveHelper;
 use common\models\Item;
 use common\models\Player;
-use common\models\PlayerBody;
 use common\models\PlayerItem;
 use frontend\components\Inventory;
 use Yii;
@@ -165,16 +164,14 @@ class PlayerItemController extends Controller
 
         $request = Yii::$app->request;
         $playerId = (int) $request->get('playerId');
-        $player = Player::findOne($playerId);
-        if ($player) {
-            $playerManager = new PlayerManager(['player' => $player]);
-            $playerManager->updateArmorClass();
-        }
-        $playerBody = FindModelHelper::findPlayerBody(['player_id' => $playerId]);
+        $player = FindModelHelper::findPlayer(['id' => $playerId]);
+
+        $playerManager = new PlayerManager(['player' => $player]);
+        $playerManager->updateArmorClass();
 
         // If a player is found, return the player's packs
         $playerItems = PlayerItem::findAll(['player_id' => $playerId, 'is_carrying' => 1]);
-        $playerBodyData = $this->getPlayerBodyData($playerBody);
+        $playerBodyData = $this->getPlayerBodyData($player);
         $equipmentData = $this->getEquipmentData($playerItems);
 
         // Render the pack view with the found model
@@ -209,16 +206,16 @@ class PlayerItemController extends Controller
 
     /**
      *
-     * @param PlayerBody $playerBody
+     * @param Player $player
      * @return array<string, array{itemId: int|null, itemName: string|null, image: string|null}>
      */
-    private function getPlayerBodyData(PlayerBody &$playerBody): array
+    private function getPlayerBodyData(Player &$player): array
     {
         $data = [];
 
         foreach (PlayerItem::BODY_ZONE as $property => $zone) {
-            if ($playerBody->hasProperty($property)) {
-                $playerItem = $playerBody->$property;
+            if ($player->hasProperty($property)) {
+                $playerItem = $player->$property;
                 $data[$zone] = [
                     /** @phpstan-ignore-next-line */
                     'itemId' => $playerItem?->item_id,
@@ -268,23 +265,20 @@ class PlayerItemController extends Controller
 
     /**
      *
-     * @param PlayerBody $playerBody
+     * @param Player $player
      * @param string $itemName
      * @param bool $equiped
      * @return array<string, mixed>
      */
-    private function savePlayerBody(PlayerBody &$playerBody, string $itemName, bool $equiped = true): array
+    private function savePlayerBody(Player &$player, string $itemName, bool $equiped = true): array
     {
         Yii::debug("*** debug *** savePlayerBody - itemName={$itemName}");
 
-        $successfullySaved = SaveHelper::save($playerBody, false);
+        $successfullySaved = SaveHelper::save($player, false);
         if ($successfullySaved) {
-            $player = Player::findOne($playerBody->player_id);
-            if ($player) {
-                $playerManager = new PlayerManager(['player' => $player]);
-                $playerManager->updateArmorClass();
-            }
-            $playerBodyData = $this->getPlayerBodyData($playerBody);
+            $playerManager = new PlayerManager(['player' => $player]);
+            $playerManager->updateArmorClass();
+            $playerBodyData = $this->getPlayerBodyData($player);
 
             return [
                 'error' => false,
@@ -297,18 +291,18 @@ class PlayerItemController extends Controller
         }
         return [
             'error' => true,
-            'msg' => 'Player equipment failed: ' . ArrayHelper::getColumn($playerBody->errors, 0, false)[0],
+            'msg' => 'Player equipment failed: ' . ArrayHelper::getColumn($player->errors, 0, false)[0],
         ];
     }
 
     /**
      *
      * @param PlayerItem $playerItem
-     * @param PlayerBody $playerBody
+     * @param Player $player
      * @param string $bodyZone
      * @return array<string, mixed>
      */
-    private function equipPlayerWithArmor(PlayerItem &$playerItem, PlayerBody &$playerBody, string $bodyZone): array
+    private function equipPlayerWithArmor(PlayerItem &$playerItem, Player &$player, string $bodyZone): array
     {
         if ($bodyZone !== PlayerItem::BODY_CHEST_ZONE) {
             return [
@@ -317,21 +311,21 @@ class PlayerItemController extends Controller
             ];
         }
         // disarm the previous item prior to equip the player with the new one
-        $this->disarmPreviousItem($playerBody, $bodyZone);
+        $this->disarmPreviousItem($player, $bodyZone);
 
-        $playerBody->chest_item_id = $playerItem->item_id;
+        $player->chest_item_id = $playerItem->item_id;
 
-        return $this->savePlayerBody($playerBody, $playerItem->item_name);
+        return $this->savePlayerBody($player, $playerItem->item_name);
     }
 
     /**
      *
      * @param PlayerItem $playerItem
-     * @param PlayerBody $playerBody
+     * @param Player $player
      * @param string $bodyZone
      * @return array<string, mixed>
      */
-    private function equipPlayerWithHelmet(PlayerItem &$playerItem, PlayerBody &$playerBody, string $bodyZone): array
+    private function equipPlayerWithHelmet(PlayerItem &$playerItem, Player &$player, string $bodyZone): array
     {
         if ($bodyZone !== PlayerItem::BODY_HEAD_ZONE) {
             return [
@@ -340,20 +334,20 @@ class PlayerItemController extends Controller
             ];
         }
         // disarm the previous item prior to equip the player with the new one
-        $this->disarmPreviousItem($playerBody, $bodyZone);
+        $this->disarmPreviousItem($player, $bodyZone);
 
-        $playerBody->head_item_id = $playerItem->item_id;
-        return $this->savePlayerBody($playerBody, $playerItem->item_name);
+        $player->head_item_id = $playerItem->item_id;
+        return $this->savePlayerBody($player, $playerItem->item_name);
     }
 
     /**
      *
      * @param PlayerItem $playerItem
-     * @param PlayerBody $playerBody
+     * @param Player $player
      * @param string $bodyZone
      * @return array<string, mixed>
      */
-    private function equipPlayerWithShield(PlayerItem &$playerItem, PlayerBody &$playerBody, string $bodyZone): array
+    private function equipPlayerWithShield(PlayerItem &$playerItem, Player &$player, string $bodyZone): array
     {
         if ($bodyZone !== PlayerItem::BODY_LEFT_HAND_ZONE) {
             return [
@@ -363,21 +357,21 @@ class PlayerItemController extends Controller
         }
 
         // disarm the previous item prior to equip the player with the new one
-        $this->disarmPreviousItem($playerBody, $bodyZone);
+        $this->disarmPreviousItem($player, $bodyZone);
 
-        $playerBody->left_hand_item_id = $playerItem->item_id;
+        $player->left_hand_item_id = $playerItem->item_id;
 
-        return $this->savePlayerBody($playerBody, $playerItem->item_name);
+        return $this->savePlayerBody($player, $playerItem->item_name);
     }
 
     /**
      *
      * @param PlayerItem $playerItem
-     * @param PlayerBody $playerBody
+     * @param Player $player
      * @param string $bodyZone
      * @return array<string, mixed>
      */
-    private function equipPlayerWithTool(PlayerItem &$playerItem, PlayerBody &$playerBody, string $bodyZone): array
+    private function equipPlayerWithTool(PlayerItem &$playerItem, Player &$player, string $bodyZone): array
     {
         if ($bodyZone !== PlayerItem::BODY_RIGHT_HAND_ZONE) {
             return [
@@ -387,19 +381,19 @@ class PlayerItemController extends Controller
         }
 
         // disarm the previous item prior to equip the player with the new one
-        $this->disarmPreviousItem($playerBody, $bodyZone);
+        $this->disarmPreviousItem($player, $bodyZone);
 
-        $playerBody->right_hand_item_id = $playerItem->item_id;
-        return $this->savePlayerBody($playerBody, $playerItem->item_name);
+        $player->right_hand_item_id = $playerItem->item_id;
+        return $this->savePlayerBody($player, $playerItem->item_name);
     }
 
     /**
      *
-     * @param PlayerBody $playerBody
+     * @param Player $player
      * @param Item $weapon
      * @return void
      */
-    private function equipWithQuiver(PlayerBody &$playerBody, Item &$weapon): void
+    private function equipWithQuiver(Player &$player, Item &$weapon): void
     {
         Yii::debug("*** debug *** equipWithQuiver - weapon={$weapon->name}");
         $weaponName = $weapon->name;
@@ -418,10 +412,10 @@ class PlayerItemController extends Controller
                 return;
             }
             $playerAmunition = PlayerItem::findOne([
-                'player_id' => $playerBody->player_id,
+                'player_id' => $player->id,
                 'item_id' => $amunitionId,
             ]);
-            $playerBody->back_item_id = ($playerAmunition !== null && $playerAmunition->quantity > 0)
+            $player->back_item_id = ($playerAmunition !== null && $playerAmunition->quantity > 0)
                 ? $amunitionId
                 : null;
         }
@@ -431,14 +425,14 @@ class PlayerItemController extends Controller
      *
      * @param PlayerItem $playerItem
      * @param Item $weapon
-     * @param PlayerBody $playerBody
+     * @param Player $player
      * @param string $bodyZone
      * @return array<string, mixed>
      */
     private function equipPlayerWithWeapon(
             PlayerItem &$playerItem,
             Item &$weapon,
-            PlayerBody &$playerBody,
+            Player &$player,
             string $bodyZone,
     ): array
     {
@@ -450,20 +444,20 @@ class PlayerItemController extends Controller
             ];
         }
         // disarm the previous item prior to equip the player with the new one
-        $this->disarmPreviousItem($playerBody, $bodyZone);
+        $this->disarmPreviousItem($player, $bodyZone);
 
         // If the weapon is two-handed, simply use both hands.
         if ($playerItem->is_two_handed) {
-            $playerBody->right_hand_item_id = $playerItem->item_id;
-            $playerBody->left_hand_item_id = $playerItem->item_id;
+            $player->right_hand_item_id = $playerItem->item_id;
+            $player->left_hand_item_id = $playerItem->item_id;
 
             // Special treatment for weapons that use arrows
-            $this->equipWithQuiver($playerBody, $weapon);
+            $this->equipWithQuiver($player, $weapon);
 
-            return $this->savePlayerBody($playerBody, $weaponName);
+            return $this->savePlayerBody($player, $weaponName);
         }
 
-        return $this->holdWeapon($weapon, $playerBody, $bodyZone);
+        return $this->holdWeapon($weapon, $player, $bodyZone);
     }
 
     /**
@@ -472,23 +466,23 @@ class PlayerItemController extends Controller
      * This function is made generic and relies on the properties array
      * to manage hand laterality.
      *
-     * @param PlayerBody $playerBody
+     * @param Player $player
      * @param array<string, mixed> $handProperties
      * @return void
      */
-    private function disarmTheOtherHand(PlayerBody &$playerBody, array $handProperties): void
+    private function disarmTheOtherHand(Player &$player, array $handProperties): void
     {
         Yii::debug('*** debug *** disarmTheOtherHand - handProperties: ' . print_r($handProperties, true));
         $otherHandItemIdField = $handProperties['otherHandItemIdField'];
-        if ($playerBody->$otherHandItemIdField) {
+        if ($player->$otherHandItemIdField) {
             // check if the other hand is not holding a two-handed weapon
             $property = $handProperties['otherHandProperty'];
-            $otherHand = $playerBody->$property;
+            $otherHand = $player->$property;
             if ($otherHand->is_two_handed) {
                 // The player has a two-handed weapon in his hand.
                 // It is therefore also in the other hand.
                 // Disarm it!
-                $playerBody->$otherHandItemIdField = null;
+                $player->$otherHandItemIdField = null;
             }
         }
     }
@@ -500,21 +494,21 @@ class PlayerItemController extends Controller
      * If they only have one, disarm the other hand.
      *
      * @param Item $weapon
-     * @param PlayerBody $playerBody
+     * @param Player $player
      * @param string $bodyZone
      * @return array<string, mixed>
      */
-    private function holdWeapon(Item &$weapon, PlayerBody &$playerBody, string $bodyZone): array
+    private function holdWeapon(Item &$weapon, Player &$player, string $bodyZone): array
     {
 
         $handProperties = PlayerItem::HAND_PROPERTIES[$bodyZone];
 
         $otherHandItemIdField = $handProperties['otherHandItemIdField'];
-        if ($playerBody->$otherHandItemIdField) {
+        if ($player->$otherHandItemIdField) {
             // check if the other hand is not holding the same one-handed weapon
             $property = $handProperties['otherHandProperty'];
-            $otherHand = $playerBody->$property;
-            $itemId = $playerBody->$otherHandItemIdField;
+            $otherHand = $player->$property;
+            $itemId = $player->$otherHandItemIdField;
             if (
                     $otherHand->is_two_handed === 0 // The Weapon is not two-handed AND
                     && $itemId === $weapon->id // The player holds the same weapon in the other hand AND
@@ -522,16 +516,16 @@ class PlayerItemController extends Controller
             ) {
                 // The player does not have 2 or more identical weapon => Disarm the other hand.
                 $otherHandBodyZone = PlayerItem::HAND_PROPERTIES[$bodyZone]['otherHandBodyZone'];
-                $this->disarmPreviousItem($playerBody, $otherHandBodyZone);
+                $this->disarmPreviousItem($player, $otherHandBodyZone);
             }
         }
         $itemIdField = $handProperties['itemIdField'];
-        $playerBody->$itemIdField = $weapon->id;
+        $player->$itemIdField = $weapon->id;
 
         // Special treatment for weapons that use arrows
-        $this->equipWithQuiver($playerBody, $weapon);
+        $this->equipWithQuiver($player, $weapon);
 
-        return $this->savePlayerBody($playerBody, $weapon->name);
+        return $this->savePlayerBody($player, $weapon->name);
     }
 
     /**
@@ -542,16 +536,16 @@ class PlayerItemController extends Controller
      */
     private function equipPlayer(PlayerItem &$playerItem, string $bodyZone): array
     {
-        $playerBody = FindModelHelper::findPlayerBody(['player_id' => $playerItem->player_id]);
+        $player = FindModelHelper::findPlayer(['id' => $playerItem->player_id]);
         $item = $playerItem->item;
         $itemType = $playerItem->item_type;
 
         return match ($itemType) {
-            'Armor' => $this->equipPlayerWithArmor($playerItem, $playerBody, $bodyZone),
-            'Helmet' => $this->equipPlayerWithHelmet($playerItem, $playerBody, $bodyZone),
-            'Shield' => $this->equipPlayerWithShield($playerItem, $playerBody, $bodyZone),
-            'Tool' => $this->equipPlayerWithTool($playerItem, $playerBody, $bodyZone),
-            'Weapon' => $this->equipPlayerWithWeapon($playerItem, $item, $playerBody, $bodyZone),
+            'Armor' => $this->equipPlayerWithArmor($playerItem, $player, $bodyZone),
+            'Helmet' => $this->equipPlayerWithHelmet($playerItem, $player, $bodyZone),
+            'Shield' => $this->equipPlayerWithShield($playerItem, $player, $bodyZone),
+            'Tool' => $this->equipPlayerWithTool($playerItem, $player, $bodyZone),
+            'Weapon' => $this->equipPlayerWithWeapon($playerItem, $item, $player, $bodyZone),
             default => throw new \InvalidArgumentException("Unknown item type: {$itemType}"),
         };
     }
@@ -582,14 +576,14 @@ class PlayerItemController extends Controller
     /**
      *
      * @param PlayerItem $playerItem
-     * @param PlayerBody $playerBody
+     * @param Player $player
      * @param string $bodyZone
      * @param string $weaponName
      * @return void
      */
     private function disarmWeapon(
             PlayerItem &$playerItem,
-            PlayerBody &$playerBody,
+            Player &$player,
             string $bodyZone,
             string $weaponName,
     ): void
@@ -600,80 +594,80 @@ class PlayerItemController extends Controller
         if (str_contains($haystack, 'bow')) {
             // Special treatment for weapons that use arrows:
             // remove the quiver from the player's back.
-            $playerBody->back_item_id = null;
+            $player->back_item_id = null;
         }
 
         $handProperties = PlayerItem::HAND_PROPERTIES[$bodyZone];
 
         if ($playerItem->is_two_handed === 1) {
-            $this->disarmTheOtherHand($playerBody, $handProperties);
+            $this->disarmTheOtherHand($player, $handProperties);
         }
     }
 
     /**
      *
-     * @param PlayerBody $playerBody
+     * @param Player $player
      * @param string $bodyZone
      * @return void
      */
-    private function clearBodyZone(PlayerBody &$playerBody, string $bodyZone): void
+    private function clearBodyZone(Player &$player, string $bodyZone): void
     {
         $bodyProperties = PlayerItem::BODY_PROPERTIES[$bodyZone];
 
         $itemIdField = $bodyProperties['itemIdField'];
-        $playerBody->$itemIdField = null;
+        $player->$itemIdField = null;
     }
 
     /**
      *
-     * @param PlayerBody $playerBody
+     * @param Player $player
      * @param string $bodyZone
      * @return void
      */
-    private function disarmPreviousItem(PlayerBody &$playerBody, string $bodyZone): void
+    private function disarmPreviousItem(Player &$player, string $bodyZone): void
     {
         $bodyProperties = PlayerItem::BODY_PROPERTIES[$bodyZone];
         $property = $bodyProperties['property'];
         $field = $bodyProperties['itemIdField'];
 
-        if ($playerBody->$field === null) {
+        if ($player->$field === null) {
             return;
         }
-        $playerItem = $playerBody->$property;
+        $playerItem = $player->$property;
 
         $previousItemName = $playerItem->item_name;
         if ($playerItem->item_type === 'Weapon') {
-            $this->disarmWeapon($playerItem, $playerBody, $bodyZone, $previousItemName);
+            $this->disarmWeapon($playerItem, $player, $bodyZone, $previousItemName);
         }
 
-        $this->clearBodyZone($playerBody, $bodyZone);
+        $this->clearBodyZone($player, $bodyZone);
     }
 
     /**
      *
-     * @param PlayerBody $playerBody
+     * @param Player $player
      * @param string $bodyZone
      * @return array<string, mixed>
      */
-    private function disarmPlayer(PlayerBody &$playerBody, string $bodyZone): array
+    private function disarmPlayer(Player &$player, string $bodyZone): array
     {
         $bodyProperties = PlayerItem::BODY_PROPERTIES[$bodyZone];
 
         $property = $bodyProperties['property'];
         $field = $bodyProperties['itemIdField'];
 
-        if ($playerBody->$field === null) {
+        if ($player->$field === null) {
             return [
                 'error' => true,
                 'msg' => "Body zone {$bodyZone} has no attached item",
             ];
         }
-        $playerItem = $playerBody->$property;
+        $playerItem = $player->$property;
         $previousItem = $playerItem->item;
 
-        $this->disarmPreviousItem($playerBody, $bodyZone);
+        $this->disarmPreviousItem($player, $bodyZone);
 
-        return $this->savePlayerBody($playerBody, $previousItem->name, false);
+        return $this->savePlayerBody($player, $previousItem->name, false);
     }
 
     /**
@@ -692,9 +686,9 @@ class PlayerItemController extends Controller
         $playerId = $request->post('playerId');
         $bodyZone = $request->post('bodyZone') ?? '';
 
-        $playerBody = FindModelHelper::findPlayerBody(['player_id' => $playerId]);
+        $player = FindModelHelper::findPlayer(['id' => $playerId]);
 
-        return $this->disarmPlayer($playerBody, $bodyZone);
+        return $this->disarmPlayer($player, $bodyZone);
     }
 
     /**

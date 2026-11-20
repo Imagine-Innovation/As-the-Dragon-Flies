@@ -21,12 +21,11 @@ use Yii;
  *
  * @property Item $item
  * @property Player $player
- * @property PlayerBody $playerBody
- * @property PlayerBody $PlayerHead
- * @property PlayerBody $playerChest
- * @property PlayerBody $playerRightHand
- * @property PlayerBody $playerLeftHand
- * @property PlayerBody $playerBack
+ * @property Player|null $head
+ * @property Player|null $chest
+ * @property Player|null $rightHand
+ * @property Player|null $leftHand
+ * @property Player|null $back
  *
  * Custom properties for Item inherited sub-classes
  *
@@ -58,7 +57,7 @@ class PlayerItem extends \yii\db\ActiveRecord
             'itemIdField' => 'left_hand_item_id',
         ],
     ];
-    // Match the properties of the PlayerBody object to the image area
+    // Match the properties of the Player object to the image area
     const BODY_ZONE = [
         'head' => self::BODY_HEAD_ZONE,
         'chest' => self::BODY_CHEST_ZONE,
@@ -66,7 +65,7 @@ class PlayerItem extends \yii\db\ActiveRecord
         'leftHand' => self::BODY_LEFT_HAND_ZONE,
         'back' => self::BODY_BACK_ZONE,
     ];
-    // Match the body zone with the PlayerBody properties.
+    // Match the body zone with the Player properties.
     const BODY_PROPERTIES = [
         self::BODY_HEAD_ZONE => [
             'itemIdField' => 'head_item_id',
@@ -180,63 +179,53 @@ class PlayerItem extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[PlayerBody]].
+     * Gets query for the [[Player]] who equipped this item on the head.
      *
-     * @return \yii\db\ActiveQuery<PlayerBody>
+     * @return \yii\db\ActiveQuery<Player>
      */
-    public function getPlayerBody()
+    public function getHead()
     {
-        return $this->hasOne(PlayerBody::class, ['player_id' => 'player_id']);
+        return $this->hasOne(Player::class, ['head_item_id' => 'item_id', 'id' => 'player_id']);
     }
 
     /**
-     * Gets query for [[PlayerHead]].
+     * Gets query for the [[Player]] who equipped this item on the chest.
      *
-     * @return \yii\db\ActiveQuery<PlayerBody>
+     * @return \yii\db\ActiveQuery<Player>
      */
-    public function getPlayerHead()
+    public function getChest()
     {
-        return $this->hasOne(PlayerBody::class, ['player_id' => 'player_id', 'head_item_id' => 'item_id']);
+        return $this->hasOne(Player::class, ['chest_item_id' => 'item_id', 'id' => 'player_id']);
     }
 
     /**
-     * Gets query for [[PlayerChest]].
+     * Gets query for the [[Player]] who equipped this item in the right hand.
      *
-     * @return \yii\db\ActiveQuery<PlayerBody>
+     * @return \yii\db\ActiveQuery<Player>
      */
-    public function getPlayerChest()
+    public function getRightHand()
     {
-        return $this->hasOne(PlayerBody::class, ['player_id' => 'player_id', 'chest_item_id' => 'item_id']);
+        return $this->hasOne(Player::class, ['right_hand_item_id' => 'item_id', 'id' => 'player_id']);
     }
 
     /**
-     * Gets query for [[PlayerRightHand]].
+     * Gets query for the [[Player]] who equipped this item in the left hand.
      *
-     * @return \yii\db\ActiveQuery<PlayerBody>
+     * @return \yii\db\ActiveQuery<Player>
      */
-    public function getPlayerRightHand()
+    public function getLeftHand()
     {
-        return $this->hasOne(PlayerBody::class, ['player_id' => 'player_id', 'right_hand_item_id' => 'item_id']);
+        return $this->hasOne(Player::class, ['left_hand_item_id' => 'item_id', 'id' => 'player_id']);
     }
 
     /**
-     * Gets query for [[PlayerLeftHand]].
+     * Gets query for the [[Player]] who carries this item on the back.
      *
-     * @return \yii\db\ActiveQuery<PlayerBody>
+     * @return \yii\db\ActiveQuery<Player>
      */
-    public function getPlayerLeftHand()
+    public function getBack()
     {
-        return $this->hasOne(PlayerBody::class, ['player_id' => 'player_id', 'left_hand_item_id' => 'item_id']);
-    }
-
-    /**
-     * Gets query for [[PlayerBack]].
-     *
-     * @return \yii\db\ActiveQuery<PlayerBody>
-     */
-    public function getPlayerBack()
-    {
-        return $this->hasOne(PlayerBody::class, ['player_id' => 'player_id', 'back_item_id' => 'item_id']);
+        return $this->hasOne(Player::class, ['back_item_id' => 'item_id', 'id' => 'player_id']);
     }
 
     /**

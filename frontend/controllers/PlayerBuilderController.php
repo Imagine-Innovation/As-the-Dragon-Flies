@@ -11,7 +11,6 @@ use common\models\ClassEquipment;
 use common\models\Image;
 use common\models\Item;
 use common\models\Player;
-use common\models\PlayerBody;
 use common\models\PlayerItem;
 use common\models\PlayerLanguage;
 use common\components\AjaxRequest;
@@ -550,9 +549,17 @@ class PlayerBuilderController extends Controller
 
         $itemIds = $request->post('itemIds');
 
-        // first of all, delete existing items.
+        // first of all, discharge the player and delete existing items.
         // As a side effect, we must assume that the player has no other items
         // purchased or collected during the setup process.
+        Player::updateAll([
+            'head_item_id' => null,
+            'chest_item_id' => null,
+            'right_hand_item_id' => null,
+            'left_hand_item_id' => null,
+            'back_item_id' => null,
+        ], ['id' => $playerId]);
+
         PlayerItem::deleteAll(['player_id' => $playerId]);
 
         if (empty($itemIds)) {
@@ -703,8 +710,6 @@ class PlayerBuilderController extends Controller
             $post = (array) $this->request->post();
             if ($playerBuilder->load($post) && $playerBuilder->save()) {
                 $playerId = $playerBuilder->id;
-                $playerBody = new PlayerBody(['player_id' => $playerId]);
-                SaveHelper::save($playerBody);
                 return $this->redirect(['update', 'id' => $playerBuilder->id]);
             }
         } else {
