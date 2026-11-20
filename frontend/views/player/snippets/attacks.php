@@ -22,7 +22,7 @@ use common\helpers\ItemHelper;
                 <article class="card mb-3">
                     <div class="card-body p-2">
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h6 class="mb-0 fw-bold"><?= $weapon->item->name ?></h6>
+                            <h6 class="mb-0 fw-bold"><?= Yii::t('app/item', $weapon->item->name) ?></h6>
                             <span class="badge btn-fantasy"><?= $playerItem->attack_modifier ?> to hit</span>
                         </div>
                         <small class="text-muted"><?= $playerItem->damage ?> <?= $weapon->damageType->name ?><?=

@@ -51,6 +51,7 @@ return [
                         'app/lobby' => 'lobby.php',
                         'app/error' => 'error.php',
                         'app/game' => 'game.php',
+                        'app/item' => 'item.php',
                     ],
                 ],
             ],
