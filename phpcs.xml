@@ -9,7 +9,13 @@
 
     <exclude-pattern>*/vendor/*</exclude-pattern>
     <exclude-pattern>*/runtime/*</exclude-pattern>
+    <exclude-pattern>*/mail/*</exclude-pattern>
+    <exclude-pattern>*/node_modules/*</exclude-pattern>
     <exclude-pattern>*/web/assets/*</exclude-pattern>
+    <exclude-pattern>*/web/img/*</exclude-pattern>
+    <exclude-pattern>*/web/music/*</exclude-pattern>
+    <exclude-pattern>*/web/offline/*</exclude-pattern>
+    <exclude-pattern>*/web/resources/*</exclude-pattern>
 
     <rule ref="PSR12"/>
 </ruleset>
