@@ -39,9 +39,9 @@ class GameOverEvent extends Event
      * @param string|null $action The action type
      * @param T|array{} $detail Additional action data
      */
-    public function __construct(string $sessionId, Player $player, Quest $quest, ?string $action, array $detail = [])
+    public function __construct(Player $player, Quest $quest, ?string $action, array $detail = [])
     {
-        parent::__construct($sessionId, $player, $quest);
+        parent::__construct($player, $quest);
         $this->action = $action;
         $this->detail = $detail;
     }
@@ -111,15 +111,13 @@ class GameOverEvent extends Event
     public function process(): void
     {
         Yii::debug('*** Debug *** GameOverEvent - process');
-        $notification = $this->createNotification();
-
-        $this->broadcast();
+        $this->createNotification();
 
         // Dungeon master says hello
         $dungeonMaster = Player::findOne(1);
         if ($dungeonMaster) {
             $message = $this->getMessage();
-            $sendingMessageEvent = new SendingMessageEvent($this->sessionId, $dungeonMaster, $this->quest, $message);
+            $sendingMessageEvent = new SendingMessageEvent($dungeonMaster, $this->quest, $message);
             $sendingMessageEvent->process();
         }
     }

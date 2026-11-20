@@ -47,7 +47,7 @@ project/
 1. **Framework:** Built on the latest version of the **Yii2 Advanced Application Template**.
 2. **`backend/`:** Contains the configuration and management application for site administration.
 3. **`common/`:** Shared components between backend and frontend. In particular, `common/models/` contains Active Record definitions mirroring the underlying database schema.
-4. **`console/`:** Contains console commands and the `EventHandler` application enabling real-time communication between quest clients.
+4. **`console/`:** Contains console commands (migrations, maintenance tasks).
 5. **`frontend/`:** Turn-based online RPG web application (Dungeons & Dragons style).
 6. **`web/` Asset Subdirectories Parsing Policy:**
    - **Policy:** CSS (`.css`) and JavaScript (`.js`) files in `web/` subdirectories **shall be analyzed and parsed**. Non-code multimedia assets (images, audio files, compiled binary fonts) shall not be analyzed.

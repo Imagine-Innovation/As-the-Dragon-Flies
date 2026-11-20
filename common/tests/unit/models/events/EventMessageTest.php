@@ -43,10 +43,10 @@ class EventMessageTest extends Unit
         $player = new TestPlayer('Aragorn');
         $quest = new TestQuest('The Ring');
 
-        $eventEn = new PlayerJoiningEvent('session1', $player, $quest, ['language' => 'en']);
+        $eventEn = new PlayerJoiningEvent($player, $quest, ['language' => 'en']);
         $this->assertEquals('Aragorn joins the quest', $eventEn->getMessage());
 
-        $eventFr = new PlayerJoiningEvent('session1', $player, $quest, ['language' => 'fr']);
+        $eventFr = new PlayerJoiningEvent($player, $quest, ['language' => 'fr']);
         $this->assertEquals('Aragorn rejoint la quête', $eventFr->getMessage());
     }
 
@@ -55,10 +55,10 @@ class EventMessageTest extends Unit
         $player = new TestPlayer('Gimli');
         $quest = new TestQuest('Moria');
 
-        $eventEn = new PlayerQuittingEvent('session1', $player, $quest, 'Need rest', ['language' => 'en']);
+        $eventEn = new PlayerQuittingEvent($player, $quest, 'Need rest', ['language' => 'en']);
         $this->assertEquals('Gimli quits the quest', $eventEn->getMessage());
 
-        $eventFr = new PlayerQuittingEvent('session1', $player, $quest, 'Need rest', ['language' => 'fr']);
+        $eventFr = new PlayerQuittingEvent($player, $quest, 'Need rest', ['language' => 'fr']);
         $this->assertEquals('Gimli quitte la quête', $eventFr->getMessage());
     }
 
@@ -67,10 +67,10 @@ class EventMessageTest extends Unit
         $player = new TestPlayer('Frodo');
         $quest = new TestQuest('Doom');
 
-        $eventEn = new QuestStartingEvent('session1', $player, $quest, ['language' => 'en']);
+        $eventEn = new QuestStartingEvent($player, $quest, ['language' => 'en']);
         $this->assertEquals('Quest Doom starting', $eventEn->getMessage());
 
-        $eventFr = new QuestStartingEvent('session1', $player, $quest, ['language' => 'fr']);
+        $eventFr = new QuestStartingEvent($player, $quest, ['language' => 'fr']);
         $this->assertEquals('Lancement de la quête « Doom »', $eventFr->getMessage());
     }
 
@@ -85,11 +85,11 @@ class EventMessageTest extends Unit
             'status' => 'ABORTED',
         ];
 
-        $eventEn = new GameOverEvent('session1', $player, $quest, 'Game over', $detail);
+        $eventEn = new GameOverEvent($player, $quest, 'Game over', $detail);
         $eventEn->language = 'en';
         $this->assertEquals('Boromir ended quest “Gondor” (ABORTED)', $eventEn->getMessage());
 
-        $eventFr = new GameOverEvent('session1', $player, $quest, 'Game over', $detail);
+        $eventFr = new GameOverEvent($player, $quest, 'Game over', $detail);
         $eventFr->language = 'fr';
         $this->assertEquals('Boromir a terminé la quête « Gondor » (ABORTED)', $eventFr->getMessage());
     }
@@ -106,12 +106,12 @@ class EventMessageTest extends Unit
             'nextMissionName' => 'Mission 2',
         ];
 
-        $eventEn = new NextMissionEvent('session1', $player, $quest, 'Next mission', $detail);
+        $eventEn = new NextMissionEvent($player, $quest, 'Next mission', $detail);
         $eventEn->language = 'en';
         $this->assertEquals('Legolas completed “Mission 1”. Gimli’s turn: “Mission 2”', $eventEn->getMessage());
         $this->assertEquals('Legolas completed “Mission 1”. Gimli’s turn: “Mission 2”', $eventEn->detail['toastMessage']['other']);
 
-        $eventFr = new NextMissionEvent('session1', $player, $quest, 'Next mission', $detail);
+        $eventFr = new NextMissionEvent($player, $quest, 'Next mission', $detail);
         $eventFr->language = 'fr';
         $this->assertEquals('Legolas a terminé « Mission 1 ». Tour de Gimli : « Mission 2 »', $eventFr->getMessage());
         $this->assertEquals('Legolas a terminé « Mission 1 ». Tour de Gimli : « Mission 2 »', $eventFr->detail['toastMessage']['other']);
@@ -127,12 +127,12 @@ class EventMessageTest extends Unit
             'nextPlayerName' => 'Pippin',
         ];
 
-        $eventEn = new NextTurnEvent('session1', $player, $quest, 'Next turn', $detail);
+        $eventEn = new NextTurnEvent($player, $quest, 'Next turn', $detail);
         $eventEn->language = 'en';
         $this->assertEquals('Gandalf finished turn. Pippin’s turn to play.', $eventEn->getMessage());
         $this->assertEquals('Gandalf finished turn. Pippin’s turn to play.', $eventEn->detail['toastMessage']['other']);
 
-        $eventFr = new NextTurnEvent('session1', $player, $quest, 'Next turn', $detail);
+        $eventFr = new NextTurnEvent($player, $quest, 'Next turn', $detail);
         $eventFr->language = 'fr';
         $this->assertEquals('Gandalf a fini son tour. Au tour de Pippin !', $eventFr->getMessage());
         $this->assertEquals('Gandalf a fini son tour. Au tour de Pippin !', $eventFr->detail['toastMessage']['other']);

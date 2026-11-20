@@ -1,0 +1,36 @@
+---
+exclude_paths:
+  - "common/tests/**"
+  - "backend/tests/**"
+  - "frontend/tests/**"
+  - "console/tests/**"
+  - "vendor/**"
+  - "**/runtime/**"
+  - "**/Generated/**"
+  - "**/*.sql"
+  - "tools/**"
+
+# The JS files below are plain ES2015+ script bundles sharing a global
+# scope (core-library.js): Codacy's JavaScript engine analyzes them with
+# legacy ES5 rules (template literals, block-scoped variables, undeclared
+# shared globals rejected, false "insecure storage" on Logger calls),
+# which is pure noise. Real JS review is covered by CodeFactor, CodeQL
+# and the JavaSript/TypeScript analyze workflow.
+  - "backend/web/js/search-select.js"
+  - "frontend/views/layouts/snippets/js/quest.php"
+  - "frontend/web/js/player-builder.js"
+  - "frontend/web/js/quest-events.js"
+  - "frontend/web/js/quest-game.js"
+  - "frontend/web/js/quest-tavern.js"
+
+engines:
+  metric:
+    exclude_paths:
+      - "common/tests/**"
+      - "backend/tests/**"
+      - "frontend/tests/**"
+      - "console/tests/**"
+      - "vendor/**"
+      - "**/runtime/**"
+      - "**/Generated/**"
+      - "tools/**"

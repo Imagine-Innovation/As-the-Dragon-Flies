@@ -21,6 +21,7 @@ namespace frontend\controllers;
 use common\components\AppStatus;
 use common\components\ContextManager;
 use common\components\gameplay\ChatManager;
+use common\components\gameplay\EventWaiter;
 use common\components\gameplay\QuestManager;
 use common\components\gameplay\TavernManager;
 use common\components\AccessRightsManager;
@@ -69,7 +70,7 @@ class QuestController extends Controller
                         'actions' => [
                             'index', 'join', 'quit', 'resume', 'start', 'summarize', 'tavern',
                             'ajax-can-start', 'ajax-get-messages', 'ajax-quest-members', 'ajax-send-message', 'ajax-welcome-messages',
-                            'ajax-end-quest',
+                            'ajax-end-quest', 'ajax-wait-events',
                         ],
                         'allow' => true,
                         'matchCallback' => function ($rule, $action) {
@@ -269,14 +270,11 @@ class QuestController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
-        $questId = Yii::$app->session->get('questId');
-
-        $deletedNotifications = \common\models\Notification::deleteAll(['quest_id' => $questId]);
-        $deletedQuestSessions = \common\models\QuestSession::deleteAll(['quest_id' => $questId]);
-
-        Yii::debug("*** debug *** clearQuestData - questId={$questId} => {$deletedNotifications} deleted notifications, {$deletedQuestSessions} deleted quest sessions.");
+        // Clear the event store, keeping the latest game-over notification:
+        // the other players are still long-polling for it when the first
+        // client clears the quest data.
+        EventWaiter::purgeQuestNotifications((int) Yii::$app->session->get('questId'));
         ContextManager::updateQuestContext(null);
-        ContextManager::clearSessionId();
 
         return ['error' => false, 'msg' => 'Session ID cleared'];
     }
@@ -372,6 +370,50 @@ class QuestController extends Controller
     }
 
     /**
+     * Long polling endpoint for real-time quest events.
+     *
+     * Replaces the external WebSocket (Ratchet) event daemon: the waiting
+     * loop lives here, server-side. The request blocks until a new event
+     * is persisted for the quest, or until the timeout expires. The client
+     * immediately issues a new request after each response, so there is no
+     * JavaScript polling timer.
+     *
+     * The PHP session lock is released first so that parallel requests
+     * from the same player are not serialized.
+     *
+     * @return array{error: bool, msg: string, events?: array<int, array<string, mixed>>, after?: int}
+     */
+    public function actionAjaxWaitEvents(): array
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        if (!$this->request->isPost || !$this->request->isAjax) {
+            return ['error' => true, 'msg' => 'Not an Ajax POST request'];
+        }
+
+        // Bind the polling to the player's current quest: the POSTed quest
+        // id is not honored, otherwise any authenticated user could read
+        // another quest's event stream by posting its id (unlisted Ajax
+        // routes are allowed by default). The session quest id is set when
+        // the player joins the quest, and they cannot switch it silently.
+        $questId = (int) Yii::$app->session->get('questId');
+        $after = $this->request->post('after');
+
+        if ($questId <= 0) {
+            return ['error' => true, 'msg' => 'Missing quest ID'];
+        }
+
+        try {
+            $eventWaiter = new \common\components\gameplay\EventWaiter(['questId' => $questId]);
+
+            return $eventWaiter->poll($after);
+        } catch (\Exception $e) {
+            Yii::error("Failed to wait for quest events: {$e->getMessage()}");
+            return ['error' => true, 'msg' => 'Failed to wait for quest events'];
+        }
+    }
+
+    /**
      * Check if the quest can start or not
      *
      * @return array{canStart: bool, msg: string}
@@ -431,7 +473,6 @@ class QuestController extends Controller
 
         $success = $this->createEvent('player-quitting', $player, $quest, ['reason' => $reason]);
         if ($success) {
-            ContextManager::clearSessionId();
             return $this->redirect(['story/index']);
         }
         UserErrorMessage::throw($this, 'error', 'Could not trigger event', self::DEFAULT_REDIRECT);
@@ -542,9 +583,8 @@ class QuestController extends Controller
      */
     protected function createEvent(string $eventType, Player &$player, Quest &$quest, array $data = []): bool
     {
-        $sessionId = Yii::$app->session->get('sessionId');
         try {
-            $event = EventFactory::createEvent($eventType, $sessionId, $player, $quest, $data);
+            $event = EventFactory::createEvent($eventType, $player, $quest, $data);
             $event->process();
             return true;
         } catch (\Exception $e) {

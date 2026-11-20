@@ -1,8 +1,7 @@
 class NotificationClient {
-    constructor(url, sessionId, playerId, playerName, avatar, questId, questName, vtt = null) {
+    constructor(url, playerId, playerName, avatar, questId, questName, vtt = null) {
         // loading init parameters
         this.url = url;
-        this.sessionId = sessionId;
         this.playerId = playerId;
         this.playerName = playerName;
         this.avatar = avatar;
@@ -11,11 +10,9 @@ class NotificationClient {
         this.vtt = vtt;
 
         // init internal variables
-        this.socket = null;
-        this.connected = false;
-        this.messageQueue = [];
+        this.stopped = false;
+        this.after = null;
         this.eventListeners = {};
-        this.heartbeatInterval = 30000; // 30s
         this.ding = new Audio("music/ding.mp3");
     }
 
@@ -66,30 +63,12 @@ class NotificationClient {
      */
     setupDefaultHandlers() {
         Logger.log(1, 'setupDefaultHandlers', '');
-        // Handle connection established
-        this.on('open', () => {
-            Logger.log(2, 'setupDefaultHandlers', 'Connection to notification server established');
-            this.updateConnectionStatus('Connected');
-        });
-
-        // Handle connection closed
-        this.on('close', () => {
-            Logger.log(2, 'setupDefaultHandlers', 'Connection to notification server closed');
-            this.updateConnectionStatus('Disconnected - Reconnecting...');
-        });
-
-        // Handle errors
-        this.on('error', (error) => {
-            console.error('Notification error:', error);
-            this.updateConnectionStatus('Connection Error');
-        });
-
         // Handle incoming notifications
         this.on('notification', (data) => {
             Logger.log(2, 'setupDefaultHandlers', 'Received notification:', data);
             const message = data.message ?? null;
             if (this.vtt) {
-                this.vtt.refresh(this.questId, this.sessionId, message);
+                this.vtt.refresh(this.questId, message);
             }
         });
 
@@ -112,9 +91,7 @@ class NotificationClient {
 
         this.on('quest-started', (data) => {
             Logger.log(2, 'setupDefaultHandlers', 'Received quest-started message:', data);
-            if (data.redirectUrl) {
-                window.location.href = data.redirectUrl;
-            }
+            window.location.href = AjaxUtils.buildUrl('game/view') + '&id=' + data.questId;
         });
 
         this.on('game-action', (data) => this.handleGameAction(data));
@@ -172,12 +149,12 @@ class NotificationClient {
             AjaxUtils.request({
                 url: 'quest/ajax-end-quest',
                 method: 'POST',
-                successCallback: (response) => {
+                successCallback: () => {
                     Logger.log(1, 'game-over', 'Session ID cleared');
                     // Redirect all participants to the summary page after a short delay
                     setTimeout(redirectAction, 3000);
                 },
-                errorCallback: (error) => {
+                errorCallback: () => {
                     Logger.log(1, 'game-over', 'Failed to clear session ID, redirecting anyway');
                     setTimeout(redirectAction, 3000);
                 }
@@ -190,7 +167,7 @@ class NotificationClient {
                 // Construct the message from the payload
                 const message = `Player ${data.playerName} has joined quest "${data.questName}".`;
                 if (this.vtt) {
-                    this.vtt.refresh(this.questId, this.sessionId, message);
+                    this.vtt.refresh(this.questId, message);
                 }
             } else {
                 console.warn('Received player-joined event with incomplete payload:', data);
@@ -203,7 +180,7 @@ class NotificationClient {
                 // Construct the message from the payload
                 const message = `Player ${data.playerName} has left the quest`;
                 if (this.vtt) {
-                    this.vtt.refresh(this.questId, this.sessionId, message);
+                    this.vtt.refresh(this.questId, message);
                 }
             } else {
                 console.warn('Received player-quit event with incomplete payload:', data);
@@ -342,69 +319,164 @@ class NotificationClient {
     }
 
     /**
-     * Connect to the WebSocket server
+     * Connect to the event stream (HTTP long polling)
+     *
+     * No WebSocket daemon anymore: each request blocks server-side in the
+     * controller until a new event is available (or until the server
+     * timeout expires), then the client immediately issues the next
+     * request. There is no JavaScript polling timer.
      */
     connect() {
         Logger.log(1, 'connect', `----------------------------------------------`);
-        Logger.log(1, 'connect', `Connecting to WebSocket server at ${this.url}`);
-        Logger.log(1, 'connect', `Player ID: ${this.playerId}, Player name: ${this.playerName}, Avatar: ${this.avatar}, Quest ID: ${this.questId}, Quest name: ${this.questName}, Session ID: ${this.sessionId}`);
+        Logger.log(1, 'connect', `Player ID: ${this.playerId}, Player name: ${this.playerName}, Avatar: ${this.avatar}, Quest ID: ${this.questId}, Quest name: ${this.questName}`);
         Logger.log(1, 'connect', `----------------------------------------------`);
 
-        this.socket = new WebSocket(this.url);
+        this.stopped = false;
+        this.firstPoll = true;
+        this.pollStep();
+    }
 
-        this.socket.onopen = () => {
-            Logger.log(2, 'connect', 'WebSocket connection established');
-            this.connected = true;
-            this.send({type: 'register'});
-
-            // Process any queued messages
-            Logger.log(2, 'connect', `Processing ${this.messageQueue.length} queued messages`);
-            while (this.messageQueue.length > 0) {
-                const message = this.messageQueue.shift();
-                Logger.log(2, 'connect', 'Sending queued message:', message);
-                this.socket.send(JSON.stringify(message));
+    /**
+     * Long polling step: issues one blocking request, then reschedules
+     * itself until disconnected. The server holds each request until a
+     * new event is available, so there is no JavaScript polling timer.
+     *
+     * @returns {Promise<void>}
+     */
+    async pollStep() {
+        if (this.stopped) {
+            return;
+        }
+        this.abortController = new AbortController();
+        try {
+            const data = await this.fetchEventPage();
+            this.handlePollData(data);
+        } catch (error) {
+            if (this.stopped) {
+                return;
             }
-
-            this.triggerEvent('open');
-            if (this.vtt) {
-                this.vtt.refresh(this.questId, this.sessionId);
-            }
-        };
-
-        this.socket.onmessage = (event) => {
-            Logger.log(2, 'connect', 'Received message:', event.data);
-            try {
-                const data = JSON.parse(event.data);
-                this.triggerEvent('message', data);
-                if (data.type) {
-                    this.triggerEvent(data.type, data);
-                }
-            } catch (error) {
-                console.error('Error parsing message:', error);
-                console.error('Raw message:', event.data);
-            }
-        };
-
-        this.socket.onclose = (event) => {
-            console.error(
-                    'WebSocket closed',
-                    {
-                        code: event.code,
-                        reason: event.reason,
-                        wasClean: event.wasClean
-                    }
-            );
-            Logger.log(2, 'connect', `WebSocket connection closed. Code:${event.code}, Reason: ${event.reason}`);
-            this.connected = false;
-            this.triggerEvent('close');
+            console.warn('Event stream error:', error);
             // Attempt to reconnect after a delay
-            setTimeout(() => this.connect(), 3000);
-        };
+            await this.sleep(3000);
+        }
+        this.pollStep();
+    }
 
-        this.socket.onerror = (error) => {
-            console.error('WebSocket error:', error);
-            this.triggerEvent('error', error);
+    /**
+     * Issues one blocking long polling request and returns the decoded
+     * response
+     *
+     * @returns {Promise<object>}
+     */
+    async fetchEventPage() {
+        const body = {
+            questId: this.questId,
+            playerId: this.playerId
         };
+        if (this.after !== null) {
+            body.after = this.after;
+        }
+
+        const response = await fetch(this.buildUrl(), {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-Token': CONFIG.CSRF_TOKEN
+            },
+            body: new URLSearchParams(body),
+            // Lets disconnect() (pagehide) cancel a poll that is still
+            // blocked server-side.
+            signal: this.abortController.signal
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        return response.json();
+    }
+
+    /**
+     * Handles one successful polling response
+     *
+     * @param {object} data
+     * @returns {void}
+     */
+    handlePollData(data) {
+        if (this.firstPoll) {
+            this.firstPoll = false;
+            if (this.vtt) {
+                this.vtt.refresh(this.questId);
+            }
+        }
+
+        const events = Array.isArray(data.events) ? data.events : [];
+
+        // The quest may have ended before this page finished loading: the
+        // layout check ran before the game-over notification was persisted,
+        // so the cursor bootstrap consumed the game-over event silently.
+        // Without this safety net the client would stay on a stale game
+        // screen, polling a quest nobody participates in anymore. Events
+        // (a just delivered game-over among them) are dispatched first:
+        // their handlers perform the end-of-quest flow themselves.
+        if (data.questOver && !events.some((event) => event && event.type === 'game-over')) {
+            this.disconnect();
+            window.location.href = `${CONFIG.ROOT_URL}/index.php?r=quest/summarize&id=${this.questId}`;
+            return;
+        }
+
+        events.forEach((event) => {
+            this.dispatch(event);
+        });
+        // Zero is a valid cursor (a quest with no notification yet): only
+        // an absent value must leave the client in bootstrap mode.
+        if (data.after !== undefined && data.after !== null) {
+            const cursor = parseInt(data.after, 10);
+            if (!Number.isNaN(cursor) && cursor >= 0) {
+                this.after = cursor;
+            }
+        }
+    }
+
+    /**
+     * Dispatch a received event to the registered handlers, skipping
+     * events initiated by this very player (the initiator already handles
+     * its own action through the AJAX response)
+     *
+     * @param {Object} event
+     * @returns {void}
+     */
+    dispatch(event) {
+        if (!event || typeof event !== 'object') {
+            return;
+        }
+        if (event.playerId && event.playerId === this.playerId) {
+            return;
+        }
+        this.triggerEvent('message', event);
+        if (event.type) {
+            this.triggerEvent(event.type, event);
+        }
+    }
+
+    /**
+     * Build the long polling route URL (the event cursor travels in the
+     * POST body, not in the URL)
+     *
+     * @returns {String}
+     */
+    buildUrl() {
+        return `${CONFIG.ROOT_URL}/index.php?r=${this.url.toLowerCase()}`;
+    }
+
+    /**
+     * Wait for the given delay
+     *
+     * @param {number} milliseconds
+     * @returns {Promise<void>}
+     */
+    sleep(milliseconds) {
+        return new Promise((resolve) => setTimeout(resolve, milliseconds));
     }
 
     updateChatMessages() {
@@ -435,35 +507,6 @@ class NotificationClient {
                 }
             }
         });
-    }
-
-    /**
-     * Send a message to the server
-     * 
-     * @param {Object} messageArray
-     * @returns {void}
-     */
-    send(messageArray) {
-        Logger.log(1, 'send', `send sessionId=${this.sessionId}, playerId=${this.playerId}, questId=${this.questId}`);
-        // Ensure all messages include the session ID, player ID, and quest ID
-        const completeMessage = {
-            ...messageArray,
-            sessionId: this.sessionId,
-            playerId: this.playerId,
-            questId: this.questId,
-            playerName: this.playerName
-        };
-        Logger.log(2, 'send', `completeMessage=${JSON.stringify(completeMessage, null, 2)}`);
-
-        if (this.connected) {
-            Logger.log(2, 'send', 'Sending message:', completeMessage);
-            this.socket.send(JSON.stringify(completeMessage));
-            //this.socket.send(completeMessage);
-        } else {
-            Logger.log(2, 'send', 'Connection not ready, queueing message:', completeMessage);
-            // Queue the message to be sent when connection is established
-            this.messageQueue.push(completeMessage);
-        }
     }
 
     /**
@@ -500,45 +543,10 @@ class NotificationClient {
      * Disconnect from the server
      */
     disconnect() {
-        // Clear heartbeat interval
-        if (this.heartbeatInterval) {
-            clearInterval(this.heartbeatInterval);
+        this.stopped = true;
+        if (this.abortController) {
+            this.abortController.abort();
         }
-        if (this.socket) {
-            this.socket.close();
-        }
-    }
-
-    /**
-     * Update the connection status indicator
-     * 
-     * @param {string} status
-     * @returns {void}
-     */
-    updateConnectionStatus(status) {
-        let severity = '';
-        //const statusIcon = $(#eventHandlerStatus);
-        const statusIcon = document.getElementById('eventHandlerStatus');
-        switch (status) {
-            case 'Connected':
-                statusIcon.classList.remove('blink');
-                statusIcon.style.color = 'var(--success)';
-
-                severity = 'info';
-                break;
-            case 'Error':
-                statusIcon.classList.add('blink');
-                statusIcon.style.color = 'var(--error)';
-
-                severity = 'error';
-                break;
-            default:
-                statusIcon.classList.add('blink');
-                statusIcon.style.color = 'var(--warning)';
-
-                severity = 'warning';
-        }
-        ToastManager.show('Connection status', status, severity);
     }
 
     /**
@@ -575,6 +583,9 @@ class NotificationClient {
             successCallback: (response) => {
                 if (!response.error) {
                     chatInput.value = '';
+                    // The sender's own new-message event is filtered out by
+                    // dispatch(), so the chat must be refreshed here.
+                    this.updateChatMessages();
                 }
             }
         });

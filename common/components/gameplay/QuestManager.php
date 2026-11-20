@@ -26,6 +26,11 @@ class QuestManager extends BaseManager
     public ?QuestProgress $questProgress = null;
     // Internal use
     private ?Player $player = null;
+    // Player who triggered the manager action. Captured at construction, before
+    // any turn advance mutates $player (setNextQuestTurn() reassigns it to the
+    // next player). Used to attribute terminal events (game-over) to the right
+    // player, otherwise the notification is self-filtered by that next player.
+    private ?Player $initiator = null;
     private ?int $nextSequence = null;
 
     /**
@@ -39,6 +44,7 @@ class QuestManager extends BaseManager
             $this->quest = $this->questProgress->quest;
         }
         $this->player ??= $this->quest->currentPlayer;
+        $this->initiator = $this->player;
     }
 
     // --- Strict Accessors (The Level 8/9 "Secret Sauce") ---
@@ -268,6 +274,12 @@ class QuestManager extends BaseManager
     }
 
     /**
+     * Ends the quest and broadcasts the game-over event.
+     *
+     * The event initiator is the player who triggered the ending action,
+     * captured at construction. Using $this->player here would be wrong:
+     * setNextQuestTurn() has likely reassigned it to the next player, which
+     * made the other client self-filter the game-over notification.
      *
      * @param AppStatus $status
      * @return array{error: bool, msg: string, event?: string, payload?: array<string, mixed>}
@@ -281,7 +293,7 @@ class QuestManager extends BaseManager
         $message = "The quest {$this->quest->name} is over with status {$status->getLabel()}!!!";
 
         $progress = $this->getQuestProgress();
-        $player = $this->getPlayer();
+        $player = $this->initiator ?? $this->getPlayer();
         $playerName = $player->name ?? '';
 
         $this->endCurrentQuestProgress($progress, $status);
@@ -539,7 +551,7 @@ class QuestManager extends BaseManager
     /**
      *
      * @param int|null $nextMissionId
-     * @return array{error: bool, msg: string, event?: string, payload?: array<string, mixed>}
+     * @return array{error: bool, msg: string, event?: string, payload?: array<string, mixed>, over?: bool}
      */
     public function moveToNextMission(?int $nextMissionId): array
     {
@@ -550,6 +562,10 @@ class QuestManager extends BaseManager
             Yii::debug("*** debug *** QuestManager::moveToNextMission - Quest #{$this->quest->id} is already over with status " . $status->getLabel());
             return [
                 'error' => false,
+                // Tells the client that the quest is over (another screen or a
+                // previous call already ended it), so it can go to the summary
+                // instead of reloading a game page it can no longer access.
+                'over' => true,
                 'msg' => "Quest #{$this->quest->id} is already over with status " . $status->getLabel(),
             ];
         }
@@ -563,7 +579,7 @@ class QuestManager extends BaseManager
 
     /**
      *
-     * @return array{error: bool, msg: string, event?: string, payload?: array<string, mixed>}
+     * @return array{error: bool, msg: string, event?: string, payload?: array<string, mixed>, over?: bool}
      */
     public function moveToNextDefaultMission(): array
     {
@@ -581,10 +597,20 @@ class QuestManager extends BaseManager
 
     /**
      *
-     * @return array{error: bool, msg: string, event?: string, payload?: array<string, mixed>}
+     * @return array{error: bool, msg: string, event?: string, payload?: array<string, mixed>, over?: bool}
      */
     public function nextPlayer(): array
     {
+        $status = AppStatus::from($this->quest->status);
+        if ($status === AppStatus::COMPLETED || $status === AppStatus::ABORTED) {
+            Yii::debug("*** debug *** QuestManager::nextPlayer - Quest #{$this->quest->id} is already over");
+            return [
+                'error' => false,
+                'over' => true,
+                'msg' => "Quest #{$this->quest->id} is already over with status " . $status->getLabel(),
+            ];
+        }
+
         $this->endCurrentTurn();
         $currentPlayer = $this->getPlayer();
         $questTurn = $this->setNextQuestTurn();
@@ -649,8 +675,6 @@ class QuestManager extends BaseManager
         Yii::debug("createQuestEvent - initiator={$initiator?->name}");
 
         try {
-            /** @var string $sessionId */
-            $sessionId = Yii::$app->session->get('sessionId');
             $player = $initiator ?? $this->getPlayer();
 
             $data = [
@@ -658,7 +682,7 @@ class QuestManager extends BaseManager
                 'detail' => $detail,
             ];
 
-            $event = EventFactory::createEvent($eventType, $sessionId, $player, $this->quest, $data);
+            $event = EventFactory::createEvent($eventType, $player, $this->quest, $data);
             $event->process();
             return $event;
         } catch (Exception $e) {

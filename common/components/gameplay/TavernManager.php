@@ -659,14 +659,34 @@ class TavernManager extends BaseManager
      */
     public function findTavern(): Quest
     {
-        $tavern = $this->story->tavern ?? null;
+        // Serialize concurrent tavern lookups with a pessimistic lock on the
+        // story row: without it, two players joining at the same time both
+        // miss the (not yet committed) waiting tavern and each create their
+        // own, splitting the group into two separate taverns.
+        $story = $this->getStory();
+        $foundTavern = $story->getDb()->transaction(function () use ($story): ?Quest {
+            $story->getDb()
+                    ->createCommand('SELECT id FROM story WHERE id = :id FOR UPDATE', [':id' => $story->id])
+                    ->queryScalar();
+
+            $foundTavern = $story->tavern;
+
+            // Create the tavern INSIDE the transaction: releasing the story
+            // row lock before the insert would let a concurrent join miss
+            // the (not yet visible) waiting tavern and create a second one,
+            // splitting the party in two.
+            if ($foundTavern === null) {
+                $foundTavern = $this->newTavern();
+            }
+
+            return $foundTavern;
+        });
+
         $questId = Yii::$app->session->get('questId');
 
-        if ($questId && (!$tavern || $tavern->id !== $questId)) {
+        if ($questId && (!$foundTavern || $foundTavern->id !== $questId)) {
             throw new NotFoundHttpException("Tavern is not the current quest for story {$this->story?->name}");
         }
-
-        $foundTavern = $tavern ?? $this->newTavern();
 
         // Update the current context
         $this->quest = $foundTavern;

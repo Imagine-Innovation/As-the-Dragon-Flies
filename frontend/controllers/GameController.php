@@ -63,6 +63,10 @@ class GameController extends Controller
      * Shows comprehensive information about a specific quest instance
      * in a virtual tabletop (VTT) layout
      *
+     * A finished quest has no more QuestProgress in progress and would render
+     * with an empty mission context (empty hidden fields); the JS snippet checks
+     * the quest status on page load and sends the browser to the quest summary.
+     *
      * @param int $id Quest ID to view
      * @return string Rendered view page
      * @throws NotFoundHttpException if quest not found
@@ -471,9 +475,9 @@ class GameController extends Controller
      */
     protected function createGameActionEvent(string $actionName, array $actionResult = []): bool
     {
-        $sessionId = Yii::$app->session->get('sessionId');
         $player = Player::findOne(Yii::$app->session->get('playerId'));
         $quest = Quest::findOne(Yii::$app->session->get('questId'));
+        $data = [];
         try {
             $data['action'] = $actionName;
             $data['detail'] = [
@@ -482,7 +486,7 @@ class GameController extends Controller
                 'outcomes' => $actionResult['outcomes'],
                 'hpLoss' => $actionResult['hpLoss'],
             ];
-            $event = EventFactory::createEvent('game-action', $sessionId, $player, $quest, $data);
+            $event = EventFactory::createEvent('game-action', $player, $quest, $data);
             $event->process();
             return true;
         } catch (\Exception $e) {

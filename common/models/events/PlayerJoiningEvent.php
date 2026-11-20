@@ -11,18 +11,6 @@ class PlayerJoiningEvent extends Event
 {
 
     /**
-     *
-     * @param string $sessionId
-     * @param Player $player
-     * @param Quest $quest
-     * @param array<string, mixed> $config
-     */
-    public function __construct(string $sessionId, Player $player, Quest $quest, array $config = [])
-    {
-        parent::__construct($sessionId, $player, $quest, $config);
-    }
-
-    /**
      * {@inheritdoc}
      *
      * @return string
@@ -76,15 +64,13 @@ class PlayerJoiningEvent extends Event
     public function process(): void
     {
         Yii::debug('*** Debug *** PlayerJoiningEvent - process');
-        $notification = $this->createNotification();
-
-        $this->broadcast();
+        $this->createNotification();
 
         // Dungeon master says hello
         $dungeonMaster = Player::findOne(1);
         if ($dungeonMaster) {
             $message = $this->getMessage();
-            $sendingMessageEvent = new SendingMessageEvent($this->sessionId, $dungeonMaster, $this->quest, $message);
+            $sendingMessageEvent = new SendingMessageEvent($dungeonMaster, $this->quest, $message);
             $sendingMessageEvent->process();
         }
     }

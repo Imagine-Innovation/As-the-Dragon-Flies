@@ -10,7 +10,7 @@ The frontend application (`frontend/`) is a turn-based online web-based RPG (Dun
 
 ### Key System Capabilities
 * **Virtual Table Top (VTT):** Turn-based interactive game view (`r=game/view`) providing real-time gameplay, mission tracking, action evaluation, and dynamic dialogue rendering.
-* **Real-time Synchronization:** WebSocket-based event broadcasting via `NotificationClient` and `EventHandler` server on port `8080` (or configured port).
+* **Real-time Synchronization:** HTTP long polling via `NotificationClient` and the `quest/ajax-wait-events` endpoint (server-side wait loop in `EventWaiter`).
 * **Interactive Equipment & SVG Body Paperdoll:** Dynamic equipment visualizer (`EquipmentHandler`) with clickable SVG body zones (head, chest, hands) updating in real-time.
 * **Character Builder:** Multi-step wizard (`r=player-builder/*`) allowing character creation, race/class selection, ability generation, skills, and equipment endowment.
 * **Shop & Cart System:** Shop interface (`r=player-cart/*`) for purchasing items and managing inventory.
@@ -27,7 +27,7 @@ frontend/
 ├── config/
 │   ├── bootstrap.php                 # App bootstrap script
 │   ├── main.php                      # Application configuration (components, assetManager, handlers)
-│   ├── params.php                    # Frontend specific parameters (e.g., eventHandlerWebSocketPort)
+│   ├── params.php                    # Frontend specific parameters
 │   └── test.php                      # Codeception test configuration
 ├── controllers/
 │   ├── GameController.php            # VTT gameplay AJAX endpoints, mission/action transitions, dialogue
@@ -66,7 +66,7 @@ frontend/
     │   ├── equipment-manager.js      # `EquipmentHandler` class (SVG zones & item equipment)
     │   ├── player-builder.js         # Character builder client script
     │   ├── player-item-manager.js    # Item table manager
-    │   ├── quest-events.js           # `NotificationClient` WebSocket handler & audio trigger
+    │   ├── quest-events.js           # `NotificationClient` long polling event handler & audio trigger
     │   ├── quest-game.js             # `VirtualTableTop` class (VTT mechanics & state sync)
     │   ├── quest-tavern.js           # Tavern lobby client script
     │   └── shop-manager.js           # Shop and cart manager
@@ -170,20 +170,23 @@ Context state is synchronized between client JS and server PHP using hidden `<in
 
 ---
 
-## 5. Real-Time WebSockets & Event System
+## 5. Real-Time Long Polling & Event System
 
 The real-time layer is powered by `NotificationClient` (`frontend/web/js/quest-events.js`).
 
 ### 5.1 Connection Lifecycle
-* WebSocket URL is dynamically constructed: `${protocol}://${hostname}:${eventHandlerWebSocketPort}`.
-* Reconnections are attempted automatically every 3 seconds if disconnected.
+* The client posts to `quest/ajax-wait-events` (with `questId`, `playerId` and the `after` cursor in the POST body, plus the CSRF header); each request blocks server-side (up to ~25 s) in `QuestController::actionAjaxWaitEvents()` until a new `notification` row exists for the quest. The waited quest is always the player's session quest (`Yii::$app->session->get('questId')`), so a client cannot subscribe to another quest's stream.
+* On the first call the client omits the `after` cursor; the server returns immediately with the current cursor (`EventWaiter::currentCursor()`), so a freshly loaded page only receives live events and never replays the quest history. A zero cursor (a quest with no notification yet) is accepted.
+* Every polling answer also carries a `questOver` flag (`EventWaiter::isQuestOver()`). When it is `true` and no fresh `game-over` event was part of the answer, the client stops polling and joins the quest summary page — this covers a game page loaded just after the quest ended.
+* A new request is issued immediately after each response — there is no JavaScript polling timer.
+* Failed requests are retried automatically every 3 seconds.
 * Audio chime (`music/ding.mp3`) signals new chat messages or updates.
 
 ### 5.2 Handled Event Subscriptions
 | Event Name | Action / Handler |
 | :--- | :--- |
-| `open` | Registers session with `{type: 'register'}` and updates status indicator `#eventHandlerStatus`. |
 | `notification` | Calls `vtt.refresh()` to update member list and player stats. |
+| `quest-started` | Redirects the browser to the VTT screen (`game/view`) for players still in the tavern. |
 | `new-message` | Triggers `updateChatMessages()` to refresh chat feed via AJAX. |
 | `game-action` | Invokes `handleGameAction(data)`: Updates party stats and triggers `equipmentHandler.refreshEquipment()` if items/stats changed. |
 | `next-turn` | Invokes `vtt.refreshTurn(questId, playerId, detail)`. |
@@ -296,7 +299,7 @@ On page load (`$(document).ready`), global instances are initialized:
 vtt = new VirtualTableTop();
 vtt.init();
 
-notificationClient = new NotificationClient(url, sessionId, playerId, playerName, avatar, questId, questName, vtt);
+notificationClient = new NotificationClient(url, playerId, playerName, avatar, questId, questName, vtt);
 notificationClient.init();
 
 equipmentHandler = new EquipmentHandler();

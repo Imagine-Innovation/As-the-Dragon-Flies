@@ -28,9 +28,9 @@ class GameActionEvent extends Event
      * @param string $action The action type
      * @param array<string, mixed> $detail Additional action data
      */
-    public function __construct(string $sessionId, Player $player, Quest $quest, string $action, array $detail = [])
+    public function __construct(Player $player, Quest $quest, string $action, array $detail = [])
     {
-        parent::__construct($sessionId, $player, $quest);
+        parent::__construct($player, $quest);
         $this->action = $action;
         $this->detail = $detail;
     }
@@ -103,15 +103,14 @@ class GameActionEvent extends Event
     {
         Yii::debug('*** Debug *** GameActionEvent - process');
 
-        $notification = $this->createNotification();
-        $this->broadcast();
+        $this->createNotification();
 
         /*
           // Dungeon master says hello
           $dungeonMaster = Player::findOne(1);
           if ($dungeonMaster) {
           $message = $this->getMessage();
-          $sendingMessageEvent = new SendingMessageEvent($this->sessionId, $dungeonMaster, $this->quest, $message);
+          $sendingMessageEvent = new SendingMessageEvent($dungeonMaster, $this->quest, $message);
           $sendingMessageEvent->process();
           }
          *

@@ -257,7 +257,7 @@ function searchSelect(searchField, valueType, minChar = 3, imagePath = null) {
                 return ajaxParams;
             },
             dropdownCssClass: 'form-select',
-            processResults: function (data, params) {
+            processResults: function (data) {
                 return {
                     results: data.results
                 };

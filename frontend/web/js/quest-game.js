@@ -72,8 +72,8 @@ class VirtualTableTop {
         this._saveContext();
     }
 
-    refresh(questId, sessionId, message = null) {
-        Logger.log(1, 'refresh', `questId=${questId}, sessionId=${sessionId}, message=${message}`);
+    refresh(questId, message = null) {
+        Logger.log(1, 'refresh', `questId=${questId}, message=${message}`);
         if (message)
             ToastManager.show('Tavern message', message, 'info');
 
@@ -179,6 +179,12 @@ class VirtualTableTop {
     _updateMission(missionId) {
         Logger.log(2, '_updateMission', `missionId=${missionId}`);
 
+        // No mission in progress (e.g. the quest is over): calling the endpoint
+        // without its required parameter would fail with a 400 Bad Request.
+        if (!missionId) {
+            return;
+        }
+
         const targetTitle = `#missionTitle`;
         if (!DOMUtils.exists(targetTitle))
             return;
@@ -251,6 +257,12 @@ class VirtualTableTop {
         const target = `#actionList`;
         if (!DOMUtils.exists(target))
             return;
+
+        // No quest progress in progress (e.g. the quest is over): calling the
+        // endpoint without its required parameter would fail with a 400.
+        if (!questProgressId) {
+            return;
+        }
 
         if (playerId !== currentPlayerId) {
             // The player is not the one who is playing, 
@@ -456,6 +468,15 @@ class VirtualTableTop {
                         questProgressId: questProgressId,
                         missionId: nextMissionId
                     });
+
+                    // The server tells us the quest is already over (the ending
+                    // action was processed by a previous call): reloading game/view
+                    // would fail with a 403 because the players are no longer
+                    // engaged. Go to the summary instead.
+                    if (response.over) {
+                        window.location.href = AjaxUtils.buildUrl('quest/summarize') + '&id=' + encodeURIComponent(this.context.questId);
+                        return;
+                    }
 
                     if (!this._handleResponseEvent(response)) {
                         window.location.reload();

@@ -4,7 +4,6 @@ namespace common\components;
 
 use common\components\AppStatus;
 use common\components\LanguageSelector;
-use common\helpers\Utilities;
 use common\models\Player;
 use common\models\Quest;
 use common\models\User;
@@ -68,22 +67,6 @@ class ContextManager extends Component
      *
      * @return void
      */
-    private static function setSessionId(): void
-    {
-        if (Yii::$app->session->get('sessionId') === null) {
-            $sessionId = Utilities::newUUID();
-            Yii::$app->session->set('sessionId', $sessionId);
-        }
-    }
-
-    /**
-     * @return void
-     */
-    public static function clearSessionId(): void
-    {
-        Yii::$app->session->set('sessionId', null);
-    }
-
     /**
      *
      * @param Player $currentPlayer
@@ -123,7 +106,6 @@ class ContextManager extends Component
         }
 
         Yii::debug('*** debug *** ContextManager - updatePlayerContext playerId=' . ($playerId ?? 'null'));
-        self::setSessionId();
 
         $currentPlayer = $playerId ? Player::findOne(['id' => $playerId]) : null;
 
@@ -169,7 +151,6 @@ class ContextManager extends Component
         }
 
         Yii::debug('*** debug *** ContextManager - updateQuestContext questId=' . ($questId ?? 'null'));
-        self::setSessionId();
 
         $quest = $questId ? Quest::findOne(['id' => $questId]) : null;
 
@@ -193,7 +174,6 @@ class ContextManager extends Component
             'isDesigner' => $user->is_designer,
             //'language' => Yii::$app->session->get('language'),
             'userId' => Yii::$app->session->get('userId'),
-            'sessionId' => Yii::$app->session->get('sessionId'),
             'hasPlayerSelected' => Yii::$app->session->get('hasPlayerSelected'),
             'playerId' => Yii::$app->session->get('playerId'),
             'playerName' => Yii::$app->session->get('playerName'),

@@ -34,7 +34,6 @@ use Yii;
  * @property QuestLog[] $questLogs
  * @property QuestPlayer[] $questPlayers
  * @property QuestProgress[] $questProgresses
- * @property QuestSession[] $questSessions
  * @property Story $story
  *
  * Custom properties
@@ -210,16 +209,6 @@ class Quest extends \yii\db\ActiveRecord
     public function getQuestProgresses()
     {
         return $this->hasMany(QuestProgress::class, ['quest_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[QuestSessions]].
-     *
-     * @return \yii\db\ActiveQuery<QuestSession>
-     */
-    public function getQuestSessions()
-    {
-        return $this->hasMany(QuestSession::class, ['quest_id' => 'id']);
     }
 
     /**

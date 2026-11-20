@@ -163,17 +163,19 @@ class Story extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Tavern]].
+     * Gets query for [[Tavern]], the quest of this story waiting for players.
      *
-     * @return \common\models\Quest|null
+     * Declaring it as a relation (instead of a direct findOne call) memoizes
+     * the result per model instance and makes it eager-loadable with 'with()'
+     * on the lobby pages, avoiding a query per access.
+     *
+     * @return \yii\db\ActiveQuery<Quest>
      */
-    public function getTavern(): ?Quest
+    public function getTavern(): \yii\db\ActiveQuery
     {
-        $quest = Quest::findOne([
-            'story_id' => $this->id,
-            'status' => AppStatus::WAITING->value,
-        ]);
-        return $quest;
+        return $this->hasOne(Quest::class, ['story_id' => 'id'])
+                ->andWhere(['status' => AppStatus::WAITING->value])
+                ->orderBy(['id' => SORT_ASC]);
     }
 
     /**
