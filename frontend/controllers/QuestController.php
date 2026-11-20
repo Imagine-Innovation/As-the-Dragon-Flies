@@ -401,16 +401,7 @@ class QuestController extends Controller
         try {
             $eventWaiter = new \common\components\gameplay\EventWaiter(['questId' => $questId]);
 
-            if ($after === null) {
-                // Bootstrap: a freshly loaded page has no cursor yet. It must
-                // not replay the quest history, only wait for live events.
-                return ['error' => false, 'msg' => '', 'events' => [], 'after' => $eventWaiter->currentCursor()];
-            }
-
-            Yii::$app->session->close();
-            set_time_limit(0);
-
-            return array_merge(['error' => false, 'msg' => ''], $eventWaiter->wait((int) $after));
+            return $eventWaiter->poll($after);
         } catch (\Exception $e) {
             Yii::error("Failed to wait for quest events: {$e->getMessage()}");
             return ['error' => true, 'msg' => 'Failed to wait for quest events'];

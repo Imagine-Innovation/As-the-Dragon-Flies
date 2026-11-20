@@ -84,6 +84,34 @@ final class EventWaiter extends BaseManager
     }
 
     /**
+     * Polls the quest event store on behalf of the controller endpoint.
+     *
+     * A null "after" means the client has no cursor yet (freshly loaded
+     * page): the bootstrap answer returns immediately with the current
+     * cursor, WITHOUT replaying the quest history. Otherwise the PHP
+     * session lock is released first and the call blocks in wait() until
+     * an event is available or the timeout expires.
+     *
+     * @param mixed $after raw "after" request parameter (null, or numeric string)
+     * @return array{error: bool, msg: string, events?: array<int, array<string, mixed>>, after?: int}
+     */
+    public function poll(mixed $after): array
+    {
+        if ($after === null) {
+            // Bootstrap: a freshly loaded page has no cursor yet. It must
+            // not replay the quest history, only wait for live events.
+            return ['error' => false, 'msg' => '', 'events' => [], 'after' => $this->currentCursor()];
+        }
+
+        // Release the PHP session lock first so that parallel requests
+        // from the same player are not serialized.
+        Yii::$app->session->close();
+        set_time_limit(0);
+
+        return array_merge(['error' => false, 'msg' => ''], $this->wait((int) $after));
+    }
+
+    /**
      * Returns every event of the quest newer than $after, in wire format.
      *
      * The wire format is identical to the one previously pushed by the
