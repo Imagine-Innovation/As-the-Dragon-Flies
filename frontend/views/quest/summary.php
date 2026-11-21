@@ -47,6 +47,11 @@ $shownOutcomeImages = [];
             flex: 0 0 100% !important;
             max-width: 100% !important;
         }
+
+        .quest-summary,
+        .quest-summary * {
+            color: #333 !important;
+        }
     }
 </style>
 <div class="quest-summary">
