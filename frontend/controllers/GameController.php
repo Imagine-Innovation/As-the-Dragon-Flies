@@ -402,7 +402,13 @@ class GameController extends Controller
         $actionManager->endCurrentAction($payload['status'], $payload['canReplay']);
         $actionManager->unlockNextActions($payload['status']);
 
-        $this->createGameActionEvent($questAction->action->name, $payload);
+        try {
+            $this->createGameActionEvent($questAction->action->name, $payload);
+        } catch (\Exception $e) {
+            // Gains are already committed: the acting player must still receive
+            // the response so that it can refresh its equipment list.
+            Yii::error("Failed to broadcast 'game-action' event: {$e->getMessage()}");
+        }
 
         $log = $actionOutcome['log'];
         $log['hasItemOutcome'] = self::hasItemOutcome($payload['outcomes']);
