@@ -420,7 +420,7 @@ class GameController extends Controller
      * @param array<Outcome> $outcomes
      * @return bool
      */
-    private static function hasItemOutcome(array $outcomes): bool
+    protected static function hasItemOutcome(array $outcomes): bool
     {
         foreach ($outcomes as $outcome) {
             if ($outcome->item_id !== null) {
