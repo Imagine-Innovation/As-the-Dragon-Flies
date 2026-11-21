@@ -70,9 +70,9 @@ $shownOutcomeImages = [];
                             $chapterName = $log->chapterLog->name;
                             $chapterNumber += 1;
                             $missionNumber = 0;
-                            $name = MarkDown::widget(['content' => $chapterName]);
+                            $name = MarkDown::widget(['content' => "{$chapterNumber}\u{00A0}{$chapterName}"]);
                             $description = MarkDown::widget(['content' => $log->chapterLog->description]);
-                            echo "<h3 class=\"text-warning\" style=\"clear: both;\">{$chapterNumber}. {$name}</h3>\n";
+                            echo "<h3 class=\"text-warning\" style=\"clear: both;\">{$name}</h3>\n";
                             $chapterIllustration = $log->chapterLog->image ?? null;
                             if (!empty($chapterIllustration)) {
                                 echo "<img class=\"float-end mb-3 ms-3\" src=\"{$storyRoot}/img/{$chapterIllustration}\" alt=\"" . Html::encode($chapterName ?? '') . "\" style=\"max-width: 300px;\">\n";
@@ -83,9 +83,9 @@ $shownOutcomeImages = [];
                         if ($log->missionLog->name !== $missionName) {
                             $missionName = $log->missionLog->name;
                             $missionNumber += 1;
-                            $name = MarkDown::widget(['content' => $missionName]);
+                            $name = MarkDown::widget(['content' => "{$chapterNumber}.{$missionNumber}\u{00A0}{$missionName}"]);
                             $description = MarkDown::widget(['content' => $log->missionLog->description]);
-                            echo "<h4 class=\"text-warning\" style=\"clear: both;\">{$chapterNumber}.{$missionNumber}. {$name}</h4>\n";
+                            echo "<h4 class=\"text-warning\" style=\"clear: both;\">{$name}</h4>\n";
                             $missionIllustration = $log->missionLog->image ?? null;
                             if (!empty($missionIllustration)) {
                                 echo "<img class=\"float-end mb-3 ms-3\" src=\"{$storyRoot}/img/{$missionIllustration}\" alt=\"" . Html::encode($missionName ?? '') . "\" style=\"max-width: 300px;\">\n";
