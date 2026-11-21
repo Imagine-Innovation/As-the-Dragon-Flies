@@ -16,17 +16,19 @@ $this->params['breadcrumbs'][] = $this->title;
 
 $status = AppStatus::from($quest->status);
 $storyRoot = WebResourcesHelper::storyRootPath($quest->story_id);
-$storyImage = $quest->image ?? $quest->story?->image;
+$storyImage = $quest->image ?: $quest->story?->image;
 
 $chapterName = "";
 $missionName = "";
 $chapterNumber = 0;
 $missionNumber = 0;
+$lastChapterId = null;
+$lastMissionId = null;
 
 // An action illustration is only displayed on the first attempt of a run of
 // consecutive attempts with the same outcome; attempting any other action in
 // between resets the counter.
-$lastActionName = null;
+$lastActionKey = null;
 $shownOutcomeImages = [];
 ?>
 <style>
@@ -59,14 +61,15 @@ $shownOutcomeImages = [];
     <container id='questHistory' class="row">
         <section id="questLogs" class="col-12 col-xl-8">
             <div class="card mb-4 text-decoration">
-                <div class="card-header"<?php if (!empty($storyImage)): ?> style="background-image: url('<?= $storyRoot ?>/img/<?= $storyImage ?>'); background-size: cover; background-position: center; max-height: 400px;"<?php endif; ?>>
+                <div class="card-header"<?php if (!empty($storyImage)): ?> style="background-image: url('<?= Html::encode("{$storyRoot}/img/{$storyImage}") ?>'); background-size: cover; background-position: center; max-height: 400px;"<?php endif; ?>>
                     <h2 class="mb-0"><?= Html::encode($this->title) ?></h2>
                     <?= MarkDown::widget(['content' => $quest->description]) ?>
                 </div>
                 <div class="card-body">
                     <?php foreach ($logs as $log): ?>
                         <?php
-                        if ($log->chapterLog->name !== $chapterName) {
+                        if ((int)($log->chapterLog->chapter_id ?? 0) !== $lastChapterId || $log->chapterLog->name !== $chapterName) {
+                            $lastChapterId = (int)($log->chapterLog->chapter_id ?? 0);
                             $chapterName = $log->chapterLog->name;
                             $chapterNumber += 1;
                             $missionNumber = 0;
@@ -75,12 +78,13 @@ $shownOutcomeImages = [];
                             echo "<h3 class=\"text-warning\" style=\"clear: both;\">{$name}</h3>\n";
                             $chapterIllustration = $log->chapterLog->image ?? null;
                             if (!empty($chapterIllustration)) {
-                                echo "<img class=\"float-end mb-3 ms-3\" src=\"{$storyRoot}/img/{$chapterIllustration}\" alt=\"" . Html::encode($chapterName ?? '') . "\" style=\"max-width: 300px;\">\n";
+                                echo "<img class=\"float-end mb-3 ms-3\" src=\"" . Html::encode("{$storyRoot}/img/{$chapterIllustration}") . "\" alt=\"" . Html::encode($chapterName ?? '') . "\" style=\"max-width: 300px;\">\n";
                             }
                             echo "<p class=\"text-muted\">{$description}</p>\n";
                         }
 
-                        if ($log->missionLog->name !== $missionName) {
+                        if ((int)($log->missionLog->mission_id ?? 0) !== $lastMissionId || $log->missionLog->name !== $missionName) {
+                            $lastMissionId = (int)($log->missionLog->mission_id ?? 0);
                             $missionName = $log->missionLog->name;
                             $missionNumber += 1;
                             $name = MarkDown::widget(['content' => "{$chapterNumber}.{$missionNumber}\u{00A0}{$missionName}"]);
@@ -88,16 +92,17 @@ $shownOutcomeImages = [];
                             echo "<h4 class=\"text-warning\" style=\"clear: both;\">{$name}</h4>\n";
                             $missionIllustration = $log->missionLog->image ?? null;
                             if (!empty($missionIllustration)) {
-                                echo "<img class=\"float-end mb-3 ms-3\" src=\"{$storyRoot}/img/{$missionIllustration}\" alt=\"" . Html::encode($missionName ?? '') . "\" style=\"max-width: 300px;\">\n";
+                                echo "<img class=\"float-end mb-3 ms-3\" src=\"" . Html::encode("{$storyRoot}/img/{$missionIllustration}") . "\" alt=\"" . Html::encode($missionName ?? '') . "\" style=\"max-width: 300px;\">\n";
                             }
                             echo "<p class=\"text-muted\">{$description}</p>\n";
                         }
 
                         $actionName = "Round {$log->round} - {$log->action_name}";
+                        $actionKey = $log->mission_id . ':' . $log->action_name;
                         $description = MarkDown::widget(['content' => $log->action_description]);
 
-                        if ($log->action_name !== $lastActionName) {
-                            $lastActionName = $log->action_name;
+                        if ($actionKey !== $lastActionKey) {
+                            $lastActionKey = $actionKey;
                             $shownOutcomeImages = [];
                         }
                         ?>
@@ -110,6 +115,7 @@ $shownOutcomeImages = [];
 
                             <?php
                             $results = json_decode($log->description) ?? [];
+                            $attemptOutcomeImages = [];
                             foreach ($results as $result):
                                 if ($result->name === null || trim($result->name) === '') {
                                     continue;
@@ -117,8 +123,8 @@ $shownOutcomeImages = [];
                                 $outcomeIllustration = $result->image ?? null;
                                 $illustration = '';
                                 if (!empty($outcomeIllustration) && !in_array($outcomeIllustration, $shownOutcomeImages, true)) {
-                                    $shownOutcomeImages[] = $outcomeIllustration;
-                                    $illustration = "<img class=\"float-end mb-3 ms-3\" src=\"{$storyRoot}/img/{$outcomeIllustration}\" alt=\"" . Html::encode($result->name) . "\" style=\"max-width: 300px;\">\n";
+                                    $attemptOutcomeImages[] = $outcomeIllustration;
+                                    $illustration = "<img class=\"float-end mb-3 ms-3\" src=\"" . Html::encode("{$storyRoot}/img/{$outcomeIllustration}") . "\" alt=\"" . Html::encode($result->name) . "\" style=\"max-width: 300px;\">\n";
                                 }
                                 ?>
                                 <div class="clearfix">
@@ -129,6 +135,7 @@ $shownOutcomeImages = [];
                                     </div>
                                 </div>
                             <?php endforeach; ?>
+                            <?php $shownOutcomeImages = $attemptOutcomeImages; ?>
                         </article>
                         <hr class="border border-warning w-90">
                     <?php endforeach; ?>
