@@ -548,27 +548,35 @@ class PlayerBuilderController extends Controller
         $player = $this->findModel($playerId);
 
         $itemIds = $request->post('itemIds');
-
-        // first of all, discharge the player and delete existing items.
-        // As a side effect, we must assume that the player has no other items
-        // purchased or collected during the setup process.
-        Player::updateAll([
-            'head_item_id' => null,
-            'chest_item_id' => null,
-            'right_hand_item_id' => null,
-            'left_hand_item_id' => null,
-            'back_item_id' => null,
-        ], ['id' => $playerId]);
-
-        PlayerItem::deleteAll(['player_id' => $playerId]);
-
-        if (empty($itemIds)) {
+        $itemQuantityList = empty($itemIds) ? [] : $this->getItemQuantityFromJson($itemIds);
+        if ($itemQuantityList === []) {
             return ['error' => true, 'msg' => 'Missing item ids'];
         }
 
-        $itemQuantity = $this->getItemQuantityFromJson($itemIds);
-        foreach ($itemQuantity as $itemQuantity) {
-            $this->addItem($player, $itemQuantity['itemId'], $itemQuantity['quantity']);
+        $transaction = Yii::$app->db->beginTransaction();
+        try {
+            // first of all, discharge the player and delete existing items.
+            // As a side effect, we must assume that the player has no other items
+            // purchased or collected during the setup process.
+            Player::updateAll([
+                'head_item_id' => null,
+                'chest_item_id' => null,
+                'right_hand_item_id' => null,
+                'left_hand_item_id' => null,
+                'back_item_id' => null,
+            ], ['id' => $playerId]);
+
+            PlayerItem::deleteAll(['player_id' => $playerId]);
+
+            foreach ($itemQuantityList as $itemQuantity) {
+                $this->addItem($player, $itemQuantity['itemId'], $itemQuantity['quantity']);
+            }
+
+            $transaction->commit();
+        } catch (\Throwable $e) {
+            $transaction->rollBack();
+
+            return ['error' => true, 'msg' => 'Initial items are not saved: ' . $e->getMessage()];
         }
 
         return ['error' => false, 'msg' => 'Initial items are saved'];

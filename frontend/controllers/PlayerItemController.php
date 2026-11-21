@@ -274,24 +274,38 @@ class PlayerItemController extends Controller
     {
         Yii::debug("*** debug *** savePlayerBody - itemName={$itemName}");
 
-        $successfullySaved = SaveHelper::save($player, false);
-        if ($successfullySaved) {
+        $transaction = Yii::$app->db->beginTransaction();
+        try {
+            $successfullySaved = SaveHelper::save($player, false);
+            if (!$successfullySaved) {
+                $transaction->rollBack();
+
+                return [
+                    'error' => true,
+                    'msg' => 'Player equipment failed: ' . ArrayHelper::getColumn($player->errors, 0, false)[0],
+                ];
+            }
             $playerManager = new PlayerManager(['player' => $player]);
             $playerManager->updateArmorClass();
-            $playerBodyData = $this->getPlayerBodyData($player);
+            $transaction->commit();
+        } catch (\Throwable $e) {
+            $transaction->rollBack();
 
             return [
-                'error' => false,
-                'msg' => "{$itemName} is " . ($equiped ? 'equiped' : 'disarmed'),
-                'contentModal' => $this->getPlayerBodyRender($playerBodyData, 'modal'),
-                'contentAside' => $this->getPlayerBodyRender($playerBodyData, 'aside'),
-                'contentOffcanvas' => $this->getPlayerBodyRender($playerBodyData, 'offcanvas'),
-                'data' => $playerBodyData,
+                'error' => true,
+                'msg' => 'Player equipment failed: ' . $e->getMessage(),
             ];
         }
+
+        $playerBodyData = $this->getPlayerBodyData($player);
+
         return [
-            'error' => true,
-            'msg' => 'Player equipment failed: ' . ArrayHelper::getColumn($player->errors, 0, false)[0],
+            'error' => false,
+            'msg' => "{$itemName} is " . ($equiped ? 'equiped' : 'disarmed'),
+            'contentModal' => $this->getPlayerBodyRender($playerBodyData, 'modal'),
+            'contentAside' => $this->getPlayerBodyRender($playerBodyData, 'aside'),
+            'contentOffcanvas' => $this->getPlayerBodyRender($playerBodyData, 'offcanvas'),
+            'data' => $playerBodyData,
         ];
     }
 

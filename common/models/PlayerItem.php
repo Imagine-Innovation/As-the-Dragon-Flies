@@ -183,7 +183,7 @@ class PlayerItem extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Player>
      */
-    public function getHead()
+    public function getHead(): \yii\db\ActiveQuery
     {
         return $this->hasOne(Player::class, ['head_item_id' => 'item_id', 'id' => 'player_id']);
     }
@@ -193,7 +193,7 @@ class PlayerItem extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Player>
      */
-    public function getChest()
+    public function getChest(): \yii\db\ActiveQuery
     {
         return $this->hasOne(Player::class, ['chest_item_id' => 'item_id', 'id' => 'player_id']);
     }
@@ -203,7 +203,7 @@ class PlayerItem extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Player>
      */
-    public function getRightHand()
+    public function getRightHand(): \yii\db\ActiveQuery
     {
         return $this->hasOne(Player::class, ['right_hand_item_id' => 'item_id', 'id' => 'player_id']);
     }
@@ -213,7 +213,7 @@ class PlayerItem extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Player>
      */
-    public function getLeftHand()
+    public function getLeftHand(): \yii\db\ActiveQuery
     {
         return $this->hasOne(Player::class, ['left_hand_item_id' => 'item_id', 'id' => 'player_id']);
     }
@@ -223,7 +223,7 @@ class PlayerItem extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery<Player>
      */
-    public function getBack()
+    public function getBack(): \yii\db\ActiveQuery
     {
         return $this->hasOne(Player::class, ['back_item_id' => 'item_id', 'id' => 'player_id']);
     }
