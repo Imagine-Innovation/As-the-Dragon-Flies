@@ -13,6 +13,7 @@ use common\helpers\FindModelHelper;
 use common\helpers\LanguageHelper;
 use common\helpers\MergeHelper;
 use common\models\events\EventFactory;
+use common\models\Outcome;
 use common\models\Player;
 use common\models\Quest;
 use common\models\QuestPlayer;
@@ -402,13 +403,30 @@ class GameController extends Controller
         $actionManager->unlockNextActions($payload['status']);
 
         $this->createGameActionEvent($questAction->action->name, $payload);
-        return $actionOutcome['log'];
+
+        $log = $actionOutcome['log'];
+        $log['hasItemOutcome'] = self::hasItemOutcome($payload['outcomes']);
+        return $log;
+    }
+
+    /**
+     *
+     * @param array<Outcome> $outcomes
+     * @return bool
+     */
+    private static function hasItemOutcome(array $outcomes): bool
+    {
+        return array_reduce(
+                $outcomes,
+                static fn (bool $carry, Outcome $outcome): bool => $carry || $outcome->item_id !== null,
+                false,
+        );
     }
 
     /**
      * Ajax POST request that evaluates the action and get the outcomes of the completed action
      *
-     * @return array{error: bool, msg: string, content?: string} Json encoded associative array with error status, internal message, and content to display
+     * @return array{error: bool, msg: string, content?: string, hasItemOutcome?: bool} Json encoded associative array with error status, internal message, and content to display
      */
     public function actionAjaxGetOutcomes(): array
     {
@@ -426,6 +444,7 @@ class GameController extends Controller
             'msg' => '',
             'content' => $content,
             'questProgressId' => $actionLog['questProgressId'],
+            'hasItemOutcome' => $actionLog['hasItemOutcome'] ?? false,
         ];
     }
 
