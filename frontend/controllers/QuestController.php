@@ -29,7 +29,6 @@ use common\helpers\FindModelHelper;
 use common\helpers\SaveHelper;
 use common\helpers\UserErrorMessage;
 use common\models\events\EventFactory;
-use common\models\Chapter;
 use common\models\Player;
 use common\models\Quest;
 use common\models\QuestLog;
@@ -516,16 +515,9 @@ class QuestController extends Controller
                 ->orderBy('round ASC')
                 ->all();
 
-        $chapterNumbers = array_map('intval', Chapter::find()
-                ->select(['id', 'chapter_number'])
-                ->where(['story_id' => $quest->story_id])
-                ->indexBy('id')
-                ->column());
-
         return $this->render('summary', [
                     'quest' => $quest,
                     'logs' => $questLogs,
-                    'chapterNumbers' => $chapterNumbers,
         ]);
     }
 

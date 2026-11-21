@@ -10,7 +10,6 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var common\models\Quest $quest */
 /** @var common\models\QuestLog[] $logs */
-/** @var array<int, int> $chapterNumbers */
 $this->title = $quest->name;
 $this->params['breadcrumbs'][] = ['label' => 'Quests', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
@@ -69,8 +68,7 @@ $shownOutcomeImages = [];
                         <?php
                         if ($log->chapterLog->name !== $chapterName) {
                             $chapterName = $log->chapterLog->name;
-                            $chapterId = (int)($log->chapterLog->chapter_id ?? 0);
-                            $chapterNumber = $chapterNumbers[$chapterId] ?? ($chapterNumber + 1);
+                            $chapterNumber += 1;
                             $missionNumber = 0;
                             $name = MarkDown::widget(['content' => "{$chapterNumber}. {$chapterName}"]);
                             $description = MarkDown::widget(['content' => $log->chapterLog->description]);
