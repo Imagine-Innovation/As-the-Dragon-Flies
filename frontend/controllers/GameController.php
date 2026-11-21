@@ -416,11 +416,13 @@ class GameController extends Controller
      */
     private static function hasItemOutcome(array $outcomes): bool
     {
-        return array_reduce(
-                $outcomes,
-                static fn (bool $carry, Outcome $outcome): bool => $carry || $outcome->item_id !== null,
-                false,
-        );
+        foreach ($outcomes as $outcome) {
+            if ($outcome->item_id !== null) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
