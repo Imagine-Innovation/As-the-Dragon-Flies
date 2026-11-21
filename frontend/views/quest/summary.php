@@ -2,6 +2,8 @@
 
 use common\components\AppStatus;
 use common\helpers\DateTimeHelper;
+use common\helpers\WebResourcesHelper;
+use common\widgets\Button;
 use common\widgets\MarkDown;
 use yii\helpers\Html;
 
@@ -13,57 +15,127 @@ $this->params['breadcrumbs'][] = ['label' => 'Quests', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
 $status = AppStatus::from($quest->status);
+$storyRoot = WebResourcesHelper::storyRootPath($quest->story_id);
+$storyImage = $quest->image ?: $quest->story?->image;
 
 $chapterName = "";
 $missionName = "";
 $chapterNumber = 0;
 $missionNumber = 0;
+$lastChapterId = null;
+$lastMissionId = null;
+
+// An action illustration is only displayed on the first attempt of a run of
+// consecutive attempts with the same outcome; attempting any other action in
+// between resets the counter.
+$lastActionKey = null;
+$shownOutcomeImages = [];
 ?>
+<style>
+    @media print {
+        .navbar,
+        nav,
+        .breadcrumb,
+        footer,
+        .no-print {
+            display: none !important;
+        }
+
+        #questHistory {
+            display: block !important;
+        }
+
+        #questLogs {
+            flex: 0 0 100% !important;
+            max-width: 100% !important;
+        }
+
+        .quest-summary,
+        .quest-summary * {
+            color: #333 !important;
+        }
+    }
+</style>
 <div class="quest-summary">
 
     <container id='questHistory' class="row">
         <section id="questLogs" class="col-12 col-xl-8">
             <div class="card mb-4 text-decoration">
-                <div class="card-header">
+                <div class="card-header"<?php if (!empty($storyImage)): ?> style="background-image: url('<?= Html::encode("{$storyRoot}/img/{$storyImage}") ?>'); background-size: cover; background-position: center; max-height: 400px;"<?php endif; ?>>
                     <h2 class="mb-0"><?= Html::encode($this->title) ?></h2>
+                    <?= MarkDown::widget(['content' => $quest->description]) ?>
                 </div>
                 <div class="card-body">
-                    <?= MarkDown::widget(['content' => $quest->description]) ?>
                     <?php foreach ($logs as $log): ?>
+                        <?php
+                        if ((int)($log->chapterLog->chapter_id ?? 0) !== $lastChapterId || $log->chapterLog->name !== $chapterName) {
+                            $lastChapterId = (int)($log->chapterLog->chapter_id ?? 0);
+                            $chapterName = $log->chapterLog->name;
+                            $chapterNumber += 1;
+                            $missionNumber = 0;
+                            $name = MarkDown::widget(['content' => "{$chapterNumber}\u{00A0}{$chapterName}"]);
+                            $description = MarkDown::widget(['content' => $log->chapterLog->description]);
+                            echo "<h3 class=\"text-warning\" style=\"clear: both;\">{$name}</h3>\n";
+                            $chapterIllustration = $log->chapterLog->image ?? null;
+                            if (!empty($chapterIllustration)) {
+                                echo "<img class=\"float-end mb-3 ms-3\" src=\"" . Html::encode("{$storyRoot}/img/{$chapterIllustration}") . "\" alt=\"" . Html::encode($chapterName ?? '') . "\" style=\"max-width: 300px;\">\n";
+                            }
+                            echo "<p class=\"text-muted\">{$description}</p>\n";
+                        }
+
+                        if ((int)($log->missionLog->mission_id ?? 0) !== $lastMissionId || $log->missionLog->name !== $missionName) {
+                            $lastMissionId = (int)($log->missionLog->mission_id ?? 0);
+                            $missionName = $log->missionLog->name;
+                            $missionNumber += 1;
+                            $name = MarkDown::widget(['content' => "{$chapterNumber}.{$missionNumber}\u{00A0}{$missionName}"]);
+                            $description = MarkDown::widget(['content' => $log->missionLog->description]);
+                            echo "<h4 class=\"text-warning\" style=\"clear: both;\">{$name}</h4>\n";
+                            $missionIllustration = $log->missionLog->image ?? null;
+                            if (!empty($missionIllustration)) {
+                                echo "<img class=\"float-end mb-3 ms-3\" src=\"" . Html::encode("{$storyRoot}/img/{$missionIllustration}") . "\" alt=\"" . Html::encode($missionName ?? '') . "\" style=\"max-width: 300px;\">\n";
+                            }
+                            echo "<p class=\"text-muted\">{$description}</p>\n";
+                        }
+
+                        $actionName = "Round {$log->round} - {$log->action_name}";
+                        $actionKey = $log->mission_id . ':' . $log->action_name;
+                        $description = MarkDown::widget(['content' => $log->action_description]);
+
+                        if ($actionKey !== $lastActionKey) {
+                            $lastActionKey = $actionKey;
+                            $shownOutcomeImages = [];
+                        }
+                        ?>
                         <article>
+                            <span class="badge bg-warning text-dark"><?= $actionName ?></span><p class="text-muted"><?= $description ?></p>
+
+                            <?php if ($log->result !== null): ?>
+                                <p><i class="bi dnd-d20"></i> <?= $log->result ?></p>
+                            <?php endif; ?>
+
                             <?php
-                            if ($log->chapterLog->name !== $chapterName) {
-                                $chapterName = $log->chapterLog->name;
-                                $chapterNumber += 1;
-                                $missionNumber = 0;
-                                $name = MarkDown::widget(['content' => "{$chapterNumber}. {$chapterName}"]);
-                                $description = MarkDown::widget(['content' => $log->chapterLog->description]);
-                                echo "<h3 class=\"text-warning\">{$name}</h3>\n<p class=\"text-muted\">{$description}</p>\n";
-                            }
-                            if ($log->missionLog->name !== $missionName) {
-                                $missionName = $log->missionLog->name;
-                                $missionNumber += 1;
-                                $name = MarkDown::widget(['content' => "{$chapterNumber}.{$missionNumber}. {$missionName}"]);
-                                $description = MarkDown::widget(['content' => $log->missionLog->description]);
-                                echo "<h4 class=\"text-warning\">{$name}</h4>\n<p class=\"text-muted\">{$description}</p>\n";
-                            }
-                            $actionName = "Round {$log->round} - {$log->action_name}";
-                            $description = MarkDown::widget(['content' => $log->action_description]);
-                            echo "<span class=\"badge bg-warning text-dark\">{$actionName}</span><p class=\"text-muted\">{$description}</p>\n";
-
-                            if ($log->result !== null) {
-                                echo "<p><i class=\"bi dnd-d20\"></i> {$log->result}</p>\n";
-                            }
-
-                            $results = json_decode($log->description);
-                            foreach ($results as $result) {
-                                if ($result->name !== null && trim($result->name) !== '') {
-                                    echo MarkDown::widget(['content' => "###### {$result->name}"]);
-                                    $description = MarkDown::widget(['content' => $result->description]);
-                                    echo "<div class=\"text-muted\">\n{$description}\n</div>\n";
+                            $results = json_decode($log->description) ?? [];
+                            $attemptOutcomeImages = [];
+                            foreach ($results as $result):
+                                if ($result->name === null || trim($result->name) === '') {
+                                    continue;
                                 }
-                            }
-                            ?>
+                                $outcomeIllustration = $result->image ?? null;
+                                $illustration = '';
+                                if (!empty($outcomeIllustration) && !in_array($outcomeIllustration, $shownOutcomeImages, true)) {
+                                    $attemptOutcomeImages[] = $outcomeIllustration;
+                                    $illustration = "<img class=\"float-end mb-3 ms-3\" src=\"" . Html::encode("{$storyRoot}/img/{$outcomeIllustration}") . "\" alt=\"" . Html::encode($result->name) . "\" style=\"max-width: 300px;\">\n";
+                                }
+                                ?>
+                                <div class="clearfix">
+                                    <?= $illustration ?>
+                                    <?= MarkDown::widget(['content' => "###### {$result->name}"]) ?>
+                                    <div class="text-muted">
+                                        <?= MarkDown::widget(['content' => $result->description ?? '']) ?>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                            <?php $shownOutcomeImages = $attemptOutcomeImages; ?>
                         </article>
                         <hr class="border border-warning w-90">
                     <?php endforeach; ?>
@@ -71,7 +143,7 @@ $missionNumber = 0;
             </div>
         </section>
 
-        <section id="questContext" class="col-12 col-xl-4">
+        <section id="questContext" class="col-12 col-xl-4 no-print">
             <div class="row">
                 <div class="col-12 col-md-6 col-xl-12 col-3xl-6">
                     <div class="card mb-4">
@@ -108,6 +180,13 @@ $missionNumber = 0;
                     </div>
 
                     <div class="d-grid gap-2">
+                        <?=
+                        Button::widget([
+                            'icon' => 'bi-printer',
+                            'title' => 'Print',
+                            'onclick' => 'window.print(); return false;',
+                        ])
+                        ?>
                         <?= Html::a('Back to Stories', ['story/index'], ['class' => 'btn btn-primary']) ?>
                     </div>
                 </div>

@@ -512,7 +512,7 @@ class QuestController extends Controller
         $questLogs = QuestLog::find()
                 ->where(['quest_id' => $id])
                 ->with(['missionLog', 'chapterLog'])
-                ->orderBy('round ASC')
+                ->orderBy('round ASC, id ASC')
                 ->all();
 
         return $this->render('summary', [
