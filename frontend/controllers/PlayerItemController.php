@@ -276,6 +276,11 @@ class PlayerItemController extends Controller
 
         $transaction = Yii::$app->db->beginTransaction();
         try {
+            // Serialize with concurrent setup resets and equip/disarm requests on the same player
+            Yii::$app->db->createCommand('SELECT id FROM player WHERE id = :id FOR UPDATE')
+                ->bindValue(':id', $player->id)
+                ->execute();
+
             $successfullySaved = SaveHelper::save($player, false);
             if (!$successfullySaved) {
                 $transaction->rollBack();

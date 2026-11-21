@@ -555,6 +555,11 @@ class PlayerBuilderController extends Controller
 
         $transaction = Yii::$app->db->beginTransaction();
         try {
+            // Serialize with concurrent equip/disarm requests on the same player
+            Yii::$app->db->createCommand('SELECT id FROM player WHERE id = :id FOR UPDATE')
+                ->bindValue(':id', $playerId)
+                ->execute();
+
             // first of all, discharge the player and delete existing items.
             // As a side effect, we must assume that the player has no other items
             // purchased or collected during the setup process.
