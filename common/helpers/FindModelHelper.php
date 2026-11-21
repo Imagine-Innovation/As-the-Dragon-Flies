@@ -8,7 +8,6 @@ use common\models\Decor;
 use common\models\Item;
 use common\models\Mission;
 use common\models\Player;
-use common\models\PlayerBody;
 use common\models\PlayerItem;
 use common\models\Quest;
 use common\models\QuestAction;
@@ -298,16 +297,6 @@ final class FindModelHelper
     public static function findPlayerItem(int|array $param): PlayerItem
     {
         return self::findModel(PlayerItem::class, $param);
-    }
-
-    /**
-     *
-     * @param int|array<string, mixed> $param
-     * @return PlayerBody
-     */
-    public static function findPlayerBody(int|array $param): PlayerBody
-    {
-        return self::findModel(PlayerBody::class, $param);
     }
 
     /**

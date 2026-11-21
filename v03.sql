@@ -14797,6 +14797,11 @@ CREATE TABLE `player` (
   `speed` int(10) unsigned DEFAULT NULL COMMENT 'Actual speed',
   `created_at` int(10) unsigned DEFAULT NULL COMMENT 'Creation timestamp',
   `updated_at` int(10) unsigned DEFAULT NULL COMMENT 'Last update timestamp',
+  `head_item_id` int(10) unsigned DEFAULT NULL COMMENT 'Optional foreign key to “player_item” table. Item that protect the head',
+  `chest_item_id` int(10) unsigned DEFAULT NULL COMMENT 'Optional foreign key to “player_item” table. Item that protect the chest',
+  `right_hand_item_id` int(10) unsigned DEFAULT NULL COMMENT 'Optional foreign key to “player_item” table. Item handled in the right hand',
+  `left_hand_item_id` int(10) unsigned DEFAULT NULL COMMENT 'Optional foreign key to “player_item” table. Item handled in the left hand',
+  `back_item_id` int(10) unsigned DEFAULT NULL COMMENT 'Optional foreign key to “player_item” table. Item carried on the back',
   PRIMARY KEY (`id`),
   KEY `fk_user` (`user_id`),
   KEY `fk_race` (`race_id`),
@@ -14814,7 +14819,17 @@ CREATE TABLE `player` (
   CONSTRAINT `player_ibfk_5` FOREIGN KEY (`background_id`) REFERENCES `background` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `player_ibfk_6` FOREIGN KEY (`level_id`) REFERENCES `level` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `player_ibfk_7` FOREIGN KEY (`image_id`) REFERENCES `image` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT `player_ibfk_8` FOREIGN KEY (`quest_id`) REFERENCES `quest` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+  CONSTRAINT `player_ibfk_8` FOREIGN KEY (`quest_id`) REFERENCES `quest` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  KEY `fk_head` (`id`,`head_item_id`),
+  KEY `fk_chest` (`id`,`chest_item_id`),
+  KEY `fk_right_hand` (`id`,`right_hand_item_id`),
+  KEY `fk_left_hand` (`id`,`left_hand_item_id`),
+  KEY `fk_back` (`id`,`back_item_id`),
+  CONSTRAINT `player_ibfk_9` FOREIGN KEY (`id`, `head_item_id`) REFERENCES `player_item` (`player_id`, `item_id`) ON DELETE NO ACTION ON UPDATE CASCADE,
+  CONSTRAINT `player_ibfk_10` FOREIGN KEY (`id`, `chest_item_id`) REFERENCES `player_item` (`player_id`, `item_id`) ON DELETE NO ACTION ON UPDATE CASCADE,
+  CONSTRAINT `player_ibfk_11` FOREIGN KEY (`id`, `right_hand_item_id`) REFERENCES `player_item` (`player_id`, `item_id`) ON DELETE NO ACTION ON UPDATE CASCADE,
+  CONSTRAINT `player_ibfk_12` FOREIGN KEY (`id`, `left_hand_item_id`) REFERENCES `player_item` (`player_id`, `item_id`) ON DELETE NO ACTION ON UPDATE CASCADE,
+  CONSTRAINT `player_ibfk_13` FOREIGN KEY (`id`, `back_item_id`) REFERENCES `player_item` (`player_id`, `item_id`) ON DELETE NO ACTION ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Main player feature table';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -14824,38 +14839,38 @@ CREATE TABLE `player` (
 
 LOCK TABLES `player` WRITE;
 /*!40000 ALTER TABLE `player` DISABLE KEYS */;
-INSERT INTO `player` (`id`, `class_id`, `level_id`, `user_id`, `race_id`, `background_id`, `alignment_id`, `image_id`, `quest_id`, `name`, `history`, `status`, `gender`, `age`, `experience_points`, `hit_points`, `max_hit_points`, `armor_class`, `speed`, `created_at`, `updated_at`) VALUES (1,12,20,1,17,5,5,NULL,NULL,'Game Master','You are the Game Master. This player is a build-in player. It MUST have ID=1!',10,NULL,NULL,0,10,10,10,NULL,NULL,NULL),
-(2,8,1,12,7,3,1,89,NULL,'Helberen','You were raised by a good dragon (or other extremely intelligent and powerful creature) and taught to think like one. You respect dragons for what they are, crafty and intelligent creatures, but you have also learned to avoid, perhaps even fear, evil dragons.',10,'M',78,100,87,110,10,NULL,1758303297,1758303774),
-(3,5,1,8,17,3,5,308,NULL,'Bardeid Dumein','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'M',29,14,1,10,10,NULL,1760886587,1760886755),
-(4,2,1,12,17,3,2,325,NULL,'Mehmen Rein','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',9,'M',26,4,3,10,10,NULL,1763464486,1763464654),
-(5,9,1,6,14,1,7,227,NULL,'Perrin Tealeaf','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',0,'M',60,193,0,10,10,NULL,1765637411,1765637536),
-(6,2,1,12,18,2,2,368,NULL,'Melech Sorrow','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'M',44,1,9,10,10,NULL,1765740564,1765740652),
-(7,8,1,8,11,1,4,134,NULL,'Roondar Daergel','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'M',132,0,10,10,10,NULL,1767177585,1774968289),
-(8,10,1,13,12,1,4,177,NULL,'Enna Amakiir (Gemflower)','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'F',44,0,10,10,10,NULL,1767544519,1767546701),
-(9,9,1,14,17,1,5,327,NULL,'Bardeid Jassan','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'M',29,1,9,10,10,NULL,1767973867,1767974256),
-(10,10,1,12,7,1,6,104,NULL,'Theren Liadon (Silverfrond)','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'M',238,0,10,10,10,NULL,1768737114,1768739803),
-(11,7,2,5,17,3,5,326,NULL,'Khemed Basha','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'M',32,887,0,10,17,NULL,1770049522,1770051722),
-(12,2,1,12,9,4,2,130,NULL,'Zook Sparklegem','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'M',155,5,7,10,10,NULL,1770571078,1770571160),
-(13,9,1,5,17,5,3,327,NULL,'Haseid Jassan','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'M',41,173,5,10,10,NULL,1772297828,1772299591),
-(20,6,1,15,7,1,2,68,NULL,'Shanairra Siannodel (Moonbrook)','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'F',206,0,10,10,10,NULL,1773681098,1773761919),
-(21,6,1,15,7,1,1,99,NULL,'Carrie Liadon (Silverfrond)','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'M',302,93,7,10,10,NULL,1773681101,1773681215),
-(22,12,1,8,9,1,3,122,NULL,'Donella Turen','You were abandoned at a very young age and have no idea who your parents are. You lived like a wanderer in the countryside, moving from village to village. You worked on various farms most of your childhood and adolescence.',10,'F',178,0,10,10,10,NULL,1774967989,1774968057),
-(23,3,1,8,16,2,5,285,NULL,'Henk','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',9,'M',27,0,10,10,10,NULL,1774968880,1774970652),
-(24,1,1,8,12,1,NULL,NULL,NULL,NULL,'On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',9,NULL,NULL,0,10,10,10,NULL,1775036723,1775036723),
-(25,1,1,8,12,1,4,179,NULL,'Riardon Galanodel (Moonwhisper)','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'M',52,0,10,10,10,NULL,1775036728,1775036808),
-(26,2,1,5,18,1,8,335,NULL,'Anakis Reverence','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'F',36,0,10,10,10,NULL,1778079457,1778079551),
-(27,9,1,12,17,4,5,314,NULL,'Zasheir Moslana','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'M',26,0,10,10,10,NULL,1778672766,1778678585),
-(28,5,1,12,17,6,NULL,NULL,NULL,NULL,'On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',9,NULL,NULL,0,10,10,10,NULL,1778679049,1778679049),
-(29,5,1,12,17,6,NULL,NULL,NULL,NULL,'On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',9,NULL,NULL,0,10,10,10,NULL,1778679054,1778679054),
-(30,5,1,12,17,6,5,324,NULL,'Bardeid Dumein','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'M',29,145,7,10,10,NULL,1778679059,1778681777),
-(31,12,1,7,17,5,5,311,NULL,'Khemed Pashar','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'M',59,70,6,10,10,NULL,1778682016,1778682111),
-(32,5,1,6,7,3,5,90,NULL,'Carrie Meliamne (Oakenheel)','You were abandoned at a very young age and have no idea who your parents are. You lived like a wanderer in the countryside, moving from village to village. You worked on various farms most of your childhood and adolescence.',9,'M',302,0,10,10,10,NULL,1778688510,1778688850),
-(33,2,1,7,18,3,7,342,NULL,'Damaia Music','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'F',50,0,10,10,10,NULL,1778694836,1779792643),
-(34,2,1,7,18,3,6,335,NULL,'Damaia Reverence','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'F',38,83,6,10,10,NULL,1778694845,1778694996),
-(35,12,2,15,17,4,1,331,NULL,'Sudeiman Rein','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'M',74,461,0,10,10,NULL,1782585033,1782585394),
-(36,7,1,7,7,4,5,98,NULL,'Tharivol Amakiir (Gemflower)','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'M',366,55,10,10,10,NULL,1782743195,1782744909),
-(37,11,1,12,16,1,3,285,NULL,'Mhurren','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'M',33,0,10,10,10,NULL,1785947752,1785948091),
-(38,6,1,5,8,1,4,68,NULL,'Anastrianna Galanodel (Moonwhisper)','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'F',302,0,10,10,12,NULL,1793369127,1793369278);
+INSERT INTO `player` (`id`, `class_id`, `level_id`, `user_id`, `race_id`, `background_id`, `alignment_id`, `image_id`, `quest_id`, `name`, `history`, `status`, `gender`, `age`, `experience_points`, `hit_points`, `max_hit_points`, `armor_class`, `speed`, `created_at`, `updated_at`, `head_item_id`, `chest_item_id`, `right_hand_item_id`, `left_hand_item_id`, `back_item_id`) VALUES (1,12,20,1,17,5,5,NULL,NULL,'Game Master','You are the Game Master. This player is a build-in player. It MUST have ID=1!',10,NULL,NULL,0,10,10,10,NULL,NULL,NULL, NULL, NULL, NULL, NULL, NULL),
+(2,8,1,12,7,3,1,89,NULL,'Helberen','You were raised by a good dragon (or other extremely intelligent and powerful creature) and taught to think like one. You respect dragons for what they are, crafty and intelligent creatures, but you have also learned to avoid, perhaps even fear, evil dragons.',10,'M',78,100,87,110,10,NULL,1758303297,1758303774, NULL, NULL, NULL, NULL, NULL),
+(3,5,1,8,17,3,5,308,NULL,'Bardeid Dumein','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'M',29,14,1,10,10,NULL,1760886587,1760886755, NULL, NULL, NULL, NULL, NULL),
+(4,2,1,12,17,3,2,325,NULL,'Mehmen Rein','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',9,'M',26,4,3,10,10,NULL,1763464486,1763464654, NULL, NULL, NULL, NULL, NULL),
+(5,9,1,6,14,1,7,227,NULL,'Perrin Tealeaf','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',0,'M',60,193,0,10,10,NULL,1765637411,1765637536, NULL, NULL, NULL, NULL, NULL),
+(6,2,1,12,18,2,2,368,NULL,'Melech Sorrow','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'M',44,1,9,10,10,NULL,1765740564,1765740652, NULL, NULL, NULL, NULL, NULL),
+(7,8,1,8,11,1,4,134,NULL,'Roondar Daergel','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'M',132,0,10,10,10,NULL,1767177585,1774968289, NULL, NULL, NULL, NULL, NULL),
+(8,10,1,13,12,1,4,177,NULL,'Enna Amakiir (Gemflower)','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'F',44,0,10,10,10,NULL,1767544519,1767546701, NULL, NULL, NULL, NULL, NULL),
+(9,9,1,14,17,1,5,327,NULL,'Bardeid Jassan','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'M',29,1,9,10,10,NULL,1767973867,1767974256, NULL, NULL, NULL, NULL, NULL),
+(10,10,1,12,7,1,6,104,NULL,'Theren Liadon (Silverfrond)','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'M',238,0,10,10,10,NULL,1768737114,1768739803, NULL, NULL, NULL, NULL, NULL),
+(11,7,2,5,17,3,5,326,NULL,'Khemed Basha','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'M',32,887,0,10,17,NULL,1770049522,1770051722, 218, 191, 149, 149, NULL),
+(12,2,1,12,9,4,2,130,NULL,'Zook Sparklegem','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'M',155,5,7,10,10,NULL,1770571078,1770571160, NULL, NULL, NULL, NULL, NULL),
+(13,9,1,5,17,5,3,327,NULL,'Haseid Jassan','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'M',41,173,5,10,10,NULL,1772297828,1772299591, NULL, NULL, NULL, NULL, NULL),
+(20,6,1,15,7,1,2,68,NULL,'Shanairra Siannodel (Moonbrook)','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'F',206,0,10,10,10,NULL,1773681098,1773761919, NULL, NULL, NULL, NULL, NULL),
+(21,6,1,15,7,1,1,99,NULL,'Carrie Liadon (Silverfrond)','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'M',302,93,7,10,10,NULL,1773681101,1773681215, NULL, NULL, NULL, NULL, NULL),
+(22,12,1,8,9,1,3,122,NULL,'Donella Turen','You were abandoned at a very young age and have no idea who your parents are. You lived like a wanderer in the countryside, moving from village to village. You worked on various farms most of your childhood and adolescence.',10,'F',178,0,10,10,10,NULL,1774967989,1774968057, NULL, NULL, NULL, NULL, NULL),
+(23,3,1,8,16,2,5,285,NULL,'Henk','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',9,'M',27,0,10,10,10,NULL,1774968880,1774970652, NULL, NULL, NULL, NULL, NULL),
+(24,1,1,8,12,1,NULL,NULL,NULL,NULL,'On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',9,NULL,NULL,0,10,10,10,NULL,1775036723,1775036723, NULL, NULL, NULL, NULL, NULL),
+(25,1,1,8,12,1,4,179,NULL,'Riardon Galanodel (Moonwhisper)','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'M',52,0,10,10,10,NULL,1775036728,1775036808, NULL, NULL, NULL, NULL, NULL),
+(26,2,1,5,18,1,8,335,NULL,'Anakis Reverence','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'F',36,0,10,10,10,NULL,1778079457,1778079551, NULL, NULL, NULL, NULL, NULL),
+(27,9,1,12,17,4,5,314,NULL,'Zasheir Moslana','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'M',26,0,10,10,10,NULL,1778672766,1778678585, NULL, NULL, NULL, NULL, NULL),
+(28,5,1,12,17,6,NULL,NULL,NULL,NULL,'On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',9,NULL,NULL,0,10,10,10,NULL,1778679049,1778679049, NULL, NULL, NULL, NULL, NULL),
+(29,5,1,12,17,6,NULL,NULL,NULL,NULL,'On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',9,NULL,NULL,0,10,10,10,NULL,1778679054,1778679054, NULL, NULL, NULL, NULL, NULL),
+(30,5,1,12,17,6,5,324,NULL,'Bardeid Dumein','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'M',29,145,7,10,10,NULL,1778679059,1778681777, NULL, NULL, NULL, NULL, NULL),
+(31,12,1,7,17,5,5,311,NULL,'Khemed Pashar','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'M',59,70,6,10,10,NULL,1778682016,1778682111, NULL, NULL, NULL, NULL, NULL),
+(32,5,1,6,7,3,5,90,NULL,'Carrie Meliamne (Oakenheel)','You were abandoned at a very young age and have no idea who your parents are. You lived like a wanderer in the countryside, moving from village to village. You worked on various farms most of your childhood and adolescence.',9,'M',302,0,10,10,10,NULL,1778688510,1778688850, NULL, NULL, NULL, NULL, NULL),
+(33,2,1,7,18,3,7,342,NULL,'Damaia Music','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'F',50,0,10,10,10,NULL,1778694836,1779792643, NULL, NULL, NULL, NULL, NULL),
+(34,2,1,7,18,3,6,335,NULL,'Damaia Reverence','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'F',38,83,6,10,10,NULL,1778694845,1778694996, NULL, NULL, NULL, NULL, NULL),
+(35,12,2,15,17,4,1,331,NULL,'Sudeiman Rein','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'M',74,461,0,10,10,NULL,1782585033,1782585394, NULL, NULL, NULL, NULL, NULL),
+(36,7,1,7,7,4,5,98,NULL,'Tharivol Amakiir (Gemflower)','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'M',366,55,10,10,10,NULL,1782743195,1782744909, NULL, NULL, NULL, NULL, NULL),
+(37,11,1,12,16,1,3,285,NULL,'Mhurren','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'M',33,0,10,10,10,NULL,1785947752,1785948091, NULL, NULL, NULL, NULL, NULL),
+(38,6,1,5,8,1,4,68,NULL,'Anastrianna Galanodel (Moonwhisper)','On several occasions, you noticed someone following you. You have seen this person many times, but never spoken to them. The few times you tried to approach him, he disappeared. So you wonder what this person wants from you, and why he is following you.',10,'F',302,0,10,10,12,NULL,1793369127,1793369278, NULL, NULL, NULL, NULL, NULL);
 /*!40000 ALTER TABLE `player` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -15077,76 +15092,6 @@ INSERT INTO `player_ability` (`player_id`, `ability_id`, `score`, `bonus`, `modi
 /*!40000 ALTER TABLE `player_ability` ENABLE KEYS */;
 UNLOCK TABLES;
 
---
--- Table structure for table `player_body`
---
-
-DROP TABLE IF EXISTS `player_body`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `player_body` (
-  `player_id` int(10) unsigned NOT NULL COMMENT 'Primary key and foreign key to “player” table',
-  `head_item_id` int(10) unsigned DEFAULT NULL COMMENT 'Optional foreign key to “player_item” table. Item that protect the head',
-  `chest_item_id` int(10) unsigned DEFAULT NULL COMMENT 'Optional foreign key to “player_item” table. Item that protect the chest',
-  `right_hand_item_id` int(10) unsigned DEFAULT NULL COMMENT 'Optional foreign key to “player_item” table. Item handled in the right hand',
-  `left_hand_item_id` int(10) unsigned DEFAULT NULL COMMENT 'Optional foreign key to “player_item” table. Item handled in the left hand',
-  `back_item_id` int(10) unsigned DEFAULT NULL COMMENT 'Optional foreign key to “player_item” table. Item carried on the back',
-  PRIMARY KEY (`player_id`),
-  KEY `fk_head` (`player_id`,`head_item_id`),
-  KEY `fk_chest` (`player_id`,`chest_item_id`),
-  KEY `fk_right_hand` (`player_id`,`right_hand_item_id`),
-  KEY `fk_left_hand` (`player_id`,`left_hand_item_id`),
-  KEY `fk_back` (`player_id`,`back_item_id`),
-  KEY `fk_player` (`player_id`) USING BTREE,
-  CONSTRAINT `player_body_ibfk_01` FOREIGN KEY (`player_id`) REFERENCES `player` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `player_body_ibfk_2` FOREIGN KEY (`player_id`, `head_item_id`) REFERENCES `player_item` (`player_id`, `item_id`) ON DELETE NO ACTION ON UPDATE CASCADE,
-  CONSTRAINT `player_body_ibfk_3` FOREIGN KEY (`player_id`, `chest_item_id`) REFERENCES `player_item` (`player_id`, `item_id`) ON DELETE NO ACTION ON UPDATE CASCADE,
-  CONSTRAINT `player_body_ibfk_4` FOREIGN KEY (`player_id`, `right_hand_item_id`) REFERENCES `player_item` (`player_id`, `item_id`) ON DELETE NO ACTION ON UPDATE CASCADE,
-  CONSTRAINT `player_body_ibfk_5` FOREIGN KEY (`player_id`, `left_hand_item_id`) REFERENCES `player_item` (`player_id`, `item_id`) ON DELETE NO ACTION ON UPDATE CASCADE,
-  CONSTRAINT `player_body_ibfk_6` FOREIGN KEY (`player_id`, `back_item_id`) REFERENCES `player_item` (`player_id`, `item_id`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Connects the players with the items they are equipped with.';
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `player_body`
---
-
-LOCK TABLES `player_body` WRITE;
-/*!40000 ALTER TABLE `player_body` DISABLE KEYS */;
-INSERT INTO `player_body` (`player_id`, `head_item_id`, `chest_item_id`, `right_hand_item_id`, `left_hand_item_id`, `back_item_id`) VALUES (1,NULL,NULL,NULL,NULL,NULL),
-(2,NULL,NULL,NULL,NULL,NULL),
-(3,NULL,NULL,NULL,NULL,NULL),
-(4,NULL,NULL,NULL,NULL,NULL),
-(5,NULL,NULL,NULL,NULL,NULL),
-(6,NULL,NULL,NULL,NULL,NULL),
-(7,NULL,NULL,NULL,NULL,NULL),
-(8,NULL,NULL,NULL,NULL,NULL),
-(9,NULL,NULL,NULL,NULL,NULL),
-(10,NULL,NULL,NULL,NULL,NULL),
-(11,218,191,149,149,NULL),
-(12,NULL,NULL,NULL,NULL,NULL),
-(13,NULL,NULL,NULL,NULL,NULL),
-(20,NULL,NULL,NULL,NULL,NULL),
-(21,NULL,NULL,NULL,NULL,NULL),
-(22,NULL,NULL,NULL,NULL,NULL),
-(23,NULL,NULL,NULL,NULL,NULL),
-(24,NULL,NULL,NULL,NULL,NULL),
-(25,NULL,NULL,NULL,NULL,NULL),
-(26,NULL,NULL,NULL,NULL,NULL),
-(27,NULL,NULL,NULL,NULL,NULL),
-(28,NULL,NULL,NULL,NULL,NULL),
-(29,NULL,NULL,NULL,NULL,NULL),
-(30,NULL,NULL,NULL,NULL,NULL),
-(31,NULL,NULL,NULL,NULL,NULL),
-(32,NULL,NULL,NULL,NULL,NULL),
-(33,NULL,NULL,NULL,NULL,NULL),
-(34,NULL,NULL,NULL,NULL,NULL),
-(35,NULL,NULL,NULL,NULL,NULL),
-(36,NULL,NULL,NULL,NULL,NULL),
-(37,NULL,NULL,NULL,NULL,NULL),
-(38,NULL,NULL,NULL,NULL,NULL);
-/*!40000 ALTER TABLE `player_body` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `player_cart`

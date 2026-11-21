@@ -11,7 +11,6 @@ use common\models\ClassEquipment;
 use common\models\Image;
 use common\models\Item;
 use common\models\Player;
-use common\models\PlayerBody;
 use common\models\PlayerItem;
 use common\models\PlayerLanguage;
 use common\components\AjaxRequest;
@@ -549,19 +548,40 @@ class PlayerBuilderController extends Controller
         $player = $this->findModel($playerId);
 
         $itemIds = $request->post('itemIds');
-
-        // first of all, delete existing items.
-        // As a side effect, we must assume that the player has no other items
-        // purchased or collected during the setup process.
-        PlayerItem::deleteAll(['player_id' => $playerId]);
-
-        if (empty($itemIds)) {
+        $itemQuantityList = empty($itemIds) ? [] : $this->getItemQuantityFromJson($itemIds);
+        if ($itemQuantityList === []) {
             return ['error' => true, 'msg' => 'Missing item ids'];
         }
 
-        $itemQuantity = $this->getItemQuantityFromJson($itemIds);
-        foreach ($itemQuantity as $itemQuantity) {
-            $this->addItem($player, $itemQuantity['itemId'], $itemQuantity['quantity']);
+        $transaction = Yii::$app->db->beginTransaction();
+        try {
+            // Serialize with concurrent equip/disarm requests on the same player
+            Yii::$app->db->createCommand('SELECT id FROM player WHERE id = :id FOR UPDATE')
+                ->bindValue(':id', $playerId)
+                ->execute();
+
+            // first of all, discharge the player and delete existing items.
+            // As a side effect, we must assume that the player has no other items
+            // purchased or collected during the setup process.
+            Player::updateAll([
+                'head_item_id' => null,
+                'chest_item_id' => null,
+                'right_hand_item_id' => null,
+                'left_hand_item_id' => null,
+                'back_item_id' => null,
+            ], ['id' => $playerId]);
+
+            PlayerItem::deleteAll(['player_id' => $playerId]);
+
+            foreach ($itemQuantityList as $itemQuantity) {
+                $this->addItem($player, $itemQuantity['itemId'], $itemQuantity['quantity']);
+            }
+
+            $transaction->commit();
+        } catch (\Throwable $e) {
+            $transaction->rollBack();
+
+            return ['error' => true, 'msg' => 'Initial items are not saved: ' . $e->getMessage()];
         }
 
         return ['error' => false, 'msg' => 'Initial items are saved'];
@@ -703,8 +723,6 @@ class PlayerBuilderController extends Controller
             $post = (array) $this->request->post();
             if ($playerBuilder->load($post) && $playerBuilder->save()) {
                 $playerId = $playerBuilder->id;
-                $playerBody = new PlayerBody(['player_id' => $playerId]);
-                SaveHelper::save($playerBody);
                 return $this->redirect(['update', 'id' => $playerBuilder->id]);
             }
         } else {

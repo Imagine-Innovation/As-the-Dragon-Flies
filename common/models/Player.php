@@ -34,6 +34,11 @@ use Yii;
  * @property int|null $speed Actual speed
  * @property int|null $created_at Creation timestamp
  * @property int|null $updated_at Last update timestamp
+ * @property int|null $head_item_id Optional foreign key to “player_item” table. Item that protect the head
+ * @property int|null $chest_item_id Optional foreign key to “player_item” table. Item that protect the chest
+ * @property int|null $right_hand_item_id Optional foreign key to “player_item” table. Item handled in the right hand
+ * @property int|null $left_hand_item_id Optional foreign key to “player_item” table. Item handled in the left hand
+ * @property int|null $back_item_id Optional foreign key to “player_item” table. Item carried on the back
  *
  * @property Ability[] $abilities
  * @property AccessLog[] $accessLogs
@@ -47,10 +52,14 @@ use Yii;
  * @property Level|null $level
  * @property Notification[] $notifications
  * @property PlayerAbility[] $playerAbilities
- * @property PlayerBody $playerBody
  * @property PlayerCart[] $playerCarts
  * @property PlayerCoin[] $playerCoins
  * @property PlayerItem[] $playerItems
+ * @property PlayerItem|null $head
+ * @property PlayerItem|null $chest
+ * @property PlayerItem|null $rightHand
+ * @property PlayerItem|null $leftHand
+ * @property PlayerItem|null $back
  * @property PlayerLanguage[] $playerLanguages
  * @property PlayerSkill[] $playerSkills
  * @property PlayerSpell[] $playerSpells
@@ -116,14 +125,21 @@ class Player extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['alignment_id', 'image_id', 'quest_id', 'name', 'history', 'gender', 'age', 'speed', 'created_at', 'updated_at'], 'default', 'value' => null],
+            [['alignment_id', 'image_id', 'quest_id', 'name', 'history', 'gender', 'age', 'speed', 'created_at', 'updated_at',
+                'head_item_id', 'chest_item_id', 'right_hand_item_id', 'left_hand_item_id', 'back_item_id'], 'default', 'value' => null],
             [['level_id'], 'default', 'value' => 1],
             [['status'], 'default', 'value' => AppStatus::INACTIVE->value],
             [['status'], 'in', 'range' => AppStatus::getValuesForPlayer()],
             [['experience_points'], 'default', 'value' => 0],
             [['armor_class'], 'default', 'value' => 10],
             [['class_id', 'user_id', 'race_id', 'background_id'], 'required'],
-            [['class_id', 'level_id', 'user_id', 'race_id', 'background_id', 'alignment_id', 'image_id', 'quest_id', 'status', 'age', 'experience_points', 'hit_points', 'max_hit_points', 'armor_class', 'speed', 'created_at', 'updated_at'], 'integer'],
+            [['class_id', 'level_id', 'user_id', 'race_id', 'background_id', 'alignment_id', 'image_id', 'quest_id', 'status', 'age', 'experience_points', 'hit_points', 'max_hit_points', 'armor_class', 'speed', 'created_at', 'updated_at',
+                'head_item_id', 'chest_item_id', 'right_hand_item_id', 'left_hand_item_id', 'back_item_id'], 'integer'],
+            [['head_item_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlayerItem::class, 'targetAttribute' => ['id' => 'player_id', 'head_item_id' => 'item_id']],
+            [['chest_item_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlayerItem::class, 'targetAttribute' => ['id' => 'player_id', 'chest_item_id' => 'item_id']],
+            [['right_hand_item_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlayerItem::class, 'targetAttribute' => ['id' => 'player_id', 'right_hand_item_id' => 'item_id']],
+            [['left_hand_item_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlayerItem::class, 'targetAttribute' => ['id' => 'player_id', 'left_hand_item_id' => 'item_id']],
+            [['back_item_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlayerItem::class, 'targetAttribute' => ['id' => 'player_id', 'back_item_id' => 'item_id']],
             [['history', 'gender'], 'string'],
             [['history'], 'filter', 'filter' => [RichTextHelper::class, 'sanitizeWithCache']],
             [['name'], 'string', 'max' => 64],
@@ -167,6 +183,11 @@ class Player extends \yii\db\ActiveRecord
             'speed' => 'Actual speed',
             'created_at' => 'Creation timestamp',
             'updated_at' => 'Last update timestamp',
+            'head_item_id' => 'Optional foreign key to “player_item” table. Item that protect the head',
+            'chest_item_id' => 'Optional foreign key to “player_item” table. Item that protect the chest',
+            'right_hand_item_id' => 'Optional foreign key to “player_item” table. Item handled in the right hand',
+            'left_hand_item_id' => 'Optional foreign key to “player_item” table. Item handled in the left hand',
+            'back_item_id' => 'Optional foreign key to “player_item” table. Item carried on the back',
         ];
     }
 
@@ -291,13 +312,53 @@ class Player extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[PlayerBody]].
+     * Gets query for [[Head]].
      *
-     * @return \yii\db\ActiveQuery<PlayerBody>
+     * @return \yii\db\ActiveQuery<PlayerItem>
      */
-    public function getPlayerBody()
+    public function getHead(): \yii\db\ActiveQuery
     {
-        return $this->hasOne(PlayerBody::class, ['player_id' => 'id']);
+        return $this->hasOne(PlayerItem::class, ['player_id' => 'id', 'item_id' => 'head_item_id']);
+    }
+
+    /**
+     * Gets query for [[Chest]].
+     *
+     * @return \yii\db\ActiveQuery<PlayerItem>
+     */
+    public function getChest(): \yii\db\ActiveQuery
+    {
+        return $this->hasOne(PlayerItem::class, ['player_id' => 'id', 'item_id' => 'chest_item_id']);
+    }
+
+    /**
+     * Gets query for [[RightHand]].
+     *
+     * @return \yii\db\ActiveQuery<PlayerItem>
+     */
+    public function getRightHand(): \yii\db\ActiveQuery
+    {
+        return $this->hasOne(PlayerItem::class, ['player_id' => 'id', 'item_id' => 'right_hand_item_id']);
+    }
+
+    /**
+     * Gets query for [[LeftHand]].
+     *
+     * @return \yii\db\ActiveQuery<PlayerItem>
+     */
+    public function getLeftHand(): \yii\db\ActiveQuery
+    {
+        return $this->hasOne(PlayerItem::class, ['player_id' => 'id', 'item_id' => 'left_hand_item_id']);
+    }
+
+    /**
+     * Gets query for [[Back]].
+     *
+     * @return \yii\db\ActiveQuery<PlayerItem>
+     */
+    public function getBack(): \yii\db\ActiveQuery
+    {
+        return $this->hasOne(PlayerItem::class, ['player_id' => 'id', 'item_id' => 'back_item_id']);
     }
 
     /**

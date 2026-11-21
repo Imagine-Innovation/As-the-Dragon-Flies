@@ -265,7 +265,7 @@ The `common/models/` directory contains over 90 ActiveRecord models categorized 
 2. **Campaign & Story Content:** `Story`, `Chapter`, `Mission`, `Action`, `Reply`, `Outcome`, `Passage`, `Dialog`.
 3. **Character Rules & Compendium:** `Race`, `CharacterClass`, `Ability`, `Skill`, `Spell`, `Item`, `Armor`, `Weapon`, `Background`, `Feature`, `Proficiency`.
 4. **Gameplay & Quest Instance:** `Quest`, `QuestPlayer`, `QuestProgress`, `QuestTurn`, `QuestLog`.
-5. **Player Character State:** `Player`, `PlayerAbility`, `PlayerItem`, `PlayerBody`, `PlayerSpell`, `PlayerSkill`, `PlayerCoin`.
+5. **Player Character State:** `Player` (includes the equipped item slots: head, chest, hands, back), `PlayerAbility`, `PlayerItem`, `PlayerSpell`, `PlayerSkill`, `PlayerCoin`.
 
 ---
 
