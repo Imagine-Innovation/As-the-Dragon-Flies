@@ -56,9 +56,9 @@ $shownOutcomeImages = [];
             <div class="card mb-4 text-decoration">
                 <div class="card-header"<?php if (!empty($storyImage)): ?> style="background-image: url('<?= $storyRoot ?>/img/<?= $storyImage ?>'); background-size: cover; background-position: center; max-height: 400px;"<?php endif; ?>>
                     <h2 class="mb-0"><?= Html::encode($this->title) ?></h2>
+                    <?= MarkDown::widget(['content' => $quest->description]) ?>
                 </div>
                 <div class="card-body">
-                    <?= MarkDown::widget(['content' => $quest->description]) ?>
                     <?php foreach ($logs as $log): ?>
                         <?php
                         if ($log->chapterLog->name !== $chapterName) {
