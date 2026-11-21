@@ -13,6 +13,7 @@ use common\helpers\FindModelHelper;
 use common\helpers\LanguageHelper;
 use common\helpers\MergeHelper;
 use common\models\events\EventFactory;
+use common\models\Outcome;
 use common\models\Player;
 use common\models\Quest;
 use common\models\QuestPlayer;
@@ -401,14 +402,39 @@ class GameController extends Controller
         $actionManager->endCurrentAction($payload['status'], $payload['canReplay']);
         $actionManager->unlockNextActions($payload['status']);
 
-        $this->createGameActionEvent($questAction->action->name, $payload);
-        return $actionOutcome['log'];
+        try {
+            $this->createGameActionEvent($questAction->action->name, $payload);
+        } catch (\Exception $e) {
+            // Gains are already committed: the acting player must still receive
+            // the response so that it can refresh its equipment list.
+            Yii::error("Failed to broadcast 'game-action' event: {$e->getMessage()}");
+        }
+
+        $log = $actionOutcome['log'];
+        $log['hasItemOutcome'] = self::hasItemOutcome($payload['outcomes']);
+        return $log;
+    }
+
+    /**
+     *
+     * @param array<Outcome> $outcomes
+     * @return bool
+     */
+    private static function hasItemOutcome(array $outcomes): bool
+    {
+        foreach ($outcomes as $outcome) {
+            if ($outcome->item_id !== null) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
      * Ajax POST request that evaluates the action and get the outcomes of the completed action
      *
-     * @return array{error: bool, msg: string, content?: string} Json encoded associative array with error status, internal message, and content to display
+     * @return array{error: bool, msg: string, content?: string, hasItemOutcome?: bool} Json encoded associative array with error status, internal message, and content to display
      */
     public function actionAjaxGetOutcomes(): array
     {
@@ -426,6 +452,7 @@ class GameController extends Controller
             'msg' => '',
             'content' => $content,
             'questProgressId' => $actionLog['questProgressId'],
+            'hasItemOutcome' => $actionLog['hasItemOutcome'] ?? false,
         ];
     }
 

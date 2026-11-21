@@ -1,7 +1,14 @@
+const EQUIPMENT_REFRESH_TIMEOUT_MS = 10000;
+const EQUIPMENT_REFRESH_MAX_RETRIES = 1;
+
+// Globals shared across the front-end scripts, defined in common/web/js/core-library.js
+/* global DOMUtils, Logger, AjaxUtils, ToastManager */
+
 class EquipmentHandler {
 
     constructor(options = {}) {
         this.zoneId = null;
+        this.requestSequence = 0;
         this.options = {
             onHeadClick: () => {
                 this.zoneId = 'equipmentHeadZone';
@@ -49,22 +56,37 @@ class EquipmentHandler {
         }
     }
 
-    _getInitPlayerItems(playerId) {
+    _getInitPlayerItems(playerId, retriesLeft = EQUIPMENT_REFRESH_MAX_RETRIES) {
         const target = `#packageContent`;
         if (!DOMUtils.exists(target))
             return;
 
+        const requestSequence = ++this.requestSequence;
         AjaxUtils.request({
             url: 'player-item/ajax-equipment',
             method: 'GET',
+            timeout: EQUIPMENT_REFRESH_TIMEOUT_MS,
             data: {playerId: playerId},
             successCallback: (response) => {
+                if (requestSequence !== this.requestSequence)
+                    return;
+
                 console.log('Callback', response);
                 if (!response.error) {
                     $(target).html(response.content);
                     this._attachEquipButtonEventListeners(response.items);
                     this._updateSvg(response);
                 }
+            },
+            errorCallback: (response) => {
+                if (requestSequence !== this.requestSequence)
+                    return;
+
+                if (retriesLeft > 0) {
+                    this._getInitPlayerItems(playerId, retriesLeft - 1);
+                    return;
+                }
+                ToastManager.show('Equipment', response.msg, 'error');
             }
         });
     }

@@ -100,11 +100,12 @@ class AjaxUtils {
         return `${CONFIG.ROOT_URL}/index.php?r=${actualRoute.toLowerCase()}`;
     }
 
-    static request( {url, method = 'POST', data = {}, successCallback, errorCallback}) {
+    static request( {url, method = 'POST', data = {}, timeout, successCallback, errorCallback}) {
         return $.ajax({
             url: this.buildUrl(url),
             method,
             dataType: 'json',
+            timeout,
             headers: {'X-CSRF-Token': CONFIG.CSRF_TOKEN},
             data
         })

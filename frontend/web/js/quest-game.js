@@ -512,6 +512,11 @@ class VirtualTableTop {
                     this.updateContext({ dialogLog: '' });
                     // update action list
                     this._updateActions(this.context.playerId, this.context.currentPlayerId, response.questProgressId);
+                    if (response.hasItemOutcome) {
+                        if (typeof equipmentHandler !== 'undefined' && equipmentHandler && typeof equipmentHandler.refreshEquipment === 'function') {
+                            equipmentHandler.refreshEquipment(this.context.playerId);
+                        }
+                    }
                 }
                 this._updatePlayer(this.context.playerId);
                 if (typeof notificationClient !== 'undefined') {

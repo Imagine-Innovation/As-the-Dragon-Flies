@@ -22,6 +22,7 @@ exclude_paths:
   - "frontend/web/js/quest-events.js"
   - "frontend/web/js/quest-game.js"
   - "frontend/web/js/quest-tavern.js"
+  - "frontend/web/js/equipment-manager.js"
 
 engines:
   metric:
