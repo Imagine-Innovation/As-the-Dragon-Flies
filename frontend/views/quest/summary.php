@@ -51,12 +51,6 @@ $shownOutcomeImages = [];
 </style>
 <div class="quest-summary">
 
-    <?php if (!empty($storyImage)): ?>
-        <figure class="mb-4">
-            <img src="<?= $storyRoot ?>/img/<?= $storyImage ?>" class="img-fluid rounded mx-auto d-block" alt="<?= Html::encode($quest->story?->name ?? $this->title) ?>" style="width: 100%; max-height: 400px; object-fit: contain;">
-        </figure>
-    <?php endif; ?>
-
     <container id='questHistory' class="row">
         <section id="questLogs" class="col-12 col-xl-8">
             <div class="card mb-4 text-decoration">
@@ -64,6 +58,9 @@ $shownOutcomeImages = [];
                     <h2 class="mb-0"><?= Html::encode($this->title) ?></h2>
                 </div>
                 <div class="card-body">
+                    <?php if (!empty($storyImage)): ?>
+                        <img src="<?= $storyRoot ?>/img/<?= $storyImage ?>" class="rounded mb-4" alt="<?= Html::encode($quest->story?->name ?? $this->title) ?>" style="width: 100%; max-height: 400px; object-fit: cover;">
+                    <?php endif; ?>
                     <?= MarkDown::widget(['content' => $quest->description]) ?>
                     <?php foreach ($logs as $log): ?>
                         <?php
