@@ -82,18 +82,24 @@ class TableFilter extends Widget
 
     /**
      * Normalizes $filterArray into value => label pairs.
+     * A simple list of values yields value => value pairs; an associative
+     * filter => label array yields filter => label pairs.
      *
      * @return array<string, string>
      */
     private function getItems(): array
     {
-        $items = [];
-        foreach ($this->filterArray as $key => $label) {
-            if (is_int($key)) {
-                $items[(string) $label] = (string) $label;
-            } else {
-                $items[(string) $key] = (string) $label;
+        if (array_is_list($this->filterArray)) {
+            $items = [];
+            foreach ($this->filterArray as $value) {
+                $items[(string) $value] = (string) $value;
             }
+            return $items;
+        }
+
+        $items = [];
+        foreach ($this->filterArray as $filter => $label) {
+            $items[(string) $filter] = (string) $label;
         }
         return $items;
     }

@@ -172,6 +172,20 @@ enum AppStatus: int
     }
 
     /**
+     * Helper to get an array of user statuses for filters, indexed by value
+     *
+     * @return array<int, string>
+     */
+    public static function getUserStatus(): array
+    {
+        return [
+            self::ACTIVE->value => self::ACTIVE->getLabel(),
+            self::INACTIVE->value => self::INACTIVE->getLabel(),
+            self::DELETED->value => self::DELETED->getLabel(),
+        ];
+    }
+
+    /**
      *
      * @return array<int>
      */

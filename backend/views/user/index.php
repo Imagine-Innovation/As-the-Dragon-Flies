@@ -14,7 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="container-fluid">
     <?=
     TableFilter::widget([
-        'filterArray' => AppStatus::getValuesForUser(),
+        'filterArray' => AppStatus::getUserStatus(),
         'multipleValues' => true,
         'searchString' => false,
     ])

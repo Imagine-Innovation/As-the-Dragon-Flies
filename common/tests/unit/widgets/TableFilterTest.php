@@ -164,6 +164,40 @@ class TableFilterTest extends \Codeception\Test\Unit
         $this->assertStringContainsString('>Frontend routes</label>', $html);
     }
 
+    public function testValueLabelPairsWithIntegerFilters()
+    {
+        $html = TableFilter::widget([
+                    'filterArray' => [
+                        10 => 'Active',
+                        9 => 'Inactive',
+                        0 => 'Deleted',
+                    ],
+        ]);
+
+        $this->assertStringContainsString('value="10"', $html);
+        $this->assertStringContainsString('>Active</label>', $html);
+        $this->assertStringContainsString('value="9"', $html);
+        $this->assertStringContainsString('>Inactive</label>', $html);
+        $this->assertStringContainsString('value="0"', $html);
+        $this->assertStringContainsString('>Deleted</label>', $html);
+        // The values to filter on are the array keys, not the labels
+        $this->assertStringNotContainsString('value="Active"', $html);
+    }
+
+    public function testAppStatusUserStatusLabels()
+    {
+        $html = TableFilter::widget(['filterArray' => AppStatus::getUserStatus()]);
+
+        $this->assertStringContainsString('value="10"', $html);
+        $this->assertStringContainsString('value="9"', $html);
+        $this->assertStringContainsString('value="0"', $html);
+        $this->assertStringContainsString('>Active</label>', $html);
+        $this->assertStringContainsString('>Inactive</label>', $html);
+        $this->assertStringContainsString('>Deleted</label>', $html);
+        $this->assertStringContainsString('type="checkbox"', $html);
+        $this->assertStringNotContainsString('<select', $html);
+    }
+
     public function testSecurity()
     {
         $html = TableFilter::widget([
