@@ -3,8 +3,12 @@
  * Handles loading of the access rights table, with application and route filters
  */
 class AccessRightManager {
+    static lastRequestId = 0;
+
     static loadGenericAjaxTable(pageNumber) {
         Logger.log(1, 'loadGenericAjaxTable', `pageNumber=${pageNumber}`);
+
+        const requestId = ++AccessRightManager.lastRequestId;
 
         const params = {
             page: pageNumber,
@@ -27,9 +31,21 @@ class AccessRightManager {
             data: params,
             successCallback: (response) => {
                 Logger.log(4, 'loadGenericAjaxTable', `response=${Object.values(response)}`);
-                $("#limit").html(response.limit);
+                if (requestId !== AccessRightManager.lastRequestId) {
+                    return;
+                }
+                if (response.error) {
+                    ToastManager.show('Access rights', response.msg, 'error');
+                    return;
+                }
                 $(`#${params.container}`).html(response.content);
                 window.location.href = "#top";
+            },
+            errorCallback: (response) => {
+                if (requestId !== AccessRightManager.lastRequestId) {
+                    return;
+                }
+                ToastManager.show('Access rights', response.msg, 'error');
             }
         });
     }
