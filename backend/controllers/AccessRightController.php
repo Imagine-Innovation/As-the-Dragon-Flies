@@ -84,6 +84,9 @@ class AccessRightController extends Controller
     }
 
     /**
+     * Lists all AccessRight models via Ajax.
+     * Supports an optional application filter (values restricted to the
+     * APP_BACKEND and APP_FRONTEND constants) and an optional route search text.
      *
      * @return array{error: bool, msg: string, content?: string}
      */
@@ -95,12 +98,31 @@ class AccessRightController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
+        $request = Yii::$app->request;
+        $applications = array_values(array_intersect(
+                array_map('strval', (array) $request->post('applications', [])),
+                [AccessRightsManager::APP_BACKEND, AccessRightsManager::APP_FRONTEND],
+        ));
+        $search = trim((string) $request->post('search', ''));
+
+        $filter = ['and'];
+        if ($applications !== []) {
+            $filter[] = ['application' => $applications];
+        }
+        if ($search !== '') {
+            $filter[] = ['or', ['like', 'route', $search], ['like', 'action', $search]];
+        }
+
         $param = [
             'modelName' => 'AccessRight',
         ];
+        if (count($filter) > 1) {
+            $param['filter'] = $filter;
+        }
+
         $ajaxRequest = new AjaxRequest($param);
 
-        if ($ajaxRequest->makeResponse(Yii::$app->request)) {
+        if ($ajaxRequest->makeResponse($request)) {
             return $ajaxRequest->response;
         }
         return ['error' => true, 'msg' => 'Error encountered'];

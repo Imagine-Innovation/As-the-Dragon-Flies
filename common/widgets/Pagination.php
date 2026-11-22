@@ -10,6 +10,7 @@ class Pagination extends Widget
     public int $limit;
     public int $pageCount;
     public int $page;
+    public string $manager = 'TableManager';
     private int $firstPage = 0;
     private int $lastVisiblePage = 0;
 
@@ -32,6 +33,7 @@ class Pagination extends Widget
                     'lastVisiblePage' => $this->lastVisiblePage,
                     'page' => $this->page,
                     'pages' => $this->calculatePages(),
+                    'manager' => $this->manager,
         ]);
     }
 
