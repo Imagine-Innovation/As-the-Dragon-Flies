@@ -1,6 +1,5 @@
 <?php
 
-use Yii;
 use yii\helpers\Html;
 
 /** @var array<string, string> $items value => label pairs to filter on */
@@ -21,7 +20,7 @@ $comboBoxValues = count($items) > 3;
                 class="form-select"<?= $multipleValues ? ' multiple' : '' ?>
                 onchange='<?= $onLoad ?>'>
             <?php if (!$multipleValues): ?>
-                <option value="" selected><?= Html::encode(Yii::t('app', 'All')) ?></option>
+                <option value="" selected><?= Html::encode(\Yii::t('app', 'All')) ?></option>
             <?php endif; ?>
             <?php foreach ($items as $value => $label): ?>
                 <option value="<?= Html::encode((string) $value) ?>"><?= Html::encode($label) ?></option>
