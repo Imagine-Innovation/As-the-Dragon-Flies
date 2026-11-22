@@ -66,6 +66,7 @@ use yii\helpers\Url;
             'page' => $page,
             'pageCount' => $pageCount,
             'limit' => $limit,
+            'manager' => 'AccessRightManager',
         ])
         ?>
         <!-- End Pagination -->
