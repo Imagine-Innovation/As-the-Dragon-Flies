@@ -4,9 +4,20 @@
  */
 class AccessRightManager {
     static lastRequestId = 0;
+    static lastFilterName = null;
+    static lastSearchId = null;
 
-    static loadGenericAjaxTable(pageNumber, filterName = 'application', searchId = 'routeSearch') {
-        Logger.log(1, 'loadGenericAjaxTable', `pageNumber=${pageNumber}, filterName=${filterName}, searchId=${searchId}`);
+    static loadGenericAjaxTable(pageNumber, filterName = null, searchId = null) {
+        if (filterName !== null) {
+            AccessRightManager.lastFilterName = filterName;
+        }
+        if (searchId !== null) {
+            AccessRightManager.lastSearchId = searchId;
+        }
+        const resolvedFilterName = AccessRightManager.lastFilterName ?? 'application';
+        const resolvedSearchId = AccessRightManager.lastSearchId ?? 'routeSearch';
+
+        Logger.log(1, 'loadGenericAjaxTable', `pageNumber=${pageNumber}, filterName=${resolvedFilterName}, searchId=${resolvedSearchId}`);
 
         const requestId = ++AccessRightManager.lastRequestId;
 
@@ -17,8 +28,8 @@ class AccessRightManager {
             route: DOMUtils.getParam("route", null),
             currentTab: DOMUtils.getParam("currentTab"),
             currentId: DOMUtils.getParam("currentId"),
-            applications: AccessRightManager.getSelectedApplications(filterName),
-            search: $(`#${searchId}`).val() ?? ''
+            applications: AccessRightManager.getSelectedApplications(resolvedFilterName),
+            search: $(`#${resolvedSearchId}`).val() ?? ''
         };
 
         // Log parameters
