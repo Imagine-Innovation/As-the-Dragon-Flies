@@ -51,13 +51,15 @@ class AccessRightManager {
     }
 
     /**
-     * Returns the list of checked application values
+     * Returns the list of selected application values, from checked boxes
+     * and selected options of filter controls named "application"
      * @returns {string[]}
      */
     static getSelectedApplications() {
-        return $('input[name="application"]:checked')
-                .map((_, checkbox) => checkbox.value)
-                .get();
+        return $('input[name="application"]:checked, select[name="application"] option:selected')
+                .map((_, element) => element.value)
+                .get()
+                .filter((value) => value !== '');
     }
 
     static setLimit(limit) {

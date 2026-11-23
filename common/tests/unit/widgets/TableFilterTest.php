@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace common\tests\unit\widgets;
 
 use common\components\AppStatus;
@@ -9,19 +11,16 @@ use common\tests\UnitTester;
 class TableFilterTest extends \Codeception\Test\Unit
 {
 
-    /**
-     * @var UnitTester
-     */
-    protected $tester;
+    protected UnitTester $tester;
 
-    public function testNothingDisplayedWhenParametersOmitted()
+    public function testNothingDisplayedWhenParametersOmitted(): void
     {
         $html = TableFilter::widget([]);
 
         $this->assertSame('', $html);
     }
 
-    public function testNoFilterControlWhenFilterArrayOmitted()
+    public function testNoFilterControlWhenFilterArrayOmitted(): void
     {
         $html = TableFilter::widget(['searchString' => true]);
 
@@ -29,7 +28,7 @@ class TableFilterTest extends \Codeception\Test\Unit
         $this->assertStringNotContainsString('<select', $html);
     }
 
-    public function testOnlySearchInputWhenFilterArrayEmpty()
+    public function testOnlySearchInputWhenFilterArrayEmpty(): void
     {
         $html = TableFilter::widget(['filterArray' => [], 'searchString' => true]);
 
@@ -38,14 +37,14 @@ class TableFilterTest extends \Codeception\Test\Unit
         $this->assertStringContainsString('bi bi-search', $html);
     }
 
-    public function testOnlyFilterControlWhenSearchStringOmitted()
+    public function testOnlyFilterControlWhenSearchStringOmitted(): void
     {
         $html = TableFilter::widget(['filterArray' => ['Backend']]);
 
         $this->assertStringNotContainsString('routeSearch', $html);
     }
 
-    public function testCheckboxesAreDefaultForSmallFilterArray()
+    public function testCheckboxesAreDefaultForSmallFilterArray(): void
     {
         $html = TableFilter::widget(['filterArray' => ['Backend', 'Frontend']]);
 
@@ -57,7 +56,7 @@ class TableFilterTest extends \Codeception\Test\Unit
         $this->assertStringContainsString('>Backend</label>', $html);
     }
 
-    public function testCheckboxesWithThreeValues()
+    public function testCheckboxesWithThreeValues(): void
     {
         $html = TableFilter::widget(['filterArray' => ['One', 'Two', 'Three']]);
 
@@ -67,7 +66,7 @@ class TableFilterTest extends \Codeception\Test\Unit
         $this->assertStringNotContainsString('<select', $html);
     }
 
-    public function testComboBoxWithMoreThanThreeValues()
+    public function testComboBoxWithMoreThanThreeValues(): void
     {
         $html = TableFilter::widget(['filterArray' => ['One', 'Two', 'Three', 'Four']]);
 
@@ -78,7 +77,7 @@ class TableFilterTest extends \Codeception\Test\Unit
         $this->assertStringNotContainsString('type="checkbox"', $html);
     }
 
-    public function testComboBoxMultipleAttribute()
+    public function testComboBoxMultipleAttribute(): void
     {
         $html = TableFilter::widget([
                     'filterArray' => ['One', 'Two', 'Three', 'Four', 'Five'],
@@ -88,7 +87,7 @@ class TableFilterTest extends \Codeception\Test\Unit
         $this->assertStringContainsString(' multiple', $html);
     }
 
-    public function testComboBoxSingleValue()
+    public function testComboBoxSingleValue(): void
     {
         $html = TableFilter::widget([
                     'filterArray' => ['One', 'Two', 'Three', 'Four', 'Five'],
@@ -98,7 +97,7 @@ class TableFilterTest extends \Codeception\Test\Unit
         $this->assertStringNotContainsString(' multiple', $html);
     }
 
-    public function testRadioButtonsWhenMultipleValuesFalse()
+    public function testRadioButtonsWhenMultipleValuesFalse(): void
     {
         $html = TableFilter::widget([
                     'filterArray' => ['Backend', 'Frontend'],
@@ -110,7 +109,7 @@ class TableFilterTest extends \Codeception\Test\Unit
         $this->assertStringContainsString('custom-control-radio', $html);
     }
 
-    public function testSearchStringTrue()
+    public function testSearchStringTrue(): void
     {
         $html = TableFilter::widget(['searchString' => true]);
 
@@ -122,7 +121,7 @@ class TableFilterTest extends \Codeception\Test\Unit
         $this->assertStringContainsString('bi bi-search', $html);
     }
 
-    public function testOnChangeCallIsTriggered()
+    public function testOnChangeCallIsTriggered(): void
     {
         $html = TableFilter::widget(['filterArray' => ['Backend'], 'searchString' => true]);
 
@@ -132,7 +131,7 @@ class TableFilterTest extends \Codeception\Test\Unit
         $this->assertSame(3, $callCount);
     }
 
-    public function testCustomFilterNameAndSearchId()
+    public function testCustomFilterNameAndSearchId(): void
     {
         $html = TableFilter::widget([
                     'filterArray' => ['Backend'],
@@ -149,7 +148,7 @@ class TableFilterTest extends \Codeception\Test\Unit
         $this->assertStringNotContainsString('routeSearch', $html);
     }
 
-    public function testValueLabelPairs()
+    public function testValueLabelPairs(): void
     {
         $html = TableFilter::widget([
                     'filterArray' => [
@@ -164,7 +163,7 @@ class TableFilterTest extends \Codeception\Test\Unit
         $this->assertStringContainsString('>Frontend routes</label>', $html);
     }
 
-    public function testValueLabelPairsWithIntegerFilters()
+    public function testValueLabelPairsWithIntegerFilters(): void
     {
         $html = TableFilter::widget([
                     'filterArray' => [
@@ -184,7 +183,7 @@ class TableFilterTest extends \Codeception\Test\Unit
         $this->assertStringNotContainsString('value="Active"', $html);
     }
 
-    public function testAppStatusUserStatusLabels()
+    public function testAppStatusUserStatusLabels(): void
     {
         $html = TableFilter::widget(['filterArray' => AppStatus::getUserStatus()]);
 
@@ -198,7 +197,7 @@ class TableFilterTest extends \Codeception\Test\Unit
         $this->assertStringNotContainsString('<select', $html);
     }
 
-    public function testSecurity()
+    public function testSecurity(): void
     {
         $html = TableFilter::widget([
                     'filterArray' => [
@@ -214,7 +213,7 @@ class TableFilterTest extends \Codeception\Test\Unit
         $this->assertStringContainsString('placeholder="&lt;i&gt;inject&lt;/i&gt;"', $html);
     }
 
-    public function testAppStatusValuesForUser()
+    public function testAppStatusValuesForUser(): void
     {
         $html = TableFilter::widget(['filterArray' => AppStatus::getValuesForUser()]);
 
@@ -223,5 +222,60 @@ class TableFilterTest extends \Codeception\Test\Unit
         $this->assertStringContainsString('value="0"', $html);
         $this->assertStringContainsString('type="checkbox"', $html);
         $this->assertStringNotContainsString('<select', $html);
+    }
+
+    public function testNullFilterArrayRendersNothing(): void
+    {
+        $html = TableFilter::widget(['filterArray' => null]);
+
+        $this->assertSame('', $html);
+    }
+
+    public function testNullFilterArrayStillRendersSearch(): void
+    {
+        $html = TableFilter::widget(['filterArray' => null, 'searchString' => true]);
+
+        $this->assertStringContainsString('id="routeSearch"', $html);
+        $this->assertStringNotContainsString('custom-control-input', $html);
+        $this->assertStringNotContainsString('<select', $html);
+    }
+
+    public function testRadioButtonsCanBeCleared(): void
+    {
+        $html = TableFilter::widget([
+                    'filterArray' => ['Backend', 'Frontend'],
+                    'multipleValues' => false,
+        ]);
+
+        $this->assertStringContainsString('id="application-all"', $html);
+        $this->assertStringContainsString('value=""', $html);
+        $this->assertStringContainsString('>All</label>', $html);
+        $this->assertStringContainsString('type="radio"', $html);
+        $this->assertStringContainsString('custom-control-radio', $html);
+    }
+
+    public function testComboBoxStillClearedForSingleSelection(): void
+    {
+        $html = TableFilter::widget([
+                    'filterArray' => ['One', 'Two', 'Three', 'Four'],
+                    'multipleValues' => false,
+        ]);
+
+        $this->assertStringContainsString('<option value="" selected>', $html);
+        $this->assertStringContainsString('>All</option>', $html);
+        $this->assertStringContainsString('value="One"', $html);
+        $this->assertStringContainsString('value="Four"', $html);
+        $this->assertStringNotContainsString(' multiple', $html);
+    }
+
+    public function testSelectIsNamedForDefaultLoader(): void
+    {
+        $html = TableFilter::widget([
+                    'filterArray' => ['One', 'Two', 'Three', 'Four'],
+                    'multipleValues' => true,
+        ]);
+
+        $this->assertStringContainsString('name="application"', $html);
+        $this->assertStringContainsString(' multiple', $html);
     }
 }

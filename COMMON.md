@@ -296,7 +296,8 @@ Provides the toolbar and HTML layout for the custom WYSIWYG editor, binding with
 
 ### 9.3 `TableFilter` Widget (`common/widgets/TableFilter.php`)
 Renders the filter controls displayed above an AJAX-loaded table (`common/widgets/views/table-filter.php`):
-* **`filterArray`:** List of possible values to filter on (plain list of values or value => label pairs). Rendered as inline checkboxes/radios when 3 values or less, as a combo box when more than 3. Nothing is displayed when omitted or empty.
+* **`filterArray` (`array<int|string, string>`):** Values to filter on, where the array key is the value applied as a filter and the value is the label displayed in the UI (e.g. `AppStatus::getUserStatus()`). A simple list of values (consecutive integer keys starting at 0) is supported as a shortcut and uses each value as both the filter and its label. Rendered as inline checkboxes/radios when 3 values or less, as a combo box when more than 3. Nothing is displayed when omitted or empty; `null` is accepted and treated as omitted.
+* **Clearing the filter:** single-selection controls (`multipleValues => false`) include an empty "All" choice so a selection can be removed; the AJAX table loader (`AccessRightManager`) reads both checked `input` controls and selected `option` elements named after `filterName`.
 * **`multipleValues`:** Whether several values can be filtered at the same time (default `true`, no action when `filterArray` is omitted).
 * **`searchString`:** Whether the free-text search form is added (default `false`).
 * **`filterName` / `searchId` / `searchPlaceholder` / `onLoad`:** Optional customization of the input names, search input, and the JS call executed when the filter changes (defaults match `AccessRightManager.loadGenericAjaxTable`).

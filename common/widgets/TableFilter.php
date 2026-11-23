@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace common\widgets;
 
 use yii\base\Widget;
@@ -11,7 +13,7 @@ use yii\base\Widget;
  *
  * Usage:
  * <?= \common\widgets\TableFilter::widget([
- *     'filterArray' => \common\components\AppStatus::getValuesForUser(),
+ *     'filterArray' => \common\components\AppStatus::getUserStatus(),
  *     'multipleValues' => true,
  *     'searchString' => true,
  * ]) ?>
@@ -20,11 +22,13 @@ class TableFilter extends Widget
 {
 
     /**
-     * @var array<int|string, int|string> $filterArray List of possible values to filter on.
-     * A plain list of values (the label is the value itself) or value => label pairs.
-     * If omitted (or empty), no filter control is displayed.
+     * @var array<int|string, string>|null $filterArray Values to filter on, as
+     * filter => label pairs where the key is the value applied as a filter and
+     * the value is the label displayed in the UI. For a simple list of values
+     * (consecutive integer keys starting at 0), each value is used as both the
+     * filter and its label. If omitted (or empty), no filter control is displayed.
      */
-    public array $filterArray = [];
+    public ?array $filterArray = [];
 
     /**
      * @var bool $multipleValues Whether several values can be filtered at the same time.
@@ -81,24 +85,25 @@ class TableFilter extends Widget
     }
 
     /**
-     * Normalizes $filterArray into value => label pairs.
-     * A simple list of values yields value => value pairs; an associative
-     * filter => label array yields filter => label pairs.
+     * Normalizes $filterArray into filter => label pairs. A simple list of values
+     * yields value => value pairs; an associative filter => label array yields
+     * filter => label pairs.
      *
      * @return array<string, string>
      */
     private function getItems(): array
     {
-        if (array_is_list($this->filterArray)) {
+        $filterArray = is_array($this->filterArray) ? $this->filterArray : [];
+        if (array_is_list($filterArray)) {
             $items = [];
-            foreach ($this->filterArray as $value) {
+            foreach ($filterArray as $value) {
                 $items[(string) $value] = (string) $value;
             }
             return $items;
         }
 
         $items = [];
-        foreach ($this->filterArray as $filter => $label) {
+        foreach ($filterArray as $filter => $label) {
             $items[(string) $filter] = (string) $label;
         }
         return $items;

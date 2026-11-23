@@ -27,6 +27,17 @@ $comboBoxValues = count($items) > 3;
             <?php endforeach; ?>
         </select>
     <?php else: ?>
+        <?php if (!$multipleValues): ?>
+            <div class="custom-control custom-radio custom-control-inline mb-2">
+                <input type="radio" id="<?= Html::encode($filterName) ?>-all"
+                       name="<?= Html::encode($filterName) ?>"
+                       value=""
+                       class="custom-control-input"
+                       onchange='<?= $onLoad ?>'>
+                <label class="custom-control-label"
+                       for="<?= Html::encode($filterName) ?>-all"><?= Html::encode(\Yii::t('app', 'All')) ?></label>
+            </div>
+        <?php endif; ?>
         <?php foreach ($items as $value => $label): ?>
             <div class="custom-control custom-<?= $filterType ?> custom-control-inline mb-2">
                 <input type="<?= $filterType ?>" id="<?= Html::encode($filterName) ?>-<?= Html::encode((string) $value) ?>"
