@@ -24,9 +24,12 @@ class TableFilter extends Widget
     /**
      * @var array<int|string, string>|null $filterArray Values to filter on, as
      * filter => label pairs where the key is the value applied as a filter and
-     * the value is the label displayed in the UI. For a simple list of values
-     * (consecutive integer keys starting at 0), each value is used as both the
-     * filter and its label. If omitted (or empty), no filter control is displayed.
+     * the value is the label displayed in the UI. A simple list of values is
+     * supported as a shortcut: consecutive integer keys starting at 0 are
+     * structurally identical in PHP to a plain list, so such keys cannot be
+     * distinguished and each value is used as both the filter and its label.
+     * Callers must offset 0-indexed value => label maps (e.g. use string keys
+     * or explicit label pairs). If omitted (or empty), no filter control is displayed.
      */
     public ?array $filterArray = [];
 

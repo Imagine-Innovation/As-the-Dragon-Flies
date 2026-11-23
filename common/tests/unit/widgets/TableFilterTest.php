@@ -295,6 +295,22 @@ class TableFilterTest extends \Codeception\Test\Unit
         $this->assertStringNotContainsString(' multiple', $html);
     }
 
+    public function testConsecutiveIntegerKeysAreTreatedAsValueList(): void
+    {
+        // Locked-in contract: PHP arrays [0 => 'Deleted', 1 => 'Active'] and
+        // ['Deleted', 'Active'] are structurally identical, so a list of values
+        // and a value => label map with consecutive integer keys starting at 0
+        // cannot be distinguished. Callers relying on such keys must offset them.
+        $html = TableFilter::widget([
+                    'filterArray' => [0 => 'Deleted', 1 => 'Active'],
+        ]);
+
+        $this->assertStringContainsString('value="Deleted"', $html);
+        $this->assertStringContainsString('value="Active"', $html);
+        $this->assertStringNotContainsString('value="0"', $html);
+        $this->assertStringNotContainsString('value="1"', $html);
+    }
+
     public function testSelectIsNamedForDefaultLoader(): void
     {
         $html = TableFilter::widget([
