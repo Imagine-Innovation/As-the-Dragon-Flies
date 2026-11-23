@@ -68,6 +68,7 @@ use common\widgets\RecordCount;
             'page' => $page,
             'pageCount' => $pageCount,
             'limit' => $limit,
+            'manager' => 'AccessRightManager',
         ])
         ?>
         <!-- End Pagination -->

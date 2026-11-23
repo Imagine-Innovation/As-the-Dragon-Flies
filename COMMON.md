@@ -115,6 +115,7 @@ common/
     ├── ModalDesc.php                 # Modal description renderer
     ├── Pagination.php                # Custom styled pagination control
     ├── RecordCount.php               # Data table record counter display
+    ├── TableFilter.php               # AJAX table filter controls (value filter + search submit)
     └── SimpleRichText.php            # Rich text editor widget wrapper
 ```
 
@@ -292,6 +293,14 @@ Provides server-side Markdown parsing with custom RPG syntax extensions:
 
 ### 9.2 `SimpleRichText` Widget (`common/widgets/SimpleRichText.php`)
 Provides the toolbar and HTML layout for the custom WYSIWYG editor, binding with `SimpleRichTextEditor` (`common/web/js/simple-rich-text.js`). Includes responsive `flex-wrap` layout for toolbar buttons.
+
+### 9.3 `TableFilter` Widget (`common/widgets/TableFilter.php`)
+Renders the filter controls displayed above an AJAX-loaded table (`common/widgets/views/table-filter.php`):
+* **`filterArray` (`array<int|string, string>`):** Values to filter on, where the array key is the value applied as a filter and the value is the label displayed in the UI (e.g. `AppStatus::getUserStatus()`). A simple list of values (consecutive integer keys starting at 0) is supported as a shortcut and uses each value as both the filter and its label, since such keys are structurally identical to a plain list in PHP — callers relying on 0-indexed value => label keys must offset them (this is asserted by `testConsecutiveIntegerKeysAreTreatedAsValueList`). Rendered as inline checkboxes/radios when 3 values or less, as a combo box when more than 3. Nothing is displayed when omitted or empty; `null` is accepted and treated as omitted.
+* **Clearing the filter:** single-selection controls (`multipleValues => false`) include an empty "All" choice so a selection can be removed; the AJAX table loader (`AccessRightManager`) reads both checked `input` controls and selected `option` elements named after `filterName`.
+* **`multipleValues`:** Whether several values can be filtered at the same time (default `true`, no action when `filterArray` is omitted).
+* **`searchString`:** Whether the free-text search form is added (default `false`).
+* **`filterName` / `searchId` / `searchPlaceholder` / `onLoad`:** Optional customization of the input names, search input, and the JS call executed when the filter changes. The default `onLoad` calls the generic `AccessRightManager.loadGenericAjaxTable` loader passing the configured `filterName` and `searchId`, so renamed controls keep working with the default loader; pass a custom `onLoad` string for fully custom behavior.
 
 ---
 
