@@ -125,10 +125,37 @@ class TableFilterTest extends \Codeception\Test\Unit
     {
         $html = TableFilter::widget(['filterArray' => ['Backend'], 'searchString' => true]);
 
-        $this->assertStringContainsString("onchange='AccessRightManager.loadGenericAjaxTable(0);'", $html);
-        $callCount = substr_count($html, 'AccessRightManager.loadGenericAjaxTable(0);');
+        $this->assertStringContainsString("onchange='AccessRightManager.loadGenericAjaxTable(0, \"application\", \"routeSearch\");'", $html);
+        $callCount = substr_count($html, 'AccessRightManager.loadGenericAjaxTable(0, "application", "routeSearch");');
         // Checkbox change, keydown, search button
         $this->assertSame(3, $callCount);
+    }
+
+    public function testDefaultOnLoadHonorsCustomNames(): void
+    {
+        $html = TableFilter::widget([
+                    'filterArray' => ['Backend'],
+                    'searchString' => true,
+                    'filterName' => 'status',
+                    'searchId' => 'userSearch',
+        ]);
+
+        $this->assertStringContainsString('AccessRightManager.loadGenericAjaxTable(0, "status", "userSearch");', $html);
+        $this->assertStringNotContainsString('"application"', $html);
+        $this->assertStringNotContainsString('"routeSearch"', $html);
+    }
+
+    public function testCustomOnLoadOverridesDefault(): void
+    {
+        $html = TableFilter::widget([
+                    'filterArray' => ['Backend'],
+                    'searchString' => true,
+                    'filterName' => 'status',
+                    'onLoad' => 'TableManager.loadGenericAjaxTable(0);',
+        ]);
+
+        $this->assertStringContainsString("onchange='TableManager.loadGenericAjaxTable(0);'", $html);
+        $this->assertStringNotContainsString('AccessRightManager', $html);
     }
 
     public function testCustomFilterNameAndSearchId(): void

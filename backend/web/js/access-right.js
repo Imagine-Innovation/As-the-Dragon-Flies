@@ -5,8 +5,8 @@
 class AccessRightManager {
     static lastRequestId = 0;
 
-    static loadGenericAjaxTable(pageNumber) {
-        Logger.log(1, 'loadGenericAjaxTable', `pageNumber=${pageNumber}`);
+    static loadGenericAjaxTable(pageNumber, filterName = 'application', searchId = 'routeSearch') {
+        Logger.log(1, 'loadGenericAjaxTable', `pageNumber=${pageNumber}, filterName=${filterName}, searchId=${searchId}`);
 
         const requestId = ++AccessRightManager.lastRequestId;
 
@@ -17,8 +17,8 @@ class AccessRightManager {
             route: DOMUtils.getParam("route", null),
             currentTab: DOMUtils.getParam("currentTab"),
             currentId: DOMUtils.getParam("currentId"),
-            applications: AccessRightManager.getSelectedApplications(),
-            search: $('#routeSearch').val() ?? ''
+            applications: AccessRightManager.getSelectedApplications(filterName),
+            search: $(`#${searchId}`).val() ?? ''
         };
 
         // Log parameters
@@ -51,12 +51,13 @@ class AccessRightManager {
     }
 
     /**
-     * Returns the list of selected application values, from checked boxes
-     * and selected options of filter controls named "application"
+     * Returns the list of selected values, from checked boxes and selected
+     * options of the filter controls bearing the given name
+     * @param {string} filterName
      * @returns {string[]}
      */
-    static getSelectedApplications() {
-        return $('input[name="application"]:checked, select[name="application"] option:selected')
+    static getSelectedApplications(filterName = 'application') {
+        return $(`input[name="${filterName}"]:checked, select[name="${filterName}"] option:selected`)
                 .map((_, element) => element.value)
                 .get()
                 .filter((value) => value !== '');

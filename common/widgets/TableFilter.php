@@ -58,10 +58,11 @@ class TableFilter extends Widget
     public string $searchPlaceholder = 'Search route';
 
     /**
-     * @var string $onLoad JavaScript call executed when a filter value changes or the
-     * search form is submitted.
+     * @var string|null $onLoad JavaScript call executed when a filter value changes or the
+     * search form is submitted. When omitted, the generic AccessRightManager loader is
+     * called with the configured filterName and searchId.
      */
-    public string $onLoad = 'AccessRightManager.loadGenericAjaxTable(0);';
+    public ?string $onLoad = null;
 
     /**
      *
@@ -80,8 +81,20 @@ class TableFilter extends Widget
                     'filterName' => $this->filterName,
                     'searchId' => $this->searchId,
                     'searchPlaceholder' => $this->searchPlaceholder,
-                    'onLoad' => $this->onLoad,
+                    'onLoad' => $this->onLoad ?? $this->getDefaultOnLoad(),
         ]);
+    }
+
+    /**
+     * Builds the default JS loader call, honoring the configured control names.
+     *
+     * @return string
+     */
+    private function getDefaultOnLoad(): string
+    {
+        $filterName = str_replace(["\"", "'", " "], '', trim($this->filterName));
+        $searchId = str_replace(["\"", "'", " "], '', trim($this->searchId));
+        return "AccessRightManager.loadGenericAjaxTable(0, \"{$filterName}\", \"{$searchId}\");";
     }
 
     /**

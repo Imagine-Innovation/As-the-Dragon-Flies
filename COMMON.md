@@ -300,7 +300,7 @@ Renders the filter controls displayed above an AJAX-loaded table (`common/widget
 * **Clearing the filter:** single-selection controls (`multipleValues => false`) include an empty "All" choice so a selection can be removed; the AJAX table loader (`AccessRightManager`) reads both checked `input` controls and selected `option` elements named after `filterName`.
 * **`multipleValues`:** Whether several values can be filtered at the same time (default `true`, no action when `filterArray` is omitted).
 * **`searchString`:** Whether the free-text search form is added (default `false`).
-* **`filterName` / `searchId` / `searchPlaceholder` / `onLoad`:** Optional customization of the input names, search input, and the JS call executed when the filter changes (defaults match `AccessRightManager.loadGenericAjaxTable`).
+* **`filterName` / `searchId` / `searchPlaceholder` / `onLoad`:** Optional customization of the input names, search input, and the JS call executed when the filter changes. The default `onLoad` calls the generic `AccessRightManager.loadGenericAjaxTable` loader passing the configured `filterName` and `searchId`, so renamed controls keep working with the default loader; pass a custom `onLoad` string for fully custom behavior.
 
 ---
 
