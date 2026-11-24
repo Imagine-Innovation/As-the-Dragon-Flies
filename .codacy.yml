@@ -19,6 +19,7 @@ exclude_paths:
   - "backend/web/js/search-select.js"
   - "backend/web/js/table-filter.js"
   - "backend/web/js/access-right.js"
+  - "common/web/js/core-library.js"
   - "frontend/views/layouts/snippets/js/quest.php"
   - "frontend/web/js/player-builder.js"
   - "frontend/web/js/quest-events.js"

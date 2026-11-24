@@ -150,18 +150,40 @@ class AjaxRequest
         if (!is_array($posted)) {
             return null;
         }
+        $statuses = self::validateStatuses($posted, $allowedStatuses);
+        return $statuses === [] ? null : $statuses;
+    }
+
+    /**
+     * @param array<mixed> $posted
+     * @param array<int> $allowedStatuses
+     * @return array<int>
+     */
+    private static function validateStatuses(array $posted, array $allowedStatuses): array
+    {
         $statuses = [];
         foreach ($posted as $value) {
-            if (!is_string($value) && !is_int($value)) {
-                continue;
-            }
-            $status = filter_var($value, FILTER_VALIDATE_INT);
-            if ($status !== false && in_array($status, $allowedStatuses, true)) {
+            $status = self::validatedStatus($value, $allowedStatuses);
+            if ($status !== null) {
                 $statuses[] = $status;
             }
         }
-        $statuses = array_values(array_unique($statuses));
-        return $statuses === [] ? null : $statuses;
+        return array_values(array_unique($statuses));
+    }
+
+    /**
+     * @param array<int> $allowedStatuses
+     */
+    private static function validatedStatus(mixed $value, array $allowedStatuses): ?int
+    {
+        if (!is_string($value) && !is_int($value)) {
+            return null;
+        }
+        $status = filter_var($value, FILTER_VALIDATE_INT);
+        if ($status === false || !in_array($status, $allowedStatuses, true)) {
+            return null;
+        }
+        return $status;
     }
 
     /**
