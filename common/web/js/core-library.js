@@ -336,7 +336,11 @@ class UserManager {
 class LayoutInitializer {
     static initAjaxPage() {
         $(document).ready(() => {
-            if (typeof TableManager !== 'undefined' && TableManager.loadGenericAjaxTable) {
+            // Prefer TableFilterManager so the initial load shares the request
+            // guard of the filter/pagination loads and cannot overwrite them
+            if (typeof TableFilterManager !== 'undefined' && TableFilterManager.loadGenericAjaxTable) {
+                TableFilterManager.loadGenericAjaxTable(0);
+            } else if (typeof TableManager !== 'undefined' && TableManager.loadGenericAjaxTable) {
                 TableManager.loadGenericAjaxTable(0);
             } else {
                 console.error('TableManager or loadGenericAjaxTable method not found.');
