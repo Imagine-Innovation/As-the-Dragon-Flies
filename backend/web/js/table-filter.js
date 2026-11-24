@@ -10,6 +10,9 @@ class TableFilterManager {
     static lastSearchId = null;
     static toastTitle = 'Table';
 
+    // The stale-request guard is shared by all managers (subclasses included):
+    // overlapping filter/search and pagination requests must invalidate each other.
+
     static loadGenericAjaxTable(pageNumber, filterName = null, searchId = null) {
         if (filterName !== null) {
             TableFilterManager.lastFilterName = filterName;
@@ -22,7 +25,7 @@ class TableFilterManager {
 
         Logger.log(1, 'loadGenericAjaxTable', `pageNumber=${pageNumber}, filterName=${resolvedFilterName}, searchId=${resolvedSearchId}`);
 
-        const requestId = ++this.lastRequestId;
+        const requestId = ++TableFilterManager.lastRequestId;
 
         const params = {
             page: pageNumber,
@@ -45,7 +48,7 @@ class TableFilterManager {
             data: params,
             successCallback: (response) => {
                 Logger.log(4, 'loadGenericAjaxTable', `response=${Object.values(response)}`);
-                if (requestId !== this.lastRequestId) {
+                if (requestId !== TableFilterManager.lastRequestId) {
                     return;
                 }
                 if (response.error) {
@@ -56,7 +59,7 @@ class TableFilterManager {
                 window.location.href = "#top";
             },
             errorCallback: (response) => {
-                if (requestId !== this.lastRequestId) {
+                if (requestId !== TableFilterManager.lastRequestId) {
                     return;
                 }
                 ToastManager.show(this.toastTitle, response.msg, 'error');

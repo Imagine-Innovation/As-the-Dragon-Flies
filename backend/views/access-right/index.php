@@ -20,6 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
         'multipleValues' => true,
         'searchString' => true,
+        'onLoad' => 'AccessRightManager.loadGenericAjaxTable(0, "application", "routeSearch");',
     ])
 ?>
 

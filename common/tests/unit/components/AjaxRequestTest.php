@@ -42,6 +42,11 @@ class AjaxRequestTest extends \Codeception\Test\Unit
         $this->assertSame([2], AjaxRequest::postedStatuses([2, '2', '2'], [2]));
     }
 
+    public function testPostedStatusesSkipsNestedValues(): void
+    {
+        $this->assertSame([1], AjaxRequest::postedStatuses([['nested'], 1], [1]));
+    }
+
     public function testPostedStatusesWithNonArrayInput(): void
     {
         $this->assertNull(AjaxRequest::postedStatuses(null, [0, 1]));
