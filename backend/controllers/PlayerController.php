@@ -88,9 +88,17 @@ class PlayerController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
+        $statuses = AjaxRequest::postedStatuses(
+                $this->request->post('applications'),
+                AppStatus::getValuesForPlayer(),
+        );
+
         $param = [
             'modelName' => 'Player',
         ];
+        if ($statuses !== null) {
+            $param['filter'] = ['status' => $statuses];
+        }
         $ajaxRequest = new AjaxRequest($param);
 
         if ($ajaxRequest->makeResponse(Yii::$app->request)) {

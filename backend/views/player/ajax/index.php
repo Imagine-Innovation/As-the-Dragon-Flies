@@ -81,6 +81,7 @@ $imgPath = WebResourcesHelper::imagePath();
             'page' => $page,
             'pageCount' => $pageCount,
             'limit' => $limit,
+            'manager' => 'TableFilterManager',
         ])
         ?>
         <!-- End Pagination -->
