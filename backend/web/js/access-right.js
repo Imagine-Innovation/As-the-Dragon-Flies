@@ -4,20 +4,9 @@
  */
 class AccessRightManager {
     static lastRequestId = 0;
-    static lastFilterName = null;
-    static lastSearchId = null;
 
-    static loadGenericAjaxTable(pageNumber, filterName = null, searchId = null) {
-        if (filterName !== null) {
-            AccessRightManager.lastFilterName = filterName;
-        }
-        if (searchId !== null) {
-            AccessRightManager.lastSearchId = searchId;
-        }
-        const resolvedFilterName = AccessRightManager.lastFilterName ?? 'application';
-        const resolvedSearchId = AccessRightManager.lastSearchId ?? 'routeSearch';
-
-        Logger.log(1, 'loadGenericAjaxTable', `pageNumber=${pageNumber}, filterName=${resolvedFilterName}, searchId=${resolvedSearchId}`);
+    static loadGenericAjaxTable(pageNumber) {
+        Logger.log(1, 'loadGenericAjaxTable', `pageNumber=${pageNumber}`);
 
         const requestId = ++AccessRightManager.lastRequestId;
 
@@ -28,8 +17,8 @@ class AccessRightManager {
             route: DOMUtils.getParam("route", null),
             currentTab: DOMUtils.getParam("currentTab"),
             currentId: DOMUtils.getParam("currentId"),
-            applications: AccessRightManager.getSelectedApplications(resolvedFilterName),
-            search: $(`#${resolvedSearchId}`).val() ?? ''
+            applications: AccessRightManager.getSelectedApplications(),
+            search: $('#routeSearch').val() ?? ''
         };
 
         // Log parameters
@@ -62,16 +51,13 @@ class AccessRightManager {
     }
 
     /**
-     * Returns the list of selected values, from checked boxes and selected
-     * options of the filter controls bearing the given name
-     * @param {string} filterName
+     * Returns the list of checked application values
      * @returns {string[]}
      */
-    static getSelectedApplications(filterName = 'application') {
-        return $(`input[name="${filterName}"]:checked, select[name="${filterName}"] option:selected`)
-                .map((_, element) => element.value)
-                .get()
-                .filter((value) => value !== '');
+    static getSelectedApplications() {
+        return $('input[name="application"]:checked')
+                .map((_, checkbox) => checkbox.value)
+                .get();
     }
 
     static setLimit(limit) {
