@@ -46,7 +46,8 @@ class TableFilter extends Widget
 
     /**
      * @var string $filterName Name of the filter inputs, as selected by the generic
-     * AJAX table loader (e.g. AccessRightManager collects input[type=checkbox][name=application]).
+     * AJAX table loader (e.g. TableFilterManager collects the checked inputs and the
+     * selected options named filterName).
      */
     public string $filterName = 'application';
 
@@ -62,8 +63,8 @@ class TableFilter extends Widget
 
     /**
      * @var string|null $onLoad JavaScript call executed when a filter value changes or the
-     * search form is submitted. When omitted, the generic AccessRightManager loader is
-     * called with the configured filterName and searchId.
+     * search form is submitted. When omitted, the generic TableFilterManager loader
+     * (backend/web/js/table-filter.js) is called with the configured filterName and searchId.
      */
     public ?string $onLoad = null;
 
@@ -97,7 +98,7 @@ class TableFilter extends Widget
     {
         $filterName = str_replace(["\"", "'", " "], '', trim($this->filterName));
         $searchId = str_replace(["\"", "'", " "], '', trim($this->searchId));
-        return "AccessRightManager.loadGenericAjaxTable(0, \"{$filterName}\", \"{$searchId}\");";
+        return "TableFilterManager.loadGenericAjaxTable(0, \"{$filterName}\", \"{$searchId}\");";
     }
 
     /**

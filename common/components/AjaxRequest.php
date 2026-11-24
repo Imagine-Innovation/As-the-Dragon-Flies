@@ -138,6 +138,30 @@ class AjaxRequest
     }
 
     /**
+     * Validates the raw values posted by the TableFilter widget. Only values
+     * that are valid integer representations and whitelisted are returned.
+     *
+     * @param mixed $posted the raw posted filter values
+     * @param array<int> $allowedStatuses whitelist of acceptable values
+     * @return array<int>|null the validated values, null when nothing usable was posted
+     */
+    public static function postedStatuses(mixed $posted, array $allowedStatuses): ?array
+    {
+        if (!is_array($posted)) {
+            return null;
+        }
+        $statuses = [];
+        foreach ($posted as $value) {
+            $status = filter_var($value, FILTER_VALIDATE_INT);
+            if ($status !== false && in_array($status, $allowedStatuses, true)) {
+                $statuses[] = $status;
+            }
+        }
+        $statuses = array_values(array_unique($statuses));
+        return $statuses === [] ? null : $statuses;
+    }
+
+    /**
      *
      * @param Request $request
      * @return bool

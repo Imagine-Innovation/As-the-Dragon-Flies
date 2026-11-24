@@ -24,6 +24,7 @@ class AppAsset extends AssetBundle
         '/common/web/js/simple-rich-text.js',
         'js/dashboard.js',
         'js/search-select.js',
+        'js/table-filter.js',
         'js/access-right.js',
     ];
     public $depends = [
