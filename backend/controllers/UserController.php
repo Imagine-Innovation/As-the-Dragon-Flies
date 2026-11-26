@@ -112,23 +112,16 @@ class UserController extends Controller
             return ['error' => true, 'msg' => 'Not an Ajax POST request'];
         }
 
-        $postedStatuses = is_array($this->request->post('applications'))
-                ? $this->request->post('applications')
-                : [];
-        $statuses = [];
-        foreach ($postedStatuses as $postedStatus) {
-            $status = filter_var($postedStatus, FILTER_VALIDATE_INT);
-            if ($status !== false && in_array($status, AppStatus::getValuesForUser(), true)) {
-                $statuses[] = $status;
-            }
-        }
-        $statuses = array_values(array_unique($statuses));
+        $statuses = AjaxRequest::postedStatuses(
+                $this->request->post('applications'),
+                AppStatus::getValuesForUser(),
+        );
 
         $param = [
             'modelName' => 'User',
             'sortOrder' => ['created_at' => SORT_DESC],
         ];
-        if ($statuses !== []) {
+        if ($statuses !== null) {
             $param['filter'] = ['status' => $statuses];
         }
         $ajaxRequest = new AjaxRequest($param);
