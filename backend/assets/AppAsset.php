@@ -22,9 +22,9 @@ class AppAsset extends AssetBundle
     public $js = [
         '/common/web/js/core-library.js',
         '/common/web/js/simple-rich-text.js',
+        '/common/web/js/table-filter.js',
         'js/dashboard.js',
         'js/search-select.js',
-        'js/table-filter.js',
         'js/access-right.js',
     ];
     public $depends = [

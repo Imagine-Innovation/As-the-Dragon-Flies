@@ -64,7 +64,7 @@ class TableFilter extends Widget
     /**
      * @var string|null $onLoad JavaScript call executed when a filter value changes or the
      * search form is submitted. When omitted, the generic TableFilterManager loader
-     * (backend/web/js/table-filter.js) is called with the configured filterName and searchId.
+     * (common/web/js/table-filter.js) is called with the configured filterName and searchId.
      */
     public ?string $onLoad = null;
 
